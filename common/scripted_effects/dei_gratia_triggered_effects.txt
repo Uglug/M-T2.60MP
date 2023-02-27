@@ -1,0 +1,3715 @@
+# Holy lands triggered modifiers, census edition
+
+dg_remove_piety = {
+	trigger_switch = {
+		on_trigger = has_country_modifier
+		$modifier$_observant = {
+			remove_country_modifier = $modifier$_observant
+		}
+		$modifier$_pious = {
+			remove_country_modifier = $modifier$_pious
+		}
+		$modifier$_fanatical = {
+			remove_country_modifier = $modifier$_fanatical
+		}
+	}
+}
+
+dg_assign_piety = {
+	if = {
+		limit = {
+			piety = 0.60
+		}
+		if = { limit = { NOT = { has_country_modifier = $modifier$_fanatical } }
+			trigger_switch = {
+				on_trigger = has_country_modifier
+				$modifier$_observant = {
+					remove_country_modifier = $modifier$_observant
+				}
+				$modifier$_pious = {
+					remove_country_modifier = $modifier$_pious
+				}
+			}
+			add_country_modifier = {
+				name = $modifier$_fanatical
+				duration = -1
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			piety = 0.20
+		}
+		if = { limit = { NOT = { has_country_modifier = $modifier$_pious } }
+			trigger_switch = {
+				on_trigger = has_country_modifier
+				$modifier$_observant = {
+					remove_country_modifier = $modifier$_observant
+				}
+				$modifier$_fanatical = {
+					remove_country_modifier = $modifier$_fanatical
+				}
+			}
+			add_country_modifier = {
+				name = $modifier$_pious
+				duration = -1
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			piety = -0.20
+		}
+		if = { limit = { NOT = { has_country_modifier = $modifier$_observant } }
+			trigger_switch = {
+				on_trigger = has_country_modifier
+				$modifier$_pious = {
+					remove_country_modifier = $modifier$_pious
+				}
+				$modifier$_fanatical = {
+					remove_country_modifier = $modifier$_fanatical
+				}
+			}
+			add_country_modifier = {
+				name = $modifier$_observant
+				duration = -1
+			}
+		}
+	}
+	else = {
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			$modifier$_observant = {
+				remove_country_modifier = $modifier$_observant
+			}
+			$modifier$_pious = {
+				remove_country_modifier = $modifier$_pious
+			}
+			$modifier$_fanatical = {
+				remove_country_modifier = $modifier$_fanatical
+			}
+		}
+	}
+}
+
+dg_assign_patriarch = {
+	if = {
+		limit = {
+			patriarch_authority = 0.75
+		}
+		if = { limit = { NOT = { has_country_modifier = $modifier$_fanatical } }
+			trigger_switch = {
+				on_trigger = has_country_modifier
+				$modifier$_observant = {
+					remove_country_modifier = $modifier$_observant
+				}
+				$modifier$_pious = {
+					remove_country_modifier = $modifier$_pious
+				}
+			}
+			add_country_modifier = {
+				name = $modifier$_fanatical
+				duration = -1
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			patriarch_authority = 0.50
+		}
+		if = { limit = { NOT = { has_country_modifier = $modifier$_pious } }
+			trigger_switch = {
+				on_trigger = has_country_modifier
+				$modifier$_observant = {
+					remove_country_modifier = $modifier$_observant
+				}
+				$modifier$_fanatical = {
+					remove_country_modifier = $modifier$_fanatical
+				}
+			}
+			add_country_modifier = {
+				name = $modifier$_pious
+				duration = -1
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			patriarch_authority = 0.10
+		}
+		if = { limit = { NOT = { has_country_modifier = $modifier$_observant } }
+			trigger_switch = {
+				on_trigger = has_country_modifier
+				$modifier$_pious = {
+					remove_country_modifier = $modifier$_pious
+				}
+				$modifier$_fanatical = {
+					remove_country_modifier = $modifier$_fanatical
+				}
+			}
+			add_country_modifier = {
+				name = $modifier$_observant
+				duration = -1
+			}
+		}
+	}
+	else = {
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			$modifier$_observant = {
+				remove_country_modifier = $modifier$_observant
+			}
+			$modifier$_pious = {
+				remove_country_modifier = $modifier$_pious
+			}
+			$modifier$_fanatical = {
+				remove_country_modifier = $modifier$_fanatical
+			}
+		}
+	}
+}
+
+dg_holy_lands_triggers = {
+	if = {
+		limit = {
+			owns_or_non_sovereign_subject_of = 379
+			OR = {
+				religion = catholic
+				religion = chaldean
+				religion = gnostic
+				religion = hussite
+			}
+		}
+		dg_assign_piety = {
+			modifier = catholic_jerusalem
+		}
+	}
+	else = {
+		dg_remove_piety = {
+			modifier = catholic_jerusalem
+		}
+	}
+	if = {
+		limit = {
+			religion_group = muslim
+		}
+		if = {
+			limit = {
+				OR = {
+					religion = wahhabi
+					religion = sunni
+				}
+			}
+			if = {
+				limit = {
+					has_global_flag = islam_destruction_of_kaaba
+				}
+				dg_assign_piety = {
+					modifier = destruction_mecca
+				}
+			}
+			else = {
+				dg_remove_piety = {
+					modifier = destruction_mecca
+				}
+				if = {
+					limit = {
+						OR = {
+							AND = {
+								religion = sunni
+								385 = {
+									owner = { NOT = { religion = sunni } }
+								}
+							}
+							AND = {
+								religion = wahhabi
+								385 = {
+									owner = { NOT = { religion = wahhabi } }
+								}
+							}
+						}
+					}
+					dg_assign_piety = {
+						modifier = infidel_mecca
+					}
+				}
+				else = {
+					dg_remove_piety = {
+						modifier = infidel_mecca
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_global_flag = islam_destruction_of_kaaba
+			}
+			if = {
+				limit = {
+					owns_or_non_sovereign_subject_of = 384 # If Kabba is gone, only check Medina
+				}
+				dg_assign_piety = {
+					modifier = muslim_medina
+				}
+			}
+			else = {
+				dg_remove_piety = {
+					modifier = muslim_medina
+				}
+			}
+		}
+		else = {
+			dg_remove_piety = {
+				modifier = muslim_medina
+			}
+			if = {
+				limit = {
+					owns_or_non_sovereign_subject_of = 385
+					owns_or_non_sovereign_subject_of = 384
+				}
+				dg_assign_piety = {
+					modifier = muslim_mecca_medina
+				}
+			}
+			else = {
+				dg_remove_piety = {
+					modifier = muslim_mecca_medina
+				}
+			}
+			if = {
+				limit = {
+					NOT = { owns_or_non_sovereign_subject_of = 385 }
+					owns_or_non_sovereign_subject_of = 384
+				}
+				dg_assign_piety = {
+					modifier = muslim_medina
+				}
+			}
+			else = {
+				dg_remove_piety = {
+					modifier = muslim_medina
+				}
+			}
+			if = {
+				limit = {
+					NOT = { owns_or_non_sovereign_subject_of = 384 }
+					owns_or_non_sovereign_subject_of = 385
+				}
+				dg_assign_piety = {
+					modifier = muslim_mecca
+				}
+			}
+			else = {
+				dg_remove_piety = {
+					modifier = muslim_mecca
+				}
+			}
+		}
+		if = {
+			limit = {
+				religion = shiite
+			}
+			if = {
+				limit = {
+					owns_or_non_sovereign_subject_of = 1330
+				}
+				dg_assign_piety = {
+					modifier = shiite_al_najaf
+				}
+			}
+			else = {
+				dg_remove_piety = {
+					modifier = shiite_al_najaf
+				}
+			}
+			if = {
+				limit = {
+					1330 = { owner = { NOT = { religion = shiite } } }
+				}
+				dg_assign_piety = {
+					modifier = infidel_al_najaf
+				}
+			}
+			else = {
+				dg_remove_piety = {
+					modifier = infidel_al_najaf
+				}
+			}
+		}
+		else = {
+			dg_remove_piety = {
+				modifier = shiite_al_najaf
+			}
+			dg_remove_piety = {
+				modifier = infidel_al_najaf
+			}
+		}
+	}
+	if = {
+		limit = {
+			religion = orthodox
+		}
+		if = {
+			limit = {
+				antioch_patriarch_area = {
+					has_province_flag = orthodox_patriarch_of_antioch
+					OR = { owned_by = ROOT owner = { is_subject_of = ROOT } }
+				}
+				alexandria_patriarch_area = {
+					has_province_flag = orthodox_patriarch_of_alexandria
+					OR = { owned_by = ROOT owner = { is_subject_of = ROOT } }
+				}
+				constantinople_patriarch_area = {
+					has_province_flag = orthodox_patriarch_of_constantinople
+					OR = { owned_by = ROOT owner = { is_subject_of = ROOT } }
+				}
+				jerusalem_patriarch_area = {
+					has_province_flag = orthodox_patriarch_of_jerusalem
+					OR = { owned_by = ROOT owner = { is_subject_of = ROOT } }
+				}
+				rome_patriarch_area = {
+					has_province_flag = orthodox_patriarch_of_rome
+					OR = { owned_by = ROOT owner = { is_subject_of = ROOT } }
+				}
+			}
+			dg_assign_piety = {
+				modifier = orthodox_greek_patriarchates
+			}
+			dg_remove_piety = {
+				modifier = orthodox_jerusalem
+			}
+			dg_remove_piety = {
+				modifier = orthodox_antioch
+			}
+			dg_remove_piety = {
+				modifier = orthodox_alexandria
+			}
+			dg_remove_piety = {
+				modifier = orthodox_constantinople
+			}
+			dg_remove_piety = {
+				modifier = infidel_jerusalem
+			}
+			dg_remove_piety = {
+				modifier = infidel_alexandria
+			}
+			dg_remove_piety = {
+				modifier = infidel_constantinople
+			}
+			dg_remove_piety = {
+				modifier = infidel_antioch
+			}
+			dg_remove_piety = {
+				modifier = infidel_orthodox_rome
+			}
+		}
+		else = {
+			dg_remove_piety = {
+				modifier = orthodox_greek_patriarchates
+			}
+			if = {
+				limit = {
+					jerusalem_patriarch_area = {
+						has_province_flag = orthodox_patriarch_of_jerusalem
+						OR = { owned_by = ROOT owner = { is_subject_of = ROOT } }
+					}
+				}
+				dg_assign_piety = {
+					modifier = orthodox_jerusalem
+				}
+			}
+			else = {
+				dg_remove_piety = {
+					modifier = orthodox_jerusalem
+				}
+			}
+			if = {
+				limit = {
+					antioch_patriarch_area = {
+						has_province_flag = orthodox_patriarch_of_antioch
+						OR = { owned_by = ROOT owner = { is_subject_of = ROOT } }
+					}
+				}
+				dg_assign_piety = {
+					modifier = orthodox_antioch
+				}
+			}
+			else = {
+				dg_remove_piety = {
+					modifier = orthodox_antioch
+				}
+			}
+			if = {
+				limit = {
+					alexandria_patriarch_area = {
+						has_province_flag = orthodox_patriarch_of_alexandria
+						OR = { owned_by = ROOT owner = { is_subject_of = ROOT } }
+					}
+				}
+				dg_assign_piety = {
+					modifier = orthodox_alexandria
+				}
+			}
+			else = {
+				dg_remove_piety = {
+					modifier = orthodox_alexandria
+				}
+			}
+			if = {
+				limit = {
+					constantinople_patriarch_area = {
+						has_province_flag = orthodox_patriarch_of_constantinople
+						OR = { owned_by = ROOT owner = { is_subject_of = ROOT } }
+					}
+				}
+				dg_assign_piety = {
+					modifier = orthodox_constantinople
+				}
+			}
+			else = {
+				dg_remove_piety = {
+					modifier = orthodox_constantinople
+				}
+			}
+			if = {
+				limit = {
+					NOT = { any_owned_province = { has_province_modifier = orthodox_patriarchate } }
+				}
+				if = {
+					limit = {
+						jerusalem_patriarch_area = {
+							has_province_flag = orthodox_patriarch_of_jerusalem
+							owner = { NOT = { religion = ROOT } }
+						}
+						capital_scope = { asia_continent_trigger = yes }
+					}
+					dg_assign_piety = {
+						modifier = infidel_jerusalem
+					}
+				}
+				else = {
+					dg_remove_piety = {
+						modifier = infidel_jerusalem
+					}
+				}
+				if = {
+					limit = {
+						capital_scope = { asia_continent_trigger = yes }
+						antioch_patriarch_area = {
+							has_province_flag = orthodox_patriarch_of_antioch
+							owner = { NOT = { religion = ROOT } }
+						}
+					}
+					dg_assign_piety = {
+						modifier = infidel_antioch
+					}
+				}
+				else = {
+					dg_remove_piety = {
+						modifier = infidel_antioch
+					}
+				}
+				if = {
+					limit = {
+						capital_scope = { africa_continent_trigger = yes }
+						alexandria_patriarch_area = {
+							has_province_flag = orthodox_patriarch_of_alexandria
+							owner = { NOT = { religion = ROOT } }
+						}
+					}
+					dg_assign_piety = {
+						modifier = infidel_alexandria
+					}
+				}
+				else = {
+					dg_remove_piety = {
+						modifier = infidel_alexandria
+					}
+				}
+				if = {
+					limit = {
+						capital_scope = {
+							continent = europe
+							western_europe_trigger = no
+						}
+						constantinople_patriarch_area = {
+							has_province_flag = orthodox_patriarch_of_constantinople
+							owner = { NOT = { religion = ROOT } }
+						}
+					}
+					dg_assign_piety = {
+						modifier = infidel_constantinople
+					}
+				}
+				else = {
+					dg_remove_piety = {
+						modifier = infidel_constantinople
+					}
+				}
+				if = {
+					limit = {
+						capital_scope = { western_europe_trigger = yes }
+						NOT = { PAP = { has_country_flag = concordat } }
+						rome_patriarch_area = {
+							has_province_flag = orthodox_patriarch_of_rome
+							owner = { NOT = { religion = ROOT } }
+						}
+					}
+					dg_assign_piety = {
+						modifier = infidel_orthodox_rome
+					}
+				}
+				else = {
+					dg_remove_piety = {
+						modifier = infidel_orthodox_rome
+					}
+				}
+			}
+			else = {
+				dg_remove_piety = {
+					modifier = infidel_jerusalem
+				}
+				dg_remove_piety = {
+					modifier = infidel_antioch
+				}
+				dg_remove_piety = {
+					modifier = infidel_alexandria
+				}
+				dg_remove_piety = {
+					modifier = infidel_constantinople
+				}
+				dg_remove_piety = {
+					modifier = infidel_orthodox_rome
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			religion = coptic
+		}
+		if = {
+			limit = {
+				jerusalem_patriarch_area = {
+					has_province_flag = miaphysite_catholicos_of_jerusalem
+					OR = { owned_by = ROOT owner = { is_subject_of = ROOT } }
+				}
+			}
+			dg_assign_piety = {
+				modifier = coptic_jerusalem
+			}
+		}
+		else = {
+			dg_remove_piety = {
+				modifier = coptic_jerusalem
+			}
+		}
+		if = {
+			limit = {
+				antioch_patriarch_area = {
+					has_province_flag = miaphysite_catholicos_of_antioch
+					OR = { owned_by = ROOT owner = { is_subject_of = ROOT } }
+				}
+			}
+			dg_assign_piety = {
+				modifier = coptic_antioch
+			}
+		}
+		else = {
+			dg_remove_piety = {
+				modifier = coptic_antioch
+			}
+		}
+		if = {
+			limit = {
+				alexandria_patriarch_area = {
+					has_province_flag = miaphysite_catholicos_of_alexandria
+					OR = { owned_by = ROOT owner = { is_subject_of = ROOT } }
+				}
+			}
+			dg_assign_piety = {
+				modifier = coptic_alexandria
+			}
+		}
+		else = {
+			dg_remove_piety = {
+				modifier = coptic_alexandria
+			}
+		}
+		if = {
+			limit = {
+				NOT = { any_owned_province = { has_province_modifier = coptic_patriarchate } }
+				capital_scope = { NOT = { continent = europe } }
+			}
+			if = {
+				limit = {
+					jerusalem_patriarch_area = {
+						has_province_flag = miaphysite_catholicos_of_jerusalem
+						owner = { NOT = { religion = ROOT } }
+					}
+				}
+				dg_assign_piety = {
+					modifier = infidel_coptic_jerusalem
+				}
+			}
+			else = {
+				dg_remove_piety = {
+					modifier = infidel_coptic_jerusalem
+				}
+			}
+			if = {
+				limit = {
+					antioch_patriarch_area = {
+						has_province_flag = miaphysite_catholicos_of_antioch
+						owner = { NOT = { religion = ROOT } }
+					}
+				}
+				dg_assign_piety = {
+					modifier = infidel_coptic_antioch
+				}
+			}
+			else = {
+				dg_remove_piety = {
+					modifier = infidel_coptic_antioch
+				}
+			}
+			if = {
+				limit = {
+					alexandria_patriarch_area = {
+						has_province_flag = miaphysite_catholicos_of_alexandria
+						owner = { NOT = { religion = ROOT } }
+					}
+				}
+				dg_assign_piety = {
+					modifier = infidel_coptic_alexandria
+				}
+			}
+			else = {
+				dg_remove_piety = {
+					modifier = infidel_coptic_alexandria
+				}
+			}
+		}
+		else = {
+			dg_remove_piety = {
+				modifier = infidel_coptic_jerusalem
+			}
+			dg_remove_piety = {
+				modifier = infidel_coptic_antioch
+			}
+			dg_remove_piety = {
+				modifier = infidel_coptic_alexandria
+			}
+		}
+	}
+	if = {
+		limit = {
+			religion_group = jewish_group
+			owns_or_non_sovereign_subject_of = 379
+		}
+		dg_assign_piety = {
+			modifier = jewish_jerusalem
+		}
+	}
+	else = {
+		dg_remove_piety = {
+			modifier = jewish_jerusalem
+		}
+	}
+	if = {
+		limit = {
+			religion = baltic_pagan_reformed
+			owns_or_non_sovereign_subject_of = 41
+		}
+		dg_assign_piety = {
+			modifier = romuva_balta
+		}
+	}
+	else = {
+		dg_remove_piety = {
+			modifier = romuva_balta
+		}
+	}
+	if = {
+		limit = {
+			OR = {
+				religion = jain
+				religion = buddhism
+			}
+			owns_or_non_sovereign_subject_of = 2632
+		}
+		dg_assign_piety = {
+			modifier = varanasi
+		}
+	}
+	else = {
+		dg_remove_piety = {
+			modifier = varanasi
+		}
+	}
+	#if = {
+	#	limit = {
+	#		always = no
+	#		religion = chaldean
+	#		owns_or_non_sovereign_subject_of = 2632
+	#		ctesiphon_patriarch_area = {
+	#			has_province_flag = chaldean_catholicos_of_ctesiphon
+	#			OR = { owned_by = ROOT owner = { is_subject_of = ROOT } }
+	#		}
+	#	}
+	#	dg_assign_piety = {
+	#		modifier = chaldean_ctesiphon
+	#	}
+	#}
+	#else = {
+	#	dg_remove_piety = {
+	#		modifier = chaldean_ctesiphon
+	#	}
+	#}
+	if = {
+		limit = {
+			religion = sikhism
+			PUN = { has_country_flag = amritsar_built }
+		}
+		if = {
+			limit = {
+				any_province = {
+					has_province_flag = amritsar
+					owner = {
+						NOT = { religion = sikhism }
+					}
+				}
+			}
+			dg_assign_piety = {
+				modifier = infidel_amritsar
+			}
+		}
+		else = {
+			dg_remove_piety = {
+				modifier = infidel_amritsar
+			}
+		}
+		if = {
+			limit = {
+				any_owned_province = {
+					has_province_flag = amritsar
+					owner = {
+						religion = sikhism
+					}
+				}
+			}
+			dg_assign_piety = {
+				modifier = sikhism_amritsar
+			}
+		}
+		else = {
+			dg_remove_piety = {
+				modifier = sikhism_amritsar
+			}
+		}
+	}
+	else = {
+		dg_remove_piety = {
+			modifier = infidel_amritsar
+		}
+		dg_remove_piety = {
+			modifier = sikhism_amritsar
+		}
+	}
+	if = {
+		limit = {
+			religion = catholic
+			NOT = { PAP = { has_country_flag = concordat } }
+			2530 = { owner = { NOT = { religion = catholic } } }
+		}
+		dg_assign_piety = {
+			modifier = infidel_rome
+		}
+	}
+	else = {
+		dg_remove_piety = {
+			modifier = infidel_rome
+		}
+	}
+}
+
+dg_remove_tithe = {
+	trigger_switch = {
+		on_trigger = has_country_modifier
+		tithe = {
+			remove_country_modifier = tithe
+		}
+		tithe_a = {
+			remove_country_modifier = tithe_a
+		}
+		tithe_b = {
+			remove_country_modifier = tithe_b
+		}
+		tithe_c = {
+			remove_country_modifier = tithe_c
+		}
+	}
+}
+dg_remove_level_4 = {
+	trigger_switch = {
+		on_trigger = has_country_modifier
+		$modifier$_strong = {
+			remove_country_modifier = $modifier$_strong
+		}
+		$modifier$_moderate = {
+			remove_country_modifier = $modifier$_moderate
+		}
+		$modifier$_weak = {
+			remove_country_modifier = $modifier$_weak
+		}
+		$modifier$_nominal = {
+			remove_country_modifier = $modifier$_nominal
+		}
+	}
+}
+dg_remove_level_3 = {
+	trigger_switch = {
+		on_trigger = has_country_modifier
+		$modifier$_strong = {
+			remove_country_modifier = $modifier$_strong
+		}
+		$modifier$_moderate = {
+			remove_country_modifier = $modifier$_moderate
+		}
+		$modifier$_weak = {
+			remove_country_modifier = $modifier$_weak
+		}
+	}
+}
+dg_remove_1_2_3_4 = {
+	trigger_switch = {
+		on_trigger = has_country_modifier
+		$modifier$_1 = {
+			remove_country_modifier = $modifier$_1
+		}
+		$modifier$_2 = {
+			remove_country_modifier = $modifier$_2
+		}
+		$modifier$_3 = {
+			remove_country_modifier = $modifier$_3
+		}
+		$modifier$_4 = {
+			remove_country_modifier = $modifier$_4
+		}
+	}
+}
+dg_remove_10_100 = {
+	trigger_switch = {
+		on_trigger = has_country_modifier
+		$modifier$_10 = {
+			remove_country_modifier = $modifier$_10
+		}
+		$modifier$_20 = {
+			remove_country_modifier = $modifier$_20
+		}
+		$modifier$_30 = {
+			remove_country_modifier = $modifier$_30
+		}
+		$modifier$_40 = {
+			remove_country_modifier = $modifier$_40
+		}
+		$modifier$_50 = {
+			remove_country_modifier = $modifier$_50
+		}
+		$modifier$_60 = {
+			remove_country_modifier = $modifier$_60
+		}
+		$modifier$_70 = {
+			remove_country_modifier = $modifier$_70
+		}
+		$modifier$_80 = {
+			remove_country_modifier = $modifier$_80
+		}
+		$modifier$_90 = {
+			remove_country_modifier = $modifier$_90
+		}
+		$modifier$_100 = {
+			remove_country_modifier = $modifier$_100
+		}
+	}
+}
+
+dg_remove_a_b_c = {
+	trigger_switch = {
+		on_trigger = has_country_modifier
+		$modifier$_a = {
+			remove_country_modifier = $modifier$_a
+		}
+		$modifier$_b = {
+			remove_country_modifier = $modifier$_b
+		}
+		$modifier$_c = {
+			remove_country_modifier = $modifier$_c
+		}
+	}
+}
+
+dg_remove_a_b = {
+	trigger_switch = {
+		on_trigger = has_country_modifier
+		$modifier$_a = {
+			remove_country_modifier = $modifier$_a
+		}
+		$modifier$_b = {
+			remove_country_modifier = $modifier$_b
+		}
+	}
+}
+
+dg_catholic_triggers = {
+	if = {
+		limit = {
+			religion = catholic
+		}
+		if = {
+			limit = {
+				tag = PAP
+			}
+			if = {
+				limit = {
+					check_variable = { which = papal_authority value = 500 }
+				}
+				if = { limit = { NOT = { has_country_modifier = church_leadership_strong } }
+					dg_remove_level_4 = {
+						modifier = church_leadership
+					}
+					add_country_modifier = {
+						name = church_leadership_strong
+						duration = -1
+					}
+				}
+				if = {
+					limit = {
+						NOT = { exists = AVI }
+						NOT = { num_of_cities = 4 }
+					}
+					if = { limit = { NOT = { has_country_modifier = tithe } }
+						dg_remove_tithe = yes
+						add_country_modifier = {
+							name = tithe
+							duration = -1
+						}
+					}
+				}
+				else = {
+					dg_remove_tithe = yes
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = papal_authority value = 400 }
+				}
+				if = { limit = { NOT = { has_country_modifier = church_leadership_moderate } }
+					dg_remove_level_4 = {
+						modifier = church_leadership
+					}
+					add_country_modifier = {
+						name = church_leadership_moderate
+						duration = -1
+					}
+				}
+				if = {
+					limit = {
+						NOT = { exists = AVI }
+						NOT = { num_of_cities = 8 }
+					}
+					if = { limit = { NOT = { has_country_modifier = tithe_c } }
+						dg_remove_tithe = yes
+						add_country_modifier = {
+							name = tithe_c
+							duration = -1
+						}
+					}
+				}
+				else = {
+					dg_remove_tithe = yes
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = papal_authority value = 300 }
+				}
+				if = { limit = { NOT = { has_country_modifier = church_leadership_weak } }
+					dg_remove_level_4 = {
+						modifier = church_leadership
+					}
+					add_country_modifier = {
+						name = church_leadership_weak
+						duration = -1
+					}
+				}
+				if = {
+					limit = {
+						NOT = { exists = AVI }
+						NOT = { num_of_cities = 12 }
+					}
+					if = { limit = { NOT = { has_country_modifier = tithe_b } }
+						dg_remove_tithe = yes
+						add_country_modifier = {
+							name = tithe_b
+							duration = -1
+						}
+					}
+				}
+				else = {
+					dg_remove_tithe = yes
+				}
+			}
+			else = {
+				if = { limit = { NOT = { has_country_modifier = church_leadership_nominal } }
+					dg_remove_level_4 = {
+						modifier = church_leadership
+					}
+					add_country_modifier = {
+						name = church_leadership_nominal
+						duration = -1
+					}
+				}
+				if = {
+					limit = {
+						NOT = { num_of_cities = 16 }
+						NOT = { exists = AVI }
+					}
+					if = {
+						limit = {
+							check_variable = { which = papal_authority value = 200 }
+						}
+						if = { limit = { NOT = { has_country_modifier = tithe_a } }
+							dg_remove_tithe = yes
+							add_country_modifier = {
+								name = tithe_a
+								duration = -1
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							num_of_cities = 12
+						}
+						if = { limit = { NOT = { has_country_modifier = tithe_a } }
+							dg_remove_tithe = yes
+							add_country_modifier = {
+								name = tithe_a
+								duration = -1
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							num_of_cities = 8
+						}
+						if = { limit = { NOT = { has_country_modifier = tithe_b } }
+							dg_remove_tithe = yes
+							add_country_modifier = {
+								name = tithe_b
+								duration = -1
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							num_of_cities = 4
+						}
+						if = { limit = { NOT = { has_country_modifier = tithe_c } }
+							dg_remove_tithe = yes
+							add_country_modifier = {
+								name = tithe_c
+								duration = -1
+							}
+						}
+					}
+					else = {
+						dg_remove_tithe = yes
+					}
+				}
+				else = {
+					dg_remove_tithe = yes
+				}
+			}
+		}
+		else = {
+			dg_remove_level_4 = {
+				modifier = church_leadership
+			}
+			dg_remove_tithe = yes
+		}
+		if = {
+			limit = {
+				OR = {
+					is_papal_controller = yes
+					tag = PAP
+				}
+			}
+			if = {
+				limit = {
+					exists = PAP
+					PAP = {
+						has_regency = yes
+						NOT = { has_country_flag = secular_pope }
+						NOT = { has_country_flag = reformer_pope }
+						NOT = { has_country_flag = corrupt_pope }
+						NOT = { has_country_flag = church_council }
+					}
+				}
+				if = {
+					limit = {
+						PAP = { check_variable = { which = papal_authority value = 500 } }
+					}
+					if = { limit = { NOT = { has_country_modifier = sede_vacante_c } }
+						dg_remove_a_b_c = {
+							modifier = sede_vacante
+						}
+						add_country_modifier = {
+							name = sede_vacante_c
+							duration = -1
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						PAP = { check_variable = { which = papal_authority value = 300 } }
+					}
+					if = { limit = { NOT = { has_country_modifier = sede_vacante_b } }
+						dg_remove_a_b_c = {
+							modifier = sede_vacante
+						}
+						add_country_modifier = {
+							name = sede_vacante_b
+							duration = -1
+						}
+					}
+				}
+				else_if = { limit = { NOT = { has_country_modifier = sede_vacante_a } }
+					dg_remove_a_b_c = {
+						modifier = sede_vacante
+					}
+					add_country_modifier = {
+						name = sede_vacante_a
+						duration = -1
+					}
+				}
+			}
+			else = {
+				dg_remove_a_b_c = {
+					modifier = sede_vacante
+				}
+			}
+		}
+		else = {
+			dg_remove_a_b_c = {
+				modifier = sede_vacante
+			}
+		}
+		if = {
+			limit = {
+				is_papal_controller = yes
+			}
+			# Remove papal_controller = no modifiers
+			dg_remove_a_b = {
+				modifier = exiled_pope
+			}
+			#if = { limit = { has_country_modifier = right_of_exclusion }
+				remove_country_modifier = right_of_exclusion
+			#}
+			if = {
+				limit = {
+					PAP = { check_variable = { which = papal_authority value = 500 } }
+				}
+				if = {
+					limit = {
+						PAP = { has_country_flag = reformer_pope }
+					}
+					if = { limit = { NOT = { has_country_modifier = curia_controller_reformer_pope_strong } }
+						dg_remove_level_4 = {
+							modifier = curia_controller_reformer_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_corrupt_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_secular_pope
+						}
+						add_country_modifier = {
+							name = curia_controller_reformer_pope_strong
+							duration = -1
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						PAP = { has_country_flag = corrupt_pope }
+					}
+					if = { limit = { NOT = { has_country_modifier = curia_controller_corrupt_pope_strong } }
+						dg_remove_level_4 = {
+							modifier = curia_controller_reformer_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_corrupt_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_secular_pope
+						}
+						add_country_modifier = {
+							name = curia_controller_corrupt_pope_strong
+							duration = -1
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						PAP = { has_country_flag = secular_pope }
+					}
+					if = { limit = { NOT = { has_country_modifier = curia_controller_secular_pope_strong } }
+						dg_remove_level_4 = {
+							modifier = curia_controller_reformer_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_corrupt_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_secular_pope
+						}
+						add_country_modifier = {
+							name = curia_controller_secular_pope_strong
+							duration = -1
+						}
+					}
+				}
+				else = {
+					dg_remove_level_4 = {
+						modifier = curia_controller_reformer_pope
+					}
+					dg_remove_level_4 = {
+						modifier = curia_controller_corrupt_pope
+					}
+					dg_remove_level_4 = {
+						modifier = curia_controller_secular_pope
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					PAP = { check_variable = { which = papal_authority value = 400 } }
+				}
+				if = {
+					limit = {
+						PAP = { has_country_flag = reformer_pope }
+					}
+					if = { limit = { NOT = { has_country_modifier = curia_controller_reformer_pope_moderate } }
+						dg_remove_level_4 = {
+							modifier = curia_controller_reformer_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_corrupt_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_secular_pope
+						}
+						add_country_modifier = {
+							name = curia_controller_reformer_pope_moderate
+							duration = -1
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						PAP = { has_country_flag = corrupt_pope }
+					}
+					if = { limit = { NOT = { has_country_modifier = curia_controller_corrupt_pope_moderate } }
+						dg_remove_level_4 = {
+							modifier = curia_controller_reformer_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_corrupt_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_secular_pope
+						}
+						add_country_modifier = {
+							name = curia_controller_corrupt_pope_moderate
+							duration = -1
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						PAP = { has_country_flag = secular_pope }
+					}
+					if = { limit = { NOT = { has_country_modifier = curia_controller_secular_pope_moderate } }
+						dg_remove_level_4 = {
+							modifier = curia_controller_reformer_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_corrupt_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_secular_pope
+						}
+						add_country_modifier = {
+							name = curia_controller_secular_pope_moderate
+							duration = -1
+						}
+					}
+				}
+				else = {
+					dg_remove_level_4 = {
+						modifier = curia_controller_reformer_pope
+					}
+					dg_remove_level_4 = {
+						modifier = curia_controller_corrupt_pope
+					}
+					dg_remove_level_4 = {
+						modifier = curia_controller_secular_pope
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					PAP = { check_variable = { which = papal_authority value = 300 } }
+				}
+				if = {
+					limit = {
+						PAP = { has_country_flag = reformer_pope }
+					}
+					if = { limit = { NOT = { has_country_modifier = curia_controller_reformer_pope_weak } }
+						dg_remove_level_4 = {
+							modifier = curia_controller_reformer_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_corrupt_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_secular_pope
+						}
+						add_country_modifier = {
+							name = curia_controller_reformer_pope_weak
+							duration = -1
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						PAP = { has_country_flag = corrupt_pope }
+					}
+					if = { limit = { NOT = { has_country_modifier = curia_controller_corrupt_pope_weak } }
+						dg_remove_level_4 = {
+							modifier = curia_controller_reformer_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_corrupt_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_secular_pope
+						}
+						add_country_modifier = {
+							name = curia_controller_corrupt_pope_weak
+							duration = -1
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						PAP = { has_country_flag = secular_pope }
+					}
+					if = { limit = { NOT = { has_country_modifier = curia_controller_secular_pope_weak } }
+						dg_remove_level_4 = {
+							modifier = curia_controller_reformer_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_corrupt_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_secular_pope
+						}
+						add_country_modifier = {
+							name = curia_controller_secular_pope_weak
+							duration = -1
+						}
+					}
+				}
+				else = {
+					dg_remove_level_4 = {
+						modifier = curia_controller_reformer_pope
+					}
+					dg_remove_level_4 = {
+						modifier = curia_controller_corrupt_pope
+					}
+					dg_remove_level_4 = {
+						modifier = curia_controller_secular_pope
+					}
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						PAP = { has_country_flag = reformer_pope }
+					}
+					if = { limit = { NOT = { has_country_modifier = curia_controller_reformer_pope_nominal } }
+						dg_remove_level_4 = {
+							modifier = curia_controller_reformer_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_corrupt_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_secular_pope
+						}
+						add_country_modifier = {
+							name = curia_controller_reformer_pope_nominal
+							duration = -1
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						PAP = { has_country_flag = corrupt_pope }
+					}
+					if = { limit = { NOT = { has_country_modifier = curia_controller_corrupt_pope_nominal } }
+						dg_remove_level_4 = {
+							modifier = curia_controller_reformer_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_corrupt_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_secular_pope
+						}
+						add_country_modifier = {
+							name = curia_controller_corrupt_pope_nominal
+							duration = -1
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						PAP = { has_country_flag = secular_pope }
+					}
+					if = { limit = { NOT = { has_country_modifier = curia_controller_secular_pope_nominal } }
+						dg_remove_level_4 = {
+							modifier = curia_controller_reformer_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_corrupt_pope
+						}
+						dg_remove_level_4 = {
+							modifier = curia_controller_secular_pope
+						}
+						add_country_modifier = {
+							name = curia_controller_secular_pope_nominal
+							duration = -1
+						}
+					}
+				}
+				else = {
+					dg_remove_level_4 = {
+						modifier = curia_controller_reformer_pope
+					}
+					dg_remove_level_4 = {
+						modifier = curia_controller_corrupt_pope
+					}
+					dg_remove_level_4 = {
+						modifier = curia_controller_secular_pope
+					}
+				}
+			}
+			if = {
+				limit = {
+					PAP = {
+						NOT = { has_country_flag = concordat_signed }
+						NOT = { has_country_flag = church_council }
+					}
+					NOT = { exists = PAP }
+				}
+				if = {
+					limit = {
+						PAP = { check_variable = { which = papal_authority value = 500 } }
+					}
+					if = { limit = { NOT = { has_country_modifier = landless_pope_c } }
+						dg_remove_a_b_c = {
+							modifier = landless_pope
+						}
+						add_country_modifier = {
+							name = landless_pope_c
+							duration = -1
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						PAP = { check_variable = { which = papal_authority value = 300 } }
+					}
+					if = { limit = { NOT = { has_country_modifier = landless_pope_b } }
+						dg_remove_a_b_c = {
+							modifier = landless_pope
+						}
+						add_country_modifier = {
+							name = landless_pope_b
+							duration = -1
+						}
+					}
+				}
+				else_if = { limit = { NOT = { has_country_modifier = landless_pope_a } }
+					dg_remove_a_b_c = {
+						modifier = landless_pope
+					}
+					add_country_modifier = {
+						name = landless_pope_a
+						duration = -1
+					}
+				}
+			}
+			else = {
+				dg_remove_a_b_c = {
+					modifier = landless_pope
+				}
+			}
+		}
+		else = {
+			dg_remove_level_4 = {
+				modifier = curia_controller_reformer_pope
+			}
+			dg_remove_level_4 = {
+				modifier = curia_controller_corrupt_pope
+			}
+			dg_remove_level_4 = {
+				modifier = curia_controller_secular_pope
+			}
+			dg_remove_a_b_c = {
+				modifier = landless_pope
+			}
+			if = {
+				limit = {
+					NOT = { exists = PAP }
+					PAP = { NOT = { has_country_flag = concordat_signed } }
+				}
+				if = {
+					limit = {
+						has_country_flag = landless_pope_turned_away
+					}
+					if = { limit = { NOT = { has_country_modifier = exiled_pope_b } }
+						dg_remove_a_b = {
+							modifier = exiled_pope
+						}
+						add_country_modifier = {
+							name = exiled_pope_b
+							duration = -1
+						}
+					}
+				}
+				else_if = { limit = { NOT = { has_country_modifier = exiled_pope_a } }
+					dg_remove_a_b = {
+						modifier = exiled_pope
+					}
+					add_country_modifier = {
+						name = exiled_pope_a
+						duration = -1
+					}
+				}
+			}
+			else = {
+				dg_remove_a_b = {
+					modifier = exiled_pope
+				}
+			}
+			if = {
+				limit = {
+					OR = {
+						AND = {
+							has_country_flag = right_of_exclusion
+							is_part_of_hre = no
+						}
+						AND = {
+							HAB = { has_country_flag = right_of_exclusion }
+							is_emperor = yes
+						}
+					}
+				}
+				if = { limit = { NOT = { has_country_modifier = right_of_exclusion } }
+					add_country_modifier = {
+						name = right_of_exclusion
+						duration = -1
+					}
+				}
+			}
+			else = {
+				#limit = { has_country_modifier = right_of_exclusion }
+				remove_country_modifier = right_of_exclusion
+			}
+		}
+		if = {
+			limit = {
+				exists = PAP
+				PAP = { culture_group = ROOT }
+				NOT = { tag = PAP }
+			}
+			if = { limit = { NOT = { has_country_modifier = language_of_vatican } }
+				add_country_modifier = {
+					name = language_of_vatican
+					duration = -1
+				}
+			}
+		}
+		else = {
+			#limit = { has_country_modifier = language_of_vatican }
+			remove_country_modifier = language_of_vatican
+		}
+		if = {
+			limit = {
+				OR = {
+					has_country_flag = royal_scandal
+					has_country_flag = dispensation_denied
+					has_country_flag = dispensation_discouraged #Temporary only
+					has_country_flag = dispensation_encouraged #Temporary only
+				}
+			}
+			if = {
+				limit = {
+					OR = {
+						piety = 0.60
+						PAP = { check_variable = { which = papal_authority value = 500 } }
+					}
+				}
+				if = { limit = { NOT = { has_country_modifier = royal_scandal_a } }
+					dg_remove_a_b_c = {
+						modifier = royal_scandal
+					}
+					add_country_modifier = {
+						name = royal_scandal_a
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						piety = 0.20
+						PAP = { check_variable = { which = papal_authority value = 400 } }
+					}
+				}
+				if = { limit = { NOT = { has_country_modifier = royal_scandal_b } }
+					dg_remove_a_b_c = {
+						modifier = royal_scandal
+					}
+					add_country_modifier = {
+						name = royal_scandal_b
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						piety = -0.20
+						PAP = { check_variable = { which = papal_authority value = 300 } }
+					}
+				}
+				if = { limit = { NOT = { has_country_modifier = royal_scandal_c } }
+					dg_remove_a_b_c = {
+						modifier = royal_scandal
+					}
+					add_country_modifier = {
+						name = royal_scandal_c
+						duration = -1
+					}
+				}
+			}
+			else = { # in case of conversion, could be moved elsewhere
+				dg_remove_a_b_c = {
+					modifier = royal_scandal
+				}
+			}
+		}
+		else = { # in case of conversion, could be moved elsewhere
+			dg_remove_a_b_c = {
+				modifier = royal_scandal
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = excommunicated #No double jeopardy
+			}
+			if = {
+				limit = {
+					OR = {
+						piety = 0.60
+						PAP = { check_variable = { which = papal_authority value = 500 } }
+					}
+				}
+				if = { limit = { NOT = { has_country_modifier = excommunicated_strong } }
+					dg_remove_level_4 = {
+						modifier = excommunicated
+					}
+					add_country_modifier = {
+						name = excommunicated_strong
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						piety = 0.20
+						PAP = { check_variable = { which = papal_authority value = 400 } }
+					}
+				}
+				if = { limit = { NOT = { has_country_modifier = excommunicated_moderate } }
+					dg_remove_level_4 = {
+						modifier = excommunicated
+					}
+					add_country_modifier = {
+						name = excommunicated_moderate
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						piety = -0.20
+						PAP = { check_variable = { which = papal_authority value = 300 } }
+					}
+				}
+				if = { limit = { NOT = { has_country_modifier = excommunicated_weak } }
+					dg_remove_level_4 = {
+						modifier = excommunicated
+					}
+					add_country_modifier = {
+						name = excommunicated_weak
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						piety = -0.60
+						PAP = { check_variable = { which = papal_authority value = 200 } }
+					}
+				}
+				if = { limit = { NOT = { has_country_modifier = excommunicated_nominal } }
+					dg_remove_level_4 = {
+						modifier = excommunicated
+					}
+					add_country_modifier = {
+						name = excommunicated_nominal
+						duration = -1
+					}
+				}
+			}
+			else = {
+				dg_remove_level_4 = {
+					modifier = excommunicated
+				}
+			}
+		}
+		else = {
+			dg_remove_level_4 = {
+				modifier = excommunicated
+			}
+			if = {
+				limit = {
+					exists = AVI
+					AVI = { papal_trigger = yes }
+					exists = PAP
+				}
+				if = {
+					limit = {
+						piety = 0.60
+					}
+					if = { limit = { NOT = { has_country_modifier = schism_a } }
+						dg_remove_a_b_c = {
+							modifier = schism
+						}
+						add_country_modifier = {
+							name = schism_a
+							duration = -1
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						piety = 0.20
+					}
+					if = { limit = { NOT = { has_country_modifier = schism_b } }
+						dg_remove_a_b_c = {
+							modifier = schism
+						}
+						add_country_modifier = {
+							name = schism_b
+							duration = -1
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						piety = -0.20
+					}
+					if = { limit = { NOT = { has_country_modifier = schism_c } }
+						dg_remove_a_b_c = {
+							modifier = schism
+						}
+						add_country_modifier = {
+							name = schism_c
+							duration = -1
+						}
+					}
+				}
+				else = { # in case of conversion, could be moved elsewhere
+					dg_remove_a_b_c = {
+						modifier = schism
+					}
+				}
+			}
+			else = { # in case of conversion, could be moved elsewhere
+				dg_remove_a_b_c = {
+					modifier = schism
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = patronato_real
+				NOT = { has_country_flag = catholic_pragmatic_sanction }
+			}
+			if = {
+				limit = {
+					OR = {
+						piety = 0.60
+						PAP = { check_variable = { which = papal_authority value = 500 } }
+					}
+				}
+				if = { limit = { NOT = { has_country_modifier = patronato_real_c } }
+					dg_remove_a_b_c = {
+						modifier = patronato_real
+					}
+					add_country_modifier = {
+						name = patronato_real_c
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						piety = 0.20
+						PAP = { check_variable = { which = papal_authority value = 400 } }
+					}
+				}
+				if = { limit = { NOT = { has_country_modifier = patronato_real_b } }
+					dg_remove_a_b_c = {
+						modifier = patronato_real
+					}
+					add_country_modifier = {
+						name = patronato_real_b
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						piety = -0.20
+						PAP = { check_variable = { which = papal_authority value = 300 } }
+					}
+				}
+				if = { limit = { NOT = { has_country_modifier = patronato_real_a } }
+					dg_remove_a_b_c = {
+						modifier = patronato_real
+					}
+					add_country_modifier = {
+						name = patronato_real_a
+						duration = -1
+					}
+				}
+			}
+			else = { # in case of conversion, could be moved elsewhere
+				dg_remove_a_b_c = {
+					modifier = patronato_real
+				}
+			}
+		}
+		else = { # in case of conversion, could be moved elsewhere
+			dg_remove_a_b_c = {
+				modifier = patronato_real
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					crusade_target = { war_with = ROOT }
+					any_known_country = {
+						war_with = ROOT
+						has_country_flag = crusade_target
+					}
+				}
+			}
+			if = {
+				limit = {
+					piety = 0.60
+				}
+				if = { limit = { NOT = { has_country_modifier = crusader_a } }
+					dg_remove_a_b_c = {
+						modifier = crusader
+					}
+					add_country_modifier = {
+						name = crusader_a
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					piety = 0.20
+				}
+				if = { limit = { NOT = { has_country_modifier = crusader_b } }
+					dg_remove_a_b_c = {
+						modifier = crusader
+					}
+					add_country_modifier = {
+						name = crusader_b
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					piety = -0.20
+				}
+				if = { limit = { NOT = { has_country_modifier = crusader_c } }
+					dg_remove_a_b_c = {
+						modifier = crusader
+					}
+					add_country_modifier = {
+						name = crusader_c
+						duration = -1
+					}
+				}
+			}
+			else = { # in case of conversion, could be moved elsewhere
+				dg_remove_a_b_c = {
+					modifier = crusader
+				}
+			}
+		}
+		else = { # in case of conversion, could be moved elsewhere
+			dg_remove_a_b_c = {
+				modifier = crusader
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					has_country_flag = uniate_church
+					has_country_flag = union_of_florence
+				}
+				NOT = { has_country_flag = uniate_church_concessions }
+				any_owned_province = {
+					check_variable = { which = orthodox value = 4 }
+				}
+				NOT = { has_country_flag = religious_turmoil_orthodox }
+			}
+			if = { limit = { NOT = { has_country_modifier = uniate_church } }
+				remove_country_modifier = uniate_church_with_concessions
+				add_country_modifier = {
+					name = uniate_church
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				has_country_flag = union_of_florence
+				has_country_flag = uniate_church_concessions
+				any_owned_province = {
+					check_variable = { which = orthodox value = 4 }
+				}
+				NOT = { has_country_flag = religious_turmoil_orthodox }
+			}
+			if = { limit = { NOT = { has_country_modifier = uniate_church_with_concessions } }
+				remove_country_modifier = uniate_church
+				add_country_modifier = {
+					name = uniate_church_with_concessions
+					duration = -1
+				}
+			}
+		}
+		else = {
+			#if = { limit = { has_country_modifier = uniate_church }
+				remove_country_modifier = uniate_church
+			#}
+			#if = { limit = { has_country_modifier = uniate_church_with_concessions }
+				remove_country_modifier = uniate_church_with_concessions
+			#}
+		}
+	}
+}
+dg_orthodox_coptic_triggers = {
+	if = {
+		limit = {
+			OR = {
+				religion = orthodox
+				religion = coptic
+			}
+			is_subject_other_than_tributary_trigger = yes
+			overlord = {
+				OR = {
+					religion = orthodox
+					religion = coptic
+				}
+				any_owned_province = { has_province_modifier = orthodox_patriarchate }
+			}
+			NOT = { has_country_flag = autonomous_church }
+			NOT = { any_owned_province = { has_province_modifier = orthodox_patriarchate } }
+		}
+		if = {
+			limit = {
+				overlord = {
+					NOT = { primary_culture = ROOT }
+				}
+				NOT = { primary_culture = greek }
+			}
+			if = { limit = { NOT = { has_country_modifier = foreign_liturgy } }
+				add_country_modifier = {
+					name = foreign_liturgy
+					duration = -1
+				}
+			}
+		}
+		else = {
+			#limit = { has_country_modifier = foreign_liturgy }
+			remove_country_modifier = foreign_liturgy
+		}
+		if = {
+			limit = {
+				overlord = {
+					NOT = { religion = ROOT }
+				}
+			}
+			if = { limit = { NOT = { has_country_modifier = heretic_liturgy } }
+				add_country_modifier = {
+					name = heretic_liturgy
+					duration = -1
+				}
+			}
+		}
+		else = {
+			#limit = { has_country_modifier = heretic_liturgy }
+			remove_country_modifier = heretic_liturgy
+		}
+	}
+	else = {
+		#if = { limit = { has_country_modifier = foreign_liturgy }
+			remove_country_modifier = foreign_liturgy
+		#}
+		#if = { limit = { has_country_modifier = heretic_liturgy }
+			remove_country_modifier = heretic_liturgy
+		#}
+	}
+}
+
+dg_coptic_triggers = {
+	if = {
+		limit = {
+			religion = coptic
+		}
+		if = {
+			limit = {
+				check_variable = { which = monastic_orders value = 5 }
+			}
+			if = { limit = { NOT = { has_country_modifier = monastic_diversity_4 } }
+				dg_remove_1_2_3_4 = {
+					modifier = monastic_diversity
+				}
+				add_country_modifier = {
+					name = monastic_diversity_4
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = monastic_orders value = 4 }
+			}
+			if = { limit = { NOT = { has_country_modifier = monastic_diversity_3 } }
+				dg_remove_1_2_3_4 = {
+					modifier = monastic_diversity
+				}
+				add_country_modifier = {
+					name = monastic_diversity_3
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = monastic_orders value = 3 }
+			}
+			if = { limit = { NOT = { has_country_modifier = monastic_diversity_2 } }
+				dg_remove_1_2_3_4 = {
+					modifier = monastic_diversity
+				}
+				add_country_modifier = {
+					name = monastic_diversity_2
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = monastic_orders value = 2 }
+			}
+			if = { limit = { NOT = { has_country_modifier = monastic_diversity_1 } }
+				dg_remove_1_2_3_4 = {
+					modifier = monastic_diversity
+				}
+				add_country_modifier = {
+					name = monastic_diversity_1
+					duration = -1
+				}
+			}
+		}
+		else = {
+			dg_remove_1_2_3_4 = {
+				modifier = monastic_diversity
+			}
+		}
+	}
+}
+
+dg_sunni_shiite_triggers = {
+	if = {
+		limit = {
+			OR = {
+				religion = sunni
+				religion = shiite
+			}
+		}
+		if = {
+			limit = {
+				check_variable = { which = sufi_ulama value = 3 }
+			}
+			if = { limit = { NOT = { has_country_modifier = ulama_strong } }
+				dg_remove_level_3 = {
+					modifier = ulama
+				}
+				dg_remove_level_3 = {
+					modifier = sufi
+				}
+				add_country_modifier = {
+					name = ulama_strong
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = sufi_ulama value = 2 }
+			}
+			if = { limit = { NOT = { has_country_modifier = ulama_strong } }
+				dg_remove_level_3 = {
+					modifier = ulama
+				}
+				dg_remove_level_3 = {
+					modifier = sufi
+				}
+				add_country_modifier = {
+					name = ulama_strong
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = sufi_ulama value = 1 }
+			}
+			if = { limit = { NOT = { has_country_modifier = ulama_strong } }
+				dg_remove_level_3 = {
+					modifier = ulama
+				}
+				dg_remove_level_3 = {
+					modifier = sufi
+				}
+				add_country_modifier = {
+					name = ulama_strong
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = sufi_ulama value = 1 }
+			}
+			if = { limit = { NOT = { has_country_modifier = ulama_strong } }
+				dg_remove_level_3 = {
+					modifier = ulama
+				}
+				dg_remove_level_3 = {
+					modifier = sufi
+				}
+				add_country_modifier = {
+					name = ulama_strong
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				NOT = { check_variable = { which = sufi_ulama value = 0 } }
+				check_variable = { which = sufi_ulama value = -1 }
+			}
+			if = { limit = { NOT = { has_country_modifier = sufi_weak } }
+				dg_remove_level_3 = {
+					modifier = ulama
+				}
+				dg_remove_level_3 = {
+					modifier = sufi
+				}
+				add_country_modifier = {
+					name = sufi_weak
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				NOT = { check_variable = { which = sufi_ulama value = -1 } }
+				check_variable = { which = sufi_ulama value = -2 }
+			}
+			if = { limit = { NOT = { has_country_modifier = sufi_moderate } }
+				dg_remove_level_3 = {
+					modifier = ulama
+				}
+				dg_remove_level_3 = {
+					modifier = sufi
+				}
+				add_country_modifier = {
+					name = sufi_moderate
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				NOT = { check_variable = { which = sufi_ulama value = -2 } }
+				check_variable = { which = sufi_ulama value = -3 }
+			}
+			if = { limit = { NOT = { has_country_modifier = sufi_strong } }
+				dg_remove_level_3 = {
+					modifier = ulama
+				}
+				dg_remove_level_3 = {
+					modifier = sufi
+				}
+				add_country_modifier = {
+					name = sufi_strong
+					duration = -1
+				}
+			}
+		}
+		else = {
+			dg_remove_level_3 = {
+				modifier = ulama
+			}
+			dg_remove_level_3 = {
+				modifier = sufi
+			}
+		}
+	}
+}
+
+dg_muslim_triggers = {
+	if = {
+		limit = {
+			religion_group = muslim
+		}
+		if = {
+			limit = {
+				any_owned_province = {
+					OR = {
+						has_province_modifier = madrassa
+						has_province_modifier = sufi_settlement
+					}
+				}
+			}
+			if = {
+				limit = {
+					num_of_cities = 16
+					OR = {
+						AND = {
+							NOT = { num_of_cities = 32 }
+							NOT = {
+								num_of_owned_provinces_with = {
+									OR = {
+										has_province_modifier = madrassa
+										has_province_modifier = sufi_settlement
+									}
+									value = 2
+								}
+							}
+						}
+						AND = {
+							num_of_owned_provinces_with = {
+								OR = {
+									has_province_modifier = madrassa
+									has_province_modifier = sufi_settlement
+								}
+								value = 2
+							}
+							NOT = {
+								num_of_owned_provinces_with = {
+									OR = {
+										has_province_modifier = madrassa
+										has_province_modifier = sufi_settlement
+									}
+									value = 3
+								}
+							}
+							num_of_cities = 32
+							NOT = { num_of_cities = 64 }
+						}
+						AND = {
+							num_of_owned_provinces_with = {
+								OR = {
+									has_province_modifier = madrassa
+									has_province_modifier = sufi_settlement
+								}
+								value = 3
+							}
+							NOT = {
+								num_of_owned_provinces_with = {
+									OR = {
+										has_province_modifier = madrassa
+										has_province_modifier = sufi_settlement
+									}
+									value = 4
+								}
+							}
+							num_of_cities = 48
+							NOT = { num_of_cities = 96 }
+						}
+						AND = {
+							num_of_owned_provinces_with = {
+								OR = {
+									has_province_modifier = madrassa
+									has_province_modifier = sufi_settlement
+								}
+								value = 4
+							}
+							NOT = {
+								num_of_owned_provinces_with = {
+									OR = {
+										has_province_modifier = madrassa
+										has_province_modifier = sufi_settlement
+									}
+									value = 5
+								}
+							}
+							num_of_cities = 64
+							NOT = { num_of_cities = 128 }
+						}
+						AND = {
+							num_of_owned_provinces_with = {
+								OR = {
+									has_province_modifier = madrassa
+									has_province_modifier = sufi_settlement
+								}
+								value = 5
+							}
+							num_of_cities = 80
+							NOT = { num_of_cities = 160 }
+						}
+					}
+				}
+				if = { limit = { NOT = { has_country_modifier = madrassas_moderate } }
+					dg_remove_level_3 = {
+						modifier = madrassas
+					}
+					add_country_modifier = {
+						name = madrassas_moderate
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					num_of_cities = 8
+					OR = {
+						AND = {
+							NOT = { num_of_cities = 16 }
+							NOT = {
+								num_of_owned_provinces_with = {
+									OR = {
+										has_province_modifier = madrassa
+										has_province_modifier = sufi_settlement
+									}
+									value = 2
+								}
+							}
+						}
+						AND = {
+							num_of_owned_provinces_with = {
+								OR = {
+									has_province_modifier = madrassa
+									has_province_modifier = sufi_settlement
+								}
+								value = 2
+							}
+							NOT = {
+								num_of_owned_provinces_with = {
+									OR = {
+										has_province_modifier = madrassa
+										has_province_modifier = sufi_settlement
+									}
+									value = 3
+								}
+							}
+							num_of_cities = 16
+							NOT = { num_of_cities = 32 }
+						}
+						AND = {
+							num_of_owned_provinces_with = {
+								OR = {
+									has_province_modifier = madrassa
+									has_province_modifier = sufi_settlement
+								}
+								value = 3
+							}
+							NOT = {
+								num_of_owned_provinces_with = {
+									OR = {
+										has_province_modifier = madrassa
+										has_province_modifier = sufi_settlement
+									}
+									value = 4
+								}
+							}
+							num_of_cities = 24
+							NOT = { num_of_cities = 48 }
+						}
+						AND = {
+							num_of_owned_provinces_with = {
+								OR = {
+									has_province_modifier = madrassa
+									has_province_modifier = sufi_settlement
+								}
+								value = 4
+							}
+							NOT = {
+								num_of_owned_provinces_with = {
+									OR = {
+										has_province_modifier = madrassa
+										has_province_modifier = sufi_settlement
+									}
+									value = 5
+								}
+							}
+							num_of_cities = 32
+							NOT = { num_of_cities = 64 }
+						}
+						AND = {
+							num_of_owned_provinces_with = {
+								OR = {
+									has_province_modifier = madrassa
+									has_province_modifier = sufi_settlement
+								}
+								value = 5
+							}
+							num_of_cities = 40
+							NOT = { num_of_cities = 80 }
+						}
+					}
+				}
+				if = { limit = { NOT = { has_country_modifier = madrassas_moderate } }
+					dg_remove_level_3 = {
+						modifier = madrassas
+					}
+					add_country_modifier = {
+						name = madrassas_moderate
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						NOT = { num_of_cities = 8 }
+						AND = {
+							num_of_owned_provinces_with = {
+								OR = {
+									has_province_modifier = madrassa
+									has_province_modifier = sufi_settlement
+								}
+								value = 2
+							}
+							NOT = { num_of_cities = 16 }
+						}
+						AND = {
+							num_of_owned_provinces_with = {
+								OR = {
+									has_province_modifier = madrassa
+									has_province_modifier = sufi_settlement
+								}
+								value = 3
+							}
+							NOT = { num_of_cities = 24 }
+						}
+						AND = {
+							num_of_owned_provinces_with = {
+								OR = {
+									has_province_modifier = madrassa
+									has_province_modifier = sufi_settlement
+								}
+								value = 4
+							}
+							NOT = { num_of_cities = 32 }
+						}
+						AND = {
+							num_of_owned_provinces_with = {
+								OR = {
+									has_province_modifier = madrassa
+									has_province_modifier = sufi_settlement
+								}
+								value = 5
+							}
+							NOT = { num_of_cities = 40 }
+						}
+					}
+				}
+				if = { limit = { NOT = { has_country_modifier = madrassas_strong } }
+					dg_remove_level_3 = {
+						modifier = madrassas
+					}
+					add_country_modifier = {
+						name = madrassas_strong
+						duration = -1
+					}
+				}
+			}
+			else = {
+				dg_remove_level_3 = {
+					modifier = madrassas
+				}
+			}
+		}
+		else = {
+			dg_remove_level_3 = {
+				modifier = madrassas
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = caliph
+			}
+			if = {
+				limit = {
+					check_variable = { which = caliph_authority value = 76 }
+				}
+				if = { limit = { NOT = { has_country_modifier = caliph_strong } }
+					dg_remove_level_4 = {
+						modifier = caliph
+					}
+					add_country_modifier = {
+						name = caliph_strong
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = caliph_authority value = 51 }
+				}
+				if = { limit = { NOT = { has_country_modifier = caliph_moderate } }
+					dg_remove_level_4 = {
+						modifier = caliph
+					}
+					add_country_modifier = {
+						name = caliph_moderate
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = caliph_authority value = 26 }
+				}
+				if = { limit = { NOT = { has_country_modifier = caliph_weak } }
+					dg_remove_level_4 = {
+						modifier = caliph
+					}
+					add_country_modifier = {
+						name = caliph_weak
+						duration = -1
+					}
+				}
+			}
+			else_if = { limit = { NOT = { has_country_modifier = caliph_nominal } }
+				dg_remove_level_4 = {
+					modifier = caliph
+				}
+				add_country_modifier = {
+					name = caliph_nominal
+					duration = -1
+				}
+			}
+		}
+		else = {
+			dg_remove_level_4 = {
+				modifier = caliph
+			}
+		}
+		if = {
+			limit = {
+				check_variable = { which = jizya_population value = 0.1 }
+			}
+			if = {
+				limit = {
+					check_variable = { which = jizya_population value = 90 }
+				}
+				if = { limit = { NOT = { has_country_modifier = jizya_100 } }
+					dg_remove_10_100 = {
+						modifier = jizya
+					}
+					add_country_modifier = {
+						name = jizya_100
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = jizya_population value = 80 }
+				}
+				if = { limit = { NOT = { has_country_modifier = jizya_90 } }
+					dg_remove_10_100 = {
+						modifier = jizya
+					}
+					add_country_modifier = {
+						name = jizya_90
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = jizya_population value = 70 }
+				}
+				if = { limit = { NOT = { has_country_modifier = jizya_80 } }
+					dg_remove_10_100 = {
+						modifier = jizya
+					}
+					add_country_modifier = {
+						name = jizya_80
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = jizya_population value = 60 }
+				}
+				if = { limit = { NOT = { has_country_modifier = jizya_70 } }
+					dg_remove_10_100 = {
+						modifier = jizya
+					}
+					add_country_modifier = {
+						name = jizya_70
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = jizya_population value = 50 }
+				}
+				if = { limit = { NOT = { has_country_modifier = jizya_60 } }
+					dg_remove_10_100 = {
+						modifier = jizya
+					}
+					add_country_modifier = {
+						name = jizya_60
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = jizya_population value = 40 }
+				}
+				if = { limit = { NOT = { has_country_modifier = jizya_50 } }
+					dg_remove_10_100 = {
+						modifier = jizya
+					}
+					add_country_modifier = {
+						name = jizya_50
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = jizya_population value = 30 }
+				}
+				if = { limit = { NOT = { has_country_modifier = jizya_40 } }
+					dg_remove_10_100 = {
+						modifier = jizya
+					}
+					add_country_modifier = {
+						name = jizya_40
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = jizya_population value = 20 }
+				}
+				if = { limit = { NOT = { has_country_modifier = jizya_30 } }
+					dg_remove_10_100 = {
+						modifier = jizya
+					}
+					add_country_modifier = {
+						name = jizya_30
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = jizya_population value = 10 }
+				}
+				if = { limit = { NOT = { has_country_modifier = jizya_20 } }
+					dg_remove_10_100 = {
+						modifier = jizya
+					}
+					add_country_modifier = {
+						name = jizya_20
+						duration = -1
+					}
+				}
+			}
+			else_if = { limit = { NOT = { has_country_modifier = jizya_10 } }
+				dg_remove_10_100 = {
+					modifier = jizya
+				}
+				add_country_modifier = {
+					name = jizya_10
+					duration = -1
+				}
+			}
+		}
+		else = {
+			dg_remove_10_100 = {
+				modifier = jizya
+			}
+		}
+		if = {
+			limit = {
+				check_variable = { which = devsirme_population value = 0.1 }
+			}
+			if = {
+				limit = {
+					check_variable = { which = devsirme_population value = 90 }
+				}
+				if = { limit = { NOT = { has_country_modifier = devsirme_100 } }
+					dg_remove_10_100 = {
+						modifier = devsirme
+					}
+					add_country_modifier = {
+						name = devsirme_100
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = devsirme_population value = 80 }
+				}
+				if = { limit = { NOT = { has_country_modifier = devsirme_90 } }
+					dg_remove_10_100 = {
+						modifier = devsirme
+					}
+					add_country_modifier = {
+						name = devsirme_90
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = devsirme_population value = 70 }
+				}
+				if = { limit = { NOT = { has_country_modifier = devsirme_80 } }
+					dg_remove_10_100 = {
+						modifier = devsirme
+					}
+					add_country_modifier = {
+						name = devsirme_80
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = devsirme_population value = 60 }
+				}
+				if = { limit = { NOT = { has_country_modifier = devsirme_70 } }
+					dg_remove_10_100 = {
+						modifier = devsirme
+					}
+					add_country_modifier = {
+						name = devsirme_70
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = devsirme_population value = 50 }
+				}
+				if = { limit = { NOT = { has_country_modifier = devsirme_60 } }
+					dg_remove_10_100 = {
+						modifier = devsirme
+					}
+					add_country_modifier = {
+						name = devsirme_60
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = devsirme_population value = 40 }
+				}
+				if = { limit = { NOT = { has_country_modifier = devsirme_50 } }
+					dg_remove_10_100 = {
+						modifier = devsirme
+					}
+					add_country_modifier = {
+						name = devsirme_50
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = devsirme_population value = 30 }
+				}
+				if = { limit = { NOT = { has_country_modifier = devsirme_40 } }
+					dg_remove_10_100 = {
+						modifier = devsirme
+					}
+					add_country_modifier = {
+						name = devsirme_40
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = devsirme_population value = 20 }
+				}
+				if = { limit = { NOT = { has_country_modifier = devsirme_30 } }
+					dg_remove_10_100 = {
+						modifier = devsirme
+					}
+					add_country_modifier = {
+						name = devsirme_30
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = devsirme_population value = 10 }
+				}
+				if = { limit = { NOT = { has_country_modifier = devsirme_20 } }
+					dg_remove_10_100 = {
+						modifier = devsirme
+					}
+					add_country_modifier = {
+						name = devsirme_20
+						duration = -1
+					}
+				}
+			}
+			else_if = { limit = { NOT = { has_country_modifier = devsirme_10 } }
+				dg_remove_10_100 = {
+					modifier = devsirme
+				}
+				add_country_modifier = {
+					name = devsirme_10
+					duration = -1
+				}
+			}
+		}
+		else = {
+			dg_remove_10_100 = {
+				modifier = devsirme
+			}
+		}
+		if = {
+			limit = {
+				check_variable = { which = millet_population value = 0.1 }
+			}
+			if = {
+				limit = {
+					check_variable = { which = millet_population value = 90 }
+				}
+				if = { limit = { NOT = { has_country_modifier = millet_100 } }
+					dg_remove_10_100 = {
+						modifier = millet
+					}
+					add_country_modifier = {
+						name = millet_100
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = millet_population value = 80 }
+				}
+				if = { limit = { NOT = { has_country_modifier = millet_90 } }
+					dg_remove_10_100 = {
+						modifier = millet
+					}
+					add_country_modifier = {
+						name = millet_90
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = millet_population value = 70 }
+				}
+				if = { limit = { NOT = { has_country_modifier = millet_80 } }
+					dg_remove_10_100 = {
+						modifier = millet
+					}
+					add_country_modifier = {
+						name = millet_80
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = millet_population value = 60 }
+				}
+				if = { limit = { NOT = { has_country_modifier = millet_70 } }
+					dg_remove_10_100 = {
+						modifier = millet
+					}
+					add_country_modifier = {
+						name = millet_70
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = millet_population value = 50 }
+				}
+				if = { limit = { NOT = { has_country_modifier = millet_60 } }
+					dg_remove_10_100 = {
+						modifier = millet
+					}
+					add_country_modifier = {
+						name = millet_60
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = millet_population value = 40 }
+				}
+				if = { limit = { NOT = { has_country_modifier = millet_50 } }
+					dg_remove_10_100 = {
+						modifier = millet
+					}
+					add_country_modifier = {
+						name = millet_50
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = millet_population value = 30 }
+				}
+				if = { limit = { NOT = { has_country_modifier = millet_40 } }
+					dg_remove_10_100 = {
+						modifier = millet
+					}
+					add_country_modifier = {
+						name = millet_40
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = millet_population value = 20 }
+				}
+				if = { limit = { NOT = { has_country_modifier = millet_30 } }
+					dg_remove_10_100 = {
+						modifier = millet
+					}
+					add_country_modifier = {
+						name = millet_30
+						duration = -1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = millet_population value = 10 }
+				}
+				if = { limit = { NOT = { has_country_modifier = millet_20 } }
+					dg_remove_10_100 = {
+						modifier = millet
+					}
+					add_country_modifier = {
+						name = millet_20
+						duration = -1
+					}
+				}
+			}
+			else_if = { limit = { NOT = { has_country_modifier = millet_10 } }
+				dg_remove_10_100 = {
+					modifier = millet
+				}
+				add_country_modifier = {
+					name = millet_10
+					duration = -1
+				}
+			}
+		}
+		else = {
+			dg_remove_10_100 = {
+				modifier = millet
+			}
+		}
+	}
+}
+
+dg_tolerance_system_triggers = {
+	if = {
+		limit = {
+			check_variable = { which = tolerated_population value = 0.1 }
+		}
+		if = {
+			limit = {
+				check_variable = { which = tolerated_population value = 90 }
+			}
+			if = { limit = { NOT = { has_country_modifier = tolerance_system_100 } }
+				dg_remove_10_100 = {
+					modifier = tolerance_system
+				}
+				add_country_modifier = {
+					name = tolerance_system_100
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = tolerated_population value = 80 }
+			}
+			if = { limit = { NOT = { has_country_modifier = tolerance_system_90 } }
+				dg_remove_10_100 = {
+					modifier = tolerance_system
+				}
+				add_country_modifier = {
+					name = tolerance_system_90
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = tolerated_population value = 70 }
+			}
+			if = { limit = { NOT = { has_country_modifier = tolerance_system_80 } }
+				dg_remove_10_100 = {
+					modifier = tolerance_system
+				}
+				add_country_modifier = {
+					name = tolerance_system_80
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = tolerated_population value = 60 }
+			}
+			if = { limit = { NOT = { has_country_modifier = tolerance_system_70 } }
+				dg_remove_10_100 = {
+					modifier = tolerance_system
+				}
+				add_country_modifier = {
+					name = tolerance_system_70
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = tolerated_population value = 50 }
+			}
+			if = { limit = { NOT = { has_country_modifier = tolerance_system_60 } }
+				dg_remove_10_100 = {
+					modifier = tolerance_system
+				}
+				add_country_modifier = {
+					name = tolerance_system_60
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = tolerated_population value = 40 }
+			}
+			if = { limit = { NOT = { has_country_modifier = tolerance_system_50 } }
+				dg_remove_10_100 = {
+					modifier = tolerance_system
+				}
+				add_country_modifier = {
+					name = tolerance_system_50
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = tolerated_population value = 30 }
+			}
+			if = { limit = { NOT = { has_country_modifier = tolerance_system_40 } }
+				dg_remove_10_100 = {
+					modifier = tolerance_system
+				}
+				add_country_modifier = {
+					name = tolerance_system_40
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = tolerated_population value = 20 }
+			}
+			if = { limit = { NOT = { has_country_modifier = tolerance_system_30 } }
+				dg_remove_10_100 = {
+					modifier = tolerance_system
+				}
+				add_country_modifier = {
+					name = tolerance_system_30
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = tolerated_population value = 10 }
+			}
+			if = { limit = { NOT = { has_country_modifier = tolerance_system_20 } }
+				dg_remove_10_100 = {
+					modifier = tolerance_system
+				}
+				add_country_modifier = {
+					name = tolerance_system_20
+					duration = -1
+				}
+			}
+		}
+		else_if = { limit = { NOT = { has_country_modifier = tolerance_system_10 } }
+			dg_remove_10_100 = {
+				modifier = tolerance_system
+			}
+			add_country_modifier = {
+				name = tolerance_system_10
+				duration = -1
+			}
+		}
+	}
+	else = {
+		dg_remove_10_100 = {
+			modifier = tolerance_system
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { which = tolerated_heretic_population value = 0.1 }
+		}
+		if = {
+			limit = {
+				check_variable = { which = tolerated_heretic_population value = 90 }
+			}
+			if = { limit = { NOT = { has_country_modifier = tolerance_system_heretic_100 } }
+				dg_remove_10_100 = {
+					modifier = tolerance_system_heretic
+				}
+				add_country_modifier = {
+					name = tolerance_system_heretic_100
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = tolerated_heretic_population value = 80 }
+			}
+			if = { limit = { NOT = { has_country_modifier = tolerance_system_heretic_90 } }
+				dg_remove_10_100 = {
+					modifier = tolerance_system_heretic
+				}
+				add_country_modifier = {
+					name = tolerance_system_heretic_90
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = tolerated_heretic_population value = 70 }
+			}
+			if = { limit = { NOT = { has_country_modifier = tolerance_system_heretic_80 } }
+				dg_remove_10_100 = {
+					modifier = tolerance_system_heretic
+				}
+				add_country_modifier = {
+					name = tolerance_system_heretic_80
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = tolerated_heretic_population value = 60 }
+			}
+			if = { limit = { NOT = { has_country_modifier = tolerance_system_heretic_70 } }
+				dg_remove_10_100 = {
+					modifier = tolerance_system_heretic
+				}
+				add_country_modifier = {
+					name = tolerance_system_heretic_70
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = tolerated_heretic_population value = 50 }
+			}
+			if = { limit = { NOT = { has_country_modifier = tolerance_system_heretic_60 } }
+				dg_remove_10_100 = {
+					modifier = tolerance_system_heretic
+				}
+				add_country_modifier = {
+					name = tolerance_system_heretic_60
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = tolerated_heretic_population value = 40 }
+			}
+			if = { limit = { NOT = { has_country_modifier = tolerance_system_heretic_50 } }
+				dg_remove_10_100 = {
+					modifier = tolerance_system_heretic
+				}
+				add_country_modifier = {
+					name = tolerance_system_heretic_50
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = tolerated_heretic_population value = 30 }
+			}
+			if = { limit = { NOT = { has_country_modifier = tolerance_system_heretic_40 } }
+				dg_remove_10_100 = {
+					modifier = tolerance_system_heretic
+				}
+				add_country_modifier = {
+					name = tolerance_system_heretic_40
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = tolerated_heretic_population value = 20 }
+			}
+			if = { limit = { NOT = { has_country_modifier = tolerance_system_heretic_30 } }
+				dg_remove_10_100 = {
+					modifier = tolerance_system_heretic
+				}
+				add_country_modifier = {
+					name = tolerance_system_heretic_30
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = tolerated_heretic_population value = 10 }
+			}
+			if = { limit = { NOT = { has_country_modifier = tolerance_system_heretic_20 } }
+				dg_remove_10_100 = {
+					modifier = tolerance_system_heretic
+				}
+				add_country_modifier = {
+					name = tolerance_system_heretic_20
+					duration = -1
+				}
+			}
+		}
+		else_if = { limit = { NOT = { has_country_modifier = tolerance_system_heretic_10 } }
+			dg_remove_10_100 = {
+				modifier = tolerance_system_heretic
+			}
+			add_country_modifier = {
+				name = tolerance_system_heretic_10
+				duration = -1
+			}
+		}
+	}
+	else = {
+		dg_remove_10_100 = {
+			modifier = tolerance_system_heretic
+		}
+	}
+}
+
+dg_remove_captured_icons = {
+	trigger_switch = {
+		on_trigger = has_country_modifier
+		captured_icons_-1 = {
+			remove_country_modifier = captured_icons_-1
+		}
+		captured_icons_1 = {
+			remove_country_modifier = captured_icons_1
+		}
+		captured_icons_2 = {
+			remove_country_modifier = captured_icons_2
+		}
+		captured_icons_4 = {
+			remove_country_modifier = captured_icons_4
+		}
+		captured_icons_7 = {
+			remove_country_modifier = captured_icons_7
+		}
+		captured_icons_11 = {
+			remove_country_modifier = captured_icons_11
+		}
+	}
+}
+
+dg_nahuati_inti_triggers = {
+	if = {
+		limit = {
+			OR = {
+				religion = nahuatl
+				religion = inti
+			}
+		}
+		if = {
+			limit = {
+				check_variable = { which = captured_icons value = 11 }
+				government = monarchy
+			}
+			if = { limit = { NOT = { has_country_modifier = captured_icons_11 } }
+				dg_remove_captured_icons = yes
+				add_country_modifier = {
+					name = captured_icons_11
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = captured_icons value = 7 }
+				government = monarchy
+			}
+			if = { limit = { NOT = { has_country_modifier = captured_icons_7 } }
+				dg_remove_captured_icons = yes
+				add_country_modifier = {
+					name = captured_icons_7
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = captured_icons value = 4 }
+				government = monarchy
+			}
+			if = { limit = { NOT = { has_country_modifier = captured_icons_4 } }
+				dg_remove_captured_icons = yes
+				add_country_modifier = {
+					name = captured_icons_4
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = captured_icons value = 2 }
+				government = monarchy
+			}
+			if = { limit = { NOT = { has_country_modifier = captured_icons_2 } }
+				dg_remove_captured_icons = yes
+				add_country_modifier = {
+					name = captured_icons_2
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = captured_icons value = 1 }
+				government = monarchy
+			}
+			if = { limit = { NOT = { has_country_modifier = captured_icons_1 } }
+				dg_remove_captured_icons = yes
+				add_country_modifier = {
+					name = captured_icons_1
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				NOT = { check_variable = { which = captured_icons value = 0 } }
+				government = monarchy
+			}
+			if = { limit = { NOT = { has_country_modifier = captured_icons_-1 } }
+				dg_remove_captured_icons = yes
+				add_country_modifier = {
+					name = captured_icons_-1
+					duration = -1
+				}
+			}
+		}
+	}
+}
+
+dg_remove_patriarch = {
+	trigger_switch = {
+		on_trigger = has_country_modifier
+		patriarch_zealous_observant = {
+			remove_country_modifier = patriarch_zealous_observant
+		}
+		patriarch_zealous_pious = {
+			remove_country_modifier = patriarch_zealous_pious
+		}
+		patriarch_zealous_fanatical = {
+			remove_country_modifier = patriarch_zealous_fanatical
+		}
+		patriarch_theologian_observant = {
+			remove_country_modifier = patriarch_theologian_observant
+		}
+		patriarch_theologian_pious = {
+			remove_country_modifier = patriarch_theologian_pious
+		}
+		patriarch_theologian_fanatical = {
+			remove_country_modifier = patriarch_theologian_fanatical
+		}
+		patriarch_obedient_observant = {
+			remove_country_modifier = patriarch_obedient_observant
+		}
+		patriarch_obedient_pious = {
+			remove_country_modifier = patriarch_obedient_pious
+		}
+		patriarch_obedient_fanatical = {
+			remove_country_modifier = patriarch_obedient_fanatical
+		}
+		patriarch_controversial_observant = {
+			remove_country_modifier = patriarch_controversial_observant
+		}
+		patriarch_controversial_pious = {
+			remove_country_modifier = patriarch_controversial_pious
+		}
+		patriarch_controversial_fanatical = {
+			remove_country_modifier = patriarch_controversial_fanatical
+		}
+		patriarch_corrupt_observant = {
+			remove_country_modifier = patriarch_corrupt_observant
+		}
+		patriarch_corrupt_pious = {
+			remove_country_modifier = patriarch_corrupt_pious
+		}
+		patriarch_corrupt_fanatical = {
+			remove_country_modifier = patriarch_corrupt_fanatical
+		}
+		patriarch_hostile_observant = {
+			remove_country_modifier = patriarch_hostile_observant
+		}
+		patriarch_hostile_pious = {
+			remove_country_modifier = patriarch_hostile_pious
+		}
+		patriarch_hostile_fanatical = {
+			remove_country_modifier = patriarch_hostile_fanatical
+		}
+	}
+}
+
+dg_patriarch_triggers = {
+	if = {
+		limit = {
+			has_country_flag = patriarch_zealous
+		}
+		dg_assign_patriarch = {
+			modifier = patriarch_zealous
+		}
+	}
+	else = {
+		dg_remove_piety = {
+			modifier = patriarch_zealous
+		}
+	}
+	if = {
+		limit = {
+			has_country_flag = patriarch_theologian
+		}
+		dg_assign_patriarch = {
+			modifier = patriarch_theologian
+		}
+	}
+	else = {
+		dg_remove_piety = {
+			modifier = patriarch_theologian
+		}
+	}
+	if = {
+		limit = {
+			has_country_flag = patriarch_obedient
+		}
+		dg_assign_patriarch = {
+			modifier = patriarch_obedient
+		}
+	}
+	else = {
+		dg_remove_piety = {
+			modifier = patriarch_obedient
+		}
+	}
+	if = {
+		limit = {
+			has_country_flag = patriarch_controversial
+		}
+		dg_assign_patriarch = {
+			modifier = patriarch_controversial
+		}
+	}
+	else = {
+		dg_remove_piety = {
+			modifier = patriarch_controversial
+		}
+	}
+	if = {
+		limit = {
+			has_country_flag = patriarch_corrupt
+		}
+		dg_assign_patriarch = {
+			modifier = patriarch_corrupt
+		}
+	}
+	else = {
+		dg_remove_piety = {
+			modifier = patriarch_corrupt
+		}
+	}
+	if = {
+		limit = {
+			has_country_flag = patriarch_hostile
+		}
+		dg_assign_patriarch = {
+			modifier = patriarch_hostile
+		}
+	}
+	else = {
+		dg_remove_piety = {
+			modifier = patriarch_hostile
+		}
+	}
+}
+
+####################
+# Thirty Years War #
+####################
+
+dg_hre_triggers = {
+	if = {
+		limit = {
+			is_religion_enabled = protestant
+			OR = {
+				religion = catholic
+				religion = protestant
+				religion = reformed
+			}
+			hre_religion = ROOT
+			hre_religion_locked = yes
+			NOT = { religion_years = { protestant = 100 } }
+			NOT = { religion_years = { reformed = 100 } }
+		}
+		if = {
+			limit = {
+				capital_scope = {
+					is_part_of_hre = yes
+					continent = europe
+				}
+			}
+			if = { limit = { NOT = { has_country_modifier = hre_dominant_member } }
+				remove_country_modifier = hre_dominant_observer
+				add_country_modifier = {
+					name = hre_dominant_member
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				capital_scope = {
+					continent = europe
+					is_part_of_hre = no
+				}
+			}
+			if = { limit = { NOT = { has_country_modifier = hre_dominant_member } }
+				remove_country_modifier = hre_dominant_member
+				add_country_modifier = {
+					name = hre_dominant_observer
+					duration = -1
+				}
+			}
+		}
+		else = {
+			#if = { limit = { has_country_modifier = hre_dominant_member }
+				remove_country_modifier = hre_dominant_member
+			#}
+			#if = { limit = { has_country_modifier = hre_dominant_observer }
+				remove_country_modifier = hre_dominant_observer
+			#}
+		}
+	}
+	else = {
+		#if = { limit = { has_country_modifier = hre_dominant_member }
+			remove_country_modifier = hre_dominant_member
+		#}
+		#if = { limit = { has_country_modifier = hre_dominant_observer }
+			remove_country_modifier = hre_dominant_observer
+		#}
+	}
+}

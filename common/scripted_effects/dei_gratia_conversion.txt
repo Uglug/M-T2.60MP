@@ -1,0 +1,2233 @@
+
+dg_conversion_set_church_influence = {
+	###CHURCH INFLUENCE (patriarch authority)
+	
+	add_patriarch_authority = -1 #Reset to zero
+	#if = {
+	#	limit = { exists = yes }
+		add_patriarch_authority = 0.20
+	#}
+	#Assumes that 0 means a new country and assigns starting values to it
+	if = {
+		limit = { NOT = { check_variable = { which = church_property value = 1 } } }
+		set_variable = { which = church_property value = 7 }
+		if = {
+			limit = { government = republic }
+			change_variable = { which = church_property value = -2 }
+		}
+		if = {
+			limit = { is_tribal = yes }
+			change_variable = { which = church_property value = -2 }
+		}
+		if = {
+			limit = { is_colonial_nation = yes }
+			change_variable = { which = church_property value = 2 }
+		}
+		if = {
+			limit = {
+				is_colonial_nation = yes
+				overlord = { has_country_flag = patronato_real religion = catholic }
+			}
+			change_variable = { which = church_property value = 2 }
+			remove_country_modifier = monastic_schools
+			remove_country_modifier = charity_schools
+			remove_country_modifier = royal_schools
+			remove_country_modifier = preparatory_schools
+			remove_country_modifier = public_schools
+			if = {
+				limit = { NOT = { has_country_modifier = public_religious_schools } }
+				add_country_modifier = { name = jesuit_schools duration = -1 }
+			}
+		}
+		if = {
+			limit = {
+				#Disorganized religions
+				OR = {
+					religion_group = pagan
+					religion_group = european_pagan
+					religion_group = new_world_pagan
+					religion = confucianism
+				}
+				NOT = { religion = inti }
+				NOT = { religion = nahuatl }
+				NOT = { has_country_modifier = organized_religion_clerical_requirements }
+				NOT = {
+					religion = shinto
+					has_country_modifier = jingi_kan
+				}
+			}
+			change_variable = { which = church_property value = -2 }
+		}
+	}
+	#Control over benefices reduces the effect of church property
+	if = {
+		limit = { religion_group = muslim }
+		if = {
+			limit = { has_country_flag = ulama_patronage }
+			add_patriarch_authority = 0.05
+		}
+		if = {
+			limit = { has_country_flag = sufi_patronage }
+			add_patriarch_authority = 0.05
+		}
+	}
+	if = {
+		limit = { has_country_flag = state_supported_church }
+		add_patriarch_authority = 0.10
+	}
+	if = {
+		limit = { has_country_flag = church_taxes }
+		if = {
+			limit = { check_variable = { which = church_property value = 3 } }
+			add_patriarch_authority = -0.05
+		}
+		if = {
+			limit = { check_variable = { which = church_property value = 2 } }
+			add_patriarch_authority = -0.05
+		}
+	}
+	if = {
+		limit = {
+			OR = {
+				has_country_flag = national_church
+				has_country_flag = catholic_pragmatic_sanction
+				has_country_flag = patronato_real
+				AND = {
+					religion = orthodox
+					OR = {
+						has_country_flag = patriarch_vacant
+						has_country_flag = holy_synod
+					}
+				}
+				religion = coptic
+				religion = protestant
+				religion = reformed
+				religion = hussite
+				religion = confucianism
+			}
+		}
+		if = {
+			limit = { check_variable = { which = church_property value = 3 } }
+			add_patriarch_authority = -0.05
+		}
+		if = {
+			limit = { check_variable = { which = church_property value = 2 } }
+			add_patriarch_authority = -0.05
+		}
+	}
+	#Church influence from property
+	if = { limit = { check_variable = { which = church_property value = 8 } }
+		if = { limit = { check_variable = { which = church_property value = 11 } }
+			if = { limit = { check_variable = { which = church_property value = 12 } }
+				if = { limit = { check_variable = { which = church_property value = 13 } }
+					add_patriarch_authority = 0.60
+				}
+				else = {
+					add_patriarch_authority = 0.55
+				}
+			}
+			else = {
+				add_patriarch_authority = 0.50
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = church_property value = 9 } }
+				if = { limit = { check_variable = { which = church_property value = 10 } }
+					add_patriarch_authority = 0.45
+				}
+				else = {
+					add_patriarch_authority = 0.40
+				}
+			}
+			else = {
+				add_patriarch_authority = 0.35
+			}
+		}
+	}
+	else = {
+		if = { limit = { check_variable = { which = church_property value = 5 } }
+			if = { limit = { check_variable = { which = church_property value = 6 } }
+				if = { limit = { check_variable = { which = church_property value = 7 } }
+					add_patriarch_authority = 0.30
+				}
+				else = {
+					add_patriarch_authority = 0.25
+				}
+			}
+			else = {
+				add_patriarch_authority = 0.20
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = church_property value = 3 } }
+				if = { limit = { check_variable = { which = church_property value = 4 } }
+					add_patriarch_authority = 0.15
+				}
+				else = {
+					add_patriarch_authority = 0.10
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = church_property value = 2 } }
+					add_patriarch_authority = 0.05
+				}
+			}
+		}
+	}
+	#Church control of marriage
+	if = {
+		limit = { has_country_modifier = civil_unions_aspect }
+		add_patriarch_authority = -0.10
+	}
+	#Church control of education
+	if = {
+		limit = { has_country_modifier = guided_interpretation_aspect }
+		add_patriarch_authority = 0.05
+	}
+	if = {
+		limit = { has_country_modifier = charity_schools }
+		add_patriarch_authority = 0.05
+	}
+	if = {
+		limit = { has_country_modifier = jesuit_schools }
+		add_patriarch_authority = 0.05
+	}
+	if = {
+		limit = { has_country_modifier = public_schools }
+		add_patriarch_authority = -0.10
+	}
+	if = {
+		limit = { has_country_modifier = public_religious_schools }
+		add_patriarch_authority = 0.10
+	}
+	#RELIGION-SPECIFIC
+	if = {
+		limit = { religion_group = dharmic }
+		if = {
+			limit = {
+				has_country_modifier = bhakti_movement
+				religion = hinduism
+			}
+			add_patriarch_authority = -0.10
+		}
+		if = {
+			limit = {
+				religion = zoroastrian
+				NOT = { has_country_flag = zoroastrian_priesthood_reestablished }
+			}
+			add_patriarch_authority = -0.10
+		}
+		if = {
+			limit = {
+				OR = {
+					religion = jain
+					religion = hinduism
+				}
+			}
+			if = { #Monasticism
+				limit = { NOT = { check_variable = { which = monastic_decline value = 5 } } }
+				add_patriarch_authority = 0.05
+			}
+		}
+	}
+	if = {
+		limit = { religion_group = taoic }
+		if = {
+			limit = { religion = buddhism }
+			if = { #Cleaning up flags
+				limit = {
+					has_country_flag = theravada_going_forth
+					OR = {
+						has_heir = no
+						heir_age = 16
+					}
+				}
+				clr_country_flag = theravada_going_forth
+			}
+			if = { #Monasticism
+				limit = { NOT = { check_variable = { which = monastic_decline value = 5 } } }
+				add_patriarch_authority = 0.05
+			}
+		}
+		if = {
+			limit = { religion = vajrayana }
+			if = { #Monasticism
+				limit = { NOT = { check_variable = { which = monastic_decline value = 5 } } }
+				add_patriarch_authority = 0.05
+			}
+		}
+		if = { #MAHAYANA
+			limit = { religion = mahayana }
+			if = {
+				limit = { has_country_flag = pure_land_banned }
+				add_patriarch_authority = -0.10
+			}
+			if = {
+				limit = { has_country_flag = shared_moral_authority }
+				add_patriarch_authority = -0.10
+			}
+			if = { #Monasticism
+				limit = { NOT = { check_variable = { which = monastic_decline value = 5 } } }
+				add_patriarch_authority = 0.05
+			}
+		}
+	}
+	if = { #JEWISH
+		limit = { religion_group = jewish_group }
+		if = {
+			limit = { has_country_flag = levite_priesthood }
+			add_patriarch_authority = 0.05
+		}
+		if = {
+			limit = { has_country_flag = sanhedrin }
+			add_patriarch_authority = 0.10
+		}
+	}
+	if = { #CHRISTIAN
+		limit = { religion_group = christian }
+		if = {
+			limit = { religion = hussite }
+			add_patriarch_authority = -0.10
+		}
+		if = {
+			limit = {
+				has_country_flag = independent_patriarchate
+				religion = orthodox
+			}
+			add_patriarch_authority = 0.10
+		}
+		if = { #Monasticism
+			limit = {
+				OR = {
+					religion = orthodox
+					religion = coptic
+					religion = chaldean
+					religion = gnostic
+					has_country_modifier = celibate_priests_aspect
+				}
+				NOT = { check_variable = { which = monastic_decline value = 5 } }
+			}
+			add_patriarch_authority = 0.05
+		}
+		if = {
+			limit = { religion = coptic }
+			if = {
+				limit = { has_country_modifier = miaphysite_royal_church }
+				add_patriarch_authority = -0.05
+			}
+			if = {
+				limit = { has_country_modifier = prester_john_missionaries }
+				add_patriarch_authority = -0.10
+			}
+			if = {
+				limit = { has_country_modifier = miaphysite_strict_christian_rules }
+				add_patriarch_authority = 0.10
+			}
+			if = {
+				limit = {
+					OR = {
+						any_owned_province = { has_province_modifier = monastery_unity }
+						any_owned_province = { has_province_modifier = monastery_stephanite }
+						any_owned_province = { has_province_modifier = monastery_zakristos }
+						any_owned_province = { has_province_modifier = monastery_unctionist }
+						any_owned_province = { has_province_modifier = monastery_sonsofgrace }
+					}
+				}
+				add_patriarch_authority = 0.05
+			}
+		}
+		if = { #CATHOLIC
+			limit = { religion = catholic }
+			if = {
+				limit = {
+					OR = {
+						check_variable = { which = jesuit_support value = 2 }
+						any_owned_province = { has_province_modifier = augustinian_order }
+						any_owned_province = { has_province_modifier = dominican_order }
+						any_owned_province = { has_province_modifier = cistercian_order }
+						any_owned_province = { has_province_modifier = franciscan_order }
+						any_owned_province = { has_province_modifier = jesuit_order }
+					}
+				}
+				add_patriarch_authority = 0.05
+			}
+			if = {
+				limit = { check_variable = { which = jesuit_support value = 3 } }
+				add_patriarch_authority = 0.05
+			}
+			if = {
+				limit = { check_variable = { which = jesuit_support value = 4 } }
+				add_patriarch_authority = 0.05
+			}
+			if = {
+				limit = { check_variable = { which = inquisition value = 1 } }
+				add_patriarch_authority = 0.05
+			}
+			if = {
+				limit = {
+					OR = {
+						check_variable = { which = inquisition value = 2 }
+						has_country_flag = forbidden_index_banned
+					}
+				}
+				add_patriarch_authority = 0.05
+			}
+			if = { #Monasticism
+				limit = { NOT = { check_variable = { which = monastic_decline value = 5 } } }
+				add_patriarch_authority = 0.05
+			}
+		}
+	}
+	if = { #ISLAM
+		limit = { religion_group = muslim }
+		if = {
+			limit = { has_country_flag = sufi_government }
+			add_patriarch_authority = 0.05
+		}
+		if = {
+			limit = {
+				OR = {
+					has_country_flag = ulama_government
+					has_country_modifier = sheikh_ul_islam
+				}
+			}
+			add_patriarch_authority = 0.05
+		}
+		if = {
+			limit = {
+				has_country_modifier = sharif
+				NOT = { has_country_flag = ruler_as_caliph }
+			}
+			add_patriarch_authority = -0.05
+		}
+		if = {
+			limit = {
+				has_country_flag = captive_caliph
+				has_country_flag = caliph
+			}
+			add_patriarch_authority = -0.05
+		}
+		if = {
+			limit = {
+				has_country_flag = ruler_as_caliph
+				has_country_flag = caliph
+			}
+			add_patriarch_authority = -0.10
+		}
+		if = {
+			limit = {
+				religion = ibadi
+				has_country_flag = elected_imam
+			}
+			add_patriarch_authority = 0.10
+		}
+		if = { #Monasticism
+			limit = { NOT = { check_variable = { which = monastic_decline value = 5 } } }
+			add_patriarch_authority = 0.05
+		}
+	}
+	#Ecceleistical courts/religious laws
+	if = {
+		limit = { government = theocracy }
+		add_patriarch_authority = 0.20
+	}
+	if = {
+		limit = { has_country_flag = religious_courts }
+		add_patriarch_authority = 0.10
+	}
+	#Religion in government (and vice versa)
+	if = {
+		limit = { has_country_flag = appointed_bishops_aspect }
+		add_patriarch_authority = -0.10
+	}
+	if = {
+		limit = { has_country_modifier = free_membership_aspect }
+		add_patriarch_authority = -0.10
+	}
+	if = {
+		limit = { advisor = theologian }
+		add_patriarch_authority = 0.05
+	}
+	if = {
+		limit = { advisor = inquisitor }
+		add_patriarch_authority = 0.10
+	}
+}
+
+dg_conversion_set_piety = {
+	###PIETY set piety
+	
+	#Starting piety
+	add_piety = -2 #Reset all to 0
+	if = {
+		limit = { num_of_cities = 1 }
+		add_piety = 1 #Reset all to 0
+	}
+	#Ruler piety
+	trigger_switch = {
+		on_trigger = has_country_flag
+		ruler_piety_fanatical = {
+			add_piety = 0.20
+		}
+		ruler_piety_pious = {
+			add_piety = 0.10
+		}
+		#ruler_piety_observant = {
+		#}
+		ruler_piety_cynical = {
+			add_piety = -0.10
+		}
+		ruler_piety_unbeliever = {
+			add_piety = -0.20
+		}
+	}
+	#Governments
+	trigger_switch = {
+		on_trigger = government
+		monarchy = {
+			trigger_switch = {
+				on_trigger = has_reform
+				#dharma reforms
+				divine_right = {
+					add_piety = 0.10
+				}
+				celestial_empire = {
+					add_piety = -0.10
+				}
+				parliamentary_monarchy = {
+					add_piety = -0.10
+				}
+				#pre-dharma mapping
+				despotic_monarchy = {
+					add_piety = -0.10
+				}
+				feudal_monarchy = {
+					add_piety = 0.10
+				}
+				english_monarchy_legacy = {
+					add_piety = -0.10
+				}
+				celestial_empire_legacy = {
+					add_piety = -0.10
+				}
+				political_absolutism_reform = {
+					add_piety = -0.10
+				}
+			}
+			#irish_monarchy
+			#iqta
+		}
+		republic = {
+			trigger_switch = {
+				on_trigger = has_reform
+				#dharma reforms
+				peasants_republic = {
+					add_piety = -0.10
+				}
+				city_state = {
+					add_piety = -0.10
+				}
+				trade_republic = {
+					add_piety = -0.10
+				}
+				dictator_reform = {
+					add_piety = -0.10
+				}
+				#pre-dharma mapping
+				#imperial_city = {
+				#	add_piety = -0.10
+				#}
+				imperial_city = {
+					add_piety = -0.10
+				}
+				trading_city_legacy = {
+					add_piety = -0.10
+				}
+				merchant_republic = {
+					add_piety = -0.10
+				}
+				oligarchic_republic = {
+					add_piety = -0.10
+				}
+				republican_dictatorship = {
+					add_piety = -0.10
+				}
+				bureaucratic_despotism = {
+					add_piety = -0.10
+				}
+				peasants_republic_legacy = {
+					add_piety = -0.10
+				}
+			}
+		}
+		theocracy = {
+			add_piety = 0.10
+		}
+		tribal = {
+			trigger_switch = {
+				on_trigger = has_reform
+				#dharma reforms
+				tribal_federation = {
+					add_piety = -0.10
+				}
+				#pre-dharma mapping
+				tribal_democracy_legacy = {
+					add_piety = -0.10
+				}
+			}
+		}
+		#native = {
+		#}
+	}
+	#Normal ways to affect piety
+	if = {
+		limit = { has_country_modifier = religious_revival }
+		add_piety = 0.20
+	}
+	#Great Temples
+	if = {
+		limit = {
+			any_owned_province = {
+				has_building = great_temple
+				#OR = {
+				#	has_province_flag = great_temple
+				#	has_province_flag = great_synagogue
+				#	has_province_flag = great_mosque
+				#	has_province_flag = great_cathedreal
+				#}
+			}
+		}
+		add_piety = 0.05
+	}
+	if = {
+		limit = {
+			religion = jewish
+			any_owned_province = {
+				has_province_modifier = jewish_third_temple
+			}
+			has_country_flag = grain_sacrifices
+		}
+		add_piety = 0.05
+	}
+	#Signs
+	if = {
+		limit = { has_country_flag = omens_read }
+		add_piety = 0.10
+	}
+	#National ideas
+	if = {
+		limit = { has_idea_group = humanist_ideas }
+		add_piety = -0.20
+	}
+	if = {
+		limit = { full_idea_group = humanist_ideas }
+		add_piety = -0.20
+	}
+	if = {
+		limit = { has_idea_group = plutocracy_ideas }
+		add_piety = -0.10
+	}
+	if = {
+		limit = { full_idea_group = plutocracy_ideas }
+		add_piety = -0.10
+	}
+	if = {
+		limit = { has_idea_group = innovativeness_ideas }
+		add_piety = -0.10
+	}
+	if = {
+		limit = { full_idea_group = innovativeness_ideas }
+		add_piety = -0.10
+	}
+	if = {
+		limit = { has_idea_group = spy_ideas }
+		add_piety = -0.10
+	}
+	if = {
+		limit = { full_idea_group = spy_ideas }
+		add_piety = -0.10
+	}
+	if = {
+		limit = { has_idea_group = free_trade_ideas }
+		add_piety = -0.10
+	}
+	if = {
+		limit = { full_idea_group = free_trade_ideas }
+		add_piety = -0.10
+	}
+	if = {
+		limit = { has_idea_group = diplomatic_ideas }
+		add_piety = -0.10
+	}
+	if = {
+		limit = { full_idea_group = diplomatic_ideas }
+		add_piety = -0.10
+	}
+	if = {
+		limit = { has_idea_group = asceticism_ideas }
+		add_piety = 0.20
+	}
+	if = {
+		limit = { full_idea_group = asceticism_ideas }
+		add_piety = 0.20
+	}
+	if = {
+		limit = { has_idea_group = ceremony_ideas }
+		add_piety = 0.20
+	}
+	if = {
+		limit = { full_idea_group = ceremony_ideas }
+		add_piety = 0.20
+	}
+	if = {
+		limit = { has_idea_group = popular_religion_ideas }
+		add_piety = 0.20
+	}
+	if = {
+		limit = { full_idea_group = popular_religion_ideas }
+		add_piety = 0.20
+	}
+	if = {
+		limit = { has_idea_group = scholasticism_ideas }
+		add_piety = 0.20
+	}
+	if = {
+		limit = { full_idea_group = scholasticism_ideas }
+		add_piety = 0.20
+	}
+	if = {
+		limit = { has_idea_group = theology_ideas }
+		add_piety = 0.20
+	}
+	if = {
+		limit = { full_idea_group = theology_ideas }
+		add_piety = 0.20
+	}
+	#Other factors
+	#Zoroastrian countries
+	if = {
+		limit = { religion = zoroastrian }
+		if = {
+			limit = { has_country_modifier = impious_priests }
+			add_piety = -0.20
+		}
+		if = {
+			limit = { has_ruler_flag = zoroastrian_sofre_prayers }
+			add_piety = 0.10
+		}
+		if = {
+			limit = { has_ruler_flag = zoroastrian_animal_sacrifices }
+			add_piety = 0.10
+		}
+		if = {
+			limit = { has_ruler_flag = zoroastrian_old_prayers }
+			add_piety = -0.10
+		}
+		if = {
+			limit = { has_ruler_flag = zoroastrian_sacrifices_banned }
+			add_piety = -0.10
+		}
+	}
+	#RELIGIOUS TOLERANCE SYSTEMS (Muslim Dhimmi, Pagan Tolerance, Confucian Tolerance)
+	if = {
+		limit = {
+			OR = {
+				religion_group = muslim
+				religion = confucianism
+				AND = {
+					NOT = { has_dlc = "The Cossacks" } #Syncretic religions unlocked
+					OR = {
+						religion_group = pagan
+						religion_group = new_world_pagan
+						religion_group = european_pagan
+					}
+				}
+			}
+		}
+		if = {
+			limit = { check_variable = { which = jizya_population value = 1 } }
+			if = { limit = { check_variable = { which = jizya_population value = 50 } }
+				if = { limit = { check_variable = { which = jizya_population value = 70 } }
+					if = { limit = { check_variable = { which = jizya_population value = 80 } }
+						if = { limit = { check_variable = { which = jizya_population value = 90 } }
+							add_piety = -0.500
+						}
+						else = {
+							add_piety = -0.450
+						}
+					}
+					else = {
+						add_piety = -0.400
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = jizya_population value = 60 } }
+						add_piety = -0.350
+					}
+					else = {
+						add_piety = -0.300
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = jizya_population value = 20 } }
+					if = { limit = { check_variable = { which = jizya_population value = 30 } }
+						if = { limit = { check_variable = { which = jizya_population value = 40 } }
+							add_piety = -0.250
+						}
+						else = {
+							add_piety = -0.200
+						}
+					}
+					else = {
+						add_piety = -0.150
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = jizya_population value = 10 } }
+						add_piety = -0.100
+					}
+					else = {
+						if = { limit = { check_variable = { which = jizya_population value = 1 } }
+							add_piety = -0.050
+						}
+					}
+				}
+			}
+		}
+		if = { #MUSLIM-ONLY MODIFIERS
+			limit = { religion_group = muslim }
+			if = {
+				limit = { has_country_modifier = muslim_judgement_day }
+				add_piety = 0.20
+			}
+			if = {
+				limit = { check_variable = { which = millet_population value = 1 } }
+				if = { limit = { check_variable = { which = millet_population value = 50 } }
+					if = { limit = { check_variable = { which = millet_population value = 70 } }
+						if = { limit = { check_variable = { which = millet_population value = 80 } }
+							if = { limit = { check_variable = { which = millet_population value = 90 } }
+								add_piety = -0.500
+							}
+							else = {
+								add_piety = -0.450
+							}
+						}
+						else = {
+							add_piety = -0.400
+						}
+					}
+					else = {
+						if = { limit = { check_variable = { which = millet_population value = 60 } }
+							add_piety = -0.350
+						}
+						else = {
+							add_piety = -0.300
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = millet_population value = 20 } }
+						if = { limit = { check_variable = { which = millet_population value = 30 } }
+							if = { limit = { check_variable = { which = millet_population value = 40 } }
+								add_piety = -0.250
+							}
+							else = {
+								add_piety = -0.200
+							}
+						}
+						else = {
+							add_piety = -0.150
+						}
+					}
+					else = {
+						if = { limit = { check_variable = { which = millet_population value = 10 } }
+							add_piety = -0.100
+						}
+						else = {
+							if = { limit = { check_variable = { which = millet_population value = 1 } }
+								add_piety = -0.050
+							}
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_country_modifier = sharif
+				NOT = { has_country_flag = captive_caliph }
+			}
+			add_piety = 0.05
+		}
+		if = {
+			limit = { has_country_flag = captive_caliph }
+			add_piety = 0.10
+		}
+		if = {
+			limit = { has_country_modifier = muslim_alcohol_ban }
+			add_piety = 0.10
+		}
+		if = {
+			limit = { has_country_flag = strict_dhimmi }
+			add_piety = 0.05
+		}
+		if = {
+			limit = { has_country_flag = sufi_patronage }
+			add_piety = -0.05
+		}
+		if = {
+			limit = { has_country_flag = sufi_government }
+			add_piety = -0.05
+		}
+		if = {
+			limit = { has_country_flag = ulama_patronage }
+			add_piety = -0.05
+		}
+		if = {
+			limit = {
+				OR = {
+					has_country_flag = ulama_government
+					has_country_modifier = sheikh_ul_islam
+				}
+			}
+			add_piety = -0.05
+		}
+		if = {
+			limit = { has_country_flag = hajj_promised }
+			add_piety = 0.05
+		}
+		if = {
+			limit = { has_country_flag = hajj_undertaken }
+			add_piety = 0.10
+		}
+		if = {
+			limit = { has_country_flag = hajj_refused }
+			add_piety = -0.05
+		}
+		if = {
+			limit = { has_country_flag = islamic_trusts }
+			add_piety = 0.05
+		}
+		if = {
+			limit = { has_country_flag = islamic_trusts_banned }
+			add_piety = -0.05
+		}
+		if = {
+			limit = { has_country_flag = ghazi_prevented }
+			add_piety = -0.10
+		}
+		if = {
+			limit = { has_country_flag = ghazi_supported }
+			add_piety = 0.10
+		}
+		if = {
+			limit = { has_country_modifier = strict_sharia }
+			add_piety = 0.10
+		}
+		if = {
+			limit = { has_country_flag = limited_sharia }
+			add_piety = -0.10
+		}
+	}
+	if = { #CHRISTIAN-ONLY MODIFIERS
+		limit = { religion_group = christian }
+		#Western Rite Church Aspects
+		if = {
+			limit = { has_country_modifier = biblical_inerrancy_aspect }
+			add_piety = 0.05
+		}
+		if = {
+			limit = { has_country_modifier = adult_baptism_aspect }
+			add_piety = 0.05
+		}
+		if = {
+			limit = { has_country_modifier = lay_priesthood_aspect }
+			add_piety = 0.05
+		}
+		if = {
+			limit = { has_country_modifier = free_membership_aspect }
+			add_piety = 0.05
+		}
+		if = {
+			limit = { has_country_flag = witchcraft_laws }
+			add_piety = -0.10
+		}
+		if = {
+			limit = {
+				OR = {
+					religion = catholic
+					religion = reformed
+					religion = protestant
+					religion = hussite
+					religion = gnostic
+				}
+				PAP = { NOT = { check_variable = { which = papal_authority value = 250 } } } #Religious exhaustion in Europe
+			}
+			add_piety = -0.05
+		}
+		if = { #MIAPHYSITE-ONLY
+			limit = { religion = coptic }
+			if = {
+				limit = { has_country_modifier = miaphysite_strict_christian_rules }
+				add_piety = 0.10
+			}
+		}
+		if = { #CATHOLIC-ONLY
+			limit = { religion = catholic }
+			if = {
+				limit = { has_country_flag = jesuit_colleges }
+				add_piety = 0.05
+			}
+			if = {
+				limit = { has_country_modifier = jesuit_schools }
+				add_piety = 0.05
+			}
+			if = {
+				limit = {
+					has_country_flag = catholic_anticlericalism
+					NOT = { has_global_flag = counter_reformation }
+				}
+				add_piety = -0.10
+			}
+			if = {
+				limit = {
+					has_country_flag = catholic_popular_piety
+					NOT = { has_global_flag = counter_reformation }
+				}
+				add_piety = 0.10
+			}
+			if = {
+				limit = {
+					papal_trigger = yes
+					has_country_flag = reformer_pope
+				}
+				add_piety = 0.20
+			}
+			if = {
+				limit = {
+					papal_trigger = yes
+					has_country_flag = corrupt_pope
+				}
+				add_piety = -0.20
+			}
+			if = {
+				limit = { check_variable = { which = inquisition value = 1 } }
+				add_piety = 0.10
+			}
+			if = {
+				limit = { check_variable = { which = inquisition value = 2 } }
+				add_piety = 0.10
+			}
+			if = {
+				limit = { has_country_flag = quran_banned_repeatedly }
+				add_piety = 0.05
+			}
+			if = {
+				limit = { has_country_flag = quran_translated }
+				add_piety = -0.05
+			}
+			#if = {
+			#	limit = { has_country_flag = jesuit_influence }
+			#	add_piety = 0.05
+			#}
+			if = {
+				limit = { has_country_flag = support_protestants_abroad }
+				add_piety = -0.10
+			}
+			if = {
+				limit = { has_country_flag = reformation_maybe }
+				add_piety = -0.10
+			}
+			if = {
+				limit = { has_country_flag = spread_reformation }
+				add_piety = -0.10
+			}
+			if = {
+				limit = { has_country_flag = introduce_reformation }
+				add_piety = -0.10
+			}
+			if = {
+				limit = {
+					exists = AVI
+					AVI = { papal_trigger = yes }
+					has_country_flag = support_antipope
+				}
+				add_piety = -0.05
+			}
+		}
+		if = { #ORTHODOX-ONLY
+			limit = { religion = orthodox }
+			if = {
+				limit = { has_country_flag = clerical_children }
+				add_piety = -0.10
+			}
+			if = {
+				limit = { has_country_flag = philokalia }
+				add_piety = 0.05
+			}
+			if = {
+				limit = { has_country_flag = third_rome }
+				add_piety = 0.10
+			}
+		}
+		if = { #PROTESTANT-ONLY
+			limit = { religion = protestant }
+			if = {
+				limit = { has_country_flag = spiritualism }
+				add_piety = -0.10
+			}
+			if = {
+				limit = {
+					religion_years = { protestant = 60 }
+					NOT = { has_country_flag = protestant_pietism }
+				}
+				add_piety = -0.10
+			}
+		}
+		if = { #REFORMED-ONLY
+			limit = { religion = reformed }
+			if = {
+				limit = { has_country_flag = revivalist_movement }
+				add_piety = 0.10
+			}
+		}
+	}
+	if = { #HINDUS-ONLY
+		limit = { religion = hinduism }
+		if = {
+			limit = { has_ruler_modifier = bhakti_movement }
+			add_piety = 0.20
+		}
+		if = {
+			limit = { has_country_flag = brahmin_supported }
+			add_piety = -0.10
+		}
+		if = {
+			limit = { has_country_flag = tantrism_reined_in }
+			add_piety = -0.10
+		}
+		if = {
+			limit = { has_country_flag = regulated_sadhu }
+			add_piety = -0.10
+		}
+		if = {
+			limit = { has_country_flag = neo_vedanta_movement }
+			add_piety = 0.10
+		}
+	}
+	#Pagans
+	if = {
+		limit = { has_country_flag = denounced_folk_religion }
+		add_piety = -0.10
+	}
+	#Hinduism
+	if = {
+		limit = {
+			OR = {
+				religion = hinduism
+				religion = sikhism
+				religion = buddhism
+			}
+			has_country_flag = kirtan_movement
+		}
+		add_piety = 0.10
+	}
+	#Others
+	if = {
+		limit = {
+			religion = mahayana
+			has_country_flag = revival_of_koans
+		}
+		add_piety = 0.05
+	}
+	if = {
+		limit = {
+			religion = sikhism
+			has_country_modifier = khalsa_order
+		}
+		add_piety = 0.10
+	}
+	if = {
+		limit = {
+			has_country_modifier = edict_of_tolerance #Christians
+		}
+		add_piety = -0.10
+	}
+	#ALL RELIGIONS
+	if = {
+		limit = { at_war_with_religious_enemy = yes }
+		add_piety = 0.10
+	}
+	if = {
+		limit = { has_country_modifier = religious_intolerance }
+		add_piety = 0.20
+	}
+	if = {
+		limit = { has_country_modifier = religious_tolerance }
+		add_piety = -0.20
+	}
+	if = {
+		limit = { government = republic }
+		add_piety = -0.10
+	}
+	else_if = {
+		limit = { government = theocracy }
+		add_piety = 0.30
+	}
+	if = {
+		limit = { is_tribal = yes }
+		add_piety = 0.10
+	}
+	if = {
+		limit = { is_defender_of_faith = yes }
+		add_piety = 0.10
+	}
+	if = {
+		limit = { advisor = philosopher }
+		add_piety = -0.10
+	}
+	if = {
+		limit = { advisor = natural_scientist }
+		add_piety = -0.10
+	}
+	if = {
+		limit = { has_country_modifier = religious_controversy }
+		add_piety = 0.10
+	}
+	if = {
+		limit = { check_variable = { which = minority_usefulness value = 1 } }
+		add_piety = -0.10
+	}
+	if = {
+		limit = { any_neighbor_country = { NOT = { religion_group = ROOT } } }
+		add_piety = 0.10
+	}
+	if = {
+		limit = { any_ally = { NOT = { religion_group = ROOT } } }
+		add_piety = -0.10
+	}
+	if = {
+		limit = { has_country_flag = religious_turmoil_happening }
+		add_piety = 0.10
+	}
+	if = {
+		limit = { has_country_flag = religious_civil_war }
+		add_piety = 0.10
+	}
+	if = {
+		limit = { has_country_flag = enlightenment_deism }
+		add_piety = -0.20
+	}
+	else_if = {
+		limit = { has_country_flag = enlightenment_thought }
+		add_piety = -0.10
+	}
+	if = {
+		limit = { has_country_flag = blasphemy_reaction_religious }
+		add_piety = 0.10
+	}
+	if = {
+		limit = { has_country_flag = blasphemy_reaction_secular }
+		add_piety = -0.10
+	}
+	if = {
+		limit = { has_country_flag = church_land_requested }
+		add_piety = -0.05
+	}
+	if = {
+		limit = { has_country_flag = church_land_seized }
+		add_piety = -0.05
+	}
+	if = {
+		limit = { has_country_flag = church_land_donated }
+		add_piety = 0.05
+	}
+	if = {
+		limit = { has_country_flag = state_supported_church }
+		add_piety = 0.10
+	}
+	#Religious minorities
+	if = {
+		limit = {
+			has_country_flag = useful_catholic
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_orthodox
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_protestant
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_reformed
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_coptic
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_gnostic
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_chaldean
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_hussite
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_jewish
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_sunni
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_shiite
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_druze
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_ibadi
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_wahhabi
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_hinduism
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_sikhism
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_jain
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_zoroastrian
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_confucianism
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_buddhism
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_mahayana
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_vajrayana
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_shinto
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_adi_dharam
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_tengri_pagan_reformed
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_shamanism
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_west_african_pagan_reformed
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_animism
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_polynesian_religion
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_hellenic_pagan
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_norse_pagan_reformed
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_slavic_pagan_reformed
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_baltic_pagan_reformed
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_finnish_pagan_reformed
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_pantheism
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_totemism
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_nahuatl
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_mesoamerican_religion
+		}
+		add_piety = -0.10
+	}
+	if = {
+		limit = {
+			has_country_flag = useful_inti
+		}
+		add_piety = -0.10
+	}
+	#Religious education
+	trigger_switch = {
+		on_trigger = has_country_modifier
+		monastic_schools = {
+			add_piety = 0.05
+		}
+		charity_schools = {
+			add_piety = 0.10
+		}
+		preparatory_schools = {
+			add_piety = -0.05
+		}
+		public_schools = {
+			add_piety = -0.10
+		}
+		public_religious_schools = {
+			add_piety = 0.10
+		}
+	}
+	#Finish setting piety
+}
+
+dg_conversion_set_sufi_ulema = {
+	## SUFI-ULAMA POWER
+	if = {
+		limit = {
+			OR = {
+				religion = sunni
+				religion = shiite
+			}
+		}
+		set_variable = { which = sufi_ulama value = 0 }
+		if = {
+			limit = { has_country_flag = sufi_influence }
+			change_variable = { which = sufi_ulama value = -1 }
+		}
+		if = {
+			limit = { has_country_flag = sufi_patronage }
+			change_variable = { which = sufi_ulama value = -1 }
+		}
+		if = {
+			limit = { has_country_flag = sufi_government }
+			change_variable = { which = sufi_ulama value = -1 }
+		}
+		if = {
+			limit = { has_country_flag = ulama_influence }
+			change_variable = { which = sufi_ulama value = 1 }
+		}
+		if = {
+			limit = { has_country_flag = ulama_patronage }
+			change_variable = { which = sufi_ulama value = 1 }
+		}
+		if = {
+			limit = { has_country_flag = ulama_government }
+			change_variable = { which = sufi_ulama value = 1 }
+		}
+		every_owned_province = {
+			limit = {
+				has_province_flag = sufis_banned
+				OR = {
+					had_province_flag = { flag = sufis_banned days = 5000 }
+					NOT = { religion_group = muslim }
+				}
+			}
+			clr_province_flag = sufis_banned
+		}
+	}
+}
+
+dg_conversion_set_caliph_authority = {
+	###CALIPH AUTHORITY
+	if = {
+		limit = { religion = sunni }
+		set_variable = { which = caliph_authority value = 0 }
+		#Territory controlled
+		trigger_switch = {
+			on_trigger = num_of_cities
+			325 = {
+				change_variable = { which = caliph_authority value = 25 }
+			}
+			300 = {
+				change_variable = { which = caliph_authority value = 24 }
+			}
+			276 = {
+				change_variable = { which = caliph_authority value = 23 }
+			}
+			253 = {
+				change_variable = { which = caliph_authority value = 22 }
+			}
+			231 = {
+				change_variable = { which = caliph_authority value = 21 }
+			}
+			210 = {
+				change_variable = { which = caliph_authority value = 20 }
+			}
+			190 = {
+				change_variable = { which = caliph_authority value = 19 }
+			}
+			171 = {
+				change_variable = { which = caliph_authority value = 18 }
+			}
+			153 = {
+				change_variable = { which = caliph_authority value = 17 }
+			}
+			136 = {
+				change_variable = { which = caliph_authority value = 16 }
+			}
+			120 = {
+				change_variable = { which = caliph_authority value = 15 }
+			}
+			105 = {
+				change_variable = { which = caliph_authority value = 14 }
+			}
+			91 = {
+				change_variable = { which = caliph_authority value = 13 }
+			}
+			78 = {
+				change_variable = { which = caliph_authority value = 12 }
+			}
+			66 = {
+				change_variable = { which = caliph_authority value = 11 }
+			}
+			55 = {
+				change_variable = { which = caliph_authority value = 10 }
+			}
+			45 = {
+				change_variable = { which = caliph_authority value = 9 }
+			}
+			36 = {
+				change_variable = { which = caliph_authority value = 8 }
+			}
+			28 = {
+				change_variable = { which = caliph_authority value = 7 }
+			}
+			21 = {
+				change_variable = { which = caliph_authority value = 6 }
+			}
+			15 = {
+				change_variable = { which = caliph_authority value = 5 }
+			}
+			10 = {
+				change_variable = { which = caliph_authority value = 4 }
+			}
+			6 = {
+				change_variable = { which = caliph_authority value = 3 }
+			}
+			3 = {
+				change_variable = { which = caliph_authority value = 2 }
+			}
+			1 = {
+				change_variable = { which = caliph_authority value = 1 }
+			}
+		}
+		#MEIOU has more provinces than vanilla
+		multiply_variable = { which = caliph_authority value = 0.70 }
+		#Church Influence
+		if = {
+			limit = { patriarch_authority = 1.00 }
+			multiply_variable = { which = caliph_authority value = 1.00 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.90 }
+			multiply_variable = { which = caliph_authority value = 0.90 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.80 }
+			multiply_variable = { which = caliph_authority value = 0.80 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.70 }
+			multiply_variable = { which = caliph_authority value = 0.70 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.60 }
+			multiply_variable = { which = caliph_authority value = 0.60 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.50 }
+			multiply_variable = { which = caliph_authority value = 0.50 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.40 }
+			multiply_variable = { which = caliph_authority value = 0.40 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.30 }
+			multiply_variable = { which = caliph_authority value = 0.30 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.20 }
+			multiply_variable = { which = caliph_authority value = 0.20 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.10 }
+			multiply_variable = { which = caliph_authority value = 0.10 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0 }
+			multiply_variable = { which = caliph_authority value = 0.05 }
+		}
+		#Piety
+		if = {
+			limit = { piety = 1.00 }
+			multiply_variable = { which = caliph_authority value = 2 }
+		}
+		else_if = {
+			limit = { piety = 0.90 }
+			multiply_variable = { which = caliph_authority value = 1.90 }
+		}
+		else_if = {
+			limit = { piety = 0.80 }
+			multiply_variable = { which = caliph_authority value = 1.80 }
+		}
+		else_if = {
+			limit = { piety = 0.70 }
+			multiply_variable = { which = caliph_authority value = 1.70 }
+		}
+		else_if = {
+			limit = { piety = 0.60 }
+			multiply_variable = { which = caliph_authority value = 1.60 }
+		}
+		else_if = {
+			limit = { piety = 0.50 }
+			multiply_variable = { which = caliph_authority value = 1.50 }
+		}
+		else_if = {
+			limit = { piety = 0.40 }
+			multiply_variable = { which = caliph_authority value = 1.40 }
+		}
+		else_if = {
+			limit = { piety = 0.30 }
+			multiply_variable = { which = caliph_authority value = 1.30 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			multiply_variable = { which = caliph_authority value = 1.20 }
+		}
+		else_if = {
+			limit = { piety = 0.10 }
+			multiply_variable = { which = caliph_authority value = 1.10 }
+		}
+		else_if = {
+			limit = { piety = 0 }
+			multiply_variable = { which = caliph_authority value = 1.00 }
+		}
+		else_if = {
+			limit = { piety = -0.10 }
+			multiply_variable = { which = caliph_authority value = 0.90 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			multiply_variable = { which = caliph_authority value = 0.80 }
+		}
+		else_if = {
+			limit = { piety = -0.30 }
+			multiply_variable = { which = caliph_authority value = 0.70 }
+		}
+		else_if = {
+			limit = { piety = -0.40 }
+			multiply_variable = { which = caliph_authority value = 0.60 }
+		}
+		else_if = {
+			limit = { piety = -0.50 }
+			multiply_variable = { which = caliph_authority value = 0.50 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			multiply_variable = { which = caliph_authority value = 0.40 }
+		}
+		else_if = {
+			limit = { piety = -0.70 }
+			multiply_variable = { which = caliph_authority value = 0.30 }
+		}
+		else_if = {
+			limit = { piety = -0.80 }
+			multiply_variable = { which = caliph_authority value = 0.20 }
+		}
+		else_if = {
+			limit = { piety = -0.90 }
+			multiply_variable = { which = caliph_authority value = 0.10 }
+		}
+		else_if = {
+			limit = { piety = -1.00 }
+			multiply_variable = { which = caliph_authority value = 0.05 }
+		}
+		#Other factors
+		if = {
+			limit = { NOT = { has_country_flag = captive_caliph } }
+			multiply_variable = { which = caliph_authority value = 0.70 }
+		}
+		if = {
+			limit = { has_country_flag = declared_caliph }
+			multiply_variable = { which = caliph_authority value = 0.70 }
+		}
+		every_country = {
+			limit = {
+				has_country_flag = caliph
+				NOT = { tag = ROOT }
+				#num_of_cities = 1
+			}
+			ROOT = { multiply_variable = { which = caliph_authority value = 0.70 } }
+		}
+		if = {
+			limit = { NOT = { owns_or_non_sovereign_subject_of = 410 } } #Baghdad
+			change_variable = { which = caliph_authority value = -1 }
+		}
+		if = {
+			limit = { NOT = { owns_or_non_sovereign_subject_of = 379 } } #Jerusalem
+			change_variable = { which = caliph_authority value = -1 }
+		}
+		if = {
+			limit = { NOT = { owns_or_non_sovereign_subject_of = 385 } } #Mecca
+			change_variable = { which = caliph_authority value = -1 }
+		}
+		if = {
+			limit = { NOT = { owns_or_non_sovereign_subject_of = 384 } } #Medina
+			change_variable = { which = caliph_authority value = -1 }
+		}
+		if = {
+			limit = { is_subject_other_than_tributary_trigger = yes }
+			multiply_variable = { which = caliph_authority value = 0.50 }
+		}
+		#Standard multiplier
+		multiply_variable = { which = caliph_authority value = 8 }
+	}
+}
+
+dg_conversion_set_papal_authority = {
+	###PAPAL AUTHORITY set papal authority
+	
+	PAP = {
+		set_variable = { which = papal_authority value = 0 }
+		set_variable = { which = antipope_authority value = 0 }
+	}
+	every_country = {
+		limit = {
+			OR = {
+				religion = catholic
+				capital_scope = { continent = europe }
+			}
+		}
+		PAP = { change_variable = { which = papacy_calculation_states value = 1 } }
+		if = {
+			limit = { religion = catholic }
+			#if = {
+			#	limit = { has_country_flag = support_antipope }
+			#	PAP = { change_variable = { which = antipope_catholic_states value = 1 } }
+			#}
+			if = {
+				limit = { NOT = { has_country_flag = support_antipope } }
+				PAP = { change_variable = { which = catholic_states value = 1 } }
+			}
+			#if = {
+			#	limit = {
+			#		NOT = { war_with = PAP }
+			#		is_colonial_nation = no
+			#		is_tribal = no
+			#		NOT = { has_country_flag = hiding_luther }
+			#		OR = {
+			#			patriarch_authority = 0.50
+			#			government = theocracy
+			#			is_subject_of = PAP
+			#			has_country_flag = patronato_real
+			#			check_variable = { which = inquisition value = 1 }
+			#		}
+			#		NOT = { has_country_flag = excommunicated }
+			#		NOT = { has_country_flag = enemy_of_pope }
+			#		NOT = { has_country_flag = rival_of_pope }
+			#		NOT = { has_country_flag = catholic_pragmatic_sanction }
+			#		NOT = { has_country_flag = crusades_over }
+			#		NOT = { has_country_flag = conciliarism_supported }
+			#		NOT = { has_country_flag = jesuit_expulsion }
+			#		NOT = { has_country_flag = jesuits_rejected }
+			#	}
+			#	if = {
+			#		limit = { has_country_flag = support_antipope }
+			#		PAP = { change_variable = { which = antipope_catholic_states value = 1 } }
+			#	}
+			#	else = {
+			#		PAP = { change_variable = { which = supportive_catholic_states value = 1 } }
+			#	}
+			#	if = {
+			#		limit = {
+			#			OR = {
+			#				patriarch_authority = 0.80
+			#				government = theocracy
+			#				is_subject_of = PAP
+			#				check_variable = { which = inquisition value = 2 }
+			#			}
+			#		}
+			#		if = {
+			#			limit = { has_country_flag = support_antipope }
+			#			PAP = { change_variable = { which = antipope_catholic_states value = 1 } }
+			#		}
+			#		else = {
+			#			PAP = { change_variable = { which = supportive_catholic_states value = 1 } }
+			#		}
+			#	}
+			#}
+		}
+		every_owned_province = {
+			PAP = { change_variable = { which = papacy_calculation_provinces value = 0.1 } }
+			if = {
+				limit = { owned_by = PAP }
+				PAP = { change_variable = { which = papal_provinces value = 0.1 } }
+			}
+			if = {
+				limit = { religion = catholic }
+				PAP = { change_variable = { which = catholic_provinces value = 0.1 } }
+			}
+		}
+	}
+	PAP = {
+		#if = {
+		#	limit = {
+		#		is_variable_equal = {
+		#			which = catholic_states
+		#			value = 0
+		#		}
+		#	}
+		#	
+		#	# log = "<ERROR><86FF9229><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+		#	
+		#}
+		#else = {
+		#	divide_variable = {
+		#		which = supportive_catholic_states
+		#		which = catholic_states
+		#	}
+		#}
+		#if = {
+		#	limit = {
+		#		is_variable_equal = {
+		#			which = catholic_states
+		#			value = 0
+		#		}
+		#	}
+		#	
+		#	# log = "<ERROR><D5B93FF0><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+		#}
+		#else = {
+		#	divide_variable = {
+		#		which = antipope_supportive_states
+		#		which = catholic_states
+		#	}
+		#}
+		#if = {
+		#	limit = {
+		#		is_variable_equal = {
+		#			which = papacy_calculation_states
+		#			value = 0
+		#		}
+		#	}
+		#	
+		#	# log = "<ERROR><5E4F31CE><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+		#	
+		#}
+		#else = {
+			divide_variable = {
+				which = catholic_states
+				which = papacy_calculation_states
+			}
+		#}
+		#if = {
+		#	limit = {
+		#		is_variable_equal = {
+		#			which = catholic_provinces
+		#			value = 0
+		#		}
+		#	}
+		#	
+		#	# log = "<ERROR><F8F5A724><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+		#	
+		#}
+		#else = {
+			divide_variable = {
+				which = papal_provinces
+				which = catholic_provinces
+			}
+		#}
+		#if = {
+		#	limit = {
+		#		is_variable_equal = {
+		#			which = papacy_calculation_provinces
+		#			value = 0
+		#		}
+		#	}
+		#	
+		#	# log = "<ERROR><5AF2E89C><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+		#	
+		#}
+		#else = {
+			divide_variable = {
+				which = catholic_provinces
+				which = papacy_calculation_provinces
+			}
+		#}
+		#200 points - Catholic provinces
+		if = {
+			limit = { check_variable = { which = catholic_provinces value = 1.00 } }
+			change_variable = { which = papal_authority value = 200 }
+		}
+		else_if = {
+			limit = { check_variable = { which = catholic_provinces value = 0.05 } }
+			set_variable = { which = catholic_provinces_temp		which = catholic_provinces }
+			multiply_variable = { which = catholic_provinces_temp	value = 200 }
+			change_variable = { which = papal_authority 			which = catholic_provinces_temp }
+			set_variable = { which = catholic_provinces_temp		value = 0 }
+		}
+		#200 points - Catholic States
+		if = {
+			limit = { check_variable = { which = catholic_states value = 1.00 } }
+			change_variable = { which = papal_authority value = 200 }
+		}
+		else_if = {
+			limit = { check_variable = { which = catholic_states value = 0.05 } }
+			set_variable = { which = catholic_states_temp		which = catholic_states }
+			multiply_variable = { which = catholic_states_temp	value = 200 }
+			change_variable = { which = papal_authority 		which = catholic_states_temp }
+			set_variable = { which = catholic_states_temp		value = 0 }
+		}
+		#the HRE (-50 to +50)
+		if = {
+			limit = { hre_religion = catholic } #1356-1648
+			change_variable = { which = papal_authority value = 25 }
+			if = {
+				limit = { hre_religion_locked = yes }
+				change_variable = { which = papal_authority value = 25 }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { hre_religion = catholic }
+				hre_religion_locked = yes
+			}
+			change_variable = { which = papal_authority value = -25 }
+		}
+		if = {
+			limit = { emperor = { NOT = { religion = catholic } } }
+			change_variable = { which = papal_authority value = -25 }
+		}
+		#The Reformation
+		if = {
+			limit = {
+				has_global_flag = reformation_ninety_five_theses
+				NOT = { has_global_flag = reformation_luther_martyred }
+			}
+			change_variable = { which = papal_authority value = -25 }
+		}
+		if = {
+			limit = {
+				NOT = { any_known_country = { religion = hussite } }
+				OR = {
+					NOT = { any_known_country = { has_country_flag = hussite_compacta } }
+					has_country_flag = hussite_compacta_voided
+				}
+			}
+			change_variable = { which = papal_authority value = 25 }
+		}
+		if = { #1356-1521
+			limit = { NOT = { any_known_country = { religion = protestant } } }
+			change_variable = { which = papal_authority value = 25 }
+		}
+		if = {
+			limit = { NOT = { any_known_country = { religion = reformed } } }
+			change_variable = { which = papal_authority value = 25 }
+		}
+		if = {
+			limit = { NOT = { any_known_country = { religion = gnostic } } }
+			change_variable = { which = papal_authority value = 25 }
+		}
+		if = { #NO
+			limit = { NOT = { any_known_country = { religion = orthodox } } }
+			change_variable = { which = papal_authority value = 25 }
+		}
+		if = { #NO
+			limit = { NOT = { any_known_country = { religion = coptic } } }
+			change_variable = { which = papal_authority value = 25 }
+		}
+		if = { #1356-1860
+			limit = { NOT = { any_known_country = { religion = chaldean } } }
+			change_variable = { which = papal_authority value = 25 }
+		}
+		#Calculate antipope authority
+		if = {
+			limit = { AVI = { papal_trigger = yes } }
+			set_variable = { which = antipope_authority which = papal_authority }
+		}
+		#200 points - Catholic support (Pope)
+		#if = {
+		#	limit = { check_variable = { which = supportive_catholic_provinces value = 1.00 } }
+		#	change_variable = { which = papal_authority value = 200 }
+		#}
+		#else_if = {
+		#	limit = { check_variable = { which = supportive_catholic_provinces value = 0.05 } }
+		#	set_variable = { which = supportive_catholic_provinces_temp			which = supportive_catholic_provinces }
+		#	multiply_variable = { which = supportive_catholic_provinces_temp	value = 200 }
+		#	change_variable = { which = papal_authority 						which = supportive_catholic_provinces_temp }
+		#	set_variable = { which = supportive_catholic_provinces_temp			value = 0 }
+		#}
+		#200 points - Catholic support (Antipope)
+		#if = {
+		#	limit = { check_variable = { which = supportive_catholic_provinces value = 1.00 } }
+		#	change_variable = { which = antipope_authority value = 200 }
+		#}
+		#else_if = {
+		#	limit = { check_variable = { which = supportive_catholic_provinces value = 0.05 } }
+		#	set_variable = { which = supportive_catholic_provinces_temp			which = supportive_catholic_provinces }
+		#	multiply_variable = { which = supportive_catholic_provinces_temp	value = 200 }
+		#	change_variable = { which = antipope_authority 						which = supportive_catholic_provinces_temp }
+		#	set_variable = { which = supportive_catholic_provinces_temp			value = 0 }
+		#}
+		#Independence of the Papal States (-50 to +50)
+		if = {
+			limit = {
+				OR = {
+					NOT = { num_of_cities = 1 }
+					is_subject_other_than_tributary_trigger = yes
+				}
+			}
+			change_variable = { which = papal_authority value = -50 }
+			if = {
+				limit = {
+					any_known_country = {
+						is_papal_controller = yes
+						has_country_flag = papal_court_large
+					}
+				}
+				change_variable = { which = papal_authority value = 50 }
+			}
+		}
+		if = {
+			limit = { num_of_cities = 1 is_free_or_tributary_trigger = yes }
+			change_variable = { which = papal_authority value = 50 }
+		}
+		#Rome and other Patriarchates (-100 to +150)
+		if = {
+			limit = { owns_rome_trigger = no }
+			change_variable = { which = papal_authority value = -100 }
+		}
+		every_owned_province = {
+			limit = { has_province_modifier = catholic_patriarchate }
+			owner = { change_variable = { which = papal_authority value = 25 } }
+		}
+		if = {
+			limit = { AVI = { papal_trigger = yes } }
+			AVI = {
+				every_owned_province = {
+					limit = { has_province_modifier = catholic_patriarchate }
+					owner = { change_variable = { which = antipope_authority value = 25 } }
+				}
+			}
+		}
+		#-200 points - Papal States is not neutral
+		if = {
+			limit = { check_variable = { which = papal_provinces value = 0.10 } }
+			subtract_variable = { which = papal_authority value = 200 }
+		}
+		else_if = {
+			limit = { check_variable = { which = papal_provinces	 value = 0.01 } }
+			set_variable = { which = papal_provinces_temp			which = papal_provinces }
+			multiply_variable = { which = papal_provinces_temp		value = 2000 }
+			subtract_variable = { which = papal_authority 			which = papal_provinces_temp }
+			set_variable = { which = papal_provinces_temp			value = 0 }
+		}
+		#Papal Reforms
+		if = {
+			limit = { NOT = { has_country_flag = constantine_donation_cf_exposed } }
+			change_variable = { which = papal_authority value = 25 }
+		}
+		if = {
+			limit = { has_country_flag = ad_limina_bishops }
+			change_variable = { which = papal_authority value = 25 }
+		}
+		if = {
+			limit = { has_country_flag = jesuits_founded }
+			change_variable = { which = papal_authority value = 25 }
+		}
+		if = {
+			limit = { has_country_flag = faith_alone } #Admitting mistakes
+			change_variable = { which = papal_authority value = -25 }
+		}
+		if = {
+			limit = { has_country_flag = solo_scriptoris } #Admitting mistakes
+			change_variable = { which = papal_authority value = -25 }
+		}
+		if = {
+			limit = { has_country_flag = bread_and_wine } #Admitting mistakes
+			change_variable = { which = papal_authority value = -25 }
+		}
+		if = {
+			limit = { has_country_flag = vernacular_allowed } #Admitting mistakes
+			change_variable = { which = papal_authority value = -25 }
+		}
+		if = {
+			limit = {
+				has_country_flag = papal_conciliarism
+				NOT = { has_country_flag = papal_absolutism }
+				NOT = { has_country_flag = papal_infallibility }
+			}
+			change_variable = { which = papal_authority value = -100 }
+		}
+		#Pope's personality
+		if = {
+			limit = { has_country_flag = corrupt_pope }
+			change_variable = { which = papal_authority value = -50 }
+		}
+		if = {
+			limit = { has_country_flag = reformer_pope }
+			change_variable = { which = papal_authority value = 50 }
+		}
+		#Papal Devotion
+		if = {
+			limit = { NOT = { devotion = 100 } }
+			change_variable = { which = papal_authority value = -10 }
+		}
+		if = {
+			limit = { NOT = { devotion = 80 } }
+			change_variable = { which = papal_authority value = -10 }
+		}
+		if = {
+			limit = { NOT = { devotion = 60 } }
+			change_variable = { which = papal_authority value = -10 }
+		}
+		if = {
+			limit = { NOT = { devotion = 40 } }
+			change_variable = { which = papal_authority value = -10 }
+		}
+		if = {
+			limit = { NOT = { devotion = 20 } }
+			change_variable = { which = papal_authority value = -10 }
+		}
+		if = {
+			limit = { is_variable_equal = { which = papal_authority value = 0 } }
+			set_variable = { which = papal_authority value = 0.001 }
+		}
+	}
+	PAP = {
+		set_variable = { which = conciliarism value = 0 }
+		set_variable = { which = catholic_states value = 0 }
+		set_variable = { which = catholic_provinces value = 0 }
+		set_variable = { which = papacy_calculation_provinces value = 0 }
+		set_variable = { which = papacy_calculation_states value = 0 }
+		set_variable = { which = papal_provinces value = 0 }
+		#set_variable = { which = supportive_catholic_states value = 0 }
+		#set_variable = { which = antipope_catholic_states value = 0 }
+		#set_variable = { which = antipope_supportive_states value = 0 }
+	}
+}

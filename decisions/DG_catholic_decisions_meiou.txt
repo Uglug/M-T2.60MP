@@ -1,0 +1,259 @@
+country_decisions = {
+	
+	secular_courts_catholic = {
+		potential = {
+			religion = catholic
+			OR = {
+				has_country_flag = humanism
+				has_country_flag = canonical_court_scandal
+				has_country_flag = church_settlement
+			}
+			OR = {
+				NOT = { PAP = { check_variable = { which = papal_authority value = 400 } } }
+				has_country_flag = church_settlement
+			}
+			NOT = { government = theocracy }
+			NOT = { has_country_flag = secular_courts }
+			NOT = { has_country_flag = national_church }
+			OR = {
+				has_country_flag = church_settlement
+				is_religion_enabled = protestant
+			}
+		}
+		allow = {
+			OR = {
+				adm = 4
+				theologian = 3
+				custom_trigger_tooltip = {
+					tooltip = not_papal_authority_300
+					NOT = { PAP = { check_variable = { which = papal_authority value = 300 } } }
+				}
+				custom_trigger_tooltip = {
+					tooltip = church_settlement
+					has_country_flag = church_settlement
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = { NOT = { has_country_flag = church_settlement } }
+				if = {
+					limit = { piety = 0.60 }
+					add_country_modifier = { name = religious_scandal_country_strong duration = 1000 }
+				}
+				else_if = {
+					limit = { piety = -0.20 }
+					add_country_modifier = { name = religious_scandal_country duration = 1000 }
+				}
+				else = {
+					add_country_modifier = { name = religious_scandal_country_weak duration = 1000 }
+				}
+			}
+			if = {
+				limit = { check_variable = { which = inquisition value = 1 } }
+				subtract_stability_1 = yes
+				hidden_effect = { change_variable = { which = inquisition value = -1 } }
+			}
+			add_piety = -0.10
+			hidden_effect = {
+				set_country_flag = secular_courts
+				#if = {
+				#	limit = { has_country_flag = church_settlement }
+					clr_country_flag = church_settlement
+				#}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				piety = 0.20
+				factor = 0
+			}
+			modifier = {
+				check_variable = { which = inquisition value = 2 }
+				factor = 0
+			}
+		}
+	}
+	secularize_order = {
+		potential = {
+			monastic_trigger = yes
+			religion = catholic
+			is_religion_enabled = protestant
+		}
+		allow = {
+			tech_1500_trigger = yes
+			stability = 0
+			adm_power = 200
+			is_at_war = no
+			custom_trigger_tooltip = {
+				NOT = { any_neighbor_country = { NOT = { religion_group = ROOT } } }
+				tooltip = cannot_border_heathens
+			}
+		}
+		effect = {
+			add_adm_power = -200
+			administratisation_effect = yes
+			if = {
+				limit = {
+					tag = TEU
+					NOT = { exists = PRU }
+				}
+				change_tag = PRU
+				add_absolutism = 10
+				if = {
+					limit = {
+						has_custom_ideas = no
+						NOT = { has_idea_group = PRU_ideas }
+					}
+					swap_national_ideas_effect = yes
+				}
+			}
+			if = {
+				limit = {
+					tag = LVO
+					NOT = { exists = LIV }
+				}
+				change_tag = LIV
+				add_absolutism = 10
+				if = {
+					limit = {
+						has_custom_ideas = no
+						NOT = { has_idea_group = LIV_ideas }
+					}
+					swap_national_ideas_effect = yes
+				}
+			}
+			if = {
+				limit = {
+					any_owned_province = { has_province_flag = jewish_holy_land }
+					NOT = { exists = KOJ }
+				}
+				change_tag = KOJ
+				add_absolutism = 10
+				if = {
+					limit = {
+						has_custom_ideas = no
+						NOT = { has_idea_group = KOJ_ideas }
+					}
+					swap_national_ideas_effect = yes
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				num_of_cardinals = 1
+				factor = 0
+			}
+			modifier = {
+				overlord = { piety = 0.60 religion = catholic }
+				factor = 0
+			}
+			modifier = {
+				at_war_with_religious_enemy = yes
+				factor = 0
+			}
+		}
+	}
+	pragmatic_sanction = {
+		potential = {
+			religion = catholic
+			NOT = { has_country_flag = catholic_pragmatic_sanction }
+			NOT = { has_country_flag = national_church }
+			NOT = { has_country_flag = patronato_real }
+			OR = {
+				NOT = { PAP = { check_variable = { which = papal_authority value = 500 } } }
+				has_country_flag = church_settlement
+				owns_or_non_sovereign_subject_of = 379 #Jerusalem (Orthodox, Catholic)
+				owns_or_non_sovereign_subject_of = 358 #Alexandria (Orthodox, Miaphysite)
+				owns_or_non_sovereign_subject_of = 382 #Antioch (Orthodox, Miaphysite)
+				owns_constantinople_trigger = yes
+				owns_or_non_sovereign_subject_of = 410 #Baghdad (Chaldean)
+			}
+			NOT = { has_country_flag = conciliarism_suppressed }
+			papal_trigger = no
+		}
+		allow = {
+			#Strong nation
+			num_of_cities = 12
+			#Strong ruler
+			OR = {
+				ADM = 5
+				DIP = 5
+				MIL = 5
+				prestige = 80
+				custom_trigger_tooltip = {
+					tooltip = church_settlement
+					has_country_flag = church_settlement
+				}
+			}
+			adm_power = 100
+			#Catholic Alienation
+			OR = {
+				NOT = { num_of_cardinals = 3 }
+				has_country_modifier = conclave_journey_extreme #triggered modifier - distance from Rome too far
+				has_country_modifier = conclave_journey_extreme_international #triggered modifier
+				has_country_modifier = catholic_alienation #triggered modifier - too many concessions to Protestants
+			}
+			#Anger at / power over the pope
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = church_settlement
+					has_country_flag = church_settlement
+				}
+				custom_trigger_tooltip = {
+					tooltip = unfair_pope
+					OR = {
+						has_country_flag = enemy_of_pope
+						has_country_flag = royal_scandal
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = excommunicated_status
+					has_country_flag = excommunicated
+				}
+				custom_trigger_tooltip = {
+					tooltip = donated_papacy
+					has_country_flag = constantine_donation_cf
+				}
+				PAP = { vassal_of = ROOT }
+				custom_trigger_tooltip = {
+					tooltip = patriarchate_controlled
+					OR = {
+						owns_or_non_sovereign_subject_of = 379 #Jerusalem (Orthodox, Catholic)
+						owns_or_non_sovereign_subject_of = 358 #Alexandria (Orthodox, Miaphysite)
+						owns_or_non_sovereign_subject_of = 382 #Antioch (Orthodox, Miaphysite)
+						owns_constantinople_trigger = yes
+						owns_or_non_sovereign_subject_of = 410 #Baghdad (Chaldean)
+					}
+				}
+			}
+		}
+		effect = {
+			add_adm_power = -100
+			hidden_effect = {
+				set_country_flag = catholic_pragmatic_sanction
+				#if = {
+				#	limit = { has_country_flag = church_settlement }
+					clr_country_flag = church_settlement
+				#}
+			}
+			custom_tooltip = pragmatic_sanction_explained
+			add_patriarch_authority = -0.10
+			reverse_add_opinion = { who = PAP modifier = catholic_autonomy }
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				is_papal_controller = yes
+				factor = 0
+			}
+			modifier = {
+				NOT = { PAP = { capital_distance = { who = ROOT distance = 100 } } }
+				factor = 0
+			}
+		}
+	}
+	
+}

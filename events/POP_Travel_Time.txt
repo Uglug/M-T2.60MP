@@ -1,0 +1,431 @@
+#all references to 'days' are merely an abstraction for ease of identification and use of paradox days between parts of the event.  Actual travel times are not relevant, no warranty implied.
+
+### By KJ
+
+namespace = POP_Travel_Time
+
+# CE initialization
+country_event = {
+	id = POP_Travel_Time.001
+	title = "POP_Travel_Time.002.t"
+	desc = "POP_Travel_Time.002.d"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	
+	is_triggered_only = yes
+	
+	hidden = yes
+	
+	immediate = {
+		set_global_flag = ce_initialized
+		
+		every_country = {
+			#limit = {
+			#	exists = yes
+			#}
+			country_event = {
+				id = POP_Travel_Time.002
+			}
+		}
+		
+		country_event = {
+			id = setup_event.13
+		}
+	}
+	
+	option = {
+		name = "POP_Travel_Time.006a"
+		ai_chance = { factor = 100 }
+	}
+}
+
+# Actual CE calculation
+country_event = {
+	id = POP_Travel_Time.002
+	title = "POP_Travel_Time.002.t"
+	desc = "POP_Travel_Time.002.d"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	
+	#is_triggered_only = no
+	
+	hidden = yes
+	
+	trigger = {
+		#exists = yes
+		
+		NOT = {
+			has_country_modifier = travel_time_still_not_set
+			
+			has_global_flag = runner_still_running
+		}
+		
+		OR = {
+			has_country_flag = stuffs_set
+			NOT = { has_global_flag = first_estate_fired }
+		}
+		has_global_flag = ce_initialized
+	}
+	
+	mean_time_to_happen = { months = 6 }
+	
+	immediate = {
+		# log = "BEGIN: POP_Travel_Time.002"
+		add_country_modifier = {
+			name = travel_time_still_not_set
+			duration = 182
+			hidden = yes
+		}
+		
+		#set_country_flag = ce_keep_modifiers
+		
+		travel_time_prep = yes
+		travel_time_main = yes
+		travel_time_recap = yes
+		travel_time_main = yes
+		
+		travel_isolated_provinces = yes
+		
+		travel_time_final = yes
+		
+		#clr_country_flag = ce_keep_modifiers
+		
+		# POP_estate_reassignment = yes
+		# log = "END: POP_Travel_Time.002"
+		if = {
+			limit = {
+				ai = no
+				has_country_flag = show_ce_info
+			}
+			country_event = {
+				id = POP_Travel_Time.99
+				days = 1
+			}
+		}
+	}
+	
+	option = {
+		name = "POP_Travel_Time.006a"
+		ai_chance = { factor = 100 }
+	}
+}
+
+country_event = {
+	id = POP_Travel_Time.006
+	title = "POP_Travel_Time.006.t"
+	desc = "POP_Travel_Time.006.d"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	is_triggered_only = yes
+	
+	trigger = {
+		NOT = {
+			has_country_flag = doing_travel_calc
+			has_global_flag = runner_still_running
+		}
+	}
+	
+	option = {
+		name = "POP_Travel_Time.006.a"
+		ai_chance = { factor = 100 }
+		
+		trigger = {
+			NOT = {
+				has_country_flag = doing_travel_calc
+				has_global_flag = runner_still_running
+			}
+		}
+		
+		hidden_effect = {
+			remove_country_modifier = recap_sent
+			
+			set_country_flag = doing_travel_calc
+			set_country_flag = travel_time_calculated
+			
+			travel_time_prep = yes
+			
+			capital_scope = {
+				add_province_modifier = { name = instant_communication	duration = -1 }
+				add_province_modifier = { name = instant_communication_mapmode	duration = 30 }
+			}
+		}
+		
+		#add_years_of_income = -0.2
+		#add_adm_power = -20
+		
+		country_event = {
+			id = POP_Travel_Time.007
+			days = 2
+		}
+	}
+	
+	option = {
+		name = "POP_Travel_Time.006.b"
+		ai_chance = { factor = 0 }
+		
+		trigger = {
+			NOT = {
+				has_country_flag = doing_travel_calc
+				has_global_flag = runner_still_running
+			}
+		}
+		
+		hidden_effect = {
+			remove_country_modifier = recap_sent
+			
+			set_country_flag = doing_travel_calc
+			set_country_flag = doing_travel_calc_2
+			set_country_flag = travel_time_calculated
+			
+			travel_time_prep = yes
+			
+			capital_scope = {
+				add_province_modifier = { name = instant_communication	duration = -1 }
+				add_province_modifier = { name = instant_communication_mapmode	duration = 30 }
+			}
+		}
+		
+		#add_years_of_income = -0.2
+		#add_adm_power = -20
+		
+		country_event = {
+			id = POP_Travel_Time.008
+			days = 2
+		}
+	}
+	
+	option = {
+		name = "POP_Travel_Time.006.c"
+		ai_chance = { factor = 0 }
+	}
+}
+
+country_event = {
+	id = POP_Travel_Time.007
+	title = "POP_Travel_Time.007.t"
+	desc = "POP_Travel_Time.007.d"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		send_runners = yes
+		
+		if = {
+			limit = {
+				has_global_flag = runner_still_running
+			}
+			country_event = {
+				id = POP_Travel_Time.007
+				days = 2
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					NOT = { has_country_flag = recap_sent }
+				}
+				set_country_flag = recap_sent
+				
+				travel_time_recap = yes
+				
+				country_event = {
+					id = POP_Travel_Time.007
+					days = 2
+				}
+			}
+			else = {
+				clr_country_flag = doing_travel_calc
+				clr_country_flag = recap_sent
+				
+				travel_isolated_provinces = yes
+				
+				travel_time_final_dispatch = yes
+			}
+		}
+		
+		clr_global_flag = runner_still_running
+		
+		# POP_estate_reassignment = yes
+	}
+	
+	option = {
+		name = "POP_Travel_Time.007a"
+		ai_chance = { factor = 100 }
+		
+		### 772-219-1978
+	}
+}
+
+country_event = {
+	id = POP_Travel_Time.008
+	title = "POP_Travel_Time.008.t"
+	desc = "POP_Travel_Time.008.d"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		if = {
+			limit = {
+				any_province = {
+					has_province_flag = large_port_present
+					has_province_modifier = runner_on_the_way
+				}
+			}
+			set_global_flag = runner_still_running
+		}
+		
+		send_runners = yes
+		
+		if = {
+			limit = {
+				has_global_flag = runner_still_running
+			}
+			country_event = {
+				id = POP_Travel_Time.008
+				days = 2
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					NOT = { has_country_flag = recap_sent }
+				}
+				set_country_flag = recap_sent
+				
+				travel_time_recap = yes
+				
+				country_event = {
+					id = POP_Travel_Time.008
+					days = 2
+				}
+			}
+			else = {
+				clr_country_flag = doing_travel_calc
+				clr_country_flag = doing_travel_calc_2
+				clr_country_flag = recap_sent
+				
+				travel_isolated_provinces = yes
+				
+				travel_time_final_dispatch = yes
+			}
+		}
+		
+		clr_global_flag = runner_still_running
+		
+		# POP_estate_reassignment = yes
+	}
+	
+	option = {
+		name = "POP_Travel_Time.007a"
+		ai_chance = { factor = 100 }
+	}
+}
+
+province_event = {
+	id = POP_Travel_Time.009
+	title = no_localization
+	desc = no_localization
+	is_triggered_only = yes
+	hidden = yes
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	
+	immediate = {
+		if = {
+			limit = {
+				has_province_modifier = runner_on_the_way
+			}
+			remove_province_modifier = runner_on_the_way
+			
+			set_province_flag = has_runner
+			
+			add_province_modifier = {
+				name = runner_mapmode
+				duration = 20
+			}
+			
+			if = {
+				limit = {
+					owner = { has_country_flag = doing_travel_calc_2 }
+				}
+				remove_ce_mod_both = yes
+			
+				set_ce_mod_both = yes
+			}
+			else = {
+				remove_ce_mod_mapmode = yes
+				
+				set_ce_mod_mapmode = yes
+			}
+		}
+	}
+	
+	option = {
+		name = no_localization
+	}
+}
+country_event = {
+	id = POP_Travel_Time.99
+	title = POP_Travel_Time.99_t
+	desc = POP_Travel_Time.99_d
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		has_country_flag = show_ce_info
+		any_owned_province = {
+			NOT = {
+				OR = {
+					is_core = ROOT
+					has_construction = core
+					is_colony = yes
+					has_province_modifier = martial_law
+				}
+			}
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = core_province_y value = 0 }
+			set_variable = { which = core_province_n value = 0 }
+			every_owned_province = {
+				limit = {
+					NOT = {
+						OR = {
+							is_core = ROOT
+							has_construction = core
+							is_colony = yes
+							has_province_modifier = martial_law
+						}
+					}
+				}
+				if = {
+					limit = {
+						unrest = 0.101
+					}
+					PREV = {
+						change_variable = { which = core_province_n value = 1 }
+					}
+				}
+				else = {
+					PREV = {
+						change_variable = { which = core_province_y value = 1 }
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = POP_Travel_Time.99_o1
+	}
+	option = {
+		name = POP_Travel_Time.99_o2
+		hidden_effect = {
+			clr_country_flag = show_ce_info
+		}
+	}
+	after = {
+		hidden_effect = {
+			set_variable = { which = core_province_y value = 0 }
+			set_variable = { which = core_province_n value = 0 }
+		}
+	}
+}

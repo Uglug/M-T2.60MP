@@ -1,0 +1,1363 @@
+namespace = POP_Great_Minds
+
+### By KJ and Khardinal
+
+# Art center to art center institution movement
+country_event = {
+	id = POP_Great_Minds.104
+	title = NO_LOCALIZATION
+	desc = NO_LOCALIZATION
+	picture = GOOD_WITH_MONARCH_eventPicture
+	hidden = yes
+	
+	is_triggered_only = yes #pulse system
+	
+	immediate = {
+		every_province = {
+			limit = {
+				has_province_flag = has_art_center_modifier
+				is_city = yes
+			}
+			if = {
+				limit = {
+					NOT = { has_province_flag = institution_spread_inited }
+				}
+				institution_spread_init = yes
+			}
+			
+			if = {
+				limit = {
+					I_meritocracy = 95
+					
+					NOT = {
+						I_meritocracy = 100
+						
+						has_province_modifier = institution_spread_delay_I_meritocracy
+					}
+				}
+				add_province_modifier = {
+					name = institution_spread_delay_I_meritocracy
+					duration = 10000
+					hidden = yes
+				}
+			}
+			if = {
+				limit = {
+					legalism = 95
+					
+					NOT = {
+						legalism = 100
+						
+						has_province_modifier = institution_spread_delay_legalism
+					}
+				}
+				add_province_modifier = {
+					name = institution_spread_delay_legalism
+					duration = 10000
+					hidden = yes
+				}
+			}
+			if = {
+				limit = {
+					banking = 95
+					
+					NOT = {
+						banking = 100
+						
+						has_province_modifier = institution_spread_delay_banking
+					}
+				}
+				add_province_modifier = {
+					name = institution_spread_delay_banking
+					duration = 10000
+					hidden = yes
+				}
+			}
+			if = {
+				limit = {
+					renaissance = 95
+					
+					NOT = {
+						renaissance = 100
+						
+						has_province_modifier = institution_spread_delay_renaissance
+					}
+				}
+				add_province_modifier = {
+					name = institution_spread_delay_renaissance
+					duration = 10000
+					hidden = yes
+				}
+			}
+			if = {
+				limit = {
+					casual_literacy = 95
+					
+					NOT = {
+						casual_literacy = 100
+						
+						has_province_modifier = institution_spread_delay_casual_literacy
+					}
+				}
+				add_province_modifier = {
+					name = institution_spread_delay_casual_literacy
+					duration = 10000
+					hidden = yes
+				}
+			}
+			if = {
+				limit = {
+					global_trade = 95
+					
+					NOT = {
+						global_trade = 100
+						
+						has_province_modifier = institution_spread_delay_global_trade
+					}
+				}
+				add_province_modifier = {
+					name = institution_spread_delay_global_trade
+					duration = 10000
+					hidden = yes
+				}
+			}
+			if = {
+				limit = {
+					manufactories = 95
+					
+					NOT = {
+						manufactories = 100
+						
+						has_province_modifier = institution_spread_delay_manufactories
+					}
+				}
+				add_province_modifier = {
+					name = institution_spread_delay_manufactories
+					duration = 10000
+					hidden = yes
+				}
+			}
+			if = {
+				limit = {
+					enlightenment = 95
+					
+					NOT = {
+						enlightenment = 100
+						
+						has_province_modifier = institution_spread_delay_enlightenment
+					}
+				}
+				add_province_modifier = {
+					name = institution_spread_delay_enlightenment
+					duration = 10000
+					hidden = yes
+				}
+			}
+			
+			srgroup = {
+				limit = {
+					PREV = { has_province_flag = part_of_@PREV }
+				}
+				save_event_target_as = sc_food_center
+			}
+			contgroup = {
+				limit = {
+					PREV = { has_province_flag = part_cont_of_@PREV }
+				}
+				save_event_target_as = cont_food_center
+			}
+			# following effect sends institutions to targets
+			# Minor center of art can get from art centers in same or neighboring subcontinent
+			# Median center of art can get from art centers of same continent
+			# Continent center of art can get from art centers of same or neighboring continent
+			every_province = {
+				limit = {
+					has_province_flag = has_art_center_modifier
+					is_city = yes
+					NOT = { province_id = PREV }
+					
+					OR = {
+						AND = {
+							has_province_modifier = minor_center_of_art
+							OR = {
+								has_province_flag = adjacent_of_@event_target:sc_food_center
+								is_variable_equal = { which = sr_id which = PREV }
+							}
+						}
+						AND = {
+							has_province_modifier = median_center_of_art
+							is_variable_equal = { which = cont_id which = PREV }
+						}
+						AND = {
+							has_province_modifier = important_center_of_art
+							OR = {
+								is_variable_equal = { which = cont_id which = PREV }
+								has_province_flag = adjacent_cont_of_@event_target:cont_food_center
+							}
+						}
+					}
+				}
+				if = {
+					limit = {
+						NOT = { has_province_flag = institution_spread_inited }
+					}
+					institution_spread_init = yes
+				}
+				
+				# Start calculating absolute distance
+				calc_dist_init = {
+					targ = PREV
+					x_coord = x_coord
+					y_coord = y_coord
+				}
+				calc_dist = yes
+				
+				set_variable = { which = art_center_dist which = distance }
+				multiply_variable = { which = art_center_dist value = 0.11 }
+				
+				institution_spread_distmodify = yes
+				
+				PREV = {
+					if = {
+						limit = {
+							I_meritocracy = 100
+							
+							NOT = { has_province_modifier = institution_spread_delay_I_meritocracy }
+						}
+						PREV = {
+							if = {
+								limit = {
+									NOT = {
+										I_meritocracy = 100
+										check_variable = { which = art_center_dist which = art_center_dist_min_meritocracy }
+									}
+								}
+								set_variable = { which = art_center_dist_min_meritocracy which = art_center_dist }
+							}
+						}
+					}
+					
+					if = {
+						limit = {
+							legalism = 100
+							
+							NOT = { has_province_modifier = institution_spread_delay_legalism }
+						}
+						PREV = {
+							if = {
+								limit = {
+									NOT = {
+										legalism = 100
+										check_variable = { which = art_center_dist which = art_center_dist_min_legalism }
+									}
+								}
+								set_variable = { which = art_center_dist_min_legalism which = art_center_dist }
+							}
+						}
+					}
+					
+					if = {
+						limit = {
+							banking = 100
+							
+							NOT = { has_province_modifier = institution_spread_delay_banking }
+						}
+						PREV = {
+							if = {
+								limit = {
+									NOT = {
+										banking = 100
+										check_variable = { which = art_center_dist which = art_center_dist_min_banking }
+									}
+								}
+								set_variable = { which = art_center_dist_min_banking which = art_center_dist }
+							}
+						}
+					}
+					
+					if = {
+						limit = {
+							renaissance = 100
+							
+							NOT = { has_province_modifier = institution_spread_delay_renaissance }
+						}
+						PREV = {
+							if = {
+								limit = {
+									NOT = {
+										renaissance = 100
+										check_variable = { which = art_center_dist which = art_center_dist_min_renaissance }
+									}
+								}
+								set_variable = { which = art_center_dist_min_renaissance which = art_center_dist }
+							}
+						}
+					}
+					
+					if = {
+						limit = {
+							casual_literacy = 100
+							
+							NOT = { has_province_modifier = institution_spread_delay_casual_literacy }
+						}
+						PREV = {
+							if = {
+								limit = {
+									NOT = {
+										casual_literacy = 100
+										check_variable = { which = art_center_dist which = art_center_dist_min_casual_literacy }
+									}
+								}
+								set_variable = { which = art_center_dist_min_casual_literacy which = art_center_dist }
+							}
+						}
+					}
+					
+					if = {
+						limit = {
+							global_trade = 100
+							
+							NOT = { has_province_modifier = institution_spread_delay_global_trade }
+						}
+						PREV = {
+							if = {
+								limit = {
+									NOT = {
+										global_trade = 100
+										check_variable = { which = art_center_dist which = art_center_dist_min_global_trade }
+									}
+								}
+								set_variable = { which = art_center_dist_min_global_trade which = art_center_dist }
+							}
+						}
+					}
+					
+					if = {
+						limit = {
+							manufactories = 100
+							
+							NOT = { has_province_modifier = institution_spread_delay_manufactories }
+						}
+						PREV = {
+							if = {
+								limit = {
+									NOT = {
+										manufactories = 100
+										check_variable = { which = art_center_dist which = art_center_dist_min_manufactories }
+									}
+								}
+								set_variable = { which = art_center_dist_min_manufactories which = art_center_dist }
+							}
+						}
+					}
+					
+					if = {
+						limit = {
+							enlightenment = 100
+							
+							NOT = { has_province_modifier = institution_spread_delay_enlightenment }
+						}
+						PREV = {
+							if = {
+								limit = {
+									NOT = {
+										enlightenment = 100
+										check_variable = { which = art_center_dist which = art_center_dist_min_enlightenment }
+									}
+								}
+								set_variable = { which = art_center_dist_min_enlightenment which = art_center_dist }
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		regiongroup = {
+			region = {
+				limit = {
+					has_province_flag = has_art_center_modifier
+					is_city = yes
+				}
+				if = {
+					limit = {
+						NOT = { I_meritocracy = 100 }
+					}
+					if = {
+						limit = {
+							NOT = { check_variable = { which = art_center_dist_min_meritocracy value = 50 } }
+						}
+						set_province_flag = institution_meritocracy_spread_1
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_meritocracy value = 50 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_meritocracy value = 100 } }
+						}
+						set_province_flag = institution_meritocracy_spread_2
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_meritocracy value = 100 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_meritocracy value = 150 } }
+						}
+						set_province_flag = institution_meritocracy_spread_3
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_meritocracy value = 150 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_meritocracy value = 200 } }
+						}
+						set_province_flag = institution_meritocracy_spread_4
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_meritocracy value = 200 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_meritocracy value = 300 } }
+						}
+						set_province_flag = institution_meritocracy_spread_5
+					}
+				}
+				if = {
+					limit = {
+						NOT = { legalism = 100 }
+					}
+					if = {
+						limit = {
+							NOT = { check_variable = { which = art_center_dist_min_legalism value = 50 } }
+						}
+						set_province_flag = institution_legalism_spread_1
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_legalism value = 50 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_legalism value = 100 } }
+						}
+						set_province_flag = institution_legalism_spread_2
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_legalism value = 100 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_legalism value = 150 } }
+						}
+						set_province_flag = institution_legalism_spread_3
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_legalism value = 150 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_legalism value = 200 } }
+						}
+						set_province_flag = institution_legalism_spread_4
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_legalism value = 200 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_legalism value = 300 } }
+						}
+						set_province_flag = institution_legalism_spread_5
+					}
+				}
+				if = {
+					limit = {
+						NOT = { banking = 100 }
+					}
+					if = {
+						limit = {
+							NOT = { check_variable = { which = art_center_dist_min_banking value = 50 } }
+						}
+						set_province_flag = institution_banking_spread_1
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_banking value = 50 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_banking value = 100 } }
+						}
+						set_province_flag = institution_banking_spread_2
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_banking value = 100 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_banking value = 150 } }
+						}
+						set_province_flag = institution_banking_spread_3
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_banking value = 150 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_banking value = 200 } }
+						}
+						set_province_flag = institution_banking_spread_4
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_banking value = 200 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_banking value = 300 } }
+						}
+						set_province_flag = institution_banking_spread_5
+					}
+				}
+				if = {
+					limit = {
+						NOT = { renaissance = 100 }
+					}
+					if = {
+						limit = {
+							NOT = { check_variable = { which = art_center_dist_min_renaissance value = 50 } }
+						}
+						set_province_flag = institution_renaissance_spread_1
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_renaissance value = 50 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_renaissance value = 100 } }
+						}
+						set_province_flag = institution_renaissance_spread_2
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_renaissance value = 100 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_renaissance value = 150 } }
+						}
+						set_province_flag = institution_renaissance_spread_3
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_renaissance value = 150 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_renaissance value = 200 } }
+						}
+						set_province_flag = institution_renaissance_spread_4
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_renaissance value = 200 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_renaissance value = 300 } }
+						}
+						set_province_flag = institution_renaissance_spread_5
+					}
+				}
+				if = {
+					limit = {
+						NOT = { casual_literacy = 100 }
+					}
+					if = {
+						limit = {
+							NOT = { check_variable = { which = art_center_dist_min_casual_literacy value = 50 } }
+						}
+						set_province_flag = institution_casual_literacy_spread_1
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_casual_literacy value = 50 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_casual_literacy value = 100 } }
+						}
+						set_province_flag = institution_casual_literacy_spread_2
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_casual_literacy value = 100 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_casual_literacy value = 150 } }
+						}
+						set_province_flag = institution_casual_literacy_spread_3
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_casual_literacy value = 150 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_casual_literacy value = 200 } }
+						}
+						set_province_flag = institution_casual_literacy_spread_4
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_casual_literacy value = 200 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_casual_literacy value = 300 } }
+						}
+						set_province_flag = institution_casual_literacy_spread_5
+					}
+				}
+				
+				if = {
+					limit = {
+						NOT = { global_trade = 100 }
+					}
+					if = {
+						limit = {
+							NOT = { check_variable = { which = art_center_dist_min_global_trade value = 50 } }
+						}
+						set_province_flag = institution_global_trade_spread_1
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_global_trade value = 50 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_global_trade value = 100 } }
+						}
+						set_province_flag = institution_global_trade_spread_2
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_global_trade value = 100 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_global_trade value = 150 } }
+						}
+						set_province_flag = institution_global_trade_spread_3
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_global_trade value = 150 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_global_trade value = 200 } }
+						}
+						set_province_flag = institution_global_trade_spread_4
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_global_trade value = 200 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_global_trade value = 300 } }
+						}
+						set_province_flag = institution_global_trade_spread_5
+					}
+				}
+				
+				if = {
+					limit = {
+						NOT = { manufactories = 100 }
+					}
+					if = {
+						limit = {
+							NOT = { check_variable = { which = art_center_dist_min_manufactories value = 50 } }
+						}
+						set_province_flag = institution_manufactories_spread_1
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_manufactories value = 50 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_manufactories value = 100 } }
+						}
+						set_province_flag = institution_manufactories_spread_2
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_manufactories value = 100 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_manufactories value = 150 } }
+						}
+						set_province_flag = institution_manufactories_spread_3
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_manufactories value = 150 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_manufactories value = 200 } }
+						}
+						set_province_flag = institution_manufactories_spread_4
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_manufactories value = 200 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_manufactories value = 300 } }
+						}
+						set_province_flag = institution_manufactories_spread_5
+					}
+				}
+				
+				if = {
+					limit = {
+						NOT = { enlightenment = 100 }
+					}
+					if = {
+						limit = {
+							NOT = { check_variable = { which = art_center_dist_min_enlightenment value = 50 } }
+						}
+						set_province_flag = institution_enlightenment_spread_1
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_enlightenment value = 50 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_enlightenment value = 100 } }
+						}
+						set_province_flag = institution_enlightenment_spread_2
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_enlightenment value = 100 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_enlightenment value = 150 } }
+						}
+						set_province_flag = institution_enlightenment_spread_3
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_enlightenment value = 150 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_enlightenment value = 200 } }
+						}
+						set_province_flag = institution_enlightenment_spread_4
+					}
+					if = {
+						limit = {
+							check_variable = { which = art_center_dist_min_enlightenment value = 200 }
+							
+							NOT = { check_variable = { which = art_center_dist_min_enlightenment value = 300 } }
+						}
+						set_province_flag = institution_enlightenment_spread_5
+					}
+				}
+				#if = {
+					#limit = {
+					#	NOT = { has_global_flag = show_for_developers }
+					#}
+					clr_province_flag = institution_spread_inited
+					
+					set_variable = { which = distance value = 0 }
+					set_variable = { which = art_power_capped value = 0 }
+					set_variable = { which = art_center_dist value = 0 }
+					set_variable = { which = art_center_dist_min_meritocracy value = 0 }
+					set_variable = { which = art_center_dist_min_legalism value = 0 }
+					set_variable = { which = art_center_dist_min_banking value = 0 }
+					set_variable = { which = art_center_dist_min_renaissance value = 0 }
+					set_variable = { which = art_center_dist_min_casual_literacy value = 0 }
+					set_variable = { which = art_center_dist_min_global_trade value = 0 }
+					set_variable = { which = art_center_dist_min_manufactories value = 0 }
+					set_variable = { which = art_center_dist_min_enlightenment value = 0 }
+				#}
+			}
+		}
+	}
+	
+	option = {
+		name = no_localization
+	}
+}
+
+# Institution reinvention
+#province_event = {
+#	id = POP_Great_Minds.106
+#	title = no_localization
+#	desc = no_localization
+#	picture = GOOD_WITH_MONARCH_eventPicture
+#	
+#	is_triggered_only = no
+#	
+#	hidden = yes
+#	
+#	trigger = {
+#		has_province_flag = has_art_center_modifier
+#	}
+#	
+#	mean_time_to_happen = { years = 1 }
+#	
+#	immediate = {
+#		hidden_effect = {
+#			clr_province_flag = institution_reinvention_legalism_1
+#			clr_province_flag = institution_reinvention_legalism_2
+#			clr_province_flag = institution_reinvention_legalism_3
+#			clr_province_flag = institution_reinvention_legalism_4
+#			clr_province_flag = institution_reinvention_legalism_5
+#			
+#			clr_province_flag = institution_reinvention_meritocracy_1
+#			clr_province_flag = institution_reinvention_meritocracy_2
+#			clr_province_flag = institution_reinvention_meritocracy_3
+#			clr_province_flag = institution_reinvention_meritocracy_4
+#			clr_province_flag = institution_reinvention_meritocracy_5
+#			
+#			clr_province_flag = institution_reinvention_banking_1
+#			clr_province_flag = institution_reinvention_banking_2
+#			clr_province_flag = institution_reinvention_banking_3
+#			clr_province_flag = institution_reinvention_banking_4
+#			clr_province_flag = institution_reinvention_banking_5
+#			
+#			clr_province_flag = institution_reinvention_renaissance_1
+#			clr_province_flag = institution_reinvention_renaissance_2
+#			clr_province_flag = institution_reinvention_renaissance_3
+#			clr_province_flag = institution_reinvention_renaissance_4
+#			clr_province_flag = institution_reinvention_renaissance_5
+#			
+#			#set_variable = { which = institution_multiplier_legalism_cap value = 0 }
+#			set_variable = { which = institution_multiplier_legalism_idea value = 0 }
+#			set_variable = { which = institution_multiplier_legalism_stability value = 0 }
+#			
+#			set_variable = { which = institution_multiplier_meritocracy_cap value = 0 }
+#			set_variable = { which = institution_multiplier_meritocracy_idea value = 0 }
+#			
+#			set_variable = { which = institution_multiplier_banking_mod value = 0 }
+#			set_variable = { which = institution_multiplier_idea value = 0 }
+#			
+#			set_variable = { which = institution_multiplier_renaissance_education value = 0 }
+#			set_variable = { which = institution_multiplier_renaissance_court value = 0 }
+#			set_variable = { which = institution_multiplier_renaissance_mod value = 0 }
+#			set_variable = { which = institution_multiplier_renaissance_idea value = 0 }
+#			
+#			# Legalism
+#			if = {
+#				limit = {
+#					NOT = { legalism = 100 }
+#					
+#					is_institution_enabled = legalism
+#				}
+#				set_variable = { which = institution_ticker_legalism which = art_power }
+#				
+#				set_variable = { which = institution_multiplier_legalism value = 0 }
+#				
+#				#set_variable = { which = institution_multiplier_legalism_cap value = 0 }
+#				set_variable = { which = institution_multiplier_legalism_idea value = 0 }
+#				set_variable = { which = institution_multiplier_legalism_stability value = 0 }
+#				
+#				#trigger_switch = {
+#				#	on_trigger = has_province_modifier
+#				#	consequential_capital_rank_3 = {
+#				#		change_variable = { which = institution_multiplier_legalism_cap value = 0.1 }
+#				#	}
+#				#	consequential_capital_rank_4 = {
+#				#		change_variable = { which = institution_multiplier_legalism_cap value = 0.2 }
+#				#	}
+#				#	consequential_capital_rank_5 = {
+#				#		change_variable = { which = institution_multiplier_legalism_cap value = 0.3 }
+#				#	}
+#				#	consequential_capital_rank_6 = {
+#				#		change_variable = { which = institution_multiplier_legalism_cap value = 0.4 }
+#				#	}
+#				#	consequential_capital_rank_7 = {
+#				#		change_variable = { which = institution_multiplier_legalism_cap value = 0.5 }
+#				#	}
+#				#	consequential_capital_rank_8 = {
+#				#		change_variable = { which = institution_multiplier_legalism_cap value = 0.6 }
+#				#	}
+#				#	consequential_capital_rank_9 = {
+#				#		change_variable = { which = institution_multiplier_legalism_cap value = 0.7 }
+#				#	}
+#				#	consequential_capital_rank_10 = {
+#				#		change_variable = { which = institution_multiplier_legalism_cap value = 0.8 }
+#				#	}
+#				#	consequential_capital_rank_11 = {
+#				#		change_variable = { which = institution_multiplier_legalism_cap value = 0.9 }
+#				#	}
+#				#	consequential_capital_rank_12 = {
+#				#		change_variable = { which = institution_multiplier_legalism_cap value = 1 }
+#				#	}
+#				#}
+#				
+#				#change_variable = { which = institution_multiplier_legalism which = institution_multiplier_legalism_cap }
+#				
+#				#if = {
+#				#	limit = {
+#				#		check_variable = { which = institution_multiplier_legalism value = 0.1 }
+#				#	}
+#					
+#					if = {
+#						limit = {
+#							owner = { full_idea_group = administrative_ideas }
+#						}
+#						change_variable = { which = institution_multiplier_legalism_idea value = 0.4 }
+#					}
+#					if = {
+#						limit = {
+#							owner = { full_idea_group = culture_ideas }
+#						}
+#						change_variable = { which = institution_multiplier_legalism_idea value = 0.2 }
+#					}
+#					if = {
+#						limit = {
+#							owner = { full_idea_group = innovativeness_ideas }
+#						}
+#						change_variable = { which = institution_multiplier_legalism_idea value = 0.2 }
+#					}
+#					
+#					export_to_variable = {
+#						which = stability_factor
+#						value = stability
+#						who = owner
+#					}
+#					
+#					multiply_variable = { which = stability_factor value = 0.1 }
+#					
+#					change_variable = { which = institution_multiplier_legalism_stability which = stability_factor }
+#				#}
+#				
+#				change_variable = { which = institution_multiplier_legalism which = institution_multiplier_legalism_idea }
+#				change_variable = { which = institution_multiplier_legalism which = institution_multiplier_legalism_stability }
+#				
+#				if = {
+#					limit = {
+#						OR = {
+#							#is_variable_equal = { which = institution_multiplier_legalism_cap value = 0 }
+#							is_variable_equal = { which = institution_multiplier_legalism_idea value = 0 }
+#							is_variable_equal = { which = institution_multiplier_legalism_stability value = 0 }
+#						}
+#					}
+#					set_variable = { which = institution_multiplier_legalism value = 0 }
+#				}
+#				
+#				multiply_variable = { which = institution_ticker_legalism which = institution_multiplier_legalism }
+#				
+#				# Institution is reinvented
+#				if = {
+#					limit = {
+#						check_variable = { which = institution_ticker_legalism value = 10 }
+#						NOT = { check_variable = { which = institution_ticker_legalism value = 15 } }
+#					}
+#					set_province_flag = institution_reinvention_legalism_1
+#				}
+#				if = {
+#					limit = {
+#						check_variable = { which = institution_ticker_legalism value = 15 }
+#						NOT = { check_variable = { which = institution_ticker_legalism value = 20 } }
+#					}
+#					set_province_flag = institution_reinvention_legalism_2
+#				}
+#				if = {
+#					limit = {
+#						check_variable = { which = institution_ticker_legalism value = 20 }
+#						NOT = { check_variable = { which = institution_ticker_legalism value = 25 } }
+#					}
+#					set_province_flag = institution_reinvention_legalism_3
+#				}
+#				if = {
+#					limit = {
+#						check_variable = { which = institution_ticker_legalism value = 25 }
+#						NOT = { check_variable = { which = institution_ticker_legalism value = 30 } }
+#					}
+#					set_province_flag = institution_reinvention_legalism_4
+#				}
+#				if = {
+#					limit = {
+#						check_variable = { which = institution_ticker_legalism value = 30 }
+#					}
+#					set_province_flag = institution_reinvention_legalism_5
+#				}
+#			}
+#			
+#			# Meritocracy
+#			if = {
+#				limit = {
+#					NOT = { I_meritocracy = 100 }
+#					
+#					is_institution_enabled = I_meritocracy
+#				}
+#				set_variable = { which = institution_ticker_meritocracy which = art_power }
+#				
+#				set_variable = { which = institution_multiplier_meritocracy value = 0 }
+#				
+#				#set_variable = { which = institution_multiplier_meritocracy_cap value = 0 }
+#				set_variable = { which = institution_multiplier_meritocracy_idea value = 0 }
+#				
+#				#trigger_switch = {
+#				#	on_trigger = has_province_modifier
+#				#	consequential_capital_rank_3 = {
+#				#		change_variable = { which = institution_multiplier_meritocracy_cap value = 0.1 }
+#				#	}
+#				#	consequential_capital_rank_4 = {
+#				#		change_variable = { which = institution_multiplier_meritocracy_cap value = 0.2 }
+#				#	}
+#				#	consequential_capital_rank_5 = {
+#				#		change_variable = { which = institution_multiplier_meritocracy_cap value = 0.3 }
+#				#	}
+#				#	consequential_capital_rank_6 = {
+#				#		change_variable = { which = institution_multiplier_meritocracy_cap value = 0.4 }
+#				#	}
+#				#	consequential_capital_rank_7 = {
+#				#		change_variable = { which = institution_multiplier_meritocracy_cap value = 0.5 }
+#				#	}
+#				#	consequential_capital_rank_8 = {
+#				#		change_variable = { which = institution_multiplier_meritocracy_cap value = 0.6 }
+#				#	}
+#				#	consequential_capital_rank_9 = {
+#				#		change_variable = { which = institution_multiplier_meritocracy_cap value = 0.7 }
+#				#	}
+#				#	consequential_capital_rank_10 = {
+#				#		change_variable = { which = institution_multiplier_meritocracy_cap value = 0.8 }
+#				#	}
+#				#	consequential_capital_rank_11 = {
+#				#		change_variable = { which = institution_multiplier_meritocracy_cap value = 0.9 }
+#				#	}
+#				#	consequential_capital_rank_12 = {
+#				#		change_variable = { which = institution_multiplier_meritocracy_cap value = 1 }
+#				#	}
+#				#}
+#				
+#				#change_variable = { which = institution_multiplier_meritocracy which = institution_multiplier_meritocracy_cap }
+#				
+#				#if = {
+#					#limit = {
+#					#	check_variable = { which = institution_multiplier_meritocracy value = 0.1 }
+#					#}
+#					if = {
+#						limit = {
+#							owner = { full_idea_group = administrative_ideas }
+#						}
+#						change_variable = { which = institution_multiplier_meritocracy_idea value = 0.3 }
+#					}
+#					if = {
+#						limit = {
+#							owner = { full_idea_group = empire_ideas }
+#						}
+#						change_variable = { which = institution_multiplier_meritocracy_idea value = 0.5 }
+#					}
+#					if = {
+#						limit = {
+#							owner = { full_idea_group = plutocracy_ideas }
+#						}
+#						change_variable = { which = institution_multiplier_meritocracy_idea value = 0.1 }
+#					}
+#					if = {
+#						limit = {
+#							owner = { full_idea_group = culture_ideas }
+#						}
+#						change_variable = { which = institution_multiplier_meritocracy_idea value = 0.1 }
+#					}
+#					if = {
+#						limit = {
+#							owner = { full_idea_group = innovativeness_ideas }
+#						}
+#						change_variable = { which = institution_multiplier_meritocracy_idea value = 0.2 }
+#					}
+#					if = {
+#						limit = {
+#							owner = { full_idea_group = democracy_ideas }
+#						}
+#						change_variable = { which = institution_multiplier_meritocracy_idea value = 0.2 }
+#					}
+#				#}
+#				
+#				change_variable = { which = institution_multiplier_meritocracy which = institution_multiplier_meritocracy_idea }
+#				
+#				if = {
+#					limit = {
+#						OR = {
+#							#is_variable_equal = { which = institution_multiplier_meritocracy_cap value = 0 }
+#							is_variable_equal = { which = institution_multiplier_meritocracy_idea value = 0 }
+#						}
+#					}
+#					set_variable = { which = institution_multiplier_meritocracy value = 0 }
+#				}
+#				
+#				multiply_variable = { which = institution_ticker_meritocracy which = institution_multiplier_meritocracy }
+#				
+#				# Institution is reinvented
+#				if = {
+#					limit = {
+#						check_variable = { which = institution_ticker_meritocracy value = 10 }
+#						NOT = { check_variable = { which = institution_ticker_meritocracy value = 15 } }
+#					}
+#					set_province_flag = institution_reinvention_meritocracy_1
+#				}
+#				if = {
+#					limit = {
+#						check_variable = { which = institution_ticker_meritocracy value = 15 }
+#						NOT = { check_variable = { which = institution_ticker_meritocracy value = 20 } }
+#					}
+#					set_province_flag = institution_reinvention_meritocracy_2
+#				}
+#				if = {
+#					limit = {
+#						check_variable = { which = institution_ticker_meritocracy value = 20 }
+#						NOT = { check_variable = { which = institution_ticker_meritocracy value = 25 } }
+#					}
+#					set_province_flag = institution_reinvention_meritocracy_3
+#				}
+#				if = {
+#					limit = {
+#						check_variable = { which = institution_ticker_meritocracy value = 25 }
+#						NOT = { check_variable = { which = institution_ticker_meritocracy value = 30 } }
+#					}
+#					set_province_flag = institution_reinvention_meritocracy_4
+#				}
+#				if = {
+#					limit = {
+#						check_variable = { which = institution_ticker_meritocracy value = 30 }
+#					}
+#					set_province_flag = institution_reinvention_meritocracy_5
+#				}
+#			}
+#			
+#			# Banking
+#			if = {
+#				limit = {
+#					NOT = { banking = 100 }
+#					
+#					is_institution_enabled = banking
+#				}
+#				set_variable = { which = institution_ticker_banking which = art_power }
+#				
+#				set_variable = { which = institution_multiplier_banking value = 0 }
+#				
+#				set_variable = { which = institution_multiplier_banking_mod value = 0 }
+#				set_variable = { which = institution_multiplier_idea value = 0 }
+#				
+#				trigger_switch = {
+#					on_trigger = has_province_modifier
+#					dominant_center_of_trade = {
+#						change_variable = { which = institution_multiplier_banking_mod value = 1 }
+#					}
+#					major_center_of_trade = {
+#						change_variable = { which = institution_multiplier_banking_mod value = 0.25 }
+#					}
+#				}
+#				trigger_switch = {
+#					on_trigger = has_province_modifier
+#					dominant_center_of_production = {
+#						change_variable = { which = institution_multiplier_banking_mod value = 0.5 }
+#					}
+#					major_center_of_production = {
+#						change_variable = { which = institution_multiplier_banking_mod value = 0.125 }
+#					}
+#				}
+#				
+#				if = {
+#					limit = {
+#						has_province_flag = has_great_natural_harbour
+#						has_province_flag = large_port_present
+#					}
+#					change_variable = { which = institution_multiplier_banking_mod value = 0.5 }
+#				}
+#				if = {
+#					limit = {
+#						has_province_flag = has_small_natural_harbour
+#						has_province_flag = large_port_present
+#					}
+#					change_variable = { which = institution_multiplier_banking_mod value = 0.125 }
+#				}
+#				
+#				change_variable = { which = institution_multiplier_banking which = institution_multiplier_banking_mod }
+#				
+#				if = {
+#					limit = {
+#						check_variable = { which = institution_multiplier_banking value = 0.1 }
+#					}
+#					if = {
+#						limit = {
+#							owner = { full_idea_group = trade_ideas }
+#						}
+#						change_variable = { which = institution_multiplier_banking_idea value = 0.4 }
+#					}
+#					if = {
+#						limit = {
+#							owner = { full_idea_group = economic_ideas }
+#						}
+#						change_variable = { which = institution_multiplier_banking_idea value = 0.2 }
+#					}
+#					if = {
+#						limit = {
+#							owner = { full_idea_group = naval_ideas }
+#						}
+#						change_variable = { which = institution_multiplier_banking_idea value = 0.1 }
+#					}
+#					if = {
+#						limit = {
+#							owner = { full_idea_group = plutocracy_ideas }
+#						}
+#						change_variable = { which = institution_multiplier_banking_idea value = 0.1 }
+#					}
+#					if = {
+#						limit = {
+#							owner = { full_idea_group = innovativeness_ideas }
+#						}
+#						change_variable = { which = institution_multiplier_banking_idea value = 0.2 }
+#					}
+#				}
+#				
+#				change_variable = { which = institution_multiplier_banking which = institution_multiplier_banking_idea }
+#				
+#				if = {
+#					limit = {
+#						OR = {
+#							is_variable_equal = { which = institution_multiplier_banking_mod value = 0 }
+#							is_variable_equal = { which = institution_multiplier_banking_idea value = 0 }
+#						}
+#					}
+#					set_variable = { which = institution_multiplier_banking value = 0 }
+#				}
+#				
+#				multiply_variable = { which = institution_ticker_banking which = institution_multiplier_banking }
+#				
+#				# Institution is reinvented
+#				if = {
+#					limit = {
+#						check_variable = { which = institution_ticker_banking value = 10 }
+#						NOT = { check_variable = { which = institution_ticker_banking value = 15 } }
+#					}
+#					set_province_flag = institution_reinvention_banking_1
+#				}
+#				if = {
+#					limit = {
+#						check_variable = { which = institution_ticker_banking value = 15 }
+#						NOT = { check_variable = { which = institution_ticker_banking value = 20 } }
+#					}
+#					set_province_flag = institution_reinvention_banking_2
+#				}
+#				if = {
+#					limit = {
+#						check_variable = { which = institution_ticker_banking value = 20 }
+#						NOT = { check_variable = { which = institution_ticker_banking value = 25 } }
+#					}
+#					set_province_flag = institution_reinvention_banking_3
+#				}
+#				if = {
+#					limit = {
+#						check_variable = { which = institution_ticker_banking value = 25 }
+#						NOT = { check_variable = { which = institution_ticker_banking value = 30 } }
+#					}
+#					set_province_flag = institution_reinvention_banking_4
+#				}
+#				if = {
+#					limit = {
+#						check_variable = { which = institution_ticker_banking value = 30 }
+#					}
+#					set_province_flag = institution_reinvention_banking_5
+#				}
+#			}
+#			
+#			# Renaissance
+#			if = {
+#				limit = {
+#					NOT = { renaissance = 100 }
+#					
+#					is_institution_enabled = renaissance
+#				}
+#				set_variable = { which = institution_ticker_renaissance which = art_power }
+#				
+#				set_variable = { which = institution_multiplier_renaissance value = 0 }
+#				
+#				set_variable = { which = institution_multiplier_renaissance_education value = 0 }
+#				set_variable = { which = institution_multiplier_renaissance_court value = 0 }
+#				set_variable = { which = institution_multiplier_renaissance_mod value = 0 }
+#				set_variable = { which = institution_multiplier_renaissance_idea value = 0 }
+#				
+#				every_province = {
+#					limit = {
+#						is_variable_equal = { which = sr_id which = PREV }
+#						
+#						is_capital = yes
+#						
+#						owner = {
+#							check_variable = { which = court_level 	value = 30 }
+#						}
+#					}
+#					PREV = { change_variable = { which = institution_multiplier_renaissance_court value = 0.2 } }
+#				}
+#				
+#				change_variable = { which = institution_multiplier_renaissance which = institution_multiplier_renaissance_court }
+#				
+#				if = {
+#					limit = {
+#						check_variable = { which = institution_multiplier_renaissance value = 0.1 }
+#					}
+#					trigger_switch = {
+#						on_trigger = has_province_modifier
+#						important_center_of_art = {
+#							change_variable = { which = institution_multiplier_renaissance_mod value = 0.4 }
+#						}
+#						median_center_of_art = {
+#							change_variable = { which = institution_multiplier_renaissance_mod value = 0.2 }
+#						}
+#					}
+#					
+#					if = {
+#						limit = {
+#							owner = { full_idea_group = culture_ideas }
+#						}
+#						change_variable = { which = institution_multiplier_renaissance_idea value = 0.4 }
+#					}
+#					if = {
+#						limit = {
+#							owner = { full_idea_group = innovativeness_ideas }
+#						}
+#						change_variable = { which = institution_multiplier_renaissance_idea value = 0.2 }
+#					}
+#					if = {
+#						limit = {
+#							owner = { full_idea_group = humanist_ideas }
+#						}
+#						change_variable = { which = institution_multiplier_renaissance_idea value = 0.2 }
+#					}
+#					
+#					set_variable = { which = education_level which = owner }
+#					set_variable = { which = institution_multiplier_renaissance_education which = education_level }
+#					
+#					divide_variable = { which = institution_multiplier_renaissance_education value = 120 }
+#				}
+#				
+#				change_variable = { which = institution_multiplier_renaissance which = institution_multiplier_renaissance_mod }
+#				change_variable = { which = institution_multiplier_renaissance which = institution_multiplier_renaissance_idea }
+#				change_variable = { which = institution_multiplier_renaissance which = institution_multiplier_renaissance_education }
+#				
+#				if = {
+#					limit = {
+#						OR = {
+#							NOT = { check_variable = { which = institution_multiplier_renaissance_education value = 0.35 } }
+#							NOT = { check_variable = { which = institution_multiplier_renaissance_court value = 0.61 } }
+#							NOT = { check_variable = { which = institution_multiplier_renaissance_mod value = 0.2 } }
+#							NOT = { check_variable = { which = institution_multiplier_renaissance_idea value = 0 } }
+#						}
+#					}
+#					set_variable = { which = institution_multiplier_renaissance value = 0 }
+#				}
+#				
+#				multiply_variable = { which = institution_ticker_renaissance which = institution_multiplier_renaissance }
+#				
+#				# Institution is reinvented
+#				if = {
+#					limit = {
+#						check_variable = { which = institution_ticker_renaissance value = 10 }
+#						NOT = { check_variable = { which = institution_ticker_renaissance value = 15 } }
+#					}
+#					set_province_flag = institution_reinvention_renaissance_1
+#				}
+#				if = {
+#					limit = {
+#						check_variable = { which = institution_ticker_renaissance value = 15 }
+#						NOT = { check_variable = { which = institution_ticker_renaissance value = 20 } }
+#					}
+#					set_province_flag = institution_reinvention_renaissance_2
+#				}
+#				if = {
+#					limit = {
+#						check_variable = { which = institution_ticker_renaissance value = 20 }
+#						NOT = { check_variable = { which = institution_ticker_renaissance value = 25 } }
+#					}
+#					set_province_flag = institution_reinvention_renaissance_3
+#				}
+#				if = {
+#					limit = {
+#						check_variable = { which = institution_ticker_renaissance value = 25 }
+#						NOT = { check_variable = { which = institution_ticker_renaissance value = 30 } }
+#					}
+#					set_province_flag = institution_reinvention_renaissance_4
+#				}
+#				if = {
+#					limit = {
+#						check_variable = { which = institution_ticker_renaissance value = 30 }
+#					}
+#					set_province_flag = institution_reinvention_renaissance_5
+#				}
+#			}
+#		}
+#	}
+#	
+#	option = {
+#		name = no_localization
+#	}
+#}

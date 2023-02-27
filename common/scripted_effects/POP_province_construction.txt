@@ -1,0 +1,612 @@
+AssessBuilding = {
+	if = {
+		limit = { can_build_$name$ = yes }
+		AssessBuilding_$name$ = { root = $root$ weight = assessBuildingWeight }
+		if = {
+			limit = { check_variable = { which = assessBuildingWeight which = getBestBuildingWeight } }
+			set_variable = { which = getBestBuildingWeight which = assessBuildingWeight }
+			set_variable = { which = getBestBuildingBuildInd value = $ind$ }
+			get_upgrade_cost_$name$ = yes
+			multiply_variable = { which = building_cost which = getBestBuildingCost }
+			set_variable = { which = getBestBuildingBuildPrice which = building_cost }
+			set_variable = { which = building_cost value = 0 }
+		}
+		set_variable = { which = assessBuildingPrice value = 0 }
+		set_variable = { which = assessBuildingWeight value = 0 }
+	}
+}
+
+GetBestBuilding = {
+	if = {
+		limit = { CanBuild = yes }
+		
+		# Local construction cost
+		export_to_variable = { which = getBestBuildingCost value = modifier:local_build_cost }
+		export_to_variable = { which = getBestBuildingCostOwner value = modifier:build_cost who = owner }
+		change_variable = { which = getBestBuildingCost value = 1 }
+		change_variable = { which = getBestBuildingCost which = getBestBuildingCostOwner }
+		
+		# Disincentives construction of urban gravity building at low food
+		# Should normally range from 0.5 to 1.6 with higher = more surplus food
+		set_variable = { which = getBestBuildingFood which = regional_food_factor }
+		multiply_variable = { which = getBestBuildingFood value = 2 }
+		
+		# Assess then set ind and price
+		set_variable = { which = getBestBuildingWeight value = -1 }
+		set_variable = { which = getBestBuildingBuildInd value = 0 }
+		set_variable = { which = getBestBuildingBuildPrice value = 0 }
+		set_variable = { which = getBestBuildingBudget which = $budget$ }
+		
+		# All potential builders are:
+		# Provinces - can spend local wealth to build rural and/or urban buildings
+		# Estates - greater/lesser nobles can build rural buildings, bughers can build urban buildings and mines
+		# The state - can build mines, urban buildings and "special" buildings (i.e. forts, roads, capitols and canals)
+		
+		# Can be built by: provinces, estates and the state
+		if = {
+			limit = {
+				OR = {
+					always = $urban$
+					always = $rural$
+				}
+			}
+			AssessBuilding = { name = mines_1 					root = $root$ ind = 1 }
+			AssessBuilding = { name = mines_2 					root = $root$ ind = 2 }
+			AssessBuilding = { name = mines_3 					root = $root$ ind = 3 }
+			AssessBuilding = { name = mines_4 					root = $root$ ind = 4 }
+			AssessBuilding = { name = mines_5 					root = $root$ ind = 5 }
+		}
+		
+		# Can be built by: provinces, estates (bughers) and the state
+		if = {
+			limit = { always = $urban$ }
+			AssessBuilding = { name = town_hall 			 	root = $root$ ind = 6 }
+			AssessBuilding = { name = urban_infrastructure_1 	root = $root$ ind = 7 }
+			AssessBuilding = { name = urban_infrastructure_2 	root = $root$ ind = 8 }
+			AssessBuilding = { name = urban_infrastructure_3 	root = $root$ ind = 9 }
+			AssessBuilding = { name = urban_infrastructure_4 	root = $root$ ind = 10 }
+			AssessBuilding = { name = urban_infrastructure_5 	root = $root$ ind = 11 }
+			
+			AssessBuilding = { name = harbour_infrastructure_1 	root = $root$ ind = 12 }
+			AssessBuilding = { name = harbour_infrastructure_2 	root = $root$ ind = 13 }
+			AssessBuilding = { name = harbour_infrastructure_3x root = $root$ ind = 14 }
+			AssessBuilding = { name = harbour_infrastructure_4 	root = $root$ ind = 15 }
+			AssessBuilding = { name = harbour_infrastructure_5 	root = $root$ ind = 16 }
+			
+			AssessBuilding = { name = marketplace 				root = $root$ ind = 17 }
+			AssessBuilding = { name = merchant_guild 			root = $root$ ind = 18 }
+			AssessBuilding = { name = trade_depot 				root = $root$ ind = 19 }
+			AssessBuilding = { name = customs_house 			root = $root$ ind = 20 }
+			
+			AssessBuilding = { name = bank 						root = $root$ ind = 21 }
+			AssessBuilding = { name = stock_exchange 			root = $root$ ind = 22 }
+			
+			AssessBuilding = { name = workshop 					root = $root$ ind = 23 }
+			AssessBuilding = { name = corporation_guild 		root = $root$ ind = 24 }
+			AssessBuilding = { name = urban_manufactory 		root = $root$ ind = 25 }
+			AssessBuilding = { name = factory 					root = $root$ ind = 26 }
+			AssessBuilding = { name = steam_powered_factory 	root = $root$ ind = 27 }
+			
+			AssessBuilding = { name = warehouse 				root = $root$ ind = 28 }
+			AssessBuilding = { name = warehouse_district 		root = $root$ ind = 29 }
+			
+			AssessBuilding = { name = small_university 			root = $root$ ind = 30 }
+			AssessBuilding = { name = medium_university 		root = $root$ ind = 31 }
+			AssessBuilding = { name = big_university 			root = $root$ ind = 32 }
+			
+			AssessBuilding = { name = art_corporation 			root = $root$ ind = 33 }
+			AssessBuilding = { name = fine_arts_academy 		root = $root$ ind = 34 }
+			AssessBuilding = { name = opera 					root = $root$ ind = 35 }
+			
+			AssessBuilding = { name = temple 					root = $root$ ind = 36 }
+			
+			AssessBuilding = { name = trading_post 				root = $root$ ind = 37 }
+			AssessBuilding = { name = trading_company 			root = $root$ ind = 38 }
+		}
+		
+		if = {
+			limit = { always = $rural$ }
+			set_variable = { which = getBestBuildingCost value = 1 }
+			
+			AssessBuilding = { name = rural_infrastructure_1 	root = $root$ ind = 39 }
+			AssessBuilding = { name = rural_infrastructure_2 	root = $root$ ind = 40 }
+			AssessBuilding = { name = rural_infrastructure_3 	root = $root$ ind = 41 }
+			AssessBuilding = { name = rural_infrastructure_4 	root = $root$ ind = 42 }
+			AssessBuilding = { name = rural_infrastructure_5 	root = $root$ ind = 43 }
+			AssessBuilding = { name = rural_infrastructure_6 	root = $root$ ind = 44 }
+			AssessBuilding = { name = rural_infrastructure_7 	root = $root$ ind = 45 }
+			AssessBuilding = { name = farm_effic 				root = $root$ ind = 46 }
+			
+			#both nobles and the state itself should be able to build canals 
+			AssessBuilding = { name = canal_1 					root = $root$ ind = 61 }
+			AssessBuilding = { name = canal_2 					root = $root$ ind = 62 }
+			AssessBuilding = { name = canal_3 					root = $root$ ind = 63 }
+		}
+		
+		if = {
+			limit = { always = $state$ }
+			set_variable = { which = getBestBuildingCost value = 1 }
+			
+			AssessBuilding = { name = fort_14th 				root = $root$ ind = 47 }
+			AssessBuilding = { name = fort_15th 				root = $root$ ind = 48 }
+			AssessBuilding = { name = fort_16th 				root = $root$ ind = 49 }
+			AssessBuilding = { name = fort_17th 				root = $root$ ind = 50 }
+			AssessBuilding = { name = fort_18th 				root = $root$ ind = 51 }
+			
+			AssessBuilding = { name = road_network 				root = $root$ ind = 52 }
+			AssessBuilding = { name = paved_road_network 		root = $root$ ind = 53 }
+			AssessBuilding = { name = highway_network 			root = $root$ ind = 54 }
+			AssessBuilding = { name = road_and_rail_network 	root = $root$ ind = 55 }
+			
+			AssessBuilding = { name = bureaucracy_1 			root = $root$ ind = 56 }
+			AssessBuilding = { name = bureaucracy_2 			root = $root$ ind = 57 }
+			AssessBuilding = { name = bureaucracy_3 			root = $root$ ind = 58 }
+			AssessBuilding = { name = bureaucracy_4 			root = $root$ ind = 59 }
+			AssessBuilding = { name = bureaucracy_5 			root = $root$ ind = 60 }
+			
+			#both nobles and the state itself should be able to build canals 
+			AssessBuilding = { name = canal_1 					root = $root$ ind = 61 }
+			AssessBuilding = { name = canal_2 					root = $root$ ind = 62 }
+			AssessBuilding = { name = canal_3 					root = $root$ ind = 63 }
+			
+			# Local construction cost
+			export_to_variable = { which = getBestBuildingCost value = modifier:local_build_cost }
+			export_to_variable = { which = getBestBuildingCostOwner value = modifier:build_cost who = owner }
+			
+			change_variable = { which = getBestBuildingCost value = 1 }
+			change_variable = { which = getBestBuildingCost which = getBestBuildingCostOwner }
+			
+			AssessBuilding = { name = harbour_infrastructure_1_state 	root = $root$ ind = 64 }
+			AssessBuilding = { name = harbour_infrastructure_2_state 	root = $root$ ind = 65 }
+			AssessBuilding = { name = harbour_infrastructure_3x_state 	root = $root$ ind = 66 }
+			AssessBuilding = { name = harbour_infrastructure_4_state 	root = $root$ ind = 67 }
+			AssessBuilding = { name = harbour_infrastructure_5_state 	root = $root$ ind = 68 }
+			
+			AssessBuilding = { name = military_harbour_1 				root = $root$ ind = 69 }
+			AssessBuilding = { name = military_harbour_2 				root = $root$ ind = 70 }
+			AssessBuilding = { name = military_harbour_3 				root = $root$ ind = 71 }
+			AssessBuilding = { name = military_harbour_4 				root = $root$ ind = 72 }
+		}
+		
+		set_variable = { which = $buildInd$ which = getBestBuildingBuildInd }
+		set_variable = { which = $buildPrice$ which = getBestBuildingBuildPrice }
+		set_variable = { which = $buildWeight$ which = getBestBuildingWeight }
+		
+		set_variable = { which = getBestBuildingWeight value = 0 }
+		set_variable = { which = getBestBuildingBuildInd value = 0 }
+		set_variable = { which = getBestBuildingBuildPrice value = 0 }
+		set_variable = { which = getBestBuildingFood value = 0 }
+		set_variable = { which = getBestBuildingCost value = 0 }
+		set_variable = { which = getBestBuildingCostOwner value = 0 }
+		set_variable = { which = getBestBuildingBudget value = 0 }
+	}
+}
+
+DoBuilding = {
+	if = {
+		limit = { NOT = { is_variable_equal = { which = $buildInd$ value = 0 } } }
+		if = {
+			limit = { check_variable = { which = $buildInd$ value = 69 } }
+			add_province_modifier = { name = ai_built_shipyard duration = 1825 } 
+		}
+		else_if = {
+			limit = { check_variable = { which = $buildInd$ value = 64 } }
+			add_province_modifier = { name = built_harbour duration = 1825 } 
+		}
+		else_if = {
+			limit = { check_variable = { which = $buildInd$ value = 61 } }
+			add_province_modifier = { name = built_canal duration = 1825 }
+		}
+		else_if = {
+			limit = { check_variable = { which = $buildInd$ value = 56 } }
+			add_province_modifier = { name = ai_built_bureau duration = 1825 }
+		}
+		else_if = {
+			limit = { check_variable = { which = $buildInd$ value = 52 } }
+			add_province_modifier = { name = road_built_recently duration = 1825 }
+		}
+		else_if = {
+			limit = { check_variable = { which = $buildInd$ value = 47 } }
+			add_province_modifier = { name = built_fort duration = 1825 }
+		}
+		
+		if = {
+			limit = { check_variable = { which = $buildInd$ value = 36 } }
+			if = {
+				limit = { check_variable = { which = $buildInd$ value = 55 } }
+				if = {
+					limit = { check_variable = { which = $buildInd$ value = 64 } }
+					if = {
+						limit = { check_variable = { which = $buildInd$ value = 68 } }
+						if = {
+							limit = { check_variable = { which = $buildInd$ value = 70 } }
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 71 } }
+								if = {
+									limit = { check_variable = { which = $buildInd$ value = 72 } }
+									add_building = military_harbour_4
+								}
+								else = { add_building = military_harbour_3 }
+							}
+							else = { add_building = military_harbour_2 }
+						}
+						else = {
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 69 } }
+								add_building = military_harbour_1
+							}
+							else = { add_building = harbour_infrastructure_5 }
+						}
+					}
+					else = {
+						if = {
+							limit = { check_variable = { which = $buildInd$ value = 66 } }
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 67 } }
+								add_building = harbour_infrastructure_4
+							}
+							else = { add_building = harbour_infrastructure_3x }
+						}
+						else = {
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 65 } }
+								add_building = harbour_infrastructure_2
+							}
+							else = { add_building = harbour_infrastructure_1 }
+						}
+					}
+				}
+				else = {
+					if = {
+						limit = { check_variable = { which = $buildInd$ value = 59 } }
+						if = {
+							limit = { check_variable = { which = $buildInd$ value = 61 } }
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 62 } }
+								if = {
+									limit = { check_variable = { which = $buildInd$ value = 63 } }
+									province_event = { id = POP_dev_button_interactions.408 }
+								}
+								else = { province_event = { id = POP_dev_button_interactions.408 } }
+							}
+							else = { province_event = { id = POP_dev_button_interactions.408 } }
+						}
+						else = {
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 60 } }
+								add_building = bureaucracy_5
+								remove_building = bureaucracy_4
+							}
+							else = {
+								add_building = bureaucracy_4
+								remove_building = bureaucracy_3
+							}
+						}
+					}
+					else = {
+						if = {
+							limit = { check_variable = { which = $buildInd$ value = 57 } }
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 58 } }
+								add_building = bureaucracy_3
+								remove_building = bureaucracy_2
+							}
+							else = {
+								add_building = bureaucracy_2
+								remove_building = bureaucracy_1
+							}
+						}
+						else = {
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 56 } }
+								add_building = bureaucracy_1
+							}
+							else = { province_event = { id = POP_dev_button_interactions.006 } }
+						}
+					}
+				}
+			}
+			else = {
+				if = {
+					limit = { check_variable = { which = $buildInd$ value = 46 } }
+					if = {
+						limit = { check_variable = { which = $buildInd$ value = 50 } }
+						if = {
+							limit = { check_variable = { which = $buildInd$ value = 52 } }
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 53 } }
+								if = {
+									limit = { check_variable = { which = $buildInd$ value = 54 } }
+									province_event = { id = POP_dev_button_interactions.006 }
+								}
+								else = { province_event = { id = POP_dev_button_interactions.006 } }
+							}
+							else = { province_event = { id = POP_dev_button_interactions.006 } }
+						}
+						else = {
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 51 } }
+								province_event = { id = POP_dev_button_interactions.106 }
+							}
+							else = { province_event = { id = POP_dev_button_interactions.106 } }
+						}
+					}
+					else = {
+						if = {
+							limit = { check_variable = { which = $buildInd$ value = 48 } }
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 49 } }
+								province_event = { id = POP_dev_button_interactions.106 }
+							}
+							else = { province_event = { id = POP_dev_button_interactions.106 } }
+						}
+						else = {
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 47 } }
+								province_event = { id = POP_dev_button_interactions.106 }
+							}
+							else = { multiply_variable = { which = farm_efficiency_ducats_invested value = 1.1 } }
+						}
+					}
+				}
+				else = {
+					if = {
+						limit = { check_variable = { which = $buildInd$ value = 41 } }
+						if = {
+							limit = { check_variable = { which = $buildInd$ value = 43 } }
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 44 } }
+								if = {
+									limit = { check_variable = { which = $buildInd$ value = 45 } }
+									add_building = rural_infrastructure_7
+								}
+								else = { add_building = rural_infrastructure_6 }
+							}
+							else = { add_building = rural_infrastructure_5 }
+						}
+						else = {
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 42 } }
+								add_building = rural_infrastructure_4
+							}
+							else = { add_building = rural_infrastructure_3 }
+						}
+					}
+					else = {
+						if = {
+							limit = { check_variable = { which = $buildInd$ value = 39 } }
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 40 } }
+								add_building = rural_infrastructure_2
+							}
+							else = { add_building = rural_infrastructure_1 }
+						}
+						else = {
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 37 } }
+								if = {
+									limit = { check_variable = { which = $buildInd$ value = 38 } }
+									add_building = trading_company
+								}
+								else = { add_building = trading_post }
+							}
+							else = { add_building = temple }
+						}
+					}
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = { check_variable = { which = $buildInd$ value = 18 } }
+				if = {
+					limit = { check_variable = { which = $buildInd$ value = 27 } }
+					if = {
+						limit = { check_variable = { which = $buildInd$ value = 31 } }
+						if = {
+							limit = { check_variable = { which = $buildInd$ value = 33 } }
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 34 } }
+								if = {
+									limit = { check_variable = { which = $buildInd$ value = 35 } }
+									add_building = opera
+								}
+								else = { add_building = fine_arts_academy }
+							}
+							else = { add_building = art_corporation }
+						}
+						else = {
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 32 } }
+								add_building = big_university
+							}
+							else = { add_building = medium_university }
+						}
+					}
+					else = {
+						if = {
+							limit = { check_variable = { which = $buildInd$ value = 29 } }
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 30 } }
+								add_building = small_university
+							}
+							else = { add_building = warehouse_district }
+						}
+						else = {
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 28 } }
+								add_building = warehouse
+							}
+							else = { add_building = steam_powered_factory }
+						}
+					}
+				}
+				else = {
+					if = {
+						limit = { check_variable = { which = $buildInd$ value = 22 } }
+						if = {
+							limit = { check_variable = { which = $buildInd$ value = 24 } }
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 25 } }
+								if = {
+									limit = { check_variable = { which = $buildInd$ value = 26 } }
+									add_building = factory
+								}
+								else = { add_building = urban_manufactory }
+							}
+							else = { add_building = corporation_guild }
+						}
+						else = {
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 23 } }
+								add_building = workshop
+							}
+							else = { add_building = stock_exchange }
+						}
+					}
+					else = {
+						if = {
+							limit = { check_variable = { which = $buildInd$ value = 20 } }
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 21 } }
+								add_building = bank
+							}
+							else = { add_building = customs_house }
+						}
+						else = {
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 19 } }
+								add_building = trade_depot
+							}
+							else = { add_building = merchant_guild }
+						}
+					}
+				}
+			}
+			else = {
+				if = {
+					limit = { check_variable = { which = $buildInd$ value = 9 } }
+					if = {
+						limit = { check_variable = { which = $buildInd$ value = 13 } }
+						if = {
+							limit = { check_variable = { which = $buildInd$ value = 15 } }
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 16 } }
+								if = {
+									limit = { check_variable = { which = $buildInd$ value = 17 } }
+									add_building = marketplace
+								}
+								else = { add_building = harbour_infrastructure_5 }
+							}
+							else = { add_building = harbour_infrastructure_4 }
+						}
+						else = {
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 14 } }
+								add_building = harbour_infrastructure_3x
+							}
+							else = { add_building = harbour_infrastructure_2 }
+						}
+					}
+					else = {
+						if = {
+							limit = { check_variable = { which = $buildInd$ value = 11 } }
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 12 } }
+								add_building = harbour_infrastructure_1
+							}
+							else = { add_building = urban_infrastructure_5 }
+						}
+						else = {
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 10 } }
+								add_building = urban_infrastructure_4
+							}
+							else = { add_building = urban_infrastructure_3 }
+						}
+					}
+				}
+				else = {
+					if = {
+						limit = { check_variable = { which = $buildInd$ value = 5 } }
+						if = {
+							limit = { check_variable = { which = $buildInd$ value = 7 } }
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 8 } }
+								add_building = urban_infrastructure_2
+							}
+							else = { add_building = urban_infrastructure_1 }
+						}
+						else = {
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 6 } }
+								add_building = town_hall
+							}
+							else = { add_building = mines_5 }
+						}
+					}
+					else = {
+						if = {
+							limit = { check_variable = { which = $buildInd$ value = 3 } }
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 4 } }
+								add_building = mines_4
+							}
+							else = { add_building = mines_3 }
+						}
+						else = {
+							if = {
+								limit = { check_variable = { which = $buildInd$ value = 2 } }
+								add_building = mines_2
+							}
+							else = { add_building = mines_1 }
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				owner = {
+					ai = no
+					has_country_flag = build_info_events
+				}
+			}
+			if = {
+				limit = { is_variable_equal = { which = $buildInd$ which = estateBuildInd } }
+				set_variable = { which = prov_built which = estateBuildInd }
+				set_variable = { which = prov_built_cost which = estateBuildPrice }
+[[type]
+				if = {
+					limit = { is_variable_equal = { which = estateBuildAssess$type$ which = estateBuildAssessGN } }
+					set_variable = { which = prov_built_type value = 1 }
+				}
+				else_if = {
+					limit = { is_variable_equal = { which = estateBuildAssess$type$ which = estateBuildAssessLN } }
+					set_variable = { which = prov_built_type value = 2 }
+				}
+				else_if = {
+					limit = { is_variable_equal = { which = estateBuildAssess$type$ which = estateBuildAssessBG } }
+					set_variable = { which = prov_built_type value = 3 }
+				}
+]
+				set_variable = { which = prov_built_event value = 2 }
+				province_event = { id = MT_general_fixes.102 }
+			}
+			else_if = {
+				limit = { is_variable_equal = { which = $buildInd$ which = provAIBuildInd } }
+				set_variable = { which = prov_built which = provAIBuildInd }
+				set_variable = { which = prov_built_cost which = provAIBuildPrice }
+				set_variable = { which = prov_built_event value = 1 }
+				province_event = { id = MT_general_fixes.101 }
+			}
+			else_if = {
+				limit = { is_variable_equal = { which = $buildInd$ which = aiDoSpendingInd } }
+				set_variable = { which = prov_built which = aiDoSpendingInd }
+				set_variable = { which = prov_built_cost which = aiDoSpendingPrice }
+				set_variable = { which = prov_built_event value = 4 }
+				province_event = { id = MT_general_fixes.104 }
+			}
+		}
+	}
+}

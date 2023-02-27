@@ -1,0 +1,626 @@
+########################################
+# Events for Bohemia
+#
+# written by Johan Andersson
+########################################
+
+# DEI GRATIA REMOVED EVENTS 1-3,7 AS HUSSITES HANDLED BY MOD
+
+# The Vladislav Hall
+country_event = {
+	id = flavor_boh.4
+	title = flavor_boh.4.t
+	desc = flavor_boh.4.d
+	picture = FORT_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = BOH
+		owns = 266 # Litomericko
+		is_year = 1493
+	}
+	
+	mean_time_to_happen = { months = 32 }
+	
+	option = {
+		name = flavor_boh.4.a
+		add_prestige = 25
+	}
+}
+
+# Municipal Constitution
+country_event = {
+	id = flavor_boh.5
+	title = flavor_boh.5.t
+	desc = flavor_boh.5.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = BOH
+		is_year = 1500
+		NOT = { ADM = 4 }
+	}
+	
+	mean_time_to_happen = { months = 12 }
+	
+	option = {
+		name = flavor_boh.5.a
+		ai_chance = { factor = 90 }
+		add_ruler_modifier = {
+			name = boh_strong_nobles
+		}
+	}
+	option = {
+		name = flavor_boh.5.b
+		subtract_stability_3 = yes
+		random_owned_province = {
+			limit = {
+				NOT = { has_province_modifier = nobles_organizing }
+			}
+			add_province_modifier = {
+				name = "nobles_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+	}
+}
+
+# Brahe & Kepler
+country_event = {
+	id = flavor_boh.6
+	title = flavor_boh.6.t
+	desc = flavor_boh.6.d
+	picture = INVENTION_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = BOH
+		is_year = 1599
+		owns = 268 # Praha
+	}
+	
+	mean_time_to_happen = { months = 12 }
+	
+	option = {
+		name = flavor_boh.6.a
+		trigger = {
+			num_of_ports = 1
+		}
+		ai_chance = { factor = 90 }
+		add_navy_tradition = 10
+	}
+	option = {
+		name = flavor_boh.6.b
+		add_army_tradition = 10
+	}
+}
+
+# Winter King in Prague
+country_event = {
+	id = flavor_boh.8
+	title = flavor_boh.8.t
+	desc = flavor_boh.8.d
+	picture = COURT_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		tag = BOH
+		is_emperor = no
+		religion = catholic
+		any_owned_province = {
+			religion = protestant
+			culture = czech
+		}
+		is_year = 1580
+	}
+	
+	
+	option = {
+		name = flavor_boh.8.a
+		ai_chance = { factor = 90 }
+		change_religion = protestant
+		if = {
+			limit = {
+				emperor = { religion = catholic }
+			}
+			emperor = {
+				add_casus_belli = {
+					target = BOH
+					type = cb_religious_conformance
+					months = 1200
+				}
+				add_opinion = {
+					who = root
+					modifier = boh_protestant_king
+				}
+			}
+		}
+		
+		every_neighbor_country = {
+			limit = {
+				is_emperor = no
+				religion = catholic
+				num_of_cities = 5
+			}
+			add_casus_belli = {
+				target = BOH
+				type = cb_religious_conformance
+				months = 1200
+			}
+			add_opinion = {
+				who = root
+				modifier = boh_protestant_king
+			}
+		}
+	}
+}
+
+# Scripted by Ellesthyan
+#Treaty of Trnava
+country_event = {
+	id = flavor_boh.9
+	title = flavor_boh.9.name
+	desc = flavor_boh.9.desc
+	picture = COURT_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = BOH
+		owns = 1858 # Belluno
+		exists = HUN
+		exists = HAB
+		HUN = {
+			has_ruler = "Louis the Great"
+		#	alliance_with = HAB
+		}
+		ROOT = {
+			NOT = { war_with = HAB }
+			NOT = { war_with = HUN }
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 5 
+		modifier = {
+			factor = 0.2
+			HUN = {
+				alliance_with = HAB
+			}
+		}
+	}
+	
+	option = {		#Agree to concession
+		name = "flavor_boh.9.opta"
+		ai_chance = { factor = 90 }
+		BOH = {
+			add_prestige = 10
+		}
+		1858 = {
+			cede_province = HUN
+			add_core = HUN
+			remove_core = BOH
+		}
+		HUN = {
+			add_opinion = {
+				who = HAB
+				modifier = alliance_broken
+			}
+		}
+		HAB = {
+			country_event = { id = flavor_boh.11 }
+		}
+		HUN = {
+			country_event = { id = flavor_boh.10 }
+		}
+	}
+	
+	option = {		#Deny concession
+		name = "flavor_boh.9.optb"
+		ai_chance = { factor = 10 }
+		HUN = {
+			add_opinion = {
+				who = BOH
+				modifier = conflict_heats_up
+			}
+			country_event = { id = flavor_boh.13 }
+		}
+		HAB = {
+			add_opinion = {
+				who = BOH
+				modifier = conflict_heats_up
+			}
+			country_event = { id = flavor_boh.12 }
+		}
+	}
+}
+
+country_event = {
+	id = flavor_boh.10
+	title = flavor_boh.10.name
+	desc = flavor_boh.10.desc
+	picture = COURT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {		#Give Belluno to ally
+		name = "flavor_boh.10.opta"
+		ai_chance = { factor = 90 }
+		add_prestige = 10
+		if = {
+			limit = {
+				exists = PAD
+				PAD = { alliance_with = HUN }
+			}
+			1858 = {
+				cede_province = PAD
+				add_core = PAD
+				remove_core = HUN
+			}
+			add_opinion = {
+				who = AQU
+				modifier = alliance_broken
+			}
+			add_opinion = {
+				who = GOR
+				modifier = alliance_broken
+			}
+			PAD = {
+				country_event = { id = flavor_boh.14 }
+			}
+			AQU = {
+				country_event = { id = flavor_boh.15 }
+			}
+			GOR = {
+				country_event = { id = flavor_boh.15 }
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					AND = {
+						exists = PAD
+						PAD = { alliance_with = HUN }
+					}
+				}
+				exists = AQU
+				AQU = { alliance_with = HUN }
+			}
+			1858 = {
+				cede_province = AQU
+				add_core = AQU
+				remove_core = HUN
+			}
+			add_opinion = {
+				who = GOR
+				modifier = alliance_broken
+			}
+			AQU = {
+				country_event = { id = flavor_boh.14 }
+			}
+			GOR = {
+				country_event = { id = flavor_boh.15 }
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					AND = {
+						exists = PAD
+						PAD = { alliance_with = HUN }
+					}
+					AND = {
+						exists = AQU
+						AQU = { alliance_with = HUN }
+					}
+				}
+				exists = GOR
+				GOR = { alliance_with = HUN }
+			}
+			1858 = {
+				cede_province = GOR
+				add_core = GOR
+				remove_core = HUN
+			}
+			GOR = {
+				country_event = { id = flavor_boh.13 }
+			}
+		}
+	}
+	
+	option = {		#Keep Belluno for yourself
+		name = "flavor_boh.10.optb"
+		ai_chance = { factor = 10 }
+		add_prestige = -10
+		add_opinion = {
+			who = PAD
+			modifier = alliance_broken
+		}
+		add_opinion = {
+			who = AQU
+			modifier = alliance_broken
+		}
+		add_opinion = {
+			who = GOR
+			modifier = alliance_broken
+		}
+		PAD = {
+			country_event = { id = flavor_boh.15 }
+		}
+		AQU = {
+			country_event = { id = flavor_boh.15 }
+		}
+		GOR = {
+			country_event = { id = flavor_boh.15 }
+		}
+	}
+}
+
+country_event = {
+	id = flavor_boh.11
+	title = flavor_boh.11.name
+	desc = flavor_boh.11.desc
+	picture = COURT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {		#Explains agreement
+		name = "flavor_boh.11.opta"
+	}
+}
+
+country_event = {
+	id = flavor_boh.12
+	title = flavor_boh.12.name
+	desc = flavor_boh.12.desc
+	picture = COURT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {		#Explains denial to Austria
+		name = "flavor_boh.12.opta"
+	}
+}
+
+country_event = {
+	id = flavor_boh.13
+	title = flavor_boh.13.name
+	desc = flavor_boh.13.desc
+	picture = COURT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {		#Explains denial to Hungary
+		name = "flavor_boh.13.opta"
+	}
+}
+
+country_event = {
+	id = flavor_boh.14
+	title = flavor_boh.14.name
+	desc = flavor_boh.14.desc
+	picture = COURT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {		#Explains transfer of Belluno
+		name = "flavor_boh.14.opta"
+	}
+}
+
+country_event = {
+	id = flavor_boh.15
+	title = flavor_boh.15.name
+	desc = flavor_boh.15.desc
+	picture = COURT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {		#Explains breaking of alliance with Italian allies
+		name = "flavor_boh.15.opta"
+	}
+}
+
+# Anna von Schweidnitz and the union with Bohemia - changed by beorsferth: Already happened in 1353 just do it as outright territory of Bohemia to prevent stupid wars and unnecissary events
+#country_event = {
+#	id = flavor_boh.16
+#	title = "flavor_boh.16.n"
+#	desc = "flavor_boh.16.t"
+#	picture = BURGUNDIAN_PRESENTATION_eventPicture
+#	
+#	is_triggered_only = yes
+#	
+#	trigger = {
+#		tag = SWD
+#		is_female = yes
+#		exists = BOH
+#		NOT = { has_country_flag = union_with_bohemia }
+#	}
+#	
+#	immediate = { set_country_flag = union_with_bohemia }
+#	
+#	option = {
+#		name = "flavor_boh.16.a"
+#		ai_chance = { factor = 95 }
+#		custom_tooltip = game_over
+#		every_country = {
+#			limit = {
+#				OR = {
+#					alliance_with = ROOT
+#					marriage_with = ROOT
+#					is_neighbor_of = ROOT
+#					overlord_of = ROOT
+#					culture_group = west_slavic
+#				}
+#				NOT = { tag = BOH }
+#			}
+#			country_event = { id = flavor_boh.18 days = 6 }
+#		}
+#		every_country = {
+#			limit = {
+#				OR = {
+#					is_subject_of = ROOT
+#				}
+#				NOT = { tag = BOH }
+#			}
+#			country_event = { id = flavor_boh.19 days = 6 }
+#		}
+#		BOH = { country_event = { id = flavor_boh.17 days = 5 } }
+#	}
+#	
+#	option = {
+#		name = "flavor_boh.16.b"
+#		ai_chance = { factor = 5 }
+#		add_legitimacy = -50
+#		add_prestige = -25
+#		break_marriage = BOH
+#		BOH = { add_casus_belli = { target = ROOT type = cb_restore_personal_union months = 120 } }
+#	}
+#}
+
+#country_event = {
+#	id = flavor_boh.17
+#	title = "flavor_boh.17.n"
+#	desc = "flavor_boh.17.t"
+#	picture = BURGUNDIAN_PRESENTATION_eventPicture
+#	
+#	is_triggered_only = yes
+#	
+#	option = {
+#		name = "flavor_boh.17.a"
+#		ai_chance = { factor = 100 }
+#		inherit = FROM
+#	}
+#	
+#	option = {
+#		name = "flavor_boh.17.b"
+#		ai_chance = { factor = 0 }
+#		add_legitimacy = 10
+#		add_prestige = 20
+#	}
+#}
+#
+#country_event = {
+#	
+#	id = flavor_boh.18
+#	title = flavor_boh.18.n
+#	desc = flavor_boh.18.t
+#	picture = DIPLOMACY_eventPicture
+#	
+#	is_triggered_only = yes #By flavor_boh.16
+#	
+#	option = {
+#		name = flavor_boh.18.a #Accept the union
+#		ai_chance = { factor = 90 }
+#	}
+#	option = {
+#		name = flavor_boh.18.b #Reject the union
+#		ai_chance = {
+#			factor = 10
+#			modifier = {
+#				is_rival = BOH
+#				factor = 3
+#			}
+#			modifier = {
+#				is_enemy = BOH
+#				factor = 3
+#			}
+#			modifier = {
+#				overlord_of = FROM
+#				factor = 3
+#			}
+#			modifier = {
+#				alliance_with = FROM
+#				factor = 2
+#			}
+#			modifier = {
+#				marriage_with = FROM
+#				factor = 2
+#			}
+#			modifier = {
+#				war_with = BOH
+#				factor = 5
+#			}
+#			modifier = {
+#				truce_with = BOH
+#				factor = 5
+#			}
+#		}
+#		add_legitimacy = -1
+#		BOH = { add_opinion = { who = ROOT modifier = insulted } }
+#		if = {
+#			limit = { overlord_of = FROM }
+#			add_casus_belli = { target = BOH type = cb_insult months = 120 }
+#		}
+#		if = {
+#			limit = {
+#				NOT = { overlord_of = FROM }
+#				OR = {
+#					alliance_with = FROM
+#					marriage_with = FROM
+#				}
+#			}
+#			add_casus_belli = { target = BOH type = cb_insult months = 12 }
+#		}
+#	}
+#	
+#}
+#
+#country_event = {
+#	
+#	id = flavor_boh.19
+#	title = flavor_boh.19.n
+#	desc = flavor_boh.19.t
+#	picture = DIPLOMACY_eventPicture
+#	
+#	is_triggered_only = yes #By flavor_boh.16
+#	
+#	option = {
+#		name = flavor_boh.19.a #Accept the union
+#		ai_chance = { factor = 100 }
+#		custom_tooltip = game_over
+#		BOH = { country_event = { id = flavor_boh.20 days = 5 } }
+#	}
+#	option = {
+#		name = flavor_boh.19.b #Reject the union
+#		ai_chance = { factor = 0 }
+#		add_legitimacy = -1
+#		BOH = { add_opinion = { who = ROOT modifier = insulted } }
+#	}
+#	
+#}
+#
+#country_event = {
+#	id = flavor_boh.20
+#	title = "flavor_boh.20.n"
+#	desc = "flavor_boh.20.t"
+#	picture = BURGUNDIAN_PRESENTATION_eventPicture
+#	
+#	is_triggered_only = yes
+#	
+#	option = {
+#		name = "flavor_boh.20.a"
+#		ai_chance = { factor = 100 }
+#		inherit = FROM
+#	}
+#	
+#	option = {
+#		name = "flavor_boh.20.b"
+#		ai_chance = { factor = 0 }
+#		add_legitimacy = 10
+#		add_prestige = 20
+#	}
+#	
+#}
+

@@ -1,0 +1,92 @@
+country_decisions = {
+	become_admin = {
+		potential = {
+			ai = no
+			has_country_flag = show_utility_decisions
+			NOT = { has_country_flag = admin_country }
+		}
+		allow = {
+			OR = {
+				NOT = {
+					has_country_flag = become_admin_request
+				}
+				had_country_flag = {
+					flag = become_admin_request
+					days = 1825
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					any_country = {
+						has_country_flag = admin_country
+					}
+				}
+				set_country_flag = become_admin_request
+				random_country = {
+					limit = {
+						has_country_flag = admin_country
+					}
+					country_event = { id = mp_events.1 }
+				}
+			}
+			else = {
+				set_country_flag = admin_country
+			}
+		}
+	}
+	relinquish_admin = {
+		potential = {
+			ai = no
+			has_country_flag = admin_country
+			has_country_flag = show_utility_decisions
+			has_global_flag = multiplayer
+		}
+		allow = {
+			hidden_trigger = {
+				always = yes
+			}
+		}
+		effect = {
+			clr_country_flag = admin_country
+			every_country = {
+				#limit = {
+				#	has_country_flag = become_admin_request
+				#}
+				clr_country_flag = become_admin_request
+			}
+		}
+	}
+#	MPreform_government = {
+#		potential = {
+#			OR = {
+#				tag = BOH
+#				tag = HUN
+#				tag = MAM
+#			}
+#			NOT = {
+#				has_country_flag = mpreform
+#			}
+#		}
+#		allow = {
+#			OR = {
+#				AND = {
+#					OR = {
+#						tag = BOH
+#						tag = HUN
+#					}
+#					absolutism = 35
+#				}
+#				AND = {
+#					tag = MAM
+#					absolutism = 35
+#				}
+#			}
+#		}
+#		effect = {
+#			change_government = despotic_monarchy
+#			set_country_flag = mpreform
+#		}
+#	}
+}

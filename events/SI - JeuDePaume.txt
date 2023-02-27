@@ -1,0 +1,1627 @@
+#by Marco Dandolo
+
+#Events concerning Jeu de Paume
+
+#Events 1-9 Jeu de Paume preparations
+
+#1 Preparations
+#2 Invited for Jeu de Paume
+#3 Jeu De Paume tournament partner accepted
+#4 Jeu De Paume tournament partner didn't accepted
+#5 Equipment for guest
+#6 Equipment for host
+#7 Guest travells to host
+#8 Guest arrives
+#9 Host welcomes guest
+
+#Events 10-21 The Match
+
+#10 Match begins
+#11 A Giraffe
+#12 A Piqué
+#13 A Bobble
+#14 An opportunity (Chance to win by spending more points)
+#15 An uncatchable ball? (Player cheats)
+#16 A possible chase (Like Match begins)
+#17 Equal return (Let the rival win)
+#18 No chance (Can't catch ball, rival wins)
+#19 A giant fail (Good return, rival loses)
+#20 Rival is chivalrous
+#21 Rival is a cheater
+
+#Events 22-25 Win, lose and local tournament
+
+#22 Jeu de Paume won
+#23 Jeu de Paume lost
+#24 Local tournament starts
+#25 Local tournament ends
+
+#Events 26- Additional flavor
+
+
+
+
+namespace = jeu_paume
+
+################
+# Jeu de Paume #
+################
+
+#Preparations
+country_event = {
+	id = jeu_paume.1
+	title = "jeu_paume.EVTNAME1"
+	desc = "jeu_paume.EVTDESC1"
+	picture = JEU_DE_PAUME_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			add_country_modifier = {
+				name = "preparing_jeu_de_paume"
+				duration = -1
+			}
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTA1"	#Invite a neighbor
+		
+		trigger = {
+			any_known_country = {
+				technology_group = western
+				religion = ROOT
+				OR = { has_regency = no has_consort_regency = yes }
+				is_female = no
+				is_at_war = no
+				NOT = { has_country_flag = jeu_de_paume_boycott }
+				NOT = { has_country_modifier = jeu_de_paume_grouch }
+				NOT = { has_country_flag = jeu_de_paume }
+				NOT = { has_country_modifier = lost_jeu_de_paume }
+				NOT = { has_country_modifier = won_jeu_de_paume }
+				adm_republic_trigger = no
+				revolution_trigger = no
+				dictator_trigger = no
+			}
+		}
+		
+		add_dip_power = -5
+		add_prestige = 3
+		random_known_country = {
+			limit = {
+				technology_group = western
+				religion = ROOT
+				OR = { has_regency = no has_consort_regency = yes }
+				is_at_war = no
+				NOT = { has_country_flag = jeu_de_paume_boycott }
+				NOT = { has_country_modifier = jeu_de_paume_grouch }
+				NOT = { has_country_flag = jeu_de_paume }
+				NOT = { has_country_modifier = lost_jeu_de_paume }
+				NOT = { has_country_modifier = won_jeu_de_paume }
+				adm_republic_trigger = no
+				revolution_trigger = no
+				dictator_trigger = no
+			}
+			country_event = {
+				id = jeu_paume.2 days = 2
+			}
+		}
+		ai_chance = { factor = 100 }
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTB1"	#It will be a local torunament
+		add_prestige = -1
+		hidden_effect = {
+			country_event = {
+				id = jeu_paume.24 days = 30
+			}
+		}
+	}
+}
+
+#Invited for Jeu de Paume
+country_event = {
+	id = jeu_paume.2
+	title = "jeu_paume.EVTNAME2"
+	desc = "jeu_paume.EVTDESC2"
+	picture = JEU_DE_PAUME_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = { hidden_effect = { set_country_flag = jeu_de_paume } }
+	
+	option = {
+		name = "jeu_paume.EVTOPTA2"	#We will play a game
+		
+		add_dip_power = -5
+		add_prestige = 2
+		FROM = {
+			country_event = {
+				id = jeu_paume.3
+			}
+		}
+		ai_chance = {
+			factor = 70
+			modifier = {
+				factor = 0.5
+				FROM = { is_enemy = ROOT }
+			}
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTB2"	#We are not interested
+		
+		add_country_modifier = {
+			name = "jeu_de_paume_grouch"
+			duration = 1825
+		}
+		FROM = {
+			country_event = {
+				id = jeu_paume.4
+			}
+		}
+		clr_country_flag = jeu_de_paume
+		ai_chance = { factor = 30 }
+	}
+}
+
+#Jeu De Paume tournament partner accepted
+country_event = {
+	id = jeu_paume.3
+	title = "jeu_paume.EVTNAME3"
+	desc = "jeu_paume.EVTDESC3"
+	picture = JEU_DE_PAUME_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "jeu_paume.EVTOPTA3"	#Great!
+		FROM = {
+			country_event = {
+				id = jeu_paume.5 days = 10
+			}
+		}
+		add_prestige = 1
+	}
+}
+
+#Jeu De Paume tournament partner didn't accepted
+country_event = {
+	id = jeu_paume.4
+	title = "jeu_paume.EVTNAME4"
+	desc = "jeu_paume.EVTDESC4"
+	picture = JEU_DE_PAUME_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "jeu_paume.EVTOPTA4"	#How dare they?
+		add_prestige = -1
+		country_event = {
+			id = jeu_paume.1 days = 100
+		}
+	}
+}
+
+#Equipment for guest
+country_event = {
+	id = jeu_paume.5
+	title = "jeu_paume.EVTNAME5"
+	desc = "jeu_paume.EVTDESC5"
+	picture = JEU_DE_PAUME_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "jeu_paume.EVTOPTA5"	#The best and newest equipment
+		
+		add_years_of_income = -0.1
+		add_prestige = 3
+		FROM = {
+			country_event = {
+				id = jeu_paume.6
+			}
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTB5"	#A good equipment
+		
+		add_years_of_income = -0.05
+		add_prestige = 1
+		FROM = {
+			country_event = {
+				id = jeu_paume.6
+			}
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTC5"	#The old one will do it
+		
+		add_prestige = -1
+		FROM = {
+			country_event = {
+				id = jeu_paume.6
+			}
+		}
+	}
+}
+
+#Equipment for host
+country_event = {
+	id = jeu_paume.6
+	title = "jeu_paume.EVTNAME5"
+	desc = "jeu_paume.EVTDESC5"
+	picture = JEU_DE_PAUME_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "jeu_paume.EVTOPTA5"	#The best and newest equipment
+		
+		add_years_of_income = -0.1
+		add_prestige = 3
+		FROM = {
+			country_event = {
+				id = jeu_paume.7 days = 7
+			}
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTB5"	#A good equipment
+		
+		add_years_of_income = -0.05
+		add_prestige = 1
+		FROM = {
+			country_event = {
+				id = jeu_paume.7 days = 7
+			}
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTC5"	#The old one will do it
+		
+		add_prestige = -1
+		FROM = {
+			country_event = {
+				id = jeu_paume.7 days = 7
+			}
+		}
+	}
+}
+
+#Guest travells to host
+country_event = {
+	id = jeu_paume.7
+	title = "jeu_paume.EVTNAME7"
+	desc = "jeu_paume.EVTDESC7"
+	picture = JEU_DE_PAUME_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "jeu_paume.EVTOPTA7"	#Let's go
+		FROM = {
+			country_event = {
+				id = jeu_paume.8
+			}
+		}
+	}
+}
+
+#Guest arrives
+country_event = {
+	id = jeu_paume.8
+	title = "jeu_paume.EVTNAME8"
+	desc = "jeu_paume.EVTDESC8"
+	picture = JEU_DE_PAUME_eventPicture
+	
+	is_triggered_only = yes
+	
+	
+	option = {
+		name = "jeu_paume.EVTOPTA8"	#Welcome our guest
+		set_country_flag = jeu_de_paume_attacker
+		set_variable = {
+			which = "jeu_de_paume"
+			value = 0
+		}
+		remove_country_modifier = preparing_jeu_de_paume
+		add_country_modifier = {
+			name = "festivating_jeu_de_paume"
+			duration = -1
+		}
+		FROM = {
+			country_event = {
+				id = jeu_paume.9 days = 2
+			}
+		}
+		add_opinion = {
+			who = FROM
+			modifier = opinion_jeu_de_paume_match
+		}
+	}
+}
+
+#Host welcomes guest
+country_event = {
+	id = jeu_paume.9
+	title = "jeu_paume.EVTNAME9"
+	desc = "jeu_paume.EVTDESC9"
+	picture = JEU_DE_PAUME_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "jeu_paume.EVTOPTA9"	#Welcome our guest
+		set_country_flag = jeu_de_paume_defender
+		set_variable = {
+			which = "jeu_de_paume"
+			value = 0
+		}
+		add_country_modifier = {
+			name = "festivating_jeu_de_paume"
+			duration = -1
+		}
+		FROM = {
+			country_event = {
+				id = jeu_paume.10 days = 5
+			}
+		}
+		add_opinion = {
+			who = FROM
+			modifier = opinion_jeu_de_paume_match
+		}
+	}
+}
+
+#############
+# THE MATCH #
+#############
+
+#Match begins
+country_event = {
+	id = jeu_paume.10
+	title = "jeu_paume.EVTNAME10"
+	desc = "jeu_paume.EVTDESC10"
+	picture = JEU_DE_PAUME_ATTACKER_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			change_variable = { which = jeu_de_paume value = 1 }
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTA10"	#Giraffe
+		
+		random_list = {
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.14 days = 2 #An opportunity
+					}
+				}
+			}
+			60 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.11 days = 2 #A Giraffe
+					}
+				}
+			}
+			15 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.15 days = 2 #An uncatchable ball?
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTB10"	#Piqué
+		
+		random_list = {
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.16 days = 2 #A possible chase
+					}
+				}
+			}
+			65 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.12 days = 2 #A Piqué
+					}
+				}
+			}
+			10 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.14 days = 2 #An opportunity
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTC10"	#Bobble
+		
+		random_list = {
+			30 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.17 days = 2 #Equal return
+					}
+				}
+			}
+			60 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.13 days = 2 #A Bobble
+					}
+				}
+			}
+			10 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.16 days = 2 #A possible chase
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTD10"	#Caesar aut nihil!
+		
+		trigger = {
+			mil = 5
+		}
+		
+		add_prestige = 1
+		random_list = {
+			50 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.18 days = 2 #No chance!
+					}
+				}
+			}
+			50 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.19 days = 2 #A giant fail!
+					}
+				}
+			}
+		}
+	}
+}
+
+#A Giraffe
+country_event = {
+	id = jeu_paume.11
+	title = "jeu_paume.EVTNAME11"
+	desc = "jeu_paume.EVTDESC11"
+	picture = JEU_DE_PAUME_DEFENDER_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			change_variable = { which = "jeu_de_paume" value = 1 }
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTA11"	#Counter Giraffe!
+		add_prestige = 1
+		add_adm_power = -3
+		
+		random_list = {
+			20 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.14 days = 2 #An opportunity
+					}
+				}
+			}
+			60 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.11 days = 2 #A Giraffe
+					}
+				}
+			}
+			20 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.19 days = 2 #A giant fail
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTB10"	#Piqué
+		add_prestige = 1
+		add_dip_power = -3
+		
+		random_list = {
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.16 days = 2 #A possible chase
+					}
+				}
+			}
+			50 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.12 days = 2 #A Piqué
+					}
+				}
+			}
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.18 days = 2 #No chance
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTC10"	#Bobble
+		add_prestige = 1
+		add_mil_power = -3
+		
+		random_list = {
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.17 days = 2 #Equal return
+					}
+				}
+			}
+			50 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.13 days = 2 #A Bobble
+					}
+				}
+			}
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.15 days = 2 #An uncatchable ball?
+					}
+				}
+			}
+		}
+	}
+}
+
+#A Piqué
+country_event = {
+	id = jeu_paume.12
+	title = "jeu_paume.EVTNAME12"
+	desc = "jeu_paume.EVTDESC12"
+	picture = JEU_DE_PAUME_DEFENDER_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			change_variable = { which = "jeu_de_paume" value = 1 }
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTA10"	#A Giraffe
+		add_prestige = 1
+		add_adm_power = -3
+		
+		random_list = {
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.14 days = 2 #An opportunity
+					}
+				}
+			}
+			50 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.11 days = 2 #A Giraffe
+					}
+				}
+			}
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.18 days = 2 #No chance
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTB12"	#Counter-Piqué!
+		add_prestige = 1
+		add_dip_power = -3
+		
+		random_list = {
+			20 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.16 days = 2 #A possible chase
+					}
+				}
+			}
+			60 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.12 days = 2 #A Piqué
+					}
+				}
+			}
+			20 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.19 days = 2 #A giant fail
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTC10"	#Bobble
+		add_prestige = 1
+		add_mil_power = -3
+		
+		random_list = {
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.17 days = 2 #Equal return
+					}
+				}
+			}
+			50 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.13 days = 2 #A Bobble
+					}
+				}
+			}
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.15 days = 2 #An uncatchable ball?
+					}
+				}
+			}
+		}
+	}
+}
+
+#A Bobble
+country_event = {
+	id = jeu_paume.13
+	title = "jeu_paume.EVTNAME13"
+	desc = "jeu_paume.EVTDESC13"
+	picture = JEU_DE_PAUME_DEFENDER_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			change_variable = { which = "jeu_de_paume" value = 1 }
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTA10"	#A Giraffe
+		add_prestige = 1
+		add_adm_power = -3
+		
+		random_list = {
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.14 days = 2 #An opportunity
+					}
+				}
+			}
+			50 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.11 days = 2 #A Giraffe
+					}
+				}
+			}
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.18 days = 2 #No chance
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTB10"	#A Piqué
+		add_prestige = 1
+		add_dip_power = -3
+		
+		random_list = {
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.16 days = 2 #A possible chase
+					}
+				}
+			}
+			50 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.12 days = 2 #A Piqué
+					}
+				}
+			}
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.15 days = 2 #An uncatchable ball?
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTC13"	#Counter-Bobble!
+		add_prestige = 1
+		add_mil_power = -3
+		
+		random_list = {
+			20 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.17 days = 2 #Equal return
+					}
+				}
+			}
+			60 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.13 days = 2 #A Bobble
+					}
+				}
+			}
+			20 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.19 days = 2 #A giant fail
+					}
+				}
+			}
+		}
+	}
+}
+
+#An opportunity
+country_event = {
+	id = jeu_paume.14
+	title = "jeu_paume.EVTNAME14"
+	desc = "jeu_paume.EVTDESC14"
+	picture = JEU_DE_PAUME_ATTACKER_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			change_variable = { which = "jeu_de_paume" value = 1 }
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTA14"	#That's an opportunity!
+		add_prestige = 3
+		add_adm_power = -5
+		add_dip_power = -5
+		add_mil_power = -5
+		
+		random_list = {
+			75 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.18 days = 2 #No chance
+					}
+				}
+			}
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.14 days = 2 #An opportunity
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTB14"	#Play a normal ball
+		add_prestige = 1
+		add_adm_power = -1
+		add_dip_power = -1
+		add_mil_power = -1
+		
+		random_list = {
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.11 days = 2 #A possible chase
+					}
+				}
+			}
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.12 days = 2 #A Piqué
+					}
+				}
+			}
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.13 days = 2 #An uncatchable ball?
+					}
+				}
+			}
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.16 days = 2 #A possible chase
+					}
+				}
+			}
+		}
+	}
+}
+
+#An uncatchable ball?
+country_event = {
+	id = jeu_paume.15
+	title = "jeu_paume.EVTNAME15"
+	desc = "jeu_paume.EVTDESC15"
+	picture = JEU_DE_PAUME_ATTACKER_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			change_variable = { which = "jeu_de_paume" value = 1 }
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTA15"	#I insist! This ball was out!
+		custom_tooltip = jeu_de_paume_win
+		add_prestige = -5
+		add_opinion = {
+			who = FROM
+			modifier = opinion_jeu_de_paume_cheater
+		}
+		FROM = {
+			country_event = {
+				id = jeu_paume.21 days = 2 #Rival is a cheater!
+			}
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTB14"	#Play a normal ball
+		add_prestige = 1
+		add_adm_power = -1
+		add_dip_power = -1
+		add_mil_power = -1
+		
+		random_list = {
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.11 days = 2 #A possible chase
+					}
+				}
+			}
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.12 days = 2 #A Piqué
+					}
+				}
+			}
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.13 days = 2 #An uncatchable ball?
+					}
+				}
+			}
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.16 days = 2 #A possible chase
+					}
+				}
+			}
+		}
+	}
+}
+
+#A chase
+country_event = {
+	id = jeu_paume.16
+	title = "jeu_paume.EVTNAME16"
+	desc = "jeu_paume.EVTDESC16"
+	picture = JEU_DE_PAUME_ATTACKER_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			change_variable = { which = "jeu_de_paume" value = 1 }
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTA10"	#Giraffe
+		add_prestige = 1
+		add_adm_power = -3
+		random_list = {
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.14 days = 2 #An opportunity
+					}
+				}
+			}
+			60 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.11 days = 2 #A Giraffe
+					}
+				}
+			}
+			15 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.15 days = 2 #An uncatchable ball?
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTB10"	#Piqué
+		add_prestige = 1
+		add_dip_power = -3
+		random_list = {
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.16 days = 2 #A possible chase
+					}
+				}
+			}
+			65 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.12 days = 2 #A Piqué
+					}
+				}
+			}
+			10 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.14 days = 2 #An opportunity
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTC10"	#Bobble
+		add_prestige = 1
+		add_mil_power = -3
+		random_list = {
+			30 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.17 days = 2 #Equal return
+					}
+				}
+			}
+			60 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.13 days = 2 #A Bobble
+					}
+				}
+			}
+			10 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.16 days = 2 #A possible chase
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTD10"	#Caesar aut nihil!
+		
+		trigger = {
+			mil = 5
+		}
+		
+		add_prestige = 1
+		add_adm_power = -1
+		add_dip_power = -1
+		add_mil_power = -1
+		random_list = {
+			66 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.18 days = 2 #No chance!
+					}
+				}
+			}
+			34 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.19 days = 2 #A giant fail!
+					}
+				}
+			}
+		}
+	}
+}
+
+#Equal return
+country_event = {
+	id = jeu_paume.17
+	title = "jeu_paume.EVTNAME17"
+	desc = "jeu_paume.EVTDESC17"
+	picture = JEU_DE_PAUME_DEFENDER_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			change_variable = { which = "jeu_de_paume" value = 1 }
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTA17"	#I'll be noble
+		custom_tooltip = jeu_de_paume_lose
+		add_prestige = 5
+		add_opinion = {
+			who = FROM
+			modifier = opinion_jeu_de_paume_fair
+		}
+		FROM = {
+			country_event = {
+				id = jeu_paume.20 days = 2 #Rival is chivalrous
+			}
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTB14"	#Play a normal ball
+		add_prestige = 1
+		add_adm_power = -1
+		add_dip_power = -1
+		add_mil_power = -1
+		
+		random_list = {
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.11 days = 2 #A possible chase
+					}
+				}
+			}
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.12 days = 2 #A Piqué
+					}
+				}
+			}
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.13 days = 2 #An uncatchable ball?
+					}
+				}
+			}
+			25 = {
+				FROM = {
+					country_event = {
+						id = jeu_paume.16 days = 2 #A possible chase
+					}
+				}
+			}
+		}
+	}
+}
+
+#No chance
+country_event = {
+	id = jeu_paume.18
+	title = "jeu_paume.EVTNAME18"
+	desc = "jeu_paume.EVTDESC18"
+	picture = JEU_DE_PAUME_DEFENDER_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			change_variable = { which = "jeu_de_paume" value = 1 }
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTA18"	#No chance
+		custom_tooltip = jeu_de_paume_lose
+		FROM = {
+			country_event = {
+				id = jeu_paume.22 days = 2 #Rival wins
+			}
+		}
+	}
+}
+
+#A giant fail
+country_event = {
+	id = jeu_paume.19
+	title = "jeu_paume.EVTNAME19"
+	desc = "jeu_paume.EVTDESC19"
+	picture = JEU_DE_PAUME_ATTACKER_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			change_variable = { which = "jeu_de_paume" value = 1 }
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTA19"	#Tenez!
+		custom_tooltip = jeu_de_paume_win
+		add_prestige = 1
+		FROM = {
+			country_event = {
+				id = jeu_paume.18 days = 2 #Rival loses
+			}
+		}
+	}
+}
+
+#Rival is chivalrous
+country_event = {
+	id = jeu_paume.20
+	title = "jeu_paume.EVTNAME20"
+	desc = "jeu_paume.EVTDESC20"
+	picture = JEU_DE_PAUME_DEFENDER_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			change_variable = { which = "jeu_de_paume" value = 1 }
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTA20"	#Our rival is a fair player
+		custom_tooltip = jeu_de_paume_win
+		add_opinion = {
+			who = FROM
+			modifier = opinion_jeu_de_paume_fair
+		}
+		FROM = {
+			country_event = {
+				id = jeu_paume.18 days = 2 #Rival loses
+			}
+		}
+	}
+}
+
+#Rival is a cheater
+country_event = {
+	id = jeu_paume.21
+	title = "jeu_paume.EVTNAME21"
+	desc = "jeu_paume.EVTDESC21"
+	picture = JEU_DE_PAUME_DEFENDER_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			change_variable = { which = "jeu_de_paume" value = 1 }
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTA21"	#Our rival is scum!
+		custom_tooltip = jeu_de_paume_lose
+		add_opinion = {
+			who = FROM
+			modifier = opinion_jeu_de_paume_cheater
+		}
+		FROM = {
+			country_event = {
+				id = jeu_paume.22 days = 2 #Rival wins
+			}
+		}
+	}
+}
+
+#############
+# AFTERMATH #
+#############
+
+#Jeu de Paume won
+country_event = {
+	id = jeu_paume.22
+	title = "jeu_paume.EVTNAME22"
+	desc = "jeu_paume.EVTDESC22"
+	picture = JEU_DE_PAUME_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		FROM = {
+			country_event = {
+				id = jeu_paume.23 days = 2 #Rival loses
+			}
+		}
+	}
+	
+	option = {
+		trigger = {
+			check_variable = { which = jeu_de_paume value = 1 }
+			NOT = { check_variable = { which = jeu_de_paume value = 2 } }
+		}
+		name = "jeu_paume.EVTOPTA22"	#We should do this again
+		add_adm_power = 3
+		add_dip_power = 3
+		add_mil_power = 3
+		add_prestige = 3
+		remove_country_modifier = festivating_jeu_de_paume
+		clr_country_flag = jeu_de_paume
+		clr_country_flag = jeu_de_paume_attacker
+		clr_country_flag = jeu_de_paume_defender
+		add_country_modifier = {
+			name = "glorious_jeu_de_paume"
+			duration = 1825
+		}
+		add_country_modifier = {
+			name = "won_jeu_de_paume"
+			duration = 2000
+		}
+		set_variable = {
+			which = "jeu_de_paume"
+			value = 0
+		}
+	}
+	
+	option = {
+		trigger = {
+			check_variable = { which = jeu_de_paume value = 2 }
+			NOT = { check_variable = { which = jeu_de_paume value = 3 } }
+		}
+		name = "jeu_paume.EVTOPTA22"	#We should do this again
+		add_adm_power = 5
+		add_dip_power = 5
+		add_mil_power = 5
+		add_prestige = 1
+		remove_country_modifier = festivating_jeu_de_paume
+		clr_country_flag = jeu_de_paume
+		clr_country_flag = jeu_de_paume_attacker
+		clr_country_flag = jeu_de_paume_defender
+		add_country_modifier = {
+			name = "glorious_jeu_de_paume"
+			duration = 1825
+		}
+		add_country_modifier = {
+			name = "won_jeu_de_paume"
+			duration = 2000
+		}
+		set_variable = {
+			which = "jeu_de_paume"
+			value = 0
+		}
+	}
+	
+	option = {
+		trigger = {
+			check_variable = { which = jeu_de_paume value = 3 }
+			NOT = { check_variable = { which = jeu_de_paume value = 4 } }
+		}
+		name = "jeu_paume.EVTOPTA22"	#We should do this again
+		add_adm_power = 8
+		add_dip_power = 8
+		add_mil_power = 8
+		add_prestige = 2
+		remove_country_modifier = festivating_jeu_de_paume
+		clr_country_flag = jeu_de_paume
+		clr_country_flag = jeu_de_paume_attacker
+		clr_country_flag = jeu_de_paume_defender
+		add_country_modifier = {
+			name = "glorious_jeu_de_paume"
+			duration = 1825
+		}
+		add_country_modifier = {
+			name = "won_jeu_de_paume"
+			duration = 2000
+		}
+		set_variable = {
+			which = "jeu_de_paume"
+			value = 0
+		}
+	}
+	
+	option = {
+		trigger = {
+			check_variable = { which = jeu_de_paume value = 4 }
+			NOT = { check_variable = { which = jeu_de_paume value = 5 } }
+		}
+		name = "jeu_paume.EVTOPTA22"	#We should do this again
+		add_adm_power = 10
+		add_dip_power = 10
+		add_mil_power = 10
+		add_prestige = 3
+		remove_country_modifier = festivating_jeu_de_paume
+		clr_country_flag = jeu_de_paume
+		clr_country_flag = jeu_de_paume_attacker
+		clr_country_flag = jeu_de_paume_defender
+		add_country_modifier = {
+			name = "glorious_jeu_de_paume"
+			duration = 2000
+		}
+		add_country_modifier = {
+			name = "won_jeu_de_paume"
+			duration = 2250
+		}
+		set_variable = {
+			which = "jeu_de_paume"
+			value = 0
+		}
+	}
+	
+	option = {
+		trigger = {
+			check_variable = { which = jeu_de_paume value = 5 }
+			NOT = { check_variable = { which = jeu_de_paume value = 7 } }
+		}
+		name = "jeu_paume.EVTOPTA22"	#We should do this again
+		add_adm_power = 15
+		add_dip_power = 15
+		add_mil_power = 15
+		add_prestige = 4
+		remove_country_modifier = festivating_jeu_de_paume
+		clr_country_flag = jeu_de_paume
+		clr_country_flag = jeu_de_paume_attacker
+		clr_country_flag = jeu_de_paume_defender
+		add_country_modifier = {
+			name = "glorious_jeu_de_paume"
+			duration = 2250
+		}
+		add_country_modifier = {
+			name = "won_jeu_de_paume"
+			duration = 2500
+		}
+		set_variable = {
+			which = "jeu_de_paume"
+			value = 0
+		}
+	}
+	option = {
+		trigger = {
+			check_variable = { which = jeu_de_paume value = 7 }
+			NOT = { check_variable = { which = jeu_de_paume value = 10 } }
+		}
+		name = "jeu_paume.EVTOPTA22"	#We should do this again
+		add_adm_power = 20
+		add_dip_power = 20
+		add_mil_power = 20
+		add_prestige = 5
+		remove_country_modifier = festivating_jeu_de_paume
+		clr_country_flag = jeu_de_paume
+		clr_country_flag = jeu_de_paume_attacker
+		clr_country_flag = jeu_de_paume_defender
+		add_country_modifier = {
+			name = "glorious_jeu_de_paume"
+			duration = 2500
+		}
+		add_country_modifier = {
+			name = "won_jeu_de_paume"
+			duration = 2750
+		}
+		set_variable = {
+			which = "jeu_de_paume"
+			value = 0
+		}
+	}
+	option = {
+		trigger = {
+			check_variable = { which = jeu_de_paume value = 10 }
+		}
+		name = "jeu_paume.EVTOPTA22"	#We should do this again
+		add_adm_power = 30
+		add_dip_power = 30
+		add_mil_power = 30
+		add_prestige = 6
+		remove_country_modifier = festivating_jeu_de_paume
+		clr_country_flag = jeu_de_paume
+		clr_country_flag = jeu_de_paume_attacker
+		clr_country_flag = jeu_de_paume_defender
+		add_country_modifier = {
+			name = "glorious_jeu_de_paume"
+			duration = 3000
+		}
+		add_country_modifier = {
+			name = "won_jeu_de_paume"
+			duration = 3000
+		}
+		set_variable = {
+			which = "jeu_de_paume"
+			value = 0
+		}
+	}
+}
+
+#Jeu de Paume lost
+country_event = {
+	id = jeu_paume.23
+	title = "jeu_paume.EVTNAME22"
+	desc = "jeu_paume.EVTDESC22"
+	picture = JEU_DE_PAUME_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "jeu_paume.EVTOPTA23"	#No Jeu de Paume for me for quite a while
+		remove_country_modifier = festivating_jeu_de_paume
+		clr_country_flag = jeu_de_paume
+		clr_country_flag = jeu_de_paume_attacker
+		clr_country_flag = jeu_de_paume_defender
+		add_country_modifier = {
+			name = "glorious_jeu_de_paume"
+			duration = 1825
+		}
+		add_country_modifier = {
+			name = "lost_jeu_de_paume"
+			duration = 1000
+		}
+		set_variable = {
+			which = "jeu_de_paume"
+			value = 0
+		}
+	}
+}
+
+#Local tournament starts
+country_event = {
+	id = jeu_paume.24
+	title = "jeu_paume.EVTNAME24"
+	desc = "jeu_paume.EVTDESC24"
+	picture = JEU_DE_PAUME_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "jeu_paume.EVTOPTA24"	#Tenez!
+		remove_country_modifier = preparing_jeu_de_paume
+		hidden_effect = {
+			country_event = {
+				id = jeu_paume.25 days = 120
+			}
+		}
+		add_country_modifier = {
+			name = "festivating_jeu_de_paume"
+			duration = -1
+		}
+	}
+}
+
+#Local tournament ends
+country_event = {
+	id = jeu_paume.25
+	title = "jeu_paume.EVTNAME25"
+	desc = "jeu_paume.EVTDESC25"
+	picture = JEU_DE_PAUME_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "jeu_paume.EVTOPTA25"	#It was fun
+		add_prestige = 1
+		add_adm_power = 3
+		add_dip_power = 3
+		add_mil_power = 3
+		remove_country_modifier = festivating_jeu_de_paume
+		clr_country_flag = jeu_de_paume
+		clr_country_flag = jeu_de_paume_attacker
+		clr_country_flag = jeu_de_paume_defender
+		add_country_modifier = {
+			name = "glorious_jeu_de_paume"
+			duration = 1825
+		}
+		set_variable = {
+			which = "jeu_de_paume"
+			value = 0
+		}
+	}
+}
+
+#############
+#Jeu de Paume hall and revolution
+
+country_event = {
+	id = jeu_paume.26
+	title = "jeu_paume.EVTNAME26"
+	desc = "jeu_paume.EVTDESC26"
+	picture = JEU_DE_PAUME_eventPicture
+	
+	major = yes
+	
+	trigger = {
+		has_disaster = revolution
+		has_country_flag = jeu_paume_hall
+		NOT = { has_country_flag = revolution_jeu_paume }
+		revolution_trigger = no
+		dictator_trigger = no
+	}
+	
+	mean_time_to_happen = { months = 12 }
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = revolution_jeu_paume
+		}
+	}
+	
+	option = {
+		name = "jeu_paume.EVTOPTA26"			# That's a place to play, not to debate!
+		add_prestige = -5
+	}
+}

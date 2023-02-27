@@ -1,0 +1,30 @@
+# Call correct actual evaluation script based on 'type' and 'name' parameters,
+# which returns a value that ranges between -3~3, and uses that to decide if
+# a flag related to that 'type' and 'name' should be added or removed
+AIEval = {
+	# Do Eval
+	AIEval$type$$name$ = { return = tmpEval }
+	
+	# Randomly modify the eval
+	random_list = {
+		1 = { subtract_variable = { which = tmpEval value = 0.5 } }
+		3 = { subtract_variable = { which = tmpEval value = 0.25 } }
+		9 = { }
+		3 = { change_variable = { which = tmpEval value = 0.25 } }
+		1 = { change_variable = { which = tmpEval value = 0.5 } }
+	}
+	
+	# Set or clear flags based on modified eval
+	if = {
+		# Tuning value, lower means less frequent removal
+		limit = { NOT = { check_variable = { which = tmpEval value = -$tuning$ } } }
+		clr_country_flag = aiHas$type$$name$
+	}
+	else_if = {
+		# Tuning value, higher means less frequent addition
+		limit = { check_variable = { which = tmpEval value = $tuning$ } }
+		set_country_flag = aiHas$type$$name$
+	}
+	
+	set_variable = { which = tmpEval value = 0 }
+}

@@ -1,0 +1,464 @@
+namespace = white_horde_collapse
+
+#Start event
+country_event = {
+	id = white_horde_collapse.1
+	title = "white_horde_collapse.1.t"
+	desc = "white_horde_collapse.1.d"
+	picture = ASSASSINATION_eventPicture
+	
+	major = yes
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = tribes_loyalty_removed_a	value = 20 }
+		}
+	}
+	
+	option = {
+		name = "white_horde_collapse.1.a"
+		kill_ruler = yes
+		if = {
+			limit = {
+				BLU = { vassal_of = ROOT }
+			}
+			free_vassal = BLU
+		}
+		if = {
+			limit = {
+				CHU = { junior_union_with = ROOT }
+			}
+			break_union = CHU
+		}
+		hidden_effect = {
+			CHU = {
+				free_vassal = ARM
+				free_vassal = SYU
+				define_ruler = {
+					culture = mongol
+					ADM = 1
+					DIP = 1
+					MIL = 1
+					claim = 30
+				}
+				kill_heir = yes
+			}
+			
+			add_country_modifier = { name = collapsing_khanate duration = 8000 hidden = yes }
+			add_country_modifier = { name = mamai_cooldown duration = 3650 hidden = yes }
+			clr_country_flag = white_horde_murdered_ruler
+			set_country_flag = white_horde_collapse_ongoing
+			add_horde_unity = -35
+			define_heir = {
+				name = "Nawruz Beg"
+				dynasty = ROOT
+				culture = mongol
+				age = 20
+				ADM = 1
+				DIP = 1
+				MIL = 1
+			}
+			# Tank the White Horde's tribal host
+			if = {
+				limit = {
+					check_variable = { which = estate_tribals_wealth	value = 2578.312 }
+				}
+				set_variable = { which = estate_tribals_wealth	value = 2578.312 }
+			}
+			every_owned_province = {
+				limit = {
+					is_city = yes
+				}
+				add_local_autonomy = 5
+				if = {
+					limit = {
+						NOT = { culture = owner }
+					}
+					add_nationalism = 15
+				}
+			}
+			if = {
+				limit = {
+					ai = yes
+				}
+				add_stability_1 = yes
+			}
+		}
+		reduce_estate_tribes_loyalty_effect = { id=a }
+		subtract_stability_points_50 = yes
+		random_list = {
+			30 = {}
+			50 = {
+				subtract_stability_points_50 = yes
+			}
+			20 = {
+				subtract_stability_1 = yes
+			}
+		}
+	}
+}
+
+country_event = {
+	id = white_horde_collapse.2
+	title = "white_horde_collapse.2.t"
+	desc = "white_horde_collapse.2.d"
+	picture = ASSASSINATION_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = tribes_loyalty_removed_a	value = 10 }
+		}
+	}
+	
+	trigger = {
+		has_heir = yes
+		heir_age = 15
+		OR = {
+			AND = {
+				NOT = { horde_unity = 75 }
+				heir_claim = 75
+			}
+			AND = {
+				NOT = { horde_unity = 50 }
+				heir_claim = 50
+			}
+			AND = {
+				NOT = { horde_unity = 25 }
+				heir_claim = 25
+			}
+		}
+		NOT = { has_country_modifier = puppet_khanate }
+		has_regency = no
+	}
+	
+	option = {
+		name = "white_horde_collapse.2.a"
+		kill_ruler = yes
+		hidden_effect = {
+			add_horde_unity = -25
+		}
+		reduce_estate_tribes_loyalty_effect = { id=a }
+		random_list = {
+			30 = {}
+			50 = {
+				subtract_stability_points_50 = yes
+			}
+			20 = {
+				subtract_stability_1 = yes
+			}
+		}
+	}
+}
+
+country_event = {
+	id = white_horde_collapse.3
+	title = "white_horde_collapse.3.t"
+	desc = "white_horde_collapse.3.d"
+	picture = CIVIL_WAR_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	trigger = {
+		has_country_modifier = genghis_khanate
+		NOT = { has_country_modifier = mamai_cooldown }
+		is_year = 1365
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = tribes_loyalty_added_a	value = 20 }
+		}
+	}
+	
+	option = {
+		name = "white_horde_collapse.3.a"
+		define_ruler = {
+			name = "Mamai"
+			dynasty = "Kiyat"
+			ADM = 3
+			DIP = 2
+			MIL = 4
+			fixed = yes
+		}
+		define_ruler_to_general = {
+			fire = 4
+			shock = 3
+			manuever = 3
+			siege = 1
+		}
+		hidden_effect = {
+			remove_country_modifier = genghis_khanate
+			add_country_modifier = {
+				name = puppet_khanate
+				duration = -1
+			}
+			kill_heir = yes
+			add_horde_unity = 50
+			every_owned_province = {
+				#if = {
+				#	limit = {
+				#		has_province_modifier = pretender_organizing
+				#	}
+					remove_province_modifier = pretender_organizing
+				#}
+				#if = {
+				#	limit = {
+				#		has_province_modifier = nationalists_organizing
+				#	}
+					remove_province_modifier = nationalists_organizing
+				#}
+			}
+		}
+		add_stability_1 = yes
+		add_estate_tribes_loyalty_effect = { id=a }
+		
+		hidden_effect = {
+			clr_country_flag = white_horde_collapse_ongoing
+		}
+	}
+}
+
+country_event = {
+	id = white_horde_collapse.4
+	title = "white_horde_collapse.4.t"
+	desc = "white_horde_collapse.4.d"
+	picture = CIVIL_WAR_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			has_regency = yes
+			NOT = { horde_unity = 60 }
+		}
+		has_country_modifier = genghis_khanate
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = tribes_loyalty_removed_a	value = 10 }
+		}
+	}
+	
+	option = {
+		name = "white_horde_collapse.4.a"
+		define_ruler = {
+			dynasty = ROOT
+			ADM = 1
+			DIP = 2
+			MIL = 2
+			fixed = yes
+		}
+		hidden_effect = {
+			add_horde_unity = -50
+			kill_heir = yes
+		}
+		reduce_estate_tribes_loyalty_effect = { id=a }
+		random_list = {
+			30 = {}
+			50 = {
+				subtract_stability_points_50 = yes
+			}
+			20 = {
+				subtract_stability_1 = yes
+			}
+		}
+		random_owned_province = {
+			limit = { NOT = { has_province_modifier = pretender_organizing } }
+			add_province_modifier = { name = pretender_organizing	duration = 400 }
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 7 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_7
+		}
+	}
+}
+
+country_event = {
+	id = white_horde_collapse.5
+	title = "white_horde_collapse.5.t"
+	desc = "white_horde_collapse.5.d"
+	picture = GOOD_WITH_MONARCH_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			NOT = { has_country_modifier = collapsing_khanate }
+			has_country_modifier = puppet_khanate
+		}
+		has_country_flag = white_horde_collapse_ongoing
+		is_year = 1370
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = tribes_loyalty_added_a	value = 10 }
+		}
+	}
+	
+	option = {
+		name = "white_horde_collapse.5.a"
+		hidden_effect = {
+			clr_country_flag = white_horde_collapse_ongoing
+		}
+		hidden_effect = {
+			every_owned_province = {
+				#if = {
+				#	limit = {
+				#		has_province_modifier = pretender_organizing
+				#	}
+					remove_province_modifier = pretender_organizing
+				#}
+				#if = {
+				#	limit = {
+				#		has_province_modifier = nationalists_organizing
+				#	}
+					remove_province_modifier = nationalists_organizing
+				#}
+			}
+		}
+		capital_scope = {
+			add_local_autonomy = -50
+		}
+		add_estate_tribes_loyalty_effect = { id=a }
+		add_stability_1 = yes
+	}
+}
+
+country_event = {
+	id = white_horde_collapse.6
+	title = "white_horde_collapse.6.t"
+	desc = "white_horde_collapse.6.d"
+	picture = GOOD_WITH_MONARCH_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = tribes_loyalty_added_a	value = 20 }
+		}
+	}
+	
+	option = {
+		name = "white_horde_collapse.6.a"
+		add_estate_tribes_loyalty_effect = { id=a }
+		add_stability_3 = yes
+		hidden_effect = {
+			every_owned_province = {
+				#if = {
+				#	limit = {
+				#		has_province_modifier = pretender_organizing
+				#	}
+					remove_province_modifier = pretender_organizing
+				#}
+				#if = {
+				#	limit = {
+				#		has_province_modifier = nationalists_organizing
+				#	}
+					remove_province_modifier = nationalists_organizing
+				#}
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = white_horde_collapse_ongoing
+			}
+			hidden_effect = {
+				clr_country_flag = white_horde_collapse_ongoing
+			}
+			capital_scope = {
+				add_local_autonomy = -40
+			}
+		}
+	}
+}
+
+country_event = {
+	id = white_horde_collapse.7
+	title = "white_horde_collapse.7.t"
+	desc = "white_horde_collapse.7.d"
+	picture = GOOD_WITH_MONARCH_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	option = {
+		name = "white_horde_collapse.7.a"
+		if = {
+			limit = {
+				OR = {
+					NOT = { has_country_flag = white_horde_collapse_ongoing }
+					is_subject = yes
+				}
+			}
+			country_event = { id = white_horde_collapse.6 }
+		}
+		else = {
+			add_disaster_progress = {
+				disaster = white_horde_collapse
+				value = 100
+			}
+		}
+	}
+}
+
+
+country_event = {
+	id = white_horde_collapse.8
+	title = "white_horde_collapse.8.t"
+	desc = "white_horde_collapse.8.d"
+	picture = GOOD_WITH_MONARCH_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	option = {
+		name = "white_horde_collapse.8.a"
+		if = { limit = { NOT = { has_country_flag = white_horde_collapse_ongoing } }
+			country_event = { id = white_horde_collapse.1 }
+		}
+	}
+}
+
+country_event = {
+	id = white_horde_collapse.9
+	title = "white_horde_collapse.9.t"
+	desc = "white_horde_collapse.9.d"
+	picture = CIVIL_WAR_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = tribes_loyalty_removed_a	value = 2 }
+		}
+	}
+	
+	trigger = {
+		NOT = { has_country_modifier = puppet_khanate }
+		any_owned_province = {
+			NOT = { has_province_modifier = pretender_organizing }
+		}
+	}
+	
+	option = {
+		name = "white_horde_collapse.9.a"
+		random_owned_province = {
+			limit = { NOT = { has_province_modifier = pretender_organizing } }
+			add_province_modifier = { name = pretender_organizing	duration = 400 }
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 7 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_7
+		}
+		add_horde_unity = -5
+		reduce_estate_tribes_loyalty_effect = { id=a }
+	}
+}

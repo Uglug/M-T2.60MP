@@ -1,0 +1,305 @@
+generic_monarchy_1 = {
+	slot = 1
+	ai = yes
+	generic = yes
+	
+	potential = {
+		government = monarchy
+	}
+	
+	monarchy_royal_marriages = {
+		icon = mission_alliances
+		required_missions = { }
+		
+		trigger = {
+			num_of_royal_marriages = 3
+		}
+		
+		effect = {
+			add_prestige = 10
+		}
+	}
+	monarchy_dip_rep = {
+		icon = mission_dominate_home_trade_node
+		required_missions = { monarchy_royal_marriages }
+		
+		trigger = {
+			diplomatic_reputation = 4
+			prestige = 40
+		}
+		
+		effect = {
+			add_dip_power = 50
+		}
+	}
+	monarchy_impress_diplomats = {
+		icon = mission_monarch_in_throne_room
+		required_missions = { monarchy_dip_rep }
+		
+		trigger = {
+			capital_scope = {
+				base_production = 10
+			}
+			OR = {
+				has_country_modifier = court_level_4
+				has_country_modifier = court_level_5
+				has_country_modifier = court_level_6
+			}
+		}
+		
+		effect = {
+			add_country_modifier = {
+				name = monarchy_impress_diplomats_mod
+				duration = 5475 #15 Years
+			}
+		}
+	}
+	monarchy_alliance_network = {
+		icon = mission_religious
+		required_missions = { monarchy_impress_diplomats }
+		
+		trigger = {
+			num_of_allies = 3
+		}
+		
+		effect = {
+			add_prestige = 10
+			add_legitimacy = 5
+			add_horde_unity = 5
+			add_republican_tradition = 5
+		}
+	}
+	monarchy_stabilise_country = {
+		icon = mission_high_income
+		required_missions = {  }
+		
+		trigger = {
+			stability = 1
+			legitimacy = 90
+			NOT = { overextension_percentage = 0.01 }
+			has_heir = yes
+		}
+		
+		effect = {
+			add_country_modifier = {
+				name = monarchy_stabilise_country_mod
+				duration = 5475 #15 Years
+			}
+		}
+	}
+	monarchy_centralisation_efforts = {
+		icon = mission_have_two_subjects
+		required_missions = { monarchy_stabilise_country }
+		
+		trigger = {
+			absolutism = 40
+			capital_scope = {
+				HasBuildingOrBetter = { b1=bureaucracy_1 b2=bureaucracy_2 b3=bureaucracy_3 b4=bureaucracy_4 b5=bureaucracy_5 }
+			}
+		}
+		
+		effect = {
+			add_adm_power = 50
+		}
+	}
+	monarchy_central_tax_system = {
+		icon = mission_war_chest
+		required_missions = { monarchy_centralisation_efforts }
+		
+		trigger = {
+			NOT = { average_home_autonomy = 50 }
+		}
+		
+		effect = {
+			if = {
+				limit = { NOT = { monthly_income = 20 } }
+				add_years_of_income = 5
+			}
+			else = {
+				add_treasury = 1200
+			}
+		}
+	}
+	monarchy_i_am_the_state = {
+		icon = mission_empire
+		required_missions = { monarchy_central_tax_system }
+		
+		trigger = {
+			NOT = { corruption = 15 }
+			legitimacy = 100
+			custom_trigger_tooltip = {
+				tooltip = monarchy_i_am_the_state.tooltip
+				check_variable = { which = estate_bureaucracy_weight_share value = 0.6 }
+			}
+		}
+		
+		effect = {
+			add_country_modifier = {
+				name = monarchy_i_am_the_state_mod
+				duration = 5475 #15 Years
+			}
+		}
+	}
+}
+generic_monarchy_2 = {
+	slot = 2
+	ai = yes
+	generic = yes
+	
+	potential = {
+		government = monarchy
+	}
+	
+	monarchy_protect_our_lands = {
+		icon = mission_conquer_5_states
+		required_missions = { }
+		
+		trigger = {
+			army_size_percentage = 1
+			manpower_percentage = 0.50
+		}
+		
+		effect = {
+			add_country_modifier = {
+				name = monarchy_protect_our_lands_mod
+				duration = 5475 #15 Years
+			}
+		}
+	}
+	monarchy_protect_our_capital = {
+		icon = mission_conquer_50_development
+		required_missions = { monarchy_protect_our_lands }
+		
+		trigger = {
+			capital_scope = {
+				custom_trigger_tooltip = {
+					tooltip = monarchy_protect_our_capital.tooltip
+					garrison = 3000
+				}
+			}
+		}
+		
+		effect = {
+			add_country_modifier = {
+				name = monarchy_protect_our_capital_mod
+				duration = 5475 #15 Years
+			}
+		}
+	}
+	monarchy_finish_mil_idea = {
+		icon = mission_unite_home_region
+		required_missions = { monarchy_protect_our_capital }
+		
+		trigger = {
+			OR = {
+				full_idea_group = standing_army_ideas
+				full_idea_group = quality_ideas
+				full_idea_group = quantity_ideas
+				full_idea_group = leadership_ideas
+			}
+		}
+		
+		effect = {
+			add_army_tradition = 10
+		}
+	}
+	monarchy_standing_army = {
+		icon = mission_assemble_an_army
+		required_missions = { monarchy_finish_mil_idea }
+		
+		trigger = {
+			army_size = 40
+			land_forcelimit = 40
+			num_of_generals = 2
+		}
+		
+		effect = {
+			add_country_modifier = {
+				name = monarchy_standing_army_mod
+				duration = 5475 #15 Years
+			}
+		}
+	}
+	monarchy_relentless_drilling = {
+		icon = mission_chinese_general_riding
+		required_missions = { monarchy_standing_army }
+		
+		trigger = {
+			if = {
+				limit = {
+					has_dlc = "Cradle of Civilization"
+				}
+				army_professionalism = 0.50
+			}
+			else = {
+				army_tradition = 50
+			}
+		}
+		
+		effect = {
+			add_mil_power = 100
+		}
+	}
+	monarchy_modernise_the_army = {
+		icon = mission_cannons_firing
+		required_missions = { monarchy_relentless_drilling }
+		
+		trigger = {
+			army_size = 80
+			land_forcelimit = 80
+			artillery_fraction = 0.3
+			has_commanding_three_star = yes
+		}
+		
+		effect = {
+			add_country_modifier = {
+				name = monarchy_modernise_the_army_mod
+				duration = 5475 #15 Years
+			}
+		}
+	}
+	monarchy_logistical_improvements = {
+		icon = mission_great_wall
+		required_missions = { monarchy_modernise_the_army }
+		
+		trigger = {
+			capital_scope = {
+				all_province_in_state = {
+					HasBuildingOrBetter = { b1=highway_network b2=road_and_rail_network }
+				}
+			}
+		}
+		
+		effect = {
+			add_mil_power = 50
+			add_country_modifier = {
+				name = monarchy_logistical_improvements_mod
+				duration = 5475 #15 Years
+			}
+		}
+	}
+	monarchy_military_supremacy = {
+		icon = mission_cossack_cavalry
+		required_missions = { monarchy_logistical_improvements }
+		
+		trigger = {
+			army_size = 120
+			land_forcelimit = 120
+			army_size_percentage = 0.80
+			manpower_percentage = 0.75
+			is_in_deficit = no
+			all_rival_country = {
+				NOT = { army_size = ROOT }
+			}
+		}
+		
+		effect = {
+			add_mil_power = 100
+			add_prestige = 20
+			add_country_modifier = {
+				name = monarchy_military_supremacy_mod
+				duration = 5475 #15 Years
+			}
+		}
+	}
+}

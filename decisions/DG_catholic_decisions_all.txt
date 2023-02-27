@@ -1,0 +1,1297 @@
+country_decisions = {
+	
+	request_dispensation = {
+		major = yes
+		potential = {
+			religion = catholic
+			OR = {
+				has_country_flag = royal_scandal
+				has_country_flag = excommunicated
+			}
+			OR = {
+				NOT = { has_country_flag = dispensation_denied }
+				is_papal_controller = yes
+			}
+			OR = {
+				NOT = { has_country_flag = dispensation_consideration }
+				is_papal_controller = yes
+			}
+			NOT = { has_country_flag = dispensation_process }
+		}
+		allow = {
+			NOT = { war_with = PAP }
+			custom_trigger_tooltip = {
+				tooltip = pope_alive
+				has_global_flag = living_pope
+			}
+			custom_trigger_tooltip = {
+				tooltip = no_religious_scandal
+				not_have_religious_scandal = yes
+			}
+		}
+		effect = {
+			hidden_effect = { set_country_flag = dispensation_process }
+			if = {
+				limit = { is_papal_controller = no }
+				add_papal_influence = -5
+				random_known_country = {
+					limit = { is_papal_controller = yes }
+					capital_scope = { add_province_triggered_modifier = request_dispensation_1 }
+					#country_event = { id = dg_pope.011 days = 60 }
+				}
+			}
+			if = {
+				limit = {
+					is_papal_controller = yes
+					PAP = { has_country_flag = corrupt_pope }
+				}
+				add_papal_influence = -5
+				country_event = { id = dg_catholic.063 }
+			}
+			if = {
+				limit = {
+					is_papal_controller = yes
+					NOT = { PAP = { has_country_flag = corrupt_pope } }
+					NOT = { PAP = { has_country_flag = reformer_pope } }
+				}
+				add_papal_influence = -10
+				country_event = { id = dg_catholic.063 }
+			}
+			if = {
+				limit = {
+					is_papal_controller = yes
+					PAP = { has_country_flag = reformer_pope }
+				}
+				add_papal_influence = -15
+				country_event = { id = dg_catholic.063 }
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = { #Will send a bribe instead
+				PAP = { has_country_flag = corrupt_pope }
+				NOT = { has_country_flag = friend_of_pope }
+				NOT = { has_country_flag = ally_of_pope }
+				years_of_income = 0.5
+				factor = 0
+			}
+		}
+	}
+	beg_dispensation = {
+		major = yes
+		potential = {
+			religion = catholic
+			OR = {
+				has_country_flag = royal_scandal
+				has_country_flag = excommunicated
+			}
+			OR = {
+				has_country_flag = dispensation_denied
+				has_country_flag = dispensation_consideration
+			}
+			NOT = { has_country_flag = begged_for_dispensation }
+			is_papal_controller = no
+		}
+		allow = {
+			prestige = 0
+			NOT = { war_with = PAP }
+			custom_trigger_tooltip = {
+				tooltip = pope_alive
+				has_global_flag = living_pope
+			}
+			custom_trigger_tooltip = {
+				tooltip = no_religious_scandal
+				not_have_religious_scandal = yes
+			}
+		}
+		effect = {
+			add_papal_influence = -10
+			add_prestige = -25
+			hidden_effect = {
+				set_country_flag = dispensation_process
+				set_country_flag = begged_for_dispensation
+			}
+			random_known_country = {
+				limit = { is_papal_controller = yes }
+				capital_scope = { add_province_triggered_modifier = request_dispensation_1 }
+				#country_event = { id = dg_pope.011 days = 60 }
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				NOT = { has_country_flag = dispensation_denied }
+				factor = 0
+			}
+		}
+	}
+	request_dispensation_bribe = {
+		major = yes
+		potential = {
+			religion = catholic
+			OR = {
+				has_country_flag = royal_scandal
+				has_country_flag = excommunicated
+			}
+			NOT = { has_country_flag = dispensation_denied }
+			NOT = { has_country_flag = dispensation_consideration }
+			NOT = { has_country_flag = dispensation_process }
+			is_papal_controller = no
+		}
+		allow = {
+			years_of_income = 0.08
+			NOT = { war_with = PAP }
+			custom_trigger_tooltip = {
+				tooltip = pope_alive
+				has_global_flag = living_pope
+			}
+			custom_trigger_tooltip = {
+				tooltip = no_religious_scandal
+				not_have_religious_scandal = yes
+			}
+		}
+		effect = {
+			hidden_effect = {
+				set_country_flag = dispensation_process
+				set_country_flag = dispensation_bribe
+			}
+			if = {
+				limit = { monthly_income = 500 }
+				add_treasury = -500
+			}
+			else_if = {
+				limit = { monthly_income = 5 }
+				add_years_of_income = -0.08
+			}
+			else = {
+				add_treasury = -5
+			}
+			hidden_effect = {
+				if = {
+					limit = { monthly_income = 200 }
+					random_known_country = {
+						limit = { is_papal_controller = yes }
+						set_variable = { which = dispensation_bribe value = 200 }
+					}
+				}
+				else_if = {
+					limit = { monthly_income = 180 }
+					random_known_country = {
+						limit = { is_papal_controller = yes }
+						set_variable = { which = dispensation_bribe value = 180 }
+					}
+				}
+				else_if = {
+					limit = { monthly_income = 160 }
+					random_known_country = {
+						limit = { is_papal_controller = yes }
+						set_variable = { which = dispensation_bribe value = 160 }
+					}
+				}
+				else_if = {
+					limit = { monthly_income = 140 }
+					random_known_country = {
+						limit = { is_papal_controller = yes }
+						set_variable = { which = dispensation_bribe value = 140 }
+					}
+				}
+				else_if = {
+					limit = { monthly_income = 120 }
+					random_known_country = {
+						limit = { is_papal_controller = yes }
+						set_variable = { which = dispensation_bribe value = 120 }
+					}
+				}
+				else_if = {
+					limit = { monthly_income = 100 }
+					random_known_country = {
+						limit = { is_papal_controller = yes }
+						set_variable = { which = dispensation_bribe value = 100 }
+					}
+				}
+				else_if = {
+					limit = { monthly_income = 80 }
+					random_known_country = {
+						limit = { is_papal_controller = yes }
+						set_variable = { which = dispensation_bribe value = 80 }
+					}
+				}
+				else_if = {
+					limit = { monthly_income = 60 }
+					random_known_country = {
+						limit = { is_papal_controller = yes }
+						set_variable = { which = dispensation_bribe value = 60 }
+					}
+				}
+				else_if = {
+					limit = { monthly_income = 50 }
+					random_known_country = {
+						limit = { is_papal_controller = yes }
+						set_variable = { which = dispensation_bribe value = 50 }
+					}
+				}
+				else_if = {
+					limit = { monthly_income = 40 }
+					random_known_country = {
+						limit = { is_papal_controller = yes }
+						set_variable = { which = dispensation_bribe value = 40 }
+					}
+				}
+				else_if = {
+					limit = { monthly_income = 30 }
+					random_known_country = {
+						limit = { is_papal_controller = yes }
+						set_variable = { which = dispensation_bribe value = 30 }
+					}
+				}
+				else_if = {
+					limit = { monthly_income = 25 }
+					random_known_country = {
+						limit = { is_papal_controller = yes }
+						set_variable = { which = dispensation_bribe value = 25 }
+					}
+				}
+				else_if = {
+					limit = { monthly_income = 20 }
+					random_known_country = {
+						limit = { is_papal_controller = yes }
+						set_variable = { which = dispensation_bribe value = 20 }
+					}
+				}
+				else_if = {
+					limit = { monthly_income = 16 }
+					random_known_country = {
+						limit = { is_papal_controller = yes }
+						set_variable = { which = dispensation_bribe value = 16 }
+					}
+				}
+				else_if = {
+					limit = { monthly_income = 12 }
+					random_known_country = {
+						limit = { is_papal_controller = yes }
+						set_variable = { which = dispensation_bribe value = 12 }
+					}
+				}
+				else_if = {
+					limit = { monthly_income = 8 }
+					random_known_country = {
+						limit = { is_papal_controller = yes }
+						set_variable = { which = dispensation_bribe value = 8 }
+					}
+				}
+				else_if = {
+					limit = { monthly_income = 5 }
+					random_known_country = {
+						limit = { is_papal_controller = yes }
+						set_variable = { which = dispensation_bribe value = 5 }
+					}
+				}
+				else_if = {
+					limit = { monthly_income = 3 }
+					random_known_country = {
+						limit = { is_papal_controller = yes }
+						set_variable = { which = dispensation_bribe value = 3 }
+					}
+				}
+				else_if = {
+					limit = { monthly_income = 2 }
+					random_known_country = {
+						limit = { is_papal_controller = yes }
+						set_variable = { which = dispensation_bribe value = 2 }
+					}
+				}
+				else = {
+					random_known_country = {
+						limit = { is_papal_controller = yes }
+						set_variable = { which = dispensation_bribe value = 1 }
+					}
+				}
+			}#End hidden effect
+			random_known_country = {
+				limit = { is_papal_controller = yes }
+				capital_scope = { add_province_triggered_modifier = request_dispensation_2 }
+				#country_event = { id = dg_pope.011 days = 30 }
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				PAP = { has_country_flag = reformer_pope }
+				factor = 0
+			}
+			modifier = {
+				NOT = { years_of_income = 0.10 }
+				factor = 0
+			}
+			modifier = {
+				num_of_loans = 1
+				factor = 0
+			}
+			modifier = {
+				is_bankrupt = yes
+				factor = 0
+			}
+			modifier = {
+				has_country_flag = friend_of_pope
+				factor = 0
+			}
+			modifier = {
+				has_country_flag = ally_of_pope
+				factor = 0
+			}
+		}
+	}
+	appoint_prelate = {
+		potential = {
+			religion = catholic
+			NOT = { tag = PAP }
+			num_of_cities = 8
+			NOT = { any_owned_province = { has_province_modifier = catholic_prelate } }
+			capital_scope = {
+				religion = catholic
+				NOT = { any_neighbor_province = { has_province_modifier = catholic_prelate } }
+			}
+			has_global_flag = dei_gratia
+		}
+		allow = {
+			OR = {
+				government = theocracy
+				num_of_cardinals = 4
+				custom_trigger_tooltip = {
+					tooltip = ally_of_pope
+					has_country_flag = ally_of_pope
+				}
+				custom_trigger_tooltip = {
+					tooltip = national_church
+					OR = {
+						has_country_flag = national_church
+						has_country_flag = catholic_pragmatic_sanction
+						has_country_flag = patronato_real
+					}
+				}
+			}
+		}
+		effect = {
+			add_prestige = 5
+			add_papal_influence = 5
+			capital_scope = {
+				add_permanent_province_modifier = { name = "catholic_prelate" duration = -1 }
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	permanent_inquisition = {
+		potential = {
+			religion = catholic
+			piety = -0.20
+			NOT = { check_variable = { which = inquisition value = 1 } }
+			NOT = { has_country_flag = excommunicated }
+			NOT = { has_country_flag = reformation_maybe }
+			NOT = { has_country_flag = spread_reformation }
+			NOT = { has_country_flag = introduce_reformation }
+			NOT = { has_country_flag = secular_courts }
+			PAP = { check_variable = { which = papal_authority value = 250 } }
+			has_country_flag = true_faith
+			OR = {
+				NOT = { tag = PAP }
+				has_country_flag = roman_inquisition
+			}
+		}
+		allow = {
+			dominant_religion = catholic
+			custom_trigger_tooltip = {
+				tooltip = papal_authority_300
+				PAP = { check_variable = { which = papal_authority value = 350 } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = no_religious_scandal
+				not_have_religious_scandal = yes
+			}
+			NOT = { has_country_modifier = religious_tolerance }
+			NOT = { has_country_modifier = edict_of_tolerance }
+			OR = {
+				piety = 0.60
+				advisor = inquisitor
+				NOT = { religious_unity = 0.90 }
+			}
+		}
+		effect = {
+			add_stability_1 = yes
+			if = {
+				limit = { NOT = { advisor = inquisitor } }
+				define_advisor = { type = inquisitor discount = yes }
+			}
+			hidden_effect = {
+				set_variable = { which = inquisition value = 2 }
+				set_country_flag = renaissance
+				#if = {
+				#	limit = { has_country_flag = humanism }
+					clr_country_flag = humanism
+				#}
+				every_owned_province = {
+					limit = {
+						has_owner_culture = yes
+						is_core = owner
+						has_province_flag = humanism
+					}
+					clr_province_flag = humanism
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				#Would be on shaky ground
+				NOT = { religious_unity = 0.60 }
+				factor = 0
+			}
+			modifier = {
+				#Is entirely Catholic
+				religious_unity = 1.00
+				factor = 0
+			}
+			modifier = {
+				#Tolerant of Christian minorities
+				NOT = { any_owned_province = { NOT = { religion_group = christian } } }
+				orthodox = 0 #Tolerance of heretics - same tolerance for all types
+				factor = 0
+			}
+			modifier = {
+				NOT = { piety = 0.60 }
+				factor = 0
+			}
+		}
+	}
+	withdraw_inquisition_support = {
+		potential = {
+			check_variable = { which = inquisition value = 2 }
+			religion = catholic
+		}
+		allow = {
+			custom_trigger_tooltip = {
+				tooltip = no_religious_scandal
+				not_have_religious_scandal = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = no_unhappy_church
+				NOT = { has_country_modifier = unhappy_church_powerful }
+				NOT = { has_country_modifier = unhappy_church_strong }
+				NOT = { has_country_modifier = unhappy_church_moderate }
+				NOT = { has_country_modifier = unhappy_church_weak }
+				NOT = { has_country_modifier = unhappy_church_impotent }
+			}
+			OR = {
+				ADM = 4
+				custom_trigger_tooltip = {
+					tooltip = church_settlement
+					has_country_flag = church_settlement
+				}
+			}
+			stability = 0
+		}
+		effect = {
+			if = {
+				limit = { check_variable = { which = inquisition value = 2 } }
+				custom_tooltip = inquisition_weakened
+			}
+			if = {
+				limit = { NOT = { check_variable = { which = inquisition value = 2 } } }
+				custom_tooltip = inquisition_ended
+			}
+			hidden_effect = {
+				change_variable = { which = inquisition value = -1 }
+				#if = {
+				#	limit = { has_country_flag = church_settlement }
+					clr_country_flag = church_settlement
+				#}
+			}
+			add_patriarch_authority = -0.05
+			add_piety = -0.05
+			if = {
+				limit = {
+					NOT = { has_country_flag = church_settlement }
+					OR = {
+						PAP = { check_variable = { which = papal_authority value = 500 } }
+						patriarch_authority = 0.80
+					}
+				}
+				add_country_modifier = { name = unhappy_church_powerful duration = 1000 }
+			}
+			if = {
+				limit = {
+					NOT = { has_country_flag = church_settlement }
+					NOT = {
+						OR = {
+							PAP = { check_variable = { which = papal_authority value = 500 } }
+							patriarch_authority = 0.80
+						}
+					}
+					OR = {
+						PAP = { check_variable = { which = papal_authority value = 400 } }
+						patriarch_authority = 0.60
+					}
+				}
+				add_country_modifier = { name = unhappy_church_strong duration = 1000 }
+			}
+			if = {
+				limit = {
+					NOT = { has_country_flag = church_settlement }
+					NOT = {
+						OR = {
+							PAP = { check_variable = { which = papal_authority value = 400 } }
+							patriarch_authority = 0.60
+						}
+					}
+					OR = {
+						PAP = { check_variable = { which = papal_authority value = 300 } }
+						patriarch_authority = 0.40
+					}
+				}
+				add_country_modifier = { name = unhappy_church_moderate duration = 1000 }
+			}
+			if = {
+				limit = {
+					NOT = { has_country_flag = church_settlement }
+					NOT = {
+						OR = {
+							PAP = { check_variable = { which = papal_authority value = 300 } }
+							patriarch_authority = 0.40
+						}
+					}
+					OR = {
+						PAP = { check_variable = { which = papal_authority value = 200 } }
+						patriarch_authority = 0.20
+					}
+				}
+				add_country_modifier = { name = unhappy_church_weak duration = 1000 }
+			}
+			if = {
+				limit = {
+					NOT = { has_country_flag = church_settlement }
+					NOT = {
+						OR = {
+							PAP = { check_variable = { which = papal_authority value = 200 } }
+							patriarch_authority = 0.20
+						}
+					}
+				}
+				add_country_modifier = { name = unhappy_church_impotent duration = 1000 }
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				piety = 0.60
+				factor = 0
+			}
+			modifier = {
+				has_country_modifier = religious_intolerance
+				factor = 0
+			}
+			modifier = {
+				NOT = { religious_unity = 1.00 }
+				factor = 0
+			}
+		}
+	}
+	suppress_inquisition = {
+		potential = {
+			is_variable_equal = { which = inquisition value = 1 }
+			religion = catholic
+		}
+		allow = {
+			ADM = 4
+			stability = 2
+			custom_trigger_tooltip = {
+				tooltip = no_religious_scandal
+				not_have_religious_scandal = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = no_unhappy_church
+				NOT = { has_country_modifier = unhappy_church_powerful }
+				NOT = { has_country_modifier = unhappy_church_strong }
+				NOT = { has_country_modifier = unhappy_church_moderate }
+				NOT = { has_country_modifier = unhappy_church_weak }
+				NOT = { has_country_modifier = unhappy_church_impotent }
+			}
+			OR = {
+				advisor = inquisitor
+				advisor = theologian
+				NOT = { piety = -0.20 }
+				ADM = 5
+			}
+		}
+		effect = {
+			if = {
+				limit = { check_variable = { which = inquisition value = 2 } }
+				custom_tooltip = inquisition_weakened
+			}
+			if = {
+				limit = { NOT = { check_variable = { which = inquisition value = 2 } } }
+				custom_tooltip = inquisition_ended
+			}
+			hidden_effect = { change_variable = { which = inquisition value = -1 } }
+			add_patriarch_authority = -0.05
+			add_piety = -0.05
+			remove_advisor = theologian
+			remove_advisor = inquisitor
+			if = {
+				limit = {
+					OR = {
+						PAP = { check_variable = { which = papal_authority value = 500 } }
+						patriarch_authority = 0.80
+					}
+				}
+				add_country_modifier = { name = unhappy_church_powerful duration = 2000 }
+			}
+			if = {
+				limit = {
+					NOT = {
+						OR = {
+							PAP = { check_variable = { which = papal_authority value = 500 } }
+							patriarch_authority = 0.80
+						}
+					}
+					OR = {
+						PAP = { check_variable = { which = papal_authority value = 400 } }
+						patriarch_authority = 0.60
+					}
+				}
+				add_country_modifier = { name = unhappy_church_strong duration = 2000 }
+			}
+			if = {
+				limit = {
+					NOT = {
+						OR = {
+							PAP = { check_variable = { which = papal_authority value = 400 } }
+							patriarch_authority = 0.60
+						}
+					}
+					OR = {
+						PAP = { check_variable = { which = papal_authority value = 300 } }
+						patriarch_authority = 0.40
+					}
+				}
+				add_country_modifier = { name = unhappy_church_moderate duration = 2000 }
+			}
+			if = {
+				limit = {
+					NOT = {
+						OR = {
+							PAP = { check_variable = { which = papal_authority value = 300 } }
+							patriarch_authority = 0.40
+						}
+					}
+					OR = {
+						PAP = { check_variable = { which = papal_authority value = 200 } }
+						patriarch_authority = 0.20
+					}
+				}
+				add_country_modifier = { name = unhappy_church_weak duration = 2000 }
+			}
+			if = {
+				limit = {
+					NOT = {
+						OR = {
+							PAP = { check_variable = { which = papal_authority value = 200 } }
+							patriarch_authority = 0.20
+						}
+					}
+				}
+				add_country_modifier = { name = unhappy_church_impotent duration = 2000 }
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				piety = 0.60
+				factor = 0
+			}
+			modifier = {
+				has_country_modifier = religious_intolerance
+				factor = 0
+			}
+			modifier = {
+				NOT = { religious_unity = 1.00 }
+				factor = 0
+			}
+		}
+	}
+	concordat_of_bologna = {
+		potential = {
+			religion = catholic
+			has_country_flag = catholic_pragmatic_sanction
+			NOT = { has_country_flag = concordat_of_bologna }
+			OR = {
+				NOT = { PAP = { check_variable = { which = papal_authority value = 500 } } }
+				has_country_flag = church_settlement
+			}
+		}
+		allow = {
+			NOT = { PAP = { has_opinion_modifier = { who = ROOT modifier = catholic_autonomy } } }
+			OR = {
+				legitimacy = 90
+				republican_tradition = 90
+			}
+			prestige = 25
+			DIP = 3
+			OR = {
+				num_of_cardinals = 3
+				PAP = { vassal_of = ROOT }
+				custom_trigger_tooltip = {
+					tooltip = church_settlement
+					has_country_flag = church_settlement
+				}
+			}
+			num_of_cities = 10
+		}
+		effect = {
+			hidden_effect = {
+				set_country_flag = concordat_of_bologna
+				#if = {
+				#	limit = { has_country_flag = church_settlement }
+					clr_country_flag = church_settlement
+				#}
+			}
+			reverse_remove_opinion = { who = PAP modifier = disobeyed_religious_leader }
+			reverse_add_opinion = { who = PAP modifier = obeyed_religious_leader }
+			add_opinion = { who = PAP modifier = papacy_great }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	buy_curia_influence = {
+		potential = {
+			religion = catholic
+			has_global_flag = living_pope
+			NOT = { PAP = { has_country_flag = reformer_pope } }
+			NOT = { has_country_flag = bought_curia_influence }
+			papal_trigger = no
+		}
+		allow = {
+			treasury = 25
+			NOT = { has_country_flag = excommunicated }
+			NOT = { war_with = PAP }
+		}
+		effect = {
+			add_treasury = -25
+			add_papal_influence = 10
+			hidden_effect = { set_country_flag = bought_curia_influence } #Cleared upon new pope
+			PAP = { add_treasury = 10 }
+			if = {
+				limit = { PAP = { has_country_flag = secular_pope } }
+				add_prestige = -5
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				papal_influence = 20
+				factor = 0
+			}
+			modifier = {
+				NOT = { treasury = 100 }
+				factor = 0
+			}
+			modifier = {
+				PAP = { has_country_flag = secular_pope }
+				NOT = { prestige = 25 }
+				factor = 0
+			}
+			modifier = {
+				PAP = { has_country_flag = secular_pope }
+				is_papal_controller = yes
+				factor = 0
+			}
+			modifier = {
+				PAP = { has_country_flag = secular_pope }
+				NOT = { num_of_cities = 10 }
+				factor = 0
+			}
+		}
+	}
+	
+	request_annulment = {
+		potential = {
+			religion = catholic
+			government = monarchy
+			has_regency = no
+			is_lesser_in_union = no
+			NOT = { has_ruler_modifier = infertile_ruler }
+			OR = {
+				has_heir = no
+				AND = {
+					has_female_heir = yes
+					NOT = { heir_age = 5 }
+				}
+			}
+			ruler_age = 20
+			months_of_ruling = 24
+			NOT = { has_country_flag = great_matter }
+			NOT = { has_country_flag = excommunication }
+			NOT = { has_country_flag = royal_scandal }
+			NOT = { has_country_flag = national_church } #Handled via divorce decision instead
+			NOT = { has_country_flag = annulment_process }
+			NOT = { any_known_country = { reverse_has_opinion_modifier = { who = ROOT modifier = marriage_broken } } }
+			NOT = { any_known_country = { has_opinion_modifier = { who = ROOT modifier = marriage_broken } } }
+		}
+		allow = {
+			NOT = { war_with = PAP }
+			custom_trigger_tooltip = {
+				tooltip = pope_alive
+				has_global_flag = living_pope
+			}
+			custom_trigger_tooltip = {
+				tooltip = no_religious_scandal
+				not_have_religious_scandal = yes
+			}
+		}
+		effect = {
+			add_papal_influence = -10
+			set_country_flag = annulment_process
+			add_ruler_modifier = { name = loveless_marriage }
+			if = {
+				limit = {
+					NOT = {
+						any_known_country = {
+							marriage_with = ROOT
+							NOT = { senior_union_with = ROOT }
+							NOT = { junior_union_with = ROOT }
+							religion = ROOT
+							NOT = { has_country_flag = annulment_process }
+							NOT = { military_strength = { who = ROOT value = 2.0 } }
+							OR = {
+								ai = no
+								is_rival = ROOT
+								truce_with = ROOT
+								is_emperor = yes
+								is_papal_controller = yes
+							}
+						}
+					}
+					NOT = {
+						any_known_country = {
+							marriage_with = ROOT
+							NOT = { senior_union_with = ROOT }
+							NOT = { junior_union_with = ROOT }
+							religion = ROOT
+							NOT = { has_country_flag = annulment_process }
+							NOT = { military_strength = { who = ROOT value = 2.0 } }
+						}
+					}
+				}
+				random_known_country = {
+					limit = {
+						marriage_with = ROOT
+						NOT = { senior_union_with = ROOT }
+						NOT = { junior_union_with = ROOT }
+						religion = catholic
+						NOT = { has_country_flag = annulment_process }
+					}
+					add_opinion = { who = ROOT modifier = marriage_broken }
+					country_event = { id = dg_catholic.081 days = 20 }
+				}
+			}
+			else_if = {
+				limit = {
+					NOT = {
+						any_known_country = {
+							marriage_with = ROOT
+							NOT = { senior_union_with = ROOT }
+							NOT = { junior_union_with = ROOT }
+							religion = ROOT
+							NOT = { has_country_flag = annulment_process }
+							NOT = { military_strength = { who = ROOT value = 2.0 } }
+							OR = {
+								ai = no
+								is_rival = ROOT
+								truce_with = ROOT
+								is_emperor = yes
+								is_papal_controller = yes
+							}
+						}
+					}
+					any_known_country = {
+						marriage_with = ROOT
+						NOT = { senior_union_with = ROOT }
+						NOT = { junior_union_with = ROOT }
+						religion = ROOT
+						NOT = { has_country_flag = annulment_process }
+						NOT = { military_strength = { who = ROOT value = 2.0 } }
+					}
+				}
+				random_known_country = {
+					limit = {
+						marriage_with = ROOT
+						NOT = { senior_union_with = ROOT }
+						NOT = { junior_union_with = ROOT }
+						religion = catholic
+						NOT = { has_country_flag = annulment_process }
+						NOT = { military_strength = { who = ROOT value = 2.0 } }
+					}
+					add_opinion = { who = ROOT modifier = marriage_broken }
+					country_event = { id = dg_catholic.081 days = 20 }
+				}
+			}
+			else = {
+				#limit = {
+				#	any_country = {
+				#		marriage_with = ROOT
+				#		NOT = { senior_union_with = ROOT }
+				#		NOT = { junior_union_with = ROOT }
+				#		religion = ROOT
+				#		NOT = { has_country_flag = annulment_process }
+				#		NOT = { military_strength = { who = ROOT value = 2.0 } }
+				#		OR = {
+				#			ai = no
+				#			is_rival = ROOT
+				#			truce_with = ROOT
+				#			is_emperor = yes
+				#			is_papal_controller = yes
+				#		}
+				#	}
+				#}
+				random_known_country = {
+					limit = {
+						marriage_with = ROOT
+						NOT = { senior_union_with = ROOT }
+						NOT = { junior_union_with = ROOT }
+						religion = catholic
+						NOT = { has_country_flag = annulment_process }
+						NOT = { military_strength = { who = ROOT value = 2.0 } }
+						OR = {
+							ai = no
+							is_rival = ROOT
+							truce_with = ROOT
+							is_emperor = yes
+							is_papal_controller = yes
+						}
+					}
+					add_opinion = { who = ROOT modifier = marriage_broken }
+					country_event = { id = dg_catholic.081 days = 20 }
+				}
+			}
+			if = {
+				limit = { is_papal_controller = yes }
+				capital_scope = { add_province_triggered_modifier = request_annulment_1 }
+				#country_event = { id = dg_pope.021 days = 40 }
+			}
+			else = {
+				#limit = { is_papal_controller = no }
+				random_known_country = {
+					limit = { is_papal_controller = yes }
+					capital_scope = { add_province_triggered_modifier = request_annulment_2 }
+					#country_event = { id = dg_pope.021 days = 80 }
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 0.25
+			modifier = {
+				NOT = {
+					any_known_country = {
+						marriage_with = ROOT
+						NOT = { military_strength = { who = ROOT value = 2.0 } }
+						NOT = { senior_union_with = ROOT }
+						NOT = { junior_union_with = ROOT }
+						religion = ROOT
+						NOT = { has_country_flag = annulment_process }
+						OR = {
+							ai = no
+							is_rival = ROOT
+							truce_with = ROOT
+							is_emperor = yes
+							is_papal_controller = yes
+						}
+					}
+				}
+				factor = 0
+			}
+			modifier = {
+				legitimacy = 95
+				has_country_flag = ally_of_pope
+				factor = 0
+			}
+			modifier = {
+				legitimacy = 90
+				has_country_flag = friend_of_pope
+				factor = 0
+			}
+			modifier = {
+				legitimacy = 85
+				NOT = { has_country_flag = friend_of_pope }
+				NOT = { has_country_flag = ally_of_pope }
+				NOT = { has_country_flag = rival_of_pope }
+				NOT = { has_country_flag = enemy_of_pope }
+				factor = 0
+			}
+			modifier = {
+				legitimacy = 80
+				has_country_flag = rival_of_pope
+				factor = 0
+			}
+			modifier = {
+				legitimacy = 75
+				has_country_flag = enemy_of_pope
+				factor = 0
+			}
+			modifier = {
+				NOT = { ruler_age = 30 }
+				factor = 0
+			}
+			modifier = {
+				NOT = { months_of_ruling = 60 }
+				factor = 0
+			}
+			modifier = {
+				months_of_ruling = 120
+				factor = 2
+			}
+			modifier = {
+				months_of_ruling = 240
+				factor = 2
+			}
+		}
+	}
+	
+	patronato_real = {
+		potential = {
+			religion = catholic
+			OR = {
+				num_of_colonies = 1
+				colony = 1
+			}
+			NOT = { has_country_flag = patronato_real }
+			is_free_or_tributary_trigger = yes
+		}
+		allow = {
+			NOT = { war_with = PAP }
+		}
+		effect = {
+			set_country_flag = patronato_real
+			reverse_add_opinion = { who = PAP modifier = patronato_real_nation }
+			custom_tooltip = patronato_real_explained
+			every_country = {
+				limit = { is_colonial_nation_of = ROOT }
+				remove_country_modifier = monastic_schools
+				remove_country_modifier = charity_schools
+				remove_country_modifier = royal_schools
+				remove_country_modifier = preparatory_schools
+				remove_country_modifier = public_schools
+				if = {
+					limit = { NOT = { has_country_modifier = public_religious_schools } }
+					add_country_modifier = { name = jesuit_schools duration = -1 }
+				}
+			}
+			if = {
+				limit = { ai = yes }
+				hidden_effect = {
+					clr_country_flag = humanism
+					set_country_flag = renaissance
+					every_owned_province = {
+						limit = {
+							OR = {
+								is_core = ROOT
+								has_owner_culture = yes
+							}
+						}
+						clr_province_flag = humanist_ideas
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				NOT = { any_neighbor_country = { religion = catholic has_country_flag = patronato_real } }
+				NOT = { has_country_flag = renaissance }
+				factor = 0
+			}
+			modifier = {
+				NOT = {
+					capital_scope = {
+						OR = {
+							region = aragon_region
+							region = castille_region
+							region = leon_region
+							region = andalucia_region
+							region = portugal_region
+							area = macaronesia_area
+							superregion = italy_superregion
+						}
+					}
+				}
+				factor = 0
+			}
+		}
+	}
+	
+	cardinal_policy = {
+		potential = {
+			religion = catholic
+			papal_trigger = no
+			NOT = { num_of_cardinals = 2 }
+			NOT = { has_country_flag = cardinal_policy }
+			NOT = { has_country_flag = excommunicated }
+			any_owned_province = {
+				has_province_modifier = catholic_archbishopric
+				has_cardinal = no
+			}
+		}
+		allow = {
+			NOT = { war_with = PAP }
+		}
+		effect = {
+			if = {
+				limit = {
+					OR = {
+						treasury = 1000
+						NOT = { papal_influence = 10 }
+					}
+				}
+				add_treasury = -25
+			}
+			if = {
+				limit = {
+					NOT = { treasury = 1000 }
+					papal_influence = 10
+				}
+				add_papal_influence = -10
+			}
+			set_country_flag = cardinal_policy
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				NOT = { papal_influence = 20 }
+				NOT = { treasury = 50 }
+				factor = 0
+			}
+			modifier = {
+				NOT = { num_of_owned_provinces_with = { has_province_modifier = catholic_archbishopric value = 4 } }
+				factor = 0
+			}
+		}
+	}
+	consolidate_latin_patriarchate = { #Venice moving Grado to Veneto
+		potential = {
+			any_owned_province = {
+				has_province_modifier = catholic_patriarchate
+				culture_group = owner
+				has_owner_culture = no
+				is_capital = no
+				NOT = { has_country_flag = orthodox_pentarchy }
+			}
+			capital_scope = { NOT = { has_province_modifier = catholic_patriarchate } }
+			piety = -0.60
+			papal_trigger = no
+		}
+		allow = {
+			OR = {
+				is_papal_controller = yes
+				num_of_cardinals = 4
+			}
+			is_at_war = no
+			is_excommunicated = no
+			papal_influence = 25
+		}
+		effect = {
+			add_papal_influence = -25
+			random_owned_province = {
+				limit = {
+					has_province_modifier = catholic_patriarchate
+					culture_group = owner
+					has_owner_culture = no
+					is_capital = no
+					NOT = { has_country_flag = orthodox_pentarchy }
+				}
+				remove_province_modifier = catholic_patriarchate
+				clr_province_flag = catholic_patriarchate
+			}
+			capital_scope = {
+				set_province_flag = catholic_patriarchate
+				add_province_modifier = { name = catholic_patriarchate duration = -1 }
+			}
+			if = {
+				limit = { piety = 0.60 }
+				add_prestige = 20
+			}
+			else_if = {
+				limit = { piety = 0.20 }
+				add_prestige = 16
+			}
+			else_if = {
+				limit = { piety = -0.20 }
+				add_prestige = 12
+			}
+			else_if = {
+				limit = { piety = -0.60 }
+				add_prestige = 8
+			}
+		}
+	}
+	request_archbishopric = {
+		potential = {
+			religion = catholic
+			papal_trigger = no
+			NOT = { any_owned_province = { has_province_flag = catholic_archbishopric } }
+			piety = -0.60
+		}
+		allow = {
+			papal_influence = 200
+			total_development = 350 #was 400, lowered to account for overall lower development levels after the 2.6 update
+			is_excommunicated = no
+			NOT = { war_with = PAP }
+			custom_trigger_tooltip = {
+				tooltip = pope_alive
+				has_global_flag = living_pope
+			}
+			custom_trigger_tooltip = {
+				tooltip = no_religious_scandal
+				not_have_religious_scandal = yes
+			}
+		}
+		effect = {
+			add_papal_influence = -200
+			random_owned_province = {
+				limit = {
+					OR = {
+						is_capital = yes
+						AND = {
+							rich_province_trigger = yes
+							religion = catholic
+							is_in_capital_area = yes
+							NOT = { any_neighbor_province = { has_province_flag = catholic_archbishopric } }
+						}
+					}
+				}
+				set_province_flag = catholic_archbishopric
+				add_province_modifier = { name = catholic_archbishopric duration = -1 }
+			}
+			if = {
+				limit = { piety = 0.60 }
+				add_prestige = 5
+			}
+			else_if = {
+				limit = { piety = 0.20 }
+				add_prestige = 4
+			}
+			else_if = {
+				limit = { piety = -0.20 }
+				add_prestige = 3
+			}
+			else_if = {
+				limit = { piety = -0.60 }
+				add_prestige = 2
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+}
+

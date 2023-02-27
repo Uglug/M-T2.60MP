@@ -1,0 +1,93 @@
+Pop_RatioToVal = {
+	# P_RTV stands for Pop_RatioToVal, to avoid mingling with preexisting variable names
+	set_variable = { which = t1_P_RTV which = $PopTotal$ }
+	multiply_variable = { which = t1_P_RTV which = $PopRatio$ }
+	
+	set_variable = { which = t2_P_RTV which = t1_P_RTV }
+	
+	multiply_variable = { which = t1_P_RTV value = 0.01 } # / 100
+	
+	# Rounding
+	set_variable = { which = t3_P_RTV which = t1_P_RTV }
+	multiply_variable = { which = t3_P_RTV value = -100 }
+	change_variable = { which = t3_P_RTV which = t2_P_RTV }
+	
+	if = {
+		limit = { check_variable = { which = t3_P_RTV value = 0.05 } }
+		change_variable = { which = t1_P_RTV value = 0.001 }
+	}
+	
+	set_variable = { which = $output$ which = t1_P_RTV }
+	
+	set_variable = { which = t1_P_RTV value = 0 }
+	set_variable = { which = t2_P_RTV value = 0 }
+	set_variable = { which = t3_P_RTV value = 0 }
+}
+
+Pop_InvRatioToVal = {
+	set_variable = { which = t_P_ITV		value = 100 }
+	subtract_variable = { which = t_P_ITV	which = $PopRatio$ }
+	Pop_RatioToVal = { PopTotal = $PopTotal$ PopRatio = t_P_ITV output = $output$ }
+	set_variable = { which = t_P_ITV		value = 0 }
+}
+
+# Receives total population size, ratio of the particular pop, and pop growth value
+# Updates total population and ratio according to growth
+Pop_CalcGrowthPrec = {
+	set_variable = { which = PopRealValue which = $PopTotal$ }
+	multiply_variable = { which = PopRealValue which = $PopRatio$ }
+	
+	change_variable = { which = $PopTotal$ which = $PopGrowth$ }
+	
+	set_variable = { which = PopRealChange which = $PopGrowth$ }
+	multiply_variable = { which = PopRealChange value = 100 } # Because ratio is (0~1) * 100
+	change_variable = { which = PopRealValue which = PopRealChange }
+	
+	if = {
+		limit = { NOT = { check_variable = { which = PopRealValue value = 1 } } }
+		set_variable = { which = PopRealValue value = 1 }
+	}
+	
+	set_variable = { which = $PopRef$ which = PopRealValue }
+	multiply_variable = { which = $PopRef$ value = 0.001 }
+	
+	if = {
+		limit = { is_variable_equal = { which = $PopTotal$ value = 0 } }
+		set_variable = { which = $PopTotal$ value = 1 } #MASKS AN ISSUE WITH DIVISION BY ZERO!!!
+	}
+	divide_variable = { which = PopRealValue which = $PopTotal$ }
+	if = {
+		limit = { NOT = { check_variable = { which = PopRealValue value = 0.001 } } }
+		set_variable = { which = PopRealValue value = 0.001 }
+	}
+	
+	set_variable = { which = $PopRatio$ which = PopRealValue }
+	
+	set_variable = { which = $PopTotalRef$ which = $PopTotal$ }
+	multiply_variable = { which = $PopTotalRef$ value = 0.1 }
+	
+	
+	set_variable = { which = PopRealValue value = 0 }
+	set_variable = { which = PopRealChange value = 0 }
+	update_pop_display = yes
+}
+
+Pop_InvCalcGrowthPrec = {
+	set_variable = { which = InvPopRatio		value = 100 }
+	subtract_variable = { which = InvPopRatio	which = $PopRatio$ }
+	
+	Pop_CalcGrowthPrec = {
+		PopTotal=$PopTotal$
+		PopRatio=InvPopRatio
+		PopGrowth=$PopGrowth$
+		PopRef=$PopRef$
+		PopTotalRef=$PopTotalRef$
+	}
+	
+	set_variable = { which = $PopRatio$ value = 100 }
+	subtract_variable = { which = $PopRatio$ which = InvPopRatio }
+	
+	
+	set_variable = { which = InvPopRatio value = 0 }
+	update_pop_display = yes
+}

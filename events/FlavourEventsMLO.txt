@@ -1,0 +1,682 @@
+########################################
+# Events for Milano
+#
+# written by Johan Andersson
+########################################
+
+
+# The Ambrosian Republic
+country_event = {
+	id = flavor_mlo.1
+	title = flavor_mlo.1.t
+	desc = flavor_mlo.1.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		tag = MLO
+		NOT = { has_country_flag = ambrosian_republic }
+		government = monarchy
+		OR = {
+			AND = {
+				has_new_dynasty = yes
+				has_regency = no
+				has_consort_regency = no
+			}
+			any_known_country = {
+				succession_claim = ROOT
+			}
+		}
+		is_lesser_in_union = no
+		NOT = { is_year = 1550 }
+	}
+	
+	option = {
+		name = flavor_mlo.1.a
+		ai_chance = { factor = 90 }
+		oligarchisation_effect = yes
+		add_republican_tradition = 5
+		every_country = {
+			limit = {
+				religion = catholic
+				num_of_cities = 5
+				NOT = {
+					tag = MLO
+				}
+				OR = {
+					government = monarchy
+					tag = VEN
+					tag = PAP
+				}
+				OR = {
+					culture_group = low_germanic
+					culture_group = high_germanic
+					culture_group = latin
+					culture_group = langue_d_oil
+					culture_group = langue_d_oc
+					is_neighbor_of = ROOT
+				}
+			}
+			
+			add_opinion = {
+				who = ROOT
+				modifier = mlo_against_ambrosian
+			}
+			if = {
+				limit = {
+					government = monarchy
+				}
+				
+				add_casus_belli = {
+					target = MLO
+					type = cb_change_government
+					months = 120
+				}
+			}
+		}
+		set_country_flag = ambrosian_republic
+	}
+	option = {
+		name = flavor_mlo.1.b
+		ai_chance = { factor = 10 }
+		subtract_stability_2 = yes
+		add_legitimacy = 25
+	}
+}
+
+# Low tradition, Guelphs vs Ghibellines
+country_event = {
+	id = flavor_mlo.2
+	title = flavor_mlo.2.t
+	desc = flavor_mlo.2.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+	
+	trigger = {
+		tag = MLO
+		oligarchy_trigger = yes
+		NOT = { republican_tradition = 50 }
+	}
+	
+	mean_time_to_happen = { years = 5 }
+	
+	option = {
+		name = flavor_mlo.2.a
+		add_republican_tradition = -20
+		add_stability_1 = yes
+	}
+	option = {
+		name = flavor_mlo.2.b
+		add_republican_tradition = 20
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+	}
+}
+
+# Ospedale Maggiore
+country_event = {
+	id = flavor_mlo.3
+	title = flavor_mlo.3.t
+	desc = flavor_mlo.3.d
+	picture = UNIVERSITY_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = MLO
+		is_year = 1456
+		owns = 104 # Lombardia
+		is_at_war = no
+		NOT = { is_year = 1470 }
+	}
+	
+	mean_time_to_happen = { months = 12 }
+	
+	option = {
+		name = flavor_mlo.3.a
+		add_legitimacy = 10
+		add_republican_tradition = 10
+		add_stability_1 = yes
+		104 = { add_country_modifier = { name = "industrious_ruler_gravity" duration = 3650 } }
+	}
+}
+
+# Peace of Lodi
+country_event = {
+	id = flavor_mlo.4
+	title = flavor_mlo.4.t
+	desc = flavor_mlo.4.d
+	picture = DIPLOMACY_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = MLO
+		is_year = 1450
+		is_at_war = no
+		num_of_cities = 3
+		
+		NOT = { is_year = 1490 }
+		
+		NAP = {
+			is_at_war = no
+			num_of_cities = 3
+		}
+		VEN = {
+			is_at_war = no
+			num_of_cities = 3
+		}
+		TUS = {
+			is_at_war = no
+			num_of_cities = 3
+		}
+	}
+	
+	mean_time_to_happen = { months = 12 }
+	
+	option = {
+		name = flavor_mlo.4.a
+		ai_chance = { factor = 90 }
+		
+		NAP = {
+			add_opinion = {
+				who = ROOT
+				modifier = mlo_peace_of_lodi
+			}
+		}
+		VEN = {
+			add_opinion = {
+				who = ROOT
+				modifier = mlo_peace_of_lodi
+			}
+		}
+		TUS = {
+			add_opinion = {
+				who = ROOT
+				modifier = mlo_peace_of_lodi
+			}
+		}
+		
+		hidden_effect = {
+			NAP = { country_event = {  id = flavor_mlo.5 } }
+			VEN = { country_event = {  id = flavor_mlo.5 } }
+			TUS = { country_event = {  id = flavor_mlo.5 } }
+		}
+	}
+	option = {
+		name = flavor_mlo.4.b
+		add_mil_power = 10
+	}
+}
+
+# For the other countries
+country_event = {
+	id = flavor_mlo.5
+	title = flavor_mlo.5.t
+	desc = flavor_mlo.5.d
+	picture = DIPLOMACY_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_mlo.5.a
+		NAP = {
+			add_opinion = {
+				who = ROOT
+				modifier = mlo_peace_of_lodi
+			}
+		}
+		TUS = {
+			add_opinion = {
+				who = ROOT
+				modifier = mlo_peace_of_lodi
+			}
+		}
+		FIR = {
+			add_opinion = {
+				who = ROOT
+				modifier = mlo_peace_of_lodi
+			}
+		}
+		VEN = {
+			add_opinion = {
+				who = ROOT
+				modifier = mlo_peace_of_lodi
+			}
+		}
+		MLO = {
+			add_opinion = {
+				who = ROOT
+				modifier = mlo_peace_of_lodi
+			}
+		}
+	}
+}
+
+
+# Niccolo Macchiavelli #changed by Marco Dandolo. Machiavelli is a statesman, hehe... also for FLO!
+country_event = {
+	id = flavor_mlo.6
+	title = flavor_mlo.6.t
+	desc = flavor_mlo.6.d
+	picture = ADVISOR_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		OR = {
+			tag = TUS
+			tag = FIR
+		}
+		is_year = 1490
+		NOT = { advisor_exists = 796 }
+		government = republic
+		owns = 116 # Toscana
+		NOT = { is_year = 1495 }
+	}
+	
+	mean_time_to_happen = { months = 12 }
+	
+	immediate = {
+		set_country_flag = we_have_macchiavelli
+	}
+	option = {
+		name = flavor_mlo.6.b
+		add_adm_power = 25
+		define_advisor = {
+			type = statesman
+			name = "Niccolò Machiavelli"
+			culture = tuscan
+			location = 116
+			skill = 3
+			discount = yes
+		}
+		add_stability_1 = yes
+	}
+}
+
+# The Prince #changed by Marco Dandolo. FLO!
+country_event = {
+	id = flavor_mlo.7
+	title = flavor_mlo.7.t
+	desc = flavor_mlo.7.d
+	picture = ADVISOR_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		OR = {
+			tag = TUS
+			tag = FIR
+		}
+		is_year = 1513
+		NOT = { is_year = 1520 }
+		OR = {
+			is_advisor_employed = 796
+			has_country_flag = we_have_macchiavelli
+		}
+	}
+	
+	mean_time_to_happen = { months = 12 }
+	
+	option = {
+		name = flavor_mlo.7.a
+		add_republican_tradition = 10
+		add_legitimacy = 10
+		add_stability_1 = yes
+		add_prestige = 10
+		
+		hidden_effect = {
+			if = {
+				limit = {
+					MLO = {
+						legitimacy = 80
+						government = monarchy
+					}
+				}
+				MLO = {
+					country_event = {
+						id = flavor_mlo.8
+						days = 5
+						random = 8
+					}
+				}
+			}
+		}
+	}
+}
+
+# Praise from Machiavelli
+country_event = {
+	id = flavor_mlo.8
+	title = flavor_mlo.8.t
+	desc = flavor_mlo.8.d
+	picture = ADVISOR_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_mlo.8.a
+		add_prestige = 25
+		add_dip_power = 50
+	}
+}
+
+# Leonardo da Vinci
+country_event = {
+	id = flavor_mlo.9
+	title = flavor_mlo.9.t
+	desc = flavor_mlo.9.d
+	picture = PAINTER_ARTIST_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = MLO
+		is_year = 1497
+		NOT = { advisor_exists = 790 }
+		owns = 104 # Lombardia
+		NOT = { is_year = 1500 }
+	}
+	
+	mean_time_to_happen = { months = 12 }
+	
+	option = {
+		name = flavor_mlo.9.a
+		define_advisor = {
+			type = natural_scientist
+			name = "Leonardo da Vinci"
+			culture = tuscan
+			location = 104
+			skill = 3
+			discount = yes
+		}
+		add_dip_power = 50
+		add_mil_power = 50
+		add_adm_power = 50
+	}
+}
+
+# The centre of fashion
+country_event = {
+	id = flavor_mlo.10
+	title = flavor_mlo.10.t
+	desc = flavor_mlo.10.d
+	picture = COURT_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = MLO
+		is_year = 1500
+		owns = 104 # Lombardia
+		NOT = { is_year = 1600 }
+	}
+	
+	mean_time_to_happen = { years = 10 }
+	
+	option = {
+		name = flavor_mlo.10.a
+		add_adm_power = 50
+		104 = { add_country_modifier = { name = "industrious_ruler_gravity" duration = 3650 } }
+	}
+}
+
+####################################################
+#Guelphs, Ghibellines and the Rise of the Sforza
+
+#by Hadhod
+
+#1: Francesco Sforza
+#2: Autocratic Guelph Ruler
+#3: The Ghibelline Conspiracy
+#4: Populace forces Elections
+#5: The Future of Milan
+
+namespace = sforza_ascending
+
+####################################################
+
+#Francesco Sforza
+country_event = {
+	id = sforza_ascending.001
+	title = "sforza_ascending.001.t"
+	desc = "sforza_ascending.001.d"
+	picture = CONQUEST_eventPicture
+
+	fire_only_once = yes
+
+	trigger = {
+		is_year = 1430
+		NOT = { is_year = 1465 }
+		NOT = { has_country_flag = francesco_sforza_in_milan }
+		tag = MLO
+		owns = 104
+		num_of_cities = 5
+	}
+
+	mean_time_to_happen = {
+		months = 120
+	}
+
+	immediate = { set_country_flag = francesco_sforza_in_milan }
+
+	option = { # He will lead our armies to victory!
+		name = "sforza_ascending.001.a"
+		define_general = {
+			name = "Francesco Sforza"
+			fire = 4
+			shock = 5
+			manuever = 5
+			siege = 2
+		}
+	}
+}
+
+#Autocratic Guelph Ruler
+country_event = {
+	id = sforza_ascending.002
+	title = "sforza_ascending.002.t"
+	desc = "sforza_ascending.002.d"
+	picture = COURT_eventPicture
+
+	fire_only_once = yes
+
+	trigger = {
+		is_year = 1440
+		tag = MLO
+		oligarchy_trigger = yes
+		NOT = { republican_tradition = 75 }
+		owns = 104
+	}
+
+	mean_time_to_happen = {
+		months = 60
+	}
+
+	option = {
+		name = "sforza_ascending.002.a"
+		add_republican_tradition = -10
+		add_prestige = 10
+		hidden_effect = {
+			country_event = {
+				id = sforza_ascending.003
+				days = 60
+			}
+		}
+		ai_chance = {
+			factor = 90
+		}
+	}
+
+	option = {
+		name = "sforza_ascending.002.b"
+		kill_ruler = yes
+		add_republican_tradition = 10
+		add_prestige = -10
+		set_country_flag = ghibellines_in_power
+
+		ai_chance = {
+			factor = 10
+		}
+	}
+}
+
+#The Ghibelline Conspiracy
+country_event = {
+	id = sforza_ascending.003
+	title = "sforza_ascending.003.t"
+	desc = "sforza_ascending.003.d"
+	picture = ASSASSINATION_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = "sforza_ascending.003.a"
+		104 = {
+			add_province_modifier = {
+				name = "peasants_organizing"
+				duration = 1825
+			}
+			add_unrest = 5
+		}
+		subtract_stability_1 = yes
+		set_country_flag = autocratic_guelph_ruler
+		
+		ai_chance = {
+			factor = 25
+		}
+	}
+
+	option = {
+		name = "sforza_ascending.003.b"
+		add_prestige = -10
+		kill_ruler = yes
+		set_country_flag = ghibellines_in_power
+
+		ai_chance = {
+			factor = 75
+		}
+	}
+}
+
+#Populace forces Election
+country_event = {
+	id = sforza_ascending.004
+	title = "sforza_ascending.004.t"
+	desc = "sforza_ascending.004.d"
+	picture = ANGRY_MOB_eventPicture
+
+	fire_only_once = yes
+
+	trigger = {
+		tag = MLO
+		oligarchy_trigger = yes
+		owns = 104
+		has_country_flag = autocratic_guelph_ruler
+	}
+
+	mean_time_to_happen = {
+		months = 12
+	}
+
+	option = {
+		name = "sforza_ascending.004.a"
+		kill_ruler = yes
+		clr_country_flag = autocratic_guelph_ruler
+		set_country_flag = ghibellines_in_power
+	}
+}
+
+#The Future of Milan
+country_event = {
+	id = sforza_ascending.005
+	title = "sforza_ascending.005.t"
+	desc = "sforza_ascending.005.d"
+	picture = STREET_SPEECH_eventPicture
+
+	fire_only_once = yes
+	major = yes
+
+	trigger = {
+		tag = MLO
+		oligarchy_trigger = yes
+		owns = 104
+		has_country_flag = ghibellines_in_power
+		has_country_flag = francesco_sforza_in_milan
+	}
+
+	mean_time_to_happen = {
+		months = 12
+	}
+
+	option = {
+		name = "sforza_ascending.005.a"
+		add_stability_1 = yes
+		add_republican_tradition = 25
+		
+		ai_chance = {
+			factor = 10
+		}
+	}
+
+	option = {
+		name = "sforza_ascending.005.b"
+		despotisation_effect = yes #feudalisation_effect
+		if = {
+			limit = {
+				OR = {
+					has_country_modifier = title_1
+					has_country_modifier = title_2
+				}
+			}
+			change_title_3 = yes
+		}
+		define_ruler = {
+			name = "Francesco"
+			dynasty = "Sforza"
+			age = 40
+			adm = 6
+			dip = 6
+			mil = 6
+			fixed = yes
+			claim = 70
+		}
+		define_consort = {
+			name = "Bianca Maria"
+			dynasty = "Visconti"
+			age = 20
+			adm = 5
+			dip = 3
+			mil = 4
+			#fixed = yes
+		}
+		if = {
+			limit = {
+				is_year = 1444
+			}
+			define_heir = {
+				name = "Galeazzo Maria"
+				dynasty = "Sforza"
+				birth_date = 1444.1.24
+				adm = 4
+				dip = 1
+				mil = 3
+				#fixed = yes
+				claim = 70
+			}
+		}
+
+		ai_chance = {
+			factor = 90
+		}
+	}
+}

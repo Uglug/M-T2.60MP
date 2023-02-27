@@ -1,0 +1,290 @@
+country_decisions = {
+	
+	adopt_confucianism = {
+		potential = {
+			OR = {
+				dominant_religion = confucianism
+				has_country_flag = was_confucianism
+			}
+			NOT = { religion = confucianism }
+			any_owned_province = {
+				religion = confucianism
+				OR = {
+					has_owner_culture = yes
+					AND = {
+						owner = { has_unified_culture_group = yes }
+						culture_group = owner
+					}
+					has_owner_accepted_culture = yes
+					AND = {
+						is_core = owner
+						is_in_capital_area = yes
+					}
+				}
+			}
+			OR = {
+				ai = no
+				is_free_or_tributary_trigger = yes
+				overlord = {
+					religion = confucianism
+				}
+			}
+		}
+		allow = {
+			is_force_converted = no
+			stability = 1
+		}
+		effect = {
+			if = {
+				limit = {
+					NOT = { check_variable = { which = confucianism_population value = 25 } }
+				}
+				custom_tooltip = convert_population_0
+				subtract_stability_3 = yes
+			}
+			if = {
+				limit = {
+					check_variable = { which = confucianism_population value = 25 }
+					NOT = { dominant_religion = confucianism }
+				}
+				custom_tooltip = convert_population_25
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = {
+					dominant_religion = confucianism
+					NOT = { check_variable = { which = confucianism_population value = 75 } }
+				}
+				custom_tooltip = convert_population_50
+				subtract_stability_1 = yes
+			}
+			if = {
+				limit = {
+					dominant_religion = confucianism
+					check_variable = { which = confucianism_population value = 75 }
+				}
+				custom_tooltip = convert_population_75
+			}
+			if = {
+				limit = { patriarch_authority = 0.75 }
+				custom_tooltip = convert_church_strong
+				subtract_stability_3 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.50 }
+				custom_tooltip = convert_piety_moderate
+				subtract_stability_2 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.25 }
+				custom_tooltip = convert_church_weak
+				subtract_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_church_insignificant
+			}
+			if = {
+				limit = { ADM = 5 }
+				if = {
+					limit = {
+						capital_scope = { religion = confucianism }
+					}
+					custom_tooltip = convert_ruler_strong
+					add_stability_3 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+			}
+			else_if = {
+				limit = { ADM = 3 }
+				if = {
+					limit = {
+						capital_scope = { religion = confucianism }
+					}
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						capital_scope = { religion = confucianism }
+					}
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_incompetent
+				}
+			}
+			if = {
+				limit = { advisor = philosopher }
+				custom_tooltip = convert_philosopher
+				add_stability_1 = yes
+			}
+			if = {
+				limit = {
+					has_country_flag = was_confucianism
+				}
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_previous_recent
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_previous_old
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_recent
+					add_stability_1 = yes
+				}
+			}
+			if = {
+				limit = {
+					is_emperor_of_china = yes
+				}
+				add_mandate = 10
+			}
+			change_religion = confucianism
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	introduce_imperial_examinations = {
+		potential = {
+			OR = {
+				religion = confucianism
+				has_country_modifier = confucianism_dominates
+				secondary_religion = confucianism
+			}
+			NOT = {
+				OR = {
+					has_country_modifier = examination_system_classics
+					has_country_modifier = examination_system_eight_legged_essay
+					has_country_modifier = examination_system_five_studies
+					has_country_modifier = examination_system_six_arts
+					has_country_modifier = examination_system_quotas
+					has_country_modifier = examination_system_translated_exams
+				}
+			}
+			NOT = {
+				has_country_flag = event_fired
+			}
+		}
+		allow = {
+			num_of_cities = 8
+			is_at_war = no
+			has_any_disaster = no
+			stability = 0
+			adm_power = 50
+		}
+		effect = {
+			add_adm_power = -50
+			add_stability_1 = yes
+			country_event = { id = dg_confucian.081 }
+			if = {
+				limit = {
+					is_emperor_of_china = yes
+				}
+				add_mandate = 10
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	reform_imperial_examinations = {
+		potential = {
+			has_country_flag = examination_system
+		}
+		allow = {
+			is_at_war = no
+			has_any_disaster = no
+			stability = 0
+			adm_power = 25
+			custom_trigger_tooltip = {
+				NOT = { has_country_flag = confucianism_reformed_examinations }
+				tooltip = dg_once_per_ruler
+			}
+		}
+		effect = {
+			add_adm_power = -25
+			set_country_flag = confucianism_reformed_examinations
+			country_event = { id = dg_confucian.081 }
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				has_new_dynasty = no
+				factor = 0
+			}
+		}
+	}
+	end_imperial_examinations = {
+		potential = {
+			has_country_flag = examination_system
+		}
+		allow = {
+			stability = 0
+			ADM = 3
+		}
+		effect = {
+			subtract_stability_2 = yes
+			set_country_flag = confucian_examination_system_ended
+			remove_country_modifier = examination_system_classics
+			remove_country_modifier = examination_system_eight_legged_essay
+			remove_country_modifier = examination_system_five_studies
+			remove_country_modifier = examination_system_six_arts
+			remove_country_modifier = examination_system_quotas
+			remove_country_modifier = examination_system_translated_exams
+			clr_country_flag = examination_system
+			if = {
+				limit = {
+					is_emperor_of_china = yes
+				}
+				add_mandate = -10
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	irregular_imperial_examinations = {
+		potential = {
+			has_country_flag = examination_system
+		}
+		allow = {
+			adm_power = 5
+			custom_trigger_tooltip = {
+				NOT = { has_country_flag = confucian_irregular_examination }
+				tooltip = in_between_regular_examinations
+			}
+		}
+		effect = {
+			set_country_flag = confucian_irregular_examination
+			add_adm_power = -5
+			hidden_effect = { capital_scope = { add_province_triggered_modifier = irregular_imperial_examinations } }
+			#country_event = { id = dg_confucian.086 days = 30 }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+}

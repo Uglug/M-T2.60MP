@@ -1,0 +1,473 @@
+mass_build_clear_vars = {
+	set_variable = { which = mass_build_admin_cost value = 0 }
+	set_variable = { which = mass_build_admin_current value = 0 }
+	set_variable = { which = mass_build_admin_expediture_step value = 0 }
+	set_variable = { which = mass_build_admin_expenditure value = 0 }
+	set_variable = { which = mass_build_admin_max_ratio value = 0 }
+	set_variable = { which = mass_build_admin_max_spend_ratio value = 0 }
+	set_variable = { which = mass_build_admin_percentage value = 0 }
+	set_variable = { which = mass_build_cash_percentage value = 0 }
+	set_variable = { which = mass_build_current_admin_ratio value = 0 }
+	set_variable = { which = mass_build_current_diplo_ratio value = 0 }
+	set_variable = { which = mass_build_current_discount_ratio value = 0 }
+	set_variable = { which = mass_build_current_estate_ratio value = 0 }
+	set_variable = { which = mass_build_current_manpower_ratio value = 0 }
+	set_variable = { which = mass_build_current_milit_ratio value = 0 }
+	set_variable = { which = mass_build_diplo_cost value = 0 }
+	set_variable = { which = mass_build_diplo_current value = 0 }
+	set_variable = { which = mass_build_ducat_cost value = 0 }
+	set_variable = { which = mass_build_ducat_cost_discounted value = 0 }
+	set_variable = { which = mass_build_estate_cost value = 0 }
+	set_variable = { which = mass_build_estate_expediture_step value = 0 }
+	set_variable = { which = mass_build_estate_expenditure value = 0 }
+	set_variable = { which = mass_build_estate_max_ratio value = 0 }
+	set_variable = { which = mass_build_estate_max_spend_ratio value = 0 }
+	set_variable = { which = mass_build_estate_percentage value = 0 }
+	set_variable = { which = mass_build_estate_treasury value = 0 }
+	set_variable = { which = mass_build_manpower_cost value = 0 }
+	set_variable = { which = mass_build_manpower_current value = 0 }
+	set_variable = { which = mass_build_manpower_expediture_step value = 0 }
+	set_variable = { which = mass_build_manpower_expenditure value = 0 }
+	set_variable = { which = mass_build_manpower_max_ratio value = 0 }
+	set_variable = { which = mass_build_manpower_max_spend_ratio value = 0 }
+	set_variable = { which = mass_build_manpower_percentage value = 0 }
+	set_variable = { which = mass_build_max_admin_cost value = 0 }
+	set_variable = { which = mass_build_max_admin_expenditure value = 0 }
+	set_variable = { which = mass_build_max_diplo_cost value = 0 }
+	set_variable = { which = mass_build_max_estate_expenditure value = 0 }
+	set_variable = { which = mass_build_max_manpower_cost value = 0 }
+	set_variable = { which = mass_build_max_manpower_expenditure value = 0 }
+	set_variable = { which = mass_build_max_milit_cost value = 0 }
+	set_variable = { which = mass_build_milit_cost value = 0 }
+	set_variable = { which = mass_build_milit_cost_divison value = 0 }
+	set_variable = { which = mass_build_milit_current value = 0 }
+	set_variable = { which = mass_build_remaining_possible_discount value = 0 }
+	set_variable = { which = mass_build_spending_admin_ratio value = 0 }
+	set_variable = { which = mass_build_spending_estate_ratio value = 0 }
+	set_variable = { which = mass_build_spending_manpower_ratio value = 0 }
+	set_variable = { which = ducat_cost value = 0 }
+	set_variable = { which = admin_cost value = 0 }
+	set_variable = { which = diplo_cost value = 0 }
+	set_variable = { which = milit_cost value = 0 }
+	set_variable = { which = manpower_cost value = 0 }
+	clr_country_flag = mass_building
+}
+mass_build_constants = {
+	set_variable = { which = mass_build_admin_expediture_step value = 0.05 }
+	set_variable = { which = mass_build_admin_max_ratio value = 0.25 } #MAXIMUM RATIO OF PROJECT THAT CAN BE PAID WITH ADMINISTRATIVE
+	set_variable = { which = mass_build_estate_expediture_step value = 0.05 }
+	set_variable = { which = mass_build_estate_max_ratio value = 0.50 } #MAXIMUM RATIO OF PROJECT THAT CAN BE PAID WITH ESTATE TREASURY
+	set_variable = { which = mass_build_manpower_expediture_step value = 0.05 }
+	set_variable = { which = mass_build_manpower_max_ratio value = 0.75 } #MAXIMUM RATIO OF PROJECT THAT CAN BE PAID WITH MANPOWER
+}
+################ BASE ###################
+mass_build_base_admin = {
+	# ACTUAL ADMINISTRATIVE POWER COST OF ALL PROJECTS (IF WE WERE PAYING 100% WITH ADMIN)
+	set_variable = { which = mass_build_max_admin_cost which = mass_build_ducat_cost }
+	multiply_variable = { which = mass_build_max_admin_cost value = 1.6 }
+	set_variable = { which = temp which = upper_pop }
+	change_variable = { which = temp value = 1 }
+	divide_variable = { which = mass_build_max_admin_cost which = temp }
+	set_variable = { which = temp value = 40 } #base cost per prov
+	multiply_variable = { which = temp which = mass_build_num }
+	change_variable = { which = mass_build_max_admin_cost which = temp }
+	multiply_variable = { which = mass_build_max_admin_cost value = 0.01 }
+	multiply_variable = { which = mass_build_max_admin_cost value = 1000 }
+}
+mass_build_base_estate = {
+	# ACTUAL DIPLO POWER COST OF ALL PROJECTS (IF WE WERE PAYING 100% WITH ESTATE TREASURY)
+	set_variable = { which = mass_build_max_diplo_cost which = mass_build_ducat_cost }
+	set_variable = { which = temp which = upper_pop }
+	change_variable = { which = temp value = 1 }
+	divide_variable = { which = mass_build_max_diplo_cost which = temp }
+	multiply_variable = { which = mass_build_max_diplo_cost value = 0.03 } #Much more expensive in mana to take gold from your estates
+	set_variable = { which = temp value = -1 }
+	change_variable = { which = temp which = estate_bureaucracy_weight_share }
+	multiply_variable = { which = temp value = -1 }
+	multiply_variable = { which = mass_build_max_diplo_cost which = temp } #But a more powerful estate has a huge bonus
+	multiply_variable = { which = mass_build_max_diplo_cost value = 1000 }
+	set_variable = { which = mass_build_max_estate_cost which = mass_build_ducat_cost }
+}
+mass_build_base_manpower = {
+	# ACTUAL MANPOWER COST OF ALL PROJECTS (IF WE WERE PAYING 100% WITH MANPOWER)
+	set_variable = { which = mass_build_max_manpower_cost which = mass_build_ducat_cost }
+	multiply_variable = { which = mass_build_max_manpower_cost value = 0.001 }
+	multiply_variable = { which = mass_build_max_manpower_cost value = 50 }
+	
+	# ACTUAL MILITARY POWER COST OF ALL PROJECTS (IF WE WERE PAYING 100% WITH MANPOWER)
+	set_variable = { which = mass_build_max_milit_cost which = mass_build_ducat_cost }
+	set_variable = { which = temp which = upper_pop }
+	change_variable = { which = temp value = 1 }
+	divide_variable = { which = mass_build_max_milit_cost which = temp }
+	change_variable = { which = mass_build_max_milit_cost value = 12 }
+	multiply_variable = { which = mass_build_max_milit_cost value = 0.001 }
+	multiply_variable = { which = mass_build_max_milit_cost value = 1000 }
+}
+################# CURRENT ##################
+mass_build_current_admin = {
+	# AMOUNT OF ADMINISTRATIVE POWER WE ACTUALLY HAVE, AND HOW MUCH OF MAX COST WE COULD PAY
+	adm_available = yes
+	set_variable = { which = mass_build_admin_current which = adm_power }
+	set_variable = { which = mass_build_current_admin_ratio which = mass_build_admin_current }
+	divide_variable = { which = mass_build_current_admin_ratio which = mass_build_max_admin_cost }
+	
+	### LIMIT ADMIN SPENDING BASED ON THE MAX ADMIN SPENDING
+	set_variable = { which = mass_build_admin_max_spend_ratio which = mass_build_current_admin_ratio }
+	
+	if = { limit = { check_variable = { which = mass_build_admin_max_spend_ratio which = mass_build_admin_max_ratio } } #If our current manpower ratio is larger than the max (75%)
+		set_variable = { which = mass_build_admin_max_spend_ratio which = mass_build_admin_max_ratio }
+	}
+}
+mass_build_current_estate = {
+	# TOTAL TREASURY OF ALL ESTATES
+	set_variable = { which = mass_build_estate_treasury which = estate_greater_nobles_treasury }
+	change_variable = { which = mass_build_estate_treasury which = estate_burghers_treasury }
+	change_variable = { which = mass_build_estate_treasury which = estate_lesser_nobles_treasury }
+	set_variable = { which = mass_build_current_estate_ratio which = mass_build_estate_treasury }
+	divide_variable = { which = mass_build_current_estate_ratio which = mass_build_max_estate_cost }
+	
+	# AMOUNT OF DIPLOMATIC POWER WE ACTUALLY HAVE, AND HOW MUCH OF MAX COST WE COULD PAY
+	dip_available = yes
+	set_variable = { which = mass_build_diplo_current which = dip_power }
+	set_variable = { which = mass_build_current_diplo_ratio which = mass_build_diplo_current }
+	divide_variable = { which = mass_build_current_diplo_ratio which = mass_build_max_diplo_cost }
+		
+	### LIMIT ESTATE SPENDING BASED ON THE LOWER OF DIP POWER OR ESTATE TREASURY SPENDING LIMIT
+	set_variable = { which = mass_build_estate_max_spend_ratio which = mass_build_current_estate_ratio }
+	
+	if = { limit = { check_variable = { which = mass_build_estate_max_spend_ratio which = mass_build_estate_max_ratio } } #If our current manpower ratio is larger than the max (75%)
+		set_variable = { which = mass_build_estate_max_spend_ratio which = mass_build_estate_max_ratio }
+	}
+	if = { limit = { check_variable = { which = mass_build_estate_max_spend_ratio which = mass_build_current_diplo_ratio } } #If our current manpower ratio is larger than the military power ratio we have to use the lower amount
+		set_variable = { which = mass_build_estate_max_spend_ratio which = mass_build_current_diplo_ratio }
+	}
+}
+mass_build_current_manpower = {
+	# AMOUNT OF MANPOWER WE ACTUALLY HAVE, AND HOW MUCH OF MAX COST WE COULD PAY
+	export_to_variable = { which = mass_build_manpower_current value = manpower }
+	set_variable = { which = mass_build_current_manpower_ratio which = mass_build_manpower_current }
+	divide_variable = { which = mass_build_current_manpower_ratio which = mass_build_max_manpower_cost }
+	
+	# AMOUNT OF MILITARY POWER WE ACTUALLY HAVE, AND HOW MUCH OF MAX COST WE COULD PAY
+	mil_available = yes
+	set_variable = { which = mass_build_milit_current which = mil_power }
+	set_variable = { which = mass_build_current_milit_ratio which = mass_build_milit_current }
+	divide_variable = { which = mass_build_current_milit_ratio which = mass_build_max_milit_cost }
+	
+	### LIMIT MANPOWER SPENDING BASED ON THE LOWER OF MIL POWER OR MANPOWER SPENDING RATIO
+	set_variable = { which = mass_build_manpower_max_spend_ratio which = mass_build_current_manpower_ratio }
+	
+	if = { limit = { check_variable = { which = mass_build_manpower_max_spend_ratio which = mass_build_manpower_max_ratio } } #If our current manpower ratio is larger than the max (75%)
+		set_variable = { which = mass_build_manpower_max_spend_ratio which = mass_build_manpower_max_ratio }
+	}
+	if = { limit = { check_variable = { which = mass_build_manpower_max_spend_ratio which = mass_build_current_milit_ratio } } #If our current manpower ratio is larger than the military power ratio we have to use the lower amount
+		set_variable = { which = mass_build_manpower_max_spend_ratio which = mass_build_current_milit_ratio }
+	}
+}
+mass_build__calc_all = {
+	hidden_effect = {
+		#set_variable = { which = mass_build_admin_cost value = 0 }
+		#set_variable = { which = mass_build_estate_cost value = 0 }
+		#set_variable = { which = mass_build_diplo_cost value = 0 }
+		#set_variable = { which = mass_build_manpower_cost value = 0 }
+		#set_variable = { which = mass_build_milit_cost value = 0 }
+		#set_variable = { which = mass_build_ducat_cost_discounted value = 0 }
+		#set_variable = { which = mass_build_cash_percentage value = 0 }
+		#set_variable = { which = mass_build_admin_percentage value = 0 }
+		#set_variable = { which = mass_build_estate_percentage value = 0 }
+		
+		mass_build_constants = yes
+		
+		mass_build_base_admin = yes
+		mass_build_base_estate = yes
+		mass_build_base_manpower = yes
+		
+		mass_build_current_admin = yes
+		mass_build_current_estate = yes
+		mass_build_current_manpower = yes
+		
+		# CURRENT SPENDING
+		set_variable = { which = mass_build_spending_admin_ratio which = mass_build_admin_expenditure }
+		multiply_variable = { which = mass_build_spending_admin_ratio which = mass_build_admin_expediture_step }
+		set_variable = { which = mass_build_spending_estate_ratio which = mass_build_estate_expenditure }
+		multiply_variable = { which = mass_build_spending_estate_ratio which = mass_build_estate_expediture_step }
+		set_variable = { which = mass_build_spending_manpower_ratio which = mass_build_manpower_expenditure }
+		multiply_variable = { which = mass_build_spending_manpower_ratio which = mass_build_manpower_expediture_step }
+		
+		# CURRENT DISCOUNTABLE PRICE REMAINING (1 - TOTAL SPENDING RATIO)
+		set_variable = { which = mass_build_current_discount_ratio which = mass_build_spending_admin_ratio }
+		change_variable = { which = mass_build_current_discount_ratio which = mass_build_spending_estate_ratio }
+		change_variable = { which = mass_build_current_discount_ratio which = mass_build_spending_manpower_ratio }
+		
+		set_variable = { which = mass_build_remaining_possible_discount value = -1 }
+		change_variable = { which = mass_build_remaining_possible_discount which = mass_build_current_discount_ratio }
+		multiply_variable = { which = mass_build_remaining_possible_discount value = -1 }
+		# LIMIT MAX SPEND RATIOS TO NO LARGER THAN REMAING DISCOUNTABLE PRICE
+		if = { limit = { check_variable = { which = mass_build_admin_max_spend_ratio which = mass_build_remaining_possible_discount } } #Limit further spending based on the remaining possible discount
+			set_variable = { which = mass_build_admin_max_spend_ratio which = mass_build_remaining_possible_discount }
+		}
+		if = { limit = { check_variable = { which = mass_build_estate_max_spend_ratio which = mass_build_remaining_possible_discount } } #Limit further spending based on the remaining possible discount
+			set_variable = { which = mass_build_estate_max_spend_ratio which = mass_build_remaining_possible_discount }
+		}
+		if = { limit = { check_variable = { which = mass_build_manpower_max_spend_ratio which = mass_build_remaining_possible_discount } } #Limit further spending based on the remaining possible discount
+			set_variable = { which = mass_build_manpower_max_spend_ratio which = mass_build_remaining_possible_discount }
+		}
+		
+		# HOW MANY EXPEDITURE STEPS WE HAVE LEFT FOR EACH CATEGORY
+		set_variable = { which = mass_build_max_admin_expenditure which = mass_build_admin_max_spend_ratio }
+		divide_variable = { which = mass_build_max_admin_expenditure which = mass_build_admin_expediture_step }
+		set_variable = { which = mass_build_max_estate_expenditure which = mass_build_estate_max_spend_ratio }
+		divide_variable = { which = mass_build_max_estate_expenditure which = mass_build_estate_expediture_step }
+		set_variable = { which = mass_build_max_manpower_expenditure which = mass_build_manpower_max_spend_ratio }
+		divide_variable = { which = mass_build_max_manpower_expenditure which = mass_build_manpower_expediture_step }
+		
+		# ACTUAL AMOUNT WE ARE GOING TO SPEND OF EACH RESOURCE BASED ON CURRENT SPENDING
+		#set_variable = { which = mass_build_manpower_percentage value = 0 }
+		set_variable = { which = mass_build_admin_cost which = mass_build_spending_admin_ratio }
+		multiply_variable = { which = mass_build_admin_cost which = mass_build_max_admin_cost }
+		
+		set_variable = { which = mass_build_estate_cost which = mass_build_spending_estate_ratio }
+		multiply_variable = { which = mass_build_estate_cost which = mass_build_max_estate_cost }
+		set_variable = { which = mass_build_diplo_cost which = mass_build_spending_estate_ratio }
+		multiply_variable = { which = mass_build_diplo_cost which = mass_build_max_diplo_cost }
+		
+		set_variable = { which = mass_build_manpower_cost which = mass_build_spending_manpower_ratio }
+		multiply_variable = { which = mass_build_manpower_cost which = mass_build_max_manpower_cost }
+		if = {
+			limit = { full_idea_group = quantity_ideas }
+			multiply_variable = { which = mass_build_manpower_cost value = 0.8 }
+		}
+		set_variable = { which = mass_build_milit_cost which = mass_build_spending_manpower_ratio }
+		multiply_variable = { which = mass_build_milit_cost which = mass_build_max_milit_cost }
+		
+		set_variable = { which = mass_build_ducat_cost_discounted which = mass_build_remaining_possible_discount }
+		multiply_variable = { which = mass_build_ducat_cost_discounted which = mass_build_ducat_cost } #Mult by the total ducat cost, so maximum discount will be only 25% of total cost
+		
+		set_variable = { which = mass_build_cash_percentage which = mass_build_remaining_possible_discount }
+		multiply_variable = { which = mass_build_cash_percentage value = 100 }
+		set_variable = { which = mass_build_admin_percentage which = mass_build_spending_admin_ratio }
+		multiply_variable = { which = mass_build_admin_percentage value = 100 }
+		set_variable = { which = mass_build_estate_percentage which = mass_build_spending_estate_ratio }
+		multiply_variable = { which = mass_build_estate_percentage value = 100 }
+		set_variable = { which = mass_build_manpower_percentage which = mass_build_spending_manpower_ratio }
+		multiply_variable = { which = mass_build_manpower_percentage value = 100 }
+		
+		#### CLEAR TEMP VARIABLES
+	}
+}
+
+mass_build_road_in_prov = {
+	remove_building = upgrade_roads_build
+	set_province_flag = already_started_building_road
+	set_province_flag = mass_building_road
+	
+	if = { limit = { can_build_road_network = yes }
+		get_upgrade_cost_road_network = yes
+	}
+	if = { limit = { can_build_paved_road_network = yes }
+		get_upgrade_cost_paved_road_network = yes
+	}
+	if = { limit = { can_build_highway_network = yes }
+		get_upgrade_cost_highway_network = yes
+	}
+	if = { limit = { can_build_road_and_rail_network = yes }
+		get_upgrade_cost_road_and_rail_network = yes
+	}
+	set_variable = { which = mass_build_ducat_cost which = building_cost }
+	if = {
+		limit = { owner = { full_idea_group = logistic_ideas } }
+		multiply_variable = { which = mass_build_ducat_cost value = 0.66 }
+	}
+	set_variable = { which = building_cost value = 0 }
+	if = { limit = { check_variable = { which = mass_build_ducat_cost value = 0.001 } }
+		owner = {
+			change_variable = { which = mass_build_ducat_cost which = PREV }
+			change_variable = { which = mass_build_num value = 1 }
+		}
+	}
+	set_variable = { which = mass_build_ducat_cost value = 0 }
+}
+
+mass_build_finish_roads = {
+	set_variable = { which = ducat_cost 	which = mass_build_ducat_cost_discounted }
+	set_variable = { which = admin_cost		which = mass_build_admin_cost }
+	set_variable = { which = diplo_cost		which = mass_build_diplo_cost }
+	set_variable = { which = milit_cost		which = mass_build_milit_cost }
+	set_variable = { which = manpower_cost	which = mass_build_manpower_cost }
+	set_variable = { which = mass_build_estate_new_ratio which = mass_build_estate_cost }
+	divide_variable = { which = mass_build_estate_new_ratio which = mass_build_estate_treasury }
+	multiply_variable = { which = mass_build_estate_new_ratio value = -1 }
+	change_variable = { which = mass_build_estate_new_ratio value = 1 }
+	multiply_variable = { which = estate_greater_nobles_treasury which = mass_build_estate_new_ratio }
+	multiply_variable = { which = estate_lesser_nobles_treasury which = mass_build_estate_new_ratio }
+	multiply_variable = { which = estate_burghers_treasury which = mass_build_estate_new_ratio }
+	scaled_ducat_cost_country = yes
+	scaled_admin_cost_country = yes
+	scaled_diplo_cost_country = yes
+	scaled_milit_cost_country = yes
+	scaled_manpower_cost_country = yes
+	every_owned_province = {
+		limit = { has_province_flag = mass_building_road }
+		province_event = { id = POP_MassBuilding.003 }
+		clr_province_flag = mass_building_road
+		clr_province_flag = already_started_building_road
+	}
+	mass_build_clear_vars = yes
+}
+
+mass_build_cancel_roads = {
+	every_owned_province = {
+		limit = { has_province_flag = mass_building_road }
+		clr_province_flag = mass_building_road
+		clr_province_flag = already_started_building_road
+	}
+	mass_build_clear_vars = yes
+	clr_country_flag = mass_build_more
+}
+
+mass_build_fort_in_prov = {
+	remove_building = upgrade_fort_build
+	set_province_flag = mass_building_fort
+	
+	if = { limit = { can_build_fort_14th = yes }
+		get_upgrade_cost_fort_14th = yes
+	}
+	if = { limit = { can_build_fort_15th = yes }
+		get_upgrade_cost_fort_15th = yes
+	}
+	if = { limit = { can_build_fort_16th = yes }
+		get_upgrade_cost_fort_16th = yes
+	}
+	if = { limit = { can_build_fort_17th = yes }
+		get_upgrade_cost_fort_17th = yes
+	}
+	if = { limit = { can_build_fort_18th = yes }
+		get_upgrade_cost_fort_18th = yes
+	}
+	set_variable = { which = mass_build_ducat_cost which = building_cost }
+	if = {
+		limit = { owner = { full_idea_group = fortification_ideas } }
+		multiply_variable = { which = mass_build_ducat_cost value = 0.5 }
+	}
+	set_variable = { which = building_cost value = 0 }
+	if = { limit = { check_variable = { which = mass_build_ducat_cost value = 0.001 } }
+		owner = {
+			change_variable = { which = mass_build_ducat_cost which = PREV }
+			change_variable = { which = mass_build_num value = 1 }
+		}
+	}
+	set_variable = { which = mass_build_ducat_cost value = 0 }
+}
+
+mass_build_finish_forts = {
+	set_variable = { which = ducat_cost 	which = mass_build_ducat_cost_discounted }
+	set_variable = { which = admin_cost		which = mass_build_admin_cost }
+	set_variable = { which = diplo_cost		which = mass_build_diplo_cost }
+	set_variable = { which = milit_cost		which = mass_build_milit_cost }
+	set_variable = { which = manpower_cost	which = mass_build_manpower_cost }
+	set_variable = { which = mass_build_estate_new_ratio which = mass_build_estate_cost }
+	divide_variable = { which = mass_build_estate_new_ratio which = mass_build_estate_treasury }
+	multiply_variable = { which = mass_build_estate_new_ratio value = -1 }
+	change_variable = { which = mass_build_estate_new_ratio value = 1 }
+	multiply_variable = { which = estate_greater_nobles_treasury which = mass_build_estate_new_ratio }
+	multiply_variable = { which = estate_lesser_nobles_treasury which = mass_build_estate_new_ratio }
+	multiply_variable = { which = estate_burghers_treasury which = mass_build_estate_new_ratio }
+	scaled_ducat_cost_country = yes
+	scaled_admin_cost_country = yes
+	scaled_diplo_cost_country = yes
+	scaled_milit_cost_country = yes
+	scaled_manpower_cost_country = yes
+	every_owned_province = {
+		limit = { has_province_flag = mass_building_fort }
+		province_event = { id = POP_MassBuilding.006 }
+		clr_province_flag = mass_building_fort
+	}
+	mass_build_clear_vars = yes
+}
+
+mass_build_cancel_forts = {
+	every_owned_province = {
+		limit = { has_province_flag = mass_building_fort }
+		clr_province_flag = mass_building_fort
+	}
+	mass_build_clear_vars = yes
+	clr_country_flag = mass_build_more
+}
+
+mass_build_canal_in_prov = {
+	remove_building = upgrade_canal_build
+	set_province_flag = mass_building_canal
+	
+	if = { limit = { can_build_canal_1 = yes }
+		get_upgrade_cost_canal_1 = yes
+	}
+	if = { limit = { can_build_canal_2 = yes }
+		get_upgrade_cost_canal_2 = yes
+	}
+	if = { limit = { can_build_canal_3 = yes }
+		get_upgrade_cost_canal_3 = yes
+	}
+	
+	set_variable = { which = mass_build_ducat_cost which = building_cost }
+	if = {
+		limit = { owner = { has_idea = pioneer_corps } }
+		multiply_variable = { which = mass_build_ducat_cost value = 0.75 }	
+	}
+	set_variable = { which = building_cost value = 0 }
+	if = { limit = { check_variable = { which = mass_build_ducat_cost value = 0.001 } }
+		owner = {
+			change_variable = { which = mass_build_ducat_cost which = PREV }
+			change_variable = { which = mass_build_num value = 1 }
+		}
+	}
+	set_variable = { which = mass_build_ducat_cost value = 0 }
+}
+
+mass_build_finish_canals = {
+	set_variable = { which = ducat_cost 	which = mass_build_ducat_cost_discounted }
+	set_variable = { which = admin_cost		which = mass_build_admin_cost }
+	set_variable = { which = diplo_cost		which = mass_build_diplo_cost }
+	set_variable = { which = milit_cost		which = mass_build_milit_cost }
+	set_variable = { which = manpower_cost	which = mass_build_manpower_cost }
+	set_variable = { which = mass_build_estate_new_ratio which = mass_build_estate_cost }
+	divide_variable = { which = mass_build_estate_new_ratio which = mass_build_estate_treasury }
+	multiply_variable = { which = mass_build_estate_new_ratio value = -1 }
+	change_variable = { which = mass_build_estate_new_ratio value = 1 }
+	multiply_variable = { which = estate_greater_nobles_treasury which = mass_build_estate_new_ratio }
+	multiply_variable = { which = estate_lesser_nobles_treasury which = mass_build_estate_new_ratio }
+	multiply_variable = { which = estate_burghers_treasury which = mass_build_estate_new_ratio }
+	scaled_ducat_cost_country = yes
+	scaled_admin_cost_country = yes
+	scaled_diplo_cost_country = yes
+	scaled_milit_cost_country = yes
+	scaled_manpower_cost_country = yes
+	every_owned_province = {
+		limit = { has_province_flag = mass_building_canal }
+		province_event = { id = POP_MassBuilding.009 }
+		clr_province_flag = mass_building_canal
+	}
+	mass_build_clear_vars = yes
+}
+
+mass_build_cancel_canals = {
+	every_owned_province = {
+		limit = { has_province_flag = mass_building_canal }
+		clr_province_flag = mass_building_canal
+	}
+	mass_build_clear_vars = yes
+	clr_country_flag = mass_build_more
+}
+
+mass_build_in_prov = { #type
+	if = {
+		limit = {
+			owner = {
+				check_variable = { which = mass_build_ducat_cost value = 2000000 }
+			}
+		}
+		owner = { set_country_flag = mass_build_more_$type$ }
+	}
+	else = {
+		mass_build_$type$_in_prov = yes
+	}
+}

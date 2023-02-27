@@ -1,0 +1,98 @@
+########################################
+# Pragmatic Sanction Flavor            #
+########################################
+
+# The Effect of the Pragmatic Sanction
+country_event = {
+	id = pragmatic_sanction.1
+	title = "pragmatic_sanction.EVTNAME1"
+	desc = "pragmatic_sanction.EVTDESC1"
+	picture = REFORM_eventPicture
+	
+	trigger = {
+		has_global_flag = pragmatic_sanction #Pragmatic sanction has been set
+		hre_size = 1
+		NOT = { has_country_flag = pragmatic_sanction }
+		capital_scope = {
+			continent = europe	#Only a European thing
+		}
+		government_rank = 3	#currently require 200 POP or 2m people, cut out the small countries
+		OR = {	#limits it to important countries
+			has_country_modifier = title_5	#Kingdom Title
+			has_country_modifier = title_6	#Empire Title
+		}
+		is_emperor = no
+	}
+	
+	mean_time_to_happen = { months = 12 }
+	
+	immediate = {
+		set_country_flag = pragmatic_sanction
+	}
+	
+	option = {		# Pro-Emperor
+		name = "pragmatic_sanction.EVTOPTA1"
+		ai_chance = { factor = 25 }
+		add_stability_1 = yes
+		emperor = {
+			add_opinion = {
+				who = ROOT
+				modifier = pro_pragmatic_sanction
+			}
+		}
+	}
+	#option = {		# Neutral
+	#	name = "pragmatic_sanction.EVTOPTB1"
+	#	ai_chance = { factor = 25 }
+	#	random_list = {
+	#		30 = {}
+	#		40 = {
+	#			subtract_stability_points_50 = yes
+	#		}
+	#		30 = {
+	#			subtract_stability_1 = yes
+	#		}
+	#	}
+	#}
+	option = {		# Anti-Emperor
+		name = "pragmatic_sanction.EVTOPTC1"
+		ai_chance = { factor = 50 }
+		add_stability_1 = yes
+		emperor = {
+			add_opinion = {
+				who = ROOT
+				modifier = anti_pragmatic_sanction
+			}
+		}
+	}
+}
+
+# The Pragmatic Sanction
+country_event = {
+	id = pragmatic_sanction.2
+	title = "pragmatic_sanction.EVTNAME2"
+	desc = "pragmatic_sanction.EVTDESC2"
+	picture = REFORM_eventPicture
+	
+	major = yes
+	
+	trigger = {
+		is_emperor = yes
+		has_female_heir = yes
+		allows_female_emperor = no
+		government_rank = 3
+		NOT = { has_global_flag = pragmatic_sanction }
+	}
+	
+	mean_time_to_happen = { months = 6 }
+	
+	immediate = {
+		set_global_flag = pragmatic_sanction
+	}
+	
+	option = {
+		name = "pragmatic_sanction.EVTOPTA2"
+		add_legitimacy = -25
+		set_allow_female_emperor = yes
+	}
+}

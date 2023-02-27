@@ -1,0 +1,319 @@
+country_decisions = {
+	
+	kingdom_of_jerusalem = {
+		major = yes
+		potential = {
+			owns = 379 # Al Quds
+			religion = catholic
+			NOT = { exists = KOJ }
+			NOT = { government = republic }
+			NOT = { is_religion_enabled = protestant }
+		}
+		allow = {
+			is_emperor = no
+			is_at_war = no
+		}
+		effect = {
+			clr_country_flag = holy_land_jerusalem
+			custom_tooltip = church_settlement_explained
+			set_country_flag = church_settlement
+			clr_country_flag = dispensation_denied
+			set_country_flag = dispensation_granted
+			add_papal_influence = 50
+			add_prestige = 25
+			379 = {
+				add_core = KOJ
+				remove_core = ROOT
+				change_province_name = "Jerusalem"
+				rename_capital = "Jerusalem"
+				every_neighbor_province = {
+					limit = { owned_by = ROOT }
+					cede_province = KOJ
+				}
+			}
+			release = KOJ
+			vassalize = KOJ
+			KOJ = {
+				change_primary_culture = ROOT
+				set_dynasty = ROOT
+				Effect_set_capital = { target=379 }
+			}
+			every_country = {
+				limit = {
+					any_owned_province = { area = palestine_area is_core = PREV }
+					NOT = { tag = ROOT }
+				}
+				add_historical_rival = KOJ
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	reestablish_order_of_the_holy_sepulchre = {
+		potential = {
+			tag = KOJ
+			NOT = { has_country_modifier = order_holy_sepulchre }
+			religion = catholic
+			government = monarchy
+		}
+		allow = {
+			owns = 379 # Al Quds
+			NOT = { is_religion_enabled = protestant }
+		}
+		effect = {
+			add_country_modifier = {
+				name = "order_holy_sepulchre"
+				duration = -1
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+#	repopulate_jerusalem = {
+#		potential = {
+#			OR = {
+#				tag = KOJ
+#				tag = ISR
+#				AND = {
+#					tag = BHA
+#					capital = 379
+#				}
+#			}
+#			owns = 379 # Al Quds
+#			379 = {
+#				NOT = { has_province_modifier = major_city }
+#			}
+#		}
+#		allow = {
+#			379 = {
+#				controlled_by = owner
+#				has_siege = no
+#				NOT = { has_province_modifier = major_city }
+#				development = 40
+#			}
+#			NOT = { num_of_loans = 1 }
+#			total_development = 150
+#			treasury = 1000
+#			adm_power = 200
+#			OR = {
+#				ADM = 4
+#				architect = 2
+#			}
+#		}
+#		effect = {
+#			add_adm_power = -200
+#			add_treasury = -1000
+#			379 = { add_permanent_province_modifier = { name = major_city duration = -1 } }
+#		}
+#		ai_will_do = {
+#			factor = 1
+#			modifier = {
+#				NOT = { treasury = 1100 }
+#				factor = 0
+#			}
+#		}
+#	}
+	
+	renovate_church_of_holy_sepulchre = {
+		potential = {
+			tag = KOJ
+			owns = 379 # Al Quds
+			religion = catholic
+			#NOT = { 379 = { has_province_modifier = great_cathedral } }
+			NOT = { 379 = { has_building = great_temple } }
+			NOT = { any_owned_province = { has_province_modifier = great_temple_progress } }
+		}
+		allow = {
+			capital = 379
+			379 = {
+				religion = catholic
+			}
+			is_at_war = no
+			OR = {
+				architect = 1
+				theologian = 2
+				adm = 3
+			}
+			NOT = { num_of_loans = 1 }
+			treasury = 500
+			adm_power = 100
+		}
+		effect = {
+			add_treasury = -500
+			add_adm_power = -100
+			379 = {
+				add_province_modifier = { name = great_temple_progress duration = -1 }
+				set_variable = { which = great_temple value = 10 }
+			}
+			every_owned_province = {
+				limit = { has_building = great_temple }
+				remove_building = great_temple
+				add_building = temple
+				clr_province_flag = great_temple
+				clr_province_flag = great_cathedral
+				clr_province_flag = great_synagogue
+				clr_province_flag = great_mosque
+			}
+			#every_owned_province = {
+			#	limit = { has_province_modifier = great_temple }
+			#	remove_province_modifier = great_temple
+			#}
+			#every_owned_province = {
+			#	limit = { has_province_modifier = great_mosque }
+			#	remove_province_modifier = great_mosque
+			#}
+			#every_owned_province = {
+			#	limit = { has_province_modifier = great_synagogue }
+			#	remove_province_modifier = great_synagogue
+			#}
+			#every_owned_province = {
+			#	limit = { has_province_modifier = great_cathedral }
+			#	remove_province_modifier = great_cathedral
+			#}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				NOT = { treasury = 600 }
+				factor = 0
+			}
+		}
+		ai_importance = 200
+	}
+	
+	renovate_dome_of_the_rock = {
+		potential = {
+			tag = BAH
+			owns = 379 # Al Quds
+			religion = sunni
+			#NOT = { 379 = { has_province_modifier = great_mosque } }
+			NOT = { 379 = { has_building = great_temple } }
+			NOT = { any_owned_province = { has_province_modifier = great_temple_progress } }
+		}
+		allow = {
+			capital = 379
+			379 = {
+				religion = sunni
+			}
+			is_at_war = no
+			OR = {
+				architect = 1
+				theologian = 2
+				adm = 3
+			}
+			NOT = { num_of_loans = 1 }
+			treasury = 500
+			adm_power = 100
+		}
+		effect = {
+			add_treasury = -500
+			add_adm_power = -100
+			379 = {
+				add_province_modifier = { name = great_temple_progress duration = -1 }
+				set_variable = { which = great_temple value = 10 }
+			}
+			every_owned_province = {
+				limit = { has_building = great_temple }
+				remove_building = great_temple
+				add_building = temple
+				clr_province_flag = great_temple
+				clr_province_flag = great_cathedral
+				clr_province_flag = great_synagogue
+				clr_province_flag = great_mosque
+			}
+			#every_owned_province = {
+			#	limit = { has_province_modifier = great_temple }
+			#	remove_province_modifier = great_temple
+			#}
+			#every_owned_province = {
+			#	limit = { has_province_modifier = great_mosque }
+			#	remove_province_modifier = great_mosque
+			#}
+			#every_owned_province = {
+			#	limit = { has_province_modifier = great_synagogue }
+			#	remove_province_modifier = great_synagogue
+			#}
+			#every_owned_province = {
+			#	limit = { has_province_modifier = great_cathedral }
+			#	remove_province_modifier = great_cathedral
+			#}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				NOT = { treasury = 600 }
+				factor = 0
+			}
+		}
+		ai_importance = 200
+	}
+	
+	invite_pilgrims = {
+		potential = {
+			owns = 379	#Jerusalem
+			religion_group = christian
+			NOT = { 379 = { has_province_modifier = "christian_pilgrims" } }
+		}
+		allow = {
+			adm_power = 100
+			is_at_war = no
+			379 = {
+				controlled_by = owner
+				has_siege = no
+			}
+		}
+		effect = {
+			379 = {
+				add_province_modifier = {
+					name = "christian_pilgrims"
+					duration = -1
+				}
+			}
+			add_adm_power = -100
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 50
+	}
+	
+	invite_settlers = {
+		potential = {
+			OR = {
+				tag = KOJ
+				tag = KEG
+				tag = CYP
+				tag = KNI
+				primary_culture = frankish
+			}
+			any_owned_province = {
+				OR = {
+					area = palestine_area
+					AND = {
+						area = syria_area
+						has_port = yes
+					}
+					AND = {
+						area = aleppo_area
+						has_port = yes
+					}
+				}
+			}
+			NOT = { any_owned_province = { has_province_modifier = "frankish_settlers" } }
+		}
+		allow = {
+			adm_power = 100
+			is_at_war = no
+		}
+		effect = {
+			country_event = { id = flavor_kni.101 }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+}

@@ -1,0 +1,179 @@
+taborite_rebels = { #Hussite Wars
+	
+	color = { 235 210 210 }
+	area = nation
+	government = monarchy
+	religion = hussite
+	defection = none
+	independence = none
+	gfx_type = culture_province
+	
+	resilient = yes
+	reinforcing = yes
+	general = yes
+	smart = yes
+	unit_transfer = no
+	will_relocate = yes				# Units will relocate if they have sieged all provinces nearby and has to move over sea.
+	
+	artillery = 0.1
+	infantry = 0.6
+	cavalry = 0.3
+	morale = 1.1
+	
+	# Possible handle actions
+	handle_action_negotiate = yes
+	handle_action_stability = no
+	handle_action_build_core = no
+	handle_action_send_missionary = no
+	
+	# The rebel type with the highest modifier for this province gets picked
+	spawn_chance = {
+		factor = 10
+		modifier = {
+			NOT = { PAP = { has_country_flag = hussite_wars } }
+			factor = 0
+		}
+		modifier = {
+			owner = { religion = hussite }
+			factor = 0
+		}
+		modifier = {
+			NOT = {
+				OR = {
+					owner = { has_country_flag = religious_turmoil_hussite }
+					has_province_modifier = hussite_raids
+					check_variable = { which = hussite value = 4 }
+				}
+			}
+			factor = 0
+		}
+		modifier = {
+			has_province_modifier = heretic_bastion
+			factor = 10
+		}
+		modifier = {
+			owner = { hussite = 2 }
+			factor = 0.5
+		}
+		modifier = {
+			owner = { hussite = 1 }
+			factor = 0.5
+		}
+		modifier = {
+			owner = { hussite = 0 }
+			factor = 0.5
+		}
+		modifier = {
+			factor = 0.5
+			NOT = { check_variable = { which = hussite value = 4 } }
+			NOT = { any_neighbor_province = { check_variable = { which = hussite value = 4 } } }
+		}
+		modifier = {
+			factor = 0.5
+			NOT = { check_variable = { which = hussite value = 2 } }
+		}
+		modifier = {
+			factor = 0.5
+			NOT = { check_variable = { which = hussite value = 4 } }
+		}
+		modifier = {
+			factor = 0.5
+			NOT = { check_variable = { which = hussite value = 6 } }
+			NOT = { any_neighbor_province = { check_variable = { which = hussite value = 6 } } }
+		}
+		modifier = {
+			factor = 0.5
+			NOT = { check_variable = { which = hussite value = 6 } }
+		}
+		modifier = {
+			has_province_modifier = fanatics_organizing
+			factor = 1.4
+		}
+	}
+	
+	# This is checked for EACH province in the Area of Operations
+	movement_evaluation = {
+		factor = 1
+		modifier = {
+			has_province_modifier = church_bastion
+			factor = 5
+		}
+		modifier = {
+			has_province_modifier = heretic_bastion
+			has_siege = yes
+			factor = 5
+		}
+		modifier = {
+			factor = 0.5
+			units_in_province = 1
+		}
+		modifier = {
+			has_siege = yes
+			controlled_by = REB
+			factor = 2
+		}
+	}
+	
+	# Province Scope
+	siege_won_trigger = { }
+	
+	siege_won_effect = {
+		remove_building = temple
+		set_province_flag = hussite_rebel_victory
+		if = {
+			limit = {
+				owner = { has_country_flag = hussite_wars_target }
+				NOT = { has_province_modifier = hussite_war_cost }
+			}
+			random_list = {
+				25 = { add_province_modifier = { name = hussite_war_cost duration = 10000 } }
+				50 = { add_province_modifier = { name = hussite_war_cost duration = 20000 } }
+				25 = { add_province_modifier = { name = hussite_war_cost duration = 30000 } }
+			}
+		}
+		owner = { set_country_flag = religious_rebel_victory }
+		if = {
+			limit = {
+				owner = { has_country_flag = religious_turmoil_hussite }
+				check_variable = { which = "hussite" value = 1 }
+			}
+			change_variable = { which = "hussite" value = 2 }
+			change_variable = { which = "province_religion" value = -2 }
+			add_province_modifier = { name = "religious_massacre" duration = 500 }
+			clr_province_flag = hussite_rebel_victory
+		}
+	}
+	
+	# Country scope
+	can_negotiate_trigger = {
+		OR = {
+			any_owned_province = { controlled_by = REB }
+			hussite = 1 #High tolerance
+		}
+	}
+	
+	# Country scope
+	can_enforce_trigger = {
+	}
+	
+	# Localisation for their demands
+	demands_description = "taborite_rebels_demand"
+	
+	# Country Scope
+	demands_enforced_effect = {
+		add_prestige = -50
+		if = {
+			limit = { has_country_flag = religious_civil_war }
+			set_country_flag = rebels_won_civil_war
+		}
+		if = {
+			limit = { has_regency = yes }
+			kill_ruler = yes
+		}
+		if = {
+			limit = { religion_group = christian }
+			change_religion = hussite
+			force_converted = yes
+		}
+	}
+}

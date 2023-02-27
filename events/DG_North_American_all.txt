@@ -1,0 +1,115 @@
+namespace = dg_american
+
+#01 - Prisoners of War
+
+#11* - Sun Dance
+
+country_event = { #Prisoners of War
+	
+	id = dg_american.001
+	title = dg_american.001.t
+	desc = dg_american.001.d
+	picture = northamerica_sundance			### picture pending review by David
+	
+	trigger = {
+		religion = totemism
+		is_at_war = no
+		check_variable = { which = captured_prisoners value = 1 }
+	}
+	
+	mean_time_to_happen = { months = 2 }
+	
+	immediate = {
+		hidden_effect = {
+			multiply_variable = { which = captured_prisoners value = 0.5 }
+			if = {
+				limit = { piety = 0.60 }
+				#multiply_variable = { which = captured_prisoners value = 1 }
+			}
+			else_if = {
+				limit = { piety = 0.20 }
+				multiply_variable = { which = captured_prisoners value = 0.8 }
+			}
+			else_if = {
+				limit = { piety = -0.20 }
+				multiply_variable = { which = captured_prisoners value = 0.6 }
+			}
+			else_if = {
+				limit = { piety = -0.60 }
+				multiply_variable = { which = captured_prisoners value = 0.4 }
+			}
+			else = {
+				multiply_variable = { which = captured_prisoners value = 0.2 }
+			}
+		}
+	}
+	
+	option = {
+		name = dg_american.001.a #Adopt them into our tribe
+		ai_chance = { factor = 60 }
+		if = {
+			limit = { check_variable = { which = captured_prisoners value = 4 } }
+			add_yearly_manpower = 0.04
+		}
+		else_if = {
+			limit = { check_variable = { which = captured_prisoners value = 3 } }
+			add_yearly_manpower = 0.03
+		}
+		else_if = {
+			limit = { check_variable = { which = captured_prisoners value = 2 } }
+			add_yearly_manpower = 0.02
+		}
+		else_if = {
+			limit = { check_variable = { which = captured_prisoners value = 1 } }
+			add_yearly_manpower = 0.01
+		}
+		else = {
+			add_yearly_manpower = 0.005
+		}
+		hidden_effect = {
+			set_variable = { which = captured_prisoners value = 0 }
+		}
+	}
+	option = {
+		name = dg_american.001.b #Torture them to death
+		ai_chance = { factor = 40 }
+		trigger = { NOT = { stability = 1 } }
+		if = {
+			limit = { check_variable = { which = captured_prisoners value = 4 } }
+			if = {
+				limit = { NOT = { stability = 1 } }
+				random = { chance = 25 add_stability_1 = yes }
+			}
+		}
+		else_if = {
+			limit = { check_variable = { which = captured_prisoners value = 3 } }
+			if = {
+				limit = { NOT = { stability = 1 } }
+				random = { chance = 20 add_stability_1 = yes }
+			}
+		}
+		else_if = {
+			limit = { check_variable = { which = captured_prisoners value = 2 } }
+			if = {
+				limit = { NOT = { stability = 1 } }
+				random = { chance = 15 add_stability_1 = yes }
+			}
+		}
+		else_if = {
+			limit = { check_variable = { which = captured_prisoners value = 1 } }
+			if = {
+				limit = { NOT = { stability = 1 } }
+				random = { chance = 10 add_stability_1 = yes }
+			}
+		}
+		else = {
+			if = {
+				limit = { NOT = { stability = 1 } }
+				random = { chance = 5 add_stability_1 = yes }
+			}
+		}
+		hidden_effect = {
+			set_variable = { which = captured_prisoners value = 0 }
+		}
+	}
+}

@@ -1,0 +1,181 @@
+#cb_sense_weakness_1 = {
+#	war_goal = wargoal_weakness_1
+#	
+#	ai_peace_desire = 0
+#	is_triggered_only = yes
+#	valid_for_subject = no
+#	
+#	months = 1
+#	
+#	attacker_disabled_po = {
+#		po_form_personal_union
+#		po_change_government
+#		po_change_religion
+#		po_become_vassal
+#	}
+#}
+#cb_sense_weakness_0.75 = {
+#	war_goal = wargoal_weakness_0.75
+#	
+#	ai_peace_desire = 0
+#	is_triggered_only = yes
+#	valid_for_subject = no
+#	
+#	months = 1
+#	
+#	attacker_disabled_po = {
+#		po_form_personal_union
+#		po_change_government
+#		po_change_religion
+#		po_become_vassal
+#	}
+#}
+#cb_sense_weakness_0.5 = {
+#	war_goal = wargoal_weakness_0.5
+#	
+#	ai_peace_desire = 0
+#	is_triggered_only = yes
+#	valid_for_subject = no
+#	
+#	months = 1
+#	
+#	attacker_disabled_po = {
+#		po_form_personal_union
+#		po_change_government
+#		po_change_religion
+#		po_become_vassal
+#	}
+#}
+
+# War on "primitives" (annexable religion)
+cb_primitives = {
+	war_goal = superiority_primitives
+	
+	valid_for_subject = no
+	
+	prerequisites = {
+		cb_on_primitives = yes
+		OR = {
+			AND = {
+				OR = {
+					is_neighbor_of = FROM
+					any_owned_province = { sea_zone = { any_neighbor_province = { owned_by = FROM } } }
+				}
+				#NOT = {
+				#	any_province = {
+				#		is_empty = yes
+				#		has_discovered = ROOT
+				#		range = ROOT
+				#	}
+				#}
+				is_colonial_nation = no
+			}
+			AND = {
+				is_neighbor_of = FROM
+				is_colonial_nation = yes
+				NOT = { has_country_flag = trade_colonialism }
+			}
+		}
+		NOT = { has_country_modifier = the_proclamation_of_year_timer } # Used from event
+		FROM = {
+			NOT = { tag = AAA }
+			OR = {
+				religion_group = pagan
+				religion_group = new_world_pagan
+			}
+			OR = {
+				OR = {
+					is_subject = no
+					is_subject_of_type = tributary_state
+				}
+				AND = {
+					is_subject = yes
+					NOT = { is_subject_of_type = tributary_state }
+					overlord = {
+						OR = {
+							religion_group = pagan
+							religion_group = new_world_pagan
+						}
+					}
+				}
+			}
+		}
+		is_revolution_target = no
+		# NOT = { AND = { tag = FRA has_global_flag = hundred_years_war ai = yes } }
+	}
+}
+
+cb_overseas = {
+	war_goal = superiority_overseas
+	
+	valid_for_subject = no
+	
+	prerequisites = {
+		cb_on_overseas = yes
+		OR = {
+			is_neighbor_of = FROM
+			any_owned_province = { sea_zone = { any_neighbor_province = { owned_by = FROM } } }
+			#NOT = {
+			#	any_province = {
+			#		is_empty = yes
+			#		has_discovered = ROOT
+			#		range = ROOT
+			#	}
+			#}
+		}
+		OR = {
+			technology_group = western
+			technology_group = eastern
+			technology_group = turkishtech
+			technology_group = high_american
+			technology_group = high_turkishtech
+			technology_group = high_muslim
+			technology_group = high_chinese
+			technology_group = high_eastern
+			technology_group = high_indian
+		}
+		FROM = {
+			NOT = { tag = AAA }
+			primitives = no
+			capital_scope = {
+				OR = {
+					continent = southeast_asia
+					continent = indian_continent
+					continent = east_asia
+					continent = central_asia
+				}
+			}
+			OR = {
+				is_subject = no
+				is_subject_of_type = tributary_state
+			}
+			NOT = {
+				OR = {
+					religion_group = pagan
+					religion_group = new_world_pagan
+					technology_group = western
+					technology_group = eastern
+					technology_group = turkishtech
+					technology_group = muslim
+					technology_group = high_american
+					technology_group = high_turkishtech
+					technology_group = high_muslim
+					technology_group = high_chinese
+					technology_group = high_eastern
+					technology_group = high_indian
+				}
+			}
+		}
+		OR = {
+			is_subject = no
+			is_subject_of_type = tributary_state
+		}
+		is_revolution_target = no
+		# NOT = { AND = { tag = FRA has_global_flag = hundred_years_war ai = yes } }
+	}
+	
+	attacker_disabled_po = {
+		po_change_government
+		po_change_religion
+	}
+}

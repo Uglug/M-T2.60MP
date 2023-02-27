@@ -1,0 +1,91 @@
+white_horde_collapse = {
+	potential = {
+		is_nomad = yes
+		hidden_trigger = {
+			OR = {
+				has_country_flag = white_horde_murdered_ruler
+				has_country_flag = white_horde_collapse_ongoing
+			}
+			OR = {
+				NOT = { is_year = 1370 }
+				has_country_flag = white_horde_collapse_ongoing
+			}
+		}
+	}
+	can_start = {
+		hidden_trigger = {
+			OR = {
+				has_country_flag = white_horde_murdered_ruler
+				has_country_flag = white_horde_collapse_ongoing
+			}
+			OR = {
+				NOT = { is_year = 1370 }
+				has_country_flag = white_horde_collapse_ongoing
+			}
+		}
+		has_heir = yes
+		has_any_disaster = no
+	}
+	can_stop = {
+		hidden_trigger = {
+			NOT = { has_country_flag = white_horde_murdered_ruler }
+			NOT = { has_country_flag = white_horde_collapse_ongoing }
+		}
+		has_any_disaster = yes
+	}
+	progress = {
+		modifier = {
+			factor = 5
+			hidden_trigger = { has_country_flag = white_horde_murdered_ruler }
+			NOT = { legitimacy_or_horde_unity = 80 }
+		}
+		modifier = {
+			factor = 100
+			custom_trigger_tooltip = {
+				tooltip = white_horde_collapse_not_ongoing
+				has_country_flag = white_horde_collapse_ongoing
+			}
+		}
+	}
+	can_end = {
+		months_of_ruling = 84
+		legitimacy_or_horde_unity = 80
+		OR = {
+			custom_trigger_tooltip = {
+				tooltip = white_horde_collapse_not_ongoing
+				NOT = { has_country_flag = white_horde_collapse_ongoing }
+			}
+			is_subject = yes
+		}
+		NOT = {
+			has_spawned_rebels = pretender_rebels
+		}
+		is_at_war = no
+	}
+	
+	modifier = {
+		global_unrest = 15
+		stability_cost_modifier = 0.30
+		#global_tax_modifier = -0.25
+		land_forcelimit = 3.0
+		land_forcelimit_modifier = 1.0
+		discipline = -0.05
+		land_morale = -0.1
+		defensiveness = -0.25
+		siege_ability = -0.1
+	}
+	on_start = white_horde_collapse.8
+	on_end = white_horde_collapse.7
+	on_monthly = {
+		events = {
+		}
+		random_events = {
+			1000 = 0
+			8 = white_horde_collapse.2 #heir kills you, takes throne
+			8 = white_horde_collapse.9 #heir kills you, takes throne
+			2 = white_horde_collapse.3 #Mamai
+			8 = white_horde_collapse.4 #deposed if weak legitimacy
+			80 = white_horde_collapse.5 #Mamai, if you've been suffering for 10 years
+		}
+	}
+}

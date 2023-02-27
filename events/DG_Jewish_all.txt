@@ -1,0 +1,2966 @@
+namespace = dg_jewish
+#25 of 39 events finished and optimized
+#Custom tooltips added
+#Variables and flags hidden
+
+##########################
+# Restoration of Judaism # 00s
+##########################
+
+#01 - Sabbatical Year
+#02 - The Status of the Jubilee
+#03 - Jubilee Year
+
+##############################
+# Jewish Sects and Movements # 10s
+##############################
+
+#11* - Jewish Sects (Rabbinic or Karaite Judaism)
+#12* - The Triumph of Irrationalism (kabbalah or rabbinic law)
+#13* - The Death of Irrationalism (part of false messiah chain)
+#14* - Hasidic Judaism (1700s)
+#15* - Haskalah (Jewish Enlightenment, 1700s)
+
+#18 - The Kabbalah
+#19 - Reaction against Kabbalism
+
+#############################
+# Jewish Advisors and Banks # 20s
+#############################
+
+#21 - Mount of Piety (15th century)
+#22 - Jewish Moneylender (before 16th century, rare)
+#23 - Jewish Conspiracy (ruler dies with jewish financier)
+
+#24* - Jewish Financier (16th century, uncommon)
+#25* - Court Jew (17th-18th century, common)
+#Decision: Arrange for personal loan
+#26* - Loan comes due
+
+#21* - Jewish bank
+#23* - Jewish bank fails
+#24* - Jewish support for the war effort
+#26* - Financing $MONARCH$'s wars
+#27* - Debt to the State (demand payment, pay nothing, pay in part, pay in full)
+
+#############################
+# False Messiah Event Chain # 30s
+#############################
+
+#30 - False Messiah
+#31 - Jewish Sabbateans
+#32 - News of Miracles and Tragedies
+#33 - The year of the Messiah approaches
+#34 - The Messiah arrives in $CAPITAL_CITY$
+#35 - Imprisonment of the Messiah
+#36 - Messianic Revolt
+#37 - Defeat of the Messiah
+#38 - Betrayal of the Messiah (notifier)
+#39 - Victory of the Messiah (Jewish state established in the holy land)
+
+#########################
+# Restoration of Israel # 40s
+#########################
+
+#41 - The Promised Land
+#42 - The Holy Land
+#43 - The Holy Land is restored to Jewish rule
+#44 - Temple Mount
+#45 - The Dome of the Rock (and the Al Asqa Mosque)
+#46 - Rebuilding the temple
+#47 - Opposition to the temple
+#48 - The Third Temple (completed building)
+#49 - Resumption of Temple Sacrifices (opposition by reform jews in favor of prayer; grain offerings instead)
+#50 - The Third Temple is rebuilt
+
+#####################
+# Treatment of Jews # 50s
+#####################
+
+#51* - Flagellant guilds (Catholics)
+#01 - Blood Libel
+#02 - The Jewish Problem
+#03 - Jewish Debts (from expulsion)
+#04 - Jewish Petition
+#05 - The Jewish Question
+#Decision: Royal Charter for the Jews
+#06 - Jewish Statute
+#Decision: Appoint Chief Rabbi
+#Decision: Allow Jews to elect Chief Rabbi
+#Decision: Jewish Emancipation
+#07 - Antisemitic Protests
+#Decision: Assembly of Jewish Leaders
+#08 - The Grand Sanhedrin
+
+country_event = { #Sabbatical Year
+	
+	id = dg_jewish.001
+	title = dg_jewish.001.t
+	desc = dg_jewish.001.d
+	picture = jewish_sabbatical_year
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		religion = jewish
+		NOT = { has_country_flag = sabbatical_years_not_observed }
+		NOT = { has_country_modifier = sabbatical_year_strict }
+		NOT = { has_country_modifier = sabbatical_year_loose }
+		OR = {
+			ai = yes
+			has_country_flag = religious_news_major
+		}
+	}
+	
+	option = {
+		name = dg_jewish.001.a #Enforce strict laws for the sabbath
+		ai_chance = {
+			factor = 30
+			modifier = {
+				piety = 0.60
+				factor = 1.4
+			}
+			modifier = {
+				piety = 0.20
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { piety = -0.20 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+		}
+		add_country_modifier = { name = sabbatical_year_strict duration = 365 }
+	}
+	option = {
+		name = dg_jewish.001.b #Allow legal fictions to be used
+		ai_chance = { factor = 40 }
+		add_country_modifier = { name = sabbatical_year_loose duration = 365 }
+	}
+	option = {
+		name = dg_jewish.001.c #This law was meant for the First Temple only
+		ai_chance = {
+			factor = 30
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.20
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.20 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 1.4
+			}
+		}
+		if = {
+			limit = { piety = 0.60 }
+			add_prestige = -8
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_prestige = -6
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_prestige = -4
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_prestige = -2
+		}
+		hidden_effect = { set_country_flag = sabbatical_years_not_observed }
+	}
+}
+
+country_event = { #The Status of the Jubilee
+	
+	id = dg_jewish.002
+	title = dg_jewish.002.t
+	desc = dg_jewish.002.d
+	picture = jewish_scholar
+	
+	trigger = {
+		religion = jewish
+		NOT = { has_country_flag = jubilee_year_calculated }
+		is_vassal = no
+		is_at_war = no
+		NOT = { has_country_flag = sabbatical_years_not_observed }
+		NOT = { has_country_flag = jubilee_years_not_observed }
+		OR = {
+			ai = yes
+			has_country_flag = religious_news_major
+		}
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 20
+		
+		modifier = {
+			piety = 0.60
+			factor = 0.7
+		}
+		modifier = {
+			piety = 0.20
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { piety = -0.20 }
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { piety = -0.60 }
+			factor = 1.4
+		}
+	}
+	
+	option = {
+		name = dg_jewish.002.a #Have our historians calculate the best match
+		ai_chance = { factor = 60 }
+		hidden_effect = { set_country_flag = jubilee_year_calculated }
+		add_treasury = -5
+		define_advisor = { religion = jewish type = theologian discount = yes }
+	}
+	option = {
+		name = dg_jewish.002.b #Begin it again after the next Sabbatical year
+		ai_chance = { factor = 30 }
+		hidden_effect = {
+			set_country_flag = jubilee_year_calculated
+			set_variable = { which = jubilee_countdown value = 1 }
+		}
+	}
+	option = {
+		name = dg_jewish.003.c #Leave it as a relic of the past
+		ai_chance = { factor = 10 }
+		hidden_effect = { set_country_flag = jubilee_years_not_observed }
+		if = {
+			limit = { piety = 0.60 }
+			add_prestige = -8
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_prestige = -6
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_prestige = -4
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_prestige = -2
+		}
+	}
+}
+
+country_event = { #Jubilee Year
+	
+	id = dg_jewish.003
+	title = dg_jewish.003.t
+	desc = dg_jewish.003.d
+	picture = jewish_jubilee
+	
+	trigger = {
+		religion = jewish
+		NOT = { check_variable = { which = jubilee_countdown value = 1 } }
+		has_country_flag = jubilee_year_calculated
+		check_variable = { which = sabbatical_countdown value = 18 }
+		NOT = { has_country_flag = sabbatical_years_not_observed }
+		NOT = { has_country_flag = jubilee_years_not_observed }
+		NOT = { has_country_modifier = jubilee_year_strict }
+		NOT = { has_country_modifier = jubilee_year_loose }
+		NOT = { has_country_modifier = sabbatical_year_strict }
+		NOT = { has_country_modifier = sabbatical_year_loose }
+		OR = {
+			ai = yes
+			has_country_flag = religious_news_major
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = dg_jewish.003.a #Celebrate the Jubilee strictly
+		ai_chance = { factor = 30 }
+		add_country_modifier = { name = jubilee_year_strict duration = 365 }
+	}
+	option = {
+		name = dg_jewish.003.b #Celebrate the Jubilee loosely
+		ai_chance = { factor = 40 }
+		add_country_modifier = { name = jubilee_year_loose duration = 365 }
+	}
+	option = {
+		name = dg_jewish.003.c #Do not celebrate it
+		ai_chance = { factor = 30 }
+		hidden_effect = { set_country_flag = jubilee_years_not_observed }
+		if = {
+			limit = { piety = 0.60 }
+			add_prestige = -8
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_prestige = -6
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_prestige = -4
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_prestige = -2
+		}
+	}
+}
+
+#######################
+# Sects and Movements #
+#######################
+
+country_event = { #18 - The Zohar
+	
+	id = dg_jewish.018
+	title = dg_jewish.018.t
+	desc = dg_jewish.018.d
+	picture = jewish_kabbalah
+	
+	trigger = {
+		religion = jewish
+		advisor = theologian
+		NOT = { has_ruler_modifier = jewish_kabbalah }
+		NOT = { has_country_flag = kabbalah_rejected } #Removed upon new ruler
+		OR = { has_regency = no has_consort_regency = yes }
+		OR = {
+			AND = {
+				is_female = no
+				ruler_age = 40
+			}
+			has_country_flag = jewish_kabbalah #Previous ruler supported it
+		}
+		OR = {
+			ai = yes
+			has_country_flag = religious_news_major
+		}
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 8
+		
+		modifier = {
+			has_country_flag = jewish_kabbalah
+			factor = 0.5
+		}
+	}
+	
+	option = {
+		name = dg_jewish.018.a #Reject the movement
+		ai_chance = { factor = 50 }
+		remove_advisor = theologian
+		set_country_flag = kabbalah_rejected
+		clr_country_flag = jewish_kabbalah
+	}
+	option = {
+		name = dg_jewish.018.b #Devote yourself to study of it
+		ai_chance = { factor = 50 }
+		set_country_flag = jewish_kabbalah
+		add_adm_power = 5
+		add_ruler_modifier = { name = jewish_kabbalah duration = -1 }
+		if = {
+			limit = { piety = 0.60 }
+			add_legitimacy = -2
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_legitimacy = -1.5
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_legitimacy = -1
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_legitimacy = -0.5
+		}
+	}
+}
+
+country_event = { #19 - Orthodox Reaction
+	
+	id = dg_jewish.019
+	title = dg_jewish.019.t
+	desc = dg_jewish.019.d
+	picture = jewish_kabbalah
+	
+	trigger = {
+		religion = jewish
+		has_ruler_modifier = jewish_kabbalah
+		NOT = { has_country_modifier = unhappy_church_powerful }
+		NOT = { has_country_modifier = unhappy_church_strong }
+		NOT = { has_country_modifier = unhappy_church_moderate }
+		NOT = { has_country_modifier = unhappy_church_weak }
+		NOT = { has_country_modifier = unhappy_church_impotent }
+		OR = {
+			ai = yes
+			has_country_flag = religious_news_major
+		}
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 16
+		
+		modifier = {
+			advisor = theologian
+			factor = 0.7
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = { advisor = theologian }
+				random_list = {
+					50 = {
+						custom_tooltip = kabbalist_killed
+						kill_advisor = theologian
+					}
+					50 = {
+						custom_tooltip = kabbalist_survived
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = dg_jewish.019.a #Distance ourselves from the movement
+		ai_chance = { factor = 60 }
+		remove_country_modifier = jewish_kabbalah
+		clr_country_flag = jewish_kabbalah
+		if = {
+			limit = { piety = 0.60 }
+			add_prestige = -2
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_prestige = -1.5
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_prestige = -1
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_prestige = -0.5
+		}
+	}
+	option = {
+		name = dg_jewish.019.b #This is the price of wisdom
+		ai_chance = {
+			factor = 40
+			modifier = {
+				advisor = theologian
+				factor = 2
+			}
+		}
+		if = {
+			limit = { patriarch_authority = 0.80 }
+			add_country_modifier = { name = unhappy_church_powerful duration = 500 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.60 }
+			add_country_modifier = { name = unhappy_church_strong duration = 500 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.40 }
+			add_country_modifier = { name = unhappy_church_moderate duration = 500 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.20 }
+			add_country_modifier = { name = unhappy_church_weak duration = 500 }
+		}
+		else = {
+			add_country_modifier = { name = unhappy_church_impotent duration = 500 }
+		}
+	}
+}
+
+#######################
+# Jewish Moneylenders #
+#######################
+
+country_event = { #21 - Mount of Piety
+	
+	id = dg_jewish.021
+	title = dg_jewish.021.t
+	desc = dg_jewish.021.d
+	picture = jewish_merchants # pending better choice of picture by David
+	
+	trigger = {
+		religion = catholic
+		tech_1450_trigger = yes
+		tech_1650_trigger = no
+		NOT = { has_country_flag = piety_fund_abandoned }
+		NOT = { has_country_flag = piety_fund }
+		is_at_war = no
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 83
+		
+		modifier = {
+			government = republic
+			factor = 0.5
+		}
+		modifier = {
+			advisor = jewish_financier
+			factor = 0.5
+		}
+	}
+	
+	#immediate = {
+	#	if = {
+	#		limit = { advisor = jewish_financier }
+	#		custom_tooltip = dg_jewish.021.jewish
+	#	}
+	#	else = {
+	#		custom_tooltip = dg_jewish.021.bankers
+	#	}
+	#	custom_tooltip = dg_jewish.021.end
+	#}
+	
+	option = {
+		name = dg_jewish.021.fiction #Allow legal fictions to be used
+		ai_chance = {
+			factor = 50
+			modifier = {
+				advisor = jewish_financier
+				factor = 0.7
+			}
+			modifier = {
+				government = monarchy
+				NOT = { legitimacy = 80 }
+				factor = 0.7
+			}
+			modifier = {
+				government = monarchy
+				NOT = { legitimacy = 70 }
+				factor = 0.7
+			}
+			modifier = {
+				government = theocracy
+				NOT = { devotion = 90 }
+				factor = 0.7
+			}
+			modifier = {
+				government = theocracy
+				NOT = { devotion = 80 }
+				factor = 0.7
+			}
+			modifier = {
+				government = republic
+				NOT = { republican_tradition = 70 }
+				factor = 0.7
+			}
+			modifier = {
+				government = republic
+				NOT = { republican_tradition = 60 }
+				factor = 0.7
+			}
+		}
+		if = {
+			limit = { advisor = jewish_financier }
+			remove_advisor = jewish_financier
+		}
+		add_adm_power = -10
+		dg_reduce_legitimacy = yes
+		add_country_modifier = { name = piety_fund duration = 12000 }
+	}
+	option = {
+		name = dg_jewish.021.donate #Donate to the fund personally
+		ai_chance = {
+			factor = 25
+			modifier = {
+				has_country_modifier = jewish_financier
+				factor = 0.7
+			}
+			modifier = {
+				num_of_loans = 1
+				factor = 0.7
+			}
+			modifier = {
+				num_of_loans = 2
+				factor = 0.7
+			}
+			modifier = {
+				num_of_loans = 3
+				factor = 0
+			}
+			modifier = {
+				government = monarchy
+				NOT = { legitimacy = 80 }
+				factor = 1.4
+			}
+			modifier = {
+				government = monarchy
+				NOT = { legitimacy = 70 }
+				factor = 1.4
+			}
+			modifier = {
+				government = theocracy
+				NOT = { devotion = 90 }
+				factor = 1.4
+			}
+			modifier = {
+				government = theocracy
+				NOT = { devotion = 80 }
+				factor = 1.4
+			}
+			modifier = {
+				government = republic
+				NOT = { republican_tradition = 70 }
+				factor = 1.4
+			}
+			modifier = {
+				government = republic
+				NOT = { republican_tradition = 60 }
+				factor = 1.4
+			}
+		}
+		if = {
+			limit = { advisor = jewish_financier }
+			random = { chance = 75 remove_advisor = jewish_financier }
+		}
+		add_years_of_income = -0.16
+		dg_add_legitimacy = yes
+		add_country_modifier = { name = piety_fund duration = 8000 }
+	}
+	option = {
+		name = dg_jewish.021.canon #Require strict adherence to canon law
+		ai_chance = { factor = 25 }
+		if = {
+			limit = { advisor = jewish_financier }
+			random = { chance = 50 remove_advisor = jewish_financier }
+		}
+		add_country_modifier = { name = piety_fund duration = 4000 }
+		set_country_flag = piety_fund_abandoned
+	}
+}
+
+country_event = { #Jewish Moneylender
+	
+	id = dg_jewish.022
+	title = dg_jewish.022.t
+	desc = dg_jewish.022.d
+	picture = jewish_merchants #TEMP
+	
+	trigger = {
+		religion_group = christian
+		NOT = { has_country_flag = religious_turmoil_jewish }
+		NOT = { advisor = jewish_financier }
+		tech_1500_trigger = no #Replaced by Jewish Financier event
+		NOT = { has_country_modifier = religious_intolerance }
+		has_regency = no
+	}
+	
+	is_triggered_only = yes #By Jewish minority timer
+	
+	option = {
+		name = dg_jewish.022.loan #Take a loan
+		ai_chance = { factor = 40 }
+		#Add money, depending on income
+		add_country_modifier = { name = jewish_loan duration = 1825 hidden = yes }
+	}
+	option = {
+		name = dg_jewish.022.position #Give him a position at court
+		ai_chance = { factor = 30 }
+		dg_reduce_legitimacy = yes
+		define_advisor = {
+			type = jewish_financier
+			religion = jewish
+		}
+		#	add_country_modifier = { name = jewish_financier duration = 7300 }
+	}
+	option = {
+		name = dg_jewish.022.no #Spurn this deal with the Devil
+		ai_chance = { factor = 30 }
+	}
+}
+
+country_event = { #Jewish Conspiracy
+	
+	id = dg_jewish.023
+	title = dg_jewish.023.t
+	desc = dg_jewish.023.d
+	picture = jewish_merchants # pending better choice of picture by David
+	
+	trigger = {
+		advisor = jewish_financier
+		NOT = { religion = jewish }
+	}
+	
+	is_triggered_only = yes #By ruler death
+	
+	option = {
+		name = dg_jewish.023.execute #Execute him and seize his estate
+		ai_chance = {
+			factor = 30
+			modifier = {
+				num_of_loans = 1
+				factor = 1.4
+			}
+			modifier = {
+				num_of_loans = 2
+				factor = 1.4
+			}
+			modifier = {
+				num_of_loans = 3
+				factor = 1.4
+			}
+			modifier = {
+				num_of_loans = 4
+				factor = 1.4
+			}
+		}
+		kill_advisor = jewish_financier
+		add_years_of_income = 0.16
+		#if = {
+		#	limit = { has_country_modifier = jewish_loan }
+			remove_country_modifier = jewish_loan
+		#}
+	}
+	option = {
+		name = dg_jewish.023.exile #Send him into exile
+		ai_chance = { factor = 40 }
+		kill_advisor = jewish_financier
+		dg_add_legitimacy = yes
+		#if = {
+		#	limit = { has_country_modifier = jewish_loan }
+			remove_country_modifier = jewish_loan
+		#}
+	}
+	option = {
+		name = dg_jewish.023.confirm #Confirm his appointment
+		ai_chance = {
+			factor = 30
+			modifier = {
+				has_country_modifier = jewish_loan
+				factor = 0.5
+			}
+			modifier = {
+				has_country_modifier = religious_intolerance
+				factor = 0.5
+			}
+			modifier = {
+				has_country_modifier = religious_tolerance
+				factor = 2
+			}
+		}
+		dg_reduce_legitimacy = yes
+	}
+}
+
+#############################
+# False Messiah Event Chain # 30s
+#############################
+
+country_event = { #False Messiah
+	
+	id = dg_jewish.030
+	title = dg_jewish.030.t
+	desc = dg_jewish.030.d
+	picture = jewish_torah
+	
+	trigger = {
+		any_owned_province = { check_variable = { which = jewish value = 2 } }
+		NOT = { has_country_flag = false_messiah }
+		NOT = { religion_group = jewish_group }
+		OR = {
+			ai = yes
+			has_country_flag = religious_news_all
+		}
+	}
+	
+	mean_time_to_happen = { years = 208 }
+	
+	option = {
+		name = dg_jewish.030.a #Ignore him
+		ai_chance = {
+			factor = 50
+			modifier = {
+				num_of_owned_provinces_with = {
+					check_variable = { which = jewish value = 2 }
+					value = 3
+				}
+				factor = 1.4
+			}
+			modifier = {
+				num_of_owned_provinces_with = {
+					check_variable = { which = jewish value = 2 }
+					value = 5
+				}
+				factor = 1.4
+			}
+			modifier = {
+				num_of_owned_provinces_with = {
+					check_variable = { which = jewish value = 2 }
+					value = 7
+				}
+				factor = 1.4
+			}
+			modifier = {
+				num_of_owned_provinces_with = {
+					check_variable = { which = jewish value = 2 }
+					value = 9
+				}
+				factor = 1.4
+			}
+			modifier = {
+				num_of_owned_provinces_with = {
+					check_variable = { which = jewish value = 2 }
+					value = 11
+				}
+				factor = 1.4
+			}
+		}
+		hidden_effect = { set_country_flag = false_messiah }
+		if = {
+			limit = { owns = 379 } # Al Quds
+			379 = { add_province_modifier = { name = false_messiah duration = 5000 } }
+		}
+		else = {
+			random_owned_province = {
+				limit = { check_variable = { which = jewish value = 2 } }
+				add_province_modifier = { name = false_messiah duration = 5000 }
+			}
+		}
+	}
+	option = {
+		name = dg_jewish.030.b #Execute him
+		ai_chance = { factor = 50 }
+		if = {
+			limit = { owns = 379 } # Al Quds
+			379 = {
+				random_list = {
+					50 = {
+						hidden_effect = {
+							set_variable = { which = added_unrest value = 10 }
+							add_base_unrest = yes
+						}
+						custom_tooltip = added_unrest_10
+					}
+					50 = { add_province_modifier = { name = false_messiah duration = 2500 } }
+				}
+			}
+		}
+		else = {
+			random_owned_province = {
+				limit = { check_variable = { which = jewish value = 2 } }
+				random_list = {
+					50 = {
+						hidden_effect = {
+							set_variable = { which = added_unrest value = 10 }
+							add_base_unrest = yes
+						}
+						custom_tooltip = added_unrest_10
+					}
+					50 = { add_province_modifier = { name = false_messiah duration = 2500 } }
+				}
+			}
+		}
+		if = {
+			limit = { NOT = { religion_group = jewish_group } }
+			every_owned_province = {
+				limit = { check_variable = { which = jewish value = 2 } }
+				hidden_effect = {
+					set_variable = { which = added_unrest value = 2 }
+					add_base_unrest = yes
+				}
+				custom_tooltip = added_unrest_2
+			}
+		}
+	}
+}
+
+country_event = { #Jewish Sabbeateans
+	
+	id = dg_jewish.031
+	title = dg_jewish.031.t
+	desc = dg_jewish.031.d
+	picture = jewish_rabbis
+	
+	trigger = {
+		owns = 379 # Al Quds
+		379 = { has_province_modifier = false_messiah }
+		NOT = { has_global_flag = sabbatean_messiah }
+	}
+	
+	mean_time_to_happen = { months = 25 }
+	
+	immediate = { hidden_effect = { set_global_flag = sabbatean_messiah } }
+	
+	option = {
+		name = dg_jewish.031.a #Disturbing
+		hidden_effect = { set_country_flag = sabbatean_messiah_news }
+		379 = { add_province_modifier = { name = sabbatean_support duration = 2000 } }
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					check_variable = { which = jewish value = 2 }
+					NOT = { province_id = 379 } # Al Quds
+				}
+				random_list = {
+					50 = {
+						add_province_modifier = { name = sabbatean_support duration = 3000 }
+						hidden_effect = { KOJ = { change_variable = { which = sabbatean_support value = 1 } } }
+						if = {
+							limit = { check_variable = { which = jewish value = 8 } }
+							hidden_effect = { KOJ = { change_variable = { which = sabbatean_support value = 3 } } }
+						}
+						else_if = {
+							limit = { check_variable = { which = jewish value = 6 } }
+							hidden_effect = { KOJ = { change_variable = { which = sabbatean_support value = 2 } } }
+						}
+						else_if = {
+							limit = { check_variable = { which = jewish value = 4 } }
+							hidden_effect = { KOJ = { change_variable = { which = sabbatean_support value = 1 } } }
+						}
+					}
+					50 = { }
+				}
+			}
+			every_country = {
+				limit = {
+					any_owned_province = { check_variable = { which = jewish value = 2 } }
+					NOT = { tag = ROOT }
+				}
+				country_event = { id = dg_jewish.032 days = 100 }
+			}
+		}
+	}
+}
+
+country_event = { #News of Miracles and Persecution
+	
+	id = dg_jewish.032
+	title = dg_jewish.032.t
+	desc = dg_jewish.032.d
+	picture = jewish_torah
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = dg_jewish.032.a #Disturbing
+		hidden_effect = {
+			every_owned_province = {
+				limit = { check_variable = { which = jewish value = 2 } }
+				random_list = {
+					50 = {
+						add_province_modifier = { name = sabbatean_support duration = 3000 }
+						hidden_effect = {
+							KOJ = { change_variable = { which = sabbatean_support value = 1 } }
+							if = {
+								limit = { check_variable = { which = jewish value = 8 } }
+								KOJ = { change_variable = { which = sabbatean_support value = 3 } }
+							}
+							else_if = {
+								limit = { check_variable = { which = jewish value = 6 } }
+								KOJ = { change_variable = { which = sabbatean_support value = 2 } }
+							}
+							else_if = {
+								limit = { check_variable = { which = jewish value = 4 } }
+								KOJ = { change_variable = { which = sabbatean_support value = 1 } }
+							}
+						}
+					}
+					50 = { }
+				}
+			}
+		}
+	}
+}
+
+country_event = { #The year of the Messiah approaches
+	
+	id = dg_jewish.033
+	title = dg_jewish.033.t
+	desc = dg_jewish.033.d
+	picture = jewish_torah
+	
+	trigger = {
+		owns = 379 # Al Quds
+		NOT = { religion = jewish }
+		has_global_flag = sabbatean_messiah
+		379 = { has_province_modifier = sabbatean_support }
+		NOT = { has_global_flag = year_of_the_messiah }
+	}
+	
+	mean_time_to_happen = { months = 25 }
+	
+	immediate = { hidden_effect = { set_global_flag = year_of_the_messiah } }
+	
+	option = {
+		name = dg_jewish.033.a #Keep a watchful eye on this man
+		ai_chance = { factor = 80 }
+	}
+	option = {
+		name = dg_jewish.033.b #Arrest this man
+		ai_chance = { factor = 20 }
+		379 = {
+			if = {
+				limit = { check_variable = { which = jewish value = 2 } }
+				hidden_effect = {
+					set_variable = { which = added_unrest value = 10 }
+					add_base_unrest = yes
+				}
+				custom_tooltip = added_unrest_10
+			}
+			random_list = {
+				50 = {
+					hidden_effect = { set_global_flag = messiah_imprisoned }
+					owner = { country_event = { id = dg_jewish.035 days = 200 } }
+				}
+				50 = { }
+			}
+		}
+		if = {
+			limit = { NOT = { religion_group = jewish_group } }
+			every_owned_province = {
+				limit = { check_variable = { which = jewish value = 2 } }
+				hidden_effect = {
+					set_variable = { which = added_unrest value = 2 }
+					add_base_unrest = yes
+				}
+				custom_tooltip = added_unrest_2
+			}
+		}
+	}
+}
+
+country_event = { #The Messiah arrives in $CAPITAL_CITY$
+	
+	id = dg_jewish.034
+	title = dg_jewish.034.t
+	desc = dg_jewish.034.d
+	picture = jewish_messiah
+	
+	trigger = {
+		owns = 379 # Al Quds
+		has_global_flag = year_of_the_messiah
+		NOT = { has_global_flag = messiah_imprisoned }
+		NOT = { has_global_flag = messiah_arrives }
+		NOT = { religion = jewish }
+	}
+	
+	mean_time_to_happen = { months = 10 }
+	
+	immediate = { set_global_flag = messiah_arrives }
+	
+	option = {
+		name = dg_jewish.034.a #Arrest him
+		ai_chance = { factor = 80 }
+		379 = {
+			if = {
+				limit = { check_variable = { which = jewish value = 2 } }
+				hidden_effect = {
+					set_variable = { which = added_unrest value = 10 }
+					add_base_unrest = yes
+				}
+				custom_tooltip = added_unrest_10
+			}
+			random_list = {
+				75 = {
+					remove_province_modifier = sabbatean_support
+					hidden_effect = { set_global_flag = messiah_imprisoned }
+					hidden_effect = { owner = { country_event = { id = dg_jewish.035 days = 200 } } }
+				}
+				25 = { }
+			}
+		}
+		if = {
+			limit = { NOT = { religion_group = jewish_group } }
+			every_owned_province = {
+				limit = { check_variable = { which = jewish value = 2 } }
+				hidden_effect = {
+					set_variable = { which = added_unrest value = 2 }
+					add_base_unrest = yes
+				}
+				custom_tooltip = added_unrest_2
+			}
+		}
+	}
+	option = {
+		name = dg_jewish.034.b #Ignore him
+		ai_chance = { factor = 20 }
+	}
+}
+
+country_event = { #Imprisonment of the Messiah
+	
+	id = dg_jewish.035
+	title = dg_jewish.035.t
+	desc = dg_jewish.035.d
+	picture = all_prisoner
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = dg_jewish.035.a #Offer him freedom if he converts
+		ai_chance = {
+			factor = 50
+			modifier = {
+				jewish = -1
+				factor = 1.4
+			}
+			modifier = {
+				jewish = 1
+				factor = 1.4
+			}
+			modifier = {
+				jewish = 3
+				factor = 1.4
+			}
+			modifier = {
+				has_country_flag = chief_rabbi
+				factor = 1.4
+			}
+		}
+		random_list = {
+			50 = { country_event = { id = dg_jewish.036 days = 200 } }
+			50 = { hidden_effect = { set_global_flag = betrayal_of_messiah } }
+		}
+	}
+	option = {
+		name = dg_jewish.035.b #Execute him
+		ai_chance = { factor = 50 }
+		hidden_effect = { set_global_flag = betrayal_of_messiah }
+		379 = {
+			if = {
+				limit = { check_variable = { which = jewish value = 2 } }
+				hidden_effect = {
+					set_variable = { which = added_unrest value = 10 }
+					add_base_unrest = yes
+				}
+				custom_tooltip = added_unrest_10
+			}
+		}
+		if = {
+			limit = { NOT = { religion_group = jewish_group } }
+			every_owned_province = {
+				limit = { check_variable = { which = jewish value = 2 } }
+				hidden_effect = {
+					set_variable = { which = added_unrest value = 2 }
+					add_base_unrest = yes
+				}
+				custom_tooltip = added_unrest_2
+			}
+		}
+	}
+}
+
+country_event = { #Messianic Revolt
+	
+	id = dg_jewish.036
+	title = dg_jewish.036.t
+	desc = dg_jewish.036.d
+	picture = jewish_revolt
+	
+	trigger = {
+		owns = 379 # Al Quds
+		has_global_flag = messiah_arrives
+		NOT = { has_global_flag = messiah_imprisoned }
+		NOT = { has_country_flag = jewish_messianic_revolt }
+		NOT = { has_global_flag = jewish_revolt }
+		NOT = { has_global_flag = betrayal_of_messiah }
+		NOT = { religion = jewish }
+	}
+	
+	mean_time_to_happen = {
+		
+		months = 25
+		
+		modifier = {
+			war_exhaustion = 5
+			factor = 0.7
+		}
+		modifier = {
+			war_exhaustion = 10
+			factor = 0.7
+		}
+		modifier = {
+			war_exhaustion = 15
+			factor = 0.7
+		}
+		modifier = {
+			war_exhaustion = 20
+			factor = 0.7
+		}
+		modifier = {
+			is_at_war = yes
+			factor = 0.7
+		}
+		modifier = {
+			379 = { has_siege = yes }
+			factor = 0.7
+		}
+		modifier = {
+			num_of_rebel_controlled_provinces = 1
+			factor = 0.7
+		}
+		modifier = {
+			num_of_rebel_controlled_provinces = 2
+			factor = 0.7
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = jewish_messianic_revolt
+			set_global_flag = jewish_revolt
+			set_country_flag = religious_turmoil_happening
+			set_country_flag = religious_turmoil_jewish
+		}
+		if = {
+			limit = {
+				KOJ = { check_variable = { which = sabbatean_support value = 25 } }
+			}
+			379 = { spawn_rebels = { type = jewish_rebels size = 5 } change_controller = REB }
+		}
+		else_if = {
+			limit = {
+				KOJ = { check_variable = { which = sabbatean_support value = 20 } }
+			}
+			379 = { spawn_rebels = { type = jewish_rebels size = 4 } change_controller = REB }
+		}
+		else_if = {
+			limit = {
+				KOJ = { check_variable = { which = sabbatean_support value = 15 } }
+			}
+			379 = { spawn_rebels = { type = jewish_rebels size = 3 } change_controller = REB }
+		}
+		else_if = {
+			limit = {
+				KOJ = { check_variable = { which = sabbatean_support value = 10 } }
+			}
+			379 = { spawn_rebels = { type = jewish_rebels size = 2 } change_controller = REB }
+		}
+		else_if = {
+			limit = {
+				KOJ = { check_variable = { which = sabbatean_support value = 5 } }
+			}
+			379 = { spawn_rebels = { type = jewish_rebels size = 1 } }
+		}
+		else_if = {
+			limit = {
+				KOJ = { check_variable = { which = sabbatean_support value = 2 } }
+			}
+			379 = {
+				spawn_rebels = { type = jewish_rebels size = 0 }
+				spawn_rebels = { type = jewish_rebels size = 0 }
+			}
+		}
+		else = {
+			379 = { spawn_rebels = { type = jewish_rebels size = 0 } }
+		}
+	}
+	
+	option = {
+		name = dg_jewish.036.a #Curses!
+	}
+}
+
+country_event = { #Defeat of the Messiah
+	
+	id = dg_jewish.037
+	title = dg_jewish.037.t
+	desc = dg_jewish.037.d
+	picture = jewish_wailing_wall
+	
+	trigger = {
+		has_country_flag = jewish_messianic_revolt
+		owns = 379 # Al Quds
+		controls = 379
+		NOT = { has_spawned_rebels = jewish_rebels }
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = dg_jewish.037.a #Excellent
+		hidden_effect = {
+			clr_country_flag = jewish_messianic_revolt
+			set_global_flag = betrayal_of_messiah
+		}
+		add_prestige = 5
+		every_owned_province = {
+			limit = {
+				OR = {
+					has_province_modifier = sabbatean_support
+					province_id = 379 # Al Quds
+				}
+			}
+			remove_province_modifier = sabbatean_support
+			hidden_effect = { set_province_flag = jewish_rebel_victory }
+		}
+		country_event = { id = dg_turmoil.121 days = 30 }
+	}
+}
+
+country_event = { #Betrayal of the Messiah
+	
+	id = dg_jewish.038
+	title = dg_jewish.038.t
+	desc = dg_jewish.038.d
+	picture = jewish_wailing_wall
+	
+	trigger = {
+		has_global_flag = betrayal_of_messiah
+		any_owned_province = { has_province_modifier = sabbatean_support }
+	}
+	
+	mean_time_to_happen = { months = 5 }
+	
+	option = {
+		name = dg_jewish.038.a #C'est la vie
+		every_owned_province = {
+			limit = { has_province_modifier = sabbatean_support }
+			remove_province_modifier = sabbatean_support
+			hidden_effect = {
+				set_variable = { which = added_unrest value = -1 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_1
+			hidden_effect = {
+				random = {
+					chance = 5
+					change_variable = { which = jewish value = -1 }
+					change_variable = { which = converts value = 1 }
+				}
+			}
+		}
+	}
+}
+
+country_event = { #Victory of the Messiah
+	
+	id = dg_jewish.039
+	title = dg_jewish.039.t
+	desc = dg_jewish.039.d
+	picture = jewish_messiah
+	
+	trigger = {
+		379 = { owner = { religion = jewish } }
+		has_global_flag = jewish_revolt
+		any_owned_province = { has_province_modifier = sabbatean_support }
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = dg_jewish.039.a #Next year in Jerusalem
+		every_owned_province = {
+			limit = { has_province_modifier = sabbatean_support }
+			remove_province_modifier = sabbatean_support
+			hidden_effect = {
+				change_variable = { which = jewish value = -1 }
+				change_variable = { which = province_religion value = 1 }
+				379 = { owner = { change_variable = { which = religious_migrants value = 1 } } }
+			}
+		}
+	}
+}
+
+#########################
+# Restoration of Israel # 40s
+#########################
+
+province_event = { #The Promised Land
+	
+	id = dg_jewish.041
+	title = dg_jewish.041.t
+	desc = dg_jewish.041.d
+	picture = jewish_people
+	
+	trigger = {
+		check_variable = { which = jewish value = 2 }
+		OR = {
+			owner = { has_country_flag = religious_turmoil_jewish }
+			owner = { has_country_modifier = religious_intolerance }
+			379 = { owner = { religion_group = jewish_group } }
+		}
+		NOT = { owner = { religion = jewish } } #Beta Israel
+		379 = { NOT = { has_province_modifier = cultural_tensions } }
+		NOT = { religion = jewish } #Large settlements not as interested
+		NOT = { culture_group = jewish_group }
+		NOT = { has_province_flag = jewish_holy_land }
+	}
+	
+	mean_time_to_happen = { years = 83 }
+	
+	option = {
+		name = dg_jewish.041.a #Ban them from leaving
+		ai_chance = {
+			factor = 50
+			modifier = {
+				owner = { jewish = 0 }
+				factor = 0.5
+			}
+		}
+		hidden_effect = {
+			set_variable = { which = added_unrest value = 2 }
+			add_base_unrest = yes
+		}
+		custom_tooltip = added_unrest_2
+	}
+	option = {
+		name = dg_jewish.041.b #Allow them to go
+		ai_chance = { factor = 50 }
+		trigger = { NOT = { owner = { owns = 379 } } }
+		hidden_effect = {
+			random = {
+				chance = 20
+				change_variable = { which = jewish value = -2 }
+				change_variable = { which = province_religion value = 2 }
+			}
+		}
+		#NEEDS TO BE REWRITTEN
+	}
+	option = {
+		name = dg_minorities.201.k #Require them to live in a ghetto
+		trigger = {
+			owner = { owns = 379 }
+			NOT = { owner = { religion = jewish } }
+			NOT = { owner = { jewish = 1 } }
+			NOT = { owner = { has_country_flag = religious_turmoil_jewish } }
+			NOT = { has_province_flag = potential_haven_jewish_similar } #No point
+		}
+		ai_chance = {
+			factor = 15
+		}
+		#NEEDS TO BE REWRITTEN
+	}
+	option = {
+		name = dg_minorities.201.c #Let them settle unoccupied land
+		trigger = {
+			owner = {
+				owns = 379 # Al Quds
+				any_owned_province = {
+					OR = {
+						has_province_flag = jewish_holy_land
+						any_neighbor_province = { has_province_flag = jewish_holy_land }
+					}
+					is_city = yes
+					town_province_trigger = no
+					NOT = { check_variable = { which = refugee_movement value = 1 } }
+				}
+			}
+			owner = { jewish = 0 }
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				owner = { has_country_flag = religious_turmoil_jewish }
+				factor = 0.5
+			}
+			modifier = {
+				has_province_flag = potential_haven_jewish_similar
+				factor = 2
+			}
+			modifier = {
+				owner = { religion = jewish }
+				factor = 0.5
+			}
+			modifier = {
+				owner = { jewish = 2 }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { jewish = 0 }
+				factor = 1.4
+			}
+		}
+		#NEEDS TO BE REWRITTEN
+	}
+	option = {
+		name = dg_minorities.201.e #Let them in for a price
+		trigger = {
+			owner = { owns = 379 }
+			NOT = { owner = { religion = jewish } }
+			NOT = { owner = { jewish = 3 } }
+		}
+		ai_chance = {
+			factor = 15
+			modifier = {
+				owner = { has_country_flag = religious_turmoil_jewish }
+				factor = 0.5
+			}
+			modifier = {
+				has_province_flag = potential_haven_jewish_similar
+				factor = 2
+			}
+			modifier = {
+				owner = { jewish = 2 }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { jewish = 0 }
+				factor = 1.4
+			}
+		}
+		#NEEDS TO BE REWRITTEN
+	}
+	option = {
+		name = dg_minorities.201.f #Demand they prove their loyalty
+		trigger = {
+			owner = {
+				owns = 379 # Al Quds
+				is_at_war = yes
+				NOT = { manpower_percentage = 0.50 }
+				jewish = -1
+			}
+		}
+		ai_chance = {
+			factor = 15
+			modifier = {
+				owner = { has_country_flag = religious_turmoil_jewish }
+				factor = 0.5
+			}
+			modifier = {
+				has_province_flag = potential_haven_jewish_similar
+				factor = 2
+			}
+			modifier = {
+				owner = { jewish = 2 }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { jewish = 0 }
+				factor = 1.4
+			}
+		}
+		#NEEDS TO BE REWRITTEN
+	}
+}
+
+country_event = { #The Holy Land
+	
+	id = dg_jewish.042
+	title = dg_jewish.042.t
+	desc = dg_jewish.042.d
+	picture = jewish_jubilee
+	
+	trigger = {
+		religion = jewish
+		owns = 379 # Al Quds
+		NOT = { has_country_flag = restoration_of_israel }
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	immediate = {
+		set_country_flag = restoration_of_israel
+		set_country_flag = holy_land_jerusalem
+		every_country = {
+			limit = {
+				religion_group = jewish_group
+				NOT = { tag = ROOT }
+				OR = {
+					piety = -0.20
+					is_defender_of_faith = yes
+					alliance_with = ROOT
+					dynasty = ROOT
+					marriage_with = ROOT
+					is_neighbor_of = ROOT
+					overlord_of = ROOT
+					is_subject_of = ROOT
+					is_core = 379 # Al Quds
+				}
+			}
+			country_event = { id = dg_jewish.043 days = 30 }
+		}
+	}
+	
+	option = {
+		name = dg_jewish.042.a #Let us return to Jerusalem
+		ai_chance = { factor = 99 }
+		trigger = {
+			OR = {
+				NOT = { capital = 379 } # Al Quds
+				NOT = { culture_group = jewish_group }
+			}
+		}
+		#if = {
+		#	limit = {
+		#		capital_scope = {
+		#			has_province_flag = ashkenazi_jews
+		#		}
+		#	}
+		#	change_primary_culture = ashkenazi
+		#	379 = { change_culture = ashkenazi } # Al Quds
+		#}
+		#if = {
+		#	limit = {
+		#		capital_scope = {
+		#			has_province_flag = sephardi_jews
+		#		}
+		#	}
+		#	change_primary_culture = sephardi
+		#	379 = { change_culture = sephardi } # Al Quds
+		#}
+		#if = {
+		#	limit = {
+		#		capital_scope = {
+		#			has_province_flag = mizrahi_jews
+		#		}
+		#	}
+		#	change_primary_culture = mizrahi
+		#	379 = { change_culture = mizrahi } # Al Quds
+		#}
+		Effect_set_capital = { target=379 } # Al Quds
+		if = {
+			limit = { piety = 0.60 }
+			add_prestige = 40
+			add_legitimacy = 20
+			if = {
+				limit = { NOT = { is_core = 379 } } # Al Quds
+				add_core = 379 # Al Quds
+			}
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_prestige = 30
+			add_legitimacy = 15
+			if = {
+				limit = { NOT = { is_core = 379 } } # Al Quds
+				add_core = 379 # Al Quds
+			}
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_prestige = 20
+			add_legitimacy = 10
+			if = {
+				limit = { NOT = { is_core = 379 } } # Al Quds
+				add_core = 379 # Al Quds
+			}
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_prestige = 10
+			add_legitimacy = 5
+			if = {
+				limit = { NOT = { is_core = 379 } } # Al Quds
+				add_claim = 379 # Al Quds
+			}
+		}
+	}
+	option = {
+		name = dg_jewish.042.b #Let us rejoice
+		ai_chance = { factor = 1 }
+		if = {
+			limit = { piety = 0.60 }
+			add_prestige = 30
+			add_legitimacy = 15
+			if = {
+				limit = { NOT = { is_core = 379 } } # Al Quds
+				add_core = 379 # Al Quds
+			}
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_prestige = 20
+			add_legitimacy = 10
+			if = {
+				limit = { NOT = { is_core = 379 } } # Al Quds
+				add_claim = 379 # Al Quds
+			}
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_prestige = 10
+			add_legitimacy = 5
+			if = {
+				limit = { NOT = { is_core = 379 } } # Al Quds
+				add_claim = 379 # Al Quds
+			}
+		}
+	}
+}
+
+country_event = { #The Holy Land is restored to Jewish rule
+	
+	id = dg_jewish.043
+	title = dg_jewish.043.t
+	desc = dg_jewish.043.d
+	picture = jewish_jubilee
+	
+	is_triggered_only = yes #By dg_jewish.042
+	
+	option = {
+		name = dg_jewish.043.a #Praise Yahweh
+		if = {
+			limit = { piety = 0.60 }
+			add_opinion = { who = FROM modifier = holy_lands_fanatical }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_opinion = { who = FROM modifier = holy_lands_pious }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_opinion = { who = FROM modifier = holy_lands_observant }
+		}
+	}
+}
+
+province_event = { #44 - Temple Mount
+	
+	id = dg_jewish.044
+	title = dg_jewish.044.t
+	desc = dg_jewish.044.d
+	picture = jewish_wailing_wall
+	
+	trigger = {
+		province_id = 379 # Al Quds
+		controlled_by = owner
+		owner = { religion_group = jewish_group }
+		NOT = { has_province_modifier = jewish_third_temple }
+		NOT = { has_province_modifier = jewish_third_temple_progress }
+		NOT = { owner = { has_country_flag = third_temple_rejected } }
+	}
+	
+	mean_time_to_happen = {
+		
+		months = 50
+		
+		modifier = {
+			owner = { has_country_flag = sanhedrin }
+			factor = 0.5
+		}
+		modifier = {
+			owner = { has_country_flag = third_temple_considered }
+			factor = 5
+		}
+		modifier = {
+			owner = { has_country_flag = third_temple_reconsidered }
+			factor = 5
+		}
+		modifier = {
+			owner = { is_at_war = yes }
+			factor = 2
+		}
+		modifier = {
+			has_siege = yes
+			factor = 2
+		}
+	}
+	
+	option = {
+		name = dg_jewish.044.a #Lay down the foundations immediately
+		ai_chance = {
+			factor = 50
+			modifier = {
+				owner = { NOT = { treasury = 200 } }
+				factor = 0.5
+			}
+			modifier = {
+				owner = { NOT = { treasury = 100 } }
+				factor = 0.5
+			}
+			modifier = {
+				owner = { monthly_income = 16 }
+				factor = 0.5
+			}
+			modifier = {
+				owner = { monthly_income = 8 }
+				factor = 0.5
+			}
+			modifier = {
+				owner = { num_of_loans = 1 }
+				factor = 0.5
+			}
+			modifier = {
+				owner = { num_of_loans = 2 }
+				factor = 0.5
+			}
+		}
+		add_province_modifier = { name = jewish_third_temple_progress duration = -1 }
+		owner = {
+			add_treasury = -200
+			add_adm_power = -20
+			every_country = {
+				limit = {
+					OR = {
+						religion = sunni
+						religion = shiite
+					}
+					OR = {
+						has_country_flag = religious_news_trivial
+						OR = {
+							is_neighbor_of = PREV
+							is_rival = PREV
+							is_enemy = PREV
+							truce_with = PREV
+							war_with = PREV
+							is_defender_of_faith = yes
+						}
+					}
+					any_known_country = { tag = ROOT }
+				}
+				country_event = { id = dg_jewish.045 days = 30 }
+			}
+			every_country = {
+				limit = {
+					OR = {
+						religion = sunni
+						religion = shiite
+					}
+					NOT = { has_country_flag = religious_news_trivial }
+					is_free_or_tributary_trigger = yes
+					NOT = {
+						OR = {
+							is_neighbor_of = PREV
+							is_rival = PREV
+							is_enemy = PREV
+							truce_with = PREV
+							war_with = PREV
+							is_defender_of_faith = yes
+						}
+					}
+					any_known_country = { tag = ROOT }
+				}
+				if = {
+					limit = { piety = 0.60 }
+					if = {
+						limit = { NOT = { is_neighbor_of = PREV } }
+						add_casus_belli = { target = PREV type = cb_insult months = 240 }
+					}
+					if = {
+						limit = { is_neighbor_of = PREV }
+						add_casus_belli = { target = PREV type = cb_jihad_cleric months = 240 }
+					}
+					add_opinion = { who = PREV modifier = mistreated_coreligionists_fanatical }
+				}
+				else_if = {
+					limit = { piety = 0.20 }
+					if = {
+						limit = { NOT = { is_neighbor_of = PREV } }
+						add_casus_belli = { target = PREV type = cb_insult months = 120 }
+					}
+					if = {
+						limit = { is_neighbor_of = PREV }
+						add_casus_belli = { target = PREV type = cb_jihad_cleric months = 120 }
+					}
+					add_opinion = { who = PREV modifier = mistreated_coreligionists_pious }
+				}
+				else_if = {
+					limit = { piety = -0.20 }
+					if = {
+						limit = { NOT = { is_neighbor_of = PREV } }
+						add_casus_belli = { target = PREV type = cb_insult months = 60 }
+					}
+					if = {
+						limit = { is_neighbor_of = PREV }
+						add_casus_belli = { target = PREV type = cb_jihad_cleric months = 60 }
+					}
+					add_opinion = { who = PREV modifier = mistreated_coreligionists_observant }
+				}
+				hidden_effect = {
+					if = {
+						limit = { NOT = { piety = -0.20 } }
+						if = {
+							limit = { NOT = { is_neighbor_of = PREV } }
+							add_casus_belli = { target = PREV type = cb_insult months = 30 }
+						}
+						if = {
+							limit = { is_neighbor_of = PREV }
+							add_casus_belli = { target = PREV type = cb_jihad_cleric months = 30 }
+						}
+						add_opinion = { who = PREV modifier = mistreated_coreligionists_decadent }
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_jewish.044.b #We must consider the implications
+		ai_chance = { factor = 40 }
+		owner = {
+			set_country_flag = third_temple_considered
+			add_country_modifier = { name = religious_controversy duration = 250 }
+		}
+	}
+	option = {
+		name = dg_jewish.044.c #We must turn away from the past
+		ai_chance = { factor = 10 }
+		owner = {
+			if = {
+				limit = { has_country_flag = third_temple_reconsidered }
+				custom_tooltip = no_jewish_temple
+				set_country_flag = third_temple_rejected
+			}
+			set_country_flag = third_temple_considered
+			set_country_flag = third_temple_reconsidered
+			if = {
+				limit = { piety = 0.60 }
+				add_prestige = -12
+			}
+			else_if = {
+				limit = { piety = 0.20 }
+				add_prestige = -9
+			}
+			else_if = {
+				limit = { piety = -0.20 }
+				add_prestige = -6
+			}
+			else_if = {
+				limit = { piety = -0.60 }
+				add_prestige = -3
+			}
+		}
+	}
+}
+
+country_event = { #45 - The Dome of the Rock
+	
+	id = dg_jewish.045
+	title = dg_jewish.045.t
+	desc = dg_jewish.045.d
+	picture = jewish_temple_mount
+	
+	is_triggered_only = yes #By dg_jewish.044
+	
+	option = {
+		name = dg_jewish.045.a #Sacrilege!
+		if = {
+			limit = {
+				FROM = {
+					owner = {
+						is_neighbor_of = ROOT
+						is_free_or_tributary_trigger = yes
+					}
+				}
+			}
+			if = {
+				limit = { piety = 0.60 }
+				FROM = {
+					owner = {
+						reverse_add_casus_belli = { target = ROOT type = cb_jihad_cleric months = 240 }
+					}
+				}
+				#limit = { is_neighbor_of = FROM }
+				#add_casus_belli = { target = FROM type = cb_jihad_cleric months = 240 }
+				add_opinion = { who = FROM modifier = mistreated_coreligionists_fanatical }
+			}
+			else_if = {
+				limit = { piety = 0.20 }
+				FROM = {
+					owner = {
+						reverse_add_casus_belli = { target = ROOT type = cb_jihad_cleric months = 120 }
+					}
+				}
+				add_opinion = { who = FROM modifier = mistreated_coreligionists_pious }
+			}
+			else_if = {
+				limit = { piety = -0.20 }
+				FROM = {
+					owner = {
+						reverse_add_casus_belli = { target = ROOT type = cb_jihad_cleric months = 60 }
+					}
+				}
+				add_opinion = { who = FROM modifier = mistreated_coreligionists_observant }
+			}
+			else = {
+				FROM = {
+					owner = {
+						reverse_add_casus_belli = { target = ROOT type = cb_jihad_cleric months = 30 }
+					}
+				}
+				add_opinion = { who = FROM modifier = mistreated_coreligionists_decadent }
+			}
+		}
+		else = {
+			if = {
+				limit = { piety = 0.60 }
+				FROM = {
+					owner = {
+						reverse_add_casus_belli = { target = ROOT type = cb_insult months = 240 }
+					}
+				}
+				#limit = { NOT = { is_neighbor_of = FROM } }
+				#add_casus_belli = { target = FROM type = cb_insult months = 240 }
+				add_opinion = { who = FROM modifier = mistreated_coreligionists_fanatical }
+			}
+			else_if = {
+				limit = { piety = 0.20 }
+				FROM = {
+					owner = {
+						reverse_add_casus_belli = { target = ROOT type = cb_insult months = 120 }
+					}
+				}
+				add_opinion = { who = FROM modifier = mistreated_coreligionists_pious }
+			}
+			else_if = {
+				limit = { piety = -0.20 }
+				FROM = {
+					owner = {
+						reverse_add_casus_belli = { target = ROOT type = cb_insult months = 60 }
+					}
+				}
+				add_opinion = { who = FROM modifier = mistreated_coreligionists_observant }
+			}
+			else = {
+				FROM = {
+					owner = {
+						reverse_add_casus_belli = { target = ROOT type = cb_insult months = 30 }
+					}
+				}
+				add_opinion = { who = FROM modifier = mistreated_coreligionists_decadent }
+			}
+		}
+	}
+}
+
+country_event = { #46 - Rebuilding the temple
+	
+	id = dg_jewish.046
+	title = dg_jewish.046.t
+	desc = dg_jewish.046.d
+	picture = jewish_temple_mount
+	
+	trigger = {
+		religion = jewish
+		any_owned_province = { has_province_modifier = jewish_third_temple_progress }
+		NOT = { has_country_modifier = religious_controversy }
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 16
+		
+		modifier = {
+			NOT = { treasury = 100 }
+			factor = 1.4
+		}
+		modifier = {
+			years_of_income = 1
+			factor = 0.7
+		}
+		modifier = {
+			years_of_income = 2
+			factor = 0.7
+		}
+		modifier = {
+			num_of_loans = 1
+			factor = 1.4
+		}
+		modifier = {
+			num_of_loans = 2
+			factor = 1.4
+		}
+		modifier = {
+			is_at_war = yes
+			factor = 1.4
+		}
+		modifier = {
+			has_regency = yes
+			factor = 1.4
+		}
+		modifier = {
+			has_country_flag = great_temple_workers #Cleared on new ruler
+			factor = 2
+		}
+		modifier = {
+			advisor = artist
+			NOT = { has_country_flag = great_temple_artist }
+			factor = 0.5
+		}
+		modifier = {
+			advisor = theologian
+			NOT = { has_country_flag = great_temple_theologian }
+			factor = 0.5
+		}
+	}
+	
+	option = {
+		name = dg_piety.051.a #Continue this great work
+		ai_chance = {
+			factor = 25
+			modifier = {
+				is_bankrupt = yes
+				factor = 0.25
+			}
+			modifier = {
+				num_of_loans = 1
+				factor = 0.5
+			}
+			modifier = {
+				num_of_loans = 2
+				factor = 0.5
+			}
+			modifier = {
+				NOT = { treasury = 100 }
+				factor = 0.5
+			}
+			modifier = {
+				NOT = { monthly_income = 8 }
+				factor = 0.5
+			}
+			modifier = {
+				advisor = artist
+				NOT = { has_country_flag = great_temple_artist }
+				factor = 0.5
+			}
+			modifier = {
+				advisor = theologian
+				NOT = { has_country_flag = great_temple_theologian }
+				factor = 0.5
+			}
+			modifier = {
+				NOT = { ADM = 3 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { ADM = 2 }
+				factor = 0.7
+			}
+			modifier = {
+				ADM = 5
+				factor = 1.4
+			}
+			modifier = {
+				ADM = 6
+				factor = 1.4
+			}
+		}
+		add_treasury = -100
+		set_country_flag = great_temple_workers
+		if = {
+			limit = { ADM = 6 }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 24 }
+				}
+			}
+			custom_tooltip = great_temple_24
+		}
+		else_if = {
+			limit = { ADM = 5 }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 21 }
+				}
+			}
+			custom_tooltip = great_temple_21
+		}
+		else_if = {
+			limit = { ADM = 4 }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 18 }
+				}
+			}
+			custom_tooltip = great_temple_18
+		}
+		else_if = {
+			limit = { ADM = 3 }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 15 }
+				}
+			}
+			custom_tooltip = great_temple_15
+		}
+		else_if = {
+			limit = { ADM = 2 }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 12 }
+				}
+			}
+			custom_tooltip = great_temple_12
+		}
+		else = {
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 9 }
+				}
+			}
+			custom_tooltip = great_temple_9
+		}
+		if = {
+			limit = {
+				any_owned_province = {
+					has_province_modifier = jewish_third_temple_progress
+					check_variable = { which = third_temple value = 100 }
+				}
+			}
+			random_owned_province = {
+				limit = { has_province_modifier = jewish_third_temple_progress }
+				province_event = { id = dg_jewish.048 }
+			}
+		}
+	}
+	option = {
+		name = dg_piety.051.h #Focus entirely on the project
+		ai_chance = {
+			factor = 5
+			modifier = {
+				NOT = { adm_power = 25 }
+				factor = 0.5
+			}
+			modifier = {
+				is_bankrupt = yes
+				factor = 0.25
+			}
+			modifier = {
+				num_of_loans = 1
+				factor = 0.5
+			}
+			modifier = {
+				num_of_loans = 2
+				factor = 0.5
+			}
+			modifier = {
+				NOT = { treasury = 300 }
+				factor = 0.5
+			}
+			modifier = {
+				NOT = { monthly_income = 24 }
+				factor = 0.5
+			}
+			modifier = {
+				advisor = artist
+				NOT = { has_country_flag = great_temple_artist }
+				factor = 0.5
+			}
+			modifier = {
+				advisor = theologian
+				NOT = { has_country_flag = great_temple_theologian }
+				factor = 0.5
+			}
+			modifier = {
+				NOT = { ADM = 3 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { ADM = 2 }
+				factor = 0.7
+			}
+			modifier = {
+				ADM = 5
+				factor = 1.4
+			}
+			modifier = {
+				ADM = 6
+				factor = 1.4
+			}
+		}
+		add_treasury = -200
+		add_adm_power = -25
+		set_country_flag = great_temple_workers
+		if = {
+			limit = { ADM = 6 }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 48 }
+				}
+			}
+			custom_tooltip = great_temple_48
+		}
+		else_if = {
+			limit = { ADM = 5 }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 42 }
+				}
+			}
+			custom_tooltip = great_temple_42
+		}
+		else_if = {
+			limit = { ADM = 4 }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 36 }
+				}
+			}
+			custom_tooltip = great_temple_36
+		}
+		else_if = {
+			limit = {
+				ADM = 3
+				NOT = { ADM = 4 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 30 }
+				}
+			}
+			custom_tooltip = great_temple_30
+		}
+		else_if = {
+			limit = { ADM = 2 }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 24 }
+				}
+			}
+			custom_tooltip = great_temple_24
+		}
+		else = {
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 18 }
+				}
+			}
+			custom_tooltip = great_temple_18
+		}
+		if = {
+			limit = {
+				any_owned_province = {
+					has_province_modifier = jewish_third_temple_progress
+					check_variable = { which = third_temple value = 100 }
+				}
+			}
+			random_owned_province = {
+				limit = { has_province_modifier = jewish_third_temple_progress }
+				province_event = { id = dg_jewish.048 }
+			}
+		}
+	}
+	option = {
+		name = dg_piety.051.b #Commission $ARTIST$ to decorate it
+		trigger = {
+			advisor = artist
+			NOT = { has_country_flag = great_temple_artist }
+		}
+		ai_chance = {
+			factor = 30
+			modifier = {
+				artist = 2
+				factor = 1.4
+			}
+			modifier = {
+				artist = 3
+				factor = 1.4
+			}
+			modifier = {
+				ADM = 4
+				factor = 0.7
+			}
+			modifier = {
+				ADM = 6
+				factor = 0.7
+			}
+		}
+		add_treasury = -25
+		set_country_flag = great_temple_artist
+		if = {
+			limit = { artist = 3 }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 36 }
+				}
+			}
+			custom_tooltip = great_temple_45
+		}
+		else_if = {
+			limit = { artist = 2 }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 30 }
+				}
+			}
+			custom_tooltip = great_temple_30
+		}
+		else_if = {
+			limit = { artist = 1 }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 15 }
+				}
+			}
+			custom_tooltip = great_temple_15
+		}
+		if = {
+			limit = {
+				any_owned_province = {
+					has_province_modifier = jewish_third_temple_progress
+					check_variable = { which = third_temple value = 100 }
+				}
+			}
+			random_owned_province = {
+				limit = { has_province_modifier = jewish_third_temple_progress }
+				province_event = { id = dg_jewish.048 }
+			}
+		}
+	}
+	option = {
+		name = dg_jewish.046.c #$THEOLOGIAN$ interprets the instructions
+		trigger = {
+			advisor = theologian
+			NOT = { has_country_flag = great_temple_theologian }
+		}
+		ai_chance = {
+			factor = 30
+			modifier = {
+				theologian = 2
+				factor = 1.4
+			}
+			modifier = {
+				theologian = 3
+				factor = 1.4
+			}
+			modifier = {
+				ADM = 4
+				factor = 0.7
+			}
+			modifier = {
+				ADM = 6
+				factor = 0.7
+			}
+		}
+		add_treasury = -25
+		set_country_flag = great_temple_theologian
+		if = {
+			limit = {
+				theologian = 1
+				NOT = { theologian = 2 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 15 }
+				}
+			}
+			custom_tooltip = great_temple_15
+		}
+		if = {
+			limit = {
+				theologian = 2
+				NOT = { theologian = 3 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 30 }
+				}
+			}
+			custom_tooltip = great_temple_30
+		}
+		if = {
+			limit = { theologian = 3 }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 45 }
+				}
+			}
+			custom_tooltip = great_temple_45
+		}
+		if = {
+			limit = {
+				any_owned_province = {
+					has_province_modifier = jewish_third_temple_progress
+					check_variable = { which = third_temple value = 100 }
+				}
+			}
+			random_owned_province = {
+				limit = { has_province_modifier = jewish_third_temple_progress }
+				province_event = { id = dg_jewish.048 }
+			}
+		}
+	}
+	option = {
+		name = dg_piety.051.f #Raise a special tithe from the faithful
+		trigger = {
+			advisor = treasurer
+			NOT = { has_country_flag = third_temple_treasurer }
+		}
+		ai_chance = {
+			factor = 15
+			modifier = {
+				treasurer = 2
+				factor = 1.4
+			}
+			modifier = {
+				treasurer = 3
+				factor = 1.4
+			}
+			modifier = {
+				ADM = 4
+				factor = 0.7
+			}
+			modifier = {
+				ADM = 6
+				factor = 0.7
+			}
+		}
+		set_country_flag = third_temple_treasurer
+		if = {
+			limit = {
+				treasurer = 1
+				NOT = { treasurer = 2 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 9 }
+				}
+			}
+			custom_tooltip = great_temple_9
+		}
+		if = {
+			limit = {
+				treasurer = 2
+				NOT = { treasurer = 3 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 18 }
+				}
+			}
+			custom_tooltip = great_temple_18
+		}
+		if = {
+			limit = { treasurer = 3 }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 27 }
+				}
+			}
+			custom_tooltip = great_temple_27
+		}
+		if = {
+			limit = {
+				any_owned_province = {
+					has_province_modifier = jewish_third_temple_progress
+					check_variable = { which = third_temple value = 100 }
+				}
+			}
+			random_owned_province = {
+				limit = { has_province_modifier = jewish_third_temple_progress }
+				province_event = { id = dg_jewish.048 }
+			}
+		}
+	}
+	option = {
+		name = dg_piety.051.g #Confiscate goods from heretics to pay for it
+		trigger = {
+			advisor = inquisitor
+			NOT = { has_country_flag = third_temple_inquisitor }
+		}
+		ai_chance = {
+			factor = 15
+			modifier = {
+				inquisitor = 2
+				factor = 1.4
+			}
+			modifier = {
+				inquisitor = 3
+				factor = 1.4
+			}
+			modifier = {
+				ADM = 4
+				factor = 0.7
+			}
+			modifier = {
+				ADM = 6
+				factor = 0.7
+			}
+		}
+		set_country_flag = third_temple_inquisitor
+		if = {
+			limit = {
+				inquisitor = 1
+				NOT = { inquisitor = 2 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 9 }
+				}
+			}
+			custom_tooltip = great_temple_9
+		}
+		if = {
+			limit = {
+				inquisitor = 2
+				NOT = { inquisitor = 3 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 18 }
+				}
+			}
+			custom_tooltip = great_temple_18
+		}
+		if = {
+			limit = { inquisitor = 3 }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = jewish_third_temple_progress }
+					change_variable = { which = third_temple value = 27 }
+				}
+			}
+			custom_tooltip = great_temple_27
+		}
+		if = {
+			limit = {
+				any_owned_province = {
+					has_province_modifier = jewish_third_temple_progress
+					check_variable = { which = third_temple value = 100 }
+				}
+			}
+			random_owned_province = {
+				limit = { has_province_modifier = jewish_third_temple_progress }
+				province_event = { id = dg_jewish.048 }
+			}
+		}
+	}
+	option = {
+		name = dg_piety.051.e #Other matters demand our attention
+		ai_chance = {
+			factor = 10
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.20
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.20 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 1.4
+			}
+		}
+		if = {
+			limit = { piety = 0.60 }
+			add_prestige = -4
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_prestige = -3
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_prestige = -2
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_prestige = -1
+		}
+	}
+}
+
+country_event = { #47 - Opposition to the temple
+	
+	id = dg_jewish.047
+	title = dg_jewish.047.t
+	desc = dg_jewish.047.d
+	picture = jewish_wailing_wall
+	
+	trigger = {
+		religion = jewish
+		owns = 379 # Al Quds
+		379 = { has_province_modifier = jewish_third_temple_progress }
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 20
+		
+		modifier = { #The more Orthodox the nation, the less opposition there is
+			piety = 0.20
+			factor = 1.4
+		}
+		modifier = {
+			piety = 0.60
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { piety = -0.20 }
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { piety = -0.60 }
+			factor = 0.7
+		}
+		modifier = {
+			advisor = theologian
+			factor = 1.4
+		}
+		modifier = {
+			has_country_flag = sanhedrin
+			factor = 1.4
+		}
+		modifier = {
+			at_war_with_religious_enemy = yes
+			factor = 1.4
+		}
+	}
+	
+	option = {
+		name = dg_jewish.047.a #Ignore their opposition
+		ai_chance = {
+			factor = 40
+			modifier = {
+				piety = 0.60
+				factor = 1.4
+			}
+			modifier = {
+				piety = 0.20
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { piety = -0.20 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+		}
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_scandal_country_strong duration = 1000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = religious_scandal_country_strong duration = 500 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = religious_scandal_country duration = 1000 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 1000 }
+		}
+		else = {
+			add_country_modifier = { name = religious_scandal_country_weak duration = 500 }
+		}
+	}
+	option = {
+		name = dg_jewish.047.b #Delay the project to try and find a compromise
+		ai_chance = {
+			factor = 40
+		}
+		add_country_modifier = { name = religious_controversy duration = 500 }
+		379 = {
+			hidden_effect = { change_variable = { which = third_temple value = -10 } }
+		}
+	}
+	option = {
+		name = dg_jewish.047.c #Cancel the project entirely
+		ai_chance = {
+			factor = 20
+			modifier = {
+				piety = -0.20
+				factor = 0
+			}
+		}
+		379 = { remove_province_modifier = jewish_third_temple_progress }
+		if = {
+			limit = { patriarch_authority = 0.80 }
+			add_country_modifier = { name = unhappy_church_powerful duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.60 }
+			add_country_modifier = { name = unhappy_church_strong duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.40 }
+			add_country_modifier = { name = unhappy_church_moderate duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.20 }
+			add_country_modifier = { name = unhappy_church_weak duration = 1000 }
+		}
+		else = {
+			add_country_modifier = { name = unhappy_church_impotent duration = 1000 }
+		}
+	}
+}
+
+province_event = { #48 - The Third Temple (completed building)
+	
+	id = dg_jewish.048
+	title = dg_jewish.048.t
+	desc = dg_jewish.048.d
+	picture = jewish_temple
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = dg_jewish.048.a
+		hidden_effect = {
+			remove_province_modifier = jewish_third_temple_progress
+			set_variable = { which = third_temple value = 0 }
+		}
+		add_province_modifier = { name = jewish_third_temple duration = -1 }
+		owner = {
+			set_country_flag = levite_priesthood
+			add_patriarch_authority = 0.05
+			if = {
+				limit = { piety = 0.60 }
+				add_prestige = 24
+			}
+			else_if = {
+				limit = { piety = 0.20 }
+				add_prestige = 18
+			}
+			else_if = {
+				limit = { piety = -0.20 }
+				add_prestige = 12
+			}
+			else_if = {
+				limit = { piety = -0.60 }
+				add_prestige = 6
+			}
+			country_event = { id = dg_jewish.049 }
+		}
+	}
+}
+
+country_event = { #49 - Resumption of Temple Sacrifices
+	
+	id = dg_jewish.049
+	title = dg_jewish.049.t
+	desc = dg_jewish.049.d
+	picture = jewish_torah
+	
+	is_triggered_only = yes #By dg_jewish.048
+	
+	option = {
+		name = dg_jewish.049.a #Animal sacrifices
+		ai_chance = { factor = 40 }
+		if = {
+			limit = { piety = 0.60 }
+			add_prestige = 8
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_prestige = 6
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_prestige = 4
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_prestige = 2
+		}
+	}
+	option = {
+		name = dg_jewish.049.b #Grain sacrifices
+		ai_chance = { factor = 50 }
+		set_country_flag = grain_sacrifices
+		add_piety = 0.05
+		if = {
+			limit = { patriarch_authority = 0.80 }
+			add_country_modifier = { name = unhappy_church_powerful duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.60 }
+			add_country_modifier = { name = unhappy_church_strong duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.40 }
+			add_country_modifier = { name = unhappy_church_moderate duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.20 }
+			add_country_modifier = { name = unhappy_church_weak duration = 1000 }
+		}
+		else = {
+			add_country_modifier = { name = unhappy_church_impotent duration = 1000 }
+		}
+	}
+	option = {
+		name = dg_jewish.049.c #No sacrifices
+		ai_chance = { factor = 10 }
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_scandal_country_strong duration = 1000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = religious_scandal_country_strong duration = 500 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = religious_scandal_country duration = 1000 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 1000 }
+		}
+	}
+}
+
+country_event = { #50 - The Third Temple is Rebuilt
+	
+	id = dg_jewish.050
+	title = dg_jewish.050.t
+	desc = dg_jewish.050.d
+	picture = jewish_temple
+	
+	trigger = {
+		religion = jewish
+		NOT = { has_country_flag = levite_priesthood }
+		NOT = { has_country_flag = rabbinic_tradition }
+		379 = { has_province_modifier = jewish_third_temple }
+	}
+	
+	option = {
+		name = dg_jewish.050.a
+		set_country_flag = levite_priesthood
+		add_patriarch_authority = 0.05
+		random_known_country = {
+			limit = {
+				owns = 379 # Al Quds
+				religion = jewish
+			}
+			reverse_add_opinion = { who = ROOT modifier = obeyed_religious_leader }
+		}
+	}
+	option = {
+		name = dg_jewish.050.b
+		set_country_flag = rabbinic_tradition
+	}
+	
+	mean_time_to_happen = { months = 1 }
+}

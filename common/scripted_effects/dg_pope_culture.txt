@@ -1,0 +1,186 @@
+set_pope_culture = {
+	export_to_variable = {
+		variable_name = Pope_Culture
+		value = culture
+	}
+	
+	PAP = {
+		set_variable = { which = Pope_Culture which = PREV }
+		set_ruler_culture = variable:Pope_Culture
+		set_variable = { which = Pope_Culture value = 0 }
+	}
+	
+	set_variable = { which = Pope_Culture value = 0 }
+}
+
+assign_pope_culture = {
+	if = {
+		limit = {
+			any_country = {
+				is_papal_controller = yes
+				has_country_flag = constantine_donation_cf
+			}
+		}
+		random_list = {
+			75 = {
+				random_country = {
+					limit = {
+						is_papal_controller = yes
+						has_country_flag = constantine_donation_cf
+					}
+					random_owned_province = {
+						limit = { has_cardinal = yes }
+						set_pope_culture = yes
+					}
+				}
+			}
+			25 = {
+				random_province = {
+					limit = {
+						superregion = italy_superregion
+						OR = {
+							has_cardinal = yes
+							AND = {
+								owner = { tag = PAP }
+								has_province_modifier = catholic_archbishopric
+							}
+							AND = {
+								owner = { tag = PAP }
+								has_province_modifier = catholic_patriarchate
+							}
+						}
+					}
+					set_pope_culture = yes
+				}
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			any_country = {
+				has_country_flag = constantine_donation_cf
+				is_papal_controller = no
+			}
+		}
+		if = {
+			limit = {
+				PAP = {
+					OR = {
+						AND = {
+							has_country_flag = secular_pope
+							check_variable = { which = babylonian_captivity_resentment value = 7 }
+						}
+						AND = {
+							has_country_flag = reformer_pope
+							check_variable = { which = babylonian_captivity_resentment value = 4 }
+						}
+					}
+				}
+			}
+			random_province = {
+				limit = {
+					superregion = italy_superregion
+					OR = {
+						has_cardinal = yes
+						AND = {
+							owner = { tag = PAP }
+							has_province_modifier = catholic_archbishopric
+						}
+						AND = {
+							owner = { tag = PAP }
+							has_province_modifier = catholic_patriarchate
+						}
+					}
+				}
+				set_pope_culture = yes
+			}
+		}
+		else = {
+			random_list = {
+				75 = {
+					random_country = {
+						limit = {
+							has_country_flag = constantine_donation_cf
+						}
+						random_owned_province = {
+							limit = { has_cardinal = yes }
+							set_pope_culture = yes
+						}
+					}
+				}
+				25 = {
+					random_province = {
+						limit = {
+							superregion = italy_superregion
+							OR = {
+								has_cardinal = yes
+								AND = {
+									owner = { tag = PAP }
+									has_province_modifier = catholic_archbishopric
+								}
+								AND = {
+									owner = { tag = PAP }
+									has_province_modifier = catholic_patriarchate
+								}
+							}
+						}
+						set_pope_culture = yes
+					}
+				}
+			}
+		}
+	}
+	else = {
+		random_list = {
+			90 = {
+				random_province = {
+					limit = {
+						superregion = italy_superregion
+						OR = {
+							has_cardinal = yes
+							AND = {
+								owner = { tag = PAP }
+								has_province_modifier = catholic_archbishopric
+							}
+							AND = {
+								owner = { tag = PAP }
+								has_province_modifier = catholic_patriarchate
+							}
+						}
+					}
+					set_pope_culture = yes
+				}
+			}
+			10 = {
+				if = {
+					limit = { PAP = { is_papal_controller = no } }
+					random_country = {
+						limit = { is_papal_controller = yes }
+						random_owned_province = {
+							limit = { has_cardinal = yes }
+							set_pope_culture = yes
+						}
+					}
+				}
+				else = {
+					random_province = {
+						limit = {
+							OR = {
+								has_cardinal = yes
+								AND = {
+									owner = { tag = PAP }
+									has_province_modifier = catholic_archbishopric
+								}
+								AND = {
+									owner = { tag = PAP }
+									has_province_modifier = catholic_patriarchate
+								}
+							}
+						}
+						set_pope_culture = yes
+					}
+				}
+			}
+		}
+	}
+}

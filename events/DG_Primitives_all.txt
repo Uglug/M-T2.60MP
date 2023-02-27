@@ -1,0 +1,580 @@
+namespace = dg_primitives
+
+#######################
+# Modernizing Reforms # 00s
+#######################
+
+#01 - $MONARCH$'s Reforms
+#02 - Peasant Revolt
+#03 - Traditionalist Coup
+#04 - Mutiny!
+#05 - Condemnation of Reforms
+#06 - Failed Reform
+#07 - Grudging Acceptance
+
+
+country_event = { #01 - $MONARCH$'s Reforms
+	
+	id = dg_primitives.001
+	title = dg_primitives.001.t
+	desc = dg_primitives.001.d
+	picture = STREET_SPEECH_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		add_authority = -100
+		add_legitimacy = -20
+		add_republican_tradition = -20
+		add_devotion = -20
+		subtract_stability_1 = yes
+	}
+	
+	option = {
+		name = dg_primitives.001.a #Wait and see
+		ai_chance = {
+			factor = 70
+			modifier = {
+				DIP = 6
+				factor = 0.7
+			}
+			modifier = {
+				DIP = 5
+				factor = 0.7
+			}
+			modifier = {
+				DIP = 4
+				factor = 0.7
+			}
+		}
+		hidden_effect = {
+			set_country_flag = reaction_to_reform
+			random_list = {
+				25 = {
+					if = {
+						limit = { NOT = { has_country_flag = reform_reaction_peasants } }
+						set_country_flag = reform_reaction_peasants
+						country_event = { id = dg_primitives.002 days = 30 }
+						clr_country_flag = reaction_to_reform
+					}
+				}
+				25 = {
+					if = {
+						limit = { NOT = { has_country_flag = reform_reaction_nobles } }
+						set_country_flag = reform_reaction_nobles
+						country_event = { id = dg_primitives.003 days = 30 }
+						clr_country_flag = reaction_to_reform
+					}
+				}
+				25 = {
+					if = {
+						limit = { NOT = { has_country_flag = reform_reaction_soldiers } }
+						set_country_flag = reform_reaction_soldiers
+						country_event = { id = dg_primitives.004 days = 30 }
+						clr_country_flag = reaction_to_reform
+					}
+				}
+				25 = {
+					if = {
+						limit = { NOT = { has_country_flag = reform_reaction_priests } }
+						set_country_flag = reform_reaction_priests
+						country_event = { id = dg_primitives.005 days = 30 }
+						clr_country_flag = reaction_to_reform
+					}
+				}
+			}
+			if = {
+				limit = { has_country_flag = reaction_to_reform }
+				clr_country_flag = reaction_to_reform
+				random_list = {
+					50 = { country_event = { id = dg_primitives.006 days = 60 } }
+					50 = { country_event = { id = dg_primitives.007 days = 90 } }
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_primitives.001.b #Smooth over ruffled feathers
+		trigger = { DIP = 2 }
+		ai_chance = { factor = 30 }
+		add_dip_power = -100
+		hidden_effect = {
+			set_country_flag = reaction_to_reform
+			if = {
+				limit = { DIP = 2 }
+				random = { chance = 10 clr_country_flag = reaction_to_reform set_country_flag = reforms_pass }
+			}
+			if = {
+				limit = { DIP = 3 }
+				random = { chance = 10 clr_country_flag = reaction_to_reform set_country_flag = reforms_pass }
+			}
+			if = {
+				limit = { DIP = 4 }
+				random = { chance = 10 clr_country_flag = reaction_to_reform set_country_flag = reforms_pass }
+			}
+			if = {
+				limit = { DIP = 5 }
+				random = { chance = 10 clr_country_flag = reaction_to_reform set_country_flag = reforms_pass }
+			}
+			if = {
+				limit = { DIP = 6 }
+				random = { chance = 10 clr_country_flag = reaction_to_reform set_country_flag = reforms_pass }
+			}
+			random_list = {
+				25 = {
+					if = {
+						limit = { NOT = { has_country_flag = reform_reaction_peasants } }
+						set_country_flag = reform_reaction_peasants
+						country_event = { id = dg_primitives.002 days = 30 }
+						clr_country_flag = reaction_to_reform
+					}
+				}
+				25 = {
+					if = {
+						limit = { NOT = { has_country_flag = reform_reaction_nobles } }
+						set_country_flag = reform_reaction_nobles
+						country_event = { id = dg_primitives.003 days = 30 }
+						clr_country_flag = reaction_to_reform
+					}
+				}
+				25 = {
+					if = {
+						limit = { NOT = { has_country_flag = reform_reaction_soldiers } }
+						set_country_flag = reform_reaction_soldiers
+						country_event = { id = dg_primitives.004 days = 30 }
+						clr_country_flag = reaction_to_reform
+					}
+				}
+				25 = {
+					if = {
+						limit = { NOT = { has_country_flag = reform_reaction_priests } }
+						set_country_flag = reform_reaction_priests
+						country_event = { id = dg_primitives.005 days = 30 }
+						clr_country_flag = reaction_to_reform
+					}
+				}
+			}
+			if = {
+				limit = { has_country_flag = reaction_to_reform }
+				clr_country_flag = reaction_to_reform
+				random_list = {
+					50 = { country_event = { id = dg_primitives.006 days = 60 } }
+					50 = { country_event = { id = dg_primitives.007 days = 90 } }
+				}
+			}
+			if = {
+				limit = { has_country_flag = reforms_pass }
+				clr_country_flag = reforms_pass
+				country_event = { id = dg_primitives.007 days = 30 }
+			}
+		}
+	}
+}
+
+country_event = { #02 - Superstitious Peasants
+	
+	id = dg_primitives.002
+	title = dg_primitives.002.t
+	desc = dg_primitives.002.d
+	picture = ANGRY_MOB_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		subtract_stability_2 = yes
+	}
+	
+	option = {
+		name = dg_primitives.002.a #Force the reforms through
+		ai_chance = { factor = 40 }
+		every_owned_province = {
+			limit = {
+				OR = {
+					culture_group = owner
+					has_owner_religion = yes
+				}
+				is_city = yes
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 10 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_10
+		}
+	}
+	option = {
+		name = dg_primitives.002.c #Mollify them
+		ai_chance = { factor = 30 }
+		add_adm_power = -100
+		every_owned_province = {
+			add_local_autonomy = 10
+		}
+		hidden_effect = { random = { chance = 50 clr_country_flag = reform_reaction_peasants } }
+	}
+	option = {
+		name = dg_primitives.002.b #Back down
+		ai_chance = { factor = 30 }
+		add_stability_1 = yes
+		add_prestige = -10
+		clr_country_flag = reform_reaction_peasants
+		remove_religious_reforms = 1
+	}
+}
+
+country_event = { #03 - Traditionalist Coup
+	
+	id = dg_primitives.003
+	title = dg_primitives.003.t
+	desc = dg_primitives.003.d
+	picture = CIVIL_WAR_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		subtract_stability_2 = yes
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					is_in_capital_area = yes
+					is_capital = no
+				}
+				set_province_flag = civil_war_province
+			}
+			if = {
+				limit = { num_of_cities = 8 }
+				random_owned_province = {
+					limit = {
+						is_in_capital_area = yes
+						is_capital = no
+						NOT = { has_province_flag = civil_war_province }
+					}
+					set_province_flag = civil_war_province
+				}
+			}
+			if = {
+				limit = { num_of_cities = 16 }
+				random_owned_province = {
+					limit = {
+						is_in_capital_area = yes
+						is_capital = no
+						NOT = { has_province_flag = civil_war_province }
+					}
+					set_province_flag = civil_war_province
+				}
+			}
+			if = {
+				limit = { num_of_cities = 24 }
+				random_owned_province = {
+					limit = {
+						is_in_capital_area = yes
+						is_capital = no
+						NOT = { has_province_flag = civil_war_province }
+					}
+					set_province_flag = civil_war_province
+				}
+			}
+			if = {
+				limit = { num_of_cities = 32 }
+				random_owned_province = {
+					limit = {
+						is_in_capital_area = yes
+						is_capital = no
+						NOT = { has_province_flag = civil_war_province }
+					}
+					set_province_flag = civil_war_province
+				}
+			}
+			if = {
+				limit = { num_of_cities = 40 }
+				random_owned_province = {
+					limit = {
+						is_in_capital_area = yes
+						is_capital = no
+						NOT = { has_province_flag = civil_war_province }
+					}
+					set_province_flag = civil_war_province
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = dg_primitives.003.a #
+		ai_chance = { factor = 70 }
+		every_owned_province = {
+			limit = { has_province_flag = civil_war_province }
+			clr_province_flag = civil_war_province
+			add_province_modifier = {
+				name = "pretender_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+	}
+	option = {
+		name = dg_primitives.003.b #Surrender
+		ai_chance = { factor = 30 }
+		remove_religious_reforms = 1
+		add_stability_1 = yes
+		add_prestige = -10
+		define_ruler = { }
+		every_owned_province = {
+			limit = { has_province_flag = civil_war_province }
+			clr_province_flag = civil_war_province
+		}
+		clr_country_flag = reform_reaction_nobles
+	}
+}
+
+country_event = { #04 - Mutiny!
+	
+	id = dg_primitives.004
+	title = dg_primitives.004.t
+	desc = dg_primitives.004.d
+	picture = MILITARY_CAMP_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		subtract_stability_2 = yes
+	}
+	
+	option = {
+		name = dg_primitives.004.a #Fight them
+		ai_chance = { factor = 40 }
+		add_army_tradition = -25
+		capital_scope = {
+			if = {
+				limit = { owner = { NOT = { num_of_infantry = 3 } } }
+				kill_units = { who = ROOT amount = 1 }
+			}
+			if = {
+				limit = {
+					owner = {
+						num_of_infantry = 3
+						NOT = { num_of_infantry = 6 }
+					}
+				}
+				kill_units = { who = ROOT amount = 2 }
+			}
+			if = {
+				limit = {
+					owner = {
+						num_of_infantry = 6
+						NOT = { num_of_infantry = 9 }
+					}
+				}
+				kill_units = { who = ROOT amount = 3 }
+			}
+			if = {
+				limit = {
+					owner = {
+						num_of_infantry = 9
+						NOT = { num_of_infantry = 12 }
+					}
+				}
+				kill_units = { who = ROOT amount = 4 }
+			}
+			if = {
+				limit = {
+					owner = {
+						num_of_infantry = 12
+						NOT = { num_of_infantry = 15 }
+					}
+				}
+				kill_units = { who = ROOT amount = 5 }
+			}
+			if = {
+				limit = {
+					owner = {
+						num_of_infantry = 15
+						NOT = { num_of_infantry = 18 }
+					}
+				}
+				kill_units = { who = ROOT amount = 6 }
+			}
+			if = {
+				limit = {
+					owner = {
+						num_of_infantry = 18
+						NOT = { num_of_infantry = 21 }
+					}
+				}
+				kill_units = { who = ROOT amount = 7 }
+			}
+			if = {
+				limit = {
+					owner = {
+						num_of_infantry = 21
+						NOT = { num_of_infantry = 24 }
+					}
+				}
+				kill_units = { who = ROOT amount = 8 }
+			}
+			if = {
+				limit = {
+					owner = {
+						num_of_infantry = 24
+						NOT = { num_of_infantry = 27 }
+					}
+				}
+				kill_units = { who = ROOT amount = 9 }
+			}
+			if = {
+				limit = {
+					owner = {
+						num_of_infantry = 27
+						NOT = { num_of_infantry = 30 }
+					}
+				}
+				kill_units = { who = ROOT amount = 10 }
+			}
+			if = {
+				limit = { owner = { num_of_infantry = 30 } }
+				kill_units = { who = ROOT amount = 12 }
+			}
+			add_province_modifier = {
+				name = "reactionaries_organizing"
+				duration = 3650
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 10 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_10
+		}
+	}
+	option = {
+		name = dg_primitives.004.c #Pay them
+		ai_chance = { factor = 30 }
+		add_country_modifier = { name = disloyal_noble_officers duration = 10000 }
+		add_years_of_income = -0.5
+		add_mil_power = -100
+		hidden_effect = { random = { chance = 50 clr_country_flag = reform_reaction_soldiers } }
+	}
+	option = {
+		name = dg_primitives.002.b #Back down
+		ai_chance = { factor = 30 }
+		add_stability_1 = yes
+		add_prestige = -10
+		remove_religious_reforms = 1
+		clr_country_flag = reform_reaction_soldiers
+	}
+}
+
+country_event = { #05 - Condemnation of Reforms
+	
+	id = dg_primitives.005
+	title = dg_primitives.005.t
+	desc = dg_primitives.005.d
+	picture = RELIGIOUS_TURMOIL_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		subtract_stability_1 = yes
+	}
+	
+	option = {
+		name = dg_primitives.005.a #Make them fall in line
+		ai_chance = { factor = 40 }
+		subtract_stability_1 = yes
+		if = {
+			limit = { NOT = { government = theocracy } }
+			clr_country_flag = patriarch_obedient
+			clr_country_flag = patriarch_theologian
+			clr_country_flag = patriarch_zealous
+			clr_country_flag = patriarch_controversial
+			clr_country_flag = patriarch_corrupt
+			set_country_flag = patriarch_hostile
+		}
+		if = {
+			limit = { patriarch_authority = 0.80 }
+			add_country_modifier = { name = unhappy_church_powerful duration = 5000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.60 }
+			add_country_modifier = { name = unhappy_church_strong duration = 10000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.40 }
+			add_country_modifier = { name = unhappy_church_moderate duration = 10000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.20 }
+			add_country_modifier = { name = unhappy_church_weak duration = 10000 }
+		}
+		else = {
+			add_country_modifier = { name = unhappy_church_impotent duration = 10000 }
+		}
+	}
+	option = {
+		name = dg_primitives.005.c #Replace the high priest
+		trigger = { NOT = { government = theocracy } }
+		ai_chance = { factor = 30 }
+		add_adm_power = -100
+		clr_country_flag = patriarch_obedient
+		clr_country_flag = patriarch_theologian
+		clr_country_flag = patriarch_zealous
+		clr_country_flag = patriarch_controversial
+		set_country_flag = patriarch_corrupt
+		clr_country_flag = patriarch_hostile
+		add_country_modifier = { name = religious_controversy duration = 5000 }
+		hidden_effect = { random = { chance = 50 clr_country_flag = reform_reaction_priests } }
+	}
+	option = {
+		name = dg_primitives.002.b
+		ai_chance = { factor = 30 }
+		add_stability_1 = yes
+		add_prestige = -10
+		remove_religious_reforms = 1
+		clr_country_flag = reform_reaction_priests
+	}
+	after = {
+		dg_patriarch_triggers = yes
+	}
+}
+
+country_event = { #06 - Failed Reform
+	
+	id = dg_primitives.006
+	title = dg_primitives.006.t
+	desc = dg_primitives.006.d
+	picture = OVEREXTENSION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = dg_primitives.006.a #Redouble our efforts
+		ai_chance = { factor = 70 }
+		add_adm_power = -100
+		add_dip_power = -100
+		add_mil_power = -100
+	}
+	option = {
+		name = dg_primitives.002.b
+		ai_chance = { factor = 30 }
+		add_prestige = -10
+		remove_religious_reforms = 1
+	}
+}
+
+country_event = { #07 - Grudging Acceptance
+	
+	id = dg_primitives.007
+	title = dg_primitives.007.t
+	desc = dg_primitives.007.d
+	picture = REFORM_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = dg_primitives.007.a
+		add_authority = 10
+	}
+}
+

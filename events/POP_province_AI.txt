@@ -1,0 +1,589 @@
+########################
+### By Dezuman, with ###
+### help from Demian ###
+### Edited by KJH    ###
+########################
+
+namespace = POP_province_AI
+
+country_event = {
+	id = POP_province_AI.001
+	title = no_localisation
+	desc = no_localisation
+	picture = CITY_DEVELOPMENT_eventPicture
+	
+	#is_triggered_only = no
+	
+	hidden = yes
+	
+	trigger = {
+		is_year = 1358
+		
+		#exists = yes
+	}
+	
+	mean_time_to_happen = {
+		years = 5
+	}
+	
+	immediate = {
+		every_owned_province = {
+			limit = {
+				check_variable = { which = wealth_urban_fluid value = 1000 }
+				is_city = yes
+				NOT = { has_province_modifier = metropole_aided_others }
+			}
+			#assess_metropole is a variable that is used to determine whether the city in question have enough population size to be considered a 'metropole'
+			#set_variable = { which = assess_metropole value = 0 }
+			set_variable = { which = assess_metropole which = year_ticker }
+			subtract_variable = { which = assess_metropole value = 56 }
+			multiply_variable = { which = assess_metropole value = 0.04 }
+			change_variable = { which = assess_metropole value = 8 }
+			
+			#Adequate infrastructure level for each urban pop is 250 - 150*(urban_pop/100)
+			set_variable = { which = assess_infra_adequate value = -1.5 }
+			multiply_variable = { which = assess_infra_adequate which = urban_pop }
+			change_variable = { which = assess_infra_adequate value = 250 }
+			
+			#set_variable = { which = assess_infra value = 0 }
+			set_variable = { which = assess_infra which = urban_pop }
+			multiply_variable = { which = assess_infra which = assess_infra_adequate }
+			
+			#If it passes both population size and infrastructure level qualifications, run the metropole code
+			if = {
+				limit = {
+					check_variable = { which = urban_pop which = assess_metropole }
+					check_variable = { which = wealth_urban_as_asset which = assess_infra }
+				}
+				province_event = {
+					id = POP_province_AI.100
+				}
+			}
+			
+			set_variable = {
+				which = assess_metropole
+				value = 0
+			}
+			set_variable = {
+				which = assess_infra_adequate
+				value = 0
+			}
+			set_variable = {
+				which = assess_infra
+				value = 0
+			}
+		}
+			
+		every_owned_province = {
+			limit = {
+				is_city = yes
+			}
+			export_to_variable = {
+				which = buildCost
+				value = modifier:local_build_cost
+			}
+			export_to_variable = {
+				which = buildCostOwner
+				value = modifier:build_cost
+				who = owner
+			}
+			
+			set_variable = {
+				which = buildCostCheck
+				which = buildCost
+			}
+			change_variable = {
+				which = buildCostCheck
+				which = buildCostOwner
+			}
+			change_variable = {
+				which = buildCostCheck
+				value = 1
+			}
+			multiply_variable = {
+				which = buildCostCheck
+				value = 100
+			}
+			
+			if = {
+				limit = {
+					check_variable = {
+						which = wealth_urban_fluid
+						which = buildCostCheck
+					}
+				}
+				province_event = {
+					id = POP_province_AI.101
+				}
+			}
+			
+			get_upgrade_cost_rural_infrastructure_1 = yes
+			
+			trigger_switch = {
+				on_trigger = has_building
+				rural_infrastructure_1 = { get_upgrade_cost_rural_infrastructure_2 = yes }
+				rural_infrastructure_2 = { get_upgrade_cost_rural_infrastructure_3 = yes }
+				rural_infrastructure_3 = { get_upgrade_cost_rural_infrastructure_4 = yes }
+				rural_infrastructure_4 = { get_upgrade_cost_rural_infrastructure_5 = yes }
+				rural_infrastructure_5 = { get_upgrade_cost_rural_infrastructure_6 = yes }
+				rural_infrastructure_6 = { get_upgrade_cost_rural_infrastructure_7 = yes }
+			}
+			
+			if = {
+				limit = {
+					check_variable = {
+						which = wealth_rural_fluid
+						which = building_cost
+					}
+				}
+				province_event = {
+					id = POP_province_AI.102
+					days = 2
+				}
+			}
+			
+			set_variable = {
+				which = buildCost
+				value = 0
+			}
+			set_variable = {
+				which = building_cost
+				value = 0
+			}
+			set_variable = {
+				which = buildCostOwner
+				value = 0
+			}
+			set_variable = {
+				which = buildCostCheck
+				value = 0
+			}
+		}
+	}
+	
+	option = {
+		name = no_localisation
+	}
+}
+
+#############################
+### Cheat ("debug") event ###
+#############################
+#
+#country_event = {
+#	id = POP_province_AI.002
+#	title = "POP_province_AI.002.t"
+#	desc = "POP_province_AI.002.d"
+#	picture = CITY_DEVELOPMENT_AU_eventPicture
+#	is_triggered_only = yes
+#	hidden = yes
+#	
+#	trigger = {
+#		always = no
+#	}
+#	
+#	immediate = {
+#		every_owned_province = {
+#			limit = {
+#				is_city = yes
+#			}
+#			change_variable = { which = "wealth_urban_fluid" value = 100000 }
+#			change_variable = { which = "wealth_rural_fluid" value = 100000 }
+#		}
+#	}
+#	
+#	option = {
+#		name = "POP_province_AI.002.a"
+#		ai_chance = { factor = 100 }
+#	}
+#}
+#
+#province_event = {
+#	id = POP_province_AI.004
+#	title = "POP_province_AI.004.t"
+#	desc = "POP_province_AI.004.d"
+#	picture = CASTLE_eventPicture
+#	
+#	is_triggered_only = yes
+#	
+#	hidden = yes # Maybe should be visible?
+#	
+#	trigger = {
+#		always = no
+#		
+#		OR = {
+#			has_building = local_fortification_1
+#			has_building = local_fortification_2
+#			has_building = local_fortification_3
+#		}
+#	}
+#	
+#	immediate = {
+#		trigger_switch = {
+#			on_trigger = has_building
+#			local_fortification_1 = {
+#				random_list = {
+#					33 = {
+#						remove_building = local_fortification_1
+#					}
+#					67 = { }
+#				}
+#			}
+#			local_fortification_2 = {
+#				random_list = {
+#					33 = {
+#						remove_building = local_fortification_2
+#						add_building = local_fortification_1
+#					}
+#					67 = { }
+#				}
+#			}
+#			local_fortification_3 = {
+#				random_list = {
+#					33 = {
+#						remove_building = local_fortification_3
+#						add_building = local_fortification_2
+#					}
+#					67 = { }
+#				}
+#			}
+#		}
+#	}
+#	
+#	option = {
+#		name = "POP_province_AI.004.a"
+#		ai_chance = { factor = 100 }
+#	}
+#}
+
+# Metropole AI
+province_event = {
+	id = POP_province_AI.100
+	title = no_localisation
+	desc = no_localisation
+	picture = CITY_DEVELOPMENT_eventPicture
+	
+	is_triggered_only = yes
+	
+	hidden = yes
+	
+	immediate = {
+		set_variable = {
+			which = metroRootAsset
+			which = wealth_urban_as_asset
+		}
+		
+		save_event_target_as = metroBest
+		
+		owner = {
+			every_owned_province = {
+				limit = {
+					region = ROOT
+					
+					CanBuild = yes
+				}
+				set_variable = {
+					which = metroRootAsset
+					which = ROOT
+				}
+				divide_variable = {
+					which = metroRootAsset
+					value = 3
+				}
+				
+				if = {
+					limit = {
+						NOT = {
+							check_variable = {
+								which = wealth_urban_as_asset
+								which = metroRootAsset
+							}
+						}
+					}
+					set_province_flag = metroCand
+					
+					set_variable = {
+						which = metroCandWeight
+						which = devPointUrbanCur
+					}
+					change_variable = {
+						which = metroCandWeight
+						which = devPointUpperCur
+					}
+					
+					export_to_variable = {
+						which = metroPrice
+						value = modifier:local_build_cost
+					}
+					
+					change_variable = {
+						which = metroPrice
+						value = 1.001
+					}
+					
+					divide_variable = {
+						which = metroCandWeight
+						which = metroPrice
+					}
+					
+					set_variable = {
+						which = metroPrice
+						value = 0
+					}
+				}
+				
+				set_variable = {
+					which = metroRootAsset
+					value = 0
+				}
+			}
+			
+			GetMax = {
+				varName = metroCandWeight
+				type = owned_province
+				cond = metroCand
+				varClean = yes
+				return = metroBest
+			}
+			
+			every_owned_province = {
+				limit = {
+					has_province_flag = metroCand
+				}
+				clr_province_flag = metroCand
+			}
+		}
+		
+		event_target:metroBest = {
+			if = {
+				limit = {
+					NOT = {
+						province_id = ROOT
+					}
+				}
+				set_variable = {
+					which = wealthOrig
+					which = wealth_urban_fluid
+				}
+				
+				set_variable = {
+					which = wealth_urban_fluid
+					which = ROOT
+				}
+				
+				province_event = {
+					id = POP_province_AI.101
+				}
+				
+				subtract_variable = {
+					which = wealth_urban_fluid
+					which = ROOT
+				}
+				
+				change_variable = {
+					which = wealth_urban_fluid
+					which = wealthOrig
+				}
+				
+				if = {
+					limit = {
+						NOT = {
+							check_variable = {
+								which = wealth_urban_fluid
+								value = 0
+							}
+						}
+					}
+					ROOT = {
+						change_variable = {
+							which = wealth_urban_fluid
+							which = PREV
+						}
+					}
+					
+					set_variable = {
+						which = wealth_urban_fluid
+						value = 0
+					}
+				}
+				
+				set_variable = {
+					which = wealthOrig
+					value = 0
+				}
+				
+				if = {
+					limit = {
+						has_province_modifier = province_built_building
+					}
+					remove_province_modifier = province_built_building
+					
+					ROOT = {
+						add_province_modifier = {
+							name = metropole_aided_others
+							duration = 1095
+						}
+					}
+					
+					add_province_modifier = {
+						name = aided_by_metropole
+						duration = 1095
+					}
+				}
+			}
+		}
+		
+		set_variable = {
+			which = metroRootAsset
+			value = 0
+		}
+	}
+	
+	option = {
+		name = no_localisation
+	}
+}
+
+# Urban Spending AI
+province_event = {
+	id = POP_province_AI.101
+	title = "POP_province_AI.101.t"
+	desc = "POP_province_AI.101.d"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	trigger = {
+		CanBuild = yes
+	}
+	
+	immediate = {
+		GetBestBuilding = {
+			root = Prov
+			urban = yes
+			rural = no
+			state = no
+			budget = wealth_urban_fluid
+			buildWeight = provAIBuildWeight
+			buildInd = provAIBuildInd
+			buildPrice = provAIBuildPrice
+		}
+		
+		if = {
+			limit = {
+				check_variable = {
+					which = provAIBuildInd
+					value = 1
+				}
+				
+				check_variable = {
+					which = wealth_urban_fluid
+					which = provAIBuildPrice
+				}
+			}
+			subtract_variable = {
+				which = wealth_urban_fluid
+				which = provAIBuildPrice
+			}
+			
+			add_province_modifier = {
+				name = "province_built_building"
+				duration = 800
+			}
+			
+			DoBuilding = {
+				buildInd = provAIBuildInd
+			}
+		}
+		
+		set_variable = {
+			which = provAIBuildWeight
+			value = 0
+		}
+		set_variable = {
+			which = provAIBuildInd
+			value = 0
+		}
+		set_variable = {
+			which = provAIBuildPrice
+			value = 0
+		}
+	}
+	
+	option = {
+		name = "POP_province_AI.101.a"
+		ai_chance = { factor = 100 }
+	}
+}
+
+# Rural Spending AI
+province_event = {
+	id = POP_province_AI.102
+	title = "POP_province_AI.102.t"
+	desc = "POP_province_AI.102.d"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	trigger = {
+		CanBuildRural = yes
+	}
+	
+	immediate = {
+		GetBestBuilding = {
+			root = Prov
+			urban = no
+			rural = yes
+			state = no
+			budget = wealth_rural_fluid
+			buildWeight = provAIBuildWeight
+			buildInd = provAIBuildInd
+			buildPrice = provAIBuildPrice
+		}
+		
+		if = {
+			limit = {
+				check_variable = {
+					which = provAIBuildInd
+					value = 1
+				}
+				
+				check_variable = {
+					which = wealth_rural_fluid
+					which = provAIBuildPrice
+				}
+			}
+			subtract_variable = {
+				which = wealth_rural_fluid
+				which = provAIBuildPrice
+			}
+			
+			add_province_modifier = {
+				name = "province_built_building"
+				duration = 800
+			}
+			
+			DoBuilding = {
+				buildInd = provAIBuildInd
+			}
+		}
+		
+		set_variable = {
+			which = provAIBuildWeight
+			value = 0
+		}
+		set_variable = {
+			which = provAIBuildInd
+			value = 0
+		}
+		set_variable = {
+			which = provAIBuildPrice
+			value = 0
+		}
+	}
+	
+	option = {
+		name = "POP_province_AI.101.a"
+		ai_chance = { factor = 100 }
+	}
+}

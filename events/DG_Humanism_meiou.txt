@@ -1,0 +1,6791 @@
+namespace = dg_humanism
+
+######################
+# Spread of Humanism # 00s
+######################
+
+#01 - Birth of the Renaissance
+#02 - The $PRIMARY_CULTURE$ Renaissance
+#03 - The Renaissance spreads (hidden)
+#04 - Humanism spreads (hidden)
+#05 - Humanist ideas (hidden)
+
+##################
+# Humanist Ideas # 10s and 20s
+##################
+
+#Theologians
+#11 - Veiled Criticism of the Church (Desiderius Erasmus, Netherlands 1511 et al) [university]
+#12 - The Forgery of Constantine (Lorenzo Valla, Italy 1439)
+#13 - The Pauline Epistles (Jacques Lefèvre d'Étaples, France 1512)
+#14 - The $PRIMARY_CULTURE$ Bible (Nicolo Malermi, William Tyndale, d'Etaples, Ferrara et al)
+#15 - A New Translation (Desiderius Erasmus, Netherlands 1514) [late]
+
+#Natural Scientists
+#16 - Ptolemy's Geography (Jacopo d'Angelo, Italy 1406) [university]
+#17 - The Third Principle of Alchemy (Paracelsus, Switzerland 1530)
+#18 - The Center of the Universe (Copernicus, Poland 1532)
+#19 - Calculating God (Gerolamo Cardano, Italy 1554)
+#20 - The Printing Press (Johann Gutenberg, Germany 1436) [late]
+#The Observation Method (Bernardino Telesio)
+
+#Artists
+#21 - A Masterpiece (Da Vinci, Italy 1507) [university]
+#22 - The Statue of David (Donatello, Italy 1430)
+#23 - Bonfire of the Vanities (Botticelli, Italy 1497)
+#24 - The Birth of Surrealism (Hieronymus Bosch, Netherlands 1490)
+#25 - The Birth of Mannerism (Michelangelo, Italy 1520) [late]
+
+#Philosophers
+#26 - Christian Ethics (Petrarch, Konrad Mutian, Conrad Celtis, Giovanni Pico della Mirandola, etc.) [university]
+#27 - The Trilingual College (Jean du Bellay, France 1530 et al)
+#28 - The Prince (Machiavelli, Italy 1513)
+#29 - Plato's Academy (Marsilio Ficino, Italy 1439)
+#30 - The Justinian Code (Guillaume Budé, France 1508) [late]
+
+######################
+# Spread of Humanism # 00s
+######################
+
+country_event = { #Birth of the Renaissance (inspired by Cagliostro)
+	
+	id = dg_humanism.001
+	title = dg_humanism.001.t
+	desc = dg_humanism.001.d
+	picture = renaissance_painters
+	
+	fire_only_once = yes
+	
+	trigger = {
+		NOT = { has_global_flag = renaissance }
+		owns = 116 #Florence
+		is_year = 1374 #Humanism founded by Petrarch
+		NOT = { is_religion_enabled = protestant }
+		NOT = { is_religion_enabled = reformed } #Just in case
+	}
+	
+	mean_time_to_happen = {
+		
+		months = 25
+		
+		modifier = {
+			exists = AVI
+			AVI = { papal_trigger = yes }
+			factor = 2
+		}
+		modifier = {
+			NOT = { exists = PAP }
+			factor = 2
+		}
+	}
+	
+	option = {
+		name = dg_humanism.001.a #The glory of Rome revived!
+		hidden_effect = { set_global_flag = renaissance }
+		define_advisor = { religion = catholic type = artist discount = yes }
+		add_prestige = 5
+	}
+}
+
+province_event = { #The $PRIMARY_CULTURE$ Renaissance (inspired by Cagliostro)
+	
+	id = dg_humanism.002
+	title = dg_humanism.002.t
+	desc = dg_humanism.002.d
+	picture = renaissance_painters
+	
+	trigger = {
+		NOT = { is_religion_enabled = reformed }
+		OR = {
+			AND = { continent = europe }
+			africa_continent_trigger = yes #Unlikely
+		}
+		religion = ROOT
+		has_owner_culture = yes
+		is_core = owner
+		has_global_flag = renaissance
+		NOT = { has_province_flag = renaissance_ideas }
+		NOT = { has_province_flag = humanist_ideas }
+		NOT = { owner = { has_country_flag = humanism } }
+		NOT = { owner = { has_country_flag = renaissance } }
+		NOT = { owner = { has_country_flag = second_chance_renaissance } }
+		owner = {
+			OR = {
+				religion = catholic
+				religion = gnostic
+				religion = hussite
+				religion = protestant
+				religion = reformed
+			}
+		}
+		OR = {
+			province_id = 116 #Florence
+			any_neighbor_province = {
+				OR = {
+					had_province_flag = { flag = renaissance_ideas days = 2000 }
+					had_province_flag = { flag = humanist_ideas days = 2000 }
+				}
+			}
+			AND = {
+				has_port = yes
+				any_trade_node_member_province = {
+					trade_center_trigger = yes
+					OR = { has_province_flag = humanist_ideas has_province_flag = renaissance_ideas }
+				}
+			}
+			AND = {
+				province_id = 235 # Kent
+				63 = {
+					OR = {
+						had_province_flag = { flag = renaissance_ideas days = 8000 }
+						had_province_flag = { flag = humanist_ideas days = 8000 }
+					}
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		
+		months = 6
+		
+		modifier = {
+			exists = AVI
+			AVI = { papal_trigger = yes }
+			factor = 3
+		}
+		modifier = {
+			factor = 0.7
+			owner = { NOT = { capital_distance = { who = PAP distance = 130 } } }
+		}
+		modifier = {
+			factor = 1.4
+			owner = { capital_distance = { who = PAP distance = 260 } }
+		}
+		modifier = {
+			OR = {
+				owner = { advisor = artist }
+				owner = { advisor = philosopher }
+			}
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { any_neighbor_province = { has_province_flag = renaissance_ideas } }
+			NOT = { any_neighbor_province = { has_province_flag = humanist_ideas } }
+			NOT = { any_neighbor_province = { NOT = { religion_group = christian } } }
+			factor = 5
+		}
+	}
+	
+	option = {
+		name = dg_humanism.002.a #The church must come first
+		trigger = {
+			owner = { religion = catholic }
+			owner = {
+				OR = {
+					is_colonial_nation = no
+					overlord = { NOT = { has_country_flag = humanism } }
+				}
+			}
+		}
+		ai_chance = {
+			factor = 70
+			modifier = {
+				owner = { capital_scope = { check_variable = { which = hussite value = 10 } } }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { capital_scope = { check_variable = { which = hussite value = 25 } } }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { has_country_flag = was_hussite }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { has_country_flag = was_gnostic }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { has_country_flag = was_orthodox }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { owner = { capital_distance = { who = PAP distance = 120 } } }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { capital_distance = { who = PAP distance = 220 } }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { capital_distance = { who = PAP distance = 320 } }
+				factor = 0.7
+			}
+			modifier = {
+				owner = {
+					any_neighbor_country = {
+						primary_culture = ROOT
+						has_country_flag = renaissance
+					}
+				}
+				factor = 1.2
+			}
+			modifier = {
+				owner = {
+					any_neighbor_country = {
+						culture_group = ROOT
+						has_country_flag = renaissance
+					}
+				}
+				factor = 1.2
+			}
+			modifier = {
+				owner = {
+					OR = {
+						is_elector = yes
+						is_emperor = yes
+					}
+					any_elector = {
+						has_country_flag = renaissance
+						preferred_emperor = PREV
+					}
+				}
+				factor = 1.4
+			}
+			modifier = {
+				owner = {
+					OR = {
+						is_elector = yes
+						is_emperor = yes
+					}
+					any_elector = {
+						has_country_flag = humanism
+						preferred_emperor = PREV
+					}
+				}
+				factor = 0.7
+			}
+			modifier = {
+				owner = { is_emperor = yes }
+				factor = 0.7
+			}
+			modifier = {
+				factor = 0.5
+				owner = { has_country_flag = reformation_maybe }
+			}
+			modifier = {
+				factor = 0.25
+				owner = { has_country_flag = spread_reformation }
+			}
+			modifier = {
+				factor = 0
+				owner = { has_country_flag = introduce_reformation }
+			}
+			modifier = {
+				factor = 1.4
+				owner = {
+					any_neighbor_country = { NOT = { religion_group = christian } }
+					any_neighbor_country = { NOT = { religion_group = pagan } }
+					any_neighbor_country = { NOT = { religion_group = european_pagan } }
+				}
+			}
+			modifier = {
+				factor = 1.4
+				any_neighbor_province = { owned_by = PAP }
+			}
+			modifier = {
+				factor = 1.4
+				owner = {
+					government = theocracy
+					is_elector = yes
+				}
+			}
+			modifier = {
+				owner = { government = theocracy }
+				factor = 1.4
+			}
+			modifier = {
+				factor = 1.25
+				owner = { has_country_flag = friend_of_pope }
+			}
+			modifier = {
+				factor = 1.4
+				owner = { has_country_flag = ally_of_pope }
+			}
+			modifier = {
+				factor = 0.85
+				owner = { has_country_flag = rival_of_pope }
+			}
+			modifier = {
+				factor = 0.7
+				owner = { has_country_flag = enemy_of_pope }
+			}
+			modifier = {
+				factor = 1.4
+				NOT = { owner = { religious_unity = 0.80 } }
+				religion = catholic
+			}
+			modifier = {
+				factor = 1.4
+				NOT = { owner = { religious_unity = 0.60 } }
+				religion = catholic
+			}
+			modifier = {
+				owner = {
+					any_neighbor_country = {
+						primary_culture = ROOT
+						has_country_flag = humanism
+					}
+				}
+				factor = 0.8
+			}
+			modifier = {
+				owner = {
+					any_neighbor_country = {
+						culture_group = ROOT
+						has_country_flag = humanism
+					}
+				}
+				factor = 0.8
+			}
+			modifier = {
+				owner = {
+					any_known_country = {
+						OR = {
+							religion = hussite
+							religion = gnostic
+							religion = protestant
+							religion = reformed
+						}
+					}
+				}
+				factor = 0.7
+			}
+			modifier = {
+				owner = { any_known_country = { has_country_flag = reformation_sponsor primary_culture = ROOT } }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { any_known_country = { has_country_flag = reformation_sponsor culture_group = ROOT } }
+				factor = 0.7
+			}
+			modifier = {
+				factor = 0.7
+				owner = { has_country_flag = excommunicated }
+			}
+			modifier = {
+				factor = 0.7
+				is_religion_enabled = protestant
+			}
+			modifier = {
+				factor = 0.7
+				PAP = { has_country_flag = potential_schism }
+			}
+			modifier = {
+				owner = { has_country_flag = simony }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { has_country_flag = absenteeism }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { has_country_flag = papal_interference }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { check_variable = { which = catholic_corruption value = 1 } }
+				factor = 0.6
+			}
+			modifier = {
+				owner = { check_variable = { which = catholic_corruption value = 2 } }
+				factor = 0.6
+			}
+			modifier = {
+				owner = { check_variable = { which = catholic_corruption value = 3 } }
+				factor = 0.6
+			}
+			modifier = {
+				owner = { check_variable = { which = catholic_corruption value = 4 } }
+				factor = 0.6
+			}
+			modifier = {
+				owner = { check_variable = { which = catholic_corruption value = 5 } }
+				factor = 0.4
+			}
+			modifier = {
+				owner = { check_variable = { which = catholic_corruption value = 6 } }
+				factor = 0.4
+			}
+			modifier = {
+				owner = { check_variable = { which = catholic_corruption value = 7 } }
+				factor = 0.4
+			}
+			modifier = {
+				owner = { check_variable = { which = catholic_corruption value = 8 } }
+				factor = 0.4
+			}
+			modifier = {
+				owner = { check_variable = { which = catholic_corruption value = 9 } }
+				factor = 0.4
+			}
+			modifier = {
+				owner = { check_variable = { which = catholic_corruption value = 10 } }
+				factor = 0.4
+			}
+			modifier = {
+				owner = { check_variable = { which = catholic_corruption value = 8 } }
+				NOT = { owner = { num_of_cardinals = 4 } }
+				factor = 0
+			}
+			modifier = {
+				factor = 2
+				owner = { NOT = { reform_desire = 10 } }
+			}
+			modifier = {
+				factor = 2
+				owner = { NOT = { reform_desire = 20 } }
+			}
+			modifier = {
+				factor = 1.4
+				owner = { NOT = { reform_desire = 30 } }
+			}
+			modifier = {
+				factor = 0.7
+				owner = { reform_desire = 80 }
+			}
+			modifier = {
+				factor = 0.7
+				owner = { reform_desire = 100 }
+			}
+			modifier = {
+				factor = 1.5
+				owner = { capital_scope = { superregion = iberia_superregion } }
+			}
+		}
+		custom_tooltip = renaissance_explained
+		owner = {
+			random_list = {
+				50 = { define_advisor = { type = philosopher discount = yes } }
+				50 = { define_advisor = { type = artist discount = yes } }
+			}
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					NOT = { owner = { has_country_flag = humanism } }
+					OR = {
+						owner = { ai = no }
+						owner = { has_country_flag = renaissance_leanings }
+						owner = { NOT = { num_of_cities = 4 } }
+					}
+				}
+				owner = { set_country_flag = renaissance }
+			}
+			if = {
+				limit = { owner = { NOT = { has_country_flag = renaissance } } }
+				owner = { set_country_flag = renaissance_leanings }
+			}
+			set_province_flag = renaissance_ideas
+			province_event = { id = dg_humanism.005 }
+		}
+	}
+	option = {
+		name = dg_humanism.002.b #Embrace secular humanism
+		ai_chance = { factor = 40 } #was 30, reformation is usually very weak
+		trigger = {
+			OR = {
+				owner = { NOT = { religion = catholic } }
+				owner = { papal_trigger = no }
+			}
+			owner = {
+				OR = {
+					is_colonial_nation = no
+					overlord = { NOT = { has_country_flag = renaissance } }
+				}
+			}
+		}
+		custom_tooltip = humanism_explained
+		hidden_effect = { set_province_flag = humanist_ideas province_event = { id = dg_humanism.005 } }
+		owner = {
+			random_list = {
+				50 = { define_advisor = { type = theologian discount = yes } }
+				50 = { define_advisor = { type = natural_scientist discount = yes } }
+			}
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					NOT = { owner = { has_country_flag = renaissance } }
+					OR = {
+						owner = { ai = no }
+						owner = { has_country_flag = humanist_leanings }
+						owner = { NOT = { num_of_cities = 4 } }
+					}
+				}
+				owner = { set_country_flag = humanism }
+			}
+			if = {
+				limit = { owner = { NOT = { has_country_flag = humanism } } }
+				owner = { set_country_flag = humanist_leanings }
+			}
+		}
+	}
+}
+
+province_event = { #Renaissance ideas spread to $PROVINCENAME$ (inspired by by Cagliostro)
+	
+	id = dg_humanism.003
+	title = dg_humanism.003.t
+	desc = dg_humanism.003.d
+	picture = renaissance_painters
+	
+	hidden = yes
+	
+	trigger = {
+		NOT = { is_religion_enabled = reformed }
+		continent = europe
+		OR = {
+			NOT = { owner = { has_country_flag = humanism } }
+			has_owner_culture = no
+			NOT = { religion = ROOT }
+			NOT = { is_core = owner }
+		}
+		has_global_flag = renaissance
+		NOT = { has_province_flag = renaissance_ideas }
+		NOT = { has_province_flag = humanist_ideas }
+		NOT = { has_province_flag = synod_location }
+		NOT = { #Handled by dg_humanism.002 instead
+			AND = {
+				has_owner_culture = yes
+				religion = ROOT
+				is_core = owner
+				owner = { NOT = { has_country_flag = humanism } }
+				owner = { NOT = { has_country_flag = renaissance } }
+			}
+		}
+		OR = {
+			religion = catholic
+			religion = gnostic
+			religion = hussite
+			religion = protestant
+			religion = reformed
+		}
+		owner = {
+			OR = {
+				religion = catholic
+				religion = hussite
+				religion = gnostic
+				religion = protestant
+				religion = reformed
+			}
+		}
+		OR = {
+			any_neighbor_province = {
+				OR = {
+					had_province_flag = { flag = renaissance_ideas days = 2000 }
+					had_province_flag = { flag = humanist_ideas days = 2000 }
+				}
+			}
+			AND = {
+				has_port = yes
+				any_trade_node_member_province = {
+					trade_center_trigger = yes
+					OR = {
+						had_province_flag = { flag = renaissance_ideas days = 8000 }
+						had_province_flag = { flag = humanist_ideas days = 8000 }
+					}
+				}
+			}
+			AND = {
+				province_id = 235 # Kent
+				63 = {
+					OR = {
+						had_province_flag = { flag = renaissance_ideas days = 8000 }
+						had_province_flag = { flag = humanist_ideas days = 8000 }
+					}
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		
+		months = 6
+		
+		modifier = {
+			NOT = { any_neighbor_province = { has_province_flag = renaissance_ideas } }
+			NOT = { any_neighbor_province = { has_province_flag = humanist_ideas } }
+			factor = 5
+		}
+		modifier = {
+			owner = { has_country_flag = humanism }
+			has_owner_culture = yes
+			factor = 1.4
+		}
+		modifier = {
+			owner = { has_country_flag = humanism }
+			owner = { accepted_culture = ROOT }
+			factor = 1.4
+		}
+		modifier = {
+			owner = { has_country_flag = counter_reformation }
+			factor = 0.7
+		}
+		modifier = {
+			owner = { has_country_flag = renaissance }
+			NOT = { is_core = owner }
+			factor = 1.4
+		}
+		modifier = {
+			factor = 0.7
+			any_neighbor_province = { NOT = { religion = catholic } }
+		}
+		modifier = {
+			factor = 0.7
+			any_neighbor_province = { owned_by = PAP }
+		}
+		modifier = {
+			factor = 0.5
+			owner = { government = theocracy }
+		}
+		modifier = {
+			factor = 1.4
+			has_province_flag = absentee_bishop
+		}
+		modifier = {
+			factor = 1.4
+			has_province_flag = simony_province
+		}
+		modifier = {
+			factor = 1.4
+			has_province_flag = indulgence_peddler
+		}
+		modifier = {
+			factor = 0.7
+			has_province_flag = monastic_order
+		}
+		modifier = {
+			factor = 2
+			exists = AVI
+			AVI = { papal_trigger = yes }
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_province_flag = renaissance_ideas
+			province_event = { id = dg_humanism.005 }
+		}
+	}
+	
+	option = {
+		name = dg_humanism.003.a
+		if = {
+			limit = { owner = { NOT = { num_of_cities = 2 } } }
+			owner = {
+				random = { chance = 50 define_advisor = { type = artist discount = yes } }
+				random = { chance = 50 define_advisor = { type = philosopher discount = yes } }
+			}
+		}
+		if = {
+			limit = { owner = { num_of_cities = 2 NOT = { num_of_cities = 4 } } }
+			owner = {
+				random = { chance = 25 define_advisor = { type = artist discount = yes } }
+				random = { chance = 25 define_advisor = { type = philosopher discount = yes } }
+			}
+		}
+		if = {
+			limit = { owner = { num_of_cities = 4 NOT = { num_of_cities = 8 } } }
+			owner = {
+				random = { chance = 10 define_advisor = { type = artist discount = yes } }
+				random = { chance = 10 define_advisor = { type = philosopher discount = yes } }
+			}
+		}
+		if = {
+			limit = { owner = { num_of_cities = 8 } }
+			owner = {
+				random = { chance = 5 define_advisor = { type = artist discount = yes } }
+				random = { chance = 5 define_advisor = { type = philosopher discount = yes } }
+			}
+		}
+		custom_tooltip = renaissance_province_explained
+		hidden_effect = {
+			if = {
+				limit = {
+					owner = { NOT = { num_of_cities = 2 } }
+					NOT = { owner = { has_country_flag = humanism } }
+				}
+				owner = { set_country_flag = renaissance }
+			}
+		}
+	}
+}
+
+province_event = { #Humanism spreads to $PROVINCENAME$ (inspired by Cagliostro)
+	
+	id = dg_humanism.004
+	title = dg_humanism.004.t
+	desc = dg_humanism.004.d
+	picture = renaissance_humanism
+	
+	hidden = yes
+	
+	trigger = {
+		NOT = { is_religion_enabled = reformed }
+		continent = europe
+		OR = {
+			NOT = { owner = { has_country_flag = renaissance } }
+			has_owner_culture = no
+			NOT = { religion = ROOT }
+			NOT = { is_core = owner }
+		}
+		has_global_flag = renaissance
+		NOT = { has_province_flag = renaissance_ideas }
+		NOT = { has_province_flag = humanist_ideas }
+		NOT = { #Handled by dg_humanism.002 instead
+			AND = {
+				has_owner_culture = yes
+				religion = ROOT
+				is_core = owner
+				owner = { NOT = { has_country_flag = humanism } }
+				owner = { NOT = { has_country_flag = renaissance } }
+			}
+		}
+		OR = {
+			religion = catholic
+			religion = gnostic
+			religion = hussite
+			religion = protestant
+			religion = reformed
+		}
+		owner = {
+			OR = {
+				religion = catholic
+				religion = hussite
+				religion = gnostic
+				religion = protestant
+				religion = reformed
+			}
+		}
+		OR = {
+			any_neighbor_province = {
+				OR = {
+					had_province_flag = { flag = renaissance_ideas days = 2000 }
+					had_province_flag = { flag = humanist_ideas days = 2000 }
+				}
+			}
+			AND = {
+				has_port = yes
+				any_trade_node_member_province = {
+					trade_center_trigger = yes
+					OR = {
+						had_province_flag = { flag = renaissance_ideas days = 8000 }
+						had_province_flag = { flag = humanist_ideas days = 8000 }
+					}
+				}
+			}
+			AND = {
+				province_id = 235 # Kent
+				63 = {
+					OR = {
+						had_province_flag = { flag = renaissance_ideas days = 8000 }
+						had_province_flag = { flag = humanist_ideas days = 8000 }
+					}
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		
+		months = 6
+		
+		modifier = {
+			has_province_modifier = catholic_archbishopric
+			factor = 2
+		}
+		modifier = {
+			any_neighbor_province = { has_province_modifier = catholic_archbishopric }
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { any_neighbor_province = { has_province_flag = renaissance_ideas } }
+			NOT = { any_neighbor_province = { has_province_flag = humanist_ideas } }
+			factor = 5
+		}
+		modifier = {
+			owner = { has_country_flag = humanism }
+			has_owner_culture = yes
+			factor = 1.4
+		}
+		modifier = {
+			owner = { has_country_flag = humanism }
+			owner = { accepted_culture = ROOT }
+			factor = 1.4
+		}
+		modifier = {
+			OR = {
+				owner = { has_country_flag = spread_reformation }
+				owner = { has_country_flag = introduce_reformation }
+			}
+			factor = 0.5
+		}
+		modifier = {
+			owner = { has_country_flag = reformation_maybe }
+			factor = 0.7
+		}
+		modifier = {
+			owner = { has_country_flag = humanism }
+			NOT = { is_core = owner }
+			factor = 1.4
+		}
+		modifier = {
+			factor = 2
+			owner = { government = theocracy }
+		}
+		modifier = {
+			factor = 0.7
+			has_province_flag = absentee_bishop
+		}
+		modifier = {
+			factor = 0.7
+			has_province_flag = simony_province
+		}
+		modifier = {
+			factor = 0.7
+			has_province_flag = indulgence_peddler
+		}
+		modifier = {
+			factor = 1.4
+			has_province_flag = monastic_order
+		}
+		modifier = {
+			factor = 0.7
+			owner = { has_country_flag = excommunicated }
+		}
+		modifier = {
+			owner = { any_known_country = { OR = { religion = hussite religion = gnostic religion = protestant religion = reformed } } }
+			factor = 0.7
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_province_flag = humanist_ideas
+			province_event = { id = dg_humanism.005 }
+		}
+	}
+	
+	option = {
+		name = dg_humanism.004.a
+		custom_tooltip = humanist_province_explained
+		if = {
+			limit = { owner = { NOT = { num_of_cities = 2 } } }
+			owner = {
+				random = { chance = 50 define_advisor = { type = natural_scientist discount = yes } }
+				random = { chance = 50 define_advisor = { type = theologian discount = yes } }
+			}
+		}
+		if = {
+			limit = { owner = { num_of_cities = 2 NOT = { num_of_cities = 4 } } }
+			owner = {
+				random = { chance = 25 define_advisor = { type = natural_scientist discount = yes } }
+				random = { chance = 25 define_advisor = { type = theologian discount = yes } }
+			}
+		}
+		if = {
+			limit = { owner = { num_of_cities = 4 NOT = { num_of_cities = 8 } } }
+			owner = {
+				random = { chance = 10 define_advisor = { type = natural_scientist discount = yes } }
+				random = { chance = 10 define_advisor = { type = theologian discount = yes } }
+			}
+		}
+		if = {
+			limit = { owner = { num_of_cities = 8 } }
+			owner = {
+				random = { chance = 5 define_advisor = { type = natural_scientist discount = yes } }
+				random = { chance = 5 define_advisor = { type = theologian discount = yes } }
+			}
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					owner = { NOT = { num_of_cities = 2 } }
+					NOT = { owner = { has_country_flag = renaissance } }
+				}
+				owner = { set_country_flag = humanism }
+			}
+		}
+	}
+}
+
+province_event = { #05 - Humanist ideas spreading
+	
+	id = dg_humanism.005
+	title = dg_humanism.005.t
+	desc = dg_humanism.005.d
+	picture = renaissance_painters
+	
+	hidden = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = dg_humanism.005.a
+		if = {
+			limit = {
+				has_province_flag = humanist_ideas
+				NOT = { has_province_flag = renaissance_ideas }
+			}
+			random_list = {
+				40 = { set_province_flag = humanism_theologian }
+				10 = { set_province_flag = humanism_philosopher }
+				10 = { set_province_flag = humanism_artist }
+				40 = { set_province_flag = humanism_natural_scientist }
+			}
+		}
+		if = {
+			limit = { has_province_flag = renaissance_ideas }
+			random_list = {
+				10 = { set_province_flag = humanism_theologian }
+				40 = { set_province_flag = humanism_philosopher }
+				40 = { set_province_flag = humanism_artist }
+				10 = { set_province_flag = humanism_natural_scientist }
+			}
+		}
+		if = {
+			limit = { is_year = 1440 }
+			random_list = {
+				20 = { set_province_flag = humanism_university }
+				20 = { set_province_flag = humanism_1 }
+				20 = { set_province_flag = humanism_2 }
+				20 = { set_province_flag = humanism_3 }
+				20 = { set_province_flag = humanism_late }
+			}
+		}
+		else = {
+			random_list = {
+				25 = { set_province_flag = humanism_university }
+				25 = { set_province_flag = humanism_1 }
+				25 = { set_province_flag = humanism_2 }
+				25 = { set_province_flag = humanism_3 }
+			}
+		}
+		if = {
+			limit = { has_province_flag = humanism_theologian }
+			if = {
+				limit = { has_province_flag = humanism_university }
+				if = {
+					limit = {
+						owner = {
+							OR = {
+								has_country_flag = renaissance_humanism_university_theologian
+								university_trigger = no
+								AND = {
+									NOT = { religion = catholic }
+									NOT = { religion = protestant }
+									NOT = { religion = reformed }
+									NOT = { religion = gnostic }
+									NOT = { religion = hussite }
+								}
+							}
+						}
+					}
+					random_country = {
+						limit = {
+							university_trigger = yes
+							OR = {
+								religion = catholic
+								religion = protestant
+								religion = reformed
+								religion = gnostic
+								religion = hussite
+							}
+							NOT = { has_country_flag = renaissance_humanism_university_theologian }
+							any_owned_province = {
+								OR = {
+									has_province_flag = humanist_ideas
+									has_province_flag = renaissance_ideas
+								}
+							}
+						}
+						country_event = { id = dg_humanism.011 }
+					}
+				}
+				if = {
+					limit = {
+						owner = {
+							OR = {
+								religion = catholic
+								religion = protestant
+								religion = reformed
+								religion = gnostic
+								religion = hussite
+							}
+							NOT = { has_country_flag = renaissance_humanism_university_theologian }
+							university_trigger = yes
+						}
+					}
+					owner = { country_event = { id = dg_humanism.011 } }
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						owner = {
+							OR = {
+								AND = {
+									NOT = { religion = catholic }
+									NOT = { religion = protestant }
+									NOT = { religion = reformed }
+									NOT = { religion = gnostic }
+									NOT = { religion = hussite }
+								}
+								has_country_flag = renaissance_humanism_theologian
+								NOT = { advisor = theologian }
+							}
+						}
+					}
+					if = {
+						limit = { has_province_flag = humanism_1 }
+						random_country = {
+							limit = {
+								advisor = theologian
+								OR = {
+									religion = catholic
+									religion = protestant
+									religion = reformed
+									religion = gnostic
+									religion = hussite
+								}
+								NOT = { has_country_flag = renaissance_humanism_theologian }
+								any_owned_province = {
+									OR = {
+										has_province_flag = humanist_ideas
+										has_province_flag = renaissance_ideas
+									}
+								}
+							}
+							country_event = { id = dg_humanism.012 }
+						}
+					}
+					if = {
+						limit = { has_province_flag = humanism_2 }
+						random_country = {
+							limit = {
+								advisor = theologian
+								OR = {
+									religion = catholic
+									religion = protestant
+									religion = reformed
+									religion = gnostic
+									religion = hussite
+								}
+								NOT = { has_country_flag = renaissance_humanism_theologian }
+								any_owned_province = {
+									OR = {
+										has_province_flag = humanist_ideas
+										has_province_flag = renaissance_ideas
+									}
+								}
+							}
+							country_event = { id = dg_humanism.013 }
+						}
+					}
+					if = {
+						limit = { has_province_flag = humanism_3 }
+						random_country = {
+							limit = {
+								advisor = theologian
+								OR = {
+									religion = catholic
+									religion = protestant
+									religion = reformed
+									religion = gnostic
+									religion = hussite
+								}
+								NOT = { has_country_flag = renaissance_humanism_theologian }
+								any_owned_province = {
+									OR = {
+										has_province_flag = humanist_ideas
+										has_province_flag = renaissance_ideas
+									}
+								}
+							}
+							country_event = { id = dg_humanism.014 }
+						}
+					}
+					if = {
+						limit = { has_province_flag = humanism_late }
+						random_country = {
+							limit = {
+								advisor = theologian
+								OR = {
+									religion = catholic
+									religion = protestant
+									religion = reformed
+									religion = gnostic
+									religion = hussite
+								}
+								NOT = { has_country_flag = renaissance_humanism_theologian }
+								any_owned_province = {
+									OR = {
+										has_province_flag = humanist_ideas
+										has_province_flag = renaissance_ideas
+									}
+								}
+							}
+							country_event = { id = dg_humanism.015 }
+						}
+					}
+				}
+				if = {
+					limit = {
+						owner = {
+							OR = {
+								religion = catholic
+								religion = protestant
+								religion = reformed
+								religion = gnostic
+								religion = hussite
+							}
+							advisor = theologian
+							NOT = { has_country_flag = renaissance_humanism_theologian }
+						}
+					}
+					if = {
+						limit = { has_province_flag = humanism_1 }
+						owner = { country_event = { id = dg_humanism.012 } }
+					}
+					if = {
+						limit = { has_province_flag = humanism_2 }
+						owner = { country_event = { id = dg_humanism.013 } }
+					}
+					if = {
+						limit = { has_province_flag = humanism_3 }
+						owner = { country_event = { id = dg_humanism.014 } }
+					}
+					if = {
+						limit = { has_province_flag = humanism_late }
+						owner = { country_event = { id = dg_humanism.015 } }
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_province_flag = humanism_natural_scientist }
+			if = {
+				limit = { has_province_flag = humanism_university }
+				if = {
+					limit = {
+						owner = {
+							OR = {
+								has_country_flag = renaissance_humanism_university_natural_scientist
+								university_trigger = no
+								AND = {
+									NOT = { religion = catholic }
+									NOT = { religion = protestant }
+									NOT = { religion = reformed }
+									NOT = { religion = gnostic }
+									NOT = { religion = hussite }
+								}
+							}
+						}
+					}
+					random_country = {
+						limit = {
+							university_trigger = yes
+							OR = {
+								religion = catholic
+								religion = protestant
+								religion = reformed
+								religion = gnostic
+								religion = hussite
+							}
+							NOT = { has_country_flag = renaissance_humanism_university_natural_scientist }
+							any_owned_province = {
+								OR = {
+									has_province_flag = humanist_ideas
+									has_province_flag = renaissance_ideas
+								}
+							}
+						}
+						country_event = { id = dg_humanism.016 }
+					}
+				}
+				if = {
+					limit = {
+						owner = {
+							OR = {
+								religion = catholic
+								religion = protestant
+								religion = reformed
+								religion = gnostic
+								religion = hussite
+							}
+							NOT = { has_country_flag = renaissance_humanism_university_natural_scientist }
+							university_trigger = yes
+						}
+					}
+					owner = { country_event = { id = dg_humanism.016 } }
+				}
+			}
+			if = {
+				limit = { NOT = { has_province_flag = humanism_university } }
+				if = {
+					limit = {
+						owner = {
+							OR = {
+								AND = {
+									NOT = { religion = catholic }
+									NOT = { religion = protestant }
+									NOT = { religion = reformed }
+									NOT = { religion = gnostic }
+									NOT = { religion = hussite }
+								}
+								has_country_flag = renaissance_humanism_natural_scientist
+								NOT = { advisor = natural_scientist }
+							}
+						}
+					}
+					if = {
+						limit = { has_province_flag = humanism_1 }
+						random_country = {
+							limit = {
+								advisor = natural_scientist
+								OR = {
+									religion = catholic
+									religion = protestant
+									religion = reformed
+									religion = gnostic
+									religion = hussite
+								}
+								NOT = { has_country_flag = renaissance_humanism_natural_scientist }
+								any_owned_province = {
+									OR = {
+										has_province_flag = humanist_ideas
+										has_province_flag = renaissance_ideas
+									}
+								}
+							}
+							country_event = { id = dg_humanism.017 }
+						}
+					}
+					if = {
+						limit = { has_province_flag = humanism_2 }
+						random_country = {
+							limit = {
+								advisor = natural_scientist
+								OR = {
+									religion = catholic
+									religion = protestant
+									religion = reformed
+									religion = gnostic
+									religion = hussite
+								}
+								NOT = { has_country_flag = renaissance_humanism_natural_scientist }
+								any_owned_province = {
+									OR = {
+										has_province_flag = humanist_ideas
+										has_province_flag = renaissance_ideas
+									}
+								}
+							}
+							country_event = { id = dg_humanism.018 }
+						}
+					}
+					if = {
+						limit = { has_province_flag = humanism_3 }
+						random_country = {
+							limit = {
+								advisor = natural_scientist
+								OR = {
+									religion = catholic
+									religion = protestant
+									religion = reformed
+									religion = gnostic
+									religion = hussite
+								}
+								NOT = { has_country_flag = renaissance_humanism_natural_scientist }
+								any_owned_province = {
+									OR = {
+										has_province_flag = humanist_ideas
+										has_province_flag = renaissance_ideas
+									}
+								}
+							}
+							country_event = { id = dg_humanism.019 }
+						}
+					}
+					if = {
+						limit = { has_province_flag = humanism_late }
+						random_country = {
+							limit = {
+								advisor = natural_scientist
+								OR = {
+									religion = catholic
+									religion = protestant
+									religion = reformed
+									religion = gnostic
+									religion = hussite
+								}
+								NOT = { has_country_flag = renaissance_humanism_natural_scientist }
+								any_owned_province = {
+									OR = {
+										has_province_flag = humanist_ideas
+										has_province_flag = renaissance_ideas
+									}
+								}
+							}
+							country_event = { id = dg_humanism.020 }
+						}
+					}
+				}
+				if = {
+					limit = {
+						owner = {
+							OR = {
+								religion = catholic
+								religion = protestant
+								religion = reformed
+								religion = gnostic
+								religion = hussite
+							}
+							advisor = natural_scientist
+							NOT = { has_country_flag = renaissance_humanism_natural_scientist }
+						}
+					}
+					if = {
+						limit = { has_province_flag = humanism_1 }
+						owner = { country_event = { id = dg_humanism.017 } }
+					}
+					if = {
+						limit = { has_province_flag = humanism_2 }
+						owner = { country_event = { id = dg_humanism.018 } }
+					}
+					if = {
+						limit = { has_province_flag = humanism_3 }
+						owner = { country_event = { id = dg_humanism.019 } }
+					}
+					if = {
+						limit = { has_province_flag = humanism_late }
+						owner = { country_event = { id = dg_humanism.020 } }
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_province_flag = humanism_artist }
+			if = {
+				limit = { has_province_flag = humanism_university }
+				if = {
+					limit = {
+						owner = {
+							OR = {
+								has_country_flag = renaissance_humanism_university_artist
+								university_trigger = no
+								AND = {
+									NOT = { religion = catholic }
+									NOT = { religion = protestant }
+									NOT = { religion = reformed }
+									NOT = { religion = gnostic }
+									NOT = { religion = hussite }
+								}
+							}
+						}
+					}
+					random_country = {
+						limit = {
+							university_trigger = yes
+							OR = {
+								religion = catholic
+								religion = protestant
+								religion = reformed
+								religion = gnostic
+								religion = hussite
+							}
+							NOT = { has_country_flag = renaissance_humanism_university_artist }
+							any_owned_province = {
+								OR = {
+									has_province_flag = humanist_ideas
+									has_province_flag = renaissance_ideas
+								}
+							}
+						}
+						country_event = { id = dg_humanism.021 }
+					}
+				}
+				if = {
+					limit = {
+						owner = {
+							OR = {
+								religion = catholic
+								religion = protestant
+								religion = reformed
+								religion = gnostic
+								religion = hussite
+							}
+							NOT = { has_country_flag = renaissance_humanism_university_artist }
+							university_trigger = yes
+						}
+					}
+					owner = { country_event = { id = dg_humanism.021 } }
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						owner = {
+							OR = {
+								AND = {
+									NOT = { religion = catholic }
+									NOT = { religion = protestant }
+									NOT = { religion = reformed }
+									NOT = { religion = gnostic }
+									NOT = { religion = hussite }
+								}
+								has_country_flag = renaissance_humanism_artist
+								NOT = { advisor = artist }
+							}
+						}
+					}
+					if = {
+						limit = { has_province_flag = humanism_1 }
+						random_country = {
+							limit = {
+								advisor = artist
+								OR = {
+									religion = catholic
+									religion = protestant
+									religion = reformed
+									religion = gnostic
+									religion = hussite
+								}
+								NOT = { has_country_flag = renaissance_humanism_artist }
+								any_owned_province = {
+									OR = {
+										has_province_flag = humanist_ideas
+										has_province_flag = renaissance_ideas
+									}
+								}
+							}
+							country_event = { id = dg_humanism.022 }
+						}
+					}
+					if = {
+						limit = { has_province_flag = humanism_2 }
+						random_country = {
+							limit = {
+								advisor = artist
+								OR = {
+									religion = catholic
+									religion = protestant
+									religion = reformed
+									religion = gnostic
+									religion = hussite
+								}
+								NOT = { has_country_flag = renaissance_humanism_artist }
+								any_owned_province = {
+									OR = {
+										has_province_flag = humanist_ideas
+										has_province_flag = renaissance_ideas
+									}
+								}
+							}
+							country_event = { id = dg_humanism.023 }
+						}
+					}
+					if = {
+						limit = { has_province_flag = humanism_3 }
+						random_country = {
+							limit = {
+								advisor = artist
+								OR = {
+									religion = catholic
+									religion = protestant
+									religion = reformed
+									religion = gnostic
+									religion = hussite
+								}
+								NOT = { has_country_flag = renaissance_humanism_artist }
+								any_owned_province = {
+									OR = {
+										has_province_flag = humanist_ideas
+										has_province_flag = renaissance_ideas
+									}
+								}
+							}
+							country_event = { id = dg_humanism.024 }
+						}
+					}
+					if = {
+						limit = { has_province_flag = humanism_late }
+						random_country = {
+							limit = {
+								advisor = artist
+								OR = {
+									religion = catholic
+									religion = protestant
+									religion = reformed
+									religion = gnostic
+									religion = hussite
+								}
+								NOT = { has_country_flag = renaissance_humanism_artist }
+								any_owned_province = {
+									OR = {
+										has_province_flag = humanist_ideas
+										has_province_flag = renaissance_ideas
+									}
+								}
+							}
+							country_event = { id = dg_humanism.025 }
+						}
+					}
+				}
+				if = {
+					limit = {
+						owner = {
+							OR = {
+								religion = catholic
+								religion = protestant
+								religion = reformed
+								religion = gnostic
+								religion = hussite
+							}
+							advisor = artist
+							NOT = { has_country_flag = renaissance_humanism_artist }
+						}
+					}
+					if = {
+						limit = { has_province_flag = humanism_1 }
+						owner = { country_event = { id = dg_humanism.022 } }
+					}
+					if = {
+						limit = { has_province_flag = humanism_2 }
+						owner = { country_event = { id = dg_humanism.023 } }
+					}
+					if = {
+						limit = { has_province_flag = humanism_3 }
+						owner = { country_event = { id = dg_humanism.024 } }
+					}
+					if = {
+						limit = { has_province_flag = humanism_late }
+						owner = { country_event = { id = dg_humanism.025 } }
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_province_flag = humanism_philosopher }
+			if = {
+				limit = { has_province_flag = humanism_university }
+				if = {
+					limit = {
+						owner = {
+							OR = {
+								has_country_flag = renaissance_humanism_university_philosopher
+								university_trigger = no
+								AND = {
+									NOT = { religion = catholic }
+									NOT = { religion = protestant }
+									NOT = { religion = reformed }
+									NOT = { religion = gnostic }
+									NOT = { religion = hussite }
+								}
+							}
+						}
+					}
+					random_country = {
+						limit = {
+							university_trigger = yes
+							OR = {
+								religion = catholic
+								religion = protestant
+								religion = reformed
+								religion = gnostic
+								religion = hussite
+							}
+							NOT = { has_country_flag = renaissance_humanism_university_philosopher }
+							any_owned_province = {
+								OR = {
+									has_province_flag = humanist_ideas
+									has_province_flag = renaissance_ideas
+								}
+							}
+						}
+						country_event = { id = dg_humanism.026 }
+					}
+				}
+				if = {
+					limit = {
+						owner = {
+							OR = {
+								religion = catholic
+								religion = protestant
+								religion = reformed
+								religion = gnostic
+								religion = hussite
+							}
+							NOT = { has_country_flag = renaissance_humanism_university_philosopher }
+							university_trigger = yes
+						}
+					}
+					owner = { country_event = { id = dg_humanism.026 } }
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						owner = {
+							OR = {
+								AND = {
+									NOT = { religion = catholic }
+									NOT = { religion = protestant }
+									NOT = { religion = reformed }
+									NOT = { religion = gnostic }
+									NOT = { religion = hussite }
+								}
+								has_country_flag = renaissance_humanism_philosopher
+								NOT = { advisor = philosopher }
+							}
+						}
+					}
+					if = {
+						limit = { has_province_flag = humanism_1 }
+						random_country = {
+							limit = {
+								advisor = philosopher
+								OR = {
+									religion = catholic
+									religion = protestant
+									religion = reformed
+									religion = gnostic
+									religion = hussite
+								}
+								NOT = { has_country_flag = renaissance_humanism_philosopher }
+								any_owned_province = {
+									OR = {
+										has_province_flag = humanist_ideas
+										has_province_flag = renaissance_ideas
+									}
+								}
+							}
+							country_event = { id = dg_humanism.027 }
+						}
+					}
+					if = {
+						limit = { has_province_flag = humanism_2 }
+						random_country = {
+							limit = {
+								advisor = philosopher
+								OR = {
+									religion = catholic
+									religion = protestant
+									religion = reformed
+									religion = gnostic
+									religion = hussite
+								}
+								NOT = { has_country_flag = renaissance_humanism_philosopher }
+								any_owned_province = {
+									OR = {
+										has_province_flag = humanist_ideas
+										has_province_flag = renaissance_ideas
+									}
+								}
+							}
+							country_event = { id = dg_humanism.028 }
+						}
+					}
+					if = {
+						limit = { has_province_flag = humanism_3 }
+						random_country = {
+							limit = {
+								advisor = philosopher
+								OR = {
+									religion = catholic
+									religion = protestant
+									religion = reformed
+									religion = gnostic
+									religion = hussite
+								}
+								NOT = { has_country_flag = renaissance_humanism_philosopher }
+								any_owned_province = {
+									OR = {
+										has_province_flag = humanist_ideas
+										has_province_flag = renaissance_ideas
+									}
+								}
+							}
+							country_event = { id = dg_humanism.029 }
+						}
+					}
+					if = {
+						limit = { has_province_flag = humanism_late }
+						random_country = {
+							limit = {
+								advisor = philosopher
+								OR = {
+									religion = catholic
+									religion = protestant
+									religion = reformed
+									religion = gnostic
+									religion = hussite
+								}
+								NOT = { has_country_flag = renaissance_humanism_philosopher }
+								any_owned_province = {
+									OR = {
+										has_province_flag = humanist_ideas
+										has_province_flag = renaissance_ideas
+									}
+								}
+							}
+							country_event = { id = dg_humanism.030 }
+						}
+					}
+				}
+				if = {
+					limit = {
+						owner = {
+							OR = {
+								religion = catholic
+								religion = protestant
+								religion = reformed
+								religion = gnostic
+								religion = hussite
+							}
+							advisor = philosopher
+							NOT = { has_country_flag = renaissance_humanism_philosopher }
+						}
+					}
+					if = {
+						limit = { has_province_flag = humanism_1 }
+						owner = { country_event = { id = dg_humanism.027 } }
+					}
+					if = {
+						limit = { has_province_flag = humanism_2 }
+						owner = { country_event = { id = dg_humanism.028 } }
+					}
+					if = {
+						limit = { has_province_flag = humanism_3 }
+						owner = { country_event = { id = dg_humanism.029 } }
+					}
+					if = {
+						limit = { has_province_flag = humanism_late }
+						owner = { country_event = { id = dg_humanism.030 } }
+					}
+				}
+			}
+		}
+		clr_province_flag = humanism_theologian
+		clr_province_flag = humanism_philosopher
+		clr_province_flag = humanism_artist
+		clr_province_flag = humanism_natural_scientist
+		clr_province_flag = humanism_university
+		clr_province_flag = humanism_1
+		clr_province_flag = humanism_2
+		clr_province_flag = humanism_3
+		clr_province_flag = humanism_late
+	}
+}
+
+##################
+# Humanist Ideas # 10s and 20s
+##################
+
+country_event = { #11 - Veiled Criticism of the Church
+	
+	id = dg_humanism.011
+	title = dg_humanism.011.t
+	desc = dg_humanism.011.d
+	picture = all_publishing
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		set_country_flag = renaissance_humanism_university_theologian
+	}
+	
+	option = {
+		name = dg_humanism.011.a #Call on the Church to reform itself
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = humanism
+				factor = 2
+			}
+			modifier = {
+				patriarch_authority = 0.80
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+		}
+		add_adm_power = 100
+		if = {
+			limit = { tag = PAP }
+			add_devotion = -25
+		}
+		add_papal_influence = -25
+		if = {
+			limit = { NOT = { religion = catholic } }
+			dg_reduce_legitimacy_small = yes
+		}
+		if = {
+			limit = { patriarch_authority = 0.80 }
+			add_country_modifier = { name = unhappy_church_powerful duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.60 }
+			add_country_modifier = { name = unhappy_church_strong duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.40 }
+			add_country_modifier = { name = unhappy_church_moderate duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.20 }
+			add_country_modifier = { name = unhappy_church_weak duration = 1000 }
+		}
+		else = {
+			add_country_modifier = { name = unhappy_church_impotent duration = 1000 }
+		}
+		if = {
+			limit = {
+				NOT = { is_year = 1380 }
+				NOT = { AVI = { num_of_cities = 1 papal_trigger = yes } }
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.15 } }
+				}
+			}
+			add_reform_desire = 0.0015
+		}
+		if = { #The Western Schism
+			limit = {
+				OR = {
+					is_year = 1380
+					AVI = { num_of_cities = 1 papal_trigger = yes }
+				}
+				has_casual_literacy_trigger = no
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.3 } }
+				}
+			}
+			add_reform_desire = 0.003
+		}
+		if = { #The Printing Press
+			limit = {
+				has_casual_literacy_trigger = yes
+				NOT = { is_year = 1510 } #Defeat of Conciliarism
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.6 } }
+				}
+			}
+			add_reform_desire = 0.006
+		}
+		if = { #Defeat of Conciliarism
+			limit = { is_year = 1510 }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 1.2 } }
+				}
+			}
+			add_reform_desire = 0.012
+		}
+		hidden_effect = { change_variable = { which = catholic_corruption value = 1 } }
+		if = {
+			limit = {
+				has_country_flag = renaissance
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = renaissance_ideas
+						set_province_flag = humanist_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_humanism.011.b #Read the book with interest
+		ai_chance = { factor = 60 }
+		add_adm_power = 75
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_controversy duration = 2000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = religious_controversy duration = 1600 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = religious_controversy duration = 1200 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = religious_controversy duration = 800 }
+		}
+		else = {
+			add_country_modifier = { name = religious_controversy duration = 400 }
+		}
+		if = {
+			limit = { NOT = { is_year = 1380 } }
+			random = {
+				chance = 75
+				hidden_effect = {
+					if = {
+						limit = { NOT = { is_religion_enabled = protestant } }
+						PAP = { change_variable = { which = reform_desire_humanism value = 0.10 } }
+					}
+				}
+				add_reform_desire = 0.001
+			}
+		}
+		if = { #The Western Schism
+			limit = {
+				is_year = 1380
+				NOT = { is_year = 1440 }
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.15 } }
+				}
+			}
+			add_reform_desire = 0.0015
+		}
+		if = { #The Printing Press
+			limit = {
+				is_year = 1440
+				NOT = { is_year = 1510 } #Defeat of Conciliarism
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.3 } }
+				}
+			}
+			add_reform_desire = 0.003
+		}
+		if = { #Defeat of Conciliarism
+			limit = { is_year = 1510 }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.6 } }
+				}
+			}
+			add_reform_desire = 0.006
+		}
+	}
+	option = {
+		name = dg_humanism.011.c #Burn copies of the text
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = renaissance
+				factor = 2
+			}
+			modifier = {
+				NOT = { patriarch_authority = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 1.00 }
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = religious_scandal_country_strong
+					has_country_modifier = religious_scandal_country
+				}
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = unhappy_church_powerful
+					has_country_modifier = unhappy_church_strong
+					has_country_modifier = unhappy_church_moderate
+				}
+				factor = 2
+			}
+		}
+		remove_advisor = theologian
+		add_adm_power = 50
+		if = {
+			limit = { tag = PAP }
+			add_devotion = 25
+		}
+		add_papal_influence = 25
+		dg_add_legitimacy_small = yes
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			religious_scandal_country_strong = {
+				remove_country_modifier = religious_scandal_country_strong
+			}
+			religious_scandal_country = {
+				remove_country_modifier = religious_scandal_country
+			}
+			religious_scandal_country_weak = {
+				remove_country_modifier = religious_scandal_country_weak
+			}
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			unhappy_church_powerful = {
+				remove_country_modifier = unhappy_church_powerful
+			}
+			unhappy_church_strong = {
+				remove_country_modifier = unhappy_church_strong
+			}
+			unhappy_church_moderate = {
+				remove_country_modifier = unhappy_church_moderate
+			}
+			unhappy_church_weak = {
+				remove_country_modifier = unhappy_church_weak
+			}
+			unhappy_church_impotent = {
+				remove_country_modifier = unhappy_church_impotent
+			}
+		}
+		#if = {
+		#	limit = {
+		#		has_country_modifier = religious_controversy
+		#	}
+			remove_country_modifier = religious_controversy
+		#}
+		if = {
+			limit = {
+				has_country_flag = humanism
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = humanist_ideas
+						set_province_flag = renaissance_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #12 - The Forgery of Constantine (Lorenzo Valla, 1439)
+	
+	id = dg_humanism.012
+	title = dg_humanism.012.t
+	desc = dg_humanism.012.d
+	picture = all_publishing
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		set_country_flag = renaissance_humanism_theologian
+	}
+	
+	option = {
+		name = dg_humanism.012.a #Publicly raise questions about the document
+		trigger = { NOT = { tag = PAP } }
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = humanism
+				factor = 2
+			}
+			modifier = {
+				patriarch_authority = 0.80
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+			modifier = {
+				has_country_flag = rival_of_pope
+				factor = 2
+			}
+			modifier = {
+				has_country_flag = enemy_of_pope
+				factor = 2
+			}
+			modifier = {
+				war_with = PAP
+				factor = 3
+			}
+			modifier = {
+				truce_with = PAP
+				factor = 3
+			}
+			modifier = {
+				is_rival = PAP
+				factor = 3
+			}
+			modifier = {
+				is_enemy = PAP
+				factor = 3
+			}
+			modifier = {
+				any_neighbor_country = { tag = PAP }
+				factor = 2
+			}
+		}
+		add_adm_power = 100
+		add_papal_influence = -25
+		if = {
+			limit = { tag = PAP }
+			add_devotion = -25
+		}
+		if = {
+			limit = { patriarch_authority = 0.80 }
+			add_country_modifier = { name = unhappy_church_powerful duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.60 }
+			add_country_modifier = { name = unhappy_church_strong duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.40 }
+			add_country_modifier = { name = unhappy_church_moderate duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.20 }
+			add_country_modifier = { name = unhappy_church_weak duration = 1000 }
+		}
+		else = {
+			add_country_modifier = { name = unhappy_church_impotent duration = 1000 }
+		}
+		if = {
+			limit = { piety = 0.60 }
+			add_prestige = 1
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_prestige = 2
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_prestige = 3
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_prestige = 4
+		}
+		else = {
+			add_prestige = 5
+		}
+		reverse_add_opinion = { who = PAP modifier = disobeyed_religious_leader }
+		add_opinion = { who = PAP modifier = papacy_bad }
+		if = {
+			limit = { NOT = { PAP = { has_country_flag = constantine_donation_cf_exposed } } }
+			PAP = { country_event = { id = dg_papacy.053 days = 30 } }
+		}
+		if = {
+			limit = { NOT = { is_year = 1380 } }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.15 } }
+				}
+			}
+			add_reform_desire = 0.0015
+		}
+		if = { #The Western Schism
+			limit = {
+				is_year = 1380
+				NOT = { is_year = 1440 }
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.3 } }
+				}
+			}
+			add_reform_desire = 0.003
+		}
+		if = { #The Printing Press
+			limit = {
+				is_year = 1440
+				NOT = { is_year = 1510 } #Defeat of Conciliarism
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.6 } }
+				}
+			}
+			add_reform_desire = 0.006
+		}
+		if = { #Defeat of Conciliarism
+			limit = { is_year = 1510 }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 1.2 } }
+				}
+			}
+			add_reform_desire = 0.012
+		}
+		hidden_effect = { change_variable = { which = catholic_corruption value = 1 } }
+		if = {
+			limit = {
+				has_country_flag = renaissance
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = renaissance_ideas
+						set_province_flag = humanist_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_humanism.012.b #Let the Church deal with this matter
+		trigger = { NOT = { tag = PAP } }
+		ai_chance = { factor = 60 }
+		add_adm_power = 75
+		remove_advisor = theologian
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_controversy duration = 2000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = religious_controversy duration = 1600 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = religious_controversy duration = 1200 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = religious_controversy duration = 800 }
+		}
+		else = {
+			add_country_modifier = { name = religious_controversy duration = 400 }
+		}
+		if = {
+			limit = { NOT = { is_year = 1380 } }
+			random = {
+				chance = 75
+				hidden_effect = {
+					if = {
+						limit = { NOT = { is_religion_enabled = protestant } }
+						PAP = { change_variable = { which = reform_desire_humanism value = 0.10 } }
+					}
+				}
+				add_reform_desire = 0.001
+			}
+		}
+		if = { #The Western Schism
+			limit = {
+				is_year = 1380
+				NOT = { is_year = 1440 }
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.15 } }
+				}
+			}
+			add_reform_desire = 0.0015
+		}
+		if = { #The Printing Press
+			limit = {
+				is_year = 1440
+				NOT = { is_year = 1510 } #Defeat of Conciliarism
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.3 } }
+				}
+			}
+			add_reform_desire = 0.003
+		}
+		if = { #Defeat of Conciliarism
+			limit = { is_year = 1510 }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.6 } }
+				}
+			}
+			add_reform_desire = 0.006
+		}
+	}
+	option = {
+		name = dg_humanism.012.c #Hush up the matter
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = renaissance
+				factor = 2
+			}
+			modifier = {
+				NOT = { patriarch_authority = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 1.00 }
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = religious_scandal_country_strong
+					has_country_modifier = religious_scandal_country
+				}
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = unhappy_church_powerful
+					has_country_modifier = unhappy_church_strong
+					has_country_modifier = unhappy_church_moderate
+				}
+				factor = 2
+			}
+		}
+		kill_advisor = theologian
+		add_adm_power = 50
+		add_papal_influence = 25
+		if = {
+			limit = { tag = PAP }
+			add_devotion = 25
+		}
+		dg_add_legitimacy_small = yes
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			religious_scandal_country_strong = {
+				remove_country_modifier = religious_scandal_country_strong
+			}
+			religious_scandal_country = {
+				remove_country_modifier = religious_scandal_country
+			}
+			religious_scandal_country_weak = {
+				remove_country_modifier = religious_scandal_country_weak
+			}
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			unhappy_church_powerful = {
+				remove_country_modifier = unhappy_church_powerful
+			}
+			unhappy_church_strong = {
+				remove_country_modifier = unhappy_church_strong
+			}
+			unhappy_church_moderate = {
+				remove_country_modifier = unhappy_church_moderate
+			}
+			unhappy_church_weak = {
+				remove_country_modifier = unhappy_church_weak
+			}
+			unhappy_church_impotent = {
+				remove_country_modifier = unhappy_church_impotent
+			}
+		}
+		#if = {
+		#	limit = {
+		#		has_country_modifier = religious_controversy
+		#	}
+			remove_country_modifier = religious_controversy
+		#}
+		if = {
+			limit = {
+				has_country_flag = humanism
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = humanist_ideas
+						set_province_flag = renaissance_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #13 - The Pauline Epistles (Jacques Lefèvre d'Étaples, 1512)
+	
+	id = dg_humanism.013
+	title = dg_humanism.013.t
+	desc = dg_humanism.013.d
+	picture = all_publishing
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		set_country_flag = renaissance_humanism_theologian
+	}
+	
+	option = {
+		name = dg_humanism.013.a #Offer him royal protection
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = humanism
+				factor = 2
+			}
+			modifier = {
+				patriarch_authority = 0.80
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+		}
+		add_adm_power = 100
+		add_papal_influence = -25
+		if = {
+			limit = { tag = PAP }
+			add_devotion = -25
+		}
+		if = {
+			limit = { patriarch_authority = 0.80 }
+			add_country_modifier = { name = unhappy_church_powerful duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.60 }
+			add_country_modifier = { name = unhappy_church_strong duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.40 }
+			add_country_modifier = { name = unhappy_church_moderate duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.20 }
+			add_country_modifier = { name = unhappy_church_weak duration = 1000 }
+		}
+		else = {
+			add_country_modifier = { name = unhappy_church_impotent duration = 1000 }
+		}
+		if = {
+			limit = { NOT = { is_year = 1380 } }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.15 } }
+				}
+			}
+			add_reform_desire = 0.0015
+		}
+		if = { #The Western Schism
+			limit = {
+				is_year = 1380
+				NOT = { is_year = 1440 }
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.3 } }
+				}
+			}
+			add_reform_desire = 0.003
+		}
+		if = { #The Printing Press
+			limit = {
+				is_year = 1440
+				NOT = { is_year = 1510 } #Defeat of Conciliarism
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.6 } }
+				}
+			}
+			add_reform_desire = 0.006
+		}
+		if = { #Defeat of Conciliarism
+			limit = { is_year = 1510 }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 1.2 } }
+				}
+			}
+			add_reform_desire = 0.012
+		}
+		hidden_effect = { change_variable = { which = catholic_corruption value = 1 } }
+		if = {
+			limit = {
+				has_country_flag = renaissance
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = renaissance_ideas
+						set_province_flag = humanist_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_humanism.013.b #Condemn him and his works
+		ai_chance = { factor = 60 }
+		add_adm_power = 75
+		remove_advisor = theologian
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_controversy duration = 2000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = religious_controversy duration = 1600 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = religious_controversy duration = 1200 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = religious_controversy duration = 800 }
+		}
+		else = {
+			add_country_modifier = { name = religious_controversy duration = 400 }
+		}
+		if = {
+			limit = { NOT = { is_year = 1380 } }
+			random = {
+				chance = 75
+				hidden_effect = {
+					if = {
+						limit = { NOT = { is_religion_enabled = protestant } }
+						PAP = { change_variable = { which = reform_desire_humanism value = 0.10 } }
+					}
+				}
+				add_reform_desire = 0.001
+			}
+		}
+		if = { #The Western Schism
+			limit = {
+				is_year = 1380
+				NOT = { is_year = 1440 }
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.15 } }
+				}
+			}
+			add_reform_desire = 0.0015
+		}
+		if = { #The Printing Press
+			limit = {
+				is_year = 1440
+				NOT = { is_year = 1510 } #Defeat of Conciliarism
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.3 } }
+				}
+			}
+			add_reform_desire = 0.003
+		}
+		if = { #Defeat of Conciliarism
+			limit = { is_year = 1510 }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.6 } }
+				}
+			}
+			add_reform_desire = 0.006
+		}
+	}
+	option = {
+		name = dg_humanism.013.c #Imprison him until he publicly recants
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = renaissance
+				factor = 2
+			}
+			modifier = {
+				NOT = { patriarch_authority = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 1.00 }
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = religious_scandal_country_strong
+					has_country_modifier = religious_scandal_country
+				}
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = unhappy_church_powerful
+					has_country_modifier = unhappy_church_strong
+					has_country_modifier = unhappy_church_moderate
+				}
+				factor = 2
+			}
+		}
+		kill_advisor = theologian
+		add_adm_power = 50
+		add_papal_influence = 25
+		if = {
+			limit = { tag = PAP }
+			add_devotion = 25
+		}
+		dg_add_legitimacy_small = yes
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			religious_scandal_country_strong = {
+				remove_country_modifier = religious_scandal_country_strong
+			}
+			religious_scandal_country = {
+				remove_country_modifier = religious_scandal_country
+			}
+			religious_scandal_country_weak = {
+				remove_country_modifier = religious_scandal_country_weak
+			}
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			unhappy_church_powerful = {
+				remove_country_modifier = unhappy_church_powerful
+			}
+			unhappy_church_strong = {
+				remove_country_modifier = unhappy_church_strong
+			}
+			unhappy_church_moderate = {
+				remove_country_modifier = unhappy_church_moderate
+			}
+			unhappy_church_weak = {
+				remove_country_modifier = unhappy_church_weak
+			}
+			unhappy_church_impotent = {
+				remove_country_modifier = unhappy_church_impotent
+			}
+		}
+		#if = {
+		#	limit = {
+		#		has_country_modifier = religious_controversy
+		#	}
+			remove_country_modifier = religious_controversy
+		#}
+		if = {
+			limit = {
+				has_country_flag = humanism
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = humanist_ideas
+						set_province_flag = renaissance_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #14 - The $PRIMARY_CULTURE$ Bible (Tyndale et al)
+	
+	id = dg_humanism.014
+	title = dg_humanism.014.t
+	desc = dg_humanism.014.d
+	picture = all_publishing
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		set_country_flag = renaissance_humanism_theologian
+	}
+	
+	option = {
+		name = dg_humanism.014.a #Sponsor an official translation
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = humanism
+				factor = 2
+			}
+			modifier = {
+				patriarch_authority = 0.80
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+		}
+		if = {
+			limit = { monthly_income = 100 }
+			add_treasury = -100
+		}
+		else_if = {
+			limit = { monthly_income = 10 }
+			add_years_of_income = -0.08
+		}
+		else = {
+			add_treasury = -10
+		}
+		add_adm_power = 100
+		add_papal_influence = -25
+		if = {
+			limit = { tag = PAP }
+			add_devotion = -25
+		}
+		if = {
+			limit = { patriarch_authority = 0.80 }
+			add_country_modifier = { name = unhappy_church_powerful duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.60 }
+			add_country_modifier = { name = unhappy_church_strong duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.40 }
+			add_country_modifier = { name = unhappy_church_moderate duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.20 }
+			add_country_modifier = { name = unhappy_church_weak duration = 1000 }
+		}
+		else = {
+			add_country_modifier = { name = unhappy_church_impotent duration = 1000 }
+		}
+		if = {
+			limit = { NOT = { is_year = 1380 } }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.15 } }
+				}
+			}
+			add_reform_desire = 0.0015
+		}
+		if = { #The Western Schism
+			limit = {
+				is_year = 1380
+				NOT = { is_year = 1440 }
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.3 } }
+				}
+			}
+			add_reform_desire = 0.003
+		}
+		if = { #The Printing Press
+			limit = {
+				is_year = 1440
+				NOT = { is_year = 1510 } #Defeat of Conciliarism
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.6 } }
+				}
+			}
+			add_reform_desire = 0.006
+		}
+		if = { #Defeat of Conciliarism
+			limit = { is_year = 1510 }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 1.2 } }
+				}
+			}
+			add_reform_desire = 0.012
+		}
+		hidden_effect = { change_variable = { which = catholic_corruption value = 1 } }
+		if = {
+			limit = {
+				has_country_flag = renaissance
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = renaissance_ideas
+						set_province_flag = humanist_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_humanism.014.b #Allow this translation to be published
+		ai_chance = { factor = 60 }
+		add_adm_power = 75
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_controversy duration = 2000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = religious_controversy duration = 1600 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = religious_controversy duration = 1200 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = religious_controversy duration = 800 }
+		}
+		else = {
+			add_country_modifier = { name = religious_controversy duration = 400 }
+		}
+		if = {
+			limit = { NOT = { is_year = 1380 } }
+			random = {
+				chance = 75
+				hidden_effect = {
+					if = {
+						limit = { NOT = { is_religion_enabled = protestant } }
+						PAP = { change_variable = { which = reform_desire_humanism value = 0.10 } }
+					}
+				}
+				add_reform_desire = 0.001
+			}
+		}
+		if = { #The Western Schism
+			limit = {
+				is_year = 1380
+				NOT = { is_year = 1440 }
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.15 } }
+				}
+			}
+			add_reform_desire = 0.0015
+		}
+		if = { #The Printing Press
+			limit = {
+				is_year = 1440
+				NOT = { is_year = 1510 } #Defeat of Conciliarism
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.3 } }
+				}
+			}
+			add_reform_desire = 0.003
+		}
+		if = { #Defeat of Conciliarism
+			limit = { is_year = 1510 }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.6 } }
+				}
+			}
+			add_reform_desire = 0.006
+		}
+	}
+	option = {
+		name = dg_humanism.014.c #Arrest the author on charges of heresy
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = renaissance
+				factor = 2
+			}
+			modifier = {
+				NOT = { patriarch_authority = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 1.00 }
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = religious_scandal_country_strong
+					has_country_modifier = religious_scandal_country
+				}
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = unhappy_church_powerful
+					has_country_modifier = unhappy_church_strong
+					has_country_modifier = unhappy_church_moderate
+				}
+				factor = 2
+			}
+		}
+		kill_advisor = theologian
+		add_adm_power = 50
+		add_papal_influence = 25
+		if = {
+			limit = { tag = PAP }
+			add_devotion = 25
+		}
+		dg_add_legitimacy_small = yes
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			religious_scandal_country_strong = {
+				remove_country_modifier = religious_scandal_country_strong
+			}
+			religious_scandal_country = {
+				remove_country_modifier = religious_scandal_country
+			}
+			religious_scandal_country_weak = {
+				remove_country_modifier = religious_scandal_country_weak
+			}
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			unhappy_church_powerful = {
+				remove_country_modifier = unhappy_church_powerful
+			}
+			unhappy_church_strong = {
+				remove_country_modifier = unhappy_church_strong
+			}
+			unhappy_church_moderate = {
+				remove_country_modifier = unhappy_church_moderate
+			}
+			unhappy_church_weak = {
+				remove_country_modifier = unhappy_church_weak
+			}
+			unhappy_church_impotent = {
+				remove_country_modifier = unhappy_church_impotent
+			}
+		}
+		#if = {
+		#	limit = {
+		#		has_country_modifier = religious_controversy
+		#	}
+			remove_country_modifier = religious_controversy
+		#}
+		if = {
+			limit = {
+				has_country_flag = humanism
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = humanist_ideas
+						set_province_flag = renaissance_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #15 - A New Translation (Desiderius Erasmus, 1514)
+	
+	id = dg_humanism.015
+	title = dg_humanism.015.t
+	desc = dg_humanism.015.d
+	picture = protestant_translation
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		set_country_flag = renaissance_humanism_theologian
+	}
+	
+	option = {
+		name = dg_humanism.015.a #The Church holds wrong beliefs
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = humanism
+				factor = 2
+			}
+			modifier = {
+				patriarch_authority = 0.80
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+		}
+		add_adm_power = 100
+		add_papal_influence = -25
+		if = {
+			limit = { tag = PAP }
+			add_devotion = -25
+		}
+		if = {
+			limit = { patriarch_authority = 0.80 }
+			add_country_modifier = { name = unhappy_church_powerful duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.60 }
+			add_country_modifier = { name = unhappy_church_strong duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.40 }
+			add_country_modifier = { name = unhappy_church_moderate duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.20 }
+			add_country_modifier = { name = unhappy_church_weak duration = 1000 }
+		}
+		else = {
+			add_country_modifier = { name = unhappy_church_impotent duration = 1000 }
+		}
+		if = {
+			limit = { NOT = { is_year = 1380 } }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.15 } }
+				}
+			}
+			add_reform_desire = 0.0015
+		}
+		if = { #The Western Schism
+			limit = {
+				is_year = 1380
+				NOT = { is_year = 1440 }
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.3 } }
+				}
+			}
+			add_reform_desire = 0.003
+		}
+		if = { #The Printing Press
+			limit = {
+				is_year = 1440
+				NOT = { is_year = 1510 } #Defeat of Conciliarism
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.6 } }
+				}
+			}
+			add_reform_desire = 0.006
+		}
+		if = { #Defeat of Conciliarism
+			limit = { is_year = 1510 }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 1.2 } }
+				}
+			}
+			add_reform_desire = 0.012
+		}
+		hidden_effect = { change_variable = { which = catholic_corruption value = 1 } }
+		if = {
+			limit = {
+				has_country_flag = renaissance
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = renaissance_ideas
+						set_province_flag = humanist_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_humanism.015.b #The translators were in error
+		ai_chance = { factor = 60 }
+		add_adm_power = 75
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 2000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 1600 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 1200 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 800 }
+		}
+		else = {
+			add_country_modifier = { name = religious_scandal_country_weak duration = 400 }
+		}
+		if = {
+			limit = { NOT = { is_year = 1380 } }
+			random = {
+				chance = 75
+				hidden_effect = {
+					if = {
+						limit = { NOT = { is_religion_enabled = protestant } }
+						PAP = { change_variable = { which = reform_desire_humanism value = 0.10 } }
+					}
+				}
+				add_reform_desire = 0.001
+			}
+		}
+		if = { #The Western Schism
+			limit = {
+				is_year = 1380
+				NOT = { is_year = 1440 }
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.15 } }
+				}
+			}
+			add_reform_desire = 0.0015
+		}
+		if = { #The Printing Press
+			limit = {
+				is_year = 1440
+				NOT = { is_year = 1510 } #Defeat of Conciliarism
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.3 } }
+				}
+			}
+			add_reform_desire = 0.003
+		}
+		if = { #Defeat of Conciliarism
+			limit = { is_year = 1510 }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.6 } }
+				}
+			}
+			add_reform_desire = 0.006
+		}
+	}
+	option = {
+		name = dg_humanism.015.c #This new translation is the work of the Devil
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = renaissance
+				factor = 2
+			}
+			modifier = {
+				NOT = { patriarch_authority = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 1.00 }
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = religious_scandal_country_strong
+					has_country_modifier = religious_scandal_country
+				}
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = unhappy_church_powerful
+					has_country_modifier = unhappy_church_strong
+					has_country_modifier = unhappy_church_moderate
+				}
+				factor = 2
+			}
+		}
+		kill_advisor = theologian
+		add_adm_power = 50
+		add_papal_influence = 25
+		if = {
+			limit = { tag = PAP }
+			add_devotion = 25
+		}
+		dg_add_legitimacy_small = yes
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			religious_scandal_country_strong = {
+				remove_country_modifier = religious_scandal_country_strong
+			}
+			religious_scandal_country = {
+				remove_country_modifier = religious_scandal_country
+			}
+			religious_scandal_country_weak = {
+				remove_country_modifier = religious_scandal_country_weak
+			}
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			unhappy_church_powerful = {
+				remove_country_modifier = unhappy_church_powerful
+			}
+			unhappy_church_strong = {
+				remove_country_modifier = unhappy_church_strong
+			}
+			unhappy_church_moderate = {
+				remove_country_modifier = unhappy_church_moderate
+			}
+			unhappy_church_weak = {
+				remove_country_modifier = unhappy_church_weak
+			}
+			unhappy_church_impotent = {
+				remove_country_modifier = unhappy_church_impotent
+			}
+		}
+		#if = {
+		#	limit = {
+		#		has_country_modifier = religious_controversy
+		#	}
+			remove_country_modifier = religious_controversy
+		#}
+		if = {
+			limit = {
+				has_country_flag = humanism
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = humanist_ideas
+						set_province_flag = renaissance_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #16 - Ptolemy's Geography (Jacopo d'Angelo, 1470)
+	
+	id = dg_humanism.016
+	title = dg_humanism.016.t
+	desc = dg_humanism.016.d
+	picture = all_cleric_scientist
+	
+	is_triggered_only = yes
+	
+	immediate = { set_country_flag = renaissance_humanism_university_natural_scientist }
+	
+	option = {
+		name = dg_humanism.016.a #Outfit an expedition immediately
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = humanism
+				factor = 2
+			}
+			modifier = {
+				patriarch_authority = 0.80
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { monthly_income = 10 }
+				factor = 0.7
+			}
+			modifier = {
+				num_of_loans = 1
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { treasury = 50 }
+				factor = 0.7
+			}
+		}
+		if = {
+			limit = { monthly_income = 100 }
+			add_treasury = -100
+		}
+		else_if = {
+			limit = { monthly_income = 10 }
+			add_years_of_income = -0.08
+		}
+		else = {
+			add_treasury = -10
+		}
+		random_list = {
+			60 = { add_dip_power = 200 }
+			40 = { add_prestige = -5 }
+		}
+		if = {
+			limit = { NOT = { is_year = 1380 } }
+			random = {
+				chance = 75
+				hidden_effect = {
+					if = {
+						limit = { NOT = { is_religion_enabled = protestant } }
+						PAP = { change_variable = { which = reform_desire_humanism value = 0.10 } }
+					}
+				}
+				add_reform_desire = 0.001
+			}
+		}
+		if = { #The Western Schism
+			limit = {
+				is_year = 1380
+				NOT = { is_year = 1440 }
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.15 } }
+				}
+			}
+			add_reform_desire = 0.0015
+		}
+		if = { #The Printing Press
+			limit = {
+				is_year = 1440
+				NOT = { is_year = 1510 } #Defeat of Conciliarism
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.3 } }
+				}
+			}
+			add_reform_desire = 0.003
+		}
+		if = { #Defeat of Conciliarism
+			limit = { is_year = 1510 }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.6 } }
+				}
+			}
+			add_reform_desire = 0.006
+		}
+		hidden_effect = { change_variable = { which = catholic_corruption value = 1 } }
+		if = {
+			limit = {
+				has_country_flag = renaissance
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = renaissance_ideas
+						set_province_flag = humanist_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_humanism.016.b #Publish the text
+		ai_chance = { factor = 60 }
+		if = {
+			limit = { monthly_income = 100 }
+			add_treasury = -50
+		}
+		else_if = {
+			limit = { monthly_income = 10 }
+			add_years_of_income = -0.04
+		}
+		else = {
+			add_treasury = -5
+		}
+		add_dip_power = 75
+		remove_advisor = natural_scientist
+		capital_scope = { add_province_modifier = { name = religious_scandal_province duration = 400 } }
+	}
+	option = {
+		name = dg_humanism.016.c #Condemn the text as inaccurate
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = renaissance
+				factor = 2
+			}
+		}
+		remove_advisor = natural_scientist
+		add_dip_power = 50
+		if = {
+			limit = {
+				has_country_flag = humanism
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = humanist_ideas
+						set_province_flag = renaissance_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #17 - The Third Principle of Alchemy (Paracelsus, 1530)
+	
+	id = dg_humanism.017
+	title = dg_humanism.017.t
+	desc = dg_humanism.017.d
+	picture = all_cleric_scientist
+	
+	is_triggered_only = yes
+	
+	immediate = { set_country_flag = renaissance_humanism_natural_scientist }
+	
+	option = {
+		name = dg_humanism.017.a #Make him royal physician
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = humanism
+				factor = 2
+			}
+			modifier = {
+				patriarch_authority = 0.80
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+			modifier = {
+				ADM = 5
+				factor = 0.5
+			}
+			modifier = {
+				DIP = 5
+				factor = 0.5
+			}
+			modifier = {
+				MIL = 5
+				factor = 0.5
+			}
+			modifier = {
+				ADM = 6
+				factor = 0
+			}
+			modifier = {
+				DIP = 6
+				factor = 0
+			}
+			modifier = {
+				MIL = 6
+				factor = 0
+			}
+			modifier = {
+				NOT = { ADM = 2 }
+				factor = 2
+			}
+			modifier = {
+				NOT = { DIP = 2 }
+				factor = 2
+			}
+			modifier = {
+				NOT = { MIL = 2 }
+				factor = 2
+			}
+		}
+		dg_reduce_legitimacy_small = yes
+		if = {
+			limit = { natural_scientist = 3 }
+			random_list = {
+				10 = { kill_ruler = yes }
+				90 = { add_dip_power = 150 }
+			}
+		}
+		else_if = {
+			limit = { natural_scientist = 2 }
+			random_list = {
+				20 = { kill_ruler = yes }
+				80 = { add_dip_power = 150 }
+			}
+		}
+		else = {
+			random_list = {
+				30 = { kill_ruler = yes }
+				70 = { add_dip_power = 150 }
+			}
+		}
+		capital_scope = { add_province_modifier = { name = religious_scandal_province duration = 1000 } }
+		if = {
+			limit = { NOT = { is_year = 1380 } }
+			random = {
+				chance = 75
+				hidden_effect = {
+					if = {
+						limit = { NOT = { is_religion_enabled = protestant } }
+						PAP = { change_variable = { which = reform_desire_humanism value = 0.10 } }
+					}
+				}
+				add_reform_desire = 0.001
+			}
+		}
+		if = { #The Western Schism
+			limit = {
+				is_year = 1380
+				NOT = { is_year = 1440 }
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.15 } }
+				}
+			}
+			add_reform_desire = 0.0015
+		}
+		if = { #The Printing Press
+			limit = {
+				is_year = 1440
+				NOT = { is_year = 1510 } #Defeat of Conciliarism
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.3 } }
+				}
+			}
+			add_reform_desire = 0.003
+		}
+		if = { #Defeat of Conciliarism
+			limit = { is_year = 1510 }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.6 } }
+				}
+			}
+			add_reform_desire = 0.006
+		}
+		hidden_effect = { change_variable = { which = catholic_corruption value = 1 } }
+		if = {
+			limit = {
+				has_country_flag = renaissance
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = renaissance_ideas
+						set_province_flag = humanist_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_humanism.017.b #Read his works with detached interest
+		ai_chance = { factor = 60 }
+		add_dip_power = 75
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_controversy duration = 2000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = religious_controversy duration = 1600 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = religious_controversy duration = 1200 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = religious_controversy duration = 800 }
+		}
+		else = {
+			add_country_modifier = { name = religious_controversy duration = 400 }
+		}
+	}
+	option = {
+		name = dg_humanism.017.c #Dismiss him as a quack
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = renaissance
+				factor = 2
+			}
+			modifier = {
+				NOT = { patriarch_authority = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 1.00 }
+				factor = 2
+			}
+		}
+		remove_advisor = natural_scientist
+		add_dip_power = 50
+		if = {
+			limit = {
+				has_country_flag = humanism
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = humanist_ideas
+						set_province_flag = renaissance_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #18 - The Center of the Universe (Copernicus, 1532)
+	
+	id = dg_humanism.018
+	title = dg_humanism.018.t
+	desc = dg_humanism.018.d
+	picture = all_cleric_scientist
+	
+	is_triggered_only = yes
+	
+	immediate = { set_country_flag = renaissance_humanism_natural_scientist }
+	
+	option = {
+		name = dg_humanism.018.a #Publish the manuscript immediately
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = humanism
+				factor = 2
+			}
+			modifier = {
+				patriarch_authority = 0.80
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { monthly_income = 10 }
+				factor = 0.7
+			}
+			modifier = {
+				num_of_loans = 1
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { treasury = 50 }
+				factor = 0.7
+			}
+		}
+		if = {
+			limit = { monthly_income = 100 }
+			add_treasury = -50
+		}
+		else_if = {
+			limit = { monthly_income = 10 }
+			add_years_of_income = -0.04
+		}
+		else = {
+			add_treasury = -5
+		}
+		add_dip_power = 100
+		add_papal_influence = -25
+		if = {
+			limit = { tag = PAP }
+			add_devotion = -25
+		}
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 2000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 1600 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 1200 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 800 }
+		}
+		else = {
+			add_country_modifier = { name = religious_scandal_country_weak duration = 400 }
+		}
+		if = {
+			limit = {
+				patriarch_authority = 0.20
+				NOT = { patriarch_authority = 0.40 }
+			}
+			add_country_modifier = { name = unhappy_church_weak duration = 1000 }
+		}
+		if = {
+			limit = {
+				NOT = { patriarch_authority = 0.20 }
+			}
+			add_country_modifier = { name = unhappy_church_impotent duration = 1000 }
+		}
+		if = {
+			limit = { NOT = { is_year = 1380 } }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.15 } }
+				}
+			}
+			add_reform_desire = 0.0015
+		}
+		if = { #The Western Schism
+			limit = {
+				is_year = 1380
+				NOT = { is_year = 1440 }
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.3 } }
+				}
+			}
+			add_reform_desire = 0.003
+		}
+		if = { #The Printing Press
+			limit = {
+				is_year = 1440
+				NOT = { is_year = 1510 } #Defeat of Conciliarism
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.6 } }
+				}
+			}
+			add_reform_desire = 0.006
+		}
+		if = { #Defeat of Conciliarism
+			limit = { is_year = 1510 }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 1.2 } }
+				}
+			}
+			add_reform_desire = 0.012
+		}
+		hidden_effect = { change_variable = { which = catholic_corruption value = 1 } }
+		if = {
+			limit = {
+				has_country_flag = renaissance
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = renaissance_ideas
+						set_province_flag = humanist_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_humanism.018.b #Publish the manuscript posthumously
+		ai_chance = { factor = 60 }
+		add_dip_power = 75
+		kill_advisor = natural_scientist
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_controversy duration = 2000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = religious_controversy duration = 1600 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = religious_controversy duration = 1200 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = religious_controversy duration = 800 }
+		}
+		else = {
+			add_country_modifier = { name = religious_controversy duration = 400 }
+		}
+		if = {
+			limit = { NOT = { is_year = 1380 } }
+			random = {
+				chance = 75
+				hidden_effect = {
+					if = {
+						limit = { NOT = { is_religion_enabled = protestant } }
+						PAP = { change_variable = { which = reform_desire_humanism value = 0.10 } }
+					}
+				}
+				add_reform_desire = 0.001
+			}
+		}
+		if = { #The Western Schism
+			limit = {
+				is_year = 1380
+				NOT = { is_year = 1440 }
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.15 } }
+				}
+			}
+			add_reform_desire = 0.0015
+		}
+		if = { #The Printing Press
+			limit = {
+				is_year = 1440
+				NOT = { is_year = 1510 } #Defeat of Conciliarism
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.3 } }
+				}
+			}
+			add_reform_desire = 0.003
+		}
+		if = { #Defeat of Conciliarism
+			limit = { is_year = 1510 }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.6 } }
+				}
+			}
+			add_reform_desire = 0.006
+		}
+	}
+	option = {
+		name = dg_humanism.018.c #Send the manuscript to the Vatican
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = renaissance
+				factor = 2
+			}
+			modifier = {
+				NOT = { patriarch_authority = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 1.00 }
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = religious_scandal_country_strong
+					has_country_modifier = religious_scandal_country
+				}
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = unhappy_church_powerful
+					has_country_modifier = unhappy_church_strong
+					has_country_modifier = unhappy_church_moderate
+				}
+				factor = 2
+			}
+		}
+		remove_advisor = natural_scientist
+		add_dip_power = 50
+		add_papal_influence = 25
+		if = {
+			limit = { tag = PAP }
+			add_devotion = 25
+		}
+		dg_add_legitimacy_small = yes
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			religious_scandal_country_strong = {
+				remove_country_modifier = religious_scandal_country_strong
+			}
+			religious_scandal_country = {
+				remove_country_modifier = religious_scandal_country
+			}
+			religious_scandal_country_weak = {
+				remove_country_modifier = religious_scandal_country_weak
+			}
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			unhappy_church_powerful = {
+				remove_country_modifier = unhappy_church_powerful
+			}
+			unhappy_church_strong = {
+				remove_country_modifier = unhappy_church_strong
+			}
+			unhappy_church_moderate = {
+				remove_country_modifier = unhappy_church_moderate
+			}
+			unhappy_church_weak = {
+				remove_country_modifier = unhappy_church_weak
+			}
+			unhappy_church_impotent = {
+				remove_country_modifier = unhappy_church_impotent
+			}
+		}
+		#if = {
+		#	limit = {
+		#		has_country_modifier = religious_controversy
+		#	}
+			remove_country_modifier = religious_controversy
+		#}
+		if = {
+			limit = {
+				has_country_flag = humanism
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = humanist_ideas
+						set_province_flag = renaissance_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #19 - Calculating God (Cardano, 1570)
+	
+	id = dg_humanism.019
+	title = dg_humanism.019.t
+	desc = dg_humanism.019.d
+	picture = all_cleric_scientist
+	
+	is_triggered_only = yes
+	
+	immediate = { set_country_flag = renaissance_humanism_natural_scientist }
+	
+	option = {
+		name = dg_humanism.019.a #Pay off the gambling debts
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = humanism
+				factor = 2
+			}
+			modifier = {
+				patriarch_authority = 0.80
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { monthly_income = 10 }
+				factor = 0.7
+			}
+			modifier = {
+				num_of_loans = 1
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { treasury = 50 }
+				factor = 0.7
+			}
+		}
+		if = {
+			limit = { monthly_income = 100 }
+			add_treasury = -50
+		}
+		else_if = {
+			limit = { monthly_income = 10 }
+			add_years_of_income = -0.04
+		}
+		else = {
+			add_treasury = -5
+		}
+		add_dip_power = 100
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 2000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 1600 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 1200 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 800 }
+		}
+		else = {
+			add_country_modifier = { name = religious_scandal_country_weak duration = 400 }
+		}
+		if = {
+			limit = { NOT = { is_year = 1380 } }
+			random = {
+				chance = 75
+				hidden_effect = {
+					if = {
+						limit = { NOT = { is_religion_enabled = protestant } }
+						PAP = { change_variable = { which = reform_desire_humanism value = 0.10 } }
+					}
+				}
+				add_reform_desire = 0.001
+			}
+		}
+		if = { #The Western Schism
+			limit = {
+				is_year = 1380
+				NOT = { is_year = 1440 }
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.15 } }
+				}
+			}
+			add_reform_desire = 0.0015
+		}
+		if = { #The Printing Press
+			limit = {
+				is_year = 1440
+				NOT = { is_year = 1510 } #Defeat of Conciliarism
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.3 } }
+				}
+			}
+			add_reform_desire = 0.003
+		}
+		if = { #Defeat of Conciliarism
+			limit = { is_year = 1510 }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.6 } }
+				}
+			}
+			add_reform_desire = 0.006
+		}
+		hidden_effect = { change_variable = { which = catholic_corruption value = 1 } }
+		if = {
+			limit = {
+				has_country_flag = renaissance
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = renaissance_ideas
+						set_province_flag = humanist_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_humanism.019.b #Fire the mathematician
+		ai_chance = { factor = 60 }
+		add_dip_power = 75
+		remove_advisor = natural_scientist
+		dg_reduce_prestige_small = yes
+	}
+	option = {
+		name = dg_humanism.019.c #Hand the author over to the Church
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = renaissance
+				factor = 2
+			}
+			modifier = {
+				NOT = { patriarch_authority = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 1.00 }
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = religious_scandal_country_strong
+					has_country_modifier = religious_scandal_country
+				}
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = unhappy_church_powerful
+					has_country_modifier = unhappy_church_strong
+					has_country_modifier = unhappy_church_moderate
+				}
+				factor = 2
+			}
+		}
+		kill_advisor = natural_scientist
+		add_dip_power = 50
+		add_papal_influence = 25
+		if = {
+			limit = { tag = PAP }
+			add_devotion = 25
+		}
+		dg_add_legitimacy_small = yes
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			religious_scandal_country_strong = {
+				remove_country_modifier = religious_scandal_country_strong
+			}
+			religious_scandal_country = {
+				remove_country_modifier = religious_scandal_country
+			}
+			religious_scandal_country_weak = {
+				remove_country_modifier = religious_scandal_country_weak
+			}
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			unhappy_church_powerful = {
+				remove_country_modifier = unhappy_church_powerful
+			}
+			unhappy_church_strong = {
+				remove_country_modifier = unhappy_church_strong
+			}
+			unhappy_church_moderate = {
+				remove_country_modifier = unhappy_church_moderate
+			}
+			unhappy_church_weak = {
+				remove_country_modifier = unhappy_church_weak
+			}
+			unhappy_church_impotent = {
+				remove_country_modifier = unhappy_church_impotent
+			}
+		}
+		#if = {
+		#	limit = {
+		#		has_country_modifier = religious_controversy
+		#	}
+			remove_country_modifier = religious_controversy
+		#}
+		if = {
+			limit = {
+				has_country_flag = humanism
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = humanist_ideas
+						set_province_flag = renaissance_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #20 - The Printing Press (Johann Gutenberg, 1436)
+	
+	id = dg_humanism.020
+	title = dg_humanism.020.t
+	desc = dg_humanism.020.d
+	picture = all_cleric_scientist
+	
+	is_triggered_only = yes
+	
+	immediate = { set_country_flag = renaissance_humanism_natural_scientist }
+	
+	option = {
+		name = dg_humanism.020.a #Establish a press in every town
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = humanism
+				factor = 2
+			}
+			modifier = {
+				patriarch_authority = 0.80
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { monthly_income = 10 }
+				factor = 0.7
+			}
+			modifier = {
+				num_of_loans = 1
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { treasury = 50 }
+				factor = 0.7
+			}
+		}
+		if = {
+			limit = { monthly_income = 100 }
+			add_treasury = -50
+		}
+		else_if = {
+			limit = { monthly_income = 10 }
+			add_years_of_income = -0.04
+		}
+		else = {
+			add_treasury = -5
+		}
+		add_adm_power = 50
+		add_dip_power = 50
+		if = {
+			limit = { patriarch_authority = 0.80 }
+			add_country_modifier = { name = unhappy_church_powerful duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.60 }
+			add_country_modifier = { name = unhappy_church_strong duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.40 }
+			add_country_modifier = { name = unhappy_church_moderate duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.20 }
+			add_country_modifier = { name = unhappy_church_weak duration = 1000 }
+		}
+		else = {
+			add_country_modifier = { name = unhappy_church_impotent duration = 1000 }
+		}
+		if = {
+			limit = { NOT = { is_year = 1380 } }
+			random = {
+				chance = 75
+				hidden_effect = {
+					if = {
+						limit = { NOT = { is_religion_enabled = protestant } }
+						PAP = { change_variable = { which = reform_desire_humanism value = 0.10 } }
+					}
+				}
+				add_reform_desire = 0.001
+			}
+		}
+		if = { #The Western Schism
+			limit = {
+				is_year = 1380
+				NOT = { is_year = 1440 }
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.15 } }
+				}
+			}
+			add_reform_desire = 0.0015
+		}
+		if = { #The Printing Press
+			limit = {
+				is_year = 1440
+				NOT = { is_year = 1510 } #Defeat of Conciliarism
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.3 } }
+				}
+			}
+			add_reform_desire = 0.003
+		}
+		if = { #Defeat of Conciliarism
+			limit = { is_year = 1510 }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.6 } }
+				}
+			}
+			add_reform_desire = 0.006
+		}
+		hidden_effect = { change_variable = { which = catholic_corruption value = 1 } }
+		if = {
+			limit = {
+				has_country_flag = renaissance
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = renaissance_ideas
+						set_province_flag = humanist_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_humanism.020.b #Purchase copies of the new books for our library
+		ai_chance = { factor = 60 }
+		if = {
+			limit = { monthly_income = 100 }
+			add_treasury = -25
+		}
+		else_if = {
+			limit = { monthly_income = 10 }
+			add_years_of_income = -0.02
+		}
+		else = {
+			add_treasury = -2.5
+		}
+		add_adm_power = 40
+		add_dip_power = 40
+	}
+	option = {
+		name = dg_humanism.020.c #Shut down imitation presses in $COUNTRY$
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = renaissance
+				factor = 2
+			}
+			modifier = {
+				NOT = { patriarch_authority = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 1.00 }
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = unhappy_church_powerful
+					has_country_modifier = unhappy_church_strong
+					has_country_modifier = unhappy_church_moderate
+				}
+				factor = 2
+			}
+		}
+		add_adm_power = 30
+		add_dip_power = 30
+		add_papal_influence = 10
+		if = {
+			limit = { tag = PAP }
+			add_devotion = 10
+		}
+		dg_add_legitimacy_small = yes
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			religious_scandal_country_strong = {
+				remove_country_modifier = religious_scandal_country_strong
+			}
+			religious_scandal_country = {
+				remove_country_modifier = religious_scandal_country
+			}
+			religious_scandal_country_weak = {
+				remove_country_modifier = religious_scandal_country_weak
+			}
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			unhappy_church_powerful = {
+				remove_country_modifier = unhappy_church_powerful
+			}
+			unhappy_church_strong = {
+				remove_country_modifier = unhappy_church_strong
+			}
+			unhappy_church_moderate = {
+				remove_country_modifier = unhappy_church_moderate
+			}
+			unhappy_church_weak = {
+				remove_country_modifier = unhappy_church_weak
+			}
+			unhappy_church_impotent = {
+				remove_country_modifier = unhappy_church_impotent
+			}
+		}
+		#if = {
+		#	limit = {
+		#		has_country_modifier = religious_controversy
+		#	}
+			remove_country_modifier = religious_controversy
+		#}
+		if = {
+			limit = {
+				has_country_flag = humanism
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = humanist_ideas
+						set_province_flag = renaissance_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #21 - A Masterpiece (Da Vinci, 1507)
+	
+	id = dg_humanism.021
+	title = dg_humanism.021.t
+	desc = dg_humanism.021.d
+	picture = renaissance_painters
+	
+	is_triggered_only = yes
+	
+	immediate = { set_country_flag = renaissance_humanism_university_artist }
+	
+	option = {
+		name = dg_humanism.021.a #Offer a generous stipend for this great artist to come to $CAPITAL_CITY$
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = humanism
+				factor = 2
+			}
+			modifier = {
+				patriarch_authority = 0.80
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { monthly_income = 10 }
+				factor = 0.7
+			}
+			modifier = {
+				num_of_loans = 1
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { treasury = 50 }
+				factor = 0.7
+			}
+		}
+		define_advisor = { religion = catholic type = artist skill = 3 discount = yes }
+		add_prestige = 10
+		if = {
+			limit = { monthly_income = 100 }
+			add_treasury = -100
+		}
+		else_if = {
+			limit = { monthly_income = 10 }
+			add_years_of_income = -0.08
+		}
+		else = {
+			add_treasury = -10
+		}
+		add_adm_power = 50
+		if = {
+			limit = {
+				has_country_flag = renaissance
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = renaissance_ideas
+						set_province_flag = humanist_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_humanism.021.b #Purchase the painting and display it publicly
+		ai_chance = { factor = 60 }
+		add_prestige = 5
+		if = {
+			limit = { monthly_income = 100 }
+			add_treasury = -50
+		}
+		else_if = {
+			limit = { monthly_income = 10 }
+			add_years_of_income = -0.04
+		}
+		else = {
+			add_treasury = -5
+		}
+		add_adm_power = 40
+	}
+	option = {
+		name = dg_humanism.021.c #Send artists to study the painting
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = renaissance
+				factor = 2
+			}
+			modifier = {
+				NOT = { patriarch_authority = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+		}
+		add_adm_power = 30
+	}
+}
+
+country_event = { #22 - The Statue of David (Donatello, 1408)
+	
+	id = dg_humanism.022
+	title = dg_humanism.022.t
+	desc = dg_humanism.022.d
+	picture = renaissance_painters
+	
+	is_triggered_only = yes
+	
+	immediate = { set_country_flag = renaissance_humanism_artist }
+	
+	option = {
+		name = dg_humanism.022.a #Place it in the town square
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = humanism
+				factor = 2
+			}
+			modifier = {
+				government = republic
+				factor = 2
+			}
+		}
+		add_adm_power = 50
+		add_republican_tradition = 5
+		if = {
+			limit = {
+				has_country_flag = renaissance
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = renaissance_ideas
+						set_province_flag = humanist_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_humanism.022.b #Place it in the entrance to the palace
+		ai_chance = { factor = 60 }
+		add_adm_power = 40
+		add_prestige = 10
+	}
+	option = {
+		name = dg_humanism.022.c #Place it in the cathedral
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = renaissance
+				factor = 2
+			}
+		}
+		add_adm_power = 30
+		add_papal_influence = 25
+		if = {
+			limit = { tag = PAP }
+			add_devotion = 25
+		}
+		if = {
+			limit = {
+				has_country_flag = humanism
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = humanist_ideas
+						set_province_flag = renaissance_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #23 - Bonfire of the Vanities (Botticelli, 1497)
+	
+	id = dg_humanism.023
+	title = dg_humanism.023.t
+	desc = dg_humanism.023.d
+	picture = renaissance_painters
+	
+	is_triggered_only = yes
+	
+	immediate = { set_country_flag = renaissance_humanism_artist }
+	
+	option = {
+		name = dg_humanism.023.a #Arrest this preacher
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = humanism
+				factor = 2
+			}
+			modifier = {
+				patriarch_authority = 0.80
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+		}
+		if = {
+			limit = { num_of_cities = 4 }
+			capital_scope = {
+				hidden_effect = {
+					set_variable = { which = added_unrest value = 4 }
+					add_base_unrest = yes
+				}
+				custom_tooltip = added_unrest_4
+			}
+		}
+		else_if = {
+			limit = { num_of_cities = 2 }
+			capital_scope = {
+				hidden_effect = {
+					set_variable = { which = added_unrest value = 3 }
+					add_base_unrest = yes
+				}
+				custom_tooltip = added_unrest_3
+			}
+		}
+		else = {
+			capital_scope = {
+				hidden_effect = {
+					set_variable = { which = added_unrest value = 2 }
+					add_base_unrest = yes
+				}
+				custom_tooltip = added_unrest_2
+			}
+		}
+		add_adm_power = 50
+		add_papal_influence = -10
+		if = {
+			limit = { tag = PAP }
+			add_devotion = -10
+		}
+		if = {
+			limit = { patriarch_authority = 0.80 }
+			add_country_modifier = { name = unhappy_church_powerful duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.60 }
+			add_country_modifier = { name = unhappy_church_strong duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.40 }
+			add_country_modifier = { name = unhappy_church_moderate duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.20 }
+			add_country_modifier = { name = unhappy_church_weak duration = 1000 }
+		}
+		else = {
+			add_country_modifier = { name = unhappy_church_impotent duration = 1000 }
+		}
+		if = {
+			limit = { NOT = { is_year = 1380 } }
+			random = {
+				chance = 75
+				hidden_effect = {
+					if = {
+						limit = { NOT = { is_religion_enabled = protestant } }
+						PAP = { change_variable = { which = reform_desire_humanism value = 0.10 } }
+					}
+				}
+				add_reform_desire = 0.001
+			}
+		}
+		if = { #The Western Schism
+			limit = {
+				is_year = 1380
+				NOT = { is_year = 1440 }
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.15 } }
+				}
+			}
+			add_reform_desire = 0.0015
+		}
+		if = { #The Printing Press
+			limit = {
+				is_year = 1440
+				NOT = { is_year = 1510 } #Defeat of Conciliarism
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.3 } }
+				}
+			}
+			add_reform_desire = 0.003
+		}
+		if = { #Defeat of Conciliarism
+			limit = { is_year = 1510 }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.6 } }
+				}
+			}
+			add_reform_desire = 0.006
+		}
+		hidden_effect = { change_variable = { which = catholic_corruption value = 1 } }
+		if = {
+			limit = {
+				has_country_flag = renaissance
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = renaissance_ideas
+						set_province_flag = humanist_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_humanism.023.b #Mourn this loss to art
+		ai_chance = { factor = 60 }
+		add_adm_power = 40
+		remove_advisor = artist
+		if = {
+			limit = { patriarch_authority = 0.80 }
+			add_country_modifier = { name = book_burning duration = 1000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.60 }
+			add_country_modifier = { name = book_burning duration = 800 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.40 }
+			add_country_modifier = { name = book_burning duration = 600 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.20 }
+			add_country_modifier = { name = book_burning duration = 400 }
+		}
+		else = {
+			add_country_modifier = { name = book_burning duration = 200 }
+		}
+	}
+	option = {
+		name = dg_humanism.023.c #Join in the burning
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = renaissance
+				factor = 2
+			}
+			modifier = {
+				NOT = { patriarch_authority = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 1.00 }
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = religious_scandal_country_strong
+					has_country_modifier = religious_scandal_country
+				}
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = unhappy_church_powerful
+					has_country_modifier = unhappy_church_strong
+					has_country_modifier = unhappy_church_moderate
+				}
+				factor = 2
+			}
+		}
+		remove_advisor = artist
+		add_adm_power = 30
+		add_papal_influence = 25
+		if = {
+			limit = { tag = PAP }
+			add_devotion = 25
+		}
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = book_burning duration = 4000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = book_burning duration = 3200 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = book_burning duration = 2400 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = book_burning duration = 1600 }
+		}
+		else = {
+			add_country_modifier = { name = book_burning duration = 800 }
+		}
+		dg_add_legitimacy_small = yes
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			religious_scandal_country_strong = {
+				remove_country_modifier = religious_scandal_country_strong
+			}
+			religious_scandal_country = {
+				remove_country_modifier = religious_scandal_country
+			}
+			religious_scandal_country_weak = {
+				remove_country_modifier = religious_scandal_country_weak
+			}
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			unhappy_church_powerful = {
+				remove_country_modifier = unhappy_church_powerful
+			}
+			unhappy_church_strong = {
+				remove_country_modifier = unhappy_church_strong
+			}
+			unhappy_church_moderate = {
+				remove_country_modifier = unhappy_church_moderate
+			}
+			unhappy_church_weak = {
+				remove_country_modifier = unhappy_church_weak
+			}
+			unhappy_church_impotent = {
+				remove_country_modifier = unhappy_church_impotent
+			}
+		}
+		#if = {
+		#	limit = {
+		#		has_country_modifier = religious_controversy
+		#	}
+			remove_country_modifier = religious_controversy
+		#}
+		if = {
+			limit = {
+				has_country_flag = humanism
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = humanist_ideas
+						set_province_flag = renaissance_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #24 - The Birth of Surrealism (Bosch, 1490)
+	
+	id = dg_humanism.024
+	title = dg_humanism.024.t
+	desc = dg_humanism.024.d
+	picture = renaissance_painters
+	
+	is_triggered_only = yes
+	
+	immediate = { set_country_flag = renaissance_humanism_artist }
+	
+	option = {
+		name = dg_humanism.024.a #Collect all the paintings
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = humanism
+				factor = 2
+			}
+			modifier = {
+				patriarch_authority = 0.80
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { monthly_income = 10 }
+				factor = 0.7
+			}
+			modifier = {
+				num_of_loans = 1
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { treasury = 50 }
+				factor = 0.7
+			}
+			modifier = {
+				prestige = 95
+				factor = 0.5
+			}
+		}
+		if = {
+			limit = { artist = 3 }
+			random_list = {
+				85 = { add_prestige = 20 }
+				15 = { add_prestige = -5 }
+			}
+		}
+		else_if = {
+			limit = { artist = 2 }
+			random_list = {
+				70 = { add_prestige = 20 }
+				30 = { add_prestige = -5 }
+			}
+		}
+		else = {
+			random_list = {
+				55 = { add_prestige = 20 }
+				45 = { add_prestige = -5 }
+			}
+		}
+		if = {
+			limit = { monthly_income = 100 }
+			add_treasury = -100
+		}
+		else_if = {
+			limit = { monthly_income = 10 }
+			add_years_of_income = -0.08
+		}
+		else = {
+			add_treasury = -10
+		}
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 1000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 800 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 600 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 400 }
+		}
+		else = {
+			add_country_modifier = { name = religious_scandal_country_weak duration = 200 }
+		}
+		add_adm_power = 50
+		if = {
+			limit = {
+				has_country_flag = renaissance
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = renaissance_ideas
+						set_province_flag = humanist_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_humanism.024.b #Display the painting at court
+		ai_chance = { factor = 60 }
+		add_prestige = 5
+		add_adm_power = 40
+		capital_scope = { add_province_modifier = { name = religious_scandal_province duration = 400 } }
+	}
+	option = {
+		name = dg_humanism.024.c #Get rid of this monstrosity
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = renaissance
+				factor = 2
+			}
+			modifier = {
+				NOT = { patriarch_authority = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 1.00 }
+				factor = 2
+			}
+			modifier = {
+				NOT = { monthly_income = 10 }
+				factor = 1.4
+			}
+			modifier = {
+				num_of_loans = 1
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { treasury = 50 }
+				factor = 1.4
+			}
+		}
+		if = {
+			limit = { monthly_income = 100 }
+			add_treasury = 25
+		}
+		else_if = {
+			limit = { monthly_income = 10 }
+			add_years_of_income = -0.02
+		}
+		else = {
+			add_treasury = 2.5
+		}
+		remove_advisor = artist
+		add_adm_power = 30
+		if = {
+			limit = {
+				has_country_flag = humanism
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = humanist_ideas
+						set_province_flag = renaissance_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #25 - The Birth of Mannerism (Michelangelo)
+	
+	id = dg_humanism.025
+	title = dg_humanism.025.t
+	desc = dg_humanism.025.d
+	picture = renaissance_painters
+	
+	is_triggered_only = yes
+	
+	immediate = { set_country_flag = renaissance_humanism_artist }
+	
+	option = {
+		name = dg_humanism.025.a #Display the work in all its glory
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = humanism
+				factor = 2
+			}
+			modifier = {
+				patriarch_authority = 0.80
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+		}
+		add_adm_power = 50
+		if = {
+			limit = { artist = 3 }
+			random_list = {
+				80 = { add_prestige = 10 }
+				20 = { capital_scope = { add_province_modifier = { name = religious_scandal_province duration = 1000 } } }
+			}
+		}
+		else_if = {
+			limit = { artist = 2 }
+			random_list = {
+				60 = { add_prestige = 10 }
+				40 = { capital_scope = { add_province_modifier = { name = religious_scandal_province duration = 1000 } } }
+			}
+		}
+		else = {
+			random_list = {
+				40 = { add_prestige = 10 }
+				60 = { capital_scope = { add_province_modifier = { name = religious_scandal_province duration = 1000 } } }
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = renaissance
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = renaissance_ideas
+						set_province_flag = humanist_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_humanism.025.b #Hire an apprentice to touch it up
+		ai_chance = { factor = 60 }
+		if = {
+			limit = { monthly_income = 100 }
+			add_treasury = -50
+		}
+		else_if = {
+			limit = { monthly_income = 10 }
+			add_years_of_income = -0.04
+		}
+		else = {
+			add_treasury = -5
+		}
+		add_adm_power = 40
+		remove_advisor = artist
+	}
+	option = {
+		name = dg_humanism.025.c #Begin a campaign against Classical art
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = renaissance
+				factor = 2
+			}
+			modifier = {
+				NOT = { patriarch_authority = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 1.00 }
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = religious_scandal_country_strong
+					has_country_modifier = religious_scandal_country
+				}
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = unhappy_church_powerful
+					has_country_modifier = unhappy_church_strong
+					has_country_modifier = unhappy_church_moderate
+				}
+				factor = 2
+			}
+		}
+		kill_advisor = artist
+		add_adm_power = 30
+		add_papal_influence = 10
+		if = {
+			limit = { tag = PAP }
+			add_devotion = 10
+		}
+		dg_add_legitimacy_small = yes
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			religious_scandal_country_strong = {
+				remove_country_modifier = religious_scandal_country_strong
+			}
+			religious_scandal_country = {
+				remove_country_modifier = religious_scandal_country
+			}
+			religious_scandal_country_weak = {
+				remove_country_modifier = religious_scandal_country_weak
+			}
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			unhappy_church_powerful = {
+				remove_country_modifier = unhappy_church_powerful
+			}
+			unhappy_church_strong = {
+				remove_country_modifier = unhappy_church_strong
+			}
+			unhappy_church_moderate = {
+				remove_country_modifier = unhappy_church_moderate
+			}
+			unhappy_church_weak = {
+				remove_country_modifier = unhappy_church_weak
+			}
+			unhappy_church_impotent = {
+				remove_country_modifier = unhappy_church_impotent
+			}
+		}
+		#if = {
+		#	limit = {
+		#		has_country_modifier = religious_controversy
+		#	}
+			remove_country_modifier = religious_controversy
+		#}
+		if = {
+			limit = {
+				has_country_flag = humanism
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = humanist_ideas
+						set_province_flag = renaissance_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #26 - Christian Ethics (Petrarch, Konrad Mutian, Conrad Celtis, etc.)
+	
+	id = dg_humanism.026
+	title = dg_humanism.026.t
+	desc = dg_humanism.026.d
+	picture = renaissance_humanism
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		set_country_flag = renaissance_humanism_university_philosopher
+		if = {
+			limit = { roman_culture_trigger = no }
+			custom_tooltip = no_roman_literature
+		}
+	}
+	
+	option = {
+		name = dg_humanism.026.a #Live life according to our conscience, not Church rules
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = humanism
+				factor = 2
+			}
+			modifier = {
+				patriarch_authority = 0.80
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+		}
+		add_adm_power = 100
+		add_papal_influence = -10
+		if = {
+			limit = { tag = PAP }
+			add_devotion = -10
+		}
+		custom_tooltip = excommunication_chance
+		hidden_effect = {
+			random = {
+				chance = 20
+				set_country_flag = excommunication_usurp_church
+			}
+		}
+		if = {
+			limit = { NOT = { is_year = 1380 } }
+			random = {
+				chance = 75
+				hidden_effect = {
+					if = {
+						limit = { NOT = { is_religion_enabled = protestant } }
+						PAP = { change_variable = { which = reform_desire_humanism value = 0.10 } }
+					}
+				}
+				add_reform_desire = 0.001
+			}
+		}
+		if = { #The Western Schism
+			limit = {
+				is_year = 1380
+				NOT = { is_year = 1440 }
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.15 } }
+				}
+			}
+			add_reform_desire = 0.0015
+		}
+		if = { #The Printing Press
+			limit = {
+				is_year = 1440
+				NOT = { is_year = 1510 } #Defeat of Conciliarism
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.3 } }
+				}
+			}
+			add_reform_desire = 0.003
+		}
+		if = { #Defeat of Conciliarism
+			limit = { is_year = 1510 }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.6 } }
+				}
+			}
+			add_reform_desire = 0.006
+		}
+		hidden_effect = { change_variable = { which = catholic_corruption value = 1 } }
+		if = {
+			limit = {
+				has_country_flag = renaissance
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = renaissance_ideas
+						set_province_flag = humanist_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_humanism.026.b #The classics are deeply flawed but still worth reading
+		ai_chance = { factor = 60 }
+		add_adm_power = 75
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 2000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 1600 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 1200 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 800 }
+		}
+		else = {
+			add_country_modifier = { name = religious_scandal_country_weak duration = 400 }
+		}
+	}
+	option = {
+		name = dg_humanism.026.c #Ban the reading of classics as heresy
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = renaissance
+				factor = 2
+			}
+			modifier = {
+				NOT = { patriarch_authority = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 1.00 }
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = religious_scandal_country_strong
+					has_country_modifier = religious_scandal_country
+				}
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = unhappy_church_powerful
+					has_country_modifier = unhappy_church_strong
+					has_country_modifier = unhappy_church_moderate
+				}
+				factor = 2
+			}
+		}
+		add_adm_power = 50
+		add_papal_influence = 10
+		if = {
+			limit = { tag = PAP }
+			add_devotion = 10
+		}
+		remove_advisor = philosopher
+		dg_add_legitimacy_small = yes
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			religious_scandal_country_strong = {
+				remove_country_modifier = religious_scandal_country_strong
+			}
+			religious_scandal_country = {
+				remove_country_modifier = religious_scandal_country
+			}
+			religious_scandal_country_weak = {
+				remove_country_modifier = religious_scandal_country_weak
+			}
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			unhappy_church_powerful = {
+				remove_country_modifier = unhappy_church_powerful
+			}
+			unhappy_church_strong = {
+				remove_country_modifier = unhappy_church_strong
+			}
+			unhappy_church_moderate = {
+				remove_country_modifier = unhappy_church_moderate
+			}
+			unhappy_church_weak = {
+				remove_country_modifier = unhappy_church_weak
+			}
+			unhappy_church_impotent = {
+				remove_country_modifier = unhappy_church_impotent
+			}
+		}
+		#if = {
+		#	limit = {
+		#		has_country_modifier = religious_controversy
+		#	}
+			remove_country_modifier = religious_controversy
+		#}
+		if = {
+			limit = {
+				has_country_flag = humanism
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = humanist_ideas
+						set_province_flag = renaissance_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #27 - The Trilingual College (Jean du Bellay, 1530)
+	
+	id = dg_humanism.027
+	title = dg_humanism.027.t
+	desc = dg_humanism.027.d
+	picture = all_publishing
+	
+	is_triggered_only = yes
+	
+	immediate = { set_country_flag = renaissance_humanism_philosopher }
+	
+	option = {
+		name = dg_humanism.027.a #Establish a royal library
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = humanism
+				factor = 2
+			}
+			modifier = {
+				patriarch_authority = 0.80
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { monthly_income = 10 }
+				factor = 0.7
+			}
+			modifier = {
+				num_of_loans = 1
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { treasury = 50 }
+				factor = 0.7
+			}
+		}
+		if = {
+			limit = { monthly_income = 100 }
+			add_treasury = -100
+		}
+		else_if = {
+			limit = { monthly_income = 10 }
+			add_years_of_income = -0.08
+		}
+		else = {
+			add_treasury = -10
+		}
+		add_adm_power = 100
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 2000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 1600 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 1200 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 800 }
+		}
+		else = {
+			add_country_modifier = { name = religious_scandal_country_weak duration = 400 }
+		}
+		if = {
+			limit = { NOT = { is_year = 1380 } }
+			random = {
+				chance = 75
+				hidden_effect = {
+					if = {
+						limit = { NOT = { is_religion_enabled = protestant } }
+						PAP = { change_variable = { which = reform_desire_humanism value = 0.10 } }
+					}
+				}
+				add_reform_desire = 0.001
+			}
+		}
+		if = { #The Western Schism
+			limit = {
+				is_year = 1380
+				NOT = { is_year = 1440 }
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.15 } }
+				}
+			}
+			add_reform_desire = 0.0015
+		}
+		if = { #The Printing Press
+			limit = {
+				is_year = 1440
+				NOT = { is_year = 1510 } #Defeat of Conciliarism
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.3 } }
+				}
+			}
+			add_reform_desire = 0.003
+		}
+		if = { #Defeat of Conciliarism
+			limit = { is_year = 1510 }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { is_religion_enabled = protestant } }
+					PAP = { change_variable = { which = reform_desire_humanism value = 0.6 } }
+				}
+			}
+			add_reform_desire = 0.006
+		}
+	}
+	option = {
+		name = dg_humanism.027.b #Allow the college to operate
+		ai_chance = { factor = 60 }
+		add_adm_power = 75
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_controversy duration = 2000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = religious_controversy duration = 1600 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = religious_controversy duration = 1200 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = religious_controversy duration = 800 }
+		}
+		else = {
+			add_country_modifier = { name = religious_controversy duration = 400 }
+		}
+	}
+	option = {
+		name = dg_humanism.027.c #Shut it down
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = renaissance
+				factor = 2
+			}
+			modifier = {
+				NOT = { patriarch_authority = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 1.00 }
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = religious_scandal_country_strong
+					has_country_modifier = religious_scandal_country
+				}
+				factor = 2
+			}
+			modifier = {
+				OR = {
+					has_country_modifier = unhappy_church_powerful
+					has_country_modifier = unhappy_church_strong
+					has_country_modifier = unhappy_church_moderate
+				}
+				factor = 2
+			}
+		}
+		remove_advisor = philosopher
+		add_adm_power = 50
+		add_papal_influence = 10
+		if = {
+			limit = { tag = PAP }
+			add_devotion = 10
+		}
+		dg_add_legitimacy_small = yes
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			religious_scandal_country_strong = {
+				remove_country_modifier = religious_scandal_country_strong
+			}
+			religious_scandal_country = {
+				remove_country_modifier = religious_scandal_country
+			}
+			religious_scandal_country_weak = {
+				remove_country_modifier = religious_scandal_country_weak
+			}
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			unhappy_church_powerful = {
+				remove_country_modifier = unhappy_church_powerful
+			}
+			unhappy_church_strong = {
+				remove_country_modifier = unhappy_church_strong
+			}
+			unhappy_church_moderate = {
+				remove_country_modifier = unhappy_church_moderate
+			}
+			unhappy_church_weak = {
+				remove_country_modifier = unhappy_church_weak
+			}
+			unhappy_church_impotent = {
+				remove_country_modifier = unhappy_church_impotent
+			}
+		}
+		#if = {
+		#	limit = {
+		#		has_country_modifier = religious_controversy
+		#	}
+			remove_country_modifier = religious_controversy
+		#}
+		if = {
+			limit = {
+				has_country_flag = humanism
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = humanist_ideas
+						set_province_flag = renaissance_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #28 - The Prince (Machiavelli, 1513)
+	
+	id = dg_humanism.028
+	title = dg_humanism.028.t
+	desc = dg_humanism.028.d
+	picture = renaissance_humanism
+	
+	is_triggered_only = yes
+	
+	immediate = { set_country_flag = renaissance_humanism_philosopher }
+	
+	option = {
+		name = dg_humanism.028.a #Place $PHILOSOPHER$ in charge
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = humanism
+				factor = 2
+			}
+			modifier = {
+				patriarch_authority = 0.80
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+		}
+		add_adm_power = 100
+		add_papal_influence = -10
+		if = {
+			limit = { tag = PAP }
+			add_devotion = -10
+		}
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 2000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 1600 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 1200 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 800 }
+		}
+		else = {
+			add_country_modifier = { name = religious_scandal_country_weak duration = 400 }
+		}
+		if = {
+			limit = {
+				has_country_flag = renaissance
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = renaissance_ideas
+						set_province_flag = humanist_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_humanism.028.b #Read the book in secret
+		ai_chance = { factor = 60 }
+		add_adm_power = 75
+		remove_advisor = philosopher
+	}
+	option = {
+		name = dg_humanism.028.c #Send $PHILOSOPHER$ into exile
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = renaissance
+				factor = 2
+			}
+			modifier = {
+				NOT = { patriarch_authority = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+		}
+		kill_advisor = philosopher
+		add_adm_power = 50
+		add_papal_influence = 10
+		if = {
+			limit = { tag = PAP }
+			add_devotion = 10
+		}
+		dg_add_legitimacy_small = yes
+		if = {
+			limit = {
+				has_country_flag = humanism
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = humanist_ideas
+						set_province_flag = renaissance_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #29 - Plato's Academy (Marsilio Ficino, 1439)
+	
+	id = dg_humanism.029
+	title = dg_humanism.029.t
+	desc = dg_humanism.029.d
+	picture = renaissance_humanism
+	
+	is_triggered_only = yes
+	
+	immediate = { set_country_flag = renaissance_humanism_philosopher }
+	
+	option = {
+		name = dg_humanism.029.a #Build a great academy
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = humanism
+				factor = 2
+			}
+			modifier = {
+				NOT = { monthly_income = 10 }
+				factor = 0.7
+			}
+			modifier = {
+				num_of_loans = 1
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { treasury = 50 }
+				factor = 0.7
+			}
+		}
+		define_advisor = { religion = catholic type = philosopher discount = yes }
+		if = {
+			limit = { monthly_income = 100 }
+			add_treasury = -100
+		}
+		else_if = {
+			limit = { monthly_income = 10 }
+			add_years_of_income = -0.08
+		}
+		else = {
+			add_treasury = -10
+		}
+		add_adm_power = 100
+		if = {
+			limit = { philosopher = 3 }
+			random_list = {
+				85 = { add_prestige = 10 }
+				15 = { capital_scope = {
+						hidden_effect = {
+							set_variable = { which = added_unrest value = 5 }
+							add_base_unrest = yes
+						}
+						custom_tooltip = added_unrest_5
+					} }
+			}
+		}
+		else_if = {
+			limit = { philosopher = 2 }
+			random_list = {
+				70 = { add_prestige = 10 }
+				30 = { capital_scope = {
+						hidden_effect = {
+							set_variable = { which = added_unrest value = 5 }
+							add_base_unrest = yes
+						}
+						custom_tooltip = added_unrest_5
+					} }
+			}
+		}
+		else = {
+			random_list = {
+				55 = { add_prestige = 10 }
+				45 = { capital_scope = {
+						hidden_effect = {
+							set_variable = { which = added_unrest value = 5 }
+							add_base_unrest = yes
+						}
+						custom_tooltip = added_unrest_5
+					} }
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = renaissance
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = renaissance_ideas
+						set_province_flag = humanist_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_humanism.029.b #Donate an unused building to the cause
+		ai_chance = { factor = 60 }
+		add_adm_power = 75
+		if = {
+			limit = { monthly_income = 100 }
+			add_treasury = -50
+		}
+		else_if = {
+			limit = { monthly_income = 10 }
+			add_years_of_income = -0.04
+		}
+		else = {
+			add_treasury = -5
+		}
+	}
+	option = {
+		name = dg_humanism.029.c #There is a reason the original was closed down
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = renaissance
+				factor = 2
+			}
+			modifier = {
+				NOT = { monthly_income = 10 }
+				factor = 1.4
+			}
+			modifier = {
+				num_of_loans = 1
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { treasury = 50 }
+				factor = 1.4
+			}
+		}
+		remove_advisor = philosopher
+		add_adm_power = 50
+		if = {
+			limit = {
+				has_country_flag = humanism
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = humanist_ideas
+						set_province_flag = renaissance_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #30 - The Justinian Code (Guillaume Budé, 1508, others in Germany)
+	
+	id = dg_humanism.030
+	title = dg_humanism.030.t
+	desc = dg_humanism.030.d
+	picture = renaissance_humanism
+	
+	is_triggered_only = yes
+	
+	immediate = { set_country_flag = renaissance_humanism_philosopher }
+	
+	option = {
+		name = dg_humanism.030.a #Introduce Roman Law in $COUNTRY$
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = humanism
+				factor = 2
+			}
+			modifier = {
+				patriarch_authority = 0.80
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { legitimacy = 80 }
+				factor = 0.5
+			}
+			modifier = {
+				legitimacy = 100
+				factor = 1.4
+			}
+		}
+		if = {
+			limit = { roman_culture_trigger = no }
+			custom_tooltip = no_roman_tradition
+			subtract_stability_1 = yes
+			if = {
+				limit = { philosopher = 3 }
+				random_list = {
+					15 = { add_legitimacy = -40 add_republican_tradition = -40 add_devotion = -40 }
+					85 = { add_adm_power = 200 }
+				}
+			}
+			else_if = {
+				limit = { philosopher = 2 }
+				random_list = {
+					30 = { add_legitimacy = -40 add_republican_tradition = -40 add_devotion = -40 }
+					70 = { add_adm_power = 200 }
+				}
+			}
+			else = {
+				random_list = {
+					45 = { add_legitimacy = -40 add_republican_tradition = -40 add_devotion = -40 }
+					55 = { add_adm_power = 200 }
+				}
+			}
+		}
+		if = {
+			limit = { roman_culture_trigger = yes }
+			if = {
+				limit = { philosopher = 3 }
+				random_list = {
+					15 = { add_legitimacy = -20 add_republican_tradition = -20 add_devotion = -20 }
+					85 = { add_adm_power = 200 }
+				}
+			}
+			else_if = {
+				limit = { philosopher = 2 }
+				random_list = {
+					30 = { add_legitimacy = -20 add_republican_tradition = -20 add_devotion = -20 }
+					70 = { add_adm_power = 200 }
+				}
+			}
+			else = {
+				random_list = {
+					45 = { add_legitimacy = -20 add_republican_tradition = -20 add_devotion = -20 }
+					55 = { add_adm_power = 200 }
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = renaissance
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = renaissance_ideas
+						set_province_flag = humanist_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = renaissance_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_humanism.030.b #Use the threat of it to wrest concessions at court
+		ai_chance = { factor = 60 }
+		add_adm_power = 75
+		dg_add_legitimacy = yes
+		add_republican_tradition = 5
+	}
+	option = {
+		name = dg_humanism.030.c #Reject Roman Law entirely
+		ai_chance = {
+			factor = 20
+			modifier = {
+				has_country_flag = renaissance
+				factor = 2
+			}
+			modifier = {
+				NOT = { patriarch_authority = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { stability = 0 }
+				factor = 2
+			}
+		}
+		remove_advisor = philosopher
+		add_adm_power = 50
+		random = { chance = 25 add_stability_1 = yes }
+		dg_add_legitimacy_small = yes
+		if = {
+			limit = {
+				has_country_flag = humanism
+				NOT = { has_country_flag = protestant_reaction }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						clr_province_flag = humanist_ideas
+						set_province_flag = renaissance_ideas
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_country_flag = protestant_reaction }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_flag = humanist_ideas }
+					random = {
+						chance = 50
+						change_variable = { which = heretics value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+}
+

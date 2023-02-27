@@ -1,0 +1,134 @@
+country_decisions = {
+	perpetual_treaty_eng_sco = {
+		
+		potential = {
+			tag = ENG
+			exists = SCO
+			SCO = { is_at_war = no }
+			NOT = {
+				has_opinion_modifier = {
+					modifier = perpetual_peace_treaty
+					who = SCO
+				}
+			}
+			NOT = {
+				has_opinion_modifier = {
+					modifier = perpetual_peace_refused
+					who = SCO
+				}
+			}
+			OR = {
+				has_opinion_modifier = {
+					modifier = marriage_secured_peace
+					who = SCO
+				}
+				AND = {
+					marriage_with = SCO
+					NOT = {
+						has_opinion_modifier = {
+							modifier = peace_marriage_refused
+							who = SCO
+						}
+					}
+				}
+			}
+			NOT = { has_ruler_flag = perpetual_peace_monarch }
+		}
+		allow = {
+			NOT = { truce_with = SCO }
+			dip_tech = 15
+			is_at_war = no
+			dip_power = 150
+		}
+		effect = {
+			add_dip_power = -100
+			set_ruler_flag = perpetual_peace_monarch
+			SCO = {
+				country_event = {
+					id = dynastic.1005
+					days = 15
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+	ratify_treaty_of_union = {
+		
+		potential = {
+			tag = ENG
+			senior_union_with = SCO
+			dip_tech = 35
+		}
+		allow = {
+			had_country_flag = { flag = union_of_the_crowns days = 36500 }
+			is_at_war = no
+			dip_power = 150
+			SCO = { is_at_war = no }
+		}
+		effect = {
+			inherit = SCO
+			change_tag = GBR
+			north_england_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = GBR } add_core = GBR }
+			north_england_region = { limit = { NOT = { owned_by = ROOT } } add_claim = GBR }
+			south_england_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = GBR } add_core = GBR }
+			south_england_region = { limit = { NOT = { owned_by = ROOT } } add_claim = GBR }
+			scotland_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = GBR } add_core = GBR }
+			scotland_region = { limit = { NOT = { owned_by = ROOT } } add_claim = GBR }
+			add_dip_power = -100
+			add_prestige = 20
+			GBR = { Effect_set_capital = { target=236 } }
+			add_absolutism = 10
+			if = {
+				limit = {
+					has_custom_ideas = no
+					NOT = { has_idea_group = ENG_ideas }
+				}
+				swap_national_ideas_effect = yes
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+	aquitaine_to_guyenne = {
+		potential = {
+			tag = ENG
+			overlord_of = GUY
+			any_owned_province = {
+				OR = {
+					region = aquitaine_region
+					region = languedoc_region
+					area = anjou_poitou_area
+					area = euskal_area
+				}
+			}
+		}
+		allow = {
+			is_at_war = no
+		}
+		effect = {
+			every_owned_province = {
+				limit = {
+					OR = {
+						region = aquitaine_region
+						region = languedoc_region
+						area = anjou_poitou_area
+						area = euskal_area
+					}
+				}
+				cede_province = GUY
+				GUY = { add_liberty_desire = -5 }
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+}

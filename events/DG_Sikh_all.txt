@@ -1,0 +1,2019 @@
+namespace = dg_sikhism
+#12 of 15 events finished
+
+###################
+# sikh Foundation # 00s
+###################
+
+#01 - Tolerance Movement (non-sikh)
+#02 - Sufis, Yogas and Gurus (non-sikh)
+#03 - Tolerance movement grows (non-sikh)
+#04 - The blessings of the Guru (any)
+#05 - Criticism of our faith (non-sikh only)
+#06 - Guru in chains (non-sikh only)
+#07 - The sikh Faith (non-sikh)
+#08 - sikh Militancy (non-sikh only)
+#09 - The Golden Temple (1588, any) (Amritsar, 1570)
+#10 - A movement towards toleration (notifier)
+#11 - A new faith (notifier)
+
+##################
+# sikh Countries # 10s
+##################
+
+#12 - The Future of sikhism
+#13* - Sikh Assembly
+#14* - Unfortunate Ruling
+#15* - Reht Maryada
+#16* - The Abode of God (1588-1604)
+
+####################
+# Sikh Persecution # 20s
+####################
+
+
+
+province_event = { #Tolerance Movement (1496)
+	
+	id = dg_sikhism.001
+	title = dg_sikhism.001.t
+	desc = dg_sikhism.001.d
+	picture = sikhism_guru
+	
+	trigger = {
+		indian_region_trigger = yes
+		NOT = { is_religion_enabled = sikhism }
+		NOT = { tolerance_to_this = 3 }
+		OR = {
+			religion_group = dharmic
+			religion_group = muslim
+		}
+		NOT = { PUN = { has_country_flag = third_guru } }
+		OR = {
+			check_variable = { which = sikh_followers value = 2 }
+			check_variable = { which = heretics value = 2 }
+			is_year = 1500
+		}
+		OR = { #Too easy to change culture in EU4
+			PUN = { primary_culture = ROOT }
+			area = multan_area
+			area = lahore_area
+			check_variable = { which = sikh_followers value = 2 } #sikhism event chain has already begun
+			#makes sure Sikhs will appear somewhere in India in nearly all games
+			AND = { #A divided Indian province facing turmoil
+				unrest = 5
+				NOT = { PUN = { has_country_flag = first_guru } }
+				NOT = { check_variable = { which = hinduism value = 12 } }
+				NOT = { check_variable = { which = sunni value = 12 } }
+				NOT = { check_variable = { which = shiite value = 12 } }
+				OR = {
+					religion = hinduism
+					religion = sunni
+					religion = shiite
+				}
+			}
+		}
+		owner = { has_casual_literacy_trigger = yes }
+		NOT = { religion = sikhism }
+		NOT = { any_neighbor_province = { religion = sikhism } }
+		NOT = { owner = { has_country_modifier = religious_intolerance } }
+		NOT = { owner = { has_country_modifier = religious_tolerance } }
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 41 #Only 3 provinces meet this criteria in EU4
+		
+		modifier = {
+			factor = 3
+			NOT = { PUN = { capital_scope = { culture = ROOT } } }
+		}
+		modifier = {
+			unrest = 2
+			factor = 0.7
+		}
+		modifier = {
+			owner = { NOT = { ADM = 2 } }
+			factor = 0.7
+		}
+		modifier = {
+			owner = { NOT = { stability = 0 } }
+			factor = 0.7
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			owner = { clr_country_flag = guru_arrested } #Start over again if necessary
+			PUN = { change_variable = { which = sikh_movement value = 2 } }
+			if = {
+				limit = { PUN = { has_country_flag = second_guru } }
+				PUN = { set_country_flag = third_guru }
+			}
+			if = {
+				limit = { PUN = { has_country_flag = first_guru } }
+				PUN = { set_country_flag = second_guru }
+			}
+			if = {
+				limit = { PUN = { NOT = { has_country_flag = first_guru } } }
+				owner = {
+					PUN = {
+						set_country_flag = first_guru
+						change_primary_culture = PREV
+					}
+				}
+				set_province_flag = sikhism_origins
+				every_country = {
+					limit = {
+						ai = no
+						has_country_flag = religious_news_all
+						any_known_country = { tag = ROOT }
+					}
+					country_event = { id = dg_sikhism.010 days = 30 }
+				}
+			}
+			change_variable = { which = sikh_followers value = 2 }
+		}
+	}
+	
+	option = {
+		name = dg_sikhism.001.a #Invite him to share his message in $CAPITAL$
+		ai_chance = {
+			factor = 40
+			modifier = {
+				owner = { has_country_flag = supported_sikhisms }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { NOT = { stability = -1 } }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { NOT = { stability = 1 } }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { NOT = { religious_unity = 0.80 } }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { NOT = { religious_unity = 0.60 } }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { NOT = { religious_unity = 0.40 } }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { NOT = { religious_unity = 0.20 } }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { NOT = { ADM = 2 } }
+				factor = 2
+			}
+			modifier = {
+				owner = { NOT = { ADM = 1 } }
+				factor = 2
+			}
+			modifier = { #Just in case
+				owner = { religion = sikhism }
+				factor = 10.0
+			}
+		}
+		hidden_effect = {
+			set_variable = { which = added_unrest value = -1 }
+			add_base_unrest = yes
+		}
+		custom_tooltip = added_unrest_1
+		owner = {
+			add_country_modifier = { name = religious_tolerance duration = 3000 }
+			add_piety = -0.20
+			custom_tooltip = followers_increase_large
+			set_country_flag = supported_sikhisms
+		}
+		if = {
+			limit = { PUN = { has_country_flag = third_guru } }
+			owner = { define_advisor = { religion = sikhism type = theologian name = "Guru Amar Das" skill = 3 discount = yes } }
+		}
+		if = {
+			limit = { PUN = { has_country_flag = second_guru NOT = { has_country_flag = third_guru } } }
+			owner = { define_advisor = { religion = sikhism type = theologian name = "Guru Angad" skill = 3 discount = yes } }
+		}
+		if = {
+			limit = { PUN = { NOT = { has_country_flag = second_guru } } }
+			owner = { define_advisor = { religion = sikhism type = theologian name = "Guru Nanak" skill = 3 discount = yes } }
+		}
+		if = {
+			limit = { owner = { NOT = { ADM = 2 } } }
+			owner = { change_adm = 1 }
+		}
+		hidden_effect = { change_variable = { which = sikh_followers value = 2 } }
+	}
+	option = {
+		name = dg_sikhism.001.b #Ignore such foolishness
+		ai_chance = {
+			factor = 25
+			modifier = { #Just in case
+				owner = { religion = sikhism }
+				factor = 0.2
+			}
+		}
+		owner = {
+			add_prestige = 1
+			custom_tooltip = followers_increase_small
+		}
+		hidden_effect = {
+			set_variable = { which = added_unrest value = -1 }
+			add_base_unrest = yes
+		}
+		custom_tooltip = added_unrest_1
+		hidden_effect = { change_variable = { which = sikh_followers value = 1 } }
+	}
+	option = {
+		name = dg_sikhism.001.c #Persecute the movement in the name of God
+		ai_chance = {
+			factor = 35
+			modifier = { #Just in case
+				owner = { religion = sikhism }
+				factor = 0
+			}
+			modifier = {
+				owner = { has_country_flag = supported_sikhisms }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { piety = 0.60 }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { piety = 0.20 }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { NOT = { piety = -0.20 } }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { NOT = { piety = -0.60 } }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { religious_unity = 1.00 }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { religious_unity = 0.80 }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { religious_unity = 0.60 }
+				factor = 1.4
+			}
+		}
+		hidden_effect = {
+			set_variable = { which = added_unrest value = 2 }
+			add_base_unrest = yes
+		}
+		custom_tooltip = added_unrest_2
+		owner = { add_country_modifier = { name = religious_intolerance duration = 3000 } }
+	}
+}
+
+province_event = { #Sufis, Yogas and Gurus (1520)
+	
+	id = dg_sikhism.002
+	title = dg_sikhism.002.t
+	desc = dg_sikhism.002.d
+	picture = sikhism_guru
+	
+	trigger = {
+		PUN = { check_variable = { which = sikh_movement value = 1 } }
+		OR = {
+			has_province_flag = sikhism_origins
+			check_variable = { which = sikh_followers value = 2 }
+			any_neighbor_province = { check_variable = { which = sikh_followers value = 4 } }
+		}
+		NOT = { is_religion_enabled = sikhism }
+		NOT = { has_province_flag = guru_travels }
+		NOT = { PUN = { has_country_flag = sikhism_militancy } }
+		NOT = { owner = { has_country_flag = guru_arrested } }
+		OR = {
+			religion_group = dharmic
+			religion_group = muslim
+		}
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 83 #Starts slow, gets faster as time goes on and sikhisms get more numerous
+		
+		modifier = {
+			tolerance_to_this = 3
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { tolerance_to_this = 0 }
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { tolerance_to_this = -2 }
+			factor = 0.7
+		}
+		modifier = {
+			has_province_flag = sikhism_origins
+			factor = 0.5
+		}
+		modifier = {
+			check_variable = { which = sikh_followers value = 2 }
+			factor = 0.7
+		}
+		modifier = {
+			check_variable = { which = sikh_followers value = 4 }
+			factor = 0.7
+		}
+		modifier = {
+			check_variable = { which = sikh_followers value = 6 }
+			factor = 0.7
+		}
+		modifier = {
+			check_variable = { which = sikh_followers value = 8 }
+			factor = 0.7
+		}
+		modifier = {
+			check_variable = { which = sikh_followers value = 10 }
+			factor = 0.7
+		}
+		modifier = {
+			check_variable = { which = sikh_followers value = 12 }
+			factor = 0.7
+		}
+		modifier = {
+			owner = { has_country_modifier = religious_intolerance }
+			factor = 1.4
+		}
+		modifier = {
+			owner = { has_country_modifier = religious_tolerance }
+			factor = 0.7
+		}
+		modifier = {
+			owner = { religion = sikhism }
+			factor = 0.5
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			PUN = { change_variable = { which = sikh_movement value = 1 } }
+			if = { #stronger near the epicenter
+				limit = {
+					OR = {
+						NOT = { any_neighbor_province = { has_province_flag = sikhism_origins } }
+						has_province_flag = guru_travels_begin
+					}
+				}
+				set_province_flag = guru_travels
+				clr_province_flag = guru_travels_begin
+			}
+			if = {
+				limit = { any_neighbor_province = { has_province_flag = sikhism_origins } }
+				set_province_flag = guru_travels_begin
+			}
+		}
+	}
+	
+	option = {
+		name = dg_sikhism.002.a #Turn a blind eye to the sect
+		ai_chance = {
+			factor = 60
+			modifier = {
+				owner = { sikhism = 3 }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { sikhism = 2 }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { sikhism = 1 }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { NOT = { sikhism = 0 } }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { NOT = { sikhism = -1 } }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { NOT = { sikhism = -2 } }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { has_country_modifier = religious_tolerance }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { has_country_modifier = religious_intolerance }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { religion = sikhism }
+				factor = 0.2
+			}
+		}
+		owner = {
+			random_owned_province = {
+				limit = {
+					OR = {
+						any_neighbor_province = { has_province_flag = sikhism_origins }
+						any_neighbor_province = { check_variable = { which = sikh_followers value = 2 } }
+					}
+				}
+				hidden_effect = {
+					set_variable = { which = added_unrest value = -1 }
+					add_base_unrest = yes
+				}
+				custom_tooltip = added_unrest_1
+				custom_tooltip = followers_increase_large
+				hidden_effect = { change_variable = { which = sikh_followers value = 3 } }
+			}
+		}
+	}
+	option = {
+		name = dg_sikhism.002.b #Frown upon this movement
+		ai_chance = {
+			factor = 20
+			modifier = {
+				owner = { has_country_flag = supported_sikhisms }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { sikhism = 3 }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { sikhism = 2 }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { sikhism = 1 }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { NOT = { sikhism = 0 } }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { NOT = { sikhism = -1 } }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { NOT = { sikhism = -2 } }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { has_country_modifier = religious_tolerance }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { has_country_modifier = religious_intolerance }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { NOT = { num_of_cities = 10 } }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { advisor = theologian }
+				factor = 0.7
+			}
+		}
+		if = {
+			limit = { check_variable = { which = sikh_followers value = 10 } }
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 3 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_3
+		}
+		else_if = {
+			limit = { check_variable = { which = sikh_followers value = 8 } }
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 2 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_2
+		}
+		else_if = {
+			limit = { check_variable = { which = sikh_followers value = 6 } }
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 2 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_2
+		}
+		else_if = {
+			limit = { check_variable = { which = sikh_followers value = 4 } }
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 1 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_1
+		}
+		else_if = {
+			limit = { check_variable = { which = sikh_followers value = 2 } }
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 1 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_1
+		}
+		if = {
+			limit = { owner = { has_country_modifier = religious_tolerance } }
+			owner = {
+				remove_country_modifier = religious_tolerance
+				add_piety = 0.20
+			}
+		}
+		if = {
+			limit = { owner = { has_country_flag = supported_sikhisms advisor = theologian } }
+			owner = { remove_advisor = theologian }
+		}
+		owner = {
+			if = {
+				limit = { NOT = { has_country_modifier = religious_intolerance } }
+				add_country_modifier = { name = religious_intolerance duration = 3000 }
+				add_piety = 0.20
+			}
+			hidden_effect = { clr_country_flag = supported_sikhisms }
+		}
+	}
+	option = {
+		name = dg_sikhism.002.c #Offer the movement state support
+		ai_chance = {
+			factor = 20
+			modifier = {
+				owner = { religion = sikhism }
+				factor = 10.0
+			}
+			modifier = {
+				owner = { has_country_flag = supported_sikhisms }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { NOT = { any_owned_province = { check_variable = { which = sikh_followers value = 4 } } } }
+				factor = 0
+			}
+			modifier = {
+				owner = { NOT = { any_owned_province = { check_variable = { which = sikh_followers value = 6 } } } }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { NOT = { any_owned_province = { check_variable = { which = sikh_followers value = 8 } } } }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { any_owned_province = { check_variable = { which = sikh_followers value = 12 } } }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { NOT = { num_of_cities = 2 } }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { NOT = { num_of_cities = 4 } }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { num_of_cities = 8 }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { num_of_cities = 12 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { owner = { treasury = 25 } }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { owner = { treasury = 50 } }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { treasury = 200 }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { treasury = 400 }
+				factor = 1.4
+			}
+		}
+		owner = {
+			hidden_effect = { set_country_flag = supported_sikhisms }
+			add_treasury = -25
+			add_prestige = 5
+			if = {
+				limit = { NOT = { has_country_modifier = religious_tolerance } }
+				add_country_modifier = { name = religious_tolerance duration = 3000 }
+				add_piety = -0.20
+			}
+			random_owned_province = {
+				limit = {
+					OR = {
+						any_neighbor_province = { has_province_flag = sikhism_origins }
+						any_neighbor_province = { check_variable = { which = sikh_followers value = 2 } }
+					}
+				}
+				hidden_effect = {
+					set_variable = { which = added_unrest value = -2 }
+					add_base_unrest = yes
+				}
+				custom_tooltip = added_unrest_2
+				custom_tooltip = followers_increase_large
+				hidden_effect = { change_variable = { which = sikh_followers value = 3 } }
+			}
+		}
+	}
+}
+
+province_event = { #Tolerance movement grows (1539)
+	
+	id = dg_sikhism.003
+	title = dg_sikhism.003.t
+	desc = dg_sikhism.003.d
+	picture = sikhism_guru
+	
+	trigger = {
+		check_variable = { which = sikh_followers value = 4 }
+		NOT = { is_religion_enabled = sikhism }
+		NOT = { PUN = { has_country_flag = gurmukhi } }
+		NOT = { PUN = { has_country_flag = sikhism_militancy } }
+		OR = {
+			owner = { sikhism = 0 }
+			owner = { has_country_modifier = religious_tolerance }
+			owner = { has_country_flag = supported_sikhisms }
+			owner = { theologian = 3 }
+		}
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 10
+		
+		
+		modifier = {
+			NOT = { owner = { sikhism = 0 } }
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { owner = { sikhism = -1 } }
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { owner = { sikhism = -2 } }
+			factor = 1.4
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			PUN = { set_country_flag = gurmukhi }
+			change_variable = { which = sikh_followers value = 2 }
+			PUN = { change_variable = { which = sikh_movement value = 1 } }
+		}
+	}
+	
+	option = {
+		name = dg_sikhism.003.a #A harmless and noble goal
+		ai_chance = {
+			factor = 50
+			modifier = {
+				tolerance_to_this = 3
+				factor = 1.4
+			}
+			modifier = {
+				tolerance_to_this = 1
+				factor = 1.4
+			}
+			modifier = {
+				tolerance_to_this = -1
+				factor = 1.4
+			}
+			modifier = {
+				owner = { has_country_modifier = religious_tolerance }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { has_country_modifier = religious_intolerance }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { has_country_flag = guru_arrested }
+				factor = 0.1
+			}
+		}
+		hidden_effect = {
+			set_variable = { which = added_unrest value = -1 }
+			add_base_unrest = yes
+		}
+		custom_tooltip = added_unrest_1
+		custom_tooltip = followers_increase_small
+		hidden_effect = { change_variable = { which = sikh_followers value = 1 } }
+		if = {
+			limit = { owner = { has_country_flag = guru_arrested } }
+			owner = { add_legitimacy = -5 }
+		}
+	}
+	option = {
+		name = dg_sikhism.003.b #Offer state support
+		ai_chance = {
+			factor = 25
+			modifier = {
+				tolerance_to_this = 3
+				factor = 1.4
+			}
+			modifier = {
+				tolerance_to_this = 1
+				factor = 1.4
+			}
+			modifier = {
+				tolerance_to_this = -1
+				factor = 1.4
+			}
+			modifier = {
+				owner = { has_country_modifier = religious_tolerance }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { has_country_modifier = religious_intolerance }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { has_country_flag = guru_arrested }
+				factor = 0
+			}
+		}
+		custom_tooltip = followers_increase_large
+		hidden_effect = { change_variable = { which = sikh_followers value = 2 } }
+		hidden_effect = {
+			set_variable = { which = added_unrest value = -1 }
+			add_base_unrest = yes
+		}
+		custom_tooltip = added_unrest_1
+		random_neighbor_province = {
+			limit = {
+				OR = {
+					owned_by = ROOT
+					any_neighbor_province = { has_province_flag = sikhism_origins }
+				}
+			}
+			hidden_effect = { change_variable = { which = sikh_followers value = 1 } }
+			hidden_effect = {
+				set_variable = { which = added_unrest value = -1 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_1
+		}
+		if = {
+			limit = { owner = { has_country_flag = guru_arrested } }
+			owner = { add_legitimacy = -10 }
+		}
+	}
+	option = {
+		name = dg_sikhism.003.c #Ban the movement in our lands
+		ai_chance = { factor = 25 }
+		owner = {
+			every_owned_province = {
+				if = {
+					limit = { check_variable = { which = sikh_followers value = 10 } }
+					hidden_effect = {
+						set_variable = { which = added_unrest value = 5 }
+						add_base_unrest = yes
+					}
+					custom_tooltip = added_unrest_5
+				}
+				else_if = {
+					limit = { check_variable = { which = sikh_followers value = 8 } }
+					hidden_effect = {
+						set_variable = { which = added_unrest value = 4 }
+						add_base_unrest = yes
+					}
+					custom_tooltip = added_unrest_4
+				}
+				else_if = {
+					limit = { check_variable = { which = sikh_followers value = 6 } }
+					hidden_effect = {
+						set_variable = { which = added_unrest value = 3 }
+						add_base_unrest = yes
+					}
+					custom_tooltip = added_unrest_3
+				}
+				else_if = {
+					limit = { check_variable = { which = sikh_followers value = 4 } }
+					hidden_effect = {
+						set_variable = { which = added_unrest value = 2 }
+						add_base_unrest = yes
+					}
+					custom_tooltip = added_unrest_2
+				}
+				else_if = {
+					limit = { check_variable = { which = sikh_followers value = 2 } }
+					hidden_effect = {
+						set_variable = { which = added_unrest value = 1 }
+						add_base_unrest = yes
+					}
+					custom_tooltip = added_unrest_1
+				}
+			}
+		}
+	}
+}
+
+country_event = { #The Blessings of the Guru
+	
+	id = dg_sikhism.004
+	title = dg_sikhism.004.t
+	desc = dg_sikhism.004.d
+	picture = sikhism_guru_2
+	
+	trigger = {
+		PUN = { check_variable = { which = sikh_movement value = 1 } }
+		OR = {
+			sikhism = 0
+			has_country_modifier = religious_tolerance
+		}
+		OR = {
+			religion_group = dharmic
+			religion_group = muslim
+		}
+		OR = {
+			NOT = { stability = -1 }
+			has_disaster = civil_war
+			war_exhaustion = 10
+			NOT = { legitimacy = 50 }
+		}
+		OR = {
+			any_owned_province = { has_province_flag = sikhism_origins }
+			any_owned_province = { check_variable = { which = sikhism value = 6 } }
+			any_owned_province = { check_variable = { which = sikh_followers value = 6 } }
+		}
+		NOT = { is_religion_enabled = sikhism }
+		NOT = { PUN = { has_country_flag = sikhism_militancy } }
+		NOT = { has_country_flag = gurus_blessing } #Removed upon new ruler
+		NOT = { has_country_flag = guru_arrested }
+		piety = -0.60
+	}
+	
+	mean_time_to_happen = {
+		
+		months = 50
+		
+		modifier = {
+			religion = sikhism
+			factor = 0.5
+		}
+		modifier = {
+			NOT = { legitimacy = 50 }
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { stability = -1 }
+			factor = 0.7
+		}
+		modifier = {
+			war_exhaustion = 10
+			factor = 0.7
+		}
+		modifier = {
+			has_disaster = civil_war
+			factor = 0.7
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			#Checks how powerful the sikhs are in your country
+			PUN = { change_variable = { which = sikh_movement value = 1 } }
+			every_owned_province = {
+				owner = { change_variable = { which = sikh_power value = -1 } }
+				if = {
+					limit = { check_variable = { which = sikh_followers value = 10 } }
+					owner = { change_variable = { which = sikh_power value = 5 } }
+				}
+				else_if = {
+					limit = { check_variable = { which = sikh_followers value = 8 } }
+					owner = { change_variable = { which = sikh_power value = 4 } }
+				}
+				else_if = {
+					limit = { check_variable = { which = sikh_followers value = 6 } }
+					owner = { change_variable = { which = sikh_power value = 3 } }
+				}
+				else_if = {
+					limit = { check_variable = { which = sikh_followers value = 4 } }
+					owner = { change_variable = { which = sikh_power value = 2 } }
+				}
+				else_if = {
+					limit = { check_variable = { which = sikh_followers value = 2 } }
+					owner = { change_variable = { which = sikh_power value = 1 } }
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = dg_sikhism.004.a #Seek out his support
+		ai_chance = {
+			factor = 40
+			modifier = {
+				NOT = { stability = 0 }
+				factor = 1.4
+			}
+			modifier = {
+				has_disaster = civil_war
+				factor = 1.4
+			}
+			modifier = {
+				war_exhaustion = 10
+				factor = 1.4
+			}
+			modifier = {
+				war_exhaustion = 15
+				factor = 1.4
+			}
+			modifier = {
+				war_exhaustion = 20
+				factor = 1.4
+			}
+			modifier = {
+				has_country_modifier = religious_tolerance
+				factor = 1.4
+			}
+			modifier = {
+				sikhism = 0
+				factor = 1.4
+			}
+		}
+		every_owned_province = {
+			limit = {
+				OR = {
+					any_neighbor_province = { has_province_flag = sikhism_origins }
+					check_variable = { which = sikh_followers value = 2 }
+				}
+			}
+			hidden_effect = { change_variable = { which = sikh_followers value = 3 } }
+			hidden_effect = {
+				set_variable = { which = added_unrest value = -1 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_1
+		}
+		if = {
+			limit = { check_variable = { which = sikh_power value = 4 } }
+			add_stability_1 = yes
+			add_war_exhaustion = -4
+			add_legitimacy = 8
+		}
+		else_if = {
+			limit = { check_variable = { which = sikh_power value = 3 } }
+			add_stability_1 = yes
+			add_war_exhaustion = -3
+			add_legitimacy = 6
+		}
+		else_if = {
+			limit = { check_variable = { which = sikh_power value = 2 } }
+			add_war_exhaustion = -2
+			add_legitimacy = 4
+		}
+		else_if = {
+			limit = { check_variable = { which = sikh_power value = 1 } }
+			add_war_exhaustion = -1
+			add_legitimacy = 2
+		}
+		if = {
+			limit = { has_country_modifier = religious_intolerance }
+			remove_country_modifier = religious_intolerance
+			add_piety = -0.20
+		}
+		else = {
+			add_country_modifier = { name = religious_tolerance duration = 3000 }
+			add_piety = -0.20
+		}
+		hidden_effect = {
+			set_country_flag = gurus_blessing
+			set_variable = { which = sikh_power value = 0 }
+		}
+	}
+	option = {
+		name = dg_sikhism.004.b #We have no need of his support
+		ai_chance = {
+			factor = 60
+			modifier = {
+				religion = sikhism
+				factor = 0
+			}
+		}
+		hidden_effect = { set_country_flag = gurus_blessing }
+		if = {
+			limit = { piety = 0.60 }
+			add_prestige = 4
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_prestige = 3
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_prestige = 2
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_prestige = 1
+		}
+		hidden_effect = { set_variable = { which = sikh_power value = 0 } }
+	}
+}
+
+
+country_event = { #Criticism of our faith
+	
+	id = dg_sikhism.005
+	title = dg_sikhism.005.t
+	desc = dg_sikhism.005.d
+	picture = sikhism_guru
+	
+	trigger = {
+		PUN = { check_variable = { which = sikh_movement value = 1 } }
+		OR = {
+			religion_group = dharmic
+			religion_group = muslim
+		}
+		OR = {
+			has_country_flag = religious_intolerance
+			NOT = { sikhism = 0 }
+		}
+		NOT = { is_religion_enabled = sikhism }
+		OR = {
+			any_owned_province = { has_province_flag = sikhism_origins }
+			any_owned_province = { check_variable = { which = sikhism value = 6 } }
+			any_owned_province = { check_variable = { which = sikh_followers value = 6 } }
+		}
+		NOT = { religion = sikhism }
+		NOT = { PUN = { has_country_flag = sikhism_militancy } }
+		NOT = { has_country_flag = gurus_blessing } #Removed upon new ruler
+		NOT = { has_country_flag = guru_arrested }
+		piety = -0.60
+	}
+	
+	mean_time_to_happen = { years = 6 }
+	
+	immediate = {
+		hidden_effect = {
+			PUN = { change_variable = { which = sikh_movement value = 1 } }
+		}
+	}
+	
+	option = {
+		name = dg_sikhism.005.a #Let him speak his mind
+		ai_chance = {
+			factor = 50
+			modifier = {
+				has_country_modifier = religious_tolerance
+				factor = 1.4
+			}
+			modifier = {
+				has_country_modifier = religious_intolerance
+				factor = 0.7
+			}
+		}
+		if = {
+			limit = { piety = 0.60 }
+			add_prestige = -4
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_prestige = -3
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_prestige = -2
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_prestige = -1
+		}
+		if = {
+			limit = { check_variable = { which = ulema value = 2 } }
+			add_legitimacy = -5
+		}
+		every_owned_province = {
+			limit = {
+				OR = {
+					any_neighbor_province = { has_province_flag = sikhism_origins }
+					check_variable = { which = sikh_followers value = 2 }
+				}
+			}
+			custom_tooltip = followers_increase_large
+			hidden_effect = { change_variable = { which = sikh_followers value = 3 } }
+		}
+	}
+	option = {
+		name = dg_sikhism.005.b #Throw him in chains
+		ai_chance = { factor = 50 }
+		if = {
+			limit = { has_country_flag = supported_sikhisms advisor = theologian }
+			remove_advisor = theologian
+		}
+		hidden_effect = {
+			clr_country_flag = supported_sikhisms
+			if = {
+				limit = { any_owned_province = { check_variable = { which = sikh_followers value = 8 } } }
+				set_country_flag = guru_arrested
+			}
+		}
+		if = {
+			limit = { has_country_modifier = religious_tolerance }
+			remove_country_modifier = religious_tolerance
+			add_piety = 0.20
+		}
+		if = {
+			limit = { NOT = { has_country_modifier = religious_intolerance } }
+			add_country_modifier = { name = religious_intolerance duration = 3000 }
+			add_piety = 0.20
+		}
+	}
+}
+
+country_event = { #Guru in chains
+	
+	id = dg_sikhism.006
+	title = dg_sikhism.006.t
+	desc = dg_sikhism.006.d
+	picture = sikhism_guru_2
+	
+	trigger = {
+		has_country_flag = guru_arrested
+		NOT = { is_religion_enabled = sikhism }
+		NOT = { PUN = { has_country_flag = sikhism_militancy } }
+	}
+	
+	
+	mean_time_to_happen = { months = 1 }
+	
+	immediate = { hidden_effect = { PUN = { change_variable = { which = sikh_movement value = 5 } } } }
+	
+	option = {
+		name = dg_sikhism.006.a #Banish him from our lands
+		ai_chance = {
+			factor = 60
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.20
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.20 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 1.4
+			}
+		}
+		hidden_effect = {
+			set_country_flag = expulsion_sikhism
+			every_owned_province = {
+				limit = { check_variable = { which = sikh_followers value = 1 } }
+				change_variable = { which = sikh_followers value = -1 }
+				change_variable = { which = sikhism_refugees value = 1 }
+			}
+		}
+		if = {
+			limit = {
+				piety = 0.20
+				NOT = { piety = 0.60 }
+			}
+			add_legitimacy = 1
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_legitimacy = 2
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_legitimacy = 3
+		}
+		else = {
+			add_legitimacy = 4
+		}
+	}
+	option = {
+		name = dg_sikhism.006.b #Execute this unrepentant heretic
+		ai_chance = { factor = 40 }
+		hidden_effect = { PUN = { set_country_flag = sikhism_militancy } }
+		if = {
+			limit = { piety = 0.60 }
+			add_prestige = 4
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_prestige = 3
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_prestige = 2
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_prestige = 1
+		}
+	}
+}
+
+country_event = { #The Sikh Faith
+	
+	id = dg_sikhism.007
+	title = dg_sikhism.007.t
+	desc = dg_sikhism.007.d
+	picture = sikhism_guru_2
+	
+	trigger = {
+		OR = {
+			PUN = { check_variable = { which = sikh_movement value = 30 } }
+			PUN = { has_country_flag = sikhism_militancy }
+		}
+		NOT = { is_religion_enabled = sikhism }
+		PUN = { has_country_flag = gurmukhi }
+		any_owned_province = { check_variable = { which = sikh_followers value = 4 } }
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 20
+		
+		modifier = { #Players like to play around with sikhismism
+			ai = no
+			factor = 0.2
+		}
+	}
+	
+	immediate = {
+		enable_religion = sikhism
+		custom_tooltip = sikhisms_appear
+		hidden_effect = {
+			PUN = { set_variable = { which = sikh_movement value = 0 } }
+			every_country = {
+				limit = {
+					ai = no
+					OR = {
+						any_owned_province = { check_variable = { which = sikhism value = 1 } }
+						AND = {
+							has_country_flag = religious_news_major
+							OR = {
+								religion_group = dharmic
+								religion_group = muslim
+							}
+							is_neighbor_of = ROOT
+						}
+						AND = {
+							has_country_flag = religious_news_trivial
+							OR = {
+								alliance_with = ROOT
+								war_with = ROOT
+								is_neighbor_of = ROOT
+								truce_with = ROOT
+								marriage_with = ROOT
+								religion_group = dharmic
+							}
+						}
+						AND = {
+							has_country_flag = religious_news_all
+							any_known_country = { tag = ROOT }
+						}
+					}
+				}
+				country_event = { id = dg_sikhism.011 days = 30 }
+			}
+			regiongroup = {
+				region = {
+					limit = { check_variable = { which = sikh_followers value = 8 } }
+					change_variable = { which = sikh_followers value = -8 }
+					change_variable = { which = sikhism value = 8 }
+					change_variable = { which = province_religion value = -8 }
+				}
+			}
+			regiongroup = {
+				region = {
+					limit = { check_variable = { which = sikh_followers value = 4 } }
+					change_variable = { which = sikh_followers value = -4 }
+					change_variable = { which = sikhism value = 4 }
+					change_variable = { which = province_religion value = -4 }
+				}
+			}
+			regiongroup = {
+				region = {
+					limit = { check_variable = { which = sikh_followers value = 2 } }
+					change_variable = { which = sikh_followers value = -2 }
+					change_variable = { which = sikhism value = 2 }
+					change_variable = { which = province_religion value = -2 }
+				}
+			}
+			regiongroup = {
+				region = {
+					limit = { check_variable = { which = sikh_followers value = 1 } }
+					set_variable = { which = sikh_followers value = 0 }
+					change_variable = { which = sikhism value = 1 }
+					change_variable = { which = province_religion value = -1 }
+				}
+			}
+		} #End hidden effect
+	}
+	
+	
+	option = {
+		name = dg_sikhism.007.a #Observe this situation carefully
+		ai_chance = { factor = 90 }
+	}
+	option = {
+		name = dg_sikhism.007.b #Convert to this strange new religion
+		trigger = {
+			any_owned_province = {
+				check_variable = { which = sikh_followers value = 2 }
+				is_in_capital_area = yes
+			}
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				capital_scope = {
+					check_variable = { which = sikhism value = 10 }
+				}
+				factor = 1.4
+			}
+			modifier = {
+				tag = PUN
+				factor = 10
+			}
+			modifier = {
+				PUN = { primary_culture = ROOT }
+				factor = 2
+			}
+			modifier = {
+				num_of_cities = 4
+				factor = 0.7
+			}
+			modifier = {
+				num_of_cities = 8
+				factor = 0.7
+			}
+			modifier = {
+				num_of_cities = 12
+				factor = 0.7
+			}
+			modifier = {
+				has_country_flag = guru_arrested
+				factor = 0
+			}
+			modifier = {
+				NOT = { religion_group = muslim }
+				NOT = { religion_group = dharmic }
+				NOT = { religion_group = pagan }
+				NOT = { religion_group = european_pagan }
+				factor = 0
+			}
+		}
+		set_country_flag = voluntary_conversion
+		if = {
+			limit = { NOT = { is_religion_enabled = sikhism } }
+			custom_tooltip = convert_dangerous_religion
+			subtract_stability_1 = yes
+		}
+		if = {
+			limit = { check_variable = { which = sikhism_population value = 75 } }
+			custom_tooltip = convert_population_75
+			add_stability_1 = yes
+		}
+		else_if = {
+			limit = { check_variable = { which = sikhism_population value = 50 } }
+			custom_tooltip = convert_population_50
+		}
+		else_if = {
+			limit = { check_variable = { which = sikhism_population value = 25 } }
+			custom_tooltip = convert_population_25
+			subtract_stability_1 = yes
+		}
+		else = {
+			custom_tooltip = convert_population_0
+			subtract_stability_2 = yes
+		}
+		if = {
+			limit = { patriarch_authority = 0.75 }
+			custom_tooltip = convert_church_strong
+			subtract_stability_2 = yes
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.50 }
+			custom_tooltip = convert_piety_moderate
+			subtract_stability_1 = yes
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.25 }
+			custom_tooltip = convert_church_weak
+		}
+		else = {
+			custom_tooltip = convert_church_insignificant
+		}
+		if = {
+			limit = { ADM = 5 }
+			if = {
+				limit = {
+					capital_scope = { religion = sikhism }
+				}
+				custom_tooltip = convert_ruler_strong
+				add_stability_3 = yes
+			}
+			else = {
+				custom_tooltip = convert_ruler_moderate
+				add_stability_2 = yes
+			}
+		}
+		else_if = {
+			limit = { ADM = 3 }
+			if = {
+				limit = {
+					capital_scope = { religion = sikhism }
+				}
+				custom_tooltip = convert_ruler_moderate
+				add_stability_2 = yes
+			}
+			else = {
+				custom_tooltip = convert_ruler_weak
+				add_stability_1 = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					capital_scope = { religion = sikhism }
+				}
+				custom_tooltip = convert_ruler_weak
+				add_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_ruler_incompetent
+			}
+		}
+		if = {
+			limit = { advisor = theologian }
+			custom_tooltip = convert_theologian
+			add_stability_1 = yes
+		}
+		if = {
+			limit = { has_country_flag = was_sikhism }
+			if = {
+				limit = {
+					check_variable = { which = sympathy_to_old_religion value = 1 }
+				}
+				custom_tooltip = convert_previous_recent
+				add_stability_2 = yes
+			}
+			else = {
+				custom_tooltip = convert_previous_old
+				add_stability_1 = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					check_variable = { which = sympathy_to_old_religion value = 1 }
+				}
+				custom_tooltip = convert_recent
+				add_stability_1 = yes
+			}
+		}
+		change_religion = sikhism
+		add_ruler_modifier = { name = sword_of_faith }
+	}
+}
+
+country_event = { #Sikh Militancy
+	
+	id = dg_sikhism.008
+	title = dg_sikhism.008.t
+	desc = dg_sikhism.008.d
+	picture = sikhism_warriors
+	
+	trigger = {
+		has_country_flag = guru_arrested
+		PUN = { has_country_flag = sikhism_militancy }
+		PUN = { has_country_flag = gurmukhi }
+		NOT = { is_religion_enabled = sikhism }
+		NOT = { has_country_flag = sikhism_reaction }
+	}
+	
+	
+	mean_time_to_happen = { months = 1 }
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = sikhism_reaction
+			set_variable = { which = complete_heresy	value = 0 }
+			set_variable = { which = strong_heresy		value = 0 }
+			set_variable = { which = moderate_heresy	value = 0 }
+			set_variable = { which = weak_heresy		value = 0 }
+			every_owned_province = {
+				if = {
+					limit = { check_variable = { which = sikh_followers	value = 20 } }
+					owner = {
+						change_variable = { which = complete_heresy	value = 0.1 }
+						change_variable = { which = strong_heresy	value = 0.6 }
+						change_variable = { which = moderate_heresy	value = 1.1 }
+						change_variable = { which = weak_heresy		value = 1.6 }
+					}
+				}
+				else_if = {
+					limit = { check_variable = { which = sikh_followers	value = 2 } }
+					
+					set_variable = { which = complete_heresy		value = 0.1 }
+					set_variable = { which = strong_heresy			value = 0.1 }
+					set_variable = { which = moderate_heresy		value = 0.1 }
+					set_variable = { which = weak_heresy			value = 0.1 }
+				
+					multiply_variable = { which = complete_heresy	which = sikh_followers }
+					multiply_variable = { which = strong_heresy		which = sikh_followers }
+					multiply_variable = { which = moderate_heresy	which = sikh_followers }
+					multiply_variable = { which = weak_heresy		which = sikh_followers }
+					
+					change_variable = { which = complete_heresy		value = -1.9 }
+					change_variable = { which = strong_heresy		value = -1.4 }
+					change_variable = { which = moderate_heresy		value = -0.9 }
+					change_variable = { which = weak_heresy			value = -0.4 }
+					
+					owner = {
+						change_variable = { which = complete_heresy		which = PREV }
+						change_variable = { which = strong_heresy		which = PREV }
+						change_variable = { which = moderate_heresy		which = PREV }
+						change_variable = { which = weak_heresy			which = PREV }
+					}
+				}
+				set_variable = { which = complete_heresy		value = 0 }
+				set_variable = { which = strong_heresy			value = 0 }
+				set_variable = { which = moderate_heresy		value = 0 }
+				set_variable = { which = weak_heresy			value = 0 }
+			}
+		}
+	}
+	
+	option = {
+		name = dg_sikhism.008.a
+		if = {
+			limit = { check_variable = { which = complete_heresy value = 1 } }
+			if = {
+				limit = { num_of_cities = 64 }
+				add_manpower = -8
+			}
+			else_if = {
+				limit = { num_of_cities = 16 }
+				add_manpower = -4
+			}
+			else_if = {
+				limit = { num_of_cities = 4 }
+				add_manpower = -2
+			}
+			else = {
+				add_manpower = -1
+			}
+		}
+		else_if = {
+			limit = { check_variable = { which = strong_heresy value = 1 } }
+			if = {
+				limit = { num_of_cities = 64 }
+				add_manpower = -6
+			}
+			else_if = {
+				limit = { num_of_cities = 16 }
+				add_manpower = -3
+			}
+			else_if = {
+				limit = { num_of_cities = 4 }
+				add_manpower = -1.5
+			}
+		}
+		else_if = {
+			limit = { check_variable = { which = moderate_heresy value = 1 } }
+			if = {
+				limit = { num_of_cities = 64 }
+				add_manpower = -4
+			}
+			else_if = {
+				limit = { num_of_cities = 16 }
+				add_manpower = -2
+			}
+			else_if = {
+				limit = { num_of_cities = 4 }
+				add_manpower = -1
+			}
+		}
+		else_if = {
+			limit = { check_variable = { which = weak_heresy value = 1 } }
+			if = {
+				limit = { num_of_cities = 64 }
+				add_manpower = -2
+			}
+			else_if = {
+				limit = { num_of_cities = 16 }
+				add_manpower = -1
+			}
+		}
+		if = {
+			limit = { has_country_modifier = religious_tolerance }
+			remove_country_modifier = religious_tolerance
+			add_piety = 0.20
+		}
+		else = {
+			add_country_modifier = { name = religious_intolerance duration = 2000 }
+			add_piety = 0.20
+		}
+		every_owned_province = {
+			limit = {
+				check_variable = { which = sikh_followers value = 8 }
+				has_siege = no
+				controlled_by = owner
+			}
+			spawn_rebels = { type = sikhism_rebels size = 1 }
+		}
+		every_owned_province = {
+			limit = {
+				NOT = { check_variable = { which = sikh_followers value = 8 } }
+				check_variable = { which = sikh_followers value = 4 }
+				has_siege = no
+				controlled_by = owner
+			}
+			spawn_rebels = { type = sikhism_rebels size = 0 }
+		}
+		hidden_effect = {
+			set_country_flag = religious_uprising_sikhism
+			set_variable = { which = complete_heresy value = 0 }
+			set_variable = { which = strong_heresy value = 0 }
+			set_variable = { which = moderate_heresy value = 0 }
+			set_variable = { which = weak_heresy value = 0 }
+		}
+	}
+}
+
+province_event = { #The Golden Temple
+	
+	id = dg_sikhism.009
+	title = dg_sikhism.009.t
+	desc = dg_sikhism.009.d
+	picture = sikhism_amritsar
+	
+	trigger = {
+		OR = {
+			religion = sikhism
+			has_province_flag = sikhism_origins
+		}
+		is_religion_enabled = sikhism
+		NOT = { PUN = { has_country_flag = amritsar_built } }
+		NOT = { has_province_flag = amritsar_destroyed }
+		OR = {
+			owner = { religion_group = dharmic }
+			owner = { religion_group = muslim }
+		}
+		OR = {
+			AND = {
+				NOT = { PUN = { has_country_flag = sikhism_militancy } }
+				NOT = { owner = { has_country_modifier = religious_intolerance } }
+			}
+			owner = { religion = sikhism }
+		}
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 20
+		
+		modifier = {
+			owner = { religion = sikhism }
+			factor = 0.5
+		}
+	}
+	
+	option = {
+		name = dg_sikhism.009.a #The holy land of $PROVINCENAME$
+		trigger = { religion = sikhism }
+		custom_tooltip = sikhism_20
+		hidden_effect = {
+			change_variable = { which = sikhism value = 4 }
+			change_variable = { which = province_religion value = -4 }
+			save_global_event_target_as = sikh_amritsar
+		}
+		if = {
+			limit = {
+				owner = {
+					OR = {
+						NOT = { religion = sikhism }
+						any_owned_province = { has_province_modifier = great_temple_progress }
+						any_owned_province = { has_building = great_temple }
+						#any_owned_province = { has_province_modifier = great_temple }
+						#any_owned_province = { has_province_modifier = great_cathedral }
+						#any_owned_province = { has_province_modifier = great_mosque }
+						#any_owned_province = { has_province_modifier = great_synagogue }
+					}
+				}
+				has_building = temple
+			}
+			owner = { add_prestige = 10 }
+		}
+		if = {
+			limit = {
+				owner = {
+					OR = {
+						NOT = { religion = sikhism }
+						any_owned_province = { has_province_modifier = great_temple_progress }
+						any_owned_province = { has_building = great_temple }
+						#any_owned_province = { has_province_modifier = great_temple }
+						#any_owned_province = { has_province_modifier = great_cathedral }
+						#any_owned_province = { has_province_modifier = great_mosque }
+						#any_owned_province = { has_province_modifier = great_synagogue }
+					}
+				}
+				num_free_building_slots = 1
+				temple_trigger = no
+				cathedral_trigger = no
+			}
+			add_building = temple
+		}
+		if = {
+			limit = {
+				owner = {
+					religion = sikhism
+					NOT = { any_owned_province = { has_province_modifier = great_temple_progress } }
+					any_owned_province = { has_building = great_temple }
+					#any_owned_province = { has_province_modifier = great_temple }
+					#any_owned_province = { has_province_modifier = great_cathedral }
+					#any_owned_province = { has_province_modifier = great_mosque }
+					#any_owned_province = { has_province_modifier = great_synagogue }
+				}
+			}
+			add_province_modifier = { name = great_temple_progress duration = -1 }
+			hidden_effect = { set_variable = { which = great_temple value = 25 } }
+		}
+		owner = { set_country_flag = holy_land_amritsar }
+		hidden_effect = {
+			PUN = { set_country_flag = amritsar_built }
+			set_province_flag = amritsar
+		}
+	}
+	option = {
+		name = dg_sikhism.009.b #This must not be allowed
+		trigger = {
+			OR = {
+				owner = { NOT = { religion = sikhism } }
+				owner = { ai = no }
+			}
+		}
+		hidden_effect = { set_province_flag = amritsar_destroyed }
+		if = {
+			limit = {
+				owner = { NOT = { religion = sikhism } }
+				check_variable = { which = sikhism value = 2 }
+				NOT = { check_variable = { which = sikhism value = 4 } }
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 1 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_1
+			spawn_rebels = { type = sikhism_rebels size = 0 }
+		}
+		if = {
+			limit = {
+				owner = { NOT = { religion = sikhism } }
+				check_variable = { which = sikhism value = 4 }
+				NOT = { check_variable = { which = sikhism value = 6 } }
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 2 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_2
+			spawn_rebels = { type = sikhism_rebels size = 0 }
+		}
+		if = {
+			limit = {
+				owner = { NOT = { religion = sikhism } }
+				check_variable = { which = sikhism value = 6 }
+				NOT = { check_variable = { which = sikhism value = 8 } }
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 3 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_3
+			spawn_rebels = { type = sikhism_rebels size = 1 }
+		}
+		if = {
+			limit = {
+				owner = { NOT = { religion = sikhism } }
+				check_variable = { which = sikhism value = 8 }
+				NOT = { check_variable = { which = sikhism value = 10 } }
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 4 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_4
+			spawn_rebels = { type = sikhism_rebels size = 1 }
+		}
+		if = {
+			limit = {
+				owner = { NOT = { religion = sikhism } }
+				check_variable = { which = sikhism value = 10 }
+				NOT = { check_variable = { which = sikhism value = 12 } }
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+			spawn_rebels = { type = sikhism_rebels size = 2 }
+		}
+		if = {
+			limit = {
+				owner = { NOT = { religion = sikhism } }
+				check_variable = { which = sikhism value = 12 }
+				NOT = { check_variable = { which = sikhism value = 14 } }
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 6 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_6
+			spawn_rebels = { type = sikhism_rebels size = 2 }
+		}
+		if = {
+			limit = {
+				owner = { NOT = { religion = sikhism } }
+				check_variable = { which = sikhism value = 14 }
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 7 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_7
+			spawn_rebels = { type = sikhism_rebels size = 2 }
+		}
+		if = {
+			limit = { has_building = temple }
+			remove_building = temple
+		}
+		if = {
+			limit = { owner = { religion = sikhism } }
+			owner = { subtract_stability_2 = yes }
+		}
+		owner = {
+			if = {
+				limit = { has_country_modifier = religious_tolerance }
+				remove_country_modifier = religious_tolerance
+				add_piety = 0.20
+			}
+			if = {
+				limit = { NOT = { has_country_modifier = religious_intolerance } }
+				add_country_modifier = { name = religious_intolerance duration = 3000 }
+				add_piety = 0.20
+			}
+		}
+	}
+}
+
+country_event = { #Movement towards toleration
+	
+	id = dg_sikhism.010
+	title = dg_sikhism.010.t
+	desc = dg_sikhism.010.d
+	picture = sikhism_guru
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = dg_sikhism.010.a
+		FROM = { add_prestige = 0 }
+	}
+}
+
+country_event = { #A new faith is born
+	
+	id = dg_sikhism.011
+	title = dg_sikhism.011.t
+	desc = dg_sikhism.011.d
+	picture = sikhism_guru
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = dg_sikhism.011.a
+		FROM = { add_prestige = 0 }
+	}
+}
+
+country_event = { #The future of sikhismism (1699)
+	
+	id = dg_sikhism.012
+	title = dg_sikhism.012.t
+	desc = dg_sikhism.012.d
+	picture = sikhism_warriors
+	
+	trigger = {
+		religion = sikhism
+		NOT = { PUN = { has_country_flag = sikhism_militancy } }
+		NOT = { government = theocracy }
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 5
+		
+		modifier = {
+			is_at_war = yes
+			factor = 0.5
+		}
+	}
+	
+	option = {
+		name = dg_sikhism.012.a #Codify the faith into a holy book (mainstream sikhisms)
+		ai_chance = {
+			factor = 50
+			modifier = {
+				is_at_war = yes
+				factor = 1.4
+			}
+			modifier = {
+				war_exhaustion = 4
+				factor = 1.4
+			}
+			modifier = {
+				war_exhaustion = 8
+				factor = 1.4
+			}
+			modifier = {
+				war_exhaustion = 12
+				factor = 1.4
+			}
+			modifier = {
+				war_exhaustion = 16
+				factor = 1.4
+			}
+			modifier = {
+				war_exhaustion = 20
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { manpower_percentage = 0.50 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { manpower_percentage = 0.30 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { manpower_percentage = 0.10 }
+				factor = 1.4
+			}
+		}
+		PUN = { set_country_flag = sikhism_militancy }
+		add_yearly_manpower = 0.10 #10%
+		add_war_exhaustion = -1
+		create_general = { tradition = 50 }
+		add_country_modifier = { name = khalsa_order duration = -1 }
+	}
+	option = {
+		name = dg_sikhism.012.b #Continue to have living gurus (Namdhari sikhisms)
+		ai_chance = {
+			factor = 50
+			modifier = {
+				NOT = { piety = -0.20 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.20
+				factor = 1.4
+			}
+			modifier = {
+				piety = 0.60
+				factor = 1.4
+			}
+		}
+		hidden_effect = { PUN = { set_country_flag = living_guru } } #May continue to get the blessings of the guru
+		theocratification_effect = yes
+	}
+}

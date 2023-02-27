@@ -1,0 +1,344 @@
+### Daur events - Warial
+
+### Adopt script
+country_event = {
+	id = daur_revival.1
+	
+	title = "daur_revival.1.t"
+	desc = "daur_revival.1.d"
+	
+	picture = SIEGE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { ### Adapt Mongol script
+		name = "daur_revival.1a"
+		add_country_modifier = {
+			name = "daur_script"
+			duration = -1
+		}
+		set_country_flag = daur_script
+		every_country = {
+			limit = {
+				OR = {
+					culture_group = altaic
+					primary_culture = manchu
+				}
+			}
+			reverse_add_opinion = {
+				who = ROOT
+				modifier = opinion_pleased
+			}
+		}
+		
+		ai_chance = {
+			factor = 50
+			
+			modifier = {
+				factor = 2
+				accepted_culture = khorchin
+			}
+			modifier = {
+				factor = 2
+				accepted_culture = khalkas
+			}
+			modifier = {
+				factor = 2
+				accepted_culture = oirats
+			}
+			modifier = {
+				factor = 2
+				accepted_culture = tumed
+			}
+			modifier = {
+				factor = 2
+				accepted_culture = chahar
+			}
+			modifier = {
+				factor = 2
+				accepted_culture = buryat
+			}
+			modifier = {
+				factor = 2
+				accepted_culture = mongol
+			}
+			modifier = {
+				factor = 2
+				accepted_culture = manchu
+			}
+		}
+	}
+	option = { ### Adopt Jurchen script
+		name = "daur_revival.1b"
+		trigger = {
+			any_country = {
+				has_country_flag = jurchen_script
+			}
+		}
+		add_country_modifier = {
+			name = "jurchen_script"
+			duration = -1
+		}
+		set_country_flag = daur_script
+		
+		every_country = {
+			limit = {
+				primary_culture = jurchen
+			}
+			reverse_add_opinion = {
+				who = ROOT
+				modifier = opinion_pleased
+			}
+		}
+		
+		ai_chance = {
+			factor = 50
+			
+			modifier = {
+				factor = 2
+				accepted_culture = jurchen
+			}
+		}
+	}
+}
+
+### Daurs settle down in the Manchurian Steppe
+country_event = {
+	id = daur_revival.2
+	
+	title = "daur_revival.2.t"
+	desc = "daur_revival.2.d"
+	
+	picture = SIEGE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { ### Horses are useful, but so is agriculture
+		name = "daur_revival.2a"
+	}
+}
+
+### Daurs offer Khorchins to renew old glory
+country_event = {
+	id = daur_revival.3
+	
+	title = "daur_revival.3.t"
+	desc = "daur_revival.3.d"
+	
+	picture = SIEGE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { ### Agree
+		name = "daur_revival.3a"
+		
+		FROM = { country_event = { id = daur_revival.4 } }
+		
+		ai_chance = {
+			factor = 50
+			
+			modifier = {
+				factor = 2
+				is_subject_of = FROM
+			}
+			
+			modifier = {
+				factor = 2
+				army_strength = {
+					who = FROM
+					value = 0.5
+				}
+			}
+		}
+	}
+	
+	option = { ### Ginghis 4 life
+		name = "daur_revival.3b"
+		
+		FROM = { country_event = { id = daur_revival.5 } }
+		add_prestige = 10
+		
+		ai_chance = {
+			factor = 50
+			
+			modifier = {
+				factor = 0.1
+				is_subject_of = FROM
+			}
+			
+			modifier = {
+				factor = 5
+				army_strength = {
+					who = FROM
+					value = 0.8
+				}
+			}
+			modifier = {
+				factor = 10
+				army_strength = {
+					who = FROM
+					value = 2.0
+				}
+			}
+		}
+	}
+}
+
+### Khorchin agree
+country_event = {
+	id = daur_revival.4
+	
+	title = "daur_revival.4.t"
+	desc = "daur_revival.4.d"
+	
+	picture = SIEGE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { ### Great!
+		name = "daur_revival.2a"
+		inherit = KHR
+		change_primary_culture = khitan
+		every_owned_province = {
+			limit = {
+				OR = {
+					culture = khorchin
+					culture = daur
+				}
+			}
+			change_culture = khitan
+		}
+		set_country_flag = khitans_reclaimed
+	}
+}
+
+### Khorchin disagree
+country_event = {
+	id = daur_revival.5
+	
+	title = "daur_revival.5.t"
+	desc = "daur_revival.5.d"
+	
+	picture = SIEGE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { ### Great!
+		name = "daur_revival.2a"
+		add_casus_belli = {
+			target = KHR
+			type = cb_conquest
+			months = 1825
+		}
+		set_country_flag = khitans_dead
+	}
+}
+
+### Daurs migrate to the Manchurian steppe
+province_event = {
+	id = daur_revival.6
+	
+	title = "daur_revival.5.t"
+	desc = "daur_revival.5.d"
+	
+	picture = SIEGE_eventPicture
+	
+	hidden = yes
+	is_triggered_only = yes
+	
+	option = { ### Great!
+		name = "daur_revival.2a"
+		set_variable = { which = rural_percentage_removed   value = 0.9 }
+		set_variable = { which = percent_rural_transfered  value = 1 }
+		remove_rural_population_DEVS = yes
+		
+		random_list = {
+			75 = { change_culture = evenki }
+			25 = { }
+		}
+		owner = {
+			random_owned_province = {
+				limit = {
+					province_group = manchurian_steppe_group
+				}
+				province_event = { id = daur_revival.7 }
+			}
+		}
+	}
+}
+
+province_event = {
+	id = daur_revival.7
+	
+	title = "daur_revival.5.t"
+	desc = "daur_revival.5.d"
+	
+	picture = SIEGE_eventPicture
+	
+	hidden = yes
+	is_triggered_only = yes
+	
+	option = { ### Great!
+		name = "daur_revival.2a"
+		#set_variable = { which = rural_population_fleeing  value = 0 }
+		set_variable = { which = rural_population_fleeing which = FROM }
+		add_rural_population_DEVS = yes
+		
+		set_variable = { which = rural_population_fleeing  value = 0 }
+		FROM = {
+			set_variable = { which = rural_percentage_removed   value = 0.9 }
+			remove_rural_population_DEVS = yes
+			
+			set_variable = { which = rural_population_fleeing  value = 0 }
+		}
+		if = {
+			limit = {
+				NOT = { development = 40 }
+				development = 30
+			}
+			random_list = {
+				90 = { }
+				10 = { change_culture = daur }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { development = 30 }
+				development = 20
+			}
+			random_list = {
+				75 = { }
+				25 = { change_culture = daur }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { development = 20 }
+				development = 15
+			}
+			random_list = {
+				66 = { }
+				34 = { change_culture = daur }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { development = 15 }
+				development = 10
+			}
+			random_list = {
+				50 = { }
+				50 = { change_culture = daur }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { development = 10 }
+			}
+			random_list = {
+				25 = { }
+				75 = { change_culture = daur }
+			}
+		}
+	}
+}

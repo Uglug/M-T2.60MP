@@ -1,0 +1,232 @@
+
+### Gunashiri leaves with his followers ###
+country_event = {
+	id = kara_del.1
+	
+	title = "kara_del.1EVTNAME"
+	desc = "kara_del.1EVTDESC"
+	
+	picture = SIEGE_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	trigger = {
+		NOT = { is_year = 1393 }
+		tag = YUA
+		NOT = { has_global_flag = gunashiri_leaves_yuan }
+		has_country_flag = yuan_loses_wuhan
+	}
+	
+	option = {
+		name = "kara_del.1a"
+		add_manpower = -2
+		set_global_flag = gunashiri_leaves_yuan
+	}
+}
+
+### Gunashiri makes it to Moghulistan ###
+country_event = {
+	id = kara_del.2
+	
+	title = "kara_del.2EVTNAME"
+	desc = "kara_del.2EVTDESC"
+	
+	picture = SIEGE_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		NOT = { is_year = 1393 }
+		has_global_flag = gunashiri_leaves_yuan
+		tag = MGH
+		#NOT = { war_with = TIM }
+		NOT = { has_global_flag = gunashiri_arrives_moghul }
+		NOT = { exists = HMI }
+		NOT = {
+			has_global_flag = gunashiri_arrives_hami
+		}
+	}
+	
+	mean_time_to_happen = { months = 24 }
+	
+	option = {
+		name = "kara_del.2a"
+		add_manpower = 2
+		set_global_flag = gunashiri_arrives_moghul
+	}
+}
+
+### Gunashiri elevated on the throne of Moghulistan ###
+country_event = {
+	id = kara_del.3
+	
+	title = "kara_del.3EVTNAME"
+	desc = "kara_del.3EVTDESC"
+	
+	picture = SIEGE_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		NOT = { is_year = 1393 }
+		tag = MGH
+		has_global_flag = gunashiri_arrives_moghul
+		has_regency = yes
+		NOT = { heir_claim = 90 }
+		NOT = { has_country_flag = gunashiri_mughal_throne }
+		NOT = { has_country_flag = gunashiri_claims_moghulistan }
+	}
+	
+	mean_time_to_happen = { months = 3 }
+	
+	option = {
+		name = "kara_del.3a"
+		define_ruler = {
+			name = "Gunashiri"
+			dynasty = "Chagatayid"
+			culture = mongol
+		}
+		capital_scope = {
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+		set_country_flag = gunashiri_mughal_throne
+	}
+	option = {
+		name = "kara_del.3b"
+		capital_scope = {
+			spawn_rebels = {
+				type = pretender_rebels
+				size = 2
+				leader = "Gunashiri Chagatayid"
+			}
+		}
+		set_country_flag = gunashiri_claims_moghulistan
+	}
+}
+
+### Gunashiri stops in Hami  ###
+country_event = {
+	id = kara_del.4
+	
+	title = "kara_del.4EVTNAME"
+	desc = "kara_del.4EVTDESC"
+	
+	picture = SIEGE_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		has_global_flag = gunashiri_leaves_yuan
+		NOT = { is_year = 1393 }
+		owns = 2743 # Kumul
+		NOT = { tag = MGH }
+		NOT = { has_global_flag = gunashiri_arrives_moghul }
+		NOT = { exists = HMI }
+		NOT = { has_global_flag = gunashiri_arrives_hami }
+	}
+	
+	mean_time_to_happen = { months = 24 }
+	
+	option = {
+		name = "kara_del.4a"
+		2743 = {
+			spawn_rebels = {
+				type = noble_rebels
+				size = 2
+				leader = "Gunashiri Chagatayid"
+			}
+		}
+		set_global_flag = gunashiri_arrives_hami
+	}
+}
+
+### Gunashiri declares Kara Del  ###
+province_event = {
+	id = kara_del.5
+	
+	title = "kara_del.5EVTNAME"
+	desc = "kara_del.5EVTDESC"
+	
+	picture = SIEGE_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_global_flag = gunashiri_arrives_hami
+		province_id = 2743 # Kumul
+		controlled_by = REB
+		NOT = { has_global_flag = gunashiri_dead }
+		NOT = { has_global_flag = gunashiri_creates_karadel }
+	}
+	
+	option = {
+		name = "kara_del.5a"
+		cede_province = HMI
+		change_controller = HMI
+		HMI = {
+			define_ruler = {
+				name = "Gunashiri"
+				dynasty = "Chagatayid"
+				culture = mongol
+			}
+			define_heir = {
+				claim = 100
+				dynasty = "Chagatayid"
+				name = "Enke Timur"
+				culture = mongol
+			}
+		}
+		owner = {
+			disband_rebels = noble_rebels
+		}
+		set_global_flag = gunashiri_creates_karadel
+	}
+}
+
+### Gunashiri defeated at Hami ###
+country_event = {
+	id = kara_del.6
+	
+	title = "kara_del.6EVTNAME"
+	desc = "kara_del.6EVTDESC"
+	
+	picture = SIEGE_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		has_global_flag = gunashiri_arrives_hami
+		owns = 2743 # Kumul
+		2743 = {
+			NOT = { sieged_by = REB }
+			unit_in_battle = no
+		}
+		NOT = { exists = HMI }
+		NOT = { has_global_flag = gunashiri_dead }
+		NOT = { has_global_flag = gunashiri_creates_karadel }
+	}
+	
+	mean_time_to_happen = { months = 6 }
+	
+	option = {
+		name = "kara_del.6a"
+		disband_rebels = noble_rebels
+		add_prestige = 2
+		set_global_flag = gunashiri_dead
+	}
+}

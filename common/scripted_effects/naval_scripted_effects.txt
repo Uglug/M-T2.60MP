@@ -1,0 +1,148 @@
+#set_timber_production = {
+#	# Use rural prod to calculate lumber if any
+#	set_variable = { which = timber_province_production value = 0 }
+#	set_variable = { which = timber_terrain_province_production_calc value = 0 }
+#	
+#	# Timber production based on terrain
+#	if = {
+#		limit = {
+#			OR = {
+#				has_terrain = forest_flats
+#				has_terrain = taiga
+#				has_terrain = forest_hills
+#				has_terrain = forest_highlands
+#				has_terrain = wood_flats
+#				has_terrain = wood_hills
+#				has_terrain = jungle_flats
+#				has_terrain = jungle_hills
+#				has_terrain = wood_highlands
+#				grass_trigger = yes
+#				mountains_trigger = yes
+#				trade_goods = lumber
+#				trade_goods = hemp
+#			}
+#		}
+#		
+#		set_variable = { which = timber_province_production which = ideal_rural_pop }
+#		divide_variable = { which = timber_province_production which = prov_size }
+#		change_variable = { which = timber_province_production value = 0.25 }
+#		multiply_variable = { which = timber_province_production which = prov_size }
+#		multiply_variable = { which = timber_province_production value = 0.001 }
+#		
+#		if = {
+#			limit = {
+#				OR = {
+#					trade_goods = lumber
+#					trade_goods = hemp
+#				}
+#			}
+#			multiply_variable = { which = timber_province_production  value = 2 }
+#		}
+#		if = {
+#			limit = {
+#				OR = {
+#					has_terrain = forest_flats
+#					has_terrain = taiga
+#				}
+#			}
+#			multiply_variable = { which = timber_province_production  value = 1.3 }
+#		}
+#		else_if = {
+#			limit = {
+#				OR = {
+#					has_terrain = forest_hills
+#					has_terrain = forest_highlands
+#				}
+#			}
+#			multiply_variable = { which = timber_province_production  value = 0.75 }
+#		}
+#		else_if = {
+#			limit = {
+#				OR = {
+#					has_terrain = wood_flats
+#					has_terrain = wood_hills
+#					has_terrain = jungle_flats
+#					has_terrain = jungle_hills
+#				}
+#			}
+#			multiply_variable = { which = timber_province_production  value = 1.15 }
+#		}
+#		else_if = {
+#			limit = {
+#				OR = {
+#					has_terrain = wood_highlands
+#					grass_trigger = yes
+#					mountains_trigger = yes
+#				}
+#			}
+#			multiply_variable = { which = timber_province_production  value = 0.5 }
+#		}
+#		if = {
+#			limit = {
+#				has_province_flag = mild_winter
+#			}
+#			multiply_variable = { which = timber_province_production  value = 1.15 }
+#		}
+#		else_if = {
+#			limit = {
+#				has_province_flag = severe_winter
+#			}
+#			multiply_variable = { which = timber_province_production  value = 1.3 }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			has_province_flag = state_forest
+#		}
+#		change_variable = { which = timber_province_production value = 4 }
+#	}
+#	if = {
+#		limit = {
+#			AND = {
+#				province_id = 2370 # 's-Gravenhage
+#				has_province_modifier = rhein_timber
+#			}
+#		}
+#		change_variable = { which = timber_province_production value = 6 }
+#	}
+#	if = {
+#		limit = {
+#			has_province_flag = estuary
+#		}
+#		change_variable = { which = timber_province_production value = 0.5 }
+#	}
+#	if = {
+#		limit = {
+#			has_port = no
+#		}
+#		multiply_variable = { which = timber_province_production value = 0.75 }
+#	}
+#
+#	if = {
+#		limit = { check_variable = { which = timber_province_production  value = 15 } } # Prevent any overflow or excessive value
+#		set_variable = { which = timber_province_production value = 15 }
+#	}
+#	if = {
+#		limit = { NOT = { check_variable = { which = timber_province_production  value = 0 } } } # Prevent any negative values
+#		set_variable = { which = timber_province_production value = 0 }
+#	}
+#
+#	if = {
+#		limit = {
+#			owner = { has_country_modifier = forestry_act }
+#		}
+#		multiply_variable = { which = timber_province_production value = 1.25 }
+#	}
+#	if = {
+#		limit = {
+#			owner = { has_country_modifier = forestry_act_big }
+#		}
+#		multiply_variable = { which = timber_province_production value = 1.5 }
+#	}
+#	if = {
+#		limit = {
+#			owner = { has_country_modifier = forestry_code }
+#		}
+#		multiply_variable = { which = timber_province_production value = 2 }
+#	}
+#}

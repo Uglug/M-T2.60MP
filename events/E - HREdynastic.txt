@@ -1,0 +1,111 @@
+#Events to make dynastic inheritance in the HRE more likely
+country_event = {
+	id = hre_dynastic_event.001
+	
+	title = "hre_dynastic_event.1.t"
+	desc = "hre_dynastic_event.1.d"
+	
+	picture = SIEGE_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		NOT = { has_country_modifier = attempted_hre_dynastic }
+		NOT = { has_country_flag = hohenzollern_succession }
+		NOT = { has_country_flag = welf_succession }
+		NOT = { has_country_flag = wettin_succession }
+		NOT = { has_country_flag = wittelsbach_succession }
+		NOT = { has_country_flag = habsburg_succession }
+		NOT = { has_country_flag = von_luxemburg_brandenburg }
+		NOT = { has_country_modifier = wittelsbach_rule }
+		num_of_royal_marriages = 1
+		government = monarchy
+		is_lesser_in_union = no
+		is_part_of_hre = yes
+		is_emperor = no
+		OR = {
+			culture_group = low_germanic
+			culture_group = high_germanic
+		}
+		any_known_country = {
+			is_part_of_hre = yes
+			marriage_with = ROOT
+			government = monarchy
+			is_emperor = no
+			OR = {
+				culture_group = low_germanic
+				culture_group = high_germanic
+			}
+		}
+		has_new_dynasty = yes
+	}
+	
+	option = {
+		name = "hre_dynastic_event.1a"
+		every_country = {
+			limit = {
+				marriage_with = ROOT
+				is_part_of_hre = yes
+				government = monarchy
+				is_emperor = no
+				OR = {
+					culture_group = low_germanic
+					culture_group = high_germanic
+				}
+			}
+			add_casus_belli = {
+				target = ROOT
+				type = cb_restore_personal_union
+				months = 120
+			}
+		}
+		random_known_country = {
+			limit = {
+				is_part_of_hre = yes
+				marriage_with = ROOT
+				government = monarchy
+				is_emperor = no
+				OR = {
+					culture_group = low_germanic
+					culture_group = high_germanic
+				}
+				is_lesser_in_union = no
+			}
+			create_union = ROOT
+		}
+		hidden_effect = {
+			add_country_modifier = {
+				name = attempted_hre_dynastic
+				duration = 365
+				hidden = yes
+			}
+		}
+	}
+	
+	option = {
+		trigger = {
+			ai = no
+		}
+		name = "hre_dynastic_event.2a"
+		add_prestige = 5
+		every_country = {
+			limit = {
+				marriage_with = ROOT
+				is_part_of_hre = yes
+				government = monarchy
+			}
+			add_casus_belli = {
+				target = ROOT
+				type = cb_restore_personal_union
+				months = 120
+			}
+		}
+		hidden_effect = {
+			add_country_modifier = {
+				name = attempted_hre_dynastic
+				duration = 365
+				hidden = yes
+			}
+		}
+	}
+}

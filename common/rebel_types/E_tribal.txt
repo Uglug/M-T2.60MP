@@ -1,0 +1,245 @@
+
+######################################################################
+# Tribal rebels. Very strong.
+######################################################################
+tribal_rebels = {
+	
+	color = { 210 195 35 }
+	area = nation 					# Stays within the nation
+	government = any				# Don't care about gov type
+	defection = none				# Will not defect
+	independence = none				# Does not strive for independence
+	gfx_type = culture_province
+	will_relocate = yes
+	
+	resilient = yes					# Can retreat
+	reinforcing = yes				# Can reinforce
+	general = yes					# Does use generals
+	smart = yes						# Do assault forts, tactically withdraw from battle, etc.
+	unit_transfer = no				# Units do not remain after enforcing demands.
+	
+	artillery = 0.0
+	infantry = 0.5
+	cavalry = 0.5
+	
+	morale = 0.95
+	
+	# Possible handle actions
+	handle_action_negotiate = yes
+	handle_action_stability = no
+	
+	# The rebel type with the highest modifier for this province gets picked
+	spawn_chance = {
+		factor = 14
+		modifier = {
+			factor = 0
+			OR = {
+				NOT = { has_dlc = "The Cossacks" }
+				owner = {
+					native_trigger = no #was tribal_nomads and tribal_nomads_hereditary
+				}
+			}
+		}
+		modifier = {
+			factor = 0.2
+			is_core = owner
+		}
+		modifier = {
+			factor = 0.2
+			is_overseas = yes # Prefer other types overseas
+		}
+		modifier = {
+			factor = 0.5
+			owner = {
+				primary_culture = ROOT
+			}
+		}
+		modifier = {
+			factor = 0.8
+			religion = owner
+		}
+		
+		
+		modifier = {
+			factor = 1.25
+			owner = {
+				num_of_cities = 12
+			}
+		}
+		modifier = {
+			factor = 1.25
+			owner = {
+				num_of_cities = 18
+			}
+		}
+		modifier = {
+			factor = 1.5
+			owner = {
+				num_of_cities = 24
+			}
+		}
+		modifier = {
+			factor = 1.5
+			owner = {
+				num_of_cities = 30
+			}
+		}
+		modifier = {
+			factor = 1.5
+			owner = {
+				num_of_cities = 40
+			}
+		}
+		modifier = {
+			factor = 2.0
+			owner = {
+				num_of_cities = 50
+			}
+		}
+		modifier = {
+			factor = 15.0
+			has_province_flag = tribals_control_province
+		}
+		modifier = {
+			factor = 7.5
+			has_province_flag = was_tribals
+		}
+		modifier = {
+			factor = 2.0
+			has_province_flag = tribals_present
+		}
+		modifier = {
+			factor = 1.1
+			owner = {
+				horde_unity = 20
+			}
+		}
+		modifier = {
+			factor = 0.8
+			owner = {
+				horde_unity = 33
+			}
+		}
+		modifier = {
+			factor = 0.8
+			owner = {
+				horde_unity = 50
+			}
+		}
+		modifier = {
+			factor = 0.8
+			owner = {
+				horde_unity = 66
+			}
+		}
+		modifier = {
+			factor = 0.8
+			owner = {
+				horde_unity = 75
+			}
+		}
+		modifier = {
+			factor = 10
+			owner = { has_country_modifier = "tribal_succession_crisis" }
+		}
+		modifier = {
+			factor = 5.0
+			owner = {
+				OR = {
+					native_trigger = yes #was tribal_nomads and tribal_nomads_hereditary
+					steppe_trigger = yes
+					trib_king_trigger = yes
+					trib_desp_trigger = yes
+					trib_fed_trigger = yes
+				}
+				NOT = { has_disaster = white_horde_collapse }
+			}
+		}
+		modifier = {
+			factor = 0
+			has_province_modifier = pretender_organizing
+		}
+		modifier = {
+			factor = 0
+			has_province_modifier = nationalists_organizing
+		}
+		modifier = {
+			factor = 0.1
+			owner = { has_disaster = white_horde_collapse }
+		}
+	}
+	
+	# This is checked for EACH province in the Area of Operations
+	movement_evaluation = {
+		factor = 1
+		modifier = {
+			factor = 0.1
+			units_in_province = 1
+		}
+		modifier = {
+			factor = 2
+			has_province_flag = tribals_control_province
+		}
+		modifier = {
+			factor = 0.001
+			controlled_by = REB
+		}
+		modifier = {
+			factor = 2.0
+			is_capital = yes
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 2
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 4
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 6
+		}
+	}
+	
+	# Province Scope
+	siege_won_trigger = {
+		NOT = { local_autonomy = 50 }
+	}
+	siege_won_effect = {
+		add_local_autonomy = 10
+	}
+	
+	# Country scope
+	can_negotiate_trigger = {
+		always = yes
+	}
+	
+	# Country scope
+	can_enforce_trigger = {
+		always = yes
+	}
+	
+	# Localisation for their demands
+	demands_description = "tribal_rebels_demand"
+	
+	# Country scope
+	demands_enforced_effect = {
+		every_owned_province = {
+			limit = {
+				OR = {
+					has_province_flag = tribals_control_province
+					has_province_flag = was_tribals
+					has_province_flag = tribals_present
+					has_rebel_faction = REB
+				}
+			}
+			add_local_autonomy = 30
+		}
+		add_prestige = -20
+		
+		# Abuse of tribal rebels to trigger various events upon success, as pseudo-pretenders
+		
+		#country_event = { id = horde_events.5 }
+	}
+}

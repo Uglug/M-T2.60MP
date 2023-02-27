@@ -1,0 +1,1607 @@
+# Estate income calculation
+EstateIncome_Clear = {
+	set_variable = { which = EstateIncome_$type$_Trade value = 0 }
+	set_variable = { which = EstateIncome_$type$_RuralProd value = 0 }
+	set_variable = { which = EstateIncome_$type$_Mine value = 0 }
+	set_variable = { which = EstateIncome_$type$_UrbanProd value = 0 }
+	set_variable = { which = EstateIncome_$type$_PopTax value = 0 }
+	set_variable = { which = EstateIncome_$type$_WealthTax value = 0 }
+	
+	set_variable = { which = EstateIncome_$type$_Manpower value = 0 }
+	
+	#set_variable = { which = EstateIncome_$type$_StateTax value = 0 }
+	#set_variable = { which = EstateIncome_$type$_ManTax value = 0 }
+}
+
+EstateIncome_Init = {
+	set_variable = { which = EstateIncome_$type$_Total value = 0 }
+	
+	EstateIncome_Clear = { type=$type$ }
+}
+
+EstateIncome_Main = {
+	set_variable = { which = EstateIncome_$type$_Trade which = EstateIncome_Trade }
+	set_variable = { which = EstateIncome_$type$_RuralProd which = EstateIncome_RuralProd }
+	set_variable = { which = EstateIncome_$type$_Mine which = EstateIncome_Mine }
+	set_variable = { which = EstateIncome_$type$_UrbanProd which = EstateIncome_UrbanProd }
+	set_variable = { which = EstateIncome_$type$_PopTax which = EstateIncome_PopTax }
+	set_variable = { which = EstateIncome_$type$_WealthTax which = EstateIncome_WealthTax }
+	
+	set_variable = { which = EstateIncome_$type$_Manpower which = EstateIncome_Manpower }
+	
+	PREV = {
+		change_variable = { which = EstateIncome_$type$_Trade which = PREV }
+		change_variable = { which = EstateIncome_$type$_RuralProd which = PREV }
+		change_variable = { which = EstateIncome_$type$_Mine which = PREV }
+		change_variable = { which = EstateIncome_$type$_UrbanProd which = PREV }
+		change_variable = { which = EstateIncome_$type$_PopTax which = PREV }
+		change_variable = { which = EstateIncome_$type$_WealthTax which = PREV }
+		
+		change_variable = { which = EstateIncome_$type$_Manpower which = PREV }
+	}
+	
+	EstateIncome_Clear = { type=$type$ }
+}
+
+
+#to change the estate base income tax, you need to change the multiply_variables with the following tags: -base manpower tax-, -base income tax-, -base trade tax-
+#you then need to change the display values to match, but divide them by 10: 0.2->0.02. -manpower tax display-, -base tax display-, -trade tax display-
+#these values are NOT the amount that the estate gets in taxes, but rather what the nation gets in taxes from them, assuming loyalty is 50% and no other variables.
+#Multipled by 0 at 0% loyalty, and by 1.5 at 100%.  Not  linear.
+EstateIncome_Finish = {
+	set_variable = { which = EstateIncome_$type$_ManTax which = EstateIncome_$type$_Manpower }
+	multiply_variable = { which = EstateIncome_$type$_ManTax value = 0.1 } #-base manpower tax- this is manpower to the nation # 10% base tax rate for all estate manpower
+	multiply_variable = { which = EstateIncome_$type$_ManTax which = EstateIncome_$type$_ManTaxRate }
+	
+	subtract_variable = { which = EstateIncome_$type$_Manpower which = EstateIncome_$type$_ManTax }
+	
+	multiply_variable = { which = EstateIncome_$type$_Manpower value = 20 } # 1000 men = 20 ducats
+	divide_variable = { which = EstateIncome_$type$_Manpower value = 1.5 } # Consider that manpower -> ducat conversion should happen only at construction, so penalty
+	multiply_variable = { which = EstateIncome_$type$_Manpower value = 0.04 } # 25 years for 0% manpower to reach 100%
+	
+	set_variable = { which = EstateIncome_$type$_TradeTax which = EstateIncome_$type$_Trade }
+	multiply_variable = { which = EstateIncome_$type$_TradeTax value = 0.20 } #-base trade tax- 20% base tax rate for all estate trade
+	multiply_variable = { which = EstateIncome_$type$_TradeTax which = EstateIncome_$type$_TradeTaxRate }
+	
+	subtract_variable = { which = EstateIncome_$type$_Trade which = EstateIncome_$type$_TradeTax }
+	change_variable = { which = EstateIncome_Trade which = EstateIncome_$type$_Trade }
+	
+	set_variable = { which = EstateIncome_$type$_Total which = EstateIncome_$type$_RuralProd }
+	change_variable = { which = EstateIncome_$type$_Total which = EstateIncome_$type$_Mine }
+	change_variable = { which = EstateIncome_$type$_Total which = EstateIncome_$type$_UrbanProd }
+	change_variable = { which = EstateIncome_$type$_Total which = EstateIncome_$type$_PopTax }
+	change_variable = { which = EstateIncome_$type$_Total which = EstateIncome_$type$_WealthTax }
+	
+	set_variable = { which = EstateIncome_$type$_StateTax which = EstateIncome_$type$_Total }
+
+	multiply_variable = { which = EstateIncome_$type$_StateTax value = 0.15 } #-base income tax- this does not include money gained from trade # 15% base tax rate for all estate income
+	multiply_variable = { which = EstateIncome_$type$_StateTax which = EstateIncome_$type$_StateTaxRate }
+	
+	subtract_variable = { which = EstateIncome_$type$_Total which = EstateIncome_$type$_StateTax }
+	
+	change_variable = { which = EstateIncome_$type$_Total which = EstateIncome_$type$_Trade }
+	change_variable = { which = EstateIncome_$type$_Total which = EstateIncome_$type$_Manpower }
+	change_variable = { which = EstateIncome_$type$_Total which = EstateIncome_$type$_Court }
+	
+	change_variable = { which = EstateIncome_StateTax which = EstateIncome_$type$_StateTax }
+	change_variable = { which = EstateIncome_ManTax which = EstateIncome_$type$_ManTax }
+		
+	multiply_variable = { which = EstateIncome_$type$_StateTax value = 0.1 }
+	multiply_variable = { which = EstateIncome_$type$_StateTax value = 10 }
+		
+	multiply_variable = { which = EstateIncome_$type$_ManTax value = 1000 }
+		
+	multiply_variable = { which = EstateIncome_$type$_TradeTax value = 0.1 }
+	multiply_variable = { which = EstateIncome_$type$_TradeTax value = 10 }
+	
+	EstateIncome_Clear = { type=$type$ }
+	
+	set_variable = { which = EstateIncome_$type$_Court value = 0 }
+}
+
+get_estate_income = {
+	set_variable = { which = EstateIncome_StateTax value = 0 }
+	set_variable = { which = EstateIncome_Trade value = 0 }
+	set_variable = { which = estate_tribals_being_tribals value = 0 }
+	
+	EstateIncome_Init = { type=BG } # Burghers
+	EstateIncome_Init = { type=GN } # Greater Nobles
+	EstateIncome_Init = { type=LN } # Lesser Nobles
+	EstateIncome_Init = { type=TR } # Tribals
+	
+	every_owned_province = {
+		limit = {
+			is_city = yes
+			
+			#NOT = { # don't take wealth from subtribes
+			#	is_variable_equal = { which = ptm_kingdom_type 		value = 2 }
+			#	is_variable_equal = { which = ptm_duchy_type 		value = 2 }
+			#	is_variable_equal = { which = ptm_county_type 		value = 2 }
+			#}
+		}
+		trigger_switch = {
+			on_trigger = has_province_flag
+			
+			burghers_control_province = {
+				EstateIncome_Main = { type=BG }
+			}
+			greater_nobles_control_province = {
+				EstateIncome_Main = { type=GN }
+			}
+			lesser_nobles_control_province = {
+				EstateIncome_Main = { type=LN }
+			}
+			tribals_control_province = { ### Tribal share of production and trade
+				EstateIncome_Main = { type=TR }
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					has_province_flag = tribals_control_province
+					AND = {
+						owner = { check_variable = { which = estate_tribals_weight_share 		value = 0.01 } }
+						has_province_flag = was_tribals
+					}
+				}
+				check_variable = { which = estate_tribals_being_tribals 		value = 0.001 }
+			}
+			PREV = {
+				change_variable = { which = estate_tribals_being_tribals which = PREV } #The tribals share of rural wealth
+			}
+		}
+	}
+	
+	EstateIncome_Finish = { type=BG }
+	EstateIncome_Finish = { type=GN }
+	EstateIncome_Finish = { type=LN }
+	EstateIncome_Finish = { type=TR }
+	
+	set_income_modifier_country = {
+		varname=EstateIncome_StateTax modname=EstateIncome_StateTax type=country
+	}
+	set_income_modifier_country = {
+		varname=EstateIncome_ManTax modname=EstateIncome_ManTax type=country
+	}
+}
+
+# Set privilege related influence changes
+Influence_PrivilegeMod = {
+	set_variable = { which = EstateInfluence_GN value = 0 }
+	set_variable = { which = EstateInfluence_LN value = 0 }
+	set_variable = { which = EstateInfluence_BG value = 0 }
+	set_variable = { which = EstateInfluence_TR value = 0 }
+	#set_variable = { which = EstateInfluence_FR value = 0 }
+	
+	set_variable = { which = EstateIncome_BG_Court value = 0 }
+	
+	# GN
+	if = {
+		limit = {
+			has_country_flag = commoners_banned_from_officers_corps_1_flag
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			commoners_banned_from_officers_corps_1_20 = {
+				change_variable = { which = EstateInfluence_GN value = 0.02 }
+			}
+			commoners_banned_from_officers_corps_1_40 = {
+				change_variable = { which = EstateInfluence_GN value = 0.04 }
+			}
+			commoners_banned_from_officers_corps_1_60 = {
+				change_variable = { which = EstateInfluence_GN value = 0.06 }
+			}
+			commoners_banned_from_officers_corps_1_80 = {
+				change_variable = { which = EstateInfluence_GN value = 0.08 }
+			}
+			commoners_banned_from_officers_corps_1_100 = {
+				change_variable = { which = EstateInfluence_GN value = 0.1 }
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = commoners_banned_from_officers_corps_2_flag
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			commoners_banned_from_officers_corps_2_20 = {
+				change_variable = { which = EstateInfluence_GN value = 0.04 }
+			}
+			commoners_banned_from_officers_corps_2_40 = {
+				change_variable = { which = EstateInfluence_GN value = 0.08 }
+			}
+			commoners_banned_from_officers_corps_2_60 = {
+				change_variable = { which = EstateInfluence_GN value = 0.12 }
+			}
+			commoners_banned_from_officers_corps_2_80 = {
+				change_variable = { which = EstateInfluence_GN value = 0.16 }
+			}
+			commoners_banned_from_officers_corps_2_100 = {
+				change_variable = { which = EstateInfluence_GN value = 0.2 }
+			}
+		}
+	}
+	
+	if = {
+		limit = {
+			has_country_flag = ceremonial_generalships_1_flag
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			ceremonial_generalships_1_20 = {
+				change_variable = { which = EstateInfluence_GN value = 0.02 }
+			}
+			ceremonial_generalships_1_40 = {
+				change_variable = { which = EstateInfluence_GN value = 0.04 }
+			}
+			ceremonial_generalships_1_60 = {
+				change_variable = { which = EstateInfluence_GN value = 0.06 }
+			}
+			ceremonial_generalships_1_80 = {
+				change_variable = { which = EstateInfluence_GN value = 0.08 }
+			}
+			ceremonial_generalships_1_100 = {
+				change_variable = { which = EstateInfluence_GN value = 0.1 }
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = ceremonial_generalships_2_flag
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			ceremonial_generalships_2_20 = {
+				change_variable = { which = EstateInfluence_GN value = 0.04 }
+			}
+			ceremonial_generalships_2_40 = {
+				change_variable = { which = EstateInfluence_GN value = 0.08 }
+			}
+			ceremonial_generalships_2_60 = {
+				change_variable = { which = EstateInfluence_GN value = 0.12 }
+			}
+			ceremonial_generalships_2_80 = {
+				change_variable = { which = EstateInfluence_GN value = 0.16 }
+			}
+			ceremonial_generalships_2_100 = {
+				change_variable = { which = EstateInfluence_GN value = 0.2 }
+			}
+		}
+	}
+	
+	if = {
+		limit = {
+			has_country_flag = GN_exclude_commoners_cabinet_1_flag
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			GN_exclude_commoners_cabinet_1_20 = {
+				change_variable = { which = EstateInfluence_GN value = 0.02 }
+			}
+			GN_exclude_commoners_cabinet_1_40 = {
+				change_variable = { which = EstateInfluence_GN value = 0.04 }
+			}
+			GN_exclude_commoners_cabinet_1_60 = {
+				change_variable = { which = EstateInfluence_GN value = 0.06 }
+			}
+			GN_exclude_commoners_cabinet_1_80 = {
+				change_variable = { which = EstateInfluence_GN value = 0.08 }
+			}
+			GN_exclude_commoners_cabinet_1_100 = {
+				change_variable = { which = EstateInfluence_GN value = 0.1 }
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = GN_exclude_commoners_cabinet_2_flag
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			GN_exclude_commoners_cabinet_2_20 = {
+				change_variable = { which = EstateInfluence_GN value = 0.04 }
+			}
+			GN_exclude_commoners_cabinet_2_40 = {
+				change_variable = { which = EstateInfluence_GN value = 0.08 }
+			}
+			GN_exclude_commoners_cabinet_2_60 = {
+				change_variable = { which = EstateInfluence_GN value = 0.12 }
+			}
+			GN_exclude_commoners_cabinet_2_80 = {
+				change_variable = { which = EstateInfluence_GN value = 0.16 }
+			}
+			GN_exclude_commoners_cabinet_2_100 = {
+				change_variable = { which = EstateInfluence_GN value = 0.2 }
+			}
+		}
+	}
+	
+	if = {
+		limit = {
+			has_country_flag = GN_high_court_titles_1_flag
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			GN_high_court_titles_1_20 = {
+				change_variable = { which = EstateInfluence_GN value = 0.02 }
+			}
+			GN_high_court_titles_1_40 = {
+				change_variable = { which = EstateInfluence_GN value = 0.04 }
+			}
+			GN_high_court_titles_1_60 = {
+				change_variable = { which = EstateInfluence_GN value = 0.06 }
+			}
+			GN_high_court_titles_1_80 = {
+				change_variable = { which = EstateInfluence_GN value = 0.08 }
+			}
+			GN_high_court_titles_1_100 = {
+				change_variable = { which = EstateInfluence_GN value = 0.1 }
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = GN_high_court_titles_2_flag
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			GN_high_court_titles_2_20 = {
+				change_variable = { which = EstateInfluence_GN value = 0.04 }
+			}
+			GN_high_court_titles_2_40 = {
+				change_variable = { which = EstateInfluence_GN value = 0.08 }
+			}
+			GN_high_court_titles_2_60 = {
+				change_variable = { which = EstateInfluence_GN value = 0.12 }
+			}
+			GN_high_court_titles_2_80 = {
+				change_variable = { which = EstateInfluence_GN value = 0.16 }
+			}
+			GN_high_court_titles_2_100 = {
+				change_variable = { which = EstateInfluence_GN value = 0.2 }
+			}
+		}
+	}
+	
+	
+	# LN
+	if = {
+		limit = {
+			has_country_flag = LN_high_court_titles_1_flag
+		}
+		change_variable = { which = EstateInfluence_LN value = 0.06 }
+	}
+	else_if = {
+		limit = {
+			has_country_flag = LN_high_court_titles_2_flag
+		}
+		change_variable = { which = EstateInfluence_LN value = 0.12 }
+	}
+	
+	
+	# BG
+	if = {
+		limit = {
+			has_country_flag = BG_resist_embargoes_1_flag
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			BG_resist_embargoes_1_20 = {
+				change_variable = { which = EstateInfluence_BG value = 0.01 }
+			}
+			BG_resist_embargoes_1_40 = {
+				change_variable = { which = EstateInfluence_BG value = 0.02 }
+			}
+			BG_resist_embargoes_1_60 = {
+				change_variable = { which = EstateInfluence_BG value = 0.03 }
+			}
+			BG_resist_embargoes_1_80 = {
+				change_variable = { which = EstateInfluence_BG value = 0.04 }
+			}
+			BG_resist_embargoes_1_100 = {
+				change_variable = { which = EstateInfluence_BG value = 0.05 }
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = BG_resist_embargoes_2_flag
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			BG_resist_embargoes_2_20 = {
+				change_variable = { which = EstateInfluence_BG value = 0.02 }
+			}
+			BG_resist_embargoes_2_40 = {
+				change_variable = { which = EstateInfluence_BG value = 0.04 }
+			}
+			BG_resist_embargoes_2_60 = {
+				change_variable = { which = EstateInfluence_BG value = 0.06 }
+			}
+			BG_resist_embargoes_2_80 = {
+				change_variable = { which = EstateInfluence_BG value = 0.08 }
+			}
+			BG_resist_embargoes_2_100 = {
+				change_variable = { which = EstateInfluence_BG value = 0.1 }
+			}
+		}
+	}
+	
+	if = {
+		limit = {
+			has_country_flag = BG_appoint_as_court_suppliers_1_flag
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			BG_appoint_as_court_suppliers_1_20 = {
+				change_variable = { which = EstateInfluence_BG value = 0.01 }
+				change_variable = { which = EstateIncome_BG_Court value = 0.01 }
+			}
+			BG_appoint_as_court_suppliers_1_40 = {
+				change_variable = { which = EstateInfluence_BG value = 0.02 }
+				change_variable = { which = EstateIncome_BG_Court value = 0.02 }
+			}
+			BG_appoint_as_court_suppliers_1_60 = {
+				change_variable = { which = EstateInfluence_BG value = 0.03 }
+				change_variable = { which = EstateIncome_BG_Court value = 0.03 }
+			}
+			BG_appoint_as_court_suppliers_1_80 = {
+				change_variable = { which = EstateInfluence_BG value = 0.04 }
+				change_variable = { which = EstateIncome_BG_Court value = 0.04 }
+			}
+			BG_appoint_as_court_suppliers_1_100 = {
+				change_variable = { which = EstateInfluence_BG value = 0.05 }
+				change_variable = { which = EstateIncome_BG_Court value = 0.05 }
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = BG_appoint_as_court_suppliers_2_flag
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			BG_appoint_as_court_suppliers_2_20 = {
+				change_variable = { which = EstateInfluence_BG value = 0.02 }
+				change_variable = { which = EstateIncome_BG_Court value = 0.02 }
+			}
+			BG_appoint_as_court_suppliers_2_40 = {
+				change_variable = { which = EstateInfluence_BG value = 0.04 }
+				change_variable = { which = EstateIncome_BG_Court value = 0.04 }
+			}
+			BG_appoint_as_court_suppliers_2_60 = {
+				change_variable = { which = EstateInfluence_BG value = 0.06 }
+				change_variable = { which = EstateIncome_BG_Court value = 0.06 }
+			}
+			BG_appoint_as_court_suppliers_2_80 = {
+				change_variable = { which = EstateInfluence_BG value = 0.08 }
+				change_variable = { which = EstateIncome_BG_Court value = 0.08 }
+			}
+			BG_appoint_as_court_suppliers_2_100 = {
+				change_variable = { which = EstateInfluence_BG value = 0.1 }
+				change_variable = { which = EstateIncome_BG_Court value = 0.1 }
+			}
+		}
+	}
+	multiply_variable = { which = EstateIncome_BG_Court which = court_money_endowed }
+	subtract_variable = { which = court_money_endowed which = EstateIncome_BG_Court }
+	
+	if = {
+		limit = {
+			has_country_flag = BG_honorary_noble_titles_1_flag
+		}
+		change_variable = { which = EstateInfluence_BG value = 0.02 }
+	}
+	else_if = {
+		limit = {
+			has_country_flag = BG_honorary_noble_titles_2_flag
+		}
+		change_variable = { which = EstateInfluence_BG value = 0.04 }
+	}
+}
+
+# Set estate tax rate
+# Estates pay more tax if loyalty is above 50,
+# Estate pay less if loyalty is below 50
+# However, high bureaucracy estate influence
+# Can force it to pay what it did not
+EstateTaxRate = {
+	if = {
+		limit = {
+			check_variable = { which = estate_$type2$_weight_share value = 0.001 }
+		}
+		set_variable = { which = EstateIncome_$type1$_StateTaxRate value = 1 }
+		subtract_variable = { which = EstateIncome_$type1$_StateTaxRate which = estate_$type3$_privilege_tax_state }
+		
+		set_variable = { which = EstateIncome_$type1$_ManTaxRate value = 1 }
+		subtract_variable = { which = EstateIncome_$type1$_ManTaxRate which = estate_$type3$_privilege_mp_state }
+		
+		set_variable = { which = EstateIncome_$type1$_TradeTaxRate value = 1 }
+		subtract_variable = { which = EstateIncome_$type1$_TradeTaxRate which = estate_$type3$_privilege_trade_state }
+		
+		if = {
+			limit = {
+				check_variable = { which = estate_$type2$_loyalty value = 0.5 }
+			}
+			set_variable = { which = EstateIncome_$type1$_LoyaltyMultiplier which = estate_$type2$_loyalty }
+			change_variable = { which = EstateIncome_$type1$_LoyaltyMultiplier value = 0.5 }
+		}
+		else = {
+			set_variable = { which = EstateIncome_$type1$_LoyaltyMultiplier which = estate_bureaucracy_weight_share }
+			divide_variable = { which = EstateIncome_$type1$_LoyaltyMultiplier which = estate_$type2$_weight_share }
+			divide_variable = { which = EstateIncome_$type1$_LoyaltyMultiplier value = 1.8 }
+			
+			if = {
+				limit = {
+					NOT = { check_variable = { which = EstateIncome_$type1$_LoyaltyMultiplier value = 1 } }
+				}
+				set_variable = { which = EstateIncome_$type1$_LoyaltyMultiplier value = 1 }
+			}
+			else = {
+				exp_funct = {
+					type1=which type2=value
+					inp=EstateIncome_$type1$_LoyaltyMultiplier exp=1.5
+				}
+				set_variable = { which = EstateIncome_$type1$_LoyaltyMultiplier which = exp_val }
+				
+				set_variable = { which = exp_val value = 0 }
+			}
+			
+			multiply_variable = { which = EstateIncome_$type1$_LoyaltyMultiplier which = estate_$type2$_loyalty }
+			multiply_variable = { which = EstateIncome_$type1$_LoyaltyMultiplier value = 2 }
+			
+			if = {
+				limit = {
+					check_variable = { which = EstateIncome_$type1$_LoyaltyMultiplier value = 1 }
+				}
+				set_variable = { which = EstateIncome_$type1$_LoyaltyMultiplier value = 1 }
+			}
+		}
+		
+		multiply_variable = { which = EstateIncome_$type1$_StateTaxRate which = EstateIncome_$type1$_LoyaltyMultiplier }
+		multiply_variable = { which = EstateIncome_$type1$_ManTaxRate which = EstateIncome_$type1$_LoyaltyMultiplier }
+		multiply_variable = { which = EstateIncome_$type1$_TradeTaxRate which = EstateIncome_$type1$_LoyaltyMultiplier }
+		
+		set_variable = { which = EstateIncome_$type1$_StateTaxRate_Disp which = EstateIncome_$type1$_StateTaxRate }
+		set_variable = { which = EstateIncome_$type1$_ManTaxRate_Disp which = EstateIncome_$type1$_ManTaxRate }
+		set_variable = { which = EstateIncome_$type1$_TradeTaxRate_Disp which = EstateIncome_$type1$_TradeTaxRate }
+		
+		multiply_variable = { which = EstateIncome_$type1$_StateTaxRate_Disp value = 0.015 } #-base tax display-
+		multiply_variable = { which = EstateIncome_$type1$_ManTaxRate_Disp value = 0.015 } #-manpower tax display-
+		multiply_variable = { which = EstateIncome_$type1$_TradeTaxRate_Disp value = 0.02 } #-trade tax display-
+		
+		multiply_variable = { which = EstateIncome_$type1$_StateTaxRate_Disp value = 1000 }
+		multiply_variable = { which = EstateIncome_$type1$_ManTaxRate_Disp value = 1000 }
+		multiply_variable = { which = EstateIncome_$type1$_TradeTaxRate_Disp value = 1000 }
+		
+		multiply_variable = { which = EstateIncome_$type1$_StateTaxRate_Disp value = 0.1 }
+		multiply_variable = { which = EstateIncome_$type1$_StateTaxRate_Disp value = 10 }
+		
+		multiply_variable = { which = EstateIncome_$type1$_ManTaxRate_Disp value = 0.1 }
+		multiply_variable = { which = EstateIncome_$type1$_ManTaxRate_Disp value = 10 }
+		
+		multiply_variable = { which = EstateIncome_$type1$_TradeTaxRate_Disp value = 0.1 }
+		multiply_variable = { which = EstateIncome_$type1$_TradeTaxRate_Disp value = 10 }
+	}
+	else = {
+		set_variable = { which = EstateIncome_$type1$_StateTaxRate value = 0 }
+		set_variable = { which = EstateIncome_$type1$_ManTaxRate value = 0 }
+		set_variable = { which = EstateIncome_$type1$_TradeTaxRate value = 0 }
+		
+		set_variable = { which = EstateIncome_$type1$_StateTaxRate_Disp value = 0 }
+		set_variable = { which = EstateIncome_$type1$_ManTaxRate_Disp value = 0 }
+		set_variable = { which = EstateIncome_$type1$_TradeTaxRate_Disp value = 0 }
+		
+		set_variable = { which = EstateIncome_$type1$_LoyaltyMultiplier value = 0 }
+	}
+}
+
+get_estate_privilege_income = {
+	#_prov means this estate privilege grants the estate greater income, taken from the province
+	#_state means this estate privilege grants the estate greater income, taken from the state
+	set_variable = { which = estate_gn_privilege_tax_prov value = 0 }
+	set_variable = { which = estate_gn_privilege_tax_state value = 0 }
+	set_variable = { which = estate_gn_privilege_mp_state value = 0 }
+	
+	set_variable = { which = estate_ln_privilege_tax_state value = 0 }
+	set_variable = { which = estate_ln_privilege_mp_state value = 0 }
+	
+	set_variable = { which = estate_bg_privilege_tax_prov value = 0 }
+	set_variable = { which = estate_bg_privilege_tax_state value = 0 }
+	set_variable = { which = estate_bg_privilege_trade_prov value = 0 }
+	set_variable = { which = estate_bg_privilege_trade_state value = 0 }
+	set_variable = { which = estate_bg_privilege_mp_state value = 0 }
+	
+	
+	if = {
+		limit = {
+			has_country_flag = GN_relaxed_levy_obligations_1_flag
+		}
+		change_variable = { which = estate_gn_privilege_mp_state value = 0.4 }
+	}
+	else_if = {
+		limit = {
+			has_country_flag = GN_relaxed_levy_obligations_2_flag
+		}
+		change_variable = { which = estate_gn_privilege_mp_state value = 0.8 }
+	}
+	
+	if = {
+		limit = {
+			has_country_flag = GN_tax_exemptions_1_flag
+		}
+		change_variable = { which = estate_gn_privilege_tax_state value = 0.2 }
+	}
+	else_if = {
+		limit = {
+			has_country_flag = GN_tax_exemptions_2_flag
+		}
+		change_variable = { which = estate_gn_privilege_tax_state value = 0.4 }
+	}
+	else_if = {
+		limit = {
+			has_country_flag = GN_tax_exemptions_3_flag
+		}
+		change_variable = { which = estate_gn_privilege_tax_state value = 0.6 }
+	}
+	else_if = {
+		limit = {
+			has_country_flag = GN_tax_exemptions_4_flag
+		}
+		change_variable = { which = estate_gn_privilege_tax_state value = 0.8 }
+	}
+	
+	if = {
+		limit = {
+			has_country_flag = GN_high_nobles_court_1_flag
+		}
+		change_variable = { which = estate_gn_privilege_tax_prov value = 0.1 }
+	}
+	else_if = {
+		limit = {
+			has_country_flag = GN_high_nobles_court_2_flag
+		}
+		change_variable = { which = estate_gn_privilege_tax_prov value = 0.2 }
+	}
+	
+	
+	if = {
+		limit = {
+			has_country_flag = LN_relaxed_levy_obligations_1_flag
+		}
+		change_variable = { which = estate_ln_privilege_mp_state value = 0.4 }
+	}
+	else_if = {
+		limit = {
+			has_country_flag = LN_relaxed_levy_obligations_2_flag
+		}
+		change_variable = { which = estate_ln_privilege_mp_state value = 0.8 }
+	}
+	
+	if = {
+		limit = {
+			has_country_flag = LN_tax_exemptions_1_flag
+		}
+		change_variable = { which = estate_ln_privilege_tax_state value = 0.2 }
+	}
+	else_if = {
+		limit = {
+			has_country_flag = LN_tax_exemptions_2_flag
+		}
+		change_variable = { which = estate_ln_privilege_tax_state value = 0.4 }
+	}
+	else_if = {
+		limit = {
+			has_country_flag = LN_tax_exemptions_3_flag
+		}
+		change_variable = { which = estate_ln_privilege_tax_state value = 0.6 }
+	}
+	else_if = {
+		limit = {
+			has_country_flag = LN_tax_exemptions_4_flag
+		}
+		change_variable = { which = estate_ln_privilege_tax_state value = 0.8 }
+	}
+	
+	
+	if = {
+		limit = {
+			has_country_flag = BG_tolerate_smuggling_1_flag
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			
+			BG_tolerate_smuggling_1_20 = {
+				change_variable = { which = estate_bg_privilege_trade_state value = 0.06 }
+				subtract_variable = { which = estate_bg_privilege_trade_prov value = 0.01 }
+			}
+			BG_tolerate_smuggling_1_40 = {
+				change_variable = { which = estate_bg_privilege_trade_state value = 0.12 }
+				subtract_variable = { which = estate_bg_privilege_trade_prov value = 0.02 }
+			}
+			BG_tolerate_smuggling_1_60 = {
+				change_variable = { which = estate_bg_privilege_trade_state value = 0.18 }
+				subtract_variable = { which = estate_bg_privilege_trade_prov value = 0.03 }
+			}
+			BG_tolerate_smuggling_1_80 = {
+				change_variable = { which = estate_bg_privilege_trade_state value = 0.24 }
+				subtract_variable = { which = estate_bg_privilege_trade_prov value = 0.04 }
+			}
+			BG_tolerate_smuggling_1_100 = {
+				change_variable = { which = estate_bg_privilege_trade_state value = 0.3 }
+				subtract_variable = { which = estate_bg_privilege_trade_prov value = 0.05 }
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = BG_tolerate_smuggling_2_flag
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			
+			BG_tolerate_smuggling_2_20 = {
+				change_variable = { which = estate_bg_privilege_trade_state value = 0.12 }
+				subtract_variable = { which = estate_bg_privilege_trade_prov value = 0.02 }
+			}
+			BG_tolerate_smuggling_2_40 = {
+				change_variable = { which = estate_bg_privilege_trade_state value = 0.24 }
+				subtract_variable = { which = estate_bg_privilege_trade_prov value = 0.04 }
+			}
+			BG_tolerate_smuggling_2_60 = {
+				change_variable = { which = estate_bg_privilege_trade_state value = 0.36 }
+				subtract_variable = { which = estate_bg_privilege_trade_prov value = 0.06 }
+			}
+			BG_tolerate_smuggling_2_80 = {
+				change_variable = { which = estate_bg_privilege_trade_state value = 0.48 }
+				subtract_variable = { which = estate_bg_privilege_trade_prov value = 0.08 }
+			}
+			BG_tolerate_smuggling_2_100 = {
+				change_variable = { which = estate_bg_privilege_trade_state value = 0.6 }
+				subtract_variable = { which = estate_bg_privilege_trade_prov value = 0.1 }
+			}
+		}
+	}
+	
+	if = {
+		limit = {
+			has_country_flag = BG_resist_embargoes_1_flag
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			
+			BG_resist_embargoes_1_20 = {
+				change_variable = { which = estate_bg_privilege_trade_state value = 0.02 }
+			}
+			BG_resist_embargoes_1_40 = {
+				change_variable = { which = estate_bg_privilege_trade_state value = 0.04 }
+			}
+			BG_resist_embargoes_1_60 = {
+				change_variable = { which = estate_bg_privilege_trade_state value = 0.06 }
+			}
+			BG_resist_embargoes_1_80 = {
+				change_variable = { which = estate_bg_privilege_trade_state value = 0.08 }
+			}
+			BG_resist_embargoes_1_100 = {
+				change_variable = { which = estate_bg_privilege_trade_state value = 0.1 }
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = BG_resist_embargoes_2_flag
+		}
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			
+			BG_resist_embargoes_2_20 = {
+				change_variable = { which = estate_bg_privilege_trade_state value = 0.04 }
+			}
+			BG_resist_embargoes_2_40 = {
+				change_variable = { which = estate_bg_privilege_trade_state value = 0.08 }
+			}
+			BG_resist_embargoes_2_60 = {
+				change_variable = { which = estate_bg_privilege_trade_state value = 0.12 }
+			}
+			BG_resist_embargoes_2_80 = {
+				change_variable = { which = estate_bg_privilege_trade_state value = 0.16 }
+			}
+			BG_resist_embargoes_2_100 = {
+				change_variable = { which = estate_bg_privilege_trade_state value = 0.2 }
+			}
+		}
+	}
+	
+	if = {
+		limit = {
+			has_country_flag = BG_honorary_noble_titles_1_flag
+		}
+		change_variable = { which = estate_bg_privilege_tax_state value = -0.075 }
+		
+		change_variable = { which = estate_bg_privilege_tax_prov value = 0.075 }
+		change_variable = { which = estate_bg_privilege_trade_prov value = 0.04 }
+		change_variable = { which = estate_bg_privilege_trade_state value = 0.08 }
+	}
+	else_if = {
+		limit = {
+			has_country_flag = BG_honorary_noble_titles_2_flag
+		}
+		change_variable = { which = estate_bg_privilege_tax_state value = -0.15 }
+		
+		change_variable = { which = estate_bg_privilege_tax_prov value = 0.15 }
+		change_variable = { which = estate_bg_privilege_trade_prov value = 0.08 }
+		change_variable = { which = estate_bg_privilege_trade_state value = 0.16 }
+	}
+	
+	if = {
+		limit = {
+			has_country_flag = BG_right_of_commerce_1_flag
+		}
+		change_variable = { which = estate_bg_privilege_tax_prov value = 0.075 }
+	}
+	else_if = {
+		limit = {
+			has_country_flag = BG_right_of_commerce_2_flag
+		}
+		change_variable = { which = estate_bg_privilege_tax_prov value = 0.15 }
+	}
+	
+	if = {
+		limit = {
+			has_country_flag = BG_exemption_from_military_services_1_flag
+		}
+		change_variable = { which = estate_bg_privilege_mp_state value = 0.5 }
+	}
+	else_if = {
+		limit = {
+			has_country_flag = BG_exemption_from_military_services_2_flag
+		}
+		change_variable = { which = estate_bg_privilege_mp_state value = 1 }
+	}
+	
+	# Set estate tax rate
+	# Estates pay more tax if loyalty is above 50,
+	# Estate pay less if loyalty is below 50
+	# However, high bureaucracy estate influence
+	# Can force it to pay what it did not
+	EstateTaxRate = {
+		type1=GN type2=greater_nobles type3=gn
+	}
+	EstateTaxRate = {
+		type1=LN type2=lesser_nobles type3=ln
+	}
+	EstateTaxRate = {
+		type1=BG type2=burghers type3=bg
+	}
+	
+	every_owned_province = {
+		limit = {
+			is_city = yes
+		}
+		set_variable = { which = estate_privilege_tax_prov value = 0 }
+		set_variable = { which = estate_privilege_trade_prov value = 0 }
+		
+		trigger_switch = {
+			on_trigger = has_province_flag
+			
+			greater_nobles_control_province = {
+				set_variable = { which = estate_gn_privilege_tax_prov which = owner }
+				set_variable = { which = EstateIncome_GN_TradeTaxRate which = owner }
+				
+				set_variable = { which = estate_privilege_tax_prov which = estate_gn_privilege_tax_prov }
+				
+				set_variable = { which = estate_gn_privilege_tax_prov value = 0 }
+				set_variable = { which = EstateIncome_GN_TradeTaxRate value = 0 }
+			}
+			
+			lesser_nobles_control_province = {
+				set_variable = { which = EstateIncome_LN_TradeTaxRate which = owner }
+				
+				set_variable = { which = EstateIncome_LN_TradeTaxRate value = 0 }
+			}
+			
+			burghers_control_province = {
+				set_variable = { which = estate_bg_privilege_tax_prov which = owner }
+				set_variable = { which = estate_bg_privilege_trade_prov which = owner }
+				set_variable = { which = EstateIncome_BG_TradeTaxRate which = owner }
+				
+				set_variable = { which = estate_privilege_tax_prov which = estate_bg_privilege_tax_prov }
+				set_variable = { which = estate_privilege_trade_prov which = estate_bg_privilege_trade_prov }
+				
+				set_variable = { which = estate_bg_privilege_tax_prov value = 0 }
+				set_variable = { which = estate_bg_privilege_trade_prov value = 0 }
+				set_variable = { which = EstateIncome_BG_TradeTaxRate value = 0 }
+			}
+		}
+	}
+	
+	
+	set_variable = { which = estate_gn_privilege_tax_prov value = 0 }
+	set_variable = { which = estate_gn_privilege_tax_state value = 0 }
+	set_variable = { which = estate_gn_privilege_mp_state value = 0 }
+	
+	set_variable = { which = estate_ln_privilege_tax_state value = 0 }
+	set_variable = { which = estate_ln_privilege_mp_state value = 0 }
+	
+	set_variable = { which = estate_bg_privilege_tax_prov value = 0 }
+	set_variable = { which = estate_bg_privilege_tax_state value = 0 }
+	set_variable = { which = estate_bg_privilege_trade_prov value = 0 }
+	set_variable = { which = estate_bg_privilege_trade_state value = 0 }
+	set_variable = { which = estate_bg_privilege_mp_state value = 0 }
+}
+
+
+# Amount of provincial income that the estate takes
+HelperEstateTakeFromProv = {
+	set_variable = { which = t_h_etfp which = $privilegeEffect$ }
+	multiply_variable = { which = t_h_etfp which = $provinceIncome$ }
+	subtract_variable = { which = $provinceIncome$ which = t_h_etfp }
+	change_variable = { which = $estateIncome$ which = t_h_etfp }
+	
+	set_variable = { which = t_h_etfp value = 0 }
+}
+
+# Generate information display variable
+HelperInfoDisplay = {
+	set_variable = { which = $info$ which = $income$ }
+	
+	if = {
+		limit = { NOT = { check_variable = { which = $info$ value = $min$ } } }
+		set_variable = { which = $info$ value = $min$ }
+	}
+
+	#set_variable = { which = t_i_id value = 1000 }
+	#multiply_variable = { which = t_i_id value = $min$ }
+	
+	#if = {
+	#	limit = {
+	#		check_variable = { which = t_i_id value = 1.001 }
+	#	}
+		multiply_variable = { which = $info$ value = 0.1 }
+		multiply_variable = { which = $info$ value = 10 }
+	#}
+	
+	set_variable = { which = t_i_id value = 0 }
+}
+
+
+IncomeTaxPop = {
+	set_variable = { which = wealth_rural_from_pop which = statTaxPopRural }
+	set_variable = { which = wealth_urban_from_pop which = statTaxPopUrban }
+	#set_variable = { which = wealth_upper_from_pop which = statTaxPopUpper }
+	
+	multiply_variable = { which = wealth_rural_from_pop which = multiplierIncome }
+	multiply_variable = { which = wealth_urban_from_pop which = multiplierIncome }
+	#multiply_variable = { which = wealth_upper_from_pop which = multiplierIncome }
+	
+	set_variable = { which = EstateIncome_PopTax which = localAutonomyIncome }
+	multiply_variable = { which = EstateIncome_PopTax value = 0.8 }
+	change_variable = { which = EstateIncome_PopTax value = 0.2 }
+	multiply_variable = { which = EstateIncome_PopTax which = statTaxPop }
+	multiply_variable = { which = EstateIncome_PopTax which = multiplierIncome }
+	
+	HelperEstateTakeFromProv = {
+		privilegeEffect=estate_privilege_tax_prov provinceIncome=wealth_rural_from_pop estateIncome=EstateIncome_PopTax
+	}
+	HelperEstateTakeFromProv = {
+		privilegeEffect=estate_privilege_tax_prov provinceIncome=wealth_urban_from_pop estateIncome=EstateIncome_PopTax
+	}
+}
+
+IncomeTaxWealth = {
+	set_variable = { which = EstateIncome_WealthTax which = localAutonomyIncome }
+	multiply_variable = { which = EstateIncome_WealthTax value = 0.8 }
+	change_variable = { which = EstateIncome_WealthTax value = 0.2 }
+	multiply_variable = { which = EstateIncome_WealthTax which = wealth_taxed_display }
+	multiply_variable = { which = EstateIncome_WealthTax which = multiplierIncome }
+}
+
+IncomeManpower = {
+	set_variable = { which = EstateIncome_Manpower which = localAutonomyIncome }
+	multiply_variable = { which = EstateIncome_Manpower value = 0.8 }
+	change_variable = { which = EstateIncome_Manpower value = 0.2 }
+	multiply_variable = { which = EstateIncome_Manpower which = statManpower }
+	multiply_variable = { which = EstateIncome_Manpower which = multiplierIncome }
+}
+
+# Trade income
+IncomeTrade = {
+	set_variable = { which = Trade_NavalContrib which = PREV }
+	
+	# Figure out how much rural, urban and upper are contributing based on innate trade power
+	#set_variable = { which = TradeUrbanContrib	value = 0 }
+	set_variable = { which = TradeUrbanContrib	which = statTradePowerUrban }
+	
+	#set_variable = { which = TradeRuralContrib	value = 0 }
+	set_variable = { which = TradeRuralContrib	which = statTradePowerRural }
+	
+	#set_variable = { which = TradeUpperContrib	value = 0 }
+	#set_variable = { which = TradeUpperContrib	which = statTradePowerUpper }
+	
+	#set_variable = { which = TotalTradePower	value = 0 }
+	set_variable = { which = TotalTradePower	which = TradeUrbanContrib }
+	change_variable = { which = TotalTradePower	which = TradeRuralContrib }
+	#change_variable = { which = TotalTradePower	which = TradeUpperContrib }
+	
+	if = {
+		limit = { NOT = { check_variable = { which = TotalTradePower value = 0.001 } } }
+		
+		set_variable = { which = TotalTradePower	value = 0.001 }
+	}
+	
+	divide_variable = { which = TradeUrbanContrib	which = TotalTradePower }
+	divide_variable = { which = TradeRuralContrib	which = TotalTradePower }
+	#divide_variable = { which = TradeUpperContrib	which = TotalTradePower }
+	
+	# Calculate Estate's share
+	set_variable = { which = EstateIncome_Trade which = localAutonomyIncome }
+	multiply_variable = { which = EstateIncome_Trade value = 0.9 }
+	change_variable = { which = EstateIncome_Trade value = 0.1 }
+	multiply_variable = { which = EstateIncome_Trade which = Prov_TradeIncome }
+	
+	#set_variable = { which = multiplier value = 0 }
+	
+	# Up to 65% goes into the hands of either the state or estate, 10% for the state (right to trade)
+	multiply_variable = { which = EstateIncome_Trade value = 0.65 }
+	
+	# 25% of trade revenue is always in the hands of the province, LA independent
+	set_variable = { which = wealth_all_from_trade which = Prov_TradeIncome }
+	multiply_variable = { which = wealth_all_from_trade value = 0.25 }
+	
+	# double dip into the local trade pool
+	HelperEstateTakeFromProv = {
+		privilegeEffect=estate_privilege_trade_prov provinceIncome=wealth_all_from_trade estateIncome=EstateIncome_Trade
+	}
+	
+	# Use the weightings to reassign trade income into the various groups
+	#set_variable = { which = wealth_urban_from_trade	value = 0 }
+	set_variable = { which = wealth_urban_from_trade	which = wealth_all_from_trade }
+	multiply_variable = { which = wealth_urban_from_trade which = TradeUrbanContrib }
+	#set_variable = { which = wealth_rural_from_trade	value = 0 }
+	set_variable = { which = wealth_rural_from_trade	which = wealth_all_from_trade }
+	multiply_variable = { which = wealth_rural_from_trade which = TradeRuralContrib }
+	#set_variable = { which = wealth_upper_from_trade	value = 0 }
+	#set_variable = { which = wealth_upper_from_trade	which = wealth_all_from_trade }
+	#multiply_variable = { which = wealth_upper_from_trade which = TradeUpperContrib }
+	
+	# Add this to the state tally
+	PREV = { change_variable = { which = wealth_all_from_trade	which = PREV } }
+	
+	# Cleanup variables
+	#set_variable = { which = Trade_NavalContrib	value = 0 }
+	set_variable = { which = wealth_all_from_trade	value = 0 }
+	set_variable = { which = TotalTradePower	value = 0 }
+	set_variable = { which = EstateIncome_Trade_monthly	which = EstateIncome_Trade }
+	if = {
+		limit = {
+			check_variable = { which = EstateIncome_Trade_monthly   value = 0.01 }
+		}
+		divide_variable = { which = EstateIncome_Trade_monthly	value = 12 }
+	}
+	
+	#HelperInfoDisplay = {
+	#	info=EstateIncome_Trade_monthly income=EstateIncome_Trade_monthly min=0.01
+	#}
+	#set_variable = { which = EstateIncome_Trade_monthly	value = 0 }
+	if = {
+		limit = { NOT = { check_variable = { which = EstateIncome_Trade_monthly value = 0.01 } } }
+		set_variable = { which = EstateIncome_Trade_monthly value = 0.01 }
+	}
+	else = {
+		multiply_variable = { which = EstateIncome_Trade_monthly value = 0.1 }
+		multiply_variable = { which = EstateIncome_Trade_monthly value = 10 }
+	}
+}
+
+IncomeProdRural = {
+	set_variable = { which = wealth_rural_from_production which = statTradeValueRural }
+	#change_variable = { which = wealth_rural_from_production which = timber_province_production }
+	multiply_variable = { which = wealth_rural_from_production value = 2.5 } # Base Efficiency
+	change_variable = { which = wealth_rural_from_production which = food_sale_local }
+	change_variable = { which = wealth_rural_from_production which = food_sale_region }
+	change_variable = { which = wealth_rural_from_production which = food_sale_cont }
+	multiply_variable = { which = wealth_rural_from_production which = multiplierIncome }
+	
+	set_variable = { which = EstateIncome_RuralProd which = localAutonomyIncome }
+	multiply_variable = { which = EstateIncome_RuralProd value = 0.8 }
+	change_variable = { which = EstateIncome_RuralProd value = 0.2 } # Estates gain 20% base income regardless of autonomy
+	multiply_variable = { which = EstateIncome_RuralProd which = wealth_rural_from_production }
+	
+	HelperEstateTakeFromProv = {
+		privilegeEffect=estate_privilege_tax_prov provinceIncome=wealth_rural_from_production estateIncome=EstateIncome_RuralProd
+	}
+}
+
+IncomeProdMine = {
+	if = {
+		limit = {
+			check_variable = { which = mine_power   value = 0.01 }
+		}
+		#set_variable = { which = wealth_from_mines value = 0 }
+		set_variable = { which = wealth_from_mines which = statIncomeMine }
+		change_variable = { which = wealth_from_mines which = statTaxMine }
+		multiply_variable = { which = wealth_from_mines value = 2.5 } # Base Efficiency
+		multiply_variable = { which = wealth_from_mines which = multiplierIncome }
+		multiply_variable = { which = wealth_from_mines value = 0.2 } # 80% to local powers
+		
+		# Estate Tax
+		set_variable = { which = EstateIncome_Mine which = localAutonomyIncome }
+		multiply_variable = { which = EstateIncome_Mine value = 0.8 }
+		change_variable = { which = EstateIncome_Mine value = 0.2 }
+		multiply_variable = { which = EstateIncome_Mine which = statIncomeMine }
+		multiply_variable = { which = EstateIncome_Mine value = 2.5 } # Base Efficiency
+		change_variable = { which = EstateIncome_Mine which = statTaxMine } # account for autonomy
+		multiply_variable = { which = EstateIncome_Mine which = multiplierIncome }
+		multiply_variable = { which = EstateIncome_Mine value = 0.8 } # 80% to local powers
+		
+		HelperEstateTakeFromProv = {
+			privilegeEffect=estate_privilege_tax_prov provinceIncome=wealth_from_mines estateIncome=EstateIncome_Mine
+		}
+	}
+	else = {
+		set_variable = { which = wealth_from_mines value = 0 }
+		set_variable = { which = EstateIncome_Mine value = 0 }
+	}
+	set_variable = { which = wealth_from_resources value = 0 }
+	set_variable = { which = wealth_urban_from_resources value = 0 }
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		fur_low = {
+			change_variable = { which = wealth_from_resources value = 1.5 }
+		}
+		fur_medium = {
+			change_variable = { which = wealth_from_resources value = 3 }
+		}
+		fur_large = {
+			change_variable = { which = wealth_from_resources value = 5.25 }
+		}
+	}
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		pearls_low = {
+			change_variable = { which = wealth_from_resources value = 2.5 }
+		}
+		pearls_medium = {
+			change_variable = { which = wealth_from_resources value = 5.5 }
+		}
+		pearls_large = {
+			change_variable = { which = wealth_from_resources value = 9.5 }
+		}
+	}
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		herring_province_small = {
+			change_variable = { which = wealth_from_resources value = 0.375 }
+		}
+		herring_province_medium = {
+			change_variable = { which = wealth_from_resources value = 0.75 }
+		}
+		herring_province_big = {
+			change_variable = { which = wealth_from_resources value = 1.5 }
+		}
+	}
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		cod_province_small = {
+			change_variable = { which = wealth_from_resources value = 0.375 }
+		}
+		cod_province_medium = {
+			change_variable = { which = wealth_from_resources value = 0.75 }
+		}
+		cod_province_big = {
+			change_variable = { which = wealth_from_resources value = 1.5 }
+		}
+	}
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		ivory_low = {
+			change_variable = { which = wealth_from_resources value = 1.875 }
+		}
+		ivory_medium = {
+			change_variable = { which = wealth_from_resources value = 3.75 }
+		}
+		ivory_large = {
+			change_variable = { which = wealth_from_resources value = 6 }
+		}
+	}
+	if = {
+		limit = {
+			has_province_flag = silk_road_town
+		}
+		change_variable = { which = wealth_urban_from_resources value = 0.75 }
+	}
+	trigger_switch = {
+		on_trigger = has_building
+		marketplace = { change_variable = { which = wealth_urban_from_resources value = 0.15 } }
+		merchant_guild = { change_variable = { which = wealth_urban_from_resources value = 0.375 } }
+		trade_depot = { change_variable = { which = wealth_urban_from_resources value = 0.75 } }
+		customs_house = { change_variable = { which = wealth_urban_from_resources value = 1.5 } }
+	}
+	multiply_variable = { which = wealth_from_resources which = localAutonomyIncome }
+	multiply_variable = { which = wealth_urban_from_resources which = localAutonomyIncome }
+	
+	set_variable = { which = EstateIncome_Resources which = wealth_from_resources }
+	change_variable = { which = EstateIncome_Resources which = wealth_urban_from_resources }
+	multiply_variable = { which = EstateIncome_Resources value = 0.7 }
+	multiply_variable = { which = wealth_from_resources value = 0.3 }
+	multiply_variable = { which = wealth_urban_from_resources value = 0.3 }
+	change_variable = { which = EstateIncome_Mine which = EstateIncome_Resources }
+	set_variable = { which = EstateIncome_Resources value = 0 }
+}
+
+IncomeProdUrban = {
+	if = {
+		limit = {
+			OR = {
+				check_variable = { which = statProdUrban   value = 0.01 }
+				check_variable = { which = statTradeValueUrban   value = 0.01 }
+			}
+		}
+		#set_variable = { which = wealth_urban_from_production value = 0 }
+		set_variable = { which = wealth_urban_from_production which = statProdUrban }
+		change_variable = { which = wealth_urban_from_production which = statTradeValueUrban }
+		multiply_variable = { which = wealth_urban_from_production value = 2.5 } # Base Efficiency
+		multiply_variable = { which = wealth_urban_from_production which = multiplierIncome }
+		
+		# Estate income
+		set_variable = { which = EstateIncome_UrbanProd which = localAutonomyIncome }
+		multiply_variable = { which = EstateIncome_UrbanProd value = 0.8 }
+		change_variable = { which = EstateIncome_UrbanProd value = 0.2 }
+		multiply_variable = { which = EstateIncome_UrbanProd which = wealth_urban_from_production }
+		
+		HelperEstateTakeFromProv = {
+			privilegeEffect=estate_privilege_tax_prov provinceIncome=wealth_urban_from_production estateIncome=EstateIncome_UrbanProd
+		}
+		
+		set_variable = {
+			which = production_urban_value_display
+			which = statProdUrban
+		}
+		multiply_variable = {
+			which = production_urban_value_display
+			value = 2.5
+		}
+		
+		#HelperInfoDisplay = {
+		#	info=production_urban_value_display income=production_urban_value_display min=0.01
+		#}
+		if = {
+			limit = { NOT = { check_variable = { which = production_urban_value_display value = 0.01 } } }
+			set_variable = { which = production_urban_value_display value = 0.01 }
+		}
+		else = {
+			multiply_variable = { which = production_urban_value_display value = 0.1 }
+			multiply_variable = { which = production_urban_value_display value = 10 }
+		}
+		HelperInfoDisplay = {
+			info=urban_production_display income=urban_production_power min=0.01
+		}
+		
+		#set_variable = {
+		#	which = statProdUrbanTmp
+		#	value = 0
+		#}
+	}
+	else = {
+		set_variable = { which = wealth_urban_from_production value = 0 }
+		set_variable = { which = EstateIncome_UrbanProd value = 0 }
+		set_variable = { which = production_urban_value_display value = 0 }
+		set_variable = { which = urban_production_display value = 0 }
+	}
+}
+
+IncomePrep = {
+	export_to_variable = {
+		which = localAutonomyIncome
+		value = local_autonomy
+	}
+	multiply_variable = { which = localAutonomyIncome value = 0.01 }
+	
+	set_variable = { which = national_multiplier_war_exhaustion		which = owner }
+	set_variable = { which = national_multiplier_stability			which = owner }
+	#set_variable = { which = national_multiplier_prestige 			which = owner }
+	
+	set_variable = { which = wealth_trauma_reduction				value = 0 }
+	if = {
+		limit = {
+			check_variable = { which = province_trauma   value = 0.001 }
+		}
+		change_variable = { which = wealth_trauma_reduction				which = province_trauma }
+		multiply_variable = { which = wealth_trauma_reduction				value = 0.05 }
+	}
+	change_variable = { which = wealth_trauma_reduction				value = 1 }
+	
+	#set_variable = { which = wartax_remain value = 1 }
+	
+	#if = {
+	#	limit = {
+	#		owner = { has_wartaxes = yes }
+	#	}
+	#	set_variable = { which = localAutonomyTemp which = localAutonomyIncome }
+	#	multiply_variable = { which = localAutonomyTemp value = 0.1 }
+	#	
+	#	set_variable = { which = wartax_lost value = 0.2 }
+	#	subtract_variable = { which = wartax_lost which = localAutonomyTemp }
+	#	
+	#	subtract_variable = { which = wartax_remain which = wartax_lost }
+	#	
+	#	set_variable = { which = localAutonomyTemp value = 0 }
+	#	set_variable = { which = wartax_lost value = 0 }
+	#}
+	
+	set_variable = { which = multiplierIncome value = 1 }
+	
+	multiply_variable = { which = multiplierIncome which = national_multiplier_war_exhaustion } ### War Exhaustion variable imported from country scope
+	multiply_variable = { which = multiplierIncome which = national_multiplier_war_exhaustion } ### Temporarily removed manpower malus and added double war exhaustion malus
+	multiply_variable = { which = multiplierIncome which = national_multiplier_stability } ### Stability imported from country scope
+	divide_variable = { which = multiplierIncome which = wealth_trauma_reduction } ### trauma reduction
+	
+	#if = {
+	#	limit = {
+	#		NOT = { check_variable = { which = wartax_remain value = 1 } }
+	#	}
+	#	multiply_variable = { which = multiplierIncome which = wartax_remain }
+	#}
+	
+	if = {
+		limit = {
+			NOT = { controlled_by = owner }
+		}
+		multiply_variable = { which = multiplierIncome value = 0.75 }
+	}
+}
+
+POP_Provincial_TradeIncome = {
+	if = {
+		limit = {
+			check_variable = { which = country_trade_income value = 0.1 }
+		}
+	#	set_variable = { which = Trade_NavalContrib value = 0.3 }
+	#	if = {
+	#		limit = {
+	#			dip_tech = 56
+	#		}
+	#		multiply_variable = { which = Trade_NavalContrib value = 7.5 }
+	#	}
+	#	else_if = {
+	#		limit = {
+	#			dip_tech = 53
+	#		}
+	#		multiply_variable = { which = Trade_NavalContrib value = 7 }
+	#	}
+	#	else_if = {
+	#		limit = {
+	#			dip_tech = 48
+	#		}
+	#		multiply_variable = { which = Trade_NavalContrib value = 6.5 }
+	#	}
+	#	else_if = {
+	#		limit = {
+	#			dip_tech = 40
+	#		}
+	#		multiply_variable = { which = Trade_NavalContrib value = 6 }
+	#	}
+	#	else_if = {
+	#		limit = {
+	#			dip_tech = 35
+	#		}
+	#		multiply_variable = { which = Trade_NavalContrib value = 5.5 }
+	#	}
+	#	else_if = {
+	#		limit = {
+	#			dip_tech = 30
+	#		}
+	#		multiply_variable = { which = Trade_NavalContrib value = 5 }
+	#	}
+	#	else_if = {
+	#		limit = {
+	#			dip_tech = 15
+	#		}
+	#		multiply_variable = { which = Trade_NavalContrib value = 3 }
+	#	}
+	#	else_if = {
+	#		limit = {
+	#			dip_tech = 10
+	#		}
+	#		multiply_variable = { which = Trade_NavalContrib value = 2 }
+	#	}
+	#	else_if = {
+	#		limit = {
+	#			dip_tech = 7
+	#		}
+	#		multiply_variable = { which = Trade_NavalContrib value = 1.5 }
+	#	}
+	#	else_if = {
+	#		limit = {
+	#			dip_tech = 5
+	#		}
+	#		multiply_variable = { which = Trade_NavalContrib value = 1 }
+	#	}
+	#	else = {
+	#		set_variable = { which = Trade_NavalContrib value = 0 }
+	#	}
+	#	
+		set_variable = { which = Prov_TradeIncome value = 0 }
+		set_variable = { which = State_TradeShare value = 0 }
+		every_owned_province = {
+			limit = {
+				is_city = yes
+			}
+			#set_variable = { which = Prov_TradeIncome value = 0 }
+			export_to_variable = {
+				which = Prov_TradeIncome
+				value = province_trade_power
+			}
+			
+			if = {
+				limit = {
+					check_variable = { which = Prov_TradeIncome   value = 0.001 }
+				}
+				exp_funct = {
+					type1=which type2=value
+					inp=Prov_TradeIncome exp=1.5
+				}
+				
+				set_variable = { which = Prov_TradeIncome which = exp_val }
+				
+				set_variable = { which = exp_val value = 0 }
+				
+	#			set_variable = { which = Trade_NavalContrib which = PREV }
+	#			
+	#			set_variable = { which = Prov_TradeNaval value = 0 }
+	#			change_variable = { which = Prov_TradeNaval which = statNavLimitRural }
+	#			change_variable = { which = Prov_TradeNaval which = statNavLimitUrban }
+	#			change_variable = { which = Prov_TradeNaval which = statNavLimitUpper }
+	#			
+	#			trigger_switch = {
+	#				on_trigger = has_building
+	#				harbour_infrastructure_1 = {
+	#					change_variable = { which = Prov_TradeNaval value = 0.5 }
+	#				}
+	#				harbour_infrastructure_2 = {
+	#					change_variable = { which = Prov_TradeNaval value = 1 }
+	#				}
+	#				harbour_infrastructure_3x = {
+	#					change_variable = { which = Prov_TradeNaval value = 1.5 }
+	#				}
+	#				harbour_infrastructure_4 = {
+	#					change_variable = { which = Prov_TradeNaval value = 2 }
+	#				}
+	#				harbour_infrastructure_5 = {
+	#					change_variable = { which = Prov_TradeNaval value = 3 }
+	#				}
+	#			}
+				
+				#trigger_switch = {
+				#	on_trigger = has_building
+				#	military_harbour_1 = {
+				#		change_variable = { which = Prov_TradeNaval value = 5 }
+				#	}
+				#	military_harbour_2 = {
+				#		change_variable = { which = Prov_TradeNaval value = 10 }
+				#	}
+				#	military_harbour_3 = {
+				#		change_variable = { which = Prov_TradeNaval value = 15 }
+				#	}
+				#	military_harbour_4 = {
+				#		change_variable = { which = Prov_TradeNaval value = 20 }
+				#	}
+				#}
+				
+				#trigger_switch = {
+				#	on_trigger = has_building
+				#	military_harbour_1 = {
+				#		change_variable = { which = Prov_TradeNaval value = 5 }
+				#	}
+				#	military_harbour_2 = {
+				#		change_variable = { which = Prov_TradeNaval value = 10 }
+				#	}
+				#	military_harbour_3 = {
+				#		change_variable = { which = Prov_TradeNaval value = 15 }
+				#	}
+				#	military_harbour_4 = {
+				#		change_variable = { which = Prov_TradeNaval value = 20 }
+				#	}
+				#}
+				
+				#multiply_variable = { which = Prov_TradeNaval which = Trade_NavalContrib }
+				
+				#change_variable = { which = Prov_TradeIncome which = Prov_TradeNaval }
+				#set_variable = { which = Prov_TradeNaval value = 0 }
+				#set_variable = { which = Trade_NavalContrib value = 0 }
+				
+				PREV = { change_variable = { which = Prov_TradeIncome which = PREV } }
+			}
+		}
+		
+		set_variable = { which = State_TradeShare which = Prov_TradeIncome }
+		set_variable = { which = Prov_TradeIncome value = 0 }
+		
+		every_owned_province = {
+			limit = {
+				is_city = yes
+			}
+			if = {
+				limit = {
+					check_variable = { which = Prov_TradeIncome   value = 0.001 }
+				}
+				set_variable = { which = State_TradeShare which = PREV }
+				set_variable = { which = country_trade_income which = PREV }
+				
+				divide_variable = { which = Prov_TradeIncome which = State_TradeShare }
+				multiply_variable = { which = Prov_TradeIncome which = country_trade_income }
+				multiply_variable = { which = Prov_TradeIncome value = 12 }
+				
+				set_variable = { which = State_TradeShare value = 0 }
+				set_variable = { which = country_trade_income value = 0 }
+			}
+			else = {
+				set_variable = { which = Prov_TradeIncome value = 0 }
+			}
+		}
+		set_variable = { which = State_TradeShare value = 0 }
+	}
+	else = {
+		every_owned_province = {
+			limit = {
+				is_city = yes
+			}
+			set_variable = { which = Prov_TradeIncome value = 0 }
+		}
+	}
+}
+
+IncomeSetPre = {
+	# Initialize trade income calculation
+	POP_Provincial_TradeIncome = yes
+	
+	# Actual income(and tax, since nothing is certain but death and taxes)
+	get_estate_privilege_income = yes
+	
+	set_variable = { which = EstateIncome_Trade value = 0 }
+	set_variable = { which = wealth_all_from_trade value = 0 }
+}
+
+IncomeSet = {
+	IncomePrep = yes
+	
+	# Calc income
+	IncomeTaxPop = yes
+	IncomeTaxWealth = yes
+	IncomeProdRural = yes
+	IncomeProdMine = yes
+	IncomeProdUrban = yes
+	IncomeTrade = yes
+	IncomeManpower = yes
+	
+	foodSaleBuy = yes
+	
+	set_variable = { which = localAutonomyIncome value = 0 }
+	set_variable = { which = multiplierIncome value = 0 }
+	
+	# Set estate display
+	set_variable = { which = EstateProv_Income which = EstateIncome_PopTax }
+	change_variable = { which = EstateProv_Income which = EstateIncome_WealthTax }
+	change_variable = { which = EstateProv_Income which = EstateIncome_Mine }
+	change_variable = { which = EstateProv_Income which = EstateIncome_RuralProd }
+	change_variable = { which = EstateProv_Income which = EstateIncome_UrbanProd }
+	
+	# Display as monthly
+	if = {
+		limit = {
+			check_variable = { which = EstateProv_Income   value = 0.01 }
+		}
+		divide_variable = { which = EstateProv_Income	value = 12 }
+	}
+	
+	multiply_variable = { which = EstateProv_Income value = 0.1 }
+	multiply_variable = { which = EstateProv_Income value = 10 }
+	
+	set_variable = { which = EstateProv_ManPow which = EstateIncome_Manpower }
+	multiply_variable = { which = EstateProv_ManPow value = 1000 }
+}
+IncomeSetPost = {
+	set_variable = { which = estate_privilege_tax_prov value = 0 }
+	set_variable = { which = estate_privilege_trade_prov value = 0 }
+}

@@ -1,0 +1,936 @@
+#### event list ###
+## 1 Government reform successful
+## 7 Confucian revolt
+## 10 Coup is successful
+## 11 Coup is failure
+## 12 Joseon dynasty
+## 14 Event for enemies
+## 20,21 Confucianism
+## 25 Move capital to Hanyang
+## 26, 27 Liaodong Diaspora
+
+### Government reform factor ###
+country_event = {
+	id = fall_of_goryeo.1
+	title = "fall_of_goryeo.1EVTNAME"
+	desc = "fall_of_goryeo.1EVTDESC"
+	picture = SIEGE_eventPicture
+	
+	hidden = yes
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		tag = KOR
+		is_year = 1358
+		NOT = {
+			is_year = 1450
+		}
+		
+		has_country_modifier = modConfUnrest
+	}
+	
+	immediate = {
+		set_variable = {
+			which = num_of_obs
+			which = privilege_corruption_GN
+		}
+		multiply_variable = {
+			which = num_of_obs
+			value = 0.04
+		}
+		
+		if = {
+			limit = {
+				has_country_modifier = obstacle_shifting_loyalties
+			}
+			change_variable = { which = num_of_obs value = 2 }
+		}
+		if = {
+			limit = {
+				has_country_modifier = obstacle_military_administration
+			}
+			change_variable = { which = num_of_obs value = 2 }
+		}
+		if = {
+			limit = {
+				has_country_modifier = obstacle_succession
+			}
+			change_variable = { which = num_of_obs value = 2 }
+		}
+		
+		if = {
+			limit = {
+				religion = confucianism
+			}
+			multiply_variable = { which = num_of_obs value = 0.5 }
+		}
+		
+		subtract_variable = {
+			which = num_of_obs
+			value = 5
+		}
+		
+		change_variable = { which = goryeo_confucian_unrest which = num_of_obs }
+		
+		set_variable = {
+			which = num_of_obs
+			value = 0
+		}
+	}
+	
+	option = {
+		name = "fall_of_goryeo.victory"
+	}
+}
+
+country_event = {
+	id = fall_of_goryeo.2
+	title = fall_of_goryeo.2.tt
+	desc = fall_of_goryeo.2.ds
+	picture = SIEGE_eventPicture
+	
+	fire_only_once = yes
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			add_country_modifier = {
+				name = modConfUnrest
+				duration = -1
+			}
+			set_variable = { which = goryeo_confucian_unrest value = 0 }
+		}
+	}
+	
+	option = {
+		name = fall_of_goryeo.2.a
+	}
+}
+
+country_event = {
+	id = fall_of_goryeo.3
+	title = fall_of_goryeo.3.tt
+	desc = fall_of_goryeo.3.ds
+	picture = SIEGE_eventPicture
+	
+	fire_only_once = yes
+	
+	#is_triggered_only = no
+	
+	trigger = {
+		OR = {
+			AND = {
+				tag = KOR
+				
+				OR = {
+					is_year = 1450
+					
+					AND = {
+						is_year = 1380
+						
+						NOT = {
+							check_variable = {
+								which = goryeo_confucian_unrest
+								value = 0
+							}
+						}
+					}
+				}
+			}
+			
+			tag = JOS
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 1
+	}
+	
+	immediate = {
+		remove_country_modifier = modConfUnrest
+		
+		set_variable = {
+			which = goryeo_confucian_unrest
+			value = 0
+		}
+	}
+	
+	option = {
+		name = fall_of_goryeo.3.a
+	}
+}
+
+### Confucian revolt ###
+country_event = {
+	id = fall_of_goryeo.7
+	title = "fall_of_goryeo.7EVTNAME"
+	desc = "fall_of_goryeo.7EVTDESC"
+	picture = SIEGE_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = KOR
+		
+		check_variable = { which = "goryeo_confucian_unrest" value = 100 }
+	}
+	
+	mean_time_to_happen = {
+		years = 40
+		
+		modifier = {
+			factor = 0.001
+			
+			is_at_war = yes
+		}
+		
+		modifier = {
+			factor = 0.5
+			check_variable = { which = "goryeo_confucian_unrest" value = 110 }
+		}
+		modifier = {
+			factor = 0.5
+			check_variable = { which = "goryeo_confucian_unrest" value = 120 }
+		}
+		modifier = {
+			factor = 0.5
+			check_variable = { which = "goryeo_confucian_unrest" value = 130 }
+		}
+		modifier = {
+			factor = 0.5
+			check_variable = { which = "goryeo_confucian_unrest" value = 140 }
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			country_event = { id = fall_of_goryeo.10 days = 1 }
+		}
+	}
+	
+	option = {
+		name = "fall_of_goryeo.7a"
+	}
+}
+
+### Capital is taken over by the revolt
+country_event = {
+	id = fall_of_goryeo.10
+	
+	title = "fall_of_goryeo.10EVTNAME"
+	desc = "fall_of_goryeo.10EVTDESC"
+	
+	picture = SIEGE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "fall_of_goryeo.10a"
+		if = {
+			limit = {
+				has_heir = yes
+			}
+			kill_ruler = yes
+		}
+		if = {
+			limit = {
+				has_heir = no
+			}
+			define_ruler = {
+				dynasty = ROOT
+			}
+		}
+		every_owned_province = {
+			limit = { controlled_by = REB }
+			change_controller = KOR
+		}
+		hidden_effect = {
+			disband_rebels = noble_rebels
+			disband_rebels = anti_tax_rebels
+			disband_rebels = pretender_rebels
+		}
+		
+		if = {
+			limit = {
+				has_leader = "Yeong Choi"
+			}
+			kill_leader = {
+				type = "Yeong Choi"
+			}
+		}
+		
+		define_general = {
+			name = "Seong-gye Yi"
+			fire = 5
+			shock = 4
+			manuever = 5
+			siege = 3
+		}
+		
+		infantry = 2802
+		infantry = 2802
+		infantry = 2802
+		infantry = 2802
+		infantry = 2802
+		cavalry = 2802
+		cavalry = 2802
+		cavalry = 2802
+		artillery = 2802
+		artillery = 2802
+		
+		subtract_stability_1 = yes
+		
+		if = {
+			limit = {
+				is_at_war = yes
+			}
+			every_country = {
+				limit = {
+					war_with = KOR
+				}
+				country_event = { id = fall_of_goryeo.14 }
+			}
+		}
+		set_country_flag = goryeo_revolt_won
+		
+		if = {
+			limit = {
+				has_country_flag = commoners_banned_from_officers_corps_1_flag
+			}
+			remove_commoners_banned_from_officers_corps_1 = yes
+		}
+		if = {
+			limit = {
+				has_country_flag = commoners_banned_from_officers_corps_2_flag
+			}
+			remove_commoners_banned_from_officers_corps_2 = yes
+			commoners_banned_from_officers_corps_1 = yes
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = ceremonial_generalships_1_flag
+			}
+			remove_ceremonial_generalships_1 = yes
+		}
+		if = {
+			limit = {
+				has_country_flag = ceremonial_generalships_2_flag
+			}
+			remove_ceremonial_generalships_2 = yes
+			ceremonial_generalships_1 = yes
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = GN_high_court_titles_1_flag
+			}
+			remove_GN_high_court_titles_1 = yes
+		}
+		if = {
+			limit = {
+				has_country_flag = GN_high_court_titles_2_flag
+			}
+			remove_GN_high_court_titles_2 = yes
+			GN_high_court_titles_1 = yes
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = commoners_banned_from_officers_corps_2_flag
+			}
+			remove_commoners_banned_from_officers_corps_2 = yes
+			commoners_banned_from_officers_corps_1 = yes
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = GN_exclude_commoners_cabinet_1_flag
+			}
+			remove_GN_exclude_commoners_cabinet_1 = yes
+		}
+		if = {
+			limit = {
+				has_country_flag = GN_exclude_commoners_cabinet_2_flag
+			}
+			remove_GN_exclude_commoners_cabinet_2 = yes
+			GN_exclude_commoners_cabinet_1 = yes
+		}
+		
+		remove_country_modifier = obstacle_military_administration
+	}
+}
+
+# Joseon dynasty emerges
+country_event = {
+	id = fall_of_goryeo.12
+	title = "fall_of_goryeo.12EVTNAME"
+	desc = "fall_of_goryeo.12EVTDESC"
+	picture = REFORM_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = KOR
+		NOT = { exists = JOS }
+		has_country_flag = goryeo_revolt_won
+		stability = 0
+	}
+	
+	mean_time_to_happen = { months = 12 }
+	
+	option = {
+		name = "fall_of_goryeo.victory2"
+		if = {
+			limit = { has_global_flag = singleplayer }
+			change_tag = JOS
+			swap_free_idea_group = yes
+			if = {
+				limit = { ai = yes }
+				country_event = { id = ideagroups.9001 days = 30 }
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					is_year = 1408
+				}
+				has_leader = "Seong-gye Yi"
+			}
+			define_ruler = {
+				name = "Seong-gye"
+				dynasty = "Yi"
+				DIP = 4
+				ADM = 5
+				MIL = 6
+				fixed = yes
+				attach_leader = "Seong-gye Yi"
+				age = 40
+			}
+		}
+		
+		if = {
+			limit = {
+				is_year = 1392
+				NOT = {
+					is_year = 1408
+				}
+			}
+			define_heir = {
+				name = "Bang-seok"
+				dynasty = ROOT
+				
+				DIP = 2
+				ADM = 3
+				MIL = 3
+				birth_date = 1382.6.11
+			}
+			set_country_flag = young_heir
+		}
+		if = {
+			limit = {
+				OR = {
+					NOT = { has_leader = "Seong-gye Yi" }
+					is_year = 1408
+				}
+			}
+			kill_leader = {
+				type = "Seong-gye Yi"
+			}
+			define_ruler = {
+				name = "Bang-won"
+				dynasty = "Yi"
+				DIP = 3
+				ADM = 6
+				MIL = 5
+				fixed = yes
+				age = 40
+			}
+			define_heir = {
+				name = "Do"
+				dynasty = "Yi"
+				claim = 100
+				DIP = 6
+				ADM = 5
+				MIL = 6
+				birth_date = 1397.5.7
+			}
+		}
+		subtract_stability_1 = yes
+		capital_scope = {
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+		add_absolutism = 10
+		clr_country_flag = jos_china_relations
+		clr_country_flag = jos_ren_relations
+		if = {
+			limit = {
+				CSE = {
+					exists = yes
+					dynasty = "Wang"
+				}
+			}
+			korea_region = {
+				add_claim = CSE
+			}
+		}
+				
+		
+		if = {
+			limit = {
+				has_country_flag = GN_tax_exemptions_1_flag
+			}
+			remove_GN_tax_exemptions_1 = yes
+		}
+		if = {
+			limit = {
+				has_country_flag = GN_tax_exemptions_2_flag
+			}
+			remove_GN_tax_exemptions_2 = yes
+		}
+		if = {
+			limit = {
+				has_country_flag = GN_tax_exemptions_3_flag
+			}
+			remove_GN_tax_exemptions_3 = yes
+		}
+		if = {
+			limit = {
+				has_country_flag = GN_tax_exemptions_4_flag
+			}
+			remove_GN_tax_exemptions_4 = yes
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = GN_authority_to_govern_locally_1_flag
+			}
+			remove_GN_authority_to_govern_locally_1 = yes
+		}
+		if = {
+			limit = {
+				has_country_flag = GN_authority_to_govern_locally_2_flag
+			}
+			remove_GN_authority_to_govern_locally_2 = yes
+			GN_authority_to_govern_locally_1 = yes
+		}
+		if = {
+			limit = {
+				has_country_flag = GN_authority_to_govern_locally_3_flag
+			}
+			remove_GN_authority_to_govern_locally_3 = yes
+			GN_authority_to_govern_locally_2 = yes
+		}
+		if = {
+			limit = {
+				has_country_flag = GN_authority_to_govern_locally_4_flag
+			}
+			remove_GN_authority_to_govern_locally_4 = yes
+			GN_authority_to_govern_locally_3 = yes
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = GN_relaxed_levy_obligations_1_flag
+			}
+			remove_GN_relaxed_levy_obligations_1 = yes
+		}
+		if = {
+			limit = {
+				has_country_flag = GN_relaxed_levy_obligations_2_flag
+			}
+			remove_GN_relaxed_levy_obligations_2 = yes
+			GN_relaxed_levy_obligations_1 = yes
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = GN_high_nobles_court_1_flag
+			}
+			remove_GN_high_nobles_court_1 = yes
+		}
+		if = {
+			limit = {
+				has_country_flag = GN_high_nobles_court_2_flag
+			}
+			remove_GN_high_nobles_court_2 = yes
+			GN_high_nobles_court_1 = yes
+		}
+		
+		remove_country_modifier = obstacle_shifting_loyalties
+		remove_country_modifier = obstacle_succession
+	}
+}
+
+
+#### Event for enemies of Korea ####
+country_event = {
+	id = fall_of_goryeo.14
+	
+	title = "fall_of_goryeo.14EVTNAME"
+	desc = "fall_of_goryeo.14EVTDESC"
+	
+	picture = SIEGE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "fall_of_goryeo.14a"
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				defensive_war_with = KOR
+			}
+			modifier = {
+				factor = 2
+				NOT = {
+					war_score_against = {
+						who = KOR
+						value = 0
+					}
+				}
+			}
+		}
+		white_peace = KOR
+	}
+	option = {
+		name = "fall_of_goryeo.14b"
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				war_score_against = {
+					who = KOR
+					value = 10
+				}
+			}
+		}
+		add_prestige = 5
+	}
+}
+
+#### Patriots rise in the northern territories ####
+#country_event = {
+#	id = fall_of_goryeo.15
+#	
+#	title = "fall_of_goryeo.15EVTNAME"
+#	desc = "fall_of_goryeo.15EVTDESC"
+#	
+#	picture = SIEGE_eventPicture
+#	
+#	fire_only_once = yes
+#	
+#	trigger = {
+#		tag = YUA
+#		owns = 732
+#		NOT = { war_with = KOR }
+#	}
+#	
+#	mean_time_to_happen = {
+#		months = 12
+#	}
+#		
+#	option = {
+#		name = "fall_of_goryeo.15a"
+#		732 = {
+#			spawn_rebels = {
+#				type = nationalist_rebels
+#				size = 1
+#				friend = KOR
+#				leader = "Ja-chun Yi"
+#			}
+#		}
+#		KOR = {
+#			country_event = { id = fall_of_goryeo.22 }
+#		}
+#	}
+#}
+
+### Introduce Confucianism to the court ###
+country_event = {
+	id = fall_of_goryeo.20
+	title = "fall_of_goryeo.20EVTNAME"
+	desc = "fall_of_goryeo.20EVTDESC"
+	picture = REFORM_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		NOT = { has_country_flag = korean_confucianism }
+		is_year = 1380
+		OR = {
+			tag = JOS
+			AND = {
+				tag = KOR
+				NOT = { check_variable = { which = "goryeo_confucian_unrest" value = 20 } }
+			}
+		}
+	}
+	
+	mean_time_to_happen = { months = 12 }
+	
+	option = {
+		name = "fall_of_goryeo.20a"
+		add_country_modifier = {
+			name = "intro_kor_confucianism"
+			duration = 2190
+		}
+		change_religion = confucianism
+		celestial_effect = yes
+		set_country_flag = korean_confucianism
+		add_patriarch_authority = 0.10
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 10
+				tag = JOS
+			}
+		}
+	}
+}
+### Confucianism spreads among the population ###
+province_event = {
+	id = fall_of_goryeo.21
+	
+	title = "fall_of_goryeo.21EVTNAME"
+	desc = "fall_of_goryeo.21EVTDESC"
+	
+	picture = SIEGE_eventPicture
+	
+	hidden = yes
+	
+	trigger = {
+		owner = {
+			OR = {
+				tag = KOR
+				tag = JOS
+			}
+			religion = confucianism
+		}
+		religion = mahayana
+		NOT = { check_variable = { which = converted_heretics value = 3 } }
+	}
+	
+	mean_time_to_happen = {
+		years = 15
+		
+		modifier = {
+			factor = 0.1
+			any_neighbor_province = {
+				religion = confucianism
+			}
+		}
+	}
+	
+	option = {
+		name = "fall_of_goryeo.victory"
+		change_variable = { which = converted_heretics value = 3 }
+	}
+}
+
+#### Revolt in the north, shall we join? ####
+#country_event = {
+#	id = fall_of_goryeo.22
+#	
+#	title = "fall_of_goryeo.22EVTNAME"
+#	desc = "fall_of_goryeo.22EVTDESC"
+#	
+#	picture = SIEGE_eventPicture
+#	
+#	is_triggered_only = yes
+#		
+#	option = {
+#		name = "fall_of_goryeo.22a"
+#		ai_chance = {
+#			factor = 100
+#		}
+#		add_prestige = 20
+#		declare_war_with_cb = {
+#			who = YUA
+#			casus_belli = cb_core
+#		}
+#	}
+#	option = {
+#		name = "fall_of_goryeo.22b"
+#		ai_chance = {
+#			factor = 0
+#		}
+#		add_prestige = 10
+#	}
+#}
+#### Move capital to Hanyang  ####
+country_event = {
+	id = fall_of_goryeo.25
+	
+	title = "fall_of_goryeo.25EVTNAME"
+	desc = "fall_of_goryeo.25EVTDESC"
+	
+	picture = SIEGE_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		OR = {
+			tag = JOS
+			tag = KOR
+		}
+		
+		religion = confucianism
+		#capital = 2802
+		NOT = { has_country_flag = joseon_capital }
+	}
+	
+	mean_time_to_happen = { months = 12 }
+	
+	option = {
+		name = "fall_of_goryeo.25a"
+		ai_chance = {
+			factor = 100
+		}
+		#Effect_set_capital = { target=735 }
+		#735 = {
+		#	add_building = bureaucracy_1
+		#	add_building = small_university
+		#	add_building = art_corporation
+		#	add_building = fort_14th
+		#	rename_capital = "Hanseong"
+		#
+		2802 = {
+			add_province_modifier = {
+				name = moved_to_hanseong
+				duration = 7300
+			}
+		}
+		#2802 = {
+		#	rename_capital = "Gaeseong"
+		#	remove_building = bureaucracy_1
+		#	remove_building = small_university
+		#	remove_building = art_corporation
+		#	remove_building = fort_14th
+		#}
+		2802 = {
+			rename_capital = "Hanseong"
+		}
+		set_country_flag = joseon_capital
+		add_adm_power = -200
+		add_absolutism = 10
+		add_legitimacy = 20
+		add_stability_1 = yes
+	}
+	option = {
+		name = "fall_of_goryeo.25b"
+		ai_chance = {
+			factor = 0
+		}
+		set_country_flag = joseon_capital
+	}
+}
+### Liaodong Diaspora
+country_event = {
+	id = fall_of_goryeo.26
+	
+	title = "fall_of_goryeo.26EVTNAME"
+	desc = "fall_of_goryeo.26EVTDESC"
+	
+	picture = SIEGE_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	trigger = {
+		FROM = {
+			province_id = 4035 # Shenyang
+			culture = korean
+		}
+		ROOT = {
+			OR = {
+				tag = KOR
+				tag = JOS
+			}
+		}
+	}
+	
+	option = {
+		name = "fall_of_goryeo.26a"
+		ai_chance = {
+			factor = 100
+			
+			modifier = {
+				factor = 0
+				ROOT = {
+					owns = 4036 # Andong
+				}
+			}
+		}
+		FROM = {
+			change_culture = jiaoliao
+			custom_tooltip = "liaodong_diaspora"
+			hidden_effect = {
+				set_variable = { which = rural_percentage_removed   value = 0.3 }
+				set_variable = { which = percent_rural_transfered  value = 1.0 }
+				remove_rural_population_DEVS = yes
+				
+			}
+		}
+		hidden_effect = {
+			random_province = {
+				limit = {
+					area = north_korea_area
+					culture = korean
+				}
+				province_event = { id = fall_of_goryeo.27 }
+			}
+		}
+	}
+	option = {
+		name = "fall_of_goryeo.26b"
+		ai_chance = {
+			factor = 1
+			
+			modifier = {
+				factor = 100
+				ROOT = {
+					owns = 4036 # Andong
+				}
+			}
+		}
+		liaoning_area = {
+			add_claim = ROOT
+		}
+	}
+}
+province_event = {
+	id = fall_of_goryeo.27
+	
+	title = "fall_of_goryeo.5.t"
+	desc = "fall_of_goryeo.5.d"
+	
+	picture = SIEGE_eventPicture
+	
+	hidden = yes
+	is_triggered_only = yes
+	
+	option = { ### Great!
+		name = "fall_of_goryeo.2a"
+		4035 = {
+			ROOT = {
+				#set_variable = { which = rural_population_fleeing  value = 0 }
+				set_variable = { which = rural_population_fleeing which = PREV }
+				add_rural_population_DEVS = yes
+				
+				set_variable = { which = rural_population_fleeing  value = 0 }
+			}
+			set_variable = { which = rural_population_fleeing  value = 0 }
+			set_variable = { which = rural_percentage_removed   value = 0.3 }
+			remove_rural_population_DEVS = yes
+			
+		}
+	}
+}

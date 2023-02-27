@@ -1,0 +1,1111 @@
+#by Marco Dandolo
+
+#Events concerning sienese festivities/flavour
+
+#Events 0-22 Palio events
+
+#0 Ave Maria
+#1 Preparations
+#2 Palio Fantini from neighbour
+#3 Palio Fantini from neighbour - yes
+#4 No Palio Fantini from neighbour
+#5 Contrade prepare banquet
+#6 Drappellone
+#7 Betting at the Prove
+#8 Personal question
+#9 Bad Palio clothes
+#10 Festivities begin
+#11 Neighbours notification
+#12 Neighbour bets
+#13 Unexpected guests
+#14 Guest has to pay
+#15 Guest is invited
+#16 Guest thrown out
+#17 A wonderful drappellone
+#18 Palio race - normal
+#19 Palio race - foreigner wins
+#20 Palio race - Fantino dies
+#21 Foreigner wins
+#22 Palio ends
+
+#Events 30-35 Palio events which are not Siena (less flavorful and strong)
+
+#30 Preparations
+#31 Betting
+#32 Race begins
+#33 Normal Race
+#34 Foreigner wins
+#35 Tragedy
+
+
+##########
+# PALIO! #
+##########
+
+#Ave Maria
+country_event = {
+	id = palio_siena.0
+	title = "palio_siena.EVTNAME0"
+	desc = "palio_siena.EVTDESC0"
+	picture = PALIO_eventPicture
+	
+	trigger = {
+		has_country_modifier = festivating_palio_republic
+		has_country_flag = palio_race
+		is_month = 8
+		NOT = {
+			has_country_modifier = glorious_palio_republic
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		
+		name = "palio_siena.EVTOPTA0"	#Ave Maria
+		
+		add_prestige = 5
+		add_republican_tradition = 5
+		remove_country_modifier = festivating_palio_republic
+		add_country_modifier = {
+			name = "glorious_palio_republic"
+			duration = 1825
+		}
+		
+		clr_country_flag = palio_decision
+		clr_country_flag = palio_bankett
+		clr_country_flag = palio_much_food
+		clr_country_flag = palio_some_food
+		clr_country_flag = palio_little_food
+		clr_country_flag = palio_no_food
+		clr_country_flag = palio_outstanding_drappellone
+		clr_country_flag = palio_drappellone
+		clr_country_flag = palio_betting
+		clr_country_flag = bad_palio_clothes
+		clr_country_flag = palio_wonderful_drappellone
+		clr_country_flag = palio_race
+		
+		every_country = {
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = neighbour_send_Fantini
+						has_country_flag = neighbour_at_the_palio
+					}
+				}
+				country_event = { id = palio_siena.22 }
+			}
+			#if = {
+			#	limit = {
+			#		has_country_flag = neighbour_at_the_palio
+			#	}
+			#	country_event = { id = palio_siena.22 }
+			#}
+		}
+		
+		#every_country = {
+		#	limit = {
+		#		has_country_flag = neighbour_at_the_palio
+		#	}
+		#	country_event = { id = palio_siena.22 }
+		#}
+	}
+}
+
+#Preparations
+country_event = {
+	id = palio_siena.1
+	title = "palio_siena.EVTNAME1"
+	desc = "palio_siena.EVTDESC1"
+	picture = PALIO_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "palio_siena.EVTOPTA1"	#We shall search foreign Fantini
+		
+		add_dip_power = -5
+		add_years_of_income = -0.1
+		add_prestige = 1
+		every_neighbor_country = {
+			country_event = {
+				id = palio_siena.2 days = 2
+			}
+		}
+		add_country_modifier = {
+			name = "preparing_palio_republic"
+			duration = -1
+		}
+		ai_chance = { factor = 100 }
+	}
+	
+	option = {
+		name = "palio_siena.EVTOPTB1"	#The Fantini in our land are good enough
+		
+		add_prestige = -1
+		add_country_modifier = {
+			name = "preparing_palio_republic"
+			duration = -1
+		}
+	}
+}
+
+#Palio Fantini from neighbour
+country_event = {
+	id = palio_siena.2
+	title = "palio_siena.EVTNAME2"
+	desc = "palio_siena.EVTDESC2"
+	picture = PALIO_eventPicture
+	
+	is_triggered_only = yes
+	
+	
+	option = {
+		name = "palio_siena.EVTOPTA2"	#Send our best Fantini
+		
+		add_dip_power = -5
+		add_prestige = 2
+		add_years_of_income = -0.3
+		FROM = {
+			country_event = {
+				id = palio_siena.3
+			}
+		}
+		set_country_flag = neighbour_send_best_Fantini
+		set_country_flag = neighbour_send_Fantini
+		ai_chance = {
+			factor = 70
+			modifier = {
+				factor = 0.1
+				FROM = { is_enemy = ROOT }
+			}
+		}
+	}
+	
+	option = {
+		name = "palio_siena.EVTOPTB2"	#Send average Fantini
+		
+		add_dip_power = -5
+		add_prestige = 1
+		add_years_of_income = -0.2
+		FROM = {
+			country_event = {
+				id = palio_siena.3
+			}
+		}
+		set_country_flag = neighbour_send_Fantini
+		ai_chance = { factor = 20 }
+	}
+	
+	option = {
+		name = "palio_siena.EVTOPTC2"	#No Fantini
+		FROM = {
+			country_event = {
+				id = palio_siena.4
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+}
+
+#Palio Fantini from neighbour - yes
+country_event = {
+	id = palio_siena.3
+	title = "palio_siena.EVTNAME3"
+	desc = "palio_siena.EVTDESC3"
+	picture = PALIO_eventPicture
+	
+	is_triggered_only = yes
+	
+	
+	option = {
+		name = "palio_siena.EVTOPTA3"	#Great!
+	}
+}
+
+#No Palio Fantini from neighbour
+country_event = {
+	id = palio_siena.4
+	title = "palio_siena.EVTNAME4"
+	desc = "palio_siena.EVTDESC4"
+	picture = PALIO_eventPicture
+	
+	is_triggered_only = yes
+	
+	
+	option = {
+		name = "palio_siena.EVTOPTA4"	#How dare they?
+		
+		add_prestige = -1
+	}
+}
+
+#Contrade prepare banquet
+country_event = {
+	id = palio_siena.5
+	title = "palio_siena.EVTNAME5"
+	desc = "palio_siena.EVTDESC5"
+	picture = PALIO_eventPicture
+	
+	trigger = {
+		tag = SIE
+		has_country_modifier = preparing_palio_republic
+		NOT = {
+			has_country_flag = palio_bankett
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = "palio_siena.EVTOPTA5"	#Banketts on every piazza and everything for free
+		
+		add_years_of_income = -0.10
+		add_republican_tradition = 5
+		add_prestige = 1
+		set_country_flag = palio_bankett
+		set_country_flag = palio_much_food
+		ai_chance = { factor = 100 }
+	}
+	
+	option = {
+		name = "palio_siena.EVTOPTB5"	#Be generous
+		
+		add_years_of_income = -0.08
+		add_republican_tradition = 4
+		set_country_flag = palio_bankett
+		set_country_flag = palio_some_food
+	}
+	
+	option = {
+		name = "palio_siena.EVTOPTC5"	#The standard
+		
+		add_years_of_income = -0.06
+		add_republican_tradition = 3
+		set_country_flag = palio_bankett
+		set_country_flag = palio_little_food
+	}
+	
+	
+	option = {
+		name = "palio_siena.EVTOPTD5"	#I'm not a medieval lord, spending 'lavishly on food'
+		set_country_flag = palio_bankett
+		set_country_flag = palio_no_food
+	}
+}
+
+#Drappellone
+country_event = {
+	id = palio_siena.6
+	title = "palio_siena.EVTNAME6"
+	desc = "palio_siena.EVTDESC6"
+	picture = DRAPPELLONE_eventPicture
+	
+	trigger = {
+		tag = SIE
+		has_country_modifier = preparing_palio_republic
+		has_country_flag = palio_bankett
+		NOT = {
+			has_country_flag = palio_drappellone
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = "palio_siena.EVTOPTA6"	#We will have an outstanding drappellone
+		
+		add_years_of_income = -0.1
+		add_republican_tradition = 1
+		add_prestige = 1
+		set_country_flag = palio_outstanding_drappellone
+		set_country_flag = palio_drappellone
+	}
+	
+	option = {
+		name = "palio_siena.EVTOPTB6"	#A normal drappellone will do it
+		
+		set_country_flag = palio_drappellone
+	}
+}
+
+#Betting at the Prove
+country_event = {
+	id = palio_siena.7
+	title = "palio_siena.EVTNAME7"
+	desc = "palio_siena.EVTDESC7"
+	picture = PALIO_eventPicture
+	
+	trigger = {
+		tag = SIE
+		has_country_modifier = preparing_palio_republic
+		has_country_flag = palio_drappellone
+		NOT = {
+			has_country_flag = palio_betting
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = "palio_siena.EVTOPTA7"	#Betting sounds good
+		
+		add_republican_tradition = 1
+		random_list = {
+			5 = { add_years_of_income = 1 add_prestige = 5 }
+			10 = { add_years_of_income = 0.6 add_prestige = 3 }
+			25 = { add_years_of_income = 0.3 add_prestige = 1 }
+			30 = { add_years_of_income = -0.3 add_prestige = -1 }
+			20 = { add_years_of_income = -0.6 add_prestige = -3 }
+			10 = { add_years_of_income = -1 add_prestige = -5 }
+		}
+		set_country_flag = palio_betting
+	}
+	
+	option = {
+		name = "palio_siena.EVTOPTB7"	#Betting is sin!
+		
+		add_papal_influence = 1
+		set_country_flag = palio_betting
+		ai_chance = { factor = 100 }
+	}
+}
+
+#Personal question
+country_event = {
+	id = palio_siena.8
+	title = "palio_siena.EVTNAME8"
+	desc = "palio_siena.EVTDESC8"
+	picture = PALIO_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = SIE
+		has_country_modifier = preparing_palio_republic
+		has_country_flag = palio_drappellone
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = "palio_siena.EVTOPTA8"	#Cretino!
+		
+		add_republican_tradition = 5
+		add_prestige = 5
+		ai_chance = { factor = 100 }
+	}
+	
+	option = {
+		name = "palio_siena.EVTOPTB8"	#He has a point.
+		
+		add_republican_tradition = -5
+		add_prestige = -5
+	}
+}
+
+#Bad palio clothes
+country_event = {
+	id = palio_siena.9
+	title = "palio_siena.EVTNAME9"
+	desc = "palio_siena.EVTDESC9"
+	picture = PALIO_eventPicture
+	
+	trigger = {
+		tag = SIE
+		has_country_modifier = preparing_palio_republic
+		overextension_percentage = 0.5
+		NOT = {
+			has_country_flag = bad_palio_clothes
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+		modifier = {
+			factor = 0.9
+			overextension_percentage = 0.6
+		}
+		modifier = {
+			factor = 0.9
+			overextension_percentage = 0.7
+		}
+		modifier = {
+			factor = 0.9
+			overextension_percentage = 0.8
+		}
+		modifier = {
+			factor = 0.9
+			overextension_percentage = 0.9
+		}
+	}
+	
+	option = {
+		name = "palio_siena.EVTOPTA9"	#We must give them new ones
+		
+		add_years_of_income = -0.03
+		set_country_flag = bad_palio_clothes
+	}
+	
+	option = {
+		name = "palio_siena.EVTOPTB9"	#I ilke the clothes. They smell so good.
+		
+		add_republican_tradition = -1
+		add_prestige = -1
+		set_country_flag = bad_palio_clothes
+	}
+}
+
+#Festivities begin!
+country_event = {
+	id = palio_siena.10
+	title = "palio_siena.EVTNAME10"
+	desc = "palio_siena.EVTDESC10"
+	picture = PALIO_eventPicture
+	
+	trigger = {
+		tag = SIE
+		has_country_modifier = preparing_palio_republic
+		has_country_flag = palio_drappellone
+		has_country_flag = palio_bankett
+		has_country_flag = palio_betting
+		is_month = 6
+		
+		NOT = {
+			has_country_modifier = festivating_palio_republic
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = "palio_siena.EVTOPTA10"	#Viva Siena! Viva Santa Maria!
+		
+		remove_country_modifier = preparing_palio_republic
+		add_country_modifier = {
+			name = "festivating_palio_republic"
+			duration = -1
+		}
+		
+		every_country = {
+			limit = {
+				has_country_flag = neighbour_send_Fantini
+			}
+			country_event = { id = palio_siena.11 }
+		}
+	}
+}
+
+#Neighbour notification
+country_event = {
+	id = palio_siena.11
+	title = "palio_siena.EVTNAME11"
+	desc = "palio_siena.EVTDESC11"
+	picture = PALIO_eventPicture
+	
+	is_triggered_only = yes
+	
+	
+	option = {
+		name = "palio_siena.EVTOPTA11"	#Maybe... we should have a look?
+		add_dip_power = -5
+		set_country_flag = neighbour_at_the_palio
+		clr_country_flag = neighbour_send_Fantini
+	}
+	
+	option = {
+		name = "palio_siena.EVTOPTB11"	#They got their horses, now... back off!
+	}
+}
+
+#Neighbour bets
+country_event = {
+	id = palio_siena.12
+	title = "palio_siena.EVTNAME12"
+	desc = "palio_siena.EVTDESC12"
+	picture = PALIO_eventPicture
+	
+	trigger = {
+		has_country_flag = neighbour_at_the_palio
+		NOT = { has_country_flag = neighbour_betted_at_palio }
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	
+	option = {
+		name = "palio_siena.EVTOPTA12"	#Betting sounds good!
+		set_country_flag = neighbour_betted_at_palio
+		random_list = {
+			25 = { add_years_of_income = 0.6 add_prestige = 3 }
+			25 = { add_years_of_income = 0.3 add_prestige = 1 }
+			25 = { add_years_of_income = -0.3 add_prestige = -1 }
+			25 = { add_years_of_income = -0.6 add_prestige = -3 }
+		}
+		every_country = {
+			limit = {
+				has_country_modifier = festivating_palio_republic
+			}
+			country_event = { id = palio_siena.13 days = 2 }
+		}
+	}
+	
+	option = {
+		name = "palio_siena.EVTOPTB12"	#Betting is sin
+		set_country_flag = neighbour_betted_at_palio
+	}
+}
+
+#Unexpected guests
+country_event = {
+	id = palio_siena.13
+	title = "palio_siena.EVTNAME13"
+	desc = "palio_siena.EVTDESC13"
+	picture = PALIO_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "palio_siena.EVTOPTA13"	#They may stay, if they pay
+		add_prestige = 1
+		add_years_of_income = 0.33
+		FROM = {
+			country_event = { id = palio_siena.14 }
+		}
+		ai_chance = { factor = 25 }
+	}
+	
+	option = {
+		name = "palio_siena.EVTOPTB13"	#Give them a place at the loggia
+		add_opinion = {
+			who = FROM
+			modifier = opinion_pleased
+		}
+		FROM = {
+			country_event = { id = palio_siena.15 }
+		}
+		ai_chance = {
+			factor = 60
+			modifier = {
+				factor = 0.1
+				FROM = { is_enemy = ROOT }
+			}
+			modifier = {
+				factor = 0.3
+				FROM = { is_rival = ROOT }
+			}
+		}
+	}
+	
+	option = {
+		name = "palio_siena.EVTOPTB13"	#Throw them out!
+		add_prestige = 5
+		FROM = {
+			country_event = { id = palio_siena.16 }
+		}
+		ai_chance = {
+			factor = 15
+			modifier = {
+				factor = 3
+				FROM = { is_enemy = ROOT }
+			}
+		}
+	}
+}
+
+#Guest has to pay
+country_event = {
+	id = palio_siena.14
+	title = "palio_siena.EVTNAME14"
+	desc = "palio_siena.EVTDESC14"
+	picture = PALIO_eventPicture
+	
+	is_triggered_only = yes
+	
+	
+	option = {
+		name = "palio_siena.EVTOPTA14"	#That's fair
+		add_prestige = 1
+		add_years_of_income = -0.33
+	}
+}
+
+#Guest is invited
+country_event = {
+	id = palio_siena.15
+	title = "palio_siena.EVTNAME15"
+	desc = "palio_siena.EVTDESC15"
+	picture = PALIO_eventPicture
+	
+	is_triggered_only = yes
+	
+	
+	option = {
+		name = "palio_siena.EVTOPTA15"	#FROM_COUNTRY is a good host!
+		add_prestige = 2
+		add_opinion = {
+			who = FROM
+			modifier = opinion_pleased
+		}
+	}
+}
+
+#Guest thrown out
+country_event = {
+	id = palio_siena.16
+	title = "palio_siena.EVTNAME16"
+	desc = "palio_siena.EVTDESC16"
+	picture = PALIO_eventPicture
+	
+	is_triggered_only = yes
+	
+	
+	option = {
+		name = "palio_siena.EVTOPTA16"	#Curses!
+		add_prestige = -5
+		clr_country_flag = neighbour_at_the_palio
+		set_country_flag = neighbour_send_Fantini
+	}
+}
+
+#A wonderful Drappellone
+country_event = {
+	id = palio_siena.17
+	title = "palio_siena.EVTNAME17"
+	desc = "palio_siena.EVTDESC17"
+	picture = DRAPPELLONE_eventPicture
+	
+	trigger = {
+		tag = SIE
+		has_country_modifier = festivating_palio_republic
+		has_country_flag = palio_outstanding_drappellone
+		advisor = artist
+		
+		NOT = {
+			has_country_flag = palio_wonderful_drappellone
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = "palio_siena.EVTOPTA17"	#That's a beautiful one
+		
+		add_republican_tradition = 1
+		add_prestige = 5
+		set_country_flag = palio_wonderful_drappellone
+	}
+}
+
+#Palio race - normal
+country_event = {
+	id = palio_siena.18
+	title = "palio_siena.EVTNAME18"
+	desc = "palio_siena.EVTDESC18"
+	picture = PALIO_eventPicture
+	
+	trigger = {
+		tag = SIE
+		has_country_modifier = festivating_palio_republic
+		is_month = 7
+		NOT = {
+			has_country_flag = palio_race
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+		
+		modifier = {
+			factor = 0.9
+			prestige = 20
+		}
+		modifier = {
+			factor = 0.9
+			stability = 1
+		}
+	}
+	
+	immediate = { set_country_flag = palio_race }
+	
+	option = {
+		name = "palio_siena.EVTOPTA18"	#Forza, Pantera!
+		
+		random_list = {
+			25 = { add_years_of_income = 0.5 }
+			25 = { add_prestige = 5 }
+			25 = { add_republican_tradition = 5 }
+			25 = { add_stability_1 = yes }
+		}
+	}
+}
+
+#Palio race - foreigner wins
+country_event = {
+	id = palio_siena.19
+	title = "palio_siena.EVTNAME19"
+	desc = "palio_siena.EVTDESC19"
+	picture = PALIO_eventPicture
+	
+	trigger = {
+		tag = SIE
+		has_country_modifier = festivating_palio_republic
+		is_month = 7
+		NOT = {
+			has_country_flag = palio_race
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+		
+		modifier = {
+			factor = 0.9
+			any_known_country = { has_country_flag = neighbour_send_best_Fantini }
+		}
+		modifier = {
+			factor = 0.9
+			NOT = { prestige = 20 }
+		}
+		modifier = {
+			factor = 0.9
+			NOT = { stability = 2 }
+		}
+	}
+	
+	immediate = { set_country_flag = palio_race }
+	
+	option = {
+		name = "palio_siena.EVTOPTA18"	#Pantera didn't win?
+		
+		random_list = {
+			33 = { add_years_of_income = 0.3 }
+			33 = { add_prestige = 3 }
+			33 = { add_republican_tradition = 3 }
+		}
+		random_known_country = {
+			limit = {
+				has_country_flag = neighbour_send_best_Fantini
+			}
+			country_event = { id = palio_siena.21 }
+		}
+	}
+}
+
+#Palio race - Fantino dies
+country_event = {
+	id = palio_siena.20
+	title = "palio_siena.EVTNAME20"
+	desc = "palio_siena.EVTDESC20"
+	picture = PALIO_eventPicture
+	
+	trigger = {
+		tag = SIE
+		has_country_modifier = festivating_palio_republic
+		overextension_percentage = 0.6
+		has_advisor = yes
+		is_month = 7
+		NOT = {
+			has_country_flag = palio_race
+		}
+	}
+	
+	immediate = { set_country_flag = palio_race }
+	
+	mean_time_to_happen = {
+		months = 1
+		
+		modifier = {
+			factor = 0.9
+			overextension_percentage = 0.7
+		}
+		modifier = {
+			factor = 0.9
+			overextension_percentage = 0.8
+		}
+		modifier = {
+			factor = 0.9
+			overextension_percentage = 0.9
+		}
+	}
+	
+	option = {
+		name = "palio_siena.EVTOPTA20"	#A tragedy!
+		
+		add_republican_tradition = 3
+		kill_advisor = random
+	}
+}
+
+#Foreigner wins
+country_event = {
+	id = palio_siena.21
+	title = "palio_siena.EVTNAME21"
+	desc = "palio_siena.EVTDESC21"
+	picture = PALIO_eventPicture
+	
+	is_triggered_only = yes
+	
+	
+	option = {
+		name = "palio_siena.EVTOPTA21"	#Viva il Palio!
+		add_prestige = 3
+	}
+}
+
+#Palio ends
+country_event = {
+	id = palio_siena.22
+	title = "palio_siena.EVTNAME22"
+	desc = "palio_siena.EVTDESC22"
+	picture = PALIO_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		trigger = {
+			has_country_flag = neighbour_at_the_palio
+		}
+		name = "palio_siena.EVTOPTA22"	#It was so much fun!
+		add_prestige = 2
+		clr_country_flag = neighbour_send_best_Fantini
+		clr_country_flag = neighbour_send_Fantini
+		clr_country_flag = neighbour_at_the_palio
+		clr_country_flag = neighbour_betted_at_palio
+	}
+	
+	option = {
+		trigger = {
+			NOT = { has_country_flag = neighbour_at_the_palio }
+		}
+		name = "palio_siena.EVTOPTB22"	#Glory to our Fantini
+		add_prestige = 1
+		clr_country_flag = neighbour_send_best_Fantini
+		clr_country_flag = neighbour_send_Fantini
+		clr_country_flag = neighbour_at_the_palio
+		clr_country_flag = neighbour_betted_at_palio
+	}
+}
+
+#################
+# GENERIC PALIO #
+#################
+
+#Preparations
+country_event = {
+	id = palio_siena.30
+	title = "palio_siena.EVTNAME30"
+	desc = "palio_siena.EVTDESC30"
+	picture = PALIO_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "palio_siena.EVTOPTA30"	#A valuable prize
+		
+		add_prestige = 3
+		add_years_of_income = -0.1
+		set_country_flag = palio_prize
+		add_country_modifier = {
+			name = "preparing_palio"
+			duration = -1
+		}
+	}
+	
+	option = {
+		name = "palio_siena.EVTOPTB30"	#A medium prize
+		
+		add_prestige = 2
+		add_years_of_income = -0.05
+		set_country_flag = palio_prize
+		add_country_modifier = {
+			name = "preparing_palio"
+			duration = -1
+		}
+	}
+	
+	option = {
+		name = "palio_siena.EVTOPTC30"	#A small prize
+		
+		add_prestige = -1
+		set_country_flag = palio_prize
+		add_country_modifier = {
+			name = "preparing_palio"
+			duration = -1
+		}
+	}
+}
+
+#Betting at the Prove
+country_event = {
+	id = palio_siena.31
+	title = "palio_siena.EVTNAME31"
+	desc = "palio_siena.EVTDESC31"
+	picture = PALIO_eventPicture
+	
+	trigger = {
+		has_country_modifier = preparing_palio
+		has_country_flag = palio_prize
+		NOT = {
+			has_country_flag = palio_betting
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = "palio_siena.EVTOPTA7"	#Betting sounds good
+		
+		add_republican_tradition = 1
+		random_list = {
+			5 = { add_years_of_income = 1 add_prestige = 5 }
+			10 = { add_years_of_income = 0.6 add_prestige = 3 }
+			25 = { add_years_of_income = 0.3 add_prestige = 1 }
+			30 = { add_years_of_income = -0.3 add_prestige = -1 }
+			20 = { add_years_of_income = -0.6 add_prestige = -3 }
+			10 = { add_years_of_income = -1 add_prestige = -5 }
+		}
+		set_country_flag = palio_betting
+	}
+	
+	option = {
+		name = "palio_siena.EVTOPTB7"	#Betting is sin!
+		
+		add_papal_influence = 1
+		set_country_flag = palio_betting
+		ai_chance = { factor = 100 }
+	}
+}
+
+#Festivities begin!
+country_event = {
+	id = palio_siena.32
+	title = "palio_siena.EVTNAME32"
+	desc = "palio_siena.EVTDESC32"
+	picture = PALIO_eventPicture
+	
+	trigger = {
+		has_country_modifier = preparing_palio
+		has_country_flag = palio_prize
+		has_country_flag = palio_betting
+		is_month = 6
+		
+		NOT = {
+			has_country_modifier = festivating_palio
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = "palio_siena.EVTOPTA32"	#Viva il Palio!
+		
+		remove_country_modifier = preparing_palio
+		add_country_modifier = {
+			name = "festivating_palio"
+			duration = -1
+		}
+		hidden_effect = {
+			random_list = {
+				65 = { country_event = { id = palio_siena.33 days = 15 } }
+				20 = { country_event = { id = palio_siena.34 days = 15 } }
+				15 = { country_event = { id = palio_siena.35 days = 15 } }
+			}
+		}
+	}
+}
+
+#Palio race - normal
+country_event = {
+	id = palio_siena.33
+	title = "palio_siena.EVTNAME33"
+	desc = "palio_siena.EVTDESC33"
+	picture = PALIO_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "palio_siena.EVTOPTA33"	#That was a great race
+		
+		random_list = {
+			25 = { add_years_of_income = 0.7 }
+			25 = { add_prestige = 7 }
+			25 = { add_republican_tradition = 7
+				add_legitimacy = 0.07
+			}
+			25 = { add_stability_1 = yes }
+		}
+		remove_country_modifier = festivating_palio
+		add_country_modifier = {
+			name = "glorious_palio"
+			duration = 1825
+		}
+		clr_country_flag = palio_prize
+		clr_country_flag = palio_betting
+		clr_country_flag = palio_race
+	}
+}
+
+#Palio race - foreigner wins
+country_event = {
+	id = palio_siena.34
+	title = "palio_siena.EVTNAME34"
+	desc = "palio_siena.EVTDESC34"
+	picture = PALIO_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "palio_siena.EVTOPTA34"	#How dares a stranger to win in my city?
+		
+		random_list = {
+			33 = { add_years_of_income = 0.3 }
+			33 = { add_prestige = 3 }
+			33 = { add_republican_tradition = 3
+				add_legitimacy = 0.03
+			}
+		}
+		random_neighbor_country = {
+			add_opinion = {
+				who = FROM
+				modifier = opinion_mildly_displeased
+			}
+		}
+		remove_country_modifier = festivating_palio
+		add_country_modifier = {
+			name = "glorious_palio"
+			duration = 1825
+		}
+		clr_country_flag = palio_prize
+		clr_country_flag = palio_betting
+		clr_country_flag = palio_race
+	}
+}
+
+#Palio race - Fantino dies
+country_event = {
+	id = palio_siena.35
+	title = "palio_siena.EVTNAME35"
+	desc = "palio_siena.EVTDESC35"
+	picture = PALIO_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "palio_siena.EVTOPTA20"	#A tragedy!
+		
+		kill_advisor = random
+		add_republican_tradition = 1
+		add_legitimacy = 0.01
+		add_prestige = 1
+		add_mil_power = 5
+		remove_country_modifier = festivating_palio
+		add_country_modifier = {
+			name = "glorious_palio"
+			duration = 1825
+		}
+		clr_country_flag = palio_prize
+		clr_country_flag = palio_betting
+		clr_country_flag = palio_race
+	}
+}

@@ -1,0 +1,97 @@
+country_decisions = {
+	
+	consult_seer = {
+		potential = {
+			OR = {
+				religion = norse_pagan_reformed
+				religion = finnish_pagan_reformed
+			}
+			OR = {
+				NOT = { has_country_modifier = minority_timer_norse_pagan_reformed }
+				NOT = { religion = norse_pagan_reformed }
+			}
+			OR = {
+				NOT = { has_country_modifier = minority_timer_finnish_pagan_reformed }
+				NOT = { religion = finnish_pagan_reformed }
+			}
+		}
+		allow = {
+			has_regency = no
+			OR = {
+				advisor = theologian
+				custom_trigger_tooltip = {
+					tooltip = has_ministry_of_divination
+					has_country_flag = ministry_of_divination
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = { monthly_income = 400 }
+				add_treasury = -100
+			}
+			else_if = {
+				limit = { monthly_income = 4 }
+				add_years_of_income = -0.02
+			}
+			else = {
+				add_treasury = -1
+			}
+			hidden_effect = { capital_scope = { add_province_triggered_modifier = consult_seer_asatru } }
+			#country_event = { id = dg_asatru.013 }
+			hidden_effect = {
+				if = {
+					limit = { religion = norse_pagan_reformed }
+					add_country_modifier = { name = minority_timer_norse_pagan_reformed duration = 2000 hidden = yes }
+				}
+				if = {
+					limit = { religion = finnish_pagan_reformed }
+					add_country_modifier = { name = minority_timer_finnish_pagan_reformed duration = 2000 hidden = yes }
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				NOT = { years_of_income = 0.10 }
+				factor = 0
+			}
+		}
+	}
+	ministry_of_divination = {
+		potential = {
+			OR = {
+				religion = norse_pagan_reformed
+				religion = finnish_pagan_reformed
+			}
+			piety = -0.60
+			tech_1600_trigger = yes
+			NOT = { has_country_flag = ministry_of_divination }
+		}
+		allow = {
+			advisor = theologian
+		}
+		effect = {
+			if = {
+				limit = { monthly_income = 400 }
+				add_treasury = -400
+			}
+			else_if = {
+				limit = { monthly_income = 4 }
+				add_years_of_income = -0.08
+			}
+			else = {
+				add_treasury = -4
+			}
+			set_country_flag = ministry_of_divination
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				NOT = { years_of_income = 0.20 }
+				factor = 0
+			}
+		}
+	}
+	
+}

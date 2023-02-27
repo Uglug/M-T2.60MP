@@ -1,0 +1,125 @@
+########################################
+# Flavor Events for Tuscany
+#
+# Scripted by Sara Wendel-Örtqvist
+########################################
+
+
+# Michelangelo
+country_event = {
+	id = flavor_tus.1
+	title = "flavor_tus.EVTNAME1"
+	desc = "flavor_tus.EVTDESC1"
+	picture = PAINTER_ARTIST_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = TUS
+		is_year = 1500
+		NOT = { is_year = 1550 }
+	}
+	
+	mean_time_to_happen = { years = 16 }
+	
+	option = {
+		name = "flavor_tus.EVTOPTA1"
+		add_adm_power = 10
+		add_prestige = 10
+	}
+}
+
+########################################
+# Flavor Events for Pisa-Lucca
+#
+# Scripted by Khardinal
+########################################
+
+# Independance of Lucca ( Request to the Emperor )
+
+country_event = {
+	id = flavor_tus.2
+	title = "flavor_tus.EVTNAME2"
+	desc = "flavor_tus.EVTDESC2"
+	picture = MEDICI_PISA_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		is_emperor = yes
+		LUC = { exists = no }
+		PIS = {
+			ai = yes
+		}
+		115 = {
+			is_capital = no
+			is_part_of_hre = yes
+			owned_by = PIS
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 8
+		modifier = {
+			factor = 0.75
+			115 = { local_autonomy = 50 }
+		}
+		modifier = {
+			factor = 0.75
+			115 = { local_autonomy = 60 }
+		}
+		modifier = {
+			factor = 0.75
+			115 = { local_autonomy = 75 }
+		}
+		modifier = {
+			factor = 1.10
+			PIS = { stability = 2 }
+		}
+		modifier = {
+			factor = 0.75
+			PIS = { NOT = { stability = 0 } }
+		}
+	}
+	
+	option = { # Request accepted
+		name = "flavor_tus.EVTOPTA2"
+		ai_chance = {
+			factor = 100
+		}
+		115 = {
+			remove_core = PIS
+			cede_province = LUC
+		}
+		add_treasury = 60
+		add_prestige = 3
+		add_imperial_influence = 5
+	}
+	
+	option = { # Request refused
+		name = "flavor_tus.EVTOPTB2"
+		ai_chance = {
+			factor = 0
+			modifier = {
+				factor = 3
+				has_opinion = {
+					who = PIS
+					value = 100
+				}
+			}
+			modifier = {
+				factor = 0
+				NOT = {
+					has_opinion = {
+						who = PIS
+						value = 0
+					}
+				}
+			}
+		}
+		add_prestige = -3
+		add_imperial_influence = -2
+	}
+}
+
+

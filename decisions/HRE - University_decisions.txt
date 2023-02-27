@@ -1,0 +1,219 @@
+#########################################################
+### HRE / European universities decisions, by Dezuman ###
+#########################################################
+
+country_decisions = {
+	ask_pope_for_university_charter = {
+		potential = {
+			religion = catholic
+			
+			# 1 per region limit
+			NOT = { has_country_flag = region_has_papal_charter_university }
+			
+			NOT = { has_ruler_flag = asked_pope_for_university_charter }
+			NOT = { check_variable = { which = university_education_multiplier value = 1.25 } }
+			PAP = {
+				exists = yes
+			}
+			
+			# So tiny countries that don't even have an upper class to educate
+			# can't spam universities
+			check_variable = { which = upper_pop_non_overseas value = 1 }
+			
+			# Should be a more dynamic trigger probably, but meh. 
+			NOT = { is_year = 1550 }
+			
+			# Can't ask pope in rome because you support the antipope
+			NOT = {
+				AND = {
+					AVI = { num_of_cities = 1 papal_trigger = yes }
+					has_country_flag = support_antipope
+				}
+			}
+			
+			# A tad inefficient, the flag limitation would work on its own with a simple setup event
+			NOT = {
+				capital_scope = {
+					any_province = {
+						region = PREV
+						university_province_trigger = yes
+					}
+				}
+			}
+		}
+		allow = {
+			treasury = 100
+			is_at_war = no
+		}
+		effect = {
+			set_ruler_flag = asked_pope_for_university_charter
+			
+			add_treasury = -100
+			
+			PAP = {
+				country_event = { id = hre_universities.102 }
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				NOT = { treasury = 150 }
+			}
+		}
+	}
+	
+	# TODO: Allow Bavaria too?
+	
+	# Germans fleeing Prague university under the Hussites historically founded Leipzig university
+	# This is railroaded-ish, but makes a lot of sense. could be made more dynamic though
+	prague_university_germans = {
+		potential = {
+			NOT = { has_global_flag = prague_university_germans_founded }
+			religion = catholic
+			check_variable = { which = upper_pop_non_overseas value = 1 }
+			
+			268 = { # Praha
+				religion = hussite
+				OR = {
+					has_building = small_university
+					has_building = medium_university
+					has_building = big_university
+				}
+			}
+			
+			# Saxony
+			capital_scope = {
+				region = upper_saxon_circle_region
+			}
+			
+			# Only pick if there is a valid target province
+			any_owned_province = {
+				has_town_hall = yes
+				NOT = {
+					has_building = small_university
+					has_building = medium_university
+					has_building = big_university
+				}
+				religion = catholic
+			}
+		}
+		allow = {
+			treasury = 100
+			is_at_war = no
+		}
+		effect = {
+			set_global_flag = prague_university_germans_founded
+			add_treasury = -100
+			
+			if = {
+				limit = {
+					any_owned_province = {
+						has_urban_infrastructure_1 = yes
+						NOT = {
+							has_building = small_university
+							has_building = medium_university
+							has_building = big_university
+						}
+						religion = catholic
+					}
+				}
+				random_owned_province = {
+					limit = {
+						has_urban_infrastructure_1 = yes
+						NOT = {
+							has_building = small_university
+							has_building = medium_university
+							has_building = big_university
+						}
+						religion = catholic
+					}
+					hidden_effect = {
+						if = {
+							limit = {
+								check_variable = { which = wealth_urban_fluid value = 50 }
+								check_variable = { which = wealth_rural_fluid value = 50 }
+							}
+							subtract_variable = { which = wealth_urban_fluid value = 50 }
+							subtract_variable = { which = wealth_rural_fluid value = 50 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { which = wealth_urban_fluid value = 100 }
+							}
+							subtract_variable = { which = wealth_urban_fluid value = 100 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { which = wealth_rural_fluid value = 100 }
+							}
+							subtract_variable = { which = wealth_rural_fluid value = 100 }
+						}
+						else = {
+							# Going into negatives is not ideal, but won't break anything. 
+							subtract_variable = { which = wealth_urban_fluid value = 50 }
+							subtract_variable = { which = wealth_rural_fluid value = 50 }
+						}
+					}
+					add_building = small_university
+				}
+			}
+			else_if = {
+				limit = {
+					any_owned_province = {
+						has_town_hall = yes
+						NOT = {
+							has_building = small_university
+							has_building = medium_university
+							has_building = big_university
+						}
+						religion = catholic
+					}
+				}
+				random_owned_province = {
+					limit = {
+						has_town_hall = yes
+						NOT = {
+							has_building = small_university
+							has_building = medium_university
+							has_building = big_university
+						}
+						religion = catholic
+					}
+					hidden_effect = {
+						if = {
+							limit = {
+								check_variable = { which = wealth_urban_fluid value = 50 }
+								check_variable = { which = wealth_rural_fluid value = 50 }
+							}
+							subtract_variable = { which = wealth_urban_fluid value = 50 }
+							subtract_variable = { which = wealth_rural_fluid value = 50 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { which = wealth_urban_fluid value = 100 }
+							}
+							subtract_variable = { which = wealth_urban_fluid value = 100 }
+						}
+						else_if = {
+							limit = {
+								check_variable = { which = wealth_rural_fluid value = 100 }
+							}
+							subtract_variable = { which = wealth_rural_fluid value = 100 }
+						}
+						else = {
+							# Going into negatives is not ideal, but won't break anything. 
+							subtract_variable = { which = wealth_urban_fluid value = 50 }
+							subtract_variable = { which = wealth_rural_fluid value = 50 }
+						}
+					}
+					add_building = small_university
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+}
+

@@ -1,0 +1,1601 @@
+#Italian power system
+#--inspired by the original Admin Efficiency system by Helius (et al) for SRI and MM and Status quo by alvya
+#edits by JF
+
+namespace = italian_power
+
+country_event = { # big remote event to determine Italian power status
+	
+	id = italian_power.1
+	title = "italian_power.EVTNAME1"
+	desc = "italian_power.EVTDESC1"
+	picture = ITALIAN_POWER_eventPicture
+	
+	is_triggered_only = yes #pulse_system, in AAA
+	
+	immediate = {
+		if = {
+			limit = {
+				NOT = { has_global_flag = italian_powers_disabled }
+			}
+			#mark italian powers
+			set_variable = { which = italian_power value = 0 }
+			every_country = {
+				set_variable = { which = italian_power value = 0 }
+				set_variable = { which = temp value = 0 }
+				clr_country_flag = new_italian_power
+			}
+			italy_superregion = {
+				export_to_variable = { which = italian_power value = development }
+				change_variable = { which = italian_power which = art_power }
+				change_variable = { which = italian_power which = art_power }
+				PREV = { change_variable = { which = italian_power which = PREV } }
+				owner = {
+					change_variable = { which = italian_power which = PREV }
+					set_country_flag = new_italian_power
+				}
+			}
+			every_country = { #add subject power
+				limit = {
+					#exists = yes
+					is_subject_other_than_tributary_trigger = no
+				}
+				every_subject_country = {
+					limit = {
+						is_subject_other_than_tributary_trigger = yes
+					}
+					every_subject_country = {
+						limit = {
+							is_subject_other_than_tributary_trigger = yes
+						}
+						every_subject_country = {
+							limit = {
+								is_subject_other_than_tributary_trigger = yes
+							}
+							every_subject_country = {
+								limit = {
+									is_subject_other_than_tributary_trigger = yes
+								}
+								export_to_variable = { which = temp2 value = total_development }
+								change_variable = { which = temp which = temp2 }
+								change_variable = { which = temp which = art_power }
+								change_variable = { which = temp which = art_power }
+								PREV = { change_variable = { which = temp which = PREV } }
+								if = {
+									limit = { has_country_flag = new_italian_power }
+									clr_country_flag = new_italian_power
+									PREV = {
+										change_variable = { which = italian_power which = PREV }
+										set_country_flag = new_italian_power
+									}
+								}
+							}
+							export_to_variable = { which = temp2 value = total_development }
+							change_variable = { which = temp which = temp2 }
+							change_variable = { which = temp which = art_power }
+							change_variable = { which = temp which = art_power }
+							PREV = { change_variable = { which = temp which = PREV } }
+							if = {
+								limit = { has_country_flag = new_italian_power }
+								clr_country_flag = new_italian_power
+								PREV = {
+									change_variable = { which = italian_power which = PREV }
+									set_country_flag = new_italian_power
+								}
+							}
+						}
+						export_to_variable = { which = temp2 value = total_development }
+						change_variable = { which = temp which = temp2 }
+						change_variable = { which = temp which = art_power }
+						change_variable = { which = temp which = art_power }
+						PREV = { change_variable = { which = temp which = PREV } }
+						if = {
+							limit = { has_country_flag = new_italian_power }
+							clr_country_flag = new_italian_power
+							PREV = {
+								change_variable = { which = italian_power which = PREV }
+								set_country_flag = new_italian_power
+							}
+						}
+					}
+					export_to_variable = { which = temp2 value = total_development }
+					change_variable = { which = temp which = temp2 }
+					change_variable = { which = temp which = art_power }
+					change_variable = { which = temp which = art_power }
+					PREV = { change_variable = { which = temp which = PREV } }
+					if = {
+						limit = { has_country_flag = new_italian_power }
+						clr_country_flag = new_italian_power
+						PREV = {
+							change_variable = { which = italian_power which = PREV }
+							set_country_flag = new_italian_power
+						}
+					}
+				}
+				if = {
+					limit = {
+						has_country_flag = new_italian_power
+					}
+					export_to_variable = { which = total_art_dev value = total_development }
+					change_variable = { which = total_art_dev which = art_power }
+					change_variable = { which = total_art_dev which = art_power }
+					change_variable = { which = total_art_dev which = temp }
+					set_variable = { which = temp which = italian_power }
+					divide_variable = { which = temp which = total_art_dev }
+					divide_variable = { which = italian_power which = PREV }
+					set_variable = { which = total_art_dev value = 0 }
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = italian_powers_enabled
+				}
+				if = {
+					limit = {
+						any_country = {
+							has_country_flag = new_italian_power
+							check_variable = { which = italian_power value = 0.667 }
+						}
+					}
+					#disable italian powers
+					every_country = {
+						limit = {
+							has_country_flag = italian_power
+						}
+						clr_country_flag = italian_power
+						country_event = { id = italian_power.4 }
+					}
+				}
+				else = {
+					every_country = {
+						if = {
+							limit = {
+								has_country_flag = new_italian_power
+							}
+							assign_italian_power = yes
+						}
+						else_if = {
+							limit = {
+								has_country_flag = italian_power
+							}
+							clr_country_flag = italian_power
+							remove_country_modifier = insignificant_italian_power
+							remove_country_modifier = local_italian_power
+							remove_country_modifier = regional_italian_power
+							remove_country_modifier = major_italian_power
+							remove_country_modifier = dominant_italian_power
+							remove_country_modifier = menacing_italian_power
+							country_event = { id = italian_power.4 }
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					NOT = {
+						any_country = {
+							has_country_flag = italian_power
+							check_variable = { which = italian_power value = 0.667 }
+						}
+					}
+				}
+				#re-enable italian powers
+				set_country_flag = italian_powers_enabled
+				country_event = { id = italian_power.1 days = 2 }
+			}
+			every_country = {
+				clr_country_flag = new_italian_power
+			}
+		}
+	}
+	option = {
+		name = "italian_power.EVTOPTA1"
+	}
+}
+#######################
+# POWER STATUS CHANGE #
+#######################
+
+### Changing Power Status
+
+country_event = {
+	id = italian_power.2
+	title = "italian_power.EVTNAME2"
+	desc = "italian_power.EVTDESC2"
+	picture = ITALIAN_POWER_eventPicture
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			has_country_flag = insignificant_italian_power
+			has_country_flag = local_italian_power
+			has_country_flag = regional_italian_power
+			has_country_flag = major_italian_power
+			has_country_flag = dominant_italian_power
+			has_country_flag = menacing_italian_power
+		}
+	}
+
+	#RISE
+	option = {
+		trigger = {
+			has_country_flag = insignificant_italian_power
+			has_country_modifier = local_italian_power
+		}
+		name = "italian_power.EVTOPTA2" #Rising from insignificant to local
+		custom_tooltip = italian_power_local_tooltip
+		add_prestige = 3
+		set_country_flag = local_italian_power
+		clr_country_flag = insignificant_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = local_italian_power
+			has_country_modifier = regional_italian_power
+		}
+		name = "italian_power.EVTOPTA2" #Rising from local to regional
+		custom_tooltip = italian_power_regional_tooltip
+		add_prestige = 3
+		set_country_flag = regional_italian_power
+		clr_country_flag = local_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = regional_italian_power
+			has_country_modifier = major_italian_power
+		}
+		name = "italian_power.EVTOPTB2" #Rising from regional to major
+		custom_tooltip = italian_power_major_tooltip
+		add_prestige = 5
+		set_country_flag = major_italian_power
+		clr_country_flag = regional_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = major_italian_power
+			has_country_modifier = dominant_italian_power
+		}
+		name = "italian_power.EVTOPTC2" #Rising from major to dominant
+		custom_tooltip = italian_power_dominant_tooltip
+		add_prestige = 2
+		set_country_flag = dominant_italian_power
+		clr_country_flag = major_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = dominant_italian_power
+			has_country_modifier = menacing_italian_power
+		}
+		name = "italian_power.EVTOPTD2" #Rising from dominant to menacing
+		custom_tooltip = italian_power_menacing_tooltip
+		add_prestige = 1
+		set_country_flag = menacing_italian_power
+		clr_country_flag = dominant_italian_power
+	}
+	#FALL
+	option = {
+		trigger = {
+			has_country_flag = menacing_italian_power
+			has_country_modifier = dominant_italian_power
+		}
+		name = "italian_power.EVTOPTE2" #Falling from menacing to dominant
+		custom_tooltip = italian_power_dominant_tooltip
+		add_prestige = -2
+		set_country_flag = dominant_italian_power
+		clr_country_flag = menacing_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = dominant_italian_power
+			has_country_modifier = major_italian_power
+		}
+		name = "italian_power.EVTOPTF2" #Falling from dominant to major
+		custom_tooltip = italian_power_major_tooltip
+		add_prestige = -3
+		set_country_flag = major_italian_power
+		clr_country_flag = dominant_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = major_italian_power
+			has_country_modifier = regional_italian_power
+		}
+		name = "italian_power.EVTOPTG2" #Falling from major to regional
+		custom_tooltip = italian_power_regional_tooltip
+		add_prestige = -5
+		set_country_flag = regional_italian_power
+		clr_country_flag = major_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = regional_italian_power
+			has_country_modifier = local_italian_power
+		}
+		name = "italian_power.EVTOPTH2" #Falling from regional to local
+		custom_tooltip = italian_power_local_tooltip
+		add_prestige = -4
+		set_country_flag = local_italian_power
+		clr_country_flag = regional_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = local_italian_power
+			has_country_modifier = insignificant_italian_power
+		}
+		name = "italian_power.EVTOPTH2" #Falling from regional to local
+		custom_tooltip = italian_power_insignifican_tooltip
+		add_prestige = -4
+		set_country_flag = insignificant_italian_power
+		clr_country_flag = local_italian_power
+	}
+	####Exceptional rise and fall - RISE#### Call me Cesar!
+	option = {
+		trigger = {
+			has_country_flag = insignificant_italian_power
+			has_country_modifier = regional_italian_power
+		}
+		name = "italian_power.EVTOPTI2" #Rising from local to major
+		custom_tooltip = italian_power_regional_tooltip
+		add_prestige = 10
+		set_country_flag = regional_italian_power
+		clr_country_flag = insignificant_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = insignificant_italian_power
+			has_country_modifier = major_italian_power
+		}
+		name = "italian_power.EVTOPTI2" #Rising from local to major
+		custom_tooltip = italian_power_major_tooltip
+		add_prestige = 10
+		set_country_flag = major_italian_power
+		clr_country_flag = insignificant_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = insignificant_italian_power
+			has_country_modifier = dominant_italian_power
+		}
+		name = "italian_power.EVTOPTI2" #Rising from local to dominant
+		custom_tooltip = italian_power_dominant_tooltip
+		add_prestige = 15
+		set_country_flag = dominant_italian_power
+		clr_country_flag = insignificant_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = insignificant_italian_power
+			has_country_modifier = menacing_italian_power
+		}
+		name = "italian_power.EVTOPTI2" #Rising from local to menacing
+		custom_tooltip = italian_power_menacing_tooltip
+		add_prestige = 10
+		set_country_flag = menacing_italian_power
+		clr_country_flag = insignificant_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = local_italian_power
+			has_country_modifier = major_italian_power
+		}
+		name = "italian_power.EVTOPTI2" #Rising from local to major
+		custom_tooltip = italian_power_major_tooltip
+		add_prestige = 10
+		set_country_flag = major_italian_power
+		clr_country_flag = local_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = local_italian_power
+			has_country_modifier = dominant_italian_power
+		}
+		name = "italian_power.EVTOPTI2" #Rising from local to dominant
+		custom_tooltip = italian_power_dominant_tooltip
+		add_prestige = 5
+		set_country_flag = dominant_italian_power
+		clr_country_flag = local_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = local_italian_power
+			has_country_modifier = menacing_italian_power
+		}
+		name = "italian_power.EVTOPTI2" #Rising from local to menacing
+		custom_tooltip = italian_power_menacing_tooltip
+		add_prestige = 20
+		set_country_flag = menacing_italian_power
+		clr_country_flag = local_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = regional_italian_power
+			has_country_modifier = dominant_italian_power
+		}
+		name = "italian_power.EVTOPTI2" #Rising from regional to dominant
+		custom_tooltip = italian_power_dominant_tooltip
+		add_prestige = 10
+		set_country_flag = dominant_italian_power
+		clr_country_flag = regional_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = regional_italian_power
+			has_country_modifier = menacing_italian_power
+		}
+		name = "italian_power.EVTOPTI2" #Rising from regional to menacing
+		custom_tooltip = italian_power_menacing_tooltip
+		add_prestige = 15
+		set_country_flag = menacing_italian_power
+		clr_country_flag = regional_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = major_italian_power
+			has_country_modifier = menacing_italian_power
+		}
+		name = "italian_power.EVTOPTI2" #Rising from major to menacing
+		custom_tooltip = italian_power_menacing_tooltip
+		add_prestige = 10
+		set_country_flag = menacing_italian_power
+		clr_country_flag = major_italian_power
+	}
+	####Exceptional rise and fall - FALL#### ... aut nihil?
+	option = {
+		trigger = {
+			has_country_flag = menacing_italian_power
+			has_country_modifier = major_italian_power
+		}
+		name = "italian_power.EVTOPTJ2" #Falling from menacing to major
+		custom_tooltip = italian_power_major_tooltip
+		add_prestige = -10
+		set_country_flag = major_italian_power
+		clr_country_flag = menacing_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = menacing_italian_power
+			has_country_modifier = regional_italian_power
+		}
+		name = "italian_power.EVTOPTJ2" #Falling from menacing to regional
+		custom_tooltip = italian_power_regional_tooltip
+		add_prestige = -15
+		set_country_flag = regional_italian_power
+		clr_country_flag = menacing_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = menacing_italian_power
+			has_country_modifier = local_italian_power
+		}
+		name = "italian_power.EVTOPTJ2" #Falling from menacing to local
+		custom_tooltip = italian_power_local_tooltip
+		add_prestige = -20
+		set_country_flag = local_italian_power
+		clr_country_flag = menacing_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = menacing_italian_power
+			has_country_modifier = insignificant_italian_power
+		}
+		name = "italian_power.EVTOPTJ2" #Falling from menacing to local
+		custom_tooltip = italian_power_insignificant_tooltip
+		add_prestige = -20
+		set_country_flag = insignificant_italian_power
+		clr_country_flag = menacing_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = dominant_italian_power
+			has_country_modifier = regional_italian_power
+		}
+		name = "italian_power.EVTOPTJ2" #Falling from dominant to regional
+		custom_tooltip = italian_power_regional_tooltip
+		add_prestige = -10
+		set_country_flag = regional_italian_power
+		clr_country_flag = dominant_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = dominant_italian_power
+			has_country_modifier = local_italian_power
+		}
+		name = "italian_power.EVTOPTJ2" #Falling from dominant to local
+		custom_tooltip = italian_power_local_tooltip
+		add_prestige = -15
+		set_country_flag = local_italian_power
+		clr_country_flag = dominant_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = dominant_italian_power
+			has_country_modifier = insignificant_italian_power
+		}
+		name = "italian_power.EVTOPTJ2" #Falling from dominant to local
+		custom_tooltip = italian_power_insignificant_tooltip
+		add_prestige = -20
+		set_country_flag = insignificant_italian_power
+		clr_country_flag = dominant_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = major_italian_power
+			has_country_modifier = local_italian_power
+		}
+		name = "italian_power.EVTOPTJ2" #Falling from major to local
+		custom_tooltip = italian_power_local_tooltip
+		add_prestige = -10
+		set_country_flag = local_italian_power
+		clr_country_flag = major_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = menacing_italian_power
+			has_country_modifier = local_italian_power
+		}
+		name = "italian_power.EVTOPTJ2" #Falling from menacing to local
+		custom_tooltip = italian_power_local_tooltip
+		add_prestige = -20
+		set_country_flag = local_italian_power
+		clr_country_flag = menacing_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = dominant_italian_power
+			has_country_modifier = regional_italian_power
+		}
+		name = "italian_power.EVTOPTJ2" #Falling from dominant to regional
+		custom_tooltip = italian_power_regional_tooltip
+		add_prestige = -10
+		set_country_flag = regional_italian_power
+		clr_country_flag = dominant_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = dominant_italian_power
+			has_country_modifier = local_italian_power
+		}
+		name = "italian_power.EVTOPTJ2" #Falling from dominant to local
+		custom_tooltip = italian_power_local_tooltip
+		add_prestige = -15
+		set_country_flag = local_italian_power
+		clr_country_flag = dominant_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = major_italian_power
+			has_country_modifier = local_italian_power
+		}
+		name = "italian_power.EVTOPTJ2" #Falling from major to local
+		custom_tooltip = italian_power_local_tooltip
+		add_prestige = -10
+		set_country_flag = local_italian_power
+		clr_country_flag = major_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = major_italian_power
+			has_country_modifier = insignificant_italian_power
+		}
+		name = "italian_power.EVTOPTJ2" #Falling from major to local
+		custom_tooltip = italian_power_insignificant_tooltip
+		add_prestige = -10
+		set_country_flag = insignificant_italian_power
+		clr_country_flag = major_italian_power
+	}
+	option = {
+		trigger = {
+			has_country_flag = regional_italian_power
+			has_country_modifier = insignificant_italian_power
+		}
+		name = "italian_power.EVTOPTJ2" #Falling from major to local
+		custom_tooltip = italian_power_insignificant_tooltip
+		add_prestige = -10
+		set_country_flag = insignificant_italian_power
+		clr_country_flag = regional_italian_power
+	}
+}
+
+###New Italian power (also welcome message)
+
+country_event = {
+	id = italian_power.3
+	title = "italian_power.EVTNAME1"
+	desc = "italian_power.EVTDESC1"
+	picture = ITALIAN_POWER_eventPicture
+	is_triggered_only = yes
+	
+	option = {
+		trigger = {
+			has_country_modifier = insignificant_italian_power
+		}
+		name = "italian_power.EVTOPTA3" #Not titles make men illustrious, but men make titles illustrious.
+		custom_tooltip = italian_power_insignificant_tooltip
+		add_prestige = 1
+		set_country_flag = insignificant_italian_power
+		set_country_flag = italian_power
+	}
+	option = {
+		trigger = {
+			has_country_modifier = local_italian_power
+		}
+		name = "italian_power.EVTOPTA3" #Not titles make men illustrious, but men make titles illustrious.
+		custom_tooltip = italian_power_local_tooltip
+		add_prestige = 1
+		set_country_flag = local_italian_power
+		set_country_flag = italian_power
+	}
+	option = {
+		trigger = {
+			has_country_modifier = regional_italian_power
+		}
+		name = "italian_power.EVTOPTA2" #Every one sees what you appear to be, few really know what you are.
+		custom_tooltip = italian_power_regional_tooltip
+		add_prestige = 2
+		set_country_flag = regional_italian_power
+		set_country_flag = italian_power
+	}
+	option = {
+		trigger = {
+			has_country_modifier = major_italian_power
+		}
+		name = "italian_power.EVTOPTB2" #One must be a fox to recognize traps, and a lion to frighten wolves.
+		custom_tooltip = italian_power_major_tooltip
+		add_prestige = 3
+		set_country_flag = major_italian_power
+		set_country_flag = italian_power
+	}
+	option = {
+		trigger = {
+			has_country_modifier = dominant_italian_power
+		}
+		name = "italian_power.EVTOPTC2" #It is far safer to be feared than loved.
+		custom_tooltip = italian_power_dominant_tooltip
+		add_prestige = 4
+		set_country_flag = dominant_italian_power
+		set_country_flag = italian_power
+	}
+	option = {
+		trigger = {
+			has_country_modifier = menacing_italian_power
+		}
+		name = "italian_power.EVTOPTD2" #Armed prophets have been victorious, unarmed prophets have been destroyed.
+		custom_tooltip = italian_power_menacing_tooltip
+		add_prestige = 5
+		set_country_flag = menacing_italian_power
+		set_country_flag = italian_power
+	}
+}
+
+###Not an Italian power anymore
+
+country_event = {
+	id = italian_power.4
+	title = "italian_power.EVTNAME4"
+	desc = "italian_power.EVTDESC4"
+	picture = ITALIAN_POWER_eventPicture
+	is_triggered_only = yes
+	
+	option = {
+		name = "italian_power.EVTOPTA4" #Va pensiero...
+		add_prestige = -5
+		clr_country_flag = insignificant_italian_power
+		clr_country_flag = local_italian_power
+		clr_country_flag = regional_italian_power
+		clr_country_flag = major_italian_power
+		clr_country_flag = dominant_italian_power
+		clr_country_flag = menacing_italian_power
+	}
+}
+
+###Italian power founded
+
+country_event = {
+	id = italian_power.5
+	title = "italian_power.EVTNAME5"
+	desc = "italian_power.EVTDESC5"
+	picture = ITALIAN_POWER_eventPicture
+	is_triggered_only = yes #ITA, ITC, ITD, ITE, Kingdom of God formation
+	
+	option = {
+		name = "italian_power.EVTOPTA5" #Italian politics have changed dramatically
+		clr_country_flag = insignificant_italian_power
+		clr_country_flag = local_italian_power
+		clr_country_flag = regional_italian_power
+		clr_country_flag = major_italian_power
+		clr_country_flag = dominant_italian_power
+		clr_country_flag = menacing_italian_power
+		remove_country_modifier = insignificant_italian_power
+		remove_country_modifier = local_italian_power
+		remove_country_modifier = regional_italian_power
+		remove_country_modifier = major_italian_power
+		remove_country_modifier = dominant_italian_power
+		remove_country_modifier = menacing_italian_power
+	}
+}
+
+###Italian power system obsolete
+
+#country_event = {
+#	id = italian_power.6
+#	title = italian_power.EVTNAME6
+#	desc = italian_power.EVTDESC6
+#	picture = ITALIAN_POWER_eventPicture
+#	is_triggered_only = yes #Not enough countries
+#	
+#	option = {
+#		name = "italian_power.EVTOPTA5" #Italian politics have changed dramatically
+#		clr_country_flag = insignificant_italian_power
+#		clr_country_flag = local_italian_power
+#		clr_country_flag = regional_italian_power
+#		clr_country_flag = major_italian_power
+#		clr_country_flag = dominant_italian_power
+#		clr_country_flag = menacing_italian_power
+#		remove_country_modifier = insignificant_italian_power
+#		remove_country_modifier = local_italian_power
+#		remove_country_modifier = regional_italian_power
+#		remove_country_modifier = major_italian_power
+#		remove_country_modifier = dominant_italian_power
+#		remove_country_modifier = menacing_italian_power
+#	}
+#}
+
+#The Shadow Kingdom - ITALY
+country_event = {
+	id = hre_event.1
+	title = "hre_event.1.t"
+	desc = "hre_event.1.d"
+	picture = HRE_eventPicture
+
+	trigger = {
+		NOT = { has_global_flag = italy_out_of_HRE }
+		#NOT = { has_global_flag = 1530_start_date }
+		normal_or_historical_nations = yes
+		is_year = 1490
+		NOT = { is_year = 1550 }
+		NOT = { emperor = { culture_group = latin } }
+		NOT = { emperor = { culture_group = napolitan } }
+		OR = {
+			capital_scope = { kingdom_italy_region_trigger = yes }
+			tag = SAV
+		}
+		#Adding these areas entirely into the Empire prevents this event.
+		OR = {
+			# East Italy Region
+			emilia_romagna_area = {
+				is_part_of_hre = no
+			}
+			marche_area = {
+				is_part_of_hre = no
+			}
+			# Non - Venice HRE area
+			108 = {
+				is_part_of_hre = no
+			}
+			3382 = {
+				is_part_of_hre = no
+			}
+			1348 = {
+				is_part_of_hre = no
+			}
+			1858 = {
+				is_part_of_hre = no
+			}
+			111 = {
+				is_part_of_hre = no
+			}
+			# West Italy Region
+			lombardy_area = {
+				is_part_of_hre = no
+			}
+			piedmont_area = {
+				is_part_of_hre = no
+			}
+			padan_area = {
+				is_part_of_hre = no
+			}
+			# Non - Genoa HRE area
+			102 = {
+				is_part_of_hre = no
+			}
+			2564 = {
+				is_part_of_hre = no
+			}
+			# Central Italy Region
+			tuscany_area = {
+				is_part_of_hre = no
+			}
+			siena_area = {
+				is_part_of_hre = no
+			}
+			lazio_area = {
+				is_part_of_hre = no
+			}
+			#Corsica
+			1247 = {
+				is_part_of_hre = no
+			}
+			2851 = {
+				is_part_of_hre = no
+			}
+		}
+		is_part_of_hre = yes
+		NOT = {	#Won't happen unless atleast one Italian HRE state isn't a vassal of a German HRE state.
+			overlord = {
+				is_part_of_hre = yes
+				OR = {
+					culture_group = low_germanic
+					culture_group = high_germanic
+					is_emperor = yes
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_global_flag = italy_out_of_HRE
+			set_country_flag = shadow_kingdom #To keep track of info events
+			every_country = {
+				limit = {
+					is_part_of_hre = yes
+					OR = {
+						culture_group = latin
+						culture_group = napolitan
+						capital_scope = {
+							kingdom_italy_region_trigger = yes
+						}
+					}
+					NOT = { has_country_flag = shadow_kingdom }
+				}
+				country_event = { id = hre_event.2 }
+				set_country_flag = shadow_kingdom #To keep track of info events
+			}
+			every_country = {
+				limit = {
+					OR = {
+						culture_group = latin
+						culture_group = napolitan
+						capital_scope = {
+							kingdom_italy_region_trigger = yes
+						}
+					}
+					is_part_of_hre = no
+					any_owned_province = {
+						is_part_of_hre = yes
+					}
+				}
+				country_event = { id = hre_event.3 } #Clears Italian provinces for countries not in the HRE
+				# Keep an eye on this, triggering country events instantly in immediate can cause loops
+			}
+		}
+	}
+
+	option = {			# 
+		name = "hre_event.1.a"
+		ai_chance = { factor = 1 }
+		set_country_flag = left_the_empire #To keep track of opinions
+		leave_the_hre = yes
+		overlord = {
+			if = {
+				limit = {
+					ai = no
+					NOT = { has_country_flag = shadow_kingdom }
+					NOT = { has_country_flag = had_shadow_kingdom_info }
+				}
+				country_event = { id = hre_event.3 } #Info Event
+			}
+		}
+		every_neighbor_country = {
+			limit = {
+				ai = no
+				NOT = { overlord_of = ROOT }
+				NOT = { has_country_flag = shadow_kingdom }
+				NOT = { has_country_flag = had_shadow_kingdom_info }
+			}
+			country_event = { id = hre_event.3 } #Info Event
+		}
+		if = {
+			limit = {
+				is_elector = yes
+			}
+			elector = no
+		}
+		emperor = {
+			add_opinion = { who = ROOT modifier = slipped_out_of_empire }
+		}
+		add_opinion = { who = emperor modifier = slipped_out_of_empire }
+		add_prestige = 35
+	}
+	option = {			#Our country is a natural part of the Empire
+		name = "hre_event.1.b"
+		ai_chance = {
+			factor = 0
+			modifier = {
+				factor = 100
+				tag = SAV
+			}
+		}
+		custom_tooltip = PENALTY_SHADOW_KINGDOM
+		add_opinion = {
+			who = emperor
+			modifier = stayed_in_the_empire
+		}
+		emperor = {
+			add_imperial_influence = 5
+			add_opinion = {
+				who = ROOT
+				modifier = stayed_in_the_empire
+			}
+		}
+		if = {
+			limit = { NOT = { tag = SAV } }
+			add_prestige = -35
+			every_country = {
+				limit = {
+					has_country_flag = left_the_empire
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = stayed_in_the_empire_hostile
+				}
+			}
+		}
+	}
+}
+
+#Shadow Kingdom - Other tags
+country_event = {
+	id = hre_event.2
+	title = "hre_event.1.t"
+	desc = "hre_event.1.d"
+	picture = HRE_eventPicture
+
+	is_triggered_only = yes
+
+	option = { # The Empire does not concern us.
+		name = "hre_event.1.a"
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				emperor = {
+					overlord_of = ROOT
+				}
+			}
+		}
+		set_country_flag = left_the_empire #To keep track of opinions
+		leave_the_hre = yes
+		overlord = {
+			if = {
+				limit = {
+					ai = no
+					NOT = { has_country_flag = shadow_kingdom }
+					NOT = { has_country_flag = had_shadow_kingdom_info }
+				}
+				country_event = { id = hre_event.3 } #Info Event
+			}
+		}
+		every_neighbor_country = {
+			limit = {
+				ai = no
+				NOT = { overlord_of = ROOT }
+				NOT = { has_country_flag = shadow_kingdom }
+				NOT = { has_country_flag = had_shadow_kingdom_info }
+			}
+			country_event = { id = hre_event.3 } #Info Event
+		}
+		if = {
+			limit = {
+				is_elector = yes
+			}
+			elector = no
+		}
+		add_prestige = 35
+		emperor = {
+			add_opinion = { who = ROOT modifier = slipped_out_of_empire }
+		}
+		add_opinion = { who = emperor modifier = slipped_out_of_empire }
+	}
+	option = {			#Our country is a natural part of the Empire
+		name = "hre_event.1.b"
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				emperor = {
+					NOT = { overlord_of = ROOT }
+				}
+			}
+		}
+		add_prestige = -35
+		add_opinion = {
+			who = emperor
+			modifier = stayed_in_the_empire
+		}
+		emperor = {
+			add_imperial_influence = 5
+			add_opinion = {
+				who = ROOT
+				modifier = stayed_in_the_empire
+			}
+		}
+		every_country = {
+			limit = {
+				has_country_flag = left_the_empire
+			}
+			add_opinion = {
+				who = ROOT
+				modifier = stayed_in_the_empire_hostile
+			}
+		}
+	}
+}
+
+#The Shadow Kingdom
+country_event = {
+	id = hre_event.3
+	title = "hre_event.3.t"
+	desc = "hre_event.3.d"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = had_shadow_kingdom_info
+		}
+	}
+	
+	option = {	#Other Italian territory in HRE also broken off unless overlord is a member.
+		name = "hre_event.3.a" #Ok.
+		trigger = {
+			OR = {
+				culture_group = latin
+				culture_group = napolitan
+				capital_scope = {
+					kingdom_italy_region_trigger = yes
+				}
+			}
+			is_part_of_hre = no
+		}
+		every_owned_province = {
+			limit = {
+				is_part_of_hre = yes
+				kingdom_italy_region_trigger = yes
+			}
+			leave_the_hre = yes
+		}
+	}
+	option = {
+		name = "hre_event.3.b" #So they cannot count on his protection?
+		trigger = {
+			NOT = {
+				culture_group = latin
+				culture_group = napolitan
+				capital_scope = {
+					kingdom_italy_region_trigger = yes
+				}
+			}
+			is_part_of_hre = no
+		}
+	}
+	option = {
+		name = "hre_event.3.c" #Ok.
+		trigger = {
+			NOT = {
+				culture_group = latin
+				culture_group = napolitan
+				capital_scope = {
+					kingdom_italy_region_trigger = yes
+				}
+			}
+			is_part_of_hre = yes
+		}
+	}
+}
+
+#Warning that Italy might slip away.
+country_event = {
+	id = hre_event.4
+	title = "hre_event.4.t"
+	desc = "hre_event.4.d"
+	picture = HRE_eventPicture
+
+	trigger = {
+		OR = {
+			is_emperor = yes
+			ai = no
+		} # Fire for AI emperor to set the global flag for possible future player emperor
+		NOT = { has_global_flag = italy_out_of_HRE }
+		normal_or_historical_nations = yes
+		is_year = 1440
+		NOT = { is_year = 1550 }
+		OR = {
+			is_part_of_hre = yes
+			is_emperor = yes
+		}
+		NOT = { has_country_flag = italian_warning }
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = italian_warning
+			every_country = {
+				limit = {
+					ai = no
+					is_part_of_hre = yes
+					NOT = { has_country_flag = italian_warning }
+				}
+				country_event = { id = hre_event.4 }
+				set_country_flag = italian_warning
+			}
+			set_global_flag = enable_stop_shadow_kingdom
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 6
+	}
+
+	option = {			# 
+		name = "hre_event.4.a"
+		trigger = {
+			NOT = { culture_group = latin }
+			NOT = { culture_group = napolitan }
+		}
+		custom_tooltip = hre_event.4.a.tt
+	}
+	option = {			# 
+		name = "hre_event.4.b"
+		trigger = {
+			OR = {
+				culture_group = latin
+				culture_group = napolitan
+			}
+		}
+		custom_tooltip = hre_event.4.b.tt
+	}
+}
+
+#Germany/Italy Formed - Leaving Empire
+country_event = {
+	id = hre_event.5
+	title = "hre_event.5.t"
+	desc = "hre_event.5.d"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "hre_event.5.a" #Ok.
+		add_imperial_influence = -75
+		add_prestige = -10
+		tooltip = {
+			add_opinion = {
+				who = FROM
+				modifier = opinion_left_empire
+			}
+		}
+	}
+}
+
+#The Shadow Duchy - PROVENCE
+country_event = {
+	id = hre_event.6
+	title = "hre_event.6.t"
+	desc = "hre_event.6.d"
+	picture = HRE_eventPicture
+
+	trigger = {
+		NOT = { has_global_flag = provence_out_of_HRE }
+		normal_or_historical_nations = yes
+		is_year = 1390
+		NOT = { is_year = 1550 }
+		NOT = { emperor = { culture_group = langue_d_oc } }
+		capital_scope = {
+			region = provence_region
+			NOT = { owned_by = SAV }
+			NOT = { owned_by = PAP }
+			NOT = { owned_by = AVI }
+		}
+		#Adding these areas entirely into the Empire prevents this event.
+		provence_region = {
+			NOT = { owned_by = SAV }
+			is_part_of_hre = no
+		}
+		is_part_of_hre = yes
+		NOT = {	#Won't happen unless atleast one Provencial HRE state isn't a vassal of a German HRE state.
+			overlord = {
+				is_part_of_hre = yes
+				OR = {
+					culture_group = low_germanic
+					culture_group = high_germanic
+					is_emperor = yes
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_global_flag = provence_out_of_HRE
+			set_country_flag = shadow_duchy #To keep track of info events
+			every_country = {
+				limit = {
+					is_part_of_hre = yes
+					NOT = { tag = SAV }
+					OR = {
+						culture_group = langue_d_oc
+						capital_scope = {
+							region = provence_region
+						}
+					}
+					NOT = { has_country_flag = shadow_duchy }
+				}
+				country_event = { id = hre_event.7 }
+				set_country_flag = shadow_duchy #To keep track of info events
+			}
+			every_country = {
+				limit = {
+					OR = {
+						culture_group = langue_d_oc
+						capital_scope = {
+							region = provence_region
+						}
+					}
+					NOT = { tag = SAV }
+					is_part_of_hre = no
+					any_owned_province = {
+						is_part_of_hre = yes
+					}
+				}
+				country_event = { id = hre_event.8 } #Clears Provencial provinces for countries not in the HRE
+				# Keep an eye on this, triggering country events instantly in immediate can cause loops
+			}
+		}
+	}
+
+	option = {			# 
+		name = "hre_event.6.a"
+		ai_chance = { factor = 1 }
+		set_country_flag = left_the_empire #To keep track of opinions
+		leave_the_hre = yes
+		overlord = {
+			if = {
+				limit = {
+					ai = no
+					NOT = { has_country_flag = shadow_duchy }
+					NOT = { has_country_flag = had_shadow_duchy_info }
+				}
+				country_event = { id = hre_event.8 } #Info Event
+			}
+		}
+		every_neighbor_country = {
+			limit = {
+				ai = no
+				NOT = { overlord_of = ROOT }
+				NOT = { has_country_flag = shadow_duchy }
+				NOT = { has_country_flag = had_shadow_duchy_info }
+			}
+			country_event = { id = hre_event.8 } #Info Event
+		}
+		if = {
+			limit = {
+				is_elector = yes
+			}
+			elector = no
+		}
+		emperor = {
+			add_opinion = { who = ROOT modifier = slipped_out_of_empire }
+		}
+		add_opinion = { who = emperor modifier = slipped_out_of_empire }
+		add_prestige = 35
+	}
+	option = {			#Our country is a natural part of the Empire
+		name = "hre_event.6.b"
+		ai_chance = {
+			factor = 0
+			modifier = {
+				factor = 100
+				tag = SAV
+			}
+		}
+		custom_tooltip = PENALTY_SHADOW_KINGDOM
+		add_opinion = {
+			who = emperor
+			modifier = stayed_in_the_empire
+		}
+		emperor = {
+			add_imperial_influence = 5
+			add_opinion = {
+				who = ROOT
+				modifier = stayed_in_the_empire
+			}
+		}
+		if = {
+			limit = { NOT = { tag = SAV } }
+			add_prestige = -35
+			every_country = {
+				limit = {
+					has_country_flag = left_the_empire
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = stayed_in_the_empire_hostile
+				}
+			}
+		}
+	}
+}
+
+#Shadow Duchy - Other tags
+country_event = {
+	id = hre_event.7
+	title = "hre_event.6.t"
+	desc = "hre_event.6.d"
+	picture = HRE_eventPicture
+
+	is_triggered_only = yes
+
+	option = { # The Empire does not concern us.
+		name = "hre_event.6.a"
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				emperor = {
+					overlord_of = ROOT
+				}
+			}
+		}
+		set_country_flag = left_the_empire #To keep track of opinions
+		leave_the_hre = yes
+		overlord = {
+			if = {
+				limit = {
+					ai = no
+					NOT = { has_country_flag = shadow_duchy }
+					NOT = { has_country_flag = had_shadow_duchy_info }
+				}
+				country_event = { id = hre_event.8 } #Info Event
+			}
+		}
+		every_neighbor_country = {
+			limit = {
+				ai = no
+				NOT = { overlord_of = ROOT }
+				NOT = { has_country_flag = shadow_duchy }
+				NOT = { has_country_flag = had_shadow_duchy_info }
+			}
+			country_event = { id = hre_event.8 } #Info Event
+		}
+		if = {
+			limit = {
+				is_elector = yes
+			}
+			elector = no
+		}
+		add_prestige = 35
+		emperor = {
+			add_opinion = { who = ROOT modifier = slipped_out_of_empire }
+		}
+		add_opinion = { who = emperor modifier = slipped_out_of_empire }
+	}
+	option = {			#Our country is a natural part of the Empire
+		name = "hre_event.6.b"
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				emperor = {
+					NOT = { overlord_of = ROOT }
+				}
+			}
+		}
+		add_prestige = -35
+		add_opinion = {
+			who = emperor
+			modifier = stayed_in_the_empire
+		}
+		emperor = {
+			add_imperial_influence = 5
+			add_opinion = {
+				who = ROOT
+				modifier = stayed_in_the_empire
+			}
+		}
+		every_country = {
+			limit = {
+				has_country_flag = left_the_empire
+			}
+			add_opinion = {
+				who = ROOT
+				modifier = stayed_in_the_empire_hostile
+			}
+		}
+	}
+}
+
+#The Shadow Duchy
+country_event = {
+	id = hre_event.8
+	title = "hre_event.8.t"
+	desc = "hre_event.8.d"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = had_shadow_duchy_info
+		}
+	}
+	
+	option = {	#Other Provencial territory in HRE also broken off unless overlord is a member.
+		name = "hre_event.8.a" #Ok.
+		trigger = {
+			OR = {
+				primary_culture = provencal
+				capital_scope = {
+					region = provence_region
+					NOT = { owned_by = SAV }
+				}
+			}
+			is_part_of_hre = no
+		}
+		every_owned_province = {
+			limit = {
+				is_part_of_hre = yes
+				region = provence_region
+				NOT = { owned_by = SAV }
+			}
+			leave_the_hre = yes
+		}
+	}
+	option = {
+		name = "hre_event.8.b" #So they cannot count on his protection?
+		trigger = {
+			NOT = {
+				primary_culture = provencal
+				capital_scope = {
+					region = provence_region
+					NOT = { owned_by = SAV }
+				}
+			}
+			is_part_of_hre = no
+		}
+	}
+	option = {
+		name = "hre_event.8.c" #Ok.
+		trigger = {
+			NOT = {
+				primary_culture = provencal
+				capital_scope = {
+					region = provence_region
+					NOT = { owned_by = SAV }
+				}
+			}
+			is_part_of_hre = yes
+		}
+	}
+}
+
+#Warning that Provence might slip away.
+country_event = {
+	id = hre_event.9
+	title = "hre_event.9.t"
+	desc = "hre_event.9.d"
+	picture = HRE_eventPicture
+
+	trigger = {
+		OR = {
+			is_emperor = yes
+			ai = no
+		} # Fire for AI emperor to set the global flag for possible future player emperor
+		NOT = { has_global_flag = provence_out_of_HRE }
+		normal_or_historical_nations = yes
+		is_year = 1440
+		NOT = { is_year = 1550 }
+		OR = {
+			is_part_of_hre = yes
+			is_emperor = yes
+		}
+		NOT = { has_country_flag = provencal_warning }
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = provencal_warning
+			every_country = {
+				limit = {
+					ai = no
+					is_part_of_hre = yes
+					NOT = { has_country_flag = provencal_warning }
+				}
+				country_event = { id = hre_event.9 }
+				set_country_flag = provencal_warning
+			}
+			set_global_flag = enable_stop_shadow_duchy
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 6
+	}
+
+	option = {			# 
+		name = "hre_event.9.a"
+		trigger = { NOT = { primary_culture = provencal } }
+		custom_tooltip = hre_event.9.a.tt
+	}
+	option = {			# 
+		name = "hre_event.9.b"
+		trigger = { primary_culture = provencal }
+		custom_tooltip = hre_event.9.b.tt
+	}
+}
+
+#Unlawful territory in ITALY
+province_event = {
+	id = italian_power.6
+	title = "italian_power.EVTNAME6"
+	desc = "italian_power.EVTDESC6"
+	picture = ITALIAN_POWER_eventPicture
+	
+	trigger = {
+		superregion = italy_superregion
+		owner = {
+			OR = {
+				has_country_modifier = dominant_italian_power
+				has_country_modifier = menacing_italian_power
+			}
+		}
+		NOT = { has_global_flag = italian_powers_disabled }
+		NOT = { is_core = owner }
+		NOT = { has_province_modifier = unlawful_territory }
+	}
+	
+	is_triggered_only = yes  #on_province_owner_change
+	
+	option = {
+		name = "italian_power.EVTOPTA6"
+		add_province_modifier = {
+			name = "unlawful_territory"
+			duration = 7300
+		}
+		if = {
+			limit = {
+				owner = {
+					OR = {
+						has_country_modifier = dominant_italian_power
+						has_country_modifier = menacing_italian_power
+					}
+				}
+			}
+			every_country = {
+				limit = {
+					OR = {
+						check_variable = { which = "Demesne_in_Italy" value = 1 }
+						is_neighbor_of = ROOT
+					}
+					capital_scope = {
+						continent = europe
+					}
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = opinion_unlawful_territory
+				}
+			}
+		}
+	}
+}

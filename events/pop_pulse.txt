@@ -1,0 +1,266 @@
+# Author: Phlopsi
+namespace = pop_pulse
+
+country_event = {
+	id = pop_pulse.004
+	title = no_localization
+	desc = no_localization
+	picture = MEIOU_AND_TAXES_eventPicture
+	
+	hidden = yes
+	is_triggered_only = yes
+	
+	#trigger = { always = yes }
+	
+	immediate = {
+		# Checks provinces to add siege malus
+		country_event = { id = POP_sieges.001 }
+		country_event = { id = POP_Estates.900 }
+		
+		# WD stuffs
+		random_list = {
+			25 = {
+				every_country = {
+					limit = { is_at_war = yes }
+					every_owned_province = {
+						limit = { is_city = yes }
+						province_event = { id = war_dynamism.1 }
+						province_event = { id = war_dynamism.2 }
+					}
+				}
+			}
+			75 = {  }
+		}
+
+		every_country = {
+			# actual income
+			if = {
+				limit = { NOT = { is_month = 11 } }
+				country_event = { id = POP_Census.902 }
+			}
+			
+			# Court and Edu
+			country_event = { id = POP_AI.112 days = 4 }
+			
+			# Levy raising
+			if = {
+				limit = { is_at_war = yes }
+				country_event = { id = POP_AI.109 days = 6 }
+			}
+			else = {
+				set_variable = { which = GN_free_picks value = 0 }
+				set_variable = { which = LN_free_picks value = 0 }
+				set_variable = { which = BUR_free_picks value = 0 }
+				set_variable = { which = TR_free_picks value = 0 }
+			}
+			
+			# Trigger switched used, since theoretically a player shouldnt be able to revoke privileges from multiple estates within a month
+			if = {
+				limit = { has_country_flag = GN_revokation_pain_signal }
+				trigger_switch = {
+					on_trigger = has_country_modifier
+					court_level_1 = {
+						random_list = {
+							10 = { set_country_flag = GN_revokation_pain_1 }
+							10 = { set_country_flag = GN_revokation_pain_2 }
+							20 = { set_country_flag = GN_revokation_pain_3 }
+							30 = { set_country_flag = GN_revokation_pain_4 }
+							30 = { set_country_flag = GN_revokation_pain_5 }
+						}
+					}
+					court_level_2 = {
+						random_list = {
+							15 = { set_country_flag = GN_revokation_pain_1 }
+							15 = { set_country_flag = GN_revokation_pain_2 }
+							20 = { set_country_flag = GN_revokation_pain_3 }
+							25 = { set_country_flag = GN_revokation_pain_4 }
+							25 = { set_country_flag = GN_revokation_pain_5 }
+						}
+					}
+					court_level_3 = {
+						random_list = {
+							20 = { set_country_flag = GN_revokation_pain_1 }
+							20 = { set_country_flag = GN_revokation_pain_2 }
+							20 = { set_country_flag = GN_revokation_pain_3 }
+							20 = { set_country_flag = GN_revokation_pain_4 }
+							20 = { set_country_flag = GN_revokation_pain_5 }
+						}
+					}
+					court_level_4 = {
+						random_list = {
+							25 = { set_country_flag = GN_revokation_pain_1 }
+							25 = { set_country_flag = GN_revokation_pain_2 }
+							20 = { set_country_flag = GN_revokation_pain_3 }
+							15 = { set_country_flag = GN_revokation_pain_4 }
+							15 = { set_country_flag = GN_revokation_pain_5 }
+						}
+					}
+					court_level_5 = {
+						random_list = {
+							30 = { set_country_flag = GN_revokation_pain_1 }
+							30 = { set_country_flag = GN_revokation_pain_2 }
+							20 = { set_country_flag = GN_revokation_pain_3 }
+							10 = { set_country_flag = GN_revokation_pain_4 }
+							10 = { set_country_flag = GN_revokation_pain_5 }
+						}
+					}
+					court_level_6 = {
+						random_list = {
+							35 = { set_country_flag = GN_revokation_pain_1 }
+							35 = { set_country_flag = GN_revokation_pain_2 }
+							15 = { set_country_flag = GN_revokation_pain_3 }
+							10 = { set_country_flag = GN_revokation_pain_4 }
+							5 = { set_country_flag = GN_revokation_pain_5 }
+						}
+					}
+				}
+				trigger_switch = {
+					on_trigger = has_country_flag
+					GN_revokation_pain_1 = { country_event = { id = POP_Estates.601 days = 1 } }
+					GN_revokation_pain_2 = { country_event = { id = POP_Estates.602 days = 1 } }
+					GN_revokation_pain_3 = { country_event = { id = POP_Estates.603 days = 1 } }
+					GN_revokation_pain_4 = { country_event = { id = POP_Estates.604 days = 1 } }
+					GN_revokation_pain_5 = { country_event = { id = POP_Estates.605 days = 1 } }
+				}
+			}
+			if = {
+				limit = { has_country_flag = LN_revokation_pain_signal }
+				trigger_switch = {
+					on_trigger = has_country_modifier
+					court_level_1 = {
+						random_list = {
+							10 = { set_country_flag = LN_revokation_pain_1 }
+							10 = { set_country_flag = LN_revokation_pain_2 }
+							20 = { set_country_flag = LN_revokation_pain_3 }
+							30 = { set_country_flag = LN_revokation_pain_4 }
+							30 = { set_country_flag = LN_revokation_pain_5 }
+						}
+					}
+					court_level_2 = {
+						random_list = {
+							15 = { set_country_flag = LN_revokation_pain_1 }
+							15 = { set_country_flag = LN_revokation_pain_2 }
+							20 = { set_country_flag = LN_revokation_pain_3 }
+							25 = { set_country_flag = LN_revokation_pain_4 }
+							25 = { set_country_flag = LN_revokation_pain_5 }
+						}
+					}
+					court_level_3 = {
+						random_list = {
+							20 = { set_country_flag = LN_revokation_pain_1 }
+							20 = { set_country_flag = LN_revokation_pain_2 }
+							20 = { set_country_flag = LN_revokation_pain_3 }
+							20 = { set_country_flag = LN_revokation_pain_4 }
+							20 = { set_country_flag = LN_revokation_pain_5 }
+						}
+					}
+					court_level_4 = {
+						random_list = {
+							25 = { set_country_flag = LN_revokation_pain_1 }
+							25 = { set_country_flag = LN_revokation_pain_2 }
+							20 = { set_country_flag = LN_revokation_pain_3 }
+							15 = { set_country_flag = LN_revokation_pain_4 }
+							15 = { set_country_flag = LN_revokation_pain_5 }
+						}
+					}
+					court_level_5 = {
+						random_list = {
+							30 = { set_country_flag = LN_revokation_pain_1 }
+							30 = { set_country_flag = LN_revokation_pain_2 }
+							20 = { set_country_flag = LN_revokation_pain_3 }
+							10 = { set_country_flag = LN_revokation_pain_4 }
+							10 = { set_country_flag = LN_revokation_pain_5 }
+						}
+					}
+					court_level_6 = {
+						random_list = {
+							35 = { set_country_flag = LN_revokation_pain_1 }
+							35 = { set_country_flag = LN_revokation_pain_2 }
+							15 = { set_country_flag = LN_revokation_pain_3 }
+							10 = { set_country_flag = LN_revokation_pain_4 }
+							5 = { set_country_flag = LN_revokation_pain_5 }
+						}
+					}
+				}
+				trigger_switch = {
+					on_trigger = has_country_flag
+					LN_revokation_pain_1 = { country_event = { id = POP_Estates.701 days = 2 } }
+					LN_revokation_pain_2 = { country_event = { id = POP_Estates.702 days = 2 } }
+					LN_revokation_pain_3 = { country_event = { id = POP_Estates.703 days = 2 } }
+					LN_revokation_pain_4 = { country_event = { id = POP_Estates.704 days = 2 } }
+					LN_revokation_pain_5 = { country_event = { id = POP_Estates.705 days = 2 } }
+				}
+			}
+			if = {
+				limit = { has_country_flag = BG_revokation_pain_signal }
+				trigger_switch = {
+					on_trigger = has_country_modifier
+					court_level_1 = {
+						random_list = {
+							10 = { set_country_flag = BG_revokation_pain_1 }
+							10 = { set_country_flag = BG_revokation_pain_2 }
+							20 = { set_country_flag = BG_revokation_pain_3 }
+							30 = { set_country_flag = BG_revokation_pain_4 }
+							30 = { set_country_flag = BG_revokation_pain_5 }
+						}
+					}
+					court_level_2 = {
+						random_list = {
+							15 = { set_country_flag = BG_revokation_pain_1 }
+							15 = { set_country_flag = BG_revokation_pain_2 }
+							20 = { set_country_flag = BG_revokation_pain_3 }
+							25 = { set_country_flag = BG_revokation_pain_4 }
+							25 = { set_country_flag = BG_revokation_pain_5 }
+						}
+					}
+					court_level_3 = {
+						random_list = {
+							20 = { set_country_flag = BG_revokation_pain_1 }
+							20 = { set_country_flag = BG_revokation_pain_2 }
+							20 = { set_country_flag = BG_revokation_pain_3 }
+							20 = { set_country_flag = BG_revokation_pain_4 }
+							20 = { set_country_flag = BG_revokation_pain_5 }
+						}
+					}
+					court_level_4 = {
+						random_list = {
+							25 = { set_country_flag = BG_revokation_pain_1 }
+							25 = { set_country_flag = BG_revokation_pain_2 }
+							20 = { set_country_flag = BG_revokation_pain_3 }
+							15 = { set_country_flag = BG_revokation_pain_4 }
+							15 = { set_country_flag = BG_revokation_pain_5 }
+						}
+					}
+					court_level_5 = {
+						random_list = {
+							30 = { set_country_flag = BG_revokation_pain_1 }
+							30 = { set_country_flag = BG_revokation_pain_2 }
+							20 = { set_country_flag = BG_revokation_pain_3 }
+							10 = { set_country_flag = BG_revokation_pain_4 }
+							10 = { set_country_flag = BG_revokation_pain_5 }
+						}
+					}
+					court_level_6 = {
+						random_list = {
+							35 = { set_country_flag = BG_revokation_pain_1 }
+							35 = { set_country_flag = BG_revokation_pain_2 }
+							15 = { set_country_flag = BG_revokation_pain_3 }
+							10 = { set_country_flag = BG_revokation_pain_4 }
+							5 = { set_country_flag = BG_revokation_pain_5 }
+						}
+					}
+				}
+				trigger_switch = {
+					on_trigger = has_country_flag
+					BG_revokation_pain_1 = { country_event = { id = POP_Estates.801 days = 3 } }
+					BG_revokation_pain_2 = { country_event = { id = POP_Estates.802 days = 3 } }
+					BG_revokation_pain_3 = { country_event = { id = POP_Estates.803 days = 3 } }
+					BG_revokation_pain_4 = { country_event = { id = POP_Estates.804 days = 3 } }
+					BG_revokation_pain_5 = { country_event = { id = POP_Estates.805 days = 3 } }
+				}
+			}
+		}
+	}
+	
+	option = { name = no_localization }
+}

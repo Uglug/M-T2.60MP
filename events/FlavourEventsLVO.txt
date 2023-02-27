@@ -1,0 +1,636 @@
+country_event = { #Dysfunctional Livonia
+	
+	id = flavor_lvo.001
+	title = flavor_lvo.001.t
+	desc = flavor_lvo.001.d
+	picture = LIVONIANORDER_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		ai = yes
+		OR = {
+			tag = LIV
+			tag = LVO
+		}
+		any_owned_province = { area = curonia_area }
+		any_owned_province = { area = livonia_area }
+		is_free_or_tributary_trigger = yes
+		NOT = { has_global_flag = livonian_war }
+		is_religion_enabled = protestant
+		is_at_war = no
+		OR = {
+			is_neighbor_of = MOS
+			is_neighbor_of = RUS
+			is_neighbor_of = NOV
+		}
+		OR = {
+			is_neighbor_of = LIT
+			is_neighbor_of = POL
+			is_neighbor_of = PLC
+		}
+		OR = {
+			NOT = { stability = 1 }
+			num_of_revolts = 2
+			is_bankrupt = yes
+			war_exhaustion = 10
+			NOT = { religious_unity = 0.75 }
+		}
+	}
+	
+	mean_time_to_happen = { months = 36 }
+	
+	option = {
+		name = "flavor_lvo.001.a"   #ask Poland, Lithuania, PLC
+		
+		ai_chance = {
+			factor = 90
+		}
+		set_global_flag = livonian_war
+		if = {
+			limit = {
+				POL = {
+					exists = yes
+					senior_union_with = LIT
+				}
+			}
+			POL = {
+				country_event = { id = flavor_lvo.002 }
+			}
+		}
+		if = {
+			limit = {
+				LIT = {
+					exists = yes
+					is_free_or_tributary_trigger = yes
+				}
+			}
+			LIT = {
+				country_event = { id = flavor_lvo.002 }
+			}
+		}
+		if = {
+			limit = {
+				PLC = {
+					exists = yes
+				}
+			}
+			PLC = {
+				country_event = { id = flavor_lvo.002 }
+			}
+		}
+	}
+	
+	option = {
+		name = "flavor_lvo.001.b" #refuse
+		ai_chance = {
+			factor = 10
+		}
+		set_global_flag = livonian_war
+		subtract_stability_4 = yes
+		random_core_province = {
+			limit = {
+				NOT = { has_province_modifier = nobles_organizing }
+			}
+			add_province_modifier = {
+				name = "nobles_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+		random_core_province = {
+			limit = {
+				NOT = { has_province_modifier = nobles_organizing }
+			}
+			add_province_modifier = {
+				name = "nobles_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+		random_core_province = {
+			limit = {
+				NOT = { has_province_modifier = nobles_organizing }
+			}
+			add_province_modifier = {
+				name = "nobles_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+		random_heretic_province = {
+			limit = {
+				NOT = { has_province_modifier = fanatics_organizing }
+			}
+			add_province_modifier = {
+				name = "fanatics_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+		random_heretic_province = {
+			limit = {
+				NOT = { has_province_modifier = fanatics_organizing }
+			}
+			add_province_modifier = {
+				name = "fanatics_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+		random_owned_province = {
+			limit = {
+				NOT = { has_province_modifier = peasants_organizing }
+			}
+			add_province_modifier = {
+				name = "peasants_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+		random_owned_province = {
+			limit = {
+				NOT = { has_province_modifier = peasants_organizing }
+			}
+			add_province_modifier = {
+				name = "peasants_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+	}
+}
+
+country_event = { #Dysfunctional Livonia
+	
+	id = flavor_lvo.002
+	title = flavor_lvo.002.t
+	desc = flavor_lvo.002.d
+	picture = LIVONIANORDER_eventPicture
+	
+	is_triggered_only = yes
+	
+	
+	option = {     #accept
+		name = "flavor_lvo.002.a"
+		ai_chance = {
+			factor = 90
+		}
+		add_prestige = 5
+		vassalize = FROM
+		FROM = {
+			set_country_flag = pol_accept_ovr
+			country_event = { id = flavor_lvo.003 }
+		}
+	}
+	
+	option = {     #refuse
+		name = "flavor_lvo.002.b"
+		ai_chance = {
+			factor = 10
+		}
+	}
+}
+
+country_event = {
+	id = flavor_lvo.003
+	title = flavor_lvo.003.t
+	desc = flavor_lvo.003.d
+	picture = LIVONIANORDER_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {     #Let us hope the matter is resolved peacfully
+		name = "flavor_lvo.003.a"
+		random_neighbor_country = {
+			limit = {
+				culture_group = east_slavic
+			}
+			country_event = { id = flavor_lvo.004 }
+		}
+	}
+}
+
+country_event = { #Dysfunctional Livonia
+	
+	id = flavor_lvo.004
+	title = flavor_lvo.004.t
+	desc = flavor_lvo.004.d
+	picture = LIVONIANORDER_eventPicture
+	
+	is_triggered_only = yes
+	
+	
+	option = {     #We shall take what is ours by right!
+		name = "flavor_lvo.004.a"
+		ai_chance = {
+			factor = 90
+			modifier = {
+				factor = 100
+				is_at_war = no
+			}
+		}
+		add_prestige = 5
+		FROM = {
+			every_owned_province = {
+				limit = {
+					area = livonia_area
+				}
+				add_claim = ROOT
+			}
+		}
+		declare_war_with_cb = { who = FROM casus_belli = cb_conquest }
+		set_global_flag = livonian_war_decided #allows LVO/LIV to do the treaty of Wilno
+	}
+	
+	option = {     #We dare not act!
+		name = "flavor_lvo.003.b"
+		ai_chance = {
+			factor = 5
+			modifier = {
+				factor = 25
+				is_at_war = yes
+			}
+		}
+		add_prestige = -25
+		set_global_flag = livonian_war_decided
+	}
+	option = {     #We dare not act, right now...
+		name = "flavor_lvo.003.b"
+		ai_chance = {
+			factor = 5
+			modifier = {
+				factor = 50
+				is_at_war = yes
+			}
+		}
+		FROM = {
+			every_owned_province = {
+				limit = {
+					OR = {
+						area = livonia_area
+						AND = {
+							area = estonia_ingria_area
+							NOT = { province_id = 1354 } # Saaremaa
+							NOT = { province_id = 3768 } # Hiiumaa
+						}
+					}
+				}
+				add_claim = ROOT
+			}
+		}
+		add_prestige = -5
+		set_global_flag = livonian_war_decided
+	}
+}
+
+country_event = { #Estonia defects to Sweden
+	
+	id = flavor_lvo.005
+	title = flavor_lvo.005.t
+	desc = flavor_lvo.005.d
+	picture = LIVONIANORDER_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		OR = {
+			tag = LIV
+			tag = LVO
+		}
+		is_religion_enabled = protestant
+		any_owned_province = { area = estonia_ingria_area }
+		is_at_war = yes
+		OR = {
+			SWE = { owns = 28 } # Uusimaa
+			SWE = { owns = 27 } # Varsinaissuomi
+			SWE = { owns = 32 } # Viipuri
+		}
+		OR = {
+			NOT = { stability = 1 }
+			num_of_revolts = 2
+			is_bankrupt = yes
+			war_exhaustion = 10
+			NOT = { religious_unity = 0.75 }
+		}
+	}
+	
+	mean_time_to_happen = { months = 6 }
+	
+	option = {     #Damn them!
+		name = "flavor_lvo.004.a"
+		every_owned_province = {
+			limit = {
+				area = estonia_ingria_area
+				owned_by = ROOT
+				NOT = { province_id = 1354 } #Osel
+				NOT = { province_id = 37 } #Parnau
+				NOT = { province_id = 1263 } #Dorpat
+			}
+			remove_core = ROOT
+			cede_province = SWE
+			add_territorial_core_effect_tag = {
+				tag = SWE
+			}
+			add_core = EST
+			add_local_autonomy = 10
+		}
+		SWE = { add_claim = 34 } # Ingria
+		SWE = { add_claim = 3401 } # Neva
+		if = {
+			limit = {
+				is_subject_other_than_tributary_trigger = yes
+			}
+			overlord = {
+				estonia_ingria_area = {
+					limit = {
+						NOT = { province_id = 1354 } #Osel
+					}
+					add_claim = PREV
+				}
+			}
+		}
+	}
+}
+
+country_event = { #Osel defects to Denmark
+	
+	id = flavor_lvo.006
+	title = flavor_lvo.006.t
+	desc = flavor_lvo.006.d
+	picture = LIVONIANORDER_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		OR = {
+			tag = LIV
+			tag = LVO
+		}
+		is_religion_enabled = protestant
+		owns = 1354 # Saaremaa
+		is_at_war = yes
+		OR = {
+			DEN = { owns = 6 } # Skane
+			DAN = { owns = 6 } # Skane
+		}
+		OR = {
+			NOT = { stability = 1 }
+			num_of_revolts = 2
+			is_bankrupt = yes
+			war_exhaustion = 10
+			NOT = { religious_unity = 0.75 }
+		}
+	}
+	
+	mean_time_to_happen = { months = 6 }
+	
+	option = {     #Damn them!
+		name = "flavor_lvo.006.a"
+		if = {
+			limit = {
+				exists = DEN
+			}
+			1354 = {
+				remove_core = ROOT
+				cede_province = DEN
+				add_territorial_core_effect_tag = {
+					tag = DEN
+				}
+				add_core = EST
+				add_local_autonomy = 10
+			}
+		}
+		if = {
+			limit = {
+				exists = DAN
+			}
+			1354 = {
+				remove_core = ROOT
+				cede_province = DAN
+				add_territorial_core_effect_tag = {
+					tag = DAN
+				}
+				add_core = EST
+				add_local_autonomy = 10
+			}
+		}
+		if = {
+			limit = {
+				is_subject_other_than_tributary_trigger = yes
+			}
+			overlord = {
+				add_claim = 1354
+			}
+		}
+	}
+}
+country_event = { #Pilante defects to Denmark
+	
+	id = flavor_lvo.007
+	title = flavor_lvo.007.t
+	desc = flavor_lvo.007.d
+	picture = LIVONIANORDER_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		OR = {
+			tag = LIV
+			tag = LVO
+		}
+		is_religion_enabled = protestant
+		owns = 1432 # Pilten
+		is_at_war = yes
+		OR = {
+			DEN = { owns = 6 } # Skane
+			DAN = { owns = 6 } # Skane
+		}
+		OR = {
+			NOT = { stability = 1 }
+			num_of_revolts = 2
+			is_bankrupt = yes
+			war_exhaustion = 10
+			NOT = { religious_unity = 0.75 }
+		}
+	}
+	
+	mean_time_to_happen = { months = 6 }
+	
+	option = {     #Damn them!
+		name = "flavor_lvo.007.a"
+		if = {
+			limit = {
+				exists = DEN
+			}
+			1432 = {
+				remove_core = ROOT
+				cede_province = DEN
+				add_territorial_core_effect_tag = {
+					tag = DEN
+				}
+				add_core = PIL
+				add_local_autonomy = 10
+			}
+		}
+		if = {
+			limit = {
+				exists = DAN
+			}
+			1432 = {
+				remove_core = ROOT
+				cede_province = DAN
+				add_territorial_core_effect_tag = {
+					tag = DAN
+				}
+				add_core = PIL
+				add_local_autonomy = 10
+			}
+		}
+		if = {
+			limit = {
+				is_subject_other_than_tributary_trigger = yes
+			}
+			overlord = {
+				add_claim = 1432
+			}
+		}
+	}
+}
+
+country_event = { #Curonians and Lattgalians coalesce into Latvians ~16th century
+	
+	id = flavor_lvo.008
+	title = flavor_lvo.008.t
+	desc = flavor_lvo.008.d
+	picture = LIVONIANORDER_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		NOT = { has_global_flag = latvian_culture_flag }
+		is_year = 1500
+		curonia_area = {
+			type = all
+			country_or_vassal_holds = ROOT
+		}
+		livonia_area = {
+			type = all
+			country_or_vassal_holds = ROOT
+		}
+	}
+	
+	mean_time_to_happen = { years = 30 }
+	
+	option = {     #They should be easier to rule
+		name = "flavor_lvo.008.a"
+		commonwealth_superregion = {
+			limit = {
+				country_or_vassal_holds = ROOT
+				OR = {
+					culture = curonian
+					culture = lattgalian
+				}
+			}
+			change_culture = latvian
+		}
+		hidden_effect = {
+			every_known_country = {
+				limit = {
+					capital_scope = {
+						superregion = commonwealth_superregion
+					}
+					OR = {
+						accepted_culture = curonian
+						accepted_culture = lattgalian
+					}
+				}
+				remove_accepted_culture = curonian
+				remove_accepted_culture = lattgalian
+				add_accepted_culture = latvian
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					primary_culture = curonian
+					primary_culture = lattgalian
+				}
+			}
+			change_primary_culture = latvian
+		}
+		every_subject_country = {
+			limit = {
+				OR = {
+					primary_culture = curonian
+					primary_culture = lattgalian
+				}
+			}
+			change_primary_culture = latvian
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+	option = {     #Absolutely not!
+		name = "flavor_lvo.008.b"
+		trigger = {
+			primary_culture = lattgalian
+		}
+		every_owned_province = {
+			limit = {
+				culture = curonian
+			}
+			add_nationalism = 10
+		}
+		ai_chance = {
+			factor = 0
+		}
+	}
+	option = {     #Absolutely not!
+		name = "flavor_lvo.008.c"
+		trigger = {
+			primary_culture = curonian
+		}
+		every_owned_province = {
+			limit = {
+				culture = lattgalian
+			}
+			add_nationalism = 10
+		}
+		ai_chance = {
+			factor = 0
+		}
+	}
+	after = {
+		set_global_flag = latvian_culture_flag
+	}
+}

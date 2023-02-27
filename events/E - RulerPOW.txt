@@ -1,0 +1,700 @@
+
+province_event = {
+	id = prisonner_of_war.001
+	title = "prisonner_of_war.001.name"
+	desc = "prisonner_of_war.001.desc"
+	picture = CONQUEST_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	trigger = {
+		owner = { is_at_war = yes }
+		has_ruler_leader_from = FROM
+		#NOT = { any_country = { has_country_flag = ruler_prisonner_of_war } }
+	}
+	
+	#immediate = {
+	#	hidden_effect = {
+	#		1 = {
+	#			change_variable = { which = "prisonner_of_war_001_fired" value = 1 }
+	#		}
+	#	}
+	#}
+	
+	option = {
+		name = "prisonner_of_war.001.opta"
+		FROM = {
+			if = {
+				limit = { mil_tech = 50 }
+				random_list = {
+					99 = { }
+					1 = { country_event = { id = prisonner_of_war.002 } }
+				}
+			}
+			else_if = {
+				limit = { mil_tech = 40 }
+				random_list = {
+					98 = { }
+					2 = { country_event = { id = prisonner_of_war.002 } }
+				}
+			}
+			else_if = {
+				limit = { mil_tech = 30 }
+				random_list = {
+					97 = { }
+					3 = { country_event = { id = prisonner_of_war.002 } }
+				}
+			}
+			else_if = {
+				limit = { mil_tech = 20 }
+				random_list = {
+					96 = { }
+					4 = { country_event = { id = prisonner_of_war.002 } }
+				}
+			}
+			else = {
+				if = {
+					limit = { tag = BLO }
+					random_list = {
+						75 = { }
+						25 = { BLO = { kill_ruler = yes } MNF = { country_event = { id = flavor_bri.14 } } }
+					}
+				}
+				else_if = {
+					limit = {
+						tag = CAS
+						CAS = { has_disaster = castilian_civil_war }
+					}
+					random_list = {
+						75 = { }
+						25 = { kill_ruler = yes }
+					}
+				}
+				else_if = {
+					limit = {
+						tag = ENR
+						CAS = { has_disaster = castilian_civil_war }
+					}
+					random_list = {
+						75 = { }
+						25 = { kill_ruler = yes }
+					}
+				}
+				else = {
+					random_list = {
+						95 = { }
+						5 = { country_event = { id = prisonner_of_war.002 } }
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = prisonner_of_war.002
+	title = "prisonner_of_war.002.name"
+	desc = "prisonner_of_war.002.desc"
+	picture = CONQUEST_eventPicture
+	
+	is_triggered_only = yes
+	
+	#immediate = {
+	#	hidden_effect = {
+	#		1 = {
+	#			change_variable = { which = "prisonner_of_war_002_fired" value = 1 }
+	#		}
+	#	}
+	#}
+	
+	option = {
+		name = "prisonner_of_war.002.opta"
+		hidden_effect = {
+			set_country_flag = ruler_prisonner_of_war
+			if = {
+				limit = {
+					has_heir = yes
+					culture_group = chinese_group
+				}
+				export_to_variable = {
+					variable_name = the_heir_age
+					value = heir_age
+				}
+				if = {
+					limit = {
+						check_variable = { which = the_heir_age value = 14 }
+					}
+					exile_ruler_as = ruler_pow_of_@ROOT
+				}
+				else = {
+					exile_heir_as = heir_pow_of_@ROOT
+					exile_ruler_as = ruler_pow_of_@ROOT
+					define_ruler = {
+						regency = yes
+						ADM = 0
+						DIP = 0
+						MIL = 0
+					}
+				}
+			}
+			else = {
+				exile_heir_as = heir_pow_of_@ROOT
+				exile_ruler_as = ruler_pow_of_@ROOT
+				define_ruler = {
+					regency = yes
+					ADM = 0
+					DIP = 0
+					MIL = 0
+				}
+			}
+		}
+		add_war_exhaustion = 10
+		if = {
+			limit = {
+				is_emperor_of_china = yes
+			}
+			add_mandate = -40
+		}
+	}
+}
+
+country_event = {
+	id = prisonner_of_war.100
+	title = "prisonner_of_war.100.name"
+	desc = "prisonner_of_war.100.desc"
+	picture = CONQUEST_eventPicture
+	
+	trigger = {
+		has_country_flag = ruler_prisonner_of_war
+		has_regency = yes
+		OR = {
+			had_country_flag = { flag = ruler_prisonner_of_war days = 1825 }
+			ruler_age = 45
+		}
+		is_at_war = yes
+	}
+	
+	mean_time_to_happen = {
+		years = 10
+		
+		modifier = {
+			ruler_age = 50
+			factor = 1.1
+		}
+		modifier = {
+			ruler_age = 55
+			factor = 1.2
+		}
+		modifier = {
+			ruler_age = 60
+			factor = 1.3
+		}
+		modifier = {
+			ruler_age = 65
+			factor = 1.5
+		}
+		modifier = {
+			ruler_age = 75
+			factor = 2.0
+		}
+	}
+	
+	option = {
+		name = "prisonner_of_war.100.opta"
+		set_heir = heir_pow_of_@ROOT
+		clr_country_flag = ruler_prisonner_of_war
+		add_war_exhaustion = 10
+		set_variable = { which = the_heir_age value = 0 }
+	}
+}
+
+country_event = {
+	id = prisonner_of_war.101
+	title = "prisonner_of_war.101.name"
+	desc = "prisonner_of_war.101.desc"
+	picture = CONQUEST_eventPicture
+	
+	# is_triggered_only = yes
+	hidden = yes
+	
+	trigger = {
+		has_country_flag = ruler_prisonner_of_war
+		OR = {
+			is_at_war = no
+			AND = {
+				has_country_flag = jean_prisonner_of_war
+				NOT = { war_with = ENG }
+			}
+		}
+	}
+	
+	mean_time_to_happen = { months = 12 }
+	
+	option = {
+		name = "prisonner_of_war.101.opta"
+		if = {
+			limit = {
+				has_regency = yes has_consort_regency = no
+			}
+			country_event = { id = prisonner_of_war.102 }
+		}
+		else = {
+			if = {
+				limit = {
+					culture_group = chinese_group
+				}
+				country_event = { id = prisonner_of_war.201 days = 356 random = 3560 }
+			}
+			else = {
+				country_event = { id = prisonner_of_war.103 }
+			}
+		}
+		set_variable = { which = the_heir_age value = 0 }
+	}
+}
+
+country_event = {
+	id = prisonner_of_war.102
+	title = "prisonner_of_war.102.name"
+	desc = "prisonner_of_war.102.desc"
+	picture = CONQUEST_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "prisonner_of_war.102.opta"
+		set_ruler = ruler_pow_of_@ROOT
+		set_heir = heir_pow_of_@ROOT
+		clr_country_flag = ruler_prisonner_of_war
+		if = {
+			limit = {
+				tag = FRA
+				has_country_flag = king_jean_released
+			}
+			country_event = { id = on_new_monarch.2 days = 1 }
+			clr_country_flag = king_jean_released
+		}
+	}
+}
+
+country_event = {
+	id = prisonner_of_war.103
+	title = "prisonner_of_war.103.name"
+	desc = "prisonner_of_war.103.desc"
+	picture = CONQUEST_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "prisonner_of_war.103.opta"
+		set_ruler = ruler_pow_of_@ROOT
+		clr_country_flag = ruler_prisonner_of_war
+		if = {
+			limit = { government = monarchy }
+			set_heir = heir_pow_of_@ROOT
+			random_list = {
+				50 = { country_event = { id = prisonner_of_war.104 } }
+				50 = { country_event = { id = prisonner_of_war.105 } }
+			}
+		}
+	}
+}
+
+country_event = {
+	id = prisonner_of_war.104
+	title = "prisonner_of_war.104.name"
+	desc = "prisonner_of_war.104.desc"
+	picture = CONQUEST_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "prisonner_of_war.104.opta"
+	}
+}
+
+country_event = {
+	id = prisonner_of_war.105
+	title = "prisonner_of_war.105.name"
+	desc = "prisonner_of_war.105.desc"
+	picture = CONQUEST_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "prisonner_of_war.105.opta"
+		capital_scope = { spawn_rebels = { type = pretender_rebels size = 2 } }
+	}
+}
+
+country_event = {
+	id = prisonner_of_war.200
+	title = "prisonner_of_war.200.name"
+	picture = CONQUEST_eventPicture
+	
+	desc = {
+		trigger = {
+			has_country_flag = mandate_of_heaven_claimed
+		}
+		desc = prisonner_of_war.200.desca
+	}
+	
+	desc = {
+		trigger = {
+			NOT = { has_country_flag = mandate_of_heaven_claimed }
+		}
+		desc = prisonner_of_war.200.descb
+	}
+	
+	trigger = {
+		has_country_flag = ruler_prisonner_of_war
+		culture_group = chinese_group
+		is_at_war = yes
+		has_consort_regency = no
+		NOT = { check_variable = { which = the_heir_age value = 14 } }
+	}
+	
+	mean_time_to_happen = { months = 12 }
+	
+	immediate = {
+		random_subject_country = {
+			limit = {
+				has_country_flag = imperial_appenage
+			}
+			save_event_target_as = tumu_prince
+		}
+		save_event_target_as = tumu_emperor
+	}
+	
+	option = {
+		name = "prisonner_of_war.200.opta"
+		if = {
+			limit = {
+				has_saved_event_target = tumu_prince
+			}
+			event_target:tumu_prince = {
+				clr_country_flag = imperial_appenage
+				set_emperor_of_china = event_target:tumu_prince
+				if = {
+					limit = { government = monarchy NOT = { has_country_modifier = title_6 } }
+					change_title_6 = yes
+				}
+				add_faction = temples
+				add_faction = enuchs
+				add_faction = bureaucrats
+				add_faction_influence = {
+					faction = temples
+					influence = 30
+				}
+				add_faction_influence = {
+					faction = enuchs
+					influence = 30
+				}
+				add_faction_influence = {
+					faction = bureaucrats
+					influence = 30
+				}
+			}
+			event_target:tumu_emperor = {
+				if = {
+					limit = {
+						has_country_modifier = chinese_physiocratic_economy
+					}
+					event_target:tumu_prince = {
+						add_country_modifier = {
+							name = chinese_physiocratic_economy
+							duration = -1
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						has_country_modifier = chinese_mercantilistic_economy
+					}
+					event_target:tumu_prince = {
+						add_country_modifier = {
+							name = chinese_mercantilistic_economy
+							duration = -1
+						}
+					}
+				}
+				if = {
+					limit = {
+						has_country_modifier = wei_suo_system
+					}
+					event_target:tumu_prince = {
+						add_country_modifier = {
+							name = wei_suo_system
+							duration = -1
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						has_country_modifier = general_trained_militia
+					}
+					event_target:tumu_prince = {
+						add_country_modifier = {
+							name = general_trained_militia
+							duration = -1
+						}
+					}
+				}
+				if = {
+					limit = {
+						has_country_flag = primogeniture_succession
+					}
+					event_target:tumu_prince = {
+						set_country_flag = primogeniture_succession
+					}
+				}
+				#if = {
+				#	limit = {
+				#		has_country_modifier = territorial_princes
+				#	}
+				#	event_target:tumu_prince = {
+				#		add_country_modifier = {
+				#			name = territorial_princes
+				#			duration = -1
+				#		}
+				#	}
+				#}
+			}
+			if = {
+				limit = { has_global_flag = singleplayer }
+				if = {
+					limit = {
+						ai = yes
+					}
+					event_target:tumu_prince = {
+						inherit = event_target:tumu_emperor
+						change_tag = event_target:tumu_emperor
+					}
+				}
+				else = {
+					switch_tag = event_target:tumu_prince
+					hidden_effect = {
+						country_event = { id = prisonner_of_war.203 }
+					}
+				}
+			}
+		}
+		else = {
+			define_ruler = {
+				claim = 10
+			}
+			if = {
+				limit = {
+					is_emperor_of_china = yes
+				}
+				add_mandate = 20
+			}
+		}
+	}
+}
+#Former Emperor returns
+country_event = {
+	id = prisonner_of_war.201
+	title = "prisonner_of_war.201.name"
+	desc = "prisonner_of_war.201.desc"
+	picture = CONQUEST_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #House arrest
+		name = "prisonner_of_war.201.opta"
+		clr_country_flag = ruler_prisonner_of_war
+		random_list = {
+			50 = { country_event = { id = prisonner_of_war.202 days = 356 random = 3560 } }
+			50 = { }
+		}
+	}
+	option = { #Yield
+		name = "prisonner_of_war.201.opta"
+		set_ruler = ruler_pow_of_@ROOT
+		set_heir = heir_pow_of_@ROOT
+		clr_country_flag = ruler_prisonner_of_war
+	}
+}
+
+country_event = {
+	id = prisonner_of_war.202
+	title = "prisonner_of_war.202.name"
+	desc = "prisonner_of_war.202.desc"
+	picture = CONQUEST_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Yield
+		name = "prisonner_of_war.202.opta"
+		subtract_stability_2 = yes
+		set_ruler = ruler_pow_of_@ROOT
+		set_heir = heir_pow_of_@ROOT
+	}
+
+}
+
+#
+country_event = {
+	id = prisonner_of_war.203
+	title = "prisonner_of_war.203.name"
+	desc = "prisonner_of_war.203.desc"
+	picture = CONQUEST_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	option = { #House arrest
+		name = "prisonner_of_war.201.opta"
+		inherit = event_target:tumu_emperor
+		change_tag = event_target:tumu_emperor
+	}
+}
+
+country_event = {
+	id = prisonner_of_war.501
+	title = "prisonner_of_war.501.name"
+	desc = "prisonner_of_war.501.desc"
+	picture = CONQUEST_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "prisonner_of_war.501.opta" # Aquitaine
+		ai_chance = {
+			factor = 90
+		}
+		FRA = { country_event = { id = prisonner_of_war.511 } }
+	}
+	option = {
+		name = "prisonner_of_war.501.optb" # Aquitaine and Normandie
+		ai_chance = {
+			factor = 10
+		}
+		FRA = { country_event = { id = prisonner_of_war.521 } }
+	}
+	option = {
+		name = "prisonner_of_war.501.optc" # No negociation
+		ai_chance = {
+			factor = 0
+		}
+		FRA = { country_event = { id = prisonner_of_war.531 } }
+	}
+}
+
+country_event = {
+	id = prisonner_of_war.511
+	title = "prisonner_of_war.511.name"
+	desc = "prisonner_of_war.511.desc"
+	picture = CONQUEST_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		clr_country_flag = negociating_release_jean
+	}
+	
+	option = {
+		name = "prisonner_of_war.511.opta"
+		ai_chance = {
+			factor = 90
+		}
+		aquitaine_group = {
+			limit = {
+				is_city = yes
+				OR = {
+					owned_by = ROOT
+					owner = { vassal_of = ROOT }
+					owner = { junior_union_with = ROOT }
+				}
+			}
+			cede_province = GUY
+		}
+		# white_peace = ENG
+		set_country_flag = king_jean_released
+		set_ruler = ruler_pow_of_@ROOT
+		set_heir = heir_pow_of_@ROOT
+		clr_country_flag = ruler_prisonner_of_war
+		country_event = { id = on_new_monarch.2 days = 1 }
+		# Recovery of Morale and the State due to the Return of the King.
+		# add_absolutism = 5
+		add_war_exhaustion = -2
+	}
+	option = {
+		name = "prisonner_of_war.501.optc" # No negociation
+		ai_chance = {
+			factor = 10
+		}
+	}
+}
+
+country_event = {
+	id = prisonner_of_war.521
+	title = "prisonner_of_war.521.name"
+	desc = "prisonner_of_war.521.desc"
+	picture = CONQUEST_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		clr_country_flag = negociating_release_jean
+	}
+	
+	option = {
+		name = "prisonner_of_war.521.opta"
+		ai_chance = {
+			factor = 90
+		}
+		aquitaine_group = {
+			limit = {
+				is_city = yes
+				OR = {
+					owned_by = ROOT
+					owner = { vassal_of = ROOT }
+					owner = { junior_union_with = ROOT }
+				}
+			}
+			cede_province = GUY
+			add_core = ROOT
+		}
+		every_owned_province = {
+			limit = {
+				area = normandy_area
+			}
+			cede_province = ENG
+		}
+		# white_peace = ENG
+		set_country_flag = king_jean_released
+		set_ruler = ruler_pow_of_@ROOT
+		set_heir = heir_pow_of_@ROOT
+		clr_country_flag = ruler_prisonner_of_war
+		country_event = { id = on_new_monarch.2 days = 1 }
+		# Recovery of Morale and the State due to the Return of the King.
+		# add_absolutism = 2.5
+		add_war_exhaustion = -1
+	}
+	option = {
+		name = "prisonner_of_war.501.optc" # No negociation
+		ai_chance = {
+			factor = 10
+		}
+	}
+}
+
+country_event = {
+	id = prisonner_of_war.531
+	title = "prisonner_of_war.531.name"
+	desc = "prisonner_of_war.531.desc"
+	picture = CONQUEST_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		clr_country_flag = negociating_release_jean
+	}
+	
+	option = {
+		name = "prisonner_of_war.531.opta" # No negociation
+	}
+}

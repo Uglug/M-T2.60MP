@@ -1,0 +1,181 @@
+########################################
+# Flavor events for China (MNG)
+#
+# written by Sara Wendel-Örtqvist
+########################################
+
+
+# The Closure of China
+country_event = {
+	id = flavor_mng.5
+	title = "flavor_mng.EVTNAME5"
+	desc = "flavor_mng.EVTDESC5"
+	picture = MERCHANTS_TALKING_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		has_country_flag = mandate_of_heaven_claimed
+		is_year = 1555
+		NOT = { is_year = 1600 }
+		any_country = {
+			capital_scope = {
+				continent = europe
+			}
+			any_known_country = {
+				has_country_flag = mandate_of_heaven_claimed
+			}
+			any_active_trade_node = {
+				owned_by = ROOT
+			}
+		}
+	}
+	
+	mean_time_to_happen = { years = 16 }
+	
+	option = {
+		name = "flavor_mng.EVTOPTA5" #Hold a small breathing hole open
+		add_prestige = -1
+	}
+	option = {
+		name = "flavor_mng.EVTOPTB5" #Close China to the outside world
+		#add_mercantilism = 40
+		add_legitimacy = 10
+		add_stability_1 = yes
+		add_country_modifier = {
+			name = mng_closed_china
+			duration = 36500
+		}
+	}
+	option = {
+		name = "flavor_mng.EVTOPTC5" #Keep trade open for all
+		add_country_modifier = {
+			name = mng_open_china
+			duration = 36500
+		}
+	}
+}
+
+#The Financial Crisis
+country_event = {
+	id = flavor_mng.11
+	title = "flavor_mng.EVTNAME11"
+	desc = "flavor_mng.EVTDESC11"
+	picture = ECONOMY_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		has_country_flag = mandate_of_heaven_claimed
+		is_year = 1640
+		NOT = { is_year = 1660 }
+		num_of_loans = 5 #More loans?
+	}
+	
+	mean_time_to_happen = { years = 16 }
+	
+	option = {
+		name = "flavor_mng.EVTOPTA11" #Yes, let us raise new taxes
+		add_inflation = 5
+		add_years_of_income = 3
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+	}
+	option = {
+		name = "flavor_mng.EVTOPTB11" #No, our subjects are already angry enough!
+		add_stability_1 = yes
+	}
+}
+
+#The Appointment of Heshen
+country_event = {
+	id = flavor_mng.14
+	title = "flavor_mng.EVTNAME14"
+	desc = "flavor_mng.EVTDESC14"
+	picture = ADVISOR_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = QNG
+		has_country_flag = mandate_of_heaven_claimed
+		is_year = 1770
+		NOT = { is_year = 1800 }
+		NOT = { advisor_exists = 380 }
+		NOT = { is_advisor_employed = 380 }
+	}
+	
+	mean_time_to_happen = { years = 16 }
+	
+	option = {
+		name = "flavor_mng.EVTOPTA14" #Appoint him despite his faults
+		define_advisor = {
+			type = statesman
+			location = 708 # Heshen was born and lived in Beijing
+			name = "Heshen"
+			skill = 2
+			discount = yes
+		}
+	}
+	option = {
+		name = "flavor_mng.EVTOPTB14" #No, such corruption could ruin the state!
+		add_prestige = -1
+	}
+}
+
+#Lord Macartney's Mission
+country_event = {
+	id = flavor_mng.15
+	title = "flavor_mng.EVTNAME15"
+	desc = "flavor_mng.EVTDESC15"
+	picture = DIPLOMACY_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		owns = 708 # Beijin, was 649 - Ternate
+		has_country_flag = mandate_of_heaven_claimed
+		is_year = 1775
+		NOT = { is_year = 1800 }
+		any_owned_province = {
+			OR = {
+				is_strongest_trade_power = ENG
+				is_strongest_trade_power = GBR
+			}
+		}
+	}
+	
+	mean_time_to_happen = { years = 16 }
+	
+	option = {
+		name = "flavor_mng.EVTOPTA15" #Reject the overtures of these rude western barbarians!
+		add_stability_1 = yes
+	}
+	option = {
+		name = "flavor_mng.EVTOPTB15" #We are interested in their ideas
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+		GBR = {
+			add_opinion = {
+				who = ROOT
+				modifier = opinion_ideas
+			}
+		}
+		add_adm_power = 50
+		add_dip_power = 50
+	}
+}

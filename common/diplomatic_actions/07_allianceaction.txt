@@ -1,0 +1,835 @@
+# INSTRUCTIONS:
+#
+# condition				A diplomatic action can have any number of condition blocks, each with its own
+#						tooltip, potential and allow section
+#
+# 	tooltip					Sets a custom text string similar to the hardcoded limits
+# 							If no tooltip is scripted, the tooltip for the actual trigger will be shown
+#							Note that the custom tooltip is only shown if the allow trigger is NOT met
+#
+# 	potential				Determines if the trigger is applicable or not
+# 	disallow				Determines if the action is valid or not
+#
+# effect				A diplomatic action can only have one effect block
+
+# ROOT					actor
+# FROM					target
+
+# aiiliance
+allianceaction = {
+	condition = {
+		tooltip = COURTSETUP
+		potential = {
+		}
+		allow = {
+			has_global_flag = courtsetup
+		}
+	}
+	condition = {
+		tooltip = AMALGAMATION
+		potential = {
+			OR = {
+				tag = AAA
+				FROM = { tag = AAA }
+			}
+		}
+		allow = {
+			always = no
+		}
+	}
+	condition = {
+		tooltip = COURTSETUP
+		potential = {
+			OR = {
+				tag = JAI
+				tag = CHU
+				tag = GEN
+				tag = VEN
+				tag = MAM
+			}
+			
+			ai = yes
+		}
+		allow = {
+			NOT = { FROM = { tag = OTT } }
+		}
+	}
+	condition = {
+		tooltip = COURTSETUP
+		potential = {
+			tag = OTT
+			
+			ai = yes
+		}
+		allow = {
+			NOT = {
+				FROM = { tag = JAI }
+				FROM = { tag = CHU }
+				FROM = { tag = GEN }
+				FROM = { tag = VEN }
+				FROM = { tag = MAM }
+			}
+		}
+	}
+	condition = {
+		tooltip = POPEANTIPOPE
+		potential = {
+			OR = {
+				tag = PAP
+				tag = AVI
+			}
+		}
+		allow = {
+			OR = {
+				AND = {
+					tag = PAP
+					FROM = { NOT = { tag = AVI } }
+				}
+				AND = {
+					tag = AVI
+					FROM = { NOT = { tag = PAP } }
+				}
+			}
+		}
+	}
+	condition = {
+		tooltip = POPESCHISM
+		potential = {
+			tag = PAP
+		}
+		allow = {
+			FROM = { NOT = { has_country_flag = support_antipope } }
+		}
+	}
+	condition = {
+		tooltip = ANTIPOPESCHISM
+		potential = {
+			tag = AVI
+		}
+		allow = {
+			FROM = { NOT = { has_country_flag = support_roman_pope } }
+		}
+	}
+	condition = {
+		tooltip = POPESCHISM
+		potential = {
+			has_country_flag = support_roman_pope
+		}
+		allow = {
+			FROM = { NOT = { tag = AVI } }
+		}
+	}
+	condition = {
+		tooltip = ANTIPOPESCHISM
+		potential = {
+			has_country_flag = support_antipope
+		}
+		allow = {
+			FROM = { NOT = { tag = PAP } }
+		}
+	}
+	condition = {
+		tooltip = POPEHEATHEN
+		potential = {
+			tag = PAP
+		}
+		allow = {
+			FROM = { religion = catholic }
+		}
+	}
+	condition = {
+		tooltip = INDIANSTATE
+		potential = {
+			indian_state_trigger = yes
+		}
+		allow = {
+			OR = {
+				FROM = {
+					OR = {
+						is_neighbor_of = ROOT
+						any_subject_country = {
+							is_subject_other_than_tributary_trigger = yes
+							is_neighbor_of = ROOT
+						}
+						culture_group = ROOT
+					}
+				}
+				any_subject_country = {
+					is_subject_other_than_tributary_trigger = yes
+					is_neighbor_of = FROM
+				}
+			}
+		}
+	}
+	condition = {
+		tooltip = INDIANSTATE
+		potential = {
+			FROM = {
+				indian_state_trigger = yes
+			}
+		}
+		allow = {
+			OR = {
+				is_neighbor_of = FROM
+				any_subject_country = {
+					is_subject_other_than_tributary_trigger = yes
+					is_neighbor_of = FROM
+				}
+				FROM = {
+					any_subject_country = {
+						is_subject_other_than_tributary_trigger = yes
+						is_neighbor_of = ROOT
+					}
+				}
+				culture_group = FROM
+			}
+		}
+	}
+	condition = {
+		tooltip = HREPREWESTPHALIA
+		potential = {
+			OR = {
+				AND = {
+					FROM = {
+						is_part_of_hre = no
+						OR = {
+							NOT = { dynasty = ROOT }
+							government = theocracy
+						}
+					}
+					AND = {
+						is_part_of_hre = yes
+						NOT = { capital_scope = { OR = { superregion = italy_superregion region = provence_region } } }
+					}
+				}
+				AND = {
+					FROM = {
+						AND = {
+							is_part_of_hre = yes
+							NOT = { capital_scope = { OR = { superregion = italy_superregion region = provence_region } } }
+						}
+						OR = {
+							NOT = { dynasty = ROOT }
+							government = theocracy
+						}
+					}
+					is_part_of_hre = no
+				}
+			}
+		}
+		allow = {
+			OR = {
+				is_emperor = yes
+				FROM = { is_emperor = yes }
+				has_global_flag = leagues_peace_of_westphalia
+			}
+		}
+	}
+	condition = {
+		tooltip = IMPERIALFREECITY
+		potential = {
+			free_city_trigger = yes
+		}
+		allow = {
+			FROM = {
+				free_city_trigger = yes
+			}
+		}
+	}
+	condition = {
+		tooltip = IMPERIALFREECITY
+		potential = {
+			FROM = {
+				free_city_trigger = yes
+			}
+		}
+		allow = {
+			free_city_trigger = yes
+		}
+	}
+	condition = {
+		tooltip = EMPEROROFCHINA
+		potential = {
+			OR = {
+				has_country_flag = mandate_of_heaven_claimed
+				FROM = {
+					has_country_flag = mandate_of_heaven_claimed
+				}
+			}
+		}
+		allow = {
+			always = no
+		}
+	}
+	condition = {
+		tooltip = TURKISHEMPEROR
+		potential = {
+			turkish_emperor_trigger = yes
+		}
+		allow = {
+			FROM = {
+				inferior_government_trigger = yes
+			}
+		}
+	}
+	condition = {
+		tooltip = TURKISHEMPEROR
+		potential = {
+			FROM = {
+				turkish_emperor_trigger = yes
+			}
+		}
+		allow = {
+			inferior_government_trigger = yes
+		}
+	}
+	condition = {
+		tooltip = PERSIANEMPEROR
+		potential = {
+			culture_group = persian_group
+			government_rank = 5
+		}
+		allow = {
+			FROM = {
+				inferior_government_trigger = yes
+			}
+		}
+	}
+	condition = {
+		tooltip = PERSIANEMPEROR
+		potential = {
+			FROM = {
+				culture_group = persian_group
+				government_rank = 5
+			}
+		}
+		allow = {
+			inferior_government_trigger = yes
+		}
+	}
+	condition = {
+		tooltip = IRISHCLAN
+		potential = {
+			OR = {
+				primary_culture = irish
+				primary_culture = hiberno_norman
+			}
+			government = tribal
+		}
+		allow = {
+			FROM = {
+				OR = {
+					primary_culture = irish
+					primary_culture = hiberno_norman
+				}
+				government = tribal
+			}
+		}
+	}
+	condition = {
+		tooltip = IRISHCLAN
+		potential = {
+			FROM = {
+				OR = {
+					primary_culture = irish
+					primary_culture = hiberno_norman
+				}
+				government = tribal
+			}
+		}
+		allow = {
+			OR = {
+				primary_culture = irish
+				primary_culture = hiberno_norman
+			}
+			government = tribal
+		}
+	}
+	condition = {
+		tooltip = EMPEROROFINDIA
+		potential = {
+			OR = {
+				AND = {
+					indian_state_trigger = yes
+					government_rank = 6
+				}
+				AND = {
+					FROM = {
+						indian_state_trigger = yes
+						government_rank = 6
+					}
+				}
+			}
+		}
+		allow = {
+			always = no
+		}
+	}
+	#condition = {
+	#	tooltip = RUSSIANPRINCES
+	#	potential = {
+	#		culture_group = east_slavic
+	#		technology_group = eastern
+	#		NOT = { has_country_flag = relocated_capital_st_petersburg }
+	#	}
+	#	allow = {
+	#		OR = {
+	#			NOT = { border_distance = { who = FROM distance = 160 } }
+	#			culture_group = FROM
+	#		}
+	#	}
+	#}
+	#condition = {
+	#	tooltip = RUSSIANPRINCES
+	#	potential = {
+	#		FROM = {
+	#			culture_group = east_slavic
+	#			technology_group = eastern
+	#			NOT = { has_country_flag = relocated_capital_st_petersburg }
+	#		}
+	#	}
+	#	allow = {
+	#		FROM = {
+	#			OR = {
+	#				NOT = { border_distance = { who = ROOT distance = 160 } }
+	#				culture_group = ROOT
+	#			}
+	#		}
+	#	}
+	#}
+	condition = {
+		tooltip = AFRICANSTATE
+		potential = {
+			african_state_trigger = yes
+		}
+		allow = {
+			OR = {
+				is_neighbor_of = FROM
+				any_subject_country = {
+					is_subject_other_than_tributary_trigger = yes
+					is_neighbor_of = FROM
+				}
+				FROM = {
+					any_subject_country = {
+						is_subject_other_than_tributary_trigger = yes
+						is_neighbor_of = ROOT
+					}
+				}
+				culture_group = FROM
+			}
+		}
+	}
+	condition = {
+		tooltip = AFRICANSTATE
+		potential = {
+			FROM = {
+				african_state_trigger = yes
+			}
+		}
+		allow = {
+			OR = {
+				FROM = {
+					OR = {
+						is_neighbor_of = ROOT
+						any_subject_country = {
+							is_subject_other_than_tributary_trigger = yes
+							is_neighbor_of = ROOT
+						}
+						culture_group = ROOT
+					}
+				}
+				any_subject_country = {
+					is_subject_other_than_tributary_trigger = yes
+					is_neighbor_of = FROM
+				}
+			}
+		}
+	}
+	# Why????
+	#condition = {
+	#	tooltip = EMPEROROFAFRICA
+	#	potential = {
+	#		OR = {
+	#			AND = {
+	#				african_state_trigger = yes
+	#				government_rank = 6
+	#			}
+	#			AND = {
+	#				FROM = {
+	#					african_state_trigger = yes
+	#					government_rank = 6
+	#				}
+	#			}
+	#		}
+	#	}
+	#	allow = {
+	#		always = no
+	#	}
+	#}
+	condition = {
+		tooltip = MANDALASYSTEM
+		potential = {
+			mandala_system_state_trigger = yes
+		}
+		allow = {
+			OR = {
+				is_neighbor_of = FROM
+				any_subject_country = {
+					is_subject_other_than_tributary_trigger = yes
+					is_neighbor_of = FROM
+				}
+				FROM = {
+					any_subject_country = {
+						is_subject_other_than_tributary_trigger = yes
+						is_neighbor_of = ROOT
+					}
+				}
+				culture_group = FROM
+			}
+		}
+	}
+	condition = {
+		tooltip = MANDALASYSTEM
+		potential = {
+			FROM = {
+				mandala_system_state_trigger = yes
+			}
+		}
+		allow = {
+			OR = {
+				FROM = {
+					OR = {
+						is_neighbor_of = ROOT
+						any_subject_country = {
+							is_subject_other_than_tributary_trigger = yes
+							is_neighbor_of = ROOT
+						}
+						culture_group = ROOT
+					}
+				}
+				any_subject_country = {
+					is_subject_other_than_tributary_trigger = yes
+					is_neighbor_of = FROM
+				}
+			}
+		}
+	}
+#	condition = {
+#		tooltip = AMALGAMATION
+#		potential = {
+#			OR = {
+#				amalgamation_trigger = yes
+#				FROM = { amalgamation_trigger = yes }
+#			}
+#		}
+#		allow = {
+#			always = no
+#		}
+#	}
+	#condition = {
+	#	tooltip = PIZARROBROTHERS
+	#	potential = {
+	#		OR = {
+	#			FROM = {
+	#				tag = PIZ
+	#			}
+	#			tag = PIZ
+	#		}
+	#	}
+	#	allow = {
+	#		always = no
+	#	}
+	#}
+	condition = {
+		tooltip = AMERINDSTATE
+		potential = {
+			amerind_trigger = yes
+		}
+		allow = {
+			OR = {
+				is_neighbor_of = FROM
+				any_subject_country = {
+					is_subject_other_than_tributary_trigger = yes
+					is_neighbor_of = FROM
+				}
+				FROM = {
+					any_subject_country = {
+						is_subject_other_than_tributary_trigger = yes
+						is_neighbor_of = ROOT
+					}
+				}
+				culture_group = FROM
+			}
+		}
+	}
+	condition = {
+		tooltip = AMERINDSTATE
+		potential = {
+			FROM = {
+				amerind_trigger = yes
+			}
+		}
+		allow = {
+			OR = {
+				FROM = {
+					OR = {
+						is_neighbor_of = ROOT
+						any_subject_country = {
+							is_subject_other_than_tributary_trigger = yes
+							is_neighbor_of = ROOT
+						}
+						culture_group = ROOT
+					}
+				}
+				any_subject_country = {
+					is_subject_other_than_tributary_trigger = yes
+					is_neighbor_of = FROM
+				}
+			}
+		}
+	}
+	condition = {
+		tooltip = POWERFULMAGNATES
+		potential = {
+			has_country_modifier = obstacle_magnates
+		}
+		allow = {
+			NOT = { border_distance = { who = FROM distance = 20 } }
+		}
+	}
+	condition = {
+		tooltip = POWERFULMAGNATESFROM
+		potential = {
+			FROM = {
+				has_country_modifier = obstacle_magnates
+			}
+		}
+		allow = {
+			FROM = {
+				NOT = { border_distance = { who = ROOT distance = 20 } }
+			}
+		}
+	}
+#	condition = {
+#		tooltip = BEYLIK
+#		potential = {
+#			has_country_modifier = turkish_beylik
+#		}
+#		allow = {
+#			NOT = { border_distance = { who = FROM distance = 20 } }
+#		}
+#	}
+#	condition = {
+#		tooltip = BEYLIKFROM
+#		potential = {
+#			FROM = {
+#				has_country_modifier = turkish_beylik
+#			}
+#		}
+#		allow = {
+#			FROM = {
+#				NOT = { border_distance = { who = ROOT distance = 20 } }
+#			}
+#		}
+#	}
+	
+	#Number Exceeded
+	condition = {
+		tooltip = YOUNUMBEREXCEDED
+		potential = {
+			NOT = { dip_tech = 48 } ###alliances are not limited past diplomatic tech 48
+			OR = {
+				is_variable_equal = { which = alliance_limit	value = 0 }
+				AND = {
+					is_variable_equal = { which = alliance_limit	value = 1 }
+					num_of_allies = 1
+				}
+				AND = {
+					is_variable_equal = { which = alliance_limit	value = 2 }
+					num_of_allies = 2
+				}
+				AND = {
+					is_variable_equal = { which = alliance_limit	value = 3 }
+					num_of_allies = 3
+				}
+				AND = {
+					is_variable_equal = { which = alliance_limit	value = 4 }
+					num_of_allies = 4
+				}
+				AND = {
+					is_variable_equal = { which = alliance_limit	value = 5 }
+					num_of_allies = 5
+				}
+				AND = {
+					is_variable_equal = { which = alliance_limit	value = 6 }
+					num_of_allies = 6
+				}
+				AND = {
+					is_variable_equal = { which = alliance_limit	value = 7 }
+					num_of_allies = 7
+				}
+				AND = {
+					is_variable_equal = { which = alliance_limit	value = 8 }
+					num_of_allies = 8
+				}
+			}
+		}
+		allow = {
+			always = no
+		}
+	}
+	
+	condition = {
+		tooltip = THEMNUMBEREXCEDED
+		potential = {
+			FROM = {
+				NOT = { dip_tech = 48 } ###alliances are not limited past diplomatic tech 48
+				OR = {
+					is_variable_equal = { which = alliance_limit	value = 0 }
+					AND = {
+						is_variable_equal = { which = alliance_limit	value = 1 }
+						num_of_allies = 1
+					}
+					AND = {
+						is_variable_equal = { which = alliance_limit	value = 2 }
+						num_of_allies = 2
+					}
+					AND = {
+						is_variable_equal = { which = alliance_limit	value = 3 }
+						num_of_allies = 3
+					}
+					AND = {
+						is_variable_equal = { which = alliance_limit	value = 4 }
+						num_of_allies = 4
+					}
+					AND = {
+						is_variable_equal = { which = alliance_limit	value = 5 }
+						num_of_allies = 5
+					}
+					AND = {
+						is_variable_equal = { which = alliance_limit	value = 6 }
+						num_of_allies = 6
+					}
+					AND = {
+						is_variable_equal = { which = alliance_limit	value = 7 }
+						num_of_allies = 7
+					}
+					AND = {
+						is_variable_equal = { which = alliance_limit	value = 8 }
+						num_of_allies = 8
+					}
+				}
+			}
+		}
+		allow = {
+			always = no
+		}
+	}
+	condition = {
+		tooltip = JAPANSHOGUN
+		potential = {
+			OR = {
+				has_global_flag = nanbokucho
+				has_global_flag = sengoku_jidai
+			}
+			OR = {
+				culture_group = japanese
+				FROM = {
+					culture_group = japanese
+				}
+			}
+		}
+		allow = {
+			OR = {
+				culture_group = FROM
+				is_neighbor_of = FROM
+				any_subject_country = {
+					is_subject_other_than_tributary_trigger = yes
+					is_neighbor_of = FROM
+				}
+				FROM = {
+					any_subject_country = {
+						is_subject_other_than_tributary_trigger = yes
+						is_neighbor_of = ROOT
+					}
+				}
+			}
+		}
+	}
+	condition = {
+		tooltip = THREEPETERS
+		potential = {
+			OR = {
+				tag = ARA
+				tag = CAS
+			}
+			exists = ENR
+		}
+		allow = {
+			FROM = {
+				OR = {
+					tag = POR
+					tag = ARA
+					tag = CAS
+					tag = ENR
+				}
+			}
+		}
+	}
+	condition = {
+		tooltip = on_deaf_years
+		potential = {
+			NOT = { is_year = 1372 }
+		}
+		allow = {
+			OR = {
+				NOT = { FROM = { tag = BYZ } }
+			
+				ai = no
+			}
+		}
+	}
+	condition = {
+		tooltip = NANBOKUCHO
+		potential = {
+			OR = {
+				culture_group = japanese
+				has_country_modifier = title_5
+				has_country_modifier = title_6
+			}
+			FROM = {
+				culture_group = japanese
+				OR = {
+					has_country_modifier = title_5
+					has_country_modifier = title_6
+				}
+			}
+		}
+		allow = {
+			always = no
+		}
+	}
+	condition = {
+		tooltip = AMALGAMATION
+		potential = {
+			check_variable = { which = Demesne_in_the_Netherlands value = 8 } #stop allying people who would block you from forming the Netherlands you cretin
+			capital_scope = {
+				OR = {
+					region = low_countries_region
+					region = belgii_region
+				}
+			}
+			ai = yes
+			FROM = {
+				capital_scope = {
+					OR = {
+						region = low_countries_region
+						region = belgii_region
+					}
+				}
+				ai = yes
+			}
+		}
+		allow = { always = no }
+	}
+}

@@ -1,0 +1,480 @@
+AIDoMoveCapital = {
+	if = {
+		limit = { has_country_flag = aiHasActionMoveCapital }
+		add_country_modifier = { name = ConsideredNewCapital duration = 18250 }
+		GetCEWeight = {
+			doPort = yes
+			return = aiDoMoveCapitalWeight
+		}
+		GetMax = {
+			varName = aiDoMoveCapitalWeight
+			type = owned_province
+			cond = is_state
+			varClean = yes
+			return = aiDoMoveCapitalBest
+		}
+		event_target:aiDoMoveCapitalBest = {
+			if = {
+				limit = { is_capital = no }
+				if = {
+					limit = {
+						NOT = {
+							has_building = bureaucracy_1
+							has_building = bureaucracy_2
+							has_building = bureaucracy_3
+							has_building = bureaucracy_4
+							has_building = bureaucracy_5
+						}
+					}
+					owner = {
+						capital_scope = {
+							trigger_switch = {
+								on_trigger = has_building
+								bureaucracy_1 = {
+									remove_building = bureaucracy_1
+									event_target:aiDoMoveCapitalBest = { add_building = bureaucracy_1 }
+								}
+								bureaucracy_2 = {
+									remove_building = bureaucracy_2
+									event_target:aiDoMoveCapitalBest = { add_building = bureaucracy_2 }
+								}
+								bureaucracy_3 = {
+									remove_building = bureaucracy_3
+									event_target:aiDoMoveCapitalBest = { add_building = bureaucracy_3 }
+								}
+								bureaucracy_4 = {
+									remove_building = bureaucracy_4
+									event_target:aiDoMoveCapitalBest = { add_building = bureaucracy_4 }
+								}
+								bureaucracy_5 = {
+									remove_building = bureaucracy_5
+									event_target:aiDoMoveCapitalBest = { add_building = bureaucracy_5 }
+								}
+							}
+						}
+					}
+				}
+				owner = { Effect_set_capital = { target = PREV } }
+			}
+		}
+	}
+}
+
+AIDoImpStab = {
+	if = {
+		limit = { has_country_flag = aiHasActionImpStab }
+		if = {
+			limit = { NOT = { has_country_modifier = stability_policy_cooltime } }
+			set_variable = { which = aiHasActionImpStabNum value = 1 }
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = aiHasActionEstRevoke
+						NOT = { stability = 0 }
+					}
+				}
+				set_variable = { which = aiHasActionImpStabNum value = 2 }
+			}
+			else_if = {
+				limit = { average_unrest = 8 }
+				set_country_flag = aiHasActionImpStabCris
+				set_variable = { which = aiHasActionImpStabNum value = 3 }
+			}
+			add_country_modifier = { name = stability_policy_cooltime duration = 1825 }
+			remove_country_modifier = stability_policy_1
+			remove_country_modifier = stability_policy_2
+			remove_country_modifier = stability_policy_3
+			if = {
+				limit = { is_variable_equal = { which = aiHasActionImpStabNum value = 3 } }
+				add_country_modifier = { name = stability_policy_3 duration = -1 }
+			}
+			else_if = {
+				limit = { is_variable_equal = { which = aiHasActionImpStabNum value = 2 } }
+				add_country_modifier = { name = stability_policy_2 duration = -1 }
+			}
+			else = { add_country_modifier = { name = stability_policy_1 duration = -1 } }
+			set_variable = { which = aiHasActionImpStabNum value = 0 }
+		}
+		if = {
+			limit = { has_country_flag = aiHasActionImpStabCris }
+			clr_country_flag = aiHasActionImpStabCris
+			if = {
+				limit = {
+					absolutism = 40
+					average_unrest = 8
+					is_at_war = no
+					NOT = { has_country_modifier = stability_cooldown_decent }
+				}
+				add_absolutism = -10
+				add_stability_1 = yes
+				add_country_modifier = { name = "appeased_with_decentralization" duration = 1825 }
+				add_country_modifier = { name = "stability_cooldown_decent" duration = 1825 }
+				add_adm_power = -100
+			}
+		}
+	}
+}
+
+AIDoEstRevoke = {
+	if = {
+		limit = { has_country_flag = aiHasActionEstRevoke }
+		if = {
+			limit = {
+				NOT = { check_variable = { which = GN_privileges_time_left value = 1 } }
+				OR = {
+					AND = {
+						stability = 1
+						check_variable = { which = stability_points value = 90 }
+					}
+					stability = 2
+				}
+				NOT = { average_unrest = -4 }
+				check_variable = { which = estate_greater_nobles_weight_share value = 0.05 }
+				check_variable = { which = privilege_corruption_GN value = 0.001 }
+			}
+			set_country_flag = PrivilegeRevocationOngoing
+			country_event = { id = POP_Estates_Interactions.006 days = 2 }
+		}
+		if = {
+			limit = {
+				NOT = { check_variable = { which = LN_privileges_time_left value = 1 } }
+				OR = {
+					AND = {
+						stability = 1
+						check_variable = { which = stability_points value = 90 }
+					}
+					stability = 2
+				}
+				NOT = { average_unrest = -4 }
+				check_variable = { which = estate_lesser_nobles_weight_share value = 0.05 }
+				check_variable = { which = privilege_corruption_LN value = 0.001 }
+			}
+			if = {
+				limit = { NOT = { has_country_flag = PrivilegeRevocationOngoing } }
+				set_country_flag = PrivilegeRevocationOngoing
+				country_event = { id = POP_Estates_Interactions.106 days = 62 }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { check_variable = { which = BG_privileges_time_left value = 1 } }
+				OR = {
+					AND = {
+						stability = 1
+						check_variable = { which = stability_points value = 90 }
+					}
+					stability = 2
+				}
+				NOT = { average_unrest = -4 }
+				check_variable = { which = estate_burghers_weight_share value = 0.05 }
+				check_variable = { which = privilege_corruption_BG value = 0.001 }
+			}
+			if = {
+				limit = { NOT = { has_country_flag = PrivilegeRevocationOngoing } }
+				set_country_flag = PrivilegeRevocationOngoing
+				country_event = { id = POP_Estates_Interactions.206 days = 122 }
+			}
+		}
+	}
+}
+
+AIDoEstGrant = {
+	if = {
+		limit = { has_country_flag = aiHasActionEstGrant }
+		if = {
+			limit = {
+				OR = {
+					AND = {
+						average_unrest = 8
+						NOT = { check_variable = { which = BG_privileges_time_left value = 1 } }
+						NOT = { check_variable = { which = estate_burghers_loyalty value = 0.75 } }
+						check_variable = { which = estate_burghers_weight_share value = 0.05 }
+					}
+					AND = {
+						NOT = { check_variable = { which = estate_burghers_loyalty value = 0.11 } }
+						check_variable = { which = estate_burghers_weight_share value = 0.05 }
+						NOT = { check_variable = { which = BG_privileges_time_left value = 1 } }
+					}
+				}
+			}
+			set_country_flag = PrivilegeGrantingOngoing
+			country_event = { id = POP_Estates_Interactions.202 days = 2 }
+		}
+		if = {
+			limit = {
+				OR = {
+					AND = {
+						average_unrest = 8
+						NOT = { check_variable = { which = LN_privileges_time_left value = 1 } }
+						NOT = { check_variable = { which = estate_lesser_nobles_loyalty value = 0.75 } }
+						check_variable = { which = estate_lesser_nobles_weight_share value = 0.05 }
+					}
+					AND = {
+						NOT = { check_variable = { which = estate_lesser_nobles_loyalty value = 0.11 } }
+						check_variable = { which = estate_lesser_nobles_weight_share value = 0.05 }
+						NOT = { check_variable = { which = LN_privileges_time_left value = 1 } }
+					}
+				}
+			}
+			if = {
+				limit = { NOT = { has_country_flag = PrivilegeGrantingOngoing } }
+				country_event = { id = POP_Estates_Interactions.102 days = 4 }
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					AND = {
+						average_unrest = 8
+						NOT = { check_variable = { which = GN_privileges_time_left value = 1 } }
+						NOT = { check_variable = { which = estate_greater_nobles_loyalty value = 0.75 } }
+						check_variable = { which = estate_greater_nobles_weight_share value = 0.05 }
+					}
+					AND = {
+						NOT = { check_variable = { which = estate_greater_nobles_loyalty value = 0.11 } }
+						check_variable = { which = estate_greater_nobles_weight_share value = 0.05 }
+						NOT = { check_variable = { which = GN_privileges_time_left value = 1 } }
+					}
+				}
+			}
+			if = {
+				limit = { NOT = { has_country_flag = PrivilegeGrantingOngoing } }
+				country_event = { id = POP_Estates_Interactions.002 days = 6 }
+			}
+		}
+	}
+}
+
+AIDoEstDemote = {
+	if = {
+		limit = { has_country_flag = aiHasActionEstDemote }
+		if = {
+			limit = {
+				check_variable = { which = estate_greater_nobles_loyalty value = 0.95 }
+				check_variable = { which = estate_lesser_nobles_loyalty value = 0.95 }
+				num_of_cities = 15
+				stability = 1
+				check_variable = { which = estate_greater_nobles_weight_share value = 0.2 }
+				check_variable = { which = estate_greater_nobles_weight_share which = estate_lesser_nobles_weight_share }
+				NOT = { average_unrest = 15 }
+			}
+			country_event = { id = POP_Estates_Interactions.008 }
+		}
+	}
+}
+
+AIDoEstFavor = {
+	if = {
+		limit = { has_country_flag = aiHasActionEstFavor }
+		if = {
+			limit = {
+				NOT = { check_variable = { which = GN_favor_time_left value = 1 } }
+				check_variable = { which = estate_greater_nobles_weight_share value = 0.05 }
+				check_variable = { which = estate_greater_nobles_loyalty value = 0.11 }
+				NOT = { check_variable = { which = estate_greater_nobles_loyalty value = 0.98 } }
+			}
+			export_to_variable = { which = GNFavorPrestige value = prestige }
+			set_variable = { which = GNFavorPrestigeDemand which = estate_greater_nobles_weight_share }
+			multiply_variable = { which = GNFavorPrestigeDemand	value = 60 }
+			divide_variable = { which = GNFavorPrestigeDemand value = 10000 }
+			multiply_variable = { which = GNFavorPrestigeDemand	value = 10000 }
+			if = {
+				limit = { check_variable = { which = GNFavorPrestigeDemand value = 50 } }
+				set_variable = { which = GNFavorPrestigeDemand value = 50 }
+			}
+			else_if = {
+				limit = { NOT = { check_variable = { which = GNFavorPrestigeDemand value = 10 } } }
+				set_variable = { which = GNFavorPrestigeDemand value = 1 }
+			}
+			
+			export_to_variable = { which = GNFavorTreasury value = treasury }
+			set_variable = { which = GNFavorCost which = estate_greater_nobles_weight_country }
+			divide_variable = { which = GNFavorCost value = 1.5 }
+			multiply_variable = {   which = GNFavorCost	value = 0.001 }
+			multiply_variable = { which = GNFavorCost value = 1000 }
+			
+			if = {
+				limit = {
+					OR = {
+						NOT = { corruption = 20 }
+						check_variable = { which = GNFavorPrestige which = GNFavorPrestigeDemand }
+						AND = {
+							check_variable = { which = GNFavorTreasury which = GNFavorCost }
+							NOT = { check_variable = { which = estate_greater_nobles_loyalty value = 0.9 } }
+						}
+					}
+				}
+				country_event = { id = POP_Estates_Interactions.003 }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { check_variable = { which = LN_favor_time_left value = 1 } }
+				check_variable = { which = estate_lesser_nobles_weight_share value = 0.05 }
+				check_variable = { which = estate_lesser_nobles_loyalty value = 0.11 }
+				NOT = { check_variable = { which = estate_lesser_nobles_loyalty value = 0.98 } }
+			}
+			export_to_variable = { which = LNFavorPrestige value = prestige }
+			set_variable = { which = LNFavorPrestigeDemand which = estate_lesser_nobles_weight_share }
+			multiply_variable = { which = LNFavorPrestigeDemand	value = 60 }
+			divide_variable = { which = LNFavorPrestigeDemand value = 10000 }
+			multiply_variable = { which = LNFavorPrestigeDemand	value = 10000 }
+			if = {
+				limit = { check_variable = { which = LNFavorPrestigeDemand value = 50 } }
+				set_variable = { which = LNFavorPrestigeDemand value = 50 }
+			}
+			else_if = {
+				limit = { NOT = { check_variable = { which = LNFavorPrestigeDemand value = 10 } } }
+				set_variable = { which = LNFavorPrestigeDemand value = 1 }
+			}
+			
+			export_to_variable = { which = LNFavorTreasury value = treasury }
+			set_variable = { which = LNFavorCost which = estate_lesser_nobles_weight_country }
+			divide_variable = { which = LNFavorCost value = 1.5 }
+			multiply_variable = {   which = LNFavorCost	value = 0.001 }
+			multiply_variable = { which = LNFavorCost value = 1000 }
+			
+			if = {
+				limit = {
+					OR = {
+						NOT = { corruption = 20 }
+						check_variable = { which = LNFavorPrestige which = LNFavorPrestigeDemand }
+						AND = {
+							check_variable = { which = LNFavorTreasury which = LNFavorCost }
+							NOT = { check_variable = { which = estate_lesser_nobles_loyalty value = 0.9 } }
+						}
+					}
+				}
+				country_event = { id = POP_Estates_Interactions.103 }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { check_variable = { which = BG_favor_time_left value = 1 } }
+				check_variable = { which = estate_burghers_weight_share value = 0.05 }
+				check_variable = { which = estate_burghers_loyalty value = 0.11 }
+				NOT = { check_variable = { which = estate_burghers_loyalty value = 0.98 } }
+				OR = {
+					NOT = { corruption = 20 }
+					NOT = { inflation = 15 }
+					NOT = { average_home_autonomy = 50 }
+				}
+			}
+			country_event = { id = POP_Estates_Interactions.203 }
+		}
+		if = {
+			limit = {
+				NOT = { check_variable = { which = TR_favor_time_left value = 1 } }
+				check_variable = { which = estate_tribals_weight_share value = 0.05 }
+				check_variable = { which = estate_tribals_loyalty value = 0.11 }
+				NOT = { check_variable = { which = estate_tribals_loyalty value = 0.98 } }
+				OR = {
+					#NOT = { has_country_modifier = advanced_tribal_claims }
+					AND = {
+						NOT = { has_country_flag = tribals_promised_loot }
+						is_at_war = no
+					}
+					AND = {
+						num_of_free_diplomatic_relations = 1
+						NOT = { has_country_modifier = recent_tribal_marriage }
+						NOT = { has_country_modifier = tribal_marriage_3 }
+					}
+					average_unrest = 5
+					AND = {
+						NOT = { has_country_flag = tribals_recieving_tribute }
+						check_variable = { which = estate_tribals_treasury_annual value = 5 }
+						check_variable = { which = ruler_diplo_ability value = 1 }
+						is_nomad = no
+					}
+				}
+			}
+			country_event = { id = POP_Estates_Interactions.402 }
+		}
+		set_variable = { which = GNFavorPrestige value = 0 }
+		set_variable = { which = GNFavorTreasury value = 0 }
+		set_variable = { which = LNFavorPrestige value = 0 }
+		set_variable = { which = LNFavorTreasury value = 0 }
+	}
+}
+
+AIDoEstDemand = {
+	if = {
+		limit = { has_country_flag = aiHasActionEstDemand }
+		if = {
+			limit = {
+				check_variable = { which = estate_greater_nobles_loyalty value = 0.36 }
+				check_variable = { which = estate_greater_nobles_weight_share value = 0.05 }
+				OR = {
+					AND = {
+						num_of_loans = 3
+						is_at_war = no
+						NOT = { has_country_modifier = already_levied_GN_taxes }
+						check_variable = { which = estate_greater_nobles_years_of_cash value = 4 }
+					}
+					AND = {
+						average_unrest = 5
+						NOT = { has_country_modifier = already_relieved_serfs }
+						check_variable = { which = estate_greater_nobles_weight_share value = 0.15 }
+						check_variable = { which = estate_greater_nobles_years_of_cash value = 2 }
+					}
+					AND = {
+						NOT = { manpower_percentage = 0.25 }
+						is_at_war = yes
+						NOT = { has_country_modifier = GN_manpower_given }
+						check_variable = { which = estate_manpower value = 1 }
+						check_variable = { which = estate_greater_nobles_years_of_cash value = 1 }
+						check_variable = { which = estate_greater_nobles_treasury_annual value = 10 }
+					}
+				}
+			}
+			country_event = { id = POP_Estates_Interactions.005 }
+		}
+		if = {
+			limit = {
+				check_variable = { which = estate_lesser_nobles_loyalty value = 0.36 }
+				check_variable = { which = estate_lesser_nobles_weight_share value = 0.05 }
+				OR = {
+					AND = {
+						num_of_loans = 3
+						is_at_war = no
+						NOT = { has_country_modifier = already_levied_LN_taxes }
+						check_variable = { which = estate_lesser_nobles_years_of_cash value = 4 }
+					}
+					AND = {
+						government = monarchy
+						NOT = { legitimacy = 50 }
+						NOT = { has_country_modifier = LN_requested_political_support }
+					}
+					AND = {
+						NOT = { manpower_percentage = 0.25 }
+						is_at_war = yes
+						NOT = { has_country_modifier = LN_manpower_given }
+						check_variable = { which = estate_manpower value = 1 }
+						check_variable = { which = estate_lesser_nobles_years_of_cash value = 1 }
+						check_variable = { which = estate_lesser_nobles_treasury_annual	value = 10 }
+					}
+				}
+			}
+			country_event = { id = POP_Estates_Interactions.105 }
+		}
+		if = {
+			limit = {
+				check_variable = { which = estate_burghers_loyalty value = 0.36 }
+				check_variable = { which = estate_burghers_weight_share value = 0.05 }
+				OR = {
+					AND = {
+						num_of_loans = 2
+						NOT = { has_country_modifier = BG_demanded_cash }
+						check_variable = { which = estate_burghers_years_of_cash value = 2.5 }
+					}
+					AND = {
+						average_unrest = 5
+						NOT = { has_country_modifier = BUR_citizenship_6 }
+						check_variable = { which = estate_burghers_years_of_cash value = 1 }
+					}
+				}
+			}
+			country_event = { id = POP_Estates_Interactions.205 }
+		}
+	}
+}

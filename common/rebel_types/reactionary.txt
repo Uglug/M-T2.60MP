@@ -1,0 +1,226 @@
+#######################################
+# DW Reactionary rebels. NOT USED
+#######################################
+reactionary_rebels = {
+	
+	color = { 179 100 100 }
+	area = nation					# Stays within the nation
+	government = any				# Don't care about gov type
+	defection = none				# Will not defect
+	independence = none				# Does not strive for independence
+	gfx_type = culture_province
+	
+	resilient = yes					# Can retreat
+	reinforcing = no				# Can reinforce
+	general = yes					# Does use generals
+	smart = yes						# Do assault forts, tactically withdraw from battle, etc.
+	unit_transfer = no				# Units do not remain after enforcing demands.
+	
+	artillery = 0.0
+	infantry = 0.7
+	cavalry = 0.3
+	
+	morale = 0.8
+	
+	# Possible handle actions
+	handle_action_negotiate = yes
+	handle_action_stability = no
+	handle_action_build_core = no
+	handle_action_send_missionary = yes
+	
+	# The rebel type with the highest modifier for this province gets picked
+	spawn_chance = {
+		factor = 1
+		#modifier = {
+		#	factor = 0.0
+		#	owner = {
+		#		is_westernising = no
+		#	}
+		#}
+		modifier = {
+			factor = 0.0
+			owner = {
+				always = yes
+			}
+		}
+		modifier = {
+			factor = 2.0
+			is_core = owner
+		}
+		modifier = {
+			factor = 2.0
+			owner = {
+				primary_culture = ROOT
+			}
+		}
+		modifier = {
+			factor = 0.5
+			is_overseas = yes # Prefer other types overseas
+		}
+		modifier = {
+			factor = 0.5
+			owner = {
+				NOT = { num_of_cities = 3 }
+			}
+		}
+		modifier = {
+			factor = 1.25
+			owner = {
+				num_of_cities = 12
+			}
+		}
+		modifier = {
+			factor = 1.5
+			owner = {
+				num_of_cities = 24
+			}
+		}
+		modifier = {
+			factor = 2.0
+			owner = {
+				num_of_cities = 48
+			}
+		}
+		modifier = {
+			factor = 2.0
+			owner = { native_trigger = yes } #was tribal_nomads and tribal_nomads_hereditary
+			#owner = { steppe_trigger = yes }
+		}
+		modifier = {
+			has_province_modifier = reactionaries_organizing
+			factor = 3
+		}
+	}
+	
+	# This is checked for EACH province in the Area of Operations
+	movement_evaluation = {
+		factor = 1
+		modifier = {
+			factor = 0.1
+			units_in_province = 1
+		}
+		modifier = {
+			factor = 0.001
+			controlled_by = REB
+		}
+		modifier = {
+			factor = 2.0
+			is_capital = yes
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 2
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 4
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 6
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 8
+		}
+	}
+	
+	siege_won_effect = {
+		#owner = { add_westernisation = -10 }
+	}
+	
+	# Country scope
+	can_negotiate_trigger = {
+		always = yes
+	}
+	
+	# Country scope
+	can_enforce_trigger = {
+		always = yes
+	}
+	
+	# Localisation for their demands
+	demands_description = "reactionary_rebels_demand"
+	
+	# Country scope
+	demands_enforced_effect = {
+		add_prestige = -50
+		#add_westernisation = -10000
+		custom_tooltip = stopping_reforms_or_reverting_reforms_tooltip
+		if = {
+			limit = {
+				has_country_flag = started_modernising_administration
+			}
+			clr_country_flag = modernisation_provinces
+			clr_country_flag = modernisation_overhauled_clerk_recruitement
+			clr_country_flag = modernisation_overhauled_government_positions
+			clr_country_flag = modernisation_established_ministeries
+			clr_country_flag = modernisation_capital_moved
+			
+			remove_country_modifier = modernised_province_setup
+			remove_country_modifier = modernised_clerk_recruitement
+			remove_country_modifier = senate_established
+			remove_country_modifier = established_ministeries
+		}
+		if = {
+			limit = {
+				has_country_flag = started_modernising_military
+			}
+			clr_country_flag = modernisation_introduced_western_officer_training
+			clr_country_flag = modernisation_founded_guard_regiment
+			clr_country_flag = modernisation_non_noble_cavalry_and_officers
+			clr_country_flag = modernisation_army_abandons_levies
+			clr_country_flag = modernisation_war_college_founded_notified
+			clr_country_flag = modernisation_war_college_founded
+			
+			remove_country_modifier = western_officer_training
+			remove_country_modifier = founded_guard_regiment
+			remove_country_modifier = cavalry_and_officercorps_non_noble_exclusive
+			remove_country_modifier = nobles_now_regular_soldiers
+		}
+		if = {
+			limit = {
+				has_country_flag = started_modernising_navy
+			}
+			clr_country_flag = modernisation_western_ship_designs
+			clr_country_flag = modernisation_western_naval_training
+			clr_country_flag = modernisation_modernisation_admiralty_founded_notified
+			clr_country_flag = modernisation_admiralty_founded
+			
+			remove_country_modifier = western_ship_designs
+			remove_country_modifier = western_naval_training
+		}
+		if = {
+			limit = {
+				has_country_flag = started_modernising_society
+			}
+			clr_country_flag = modernisation_education_reform_schools
+			clr_country_flag = modernisation_education_reform_academy_of_science
+			clr_country_flag = modernisation_tax_reform
+			clr_country_flag = modernisation_formal_organisation_of_nobility
+			clr_country_flag = modernisation_education_reform_universities_notified
+			clr_country_flag = modernisation_education_reform_universities
+			
+			remove_country_modifier = education_reform_schools
+			remove_country_modifier = education_academy_of_science
+			remove_country_modifier = modernisation_tax_reform
+			remove_country_modifier = formal_organisation_of_nobility
+		}
+		if = {
+			limit = {
+				has_country_flag = started_modernising_economy_and_trade
+			}
+			clr_country_flag = modernisation_implemented_mercantilistic_restrictions
+			clr_country_flag = modernisation_overhaul_production_methods_farming
+			clr_country_flag = modernisation_manufactories_founded
+			clr_country_flag = modernisation_manufactories_founded_notified
+			clr_country_flag = modernisation_overhaul_production_methods_craftsmen
+			
+			remove_country_modifier = modernisation_mercantilistic_restrictions
+			remove_country_modifier = modernised_farming_methods
+			remove_country_modifier = modernised_production_methods
+		}
+		clr_country_flag = modernisation_stopped
+		set_country_flag = modernisation_stopped
+	}
+}

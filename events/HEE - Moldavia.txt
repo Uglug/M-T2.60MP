@@ -1,0 +1,513 @@
+#Moldavian Events
+
+country_event = {
+	id = hee_MOL.1
+	title = hee_MOL.1.t
+	desc = hee_MOL.1.d
+	picture = CONQUEST_eventPicture
+	trigger = {
+		OR = {
+			tag = MOL
+			tag = WAL
+		}
+		OR = { has_regency = no has_consort_regency = yes }
+		is_at_war = no
+		NOT = { num_of_cities = 6 }
+		any_neighbor_country = {
+			religion_group = christian
+			num_of_cities = 10
+		}
+		any_neighbor_country = {
+			religion_group = muslim
+			num_of_cities = 10
+		}
+		OR = {
+			is_free_or_tributary_trigger = yes
+			liberty_desire = 75
+		}
+	}
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		random_neighbor_country = {
+			limit = {
+				religion_group = christian
+				num_of_cities = 10
+				NOT = { overlord_of = ROOT }
+			}
+			save_event_target_as = first_neighbour
+		}
+		random_neighbor_country = {
+			limit = {
+				religion_group = christian
+				num_of_cities = 10
+				NOT = { overlord_of = ROOT }
+				NOT = { has_saved_event_target = first_neighbour }
+			}
+			save_event_target_as = second_neighbour
+		}
+		random_neighbor_country = {
+			limit = {
+				religion_group = christian
+				num_of_cities = 10
+				NOT = { overlord_of = ROOT }
+				NOT = { has_saved_event_target = first_neighbour }
+				NOT = { has_saved_event_target = second_neighbour }
+			}
+			save_event_target_as = third_neighbour
+		}
+		random_neighbor_country = {
+			limit = {
+				religion_group = christian
+				num_of_cities = 10
+				NOT = { overlord_of = ROOT }
+				NOT = { has_saved_event_target = first_neighbour }
+				NOT = { has_saved_event_target = second_neighbour }
+				NOT = { has_saved_event_target = third_neighbour }
+			}
+			save_event_target_as = fourth_neighbour
+		}
+		random_neighbor_country = {
+			limit = {
+				religion_group = muslim
+				NOT = { overlord_of = ROOT }
+				num_of_cities = 10
+			}
+			save_event_target_as = muslim_neighbour
+		}
+	}
+	
+	option = {
+		name = hee_MOL.1.a
+		trigger = {
+			has_saved_event_target = first_neighbour
+		}
+		ai_chance = {
+			factor = 40
+			modifier = {
+				factor = 10
+				event_target:first_neighbour = {
+					num_of_cities = event_target:muslim_neighbour
+				}
+			}
+			modifier = {
+				factor = 0
+				overlord = {
+					num_of_cities = event_target:first_neighbour
+				}
+			}
+		}
+		add_adm_power = 50
+		add_prestige = -10
+		if = {
+			limit = {
+				is_subject = yes
+			}
+			overlord = {
+				country_event = {
+					id = hee_MOL.6
+				}
+			}
+		}
+		event_target:first_neighbour = { #New overlord gets this
+			country_event = {
+				id = hee_MOL.5
+			}
+		}
+	}
+	option = {
+		name = hee_MOL.1.b
+		trigger = {
+			has_saved_event_target = second_neighbour
+		}
+		ai_chance = {
+			factor = 40
+			modifier = {
+				factor = 10
+				event_target:second_neighbour = {
+					num_of_cities = event_target:muslim_neighbour
+				}
+			}
+			modifier = {
+				factor = 0
+				overlord = {
+					num_of_cities = event_target:second_neighbour
+				}
+			}
+		}
+		add_adm_power = 50
+		add_prestige = -10
+		if = {
+			limit = {
+				is_subject = yes
+			}
+			overlord = {
+				country_event = {
+					id = hee_MOL.6
+				}
+			}
+		}
+		event_target:second_neighbour = { #New overlord gets this
+			country_event = {
+				id = hee_MOL.5
+			}
+		}
+	}
+	option = {
+		name = hee_MOL.1.c
+		trigger = {
+			has_saved_event_target = third_neighbour
+		}
+		ai_chance = {
+			factor = 40
+			modifier = {
+				factor = 10
+				event_target:second_neighbour = {
+					num_of_cities = event_target:muslim_neighbour
+				}
+			}
+			modifier = {
+				factor = 0
+				overlord = {
+					num_of_cities = event_target:third_neighbour
+				}
+			}
+		}
+		add_adm_power = 50
+		add_prestige = -10
+		if = {
+			limit = {
+				is_subject = yes
+			}
+			overlord = {
+				country_event = {
+					id = hee_MOL.6
+				}
+			}
+		}
+		event_target:third_neighbour = { #New overlord gets this
+			country_event = {
+				id = hee_MOL.5
+			}
+		}
+	}
+	option = {
+		name = hee_MOL.1.d
+		trigger = {
+			has_saved_event_target = fourth_neighbour
+		}
+		ai_chance = {
+			factor = 40
+			modifier = {
+				factor = 10
+				event_target:fourth_neighbour = {
+					num_of_cities = event_target:muslim_neighbour
+				}
+			}
+			modifier = {
+				factor = 0
+				overlord = {
+					num_of_cities = event_target:fourth_neighbour
+				}
+			}
+		}
+		add_adm_power = 50
+		add_prestige = -10
+		if = {
+			limit = {
+				is_subject = yes
+			}
+			overlord = {
+				country_event = {
+					id = hee_MOL.6
+				}
+			}
+		}
+		event_target:fourth_neighbour = { #New overlord gets this
+			country_event = {
+				id = hee_MOL.5
+			}
+		}
+	}
+	option = {
+		name = hee_MOL.1.e
+		trigger = {
+			has_saved_event_target = muslim_neighbour
+		}
+		ai_chance = {
+			factor = 80
+			modifier = {
+				factor = 0
+				overlord = {
+					num_of_cities = event_target:muslim_neighbour
+				}
+			}
+		}
+		add_adm_power = 50
+		add_prestige = -10
+		if = {
+			limit = {
+				is_subject = yes
+			}
+			overlord = {
+				country_event = {
+					id = hee_MOL.6
+				}
+			}
+		}
+		event_target:muslim_neighbour = { #New overlord gets this
+			country_event = {
+				id = hee_MOL.5
+			}
+		}
+	}
+	option = {
+		name = hee_MOL.1.f
+		ai_chance = {
+			factor = 80
+		}
+		trigger = {
+			OR = {
+				DIP = 5
+				ADM = 5
+				MIL = 5
+				ai = no
+			}
+		}
+		every_neighbor_country = {
+			limit = {
+				NOT = { overlord_of = ROOT }
+			}
+			country_event = { id = hee_MOL.12 }
+		}
+		overlord = {
+			country_event = {
+				id = hee_MOL.11
+			}
+			free_vassal = ROOT
+		}
+		add_prestige = 15
+		add_adm_power = 100
+		add_mil_power = 100
+		add_dip_power = 100
+	}
+	option = {
+		name = hee_MOL.1.g
+		ai_chance = {
+			factor = 80
+		}
+		trigger = {
+			is_subject = yes
+		}
+		overlord = {
+			add_prestige = 1
+		}
+	}
+}
+
+# Athleta Christi
+
+country_event = {
+	id = hee_MOL.3
+	title = hee_MOL.3.t
+	desc = hee_MOL.3.d
+	picture = RELIGIOUS_WARS_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = MOL
+		NOT = { is_subject_of = TUR }
+		is_neighbor_of = TUR
+		is_year = 1475
+		NOT = { is_year = 1500 }
+		owns = 3794 # Cetatea Alba
+		owns = 1400 # Orheiu
+		owns = 1269 # Carligatura
+	}
+	
+	mean_time_to_happen = { years = 16 }
+	
+	option = {
+		name = hee_MOL.3.a
+		add_ruler_modifier = { name = athleta_christi }
+	}
+}
+
+# Mount Athos
+
+country_event = {
+	id = hee_MOL.4
+	title = hee_MOL.4.t
+	desc = hee_MOL.4.d
+	picture = BANKRUPTCY_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = MOL
+		religion = orthodox
+		147 = {
+			has_province_modifier = lavra
+			owner = {
+				NOT = { religion = orthodox }
+				overlord_of = MOL
+			}
+		}
+		is_year = 1475
+		NOT = { is_year = 1500 }
+	}
+	
+	mean_time_to_happen = { years = 16 }
+	
+	option = {
+		name = hee_MOL.4.a
+		add_treasury = -30
+		overlord = { add_treasury = 30 }
+		add_prestige = 5
+		add_adm_power = 25
+		add_patriarch_authority = 0.15
+	}
+	option = {
+		name = hee_MOL.4.b
+		add_prestige = -5
+		add_patriarch_authority = -0.1
+	}
+}
+
+#Moldavia seeks protection with ROOT
+country_event = {
+	id = hee_MOL.5
+	title = hee_MOL.5.t
+	desc = hee_MOL.5.d
+	picture = CONQUEST_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = hee_MOL.5.a
+		ai_chance = {
+			factor = 95
+		}
+		create_subject = {
+			subject = FROM
+			subject_type = march
+		}
+		add_prestige = 5
+		add_adm_power = 20
+		add_dip_power = 35
+		add_mil_power = 20
+	}
+	option = {
+		name = hee_MOL.5.b
+		ai_chance = {
+			factor = 5
+		}
+		add_prestige = -10
+		add_legitimacy = -5
+	}
+}
+
+#Former overlord's event
+country_event = {
+	id = hee_MOL.6
+	title = hee_MOL.6.t
+	desc = hee_MOL.6.d
+	picture = LIBERUM_VETO_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = hee_MOL.6.a
+		add_prestige = -5
+		add_dip_power = -10
+		add_casus_belli = {
+			target = FROM
+			type = cb_disloyal_vassal
+			months = 60
+		}
+	}
+}
+
+#MOLlachia breaks free
+country_event = {
+	id = hee_MOL.11
+	title = hee_MOL.11.t
+	desc = hee_MOL.11.d
+	picture = COURT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = hee_MOL.11.a
+		add_casus_belli = {
+			target = FROM
+			type = cb_disloyal_vassal
+			months = 60
+		}
+	}
+}
+
+
+#MOLlachia is free (neighbors)
+country_event = {
+	id = hee_MOL.12
+	title = hee_MOL.12.t
+	desc = hee_MOL.12.d
+	picture = COURT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = hee_MOL.12.a
+	}
+}
+
+
+
+#Vasile Lupu
+country_event = {
+	id = hee_MOL.13
+	title = hee_MOL.13.t
+	desc = hee_MOL.13.d
+	picture = BAD_WITH_MONARCH_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = MOL
+		has_heir = no
+		is_year = 1595
+		NOT = { is_year = 1690 }
+	}
+	
+	mean_time_to_happen = { months = 18 }
+	
+	option = {
+		name = hee_MOL.13.a
+		add_years_of_income = 3
+		define_heir = {
+			name = "Vasile"
+			dynasty = "Lupu"
+			claim = 50
+			adm = 5
+			dip = 3
+			mil = 3
+			age = 27
+		}
+	}
+	option = {
+		name = hee_MOL.13.b
+		add_stability_2 = yes
+		define_heir = {
+			name = "George"
+			dynasty = "Ceaur"
+			claim = 100
+			adm = 2
+			dip = 4
+			mil = 3
+			age = 19
+		}
+	}
+}

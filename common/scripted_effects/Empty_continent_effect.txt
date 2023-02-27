@@ -1,0 +1,592 @@
+Empty_toggle_flag = { #flag
+	if = {
+		limit = {
+			has_global_flag = Empty_$flag$
+		}
+		clr_global_flag = Empty_$flag$
+	}
+	else = {
+		set_global_flag = Empty_$flag$
+	}
+}
+Empty_count = { #var
+	set_variable = { which = temp value = 0 }
+	set_variable = { which = $var$ value = 0 }
+	every_province = {
+		limit = {
+			is_wasteland = no
+			NOT = { continent = eitc_continent }
+			NOT = { continent = scc_continent }
+		}
+		PREV = { change_variable = { which = temp value = 1 } }
+		if = {
+			limit = {
+				has_province_flag = Prov_Emptied
+			}
+			PREV = { change_variable = { which = $var$ value = 1 } }
+		}
+	}
+	divide_variable = { which = $var$ which = temp }
+}
+Empty_set_flag_random = { #var #flag
+	if = {
+		limit = {
+			check_variable = { which = $var$ value = 0.001 }
+		}
+		if = {
+			limit = {
+				check_variable = { which = $var$ value = 1 }
+			}
+			set_country_flag = $flag$
+		}
+		else = {
+			multiply_variable = { which = $var$ value = 100 }
+			Empty_sfr_helper = { var=$var$ flag=$flag$ num=50 }
+			Empty_sfr_helper = { var=$var$ flag=$flag$ num=25 }
+			Empty_sfr_helper = { var=$var$ flag=$flag$ num=12.5 }
+			Empty_sfr_helper = { var=$var$ flag=$flag$ num=6.25 }
+			Empty_sfr_helper = { var=$var$ flag=$flag$ num=3.13 }
+			Empty_sfr_helper = { var=$var$ flag=$flag$ num=1.6 }
+			Empty_sfr_helper = { var=$var$ flag=$flag$ num=0.8 }
+			Empty_sfr_helper = { var=$var$ flag=$flag$ num=0.4 }
+			Empty_sfr_helper = { var=$var$ flag=$flag$ num=0.2 }
+			Empty_sfr_helper = { var=$var$ flag=$flag$ num=0.1 }
+		}
+	}
+	set_variable = { which = $var$ value = 0 }
+}
+Empty_sfr_helper = {
+	if = {
+		limit = {
+			check_variable = { which = $var$ value = $num$ }
+		}
+		subtract_variable = { which = $var$ value = $num$ }
+		random = {
+			chance = $num$
+			set_variable = { which = $var$ value = 0 }
+			set_country_flag = $flag$
+		}
+	}
+}
+
+#- AMERICA north, central, south   na ca sa
+
+# continent = north_america
+# NOT = { superregion = central_america_superregion }
+
+# OR = { superregion = central_america_superregion
+# region = colombia_region }
+
+# continent = south_america
+# NOT = { region = colombia_region }
+
+#- AFRICA sub-sahara, south af, north af, egypt   sub saf naf egy
+
+#superregion = west_africa_superregion
+
+#superregion = east_africa_superregion
+#NOT = { region = sudan_region }
+#NOT = { region = harar_region }
+#NOT = { region = abyssinia_region }
+
+# superregion = north_africa_superregion
+
+#OR = {
+#	region = sudan_region
+#	region = harar_region
+#	region = abyssinia_region
+#	region = egypt_region
+#}
+
+#- INDIA inner india, outer india, persia, arabia, anatolia   iin oin per ara ana
+
+#OR = { superregion = north_india_superregion 
+# superregion = rajputana_superregion
+# superregion = west_india_superregion
+# region = west_deccan_region
+# region = central_india_region
+# area = hyderabad_area
+# area = nizamabab_area
+# area = utsang_area
+#}
+#	NOT = { region = gujarat_region }
+#	NOT = { region = hindusthan_region }
+
+#OR = {
+#	superregion = south_india_superregion
+#	superregion = east_india_superregion
+#	region = gujarat_region
+#	region = hindusthan_region
+#	region = konkan_region
+#	area = east_deccan_area
+#	area = andhra_area
+#	area = godavari_area
+#}
+
+#OR = { region = al_iraq_region
+#superregion = persia_superregion
+#}
+
+#	OR = { region = arabia_region
+#	region = aden_region }
+
+# superregion = anatolia_superregion
+# NOT = { region = caucasia_region }
+
+#- ASIA inner china, outer china, steppe, korea, japan, SEA    icn ocn stp kor jap sea
+
+#OR = { region = shaangan_region
+#region = shanxi_region
+#region = zhongyuan_region
+#region = tibet_region
+#region = inner_mongolia_region
+#region = sichuan_region
+#region = huguang_region
+#region = jiangxi_region
+#}
+#NOT = { area = utsang_area }
+#NOT = { area = huaibei_area }
+#NOT = { area = haozhou_area }
+
+#OR = {
+#	region = hebei_region
+#	region = jiaoliao_region
+#	superregion = east_china_superregion
+#	area = huaibei_area
+#	area = haozhou_area
+#	region = guangdong_region
+#	region = guangxi_region }
+#NOT = { region = huguang_region }
+#NOT = { region = jiangxi_region }
+
+#OR = { superregion = siberia_superregion
+#superregion = central_asia_superregion
+#	superregion = eastern_steppe_superregion }
+#	NOT = { region = inner_mongolia_region }
+
+#region = korea_region
+
+#superregion = japan_superregion
+#NOT = { region = korea_region }
+
+#OR = { superregion = southeast_asia_superregion
+#region = yunnan_region }
+#NOT = { region = malaya_region }
+
+#- OCEANIA indonesia, australia     ind aus
+
+#OR = { superregion = east_indies_superregion
+#region = malaya_region 
+#region = papua_region }
+
+#continent = oceania
+#NOT = { region = papua_region }
+
+#- EUROPE britain, iberia, italy, hre, france, scandi, poland, russia, balkans     bri ibe ita hre fra sca plc rus bal
+
+#OR = { superregion = british_isles_superregion area = subarctic_islands_area }
+
+#superregion = iberia_superregion
+
+#OR = { superregion = italy_superregion area = carinthia_area province_id = 110 }
+
+#OR = { superregion = germany_superregion
+#superregion = greater_austrian_circle_superregion
+# region = danish_region
+#}
+#NOT = { area = holland_area area = carinthia_area province_id = 110 area = skaneland_area }
+
+#OR = { superregion = france_superregion area = holland_area }
+
+#superregion = scandinavian_superregion 
+#NOT = { area = subarctic_islands_area }
+#NOT = { area = jutland_area }
+#NOT = { area = denmark_area }
+
+#OR = { superregion = commonwealth_superregion
+#area = moldavia_area area = basarabia_area }
+
+#OR = { superregion = greater_russia_superregion region = caucasia_region }
+
+#superregion = balkan_superregion
+#NOT = { area = moldavia_area }
+#NOT = { area = basarabia_area }
+
+Empty_apply = {
+	regiongroup = {
+		region = {
+			if = {
+				limit = {
+					continent = north_america
+					NOT = { superregion = central_america_superregion }
+				}
+				Empty_effect = { place=na }
+			}
+			else_if = {
+				limit = {
+					OR = { superregion = central_america_superregion
+					region = colombia_region }
+				}
+				Empty_effect = { place=ca }
+			}
+			else_if = {
+				limit = {
+					continent = south_america
+					NOT = { region = colombia_region }
+				}
+				Empty_effect = { place=sa }
+			}
+			else_if = {
+				limit = {
+					superregion = west_africa_superregion
+				}
+				Empty_effect = { place=sub }
+			}
+			else_if = {
+				limit = {
+					superregion = east_africa_superregion
+					NOT = { region = sudan_region }
+					NOT = { region = harar_region }
+					NOT = { region = abyssinia_region }
+				}
+				Empty_effect = { place=saf }
+			}
+			else_if = {
+				limit = {
+					superregion = north_africa_superregion
+				}
+				Empty_effect = { place=naf }
+			}
+			else_if = {
+				limit = {
+					OR = { region = sudan_region
+					region = harar_region
+					region = abyssinia_region
+					region = egypt_region
+					region = al_sham_region }
+				}
+				Empty_effect = { place=egy }
+			}
+			else_if = {
+				limit = {
+					OR = { superregion = north_india_superregion 
+					superregion = rajputana_superregion
+					superregion = west_india_superregion
+					region = west_deccan_region
+					region = central_india_region
+					area = hyderabad_area
+					area = nizamabab_area
+					area = utsang_area }
+					NOT = { region = gujarat_region }
+					NOT = { region = hindusthan_region }
+				}
+				Empty_effect = { place=iin }
+			}
+			else_if = {
+				limit = {
+					OR = { superregion = south_india_superregion
+					superregion = east_india_superregion
+					region = gujarat_region
+					region = hindusthan_region
+					region = konkan_region
+					#area = east_deccan_area
+					area = andhra_area
+					area = godavari_area }
+				}
+				Empty_effect = { place=oin }
+			}
+			else_if = {
+				limit = {
+					OR = { region = al_iraq_region
+					superregion = persia_superregion }
+				}
+				Empty_effect = { place=per }
+			}
+			else_if = {
+				limit = {
+					OR = { region = arabia_region
+					region = aden_region }
+				}
+				Empty_effect = { place=ara }
+			}
+			else_if = {
+				limit = {
+					superregion = anatolia_superregion
+					NOT = { region = caucasia_region }
+				}
+				Empty_effect = { place=ana }
+			}
+			else_if = {
+				limit = {
+					OR = { region = shaangan_region
+					region = shanxi_region
+					region = zhongyuan_region
+					region = tibet_region
+					region = inner_mongolia_region
+					region = sichuan_region
+					region = huguang_region
+					region = jiangxi_region }
+					NOT = { area = utsang_area }
+					NOT = { area = huaibei_area }
+					NOT = { area = haozhou_area }
+				}
+				Empty_effect = { place=icn }
+			}
+			else_if = {
+				limit = {
+					OR = { superregion = east_china_superregion
+					region = jiaoliao_region
+					region = hebei_region
+					region = guangdong_region
+					region = guangxi_region
+					area = huaibei_area
+					area = haozhou_area }
+					NOT = { region = huguang_region }
+					NOT = { region = jiangxi_region }
+				}
+				Empty_effect = { place=ocn }
+			}
+			else_if = {
+				limit = {
+					OR = { superregion = siberia_superregion
+					superregion = central_asia_superregion
+					superregion = eastern_steppe_superregion }
+					NOT = { region = inner_mongolia_region }
+				}
+				Empty_effect = { place=stp }
+			}
+			else_if = {
+				limit = {
+					region = korea_region
+				}
+				Empty_effect = { place=kor }
+			}
+			else_if = {
+				limit = {
+					superregion = japan_superregion
+					NOT = { region = korea_region }
+				}
+				Empty_effect = { place=jap }
+			}
+			else_if = {
+				limit = {
+					OR = { superregion = southeast_asia_superregion
+					region = yunnan_region }
+					NOT = { region = malaya_region }
+				}
+				Empty_effect = { place=sea }
+			}
+			else_if = {
+				limit = {
+					OR = { superregion = east_indies_superregion
+					region = malaya_region 
+					region = papua_region }
+				}
+				Empty_effect = { place=ind }
+			}
+			else_if = {
+				limit = {
+					continent = oceania
+					NOT = { region = papua_region }
+				}
+				Empty_effect = { place=aus }
+			}
+			else_if = {
+				limit = {
+					OR = { superregion = british_isles_superregion
+					area = subarctic_islands_area }
+				}
+				Empty_effect = { place=bri }
+			}
+			else_if = {
+				limit = {
+					superregion = iberia_superregion
+				}
+				Empty_effect = { place=ibe }
+			}
+			else_if = {
+				limit = {
+					OR = { superregion = italy_superregion
+					area = carinthia_area
+					province_id = 110 }
+				}
+				Empty_effect = { place=ita }
+			}
+			else_if = {
+				limit = {
+					OR = { superregion = germany_superregion
+					superregion = greater_austrian_circle_superregion
+					region = danish_region }
+					NOT = { area = holland_area }
+					NOT = { area = carinthia_area }
+					NOT = { area = skaneland_area }
+					NOT = { province_id = 110 }
+				}
+				Empty_effect = { place=hre }
+			}
+			else_if = {
+				limit = {
+					OR = { superregion = france_superregion
+					area = holland_area }
+				}
+				Empty_effect = { place=fra }
+			}
+			else_if = {
+				limit = {
+					superregion = scandinavian_superregion 
+					NOT = { area = subarctic_islands_area }
+					NOT = { area = jutland_area }
+					NOT = { area = denmark_area }
+				}
+				Empty_effect = { place=sca }
+			}
+			else_if = {
+				limit = {
+					superregion = commonwealth_superregion
+				}
+				Empty_effect = { place=plc }
+			}
+			else_if = {
+				limit = {
+					OR = { superregion = greater_russia_superregion
+					region = caucasia_region }
+				}
+				Empty_effect = { place=rus }
+			}
+			else_if = {
+				limit = {
+					superregion = balkan_superregion
+				}
+				Empty_effect = { place=bal }
+			}
+		}
+	}
+}
+Empty_effect = { #place
+	if = {
+		limit = {
+			has_global_flag = Empty_$place$
+			NOT = { continent = eitc_continent }
+			NOT = { continent = scc_continent }
+		}
+		if = {
+			limit = {
+				is_empty = no
+				owner = {
+					ai = yes
+					NOT = { tag = AAA }
+				}
+			}
+			empty_province_effect = yes
+		}
+		set_province_flag = Prov_Emptied
+	}
+}
+
+Empty_save_building = { #building
+	if = {
+		limit = {
+			has_building = $building$
+		}
+		set_province_flag = building_$building$
+	}
+}
+Empty_load_building = { #building
+	if = {
+		limit = {
+			has_province_flag = building_$building$
+		}
+		clr_province_flag = building_$building$
+		#if = {
+		#	limit = {
+		#		NOT = { has_building = $building$ }
+		#	}
+			add_building = $building$
+		#}
+	}
+}
+Empty_delete_building = {
+	clr_province_flag = building_$building$
+}
+Empty_all_buildings_effect = { #type
+	Empty_$type$_building = { building = fort_14th }
+	Empty_$type$_building = { building = fort_15th }
+	Empty_$type$_building = { building = fort_16th }
+	Empty_$type$_building = { building = fort_17th }
+	Empty_$type$_building = { building = fort_18th }
+	Empty_$type$_building = { building = local_fortification_1 }
+	Empty_$type$_building = { building = local_fortification_2 }
+	Empty_$type$_building = { building = local_fortification_3 }
+	Empty_$type$_building = { building = local_fortification_1_off }
+	Empty_$type$_building = { building = local_fortification_2_off }
+	Empty_$type$_building = { building = local_fortification_3_off }
+	Empty_$type$_building = { building = bureaucracy_1 }
+	Empty_$type$_building = { building = bureaucracy_2 }
+	Empty_$type$_building = { building = bureaucracy_3 }
+	Empty_$type$_building = { building = bureaucracy_4 }
+	Empty_$type$_building = { building = bureaucracy_5 }
+	Empty_$type$_building = { building = canal_level_1 }
+	Empty_$type$_building = { building = canal_level_2 }
+	Empty_$type$_building = { building = canal_level_3 }
+	Empty_$type$_building = { building = road_network }
+	Empty_$type$_building = { building = paved_road_network }
+	Empty_$type$_building = { building = highway_network }
+	Empty_$type$_building = { building = road_and_rail_network }
+	Empty_$type$_building = { building = harbour_infrastructure_1 }
+	Empty_$type$_building = { building = harbour_infrastructure_2 }
+	Empty_$type$_building = { building = harbour_infrastructure_3x }
+	Empty_$type$_building = { building = harbour_infrastructure_4 }
+	Empty_$type$_building = { building = harbour_infrastructure_5 }
+	Empty_$type$_building = { building = military_harbour_1 }
+	Empty_$type$_building = { building = military_harbour_2 }
+	Empty_$type$_building = { building = military_harbour_3 }
+	Empty_$type$_building = { building = military_harbour_4 }
+	Empty_$type$_building = { building = temple }
+	Empty_$type$_building = { building = temple_heathen }
+	Empty_$type$_building = { building = great_temple }
+	Empty_$type$_building = { building = town_hall }
+	Empty_$type$_building = { building = urban_infrastructure_1 }
+	Empty_$type$_building = { building = urban_infrastructure_2 }
+	Empty_$type$_building = { building = urban_infrastructure_3 }
+	Empty_$type$_building = { building = urban_infrastructure_4 }
+	Empty_$type$_building = { building = urban_infrastructure_5 }
+	Empty_$type$_building = { building = workshop }
+	Empty_$type$_building = { building = corporation_guild }
+	Empty_$type$_building = { building = urban_manufactory }
+	Empty_$type$_building = { building = factory }
+	Empty_$type$_building = { building = steam_powered_factory }
+	Empty_$type$_building = { building = warehouse }
+	Empty_$type$_building = { building = warehouse_district }
+	Empty_$type$_building = { building = marketplace }
+	Empty_$type$_building = { building = merchant_guild }
+	Empty_$type$_building = { building = trade_depot }
+	Empty_$type$_building = { building = customs_house }
+	Empty_$type$_building = { building = art_corporation }
+	Empty_$type$_building = { building = fine_arts_academy }
+	Empty_$type$_building = { building = opera }
+	Empty_$type$_building = { building = bank }
+	Empty_$type$_building = { building = stock_exchange }
+	Empty_$type$_building = { building = small_university }
+	Empty_$type$_building = { building = medium_university }
+	Empty_$type$_building = { building = big_university }
+	Empty_$type$_building = { building = trading_post }
+	Empty_$type$_building = { building = trading_company }
+	Empty_$type$_building = { building = mines_1 }
+	Empty_$type$_building = { building = mines_2 }
+	Empty_$type$_building = { building = mines_3 }
+	Empty_$type$_building = { building = mines_4 }
+	Empty_$type$_building = { building = mines_5 }
+	Empty_$type$_building = { building = rural_infrastructure_1 }
+	Empty_$type$_building = { building = rural_infrastructure_2 }
+	Empty_$type$_building = { building = rural_infrastructure_3 }
+	Empty_$type$_building = { building = rural_infrastructure_4 }
+	Empty_$type$_building = { building = rural_infrastructure_5 }
+	Empty_$type$_building = { building = rural_infrastructure_6 }
+	Empty_$type$_building = { building = rural_infrastructure_7 }
+	Empty_$type$_building = { building = mantua_lakes_b }
+	Empty_$type$_building = { building = gibraltar_rock_b }
+	Empty_$type$_building = { building = peten_itza_lake_b }
+	Empty_$type$_building = { building = texcoco_lake_b }
+	Empty_$type$_building = { building = constantine_b }
+	Empty_$type$_building = { building = theodosian_walls }
+}

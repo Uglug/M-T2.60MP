@@ -1,0 +1,202 @@
+namespace = dg_intermarriage
+#3 of 3 events finished and optimized
+#No custom tooltips needed
+#variables and flags hidden
+
+country_event = { #A marriage between faiths
+	
+	id = dg_intermarriage.001
+	title = dg_intermarriage.001.t
+	desc = dg_intermarriage.001.d
+	picture = all_dowry
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = dg_intermarriage.001.a #Accept the proposal
+		ai_chance = {
+			factor = 50
+			#High tolerance of heathens
+			modifier = {
+				NOT = { religion_group = christian }
+				catholic = 1
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { religion_group = christian }
+				catholic = 2
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { religion_group = christian }
+				catholic = 3
+				factor = 1.4
+			}
+			modifier = {
+				religion_group = christian
+				sunni = 1
+				factor = 1.4
+			}
+			modifier = {
+				religion_group = christian
+				sunni = 2
+				factor = 1.4
+			}
+			modifier = {
+				religion_group = christian
+				sunni = 3
+				factor = 1.4
+			}
+			#Low tolerance of heathens
+			modifier = {
+				NOT = { religion_group = christian }
+				NOT = { catholic = 0 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religion_group = christian }
+				NOT = { catholic = -1 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religion_group = christian }
+				NOT = { catholic = -2 }
+				factor = 0.7
+			}
+			modifier = {
+				religion_group = christian
+				NOT = { sunni = 0 }
+				factor = 0.7
+			}
+			modifier = {
+				religion_group = christian
+				NOT = { sunni = -1 }
+				factor = 0.7
+			}
+			modifier = {
+				religion_group = christian
+				NOT = { sunni = -2 }
+				factor = 0.7
+			}
+			#AI will not accept if tolerance is too low
+			modifier = {
+				NOT = { religion_group = christian }
+				NOT = { catholic = -3 }
+				factor = 0
+			}
+			modifier = {
+				religion_group = christian
+				NOT = { sunni = -3 }
+				factor = 0
+			}
+			#Holy war
+			modifier = {
+				has_country_flag = religious_turmoil_happening
+				factor = 0.5
+			}
+			modifier = {
+				any_known_country = {
+					war_with = ROOT
+					religion = FROM
+				}
+				factor = 0.5
+			}
+			modifier = {
+				has_country_flag = religious_civil_war
+				factor = 0
+			}
+		}
+		clr_country_flag = intermarriage_considered
+		if = {
+			limit = {
+				OR = {
+					AND = {
+						NOT = { religion_group = christian }
+						NOT = { catholic = 0 }
+						catholic = -1
+					}
+					AND = {
+						religion_group = christian
+						NOT = { sunni = 0 }
+						sunni = -1
+					}
+				}
+			}
+			add_country_modifier = { name = religious_scandal_country_weak duration = 400 }
+		}
+		if = {
+			limit = {
+				OR = {
+					AND = {
+						NOT = { religion_group = christian }
+						NOT = { catholic = -1 }
+						catholic = -2
+					}
+					AND = {
+						religion_group = christian
+						NOT = { sunni = -1 }
+						sunni = -2
+					}
+				}
+			}
+			add_country_modifier = { name = religious_scandal_country duration = 400 }
+		}
+		if = {
+			limit = {
+				OR = {
+					AND = {
+						NOT = { religion_group = christian }
+						NOT = { catholic = -2 }
+					}
+					AND = {
+						religion_group = christian
+						NOT = { sunni = -2 }
+					}
+				}
+			}
+			add_country_modifier = { name = religious_scandal_country_strong duration = 400 }
+		}
+		FROM = { country_event = { id = dg_intermarriage.002 } }
+	}
+	
+	option = {
+		name = dg_intermarriage.001.b #Reject the proposal
+		ai_chance = { factor = 50 }
+		clr_country_flag = intermarriage_considered
+		add_legitimacy = 1
+		add_opinion = { who = FROM modifier = intermarriage_refused }
+		reverse_add_casus_belli = { target = FROM type = cb_insult months = 12 }
+		FROM = { country_event = { id = dg_intermarriage.003 days = 30 } }
+	}
+}
+
+country_event = { #Dowry arrives
+	
+	id = dg_intermarriage.002
+	title = dg_intermarriage.002.t
+	desc = dg_intermarriage.002.d
+	picture = all_dowry
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = dg_intermarriage.002.a
+		create_marriage = FROM
+	}
+}
+
+country_event = { #Intermarriage refused
+	
+	id = dg_intermarriage.003
+	title = dg_intermarriage.003.t
+	desc = dg_intermarriage.003.d
+	picture = turmoil_call_for_holy_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = dg_intermarriage.003.a
+		add_prestige = -5
+	}
+}
+

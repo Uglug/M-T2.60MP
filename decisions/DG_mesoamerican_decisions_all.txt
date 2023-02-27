@@ -1,0 +1,117 @@
+country_decisions = {
+	
+	consult_great_seer = {
+		potential = {
+			OR = {
+				religion = nahuatl
+				religion = inti
+			}
+			NOT = { has_country_flag = consulted_oracle } #Cleared upon new ruler
+			has_regency = no
+			piety = -0.60
+		}
+		allow = {
+			custom_trigger_tooltip = {
+				tooltip = no_religious_scandal
+				not_have_religious_scandal = yes
+			}
+			years_of_income = 0.01
+		}
+		effect = {
+			hidden_effect = { set_country_flag = consulted_oracle }
+			if = { #Maximum
+				limit = { monthly_income = 100 }
+				add_treasury = -100
+			}
+			else_if = { #Variable
+				limit = { monthly_income = 5 }
+				add_years_of_income = -0.08
+			}
+			else = { #Minimum
+				add_treasury = -5
+			}
+			hidden_effect = { capital_scope = { add_province_triggered_modifier = consult_oracle } }
+			#country_event = { id = dg_hellenic.001 days = 30 }
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				is_at_war = yes
+				factor = 0
+			}
+			modifier = {
+				NOT = { years_of_income = 0.25 }
+				factor = 0
+			}
+			modifier = {
+				NOT = { treasury = 10 }
+				factor = 0
+			}
+			modifier = {
+				is_bankrupt = yes
+				factor = 0
+			}
+			modifier = {
+				num_of_loans = 3
+				factor = 0
+			}
+		}
+	}
+	consult_mummies = {
+		potential = {
+			religion = inti
+			NOT = { has_country_flag = omens_read }
+			piety = -0.20
+			check_variable = { which = captured_icons value = 2 }
+			NOT = { has_country_flag = augury }
+		}
+		allow = {
+			custom_trigger_tooltip = {
+				tooltip = no_religious_scandal
+				not_have_religious_scandal = yes
+			}
+			has_regency = no
+			years_of_income = 0.01
+			dip = 3
+		}
+		effect = {
+			set_country_flag = augury
+			if = { #Maximum
+				limit = { monthly_income = 100 }
+				add_treasury = -100
+			}
+			else_if = { #Variable
+				limit = { monthly_income = 5 }
+				add_years_of_income = -0.08
+			}
+			else = { #Minimum
+				add_treasury = -5
+			}
+			country_event = { id = dg_piety.016 days = 10 }
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				NOT = { DIP = 3 }
+				factor = 0
+			}
+			modifier = {
+				NOT = { years_of_income = 0.25 }
+				factor = 0
+			}
+			modifier = {
+				NOT = { treasury = 10 }
+				factor = 0
+			}
+			modifier = {
+				is_bankrupt = yes
+				factor = 0
+			}
+			modifier = {
+				num_of_loans = 3
+				factor = 0
+			}
+		}
+	}
+	
+}

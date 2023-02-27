@@ -1,0 +1,281 @@
+country_decisions = {
+	shinto_pilgrimage = {
+		potential = {
+			OR = {
+				has_country_modifier = shinto_buddhism
+				has_country_modifier = yuiitso_shinto
+				religion = shinto
+			}
+			NOT = { has_country_flag = shinto_pilgrimage } #Removed upon new ruler
+			has_regency = no
+			piety = -0.60
+		}
+		allow = {
+			piety = -0.20
+			is_at_war = no
+		}
+		effect = {
+			set_country_flag = shinto_pilgrimage
+			if = {
+				limit = { monthly_income = 500 }
+				add_treasury = -500
+			}
+			else_if = {
+				limit = { monthly_income = 5 }
+				add_years_of_income = -0.08
+			}
+			else = {
+				add_treasury = -5
+			}
+			if = {
+				limit = {
+					NOT = { has_country_flag = buddhist_purification }
+					piety = 0.60
+				}
+				add_legitimacy = 4
+				add_prestige = 2
+			}
+			if = {
+				limit = {
+					NOT = { has_country_flag = buddhist_purification }
+					NOT = { piety = 0.60 }
+					piety = 0.20
+				}
+				add_legitimacy = 3
+				add_prestige = 1.5
+			}
+			if = {
+				limit = {
+					NOT = { piety = 0.20 }
+					piety = -0.20
+				}
+				add_legitimacy = 2
+				add_prestige = 1
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				legitimacy = 99
+				prestige = 0
+				factor = 0
+			}
+			modifier = {
+				legitimacy = 80
+				num_of_loans = 1
+				factor = 0
+			}
+			modifier = {
+				is_bankrupt = yes
+				factor = 0
+			}
+			modifier = {
+				legitimacy = 80
+				NOT = { years_of_income = 0.08 }
+				factor = 0
+			}
+		}
+	}
+	reinstate_department_of_rites = { #1869
+		potential = {
+			japanese_culture_trigger = yes
+			OR = {
+				religion = shinto
+				has_country_modifier = yuiitso_shinto
+				has_country_flag = kokugaku
+			}
+			NOT = { has_country_modifier = jingi_kan }
+		}
+		allow = {
+			num_of_owned_provinces_with = {
+				japanese_region_trigger = yes
+				value = 15 #28 provinces in vanilla
+			}
+			OR = {
+				ADM = 4
+				advisor = theologian
+			}
+			stability = 1
+		}
+		effect = {
+			add_years_of_income = -0.25
+			if = {
+				limit = { religion = shinto }
+				custom_tooltip = enables_religious_head_shinto
+			}
+			add_country_modifier = { name = jingi_kan duration = -1 }
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				NOT = { years_of_income = 1 }
+				factor = 0
+			}
+		}
+	}
+	establish_state_shinto = { #1868
+		potential = {
+			japanese_culture_trigger = yes
+			NOT = { religion = shinto }
+			OR = {
+				has_country_modifier = yuiitso_shinto
+				has_country_flag = kokugaku
+			}
+			any_owned_province = {
+				culture_group = owner
+				check_variable = { which = shinto value = 2 }
+			}
+		}
+		allow = {
+			num_of_owned_provinces_with = {
+				japanese_region_trigger = yes
+				value = 15 #A majority
+			}
+			NOT = { patriarch_authority = 0.40 }
+			OR = {
+				ADM = 4
+				advisor = theologian
+			}
+			stability = 1
+			is_at_war = no
+		}
+		effect = {
+			set_country_flag = voluntary_conversion
+			add_legitimacy = 25
+			if = {
+				limit = {
+					NOT = { check_variable = { which = shinto_population value = 25 } }
+				}
+				custom_tooltip = convert_population_0
+				subtract_stability_3 = yes
+			}
+			if = {
+				limit = {
+					check_variable = { which = shinto_population value = 25 }
+					NOT = { dominant_religion = shinto }
+				}
+				custom_tooltip = convert_population_25
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = {
+					dominant_religion = shinto
+					NOT = { check_variable = { which = shinto_population value = 75 } }
+				}
+				custom_tooltip = convert_population_50
+				subtract_stability_1 = yes
+			}
+			if = {
+				limit = {
+					dominant_religion = shinto
+					check_variable = { which = shinto_population value = 75 }
+				}
+				custom_tooltip = convert_population_75
+			}
+			if = {
+				limit = { patriarch_authority = 0.75 }
+				custom_tooltip = convert_church_strong
+				subtract_stability_3 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.50 }
+				custom_tooltip = convert_piety_moderate
+				subtract_stability_2 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.25 }
+				custom_tooltip = convert_church_weak
+				subtract_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_church_insignificant
+			}
+			if = {
+				limit = { ADM = 5 }
+				if = {
+					limit = {
+						capital_scope = { religion = shinto }
+					}
+					custom_tooltip = convert_ruler_strong
+					add_stability_3 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+			}
+			else_if = {
+				limit = { ADM = 3 }
+				if = {
+					limit = {
+						capital_scope = { religion = shinto }
+					}
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						capital_scope = { religion = shinto }
+					}
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_incompetent
+				}
+			}
+			if = {
+				limit = { advisor = theologian }
+				custom_tooltip = convert_theologian
+				add_stability_1 = yes
+			}
+			if = {
+				limit = {
+					has_country_flag = was_shinto
+				}
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_previous_recent
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_previous_old
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_recent
+					add_stability_1 = yes
+				}
+			}
+			change_religion = shinto
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				any_subject_country = { religion_group = ROOT }
+				factor = 0
+			}
+			modifier = {
+				overlord = { religion_group = ROOT }
+				factor = 0
+			}
+			modifier = {
+				NOT = { any_owned_province = { check_variable = { which = shinto value = 6 } } }
+				factor = 0
+			}
+		}
+	}
+}

@@ -1,0 +1,138 @@
+peasant_war = {
+	potential = {
+		OR = {
+			government = monarchy
+			government = theocracy
+		}
+		celestial_trigger = no
+		is_nomad = no
+		uses_doom = no
+		NOT = { check_variable = { which = country_percent_urbanized value = 0.60 } }
+	}
+	
+	can_start = {
+		NOT = { has_country_modifier = recent_peasants_war }
+		has_any_disaster = no
+		NOT = { manpower_percentage = 0.30 }
+	}
+	
+	can_stop = {
+		OR = {
+			has_any_disaster = yes
+			manpower_percentage = 0.50
+		}
+	}
+	
+	progress = {
+		modifier = {
+			factor = 0.3
+			is_in_war = {
+				defender_leader = ROOT
+			}
+		}
+		modifier = {
+			factor = 0.5
+			war_exhaustion = 5
+			hidden_trigger = { NOT = { war_exhaustion = 10 } }
+		}
+		modifier = {
+			factor = 1
+			war_exhaustion = 10
+			hidden_trigger = { NOT = { war_exhaustion = 15 } }
+		}
+		modifier = {
+			factor = 1.5
+			war_exhaustion = 15
+			hidden_trigger = { NOT = { war_exhaustion = 20 } }
+		}
+		modifier = {
+			factor = 2
+			war_exhaustion = 20
+		}
+		modifier = {
+			factor = 0.5
+			NOT = { stability = 0 }
+			hidden_trigger = { stability = -1 }
+		}
+		modifier = {
+			factor = 1
+			NOT = { stability = -1 }
+			hidden_trigger = { stability = -2 }
+		}
+		modifier = {
+			factor = 1.5
+			NOT = { stability = -2 }
+		}
+		modifier = {
+			factor = 0.5
+			NOT = { legitimacy_equivalent = 50 }
+			hidden_trigger = { legitimacy_equivalent = 40 }
+		}
+		modifier = {
+			factor = 1
+			NOT = { legitimacy_equivalent = 40 }
+			hidden_trigger = { legitimacy_equivalent = 30 }
+		}
+		modifier = {
+			factor = 1.5
+			NOT = { legitimacy_equivalent = 30 }
+			hidden_trigger = { legitimacy_equivalent = 20 }
+		}
+		modifier = {
+			factor = 2
+			NOT = { legitimacy_equivalent = 20 }
+			hidden_trigger = { legitimacy_equivalent = 10 }
+		}
+		modifier = {
+			factor = 2.5
+			NOT = { legitimacy_equivalent = 10 }
+		}
+		modifier = {
+			factor = 3
+			is_bankrupt = yes
+		}
+		modifier = {
+			factor = 0.25
+			overextension_percentage = 0.25
+			NOT = {
+				overextension_percentage = 0.5
+			}
+		}
+		modifier = {
+			factor = 0.5
+			overextension_percentage = 0.5
+		}
+	}
+	
+	can_end = {
+		NOT = { num_of_rebel_controlled_provinces = 1 }
+		NOT = {
+			any_owned_province = {
+				has_province_modifier = peasants_organizing
+				unrest = 1
+			}
+		}
+		#TODO, trigger on support for antitax rebels
+	}
+	
+	modifier = {
+		global_unrest = 5
+		stability_cost_modifier = 0.20
+	}
+	
+	on_start = peasants_war.1
+	on_end = peasants_war.6
+	
+	on_monthly = {
+		events = {
+			
+		}
+		random_events = {
+			1000 = 0
+			100 = peasants_war.2
+			100 = peasants_war.3
+			# 100 = peasants_war.4
+			100 = peasants_war.5
+		}
+	}
+}

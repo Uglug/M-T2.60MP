@@ -1,0 +1,150 @@
+country_decisions = {
+	
+	crusader_kingdom_of_africa = {
+		major = yes
+		potential = {
+			owns = 341 # Tunis
+			religion = catholic
+			NOT = { exists = KAF }
+			NOT = { government = republic }
+			NOT = { is_religion_enabled = protestant }
+		}
+		provinces_to_highlight = {
+			province_id = 341
+		}
+		allow = {
+			is_at_war = no
+		}
+		effect = {
+			clr_country_flag = holy_land_jerusalem
+			custom_tooltip = church_settlement_explained
+			set_country_flag = church_settlement
+			clr_country_flag = dispensation_denied
+			set_country_flag = dispensation_granted
+			add_papal_influence = 50
+			add_prestige = 25
+			341 = {
+				add_core = KAF
+				remove_core = ROOT
+				every_neighbor_province = {
+					limit = { owned_by = ROOT }
+					cede_province = KAF
+				}
+			}
+			release = KAF
+			vassalize = KAF
+			KAF = {
+				change_government = monarchy
+				change_primary_culture = ROOT
+				set_dynasty = ROOT
+				Effect_set_capital = { target=341 }
+			}
+			every_country = {
+				limit = {
+					any_owned_province = { region = east_maghreb_region is_core = PREV }
+					NOT = { tag = ROOT }
+				}
+				add_historical_rival = KAF
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	become_crusader_kingdom_of_africa = {
+		major = yes
+		potential = {
+			OR = {
+				tag = CYP
+				tag = KNI
+			}
+			religion = catholic
+			NOT = { exists = KAF }
+			east_maghreb_region = { owned_by = ROOT }
+		}
+		provinces_to_highlight = {
+			OR = {
+				region = central_maghreb_region
+				region = east_maghreb_region
+			}
+		}
+		allow = {
+			owns = 341 # Tunis
+			is_at_war = no
+			OR = {
+				check_variable = { which = "Demesne_in_Africa" value = 8 }
+				check_variable = { which = "Cores_on_Africa" value = 5 }
+			}
+		}
+		effect = {
+			east_maghreb_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = KAF } add_core = KAF }
+			east_maghreb_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = KAF }
+			every_country = {
+				limit = {
+					any_owned_province = { region = east_maghreb_region is_core = PREV }
+					NOT = { tag = ROOT }
+				}
+				add_historical_rival = KAF
+			}
+			add_prestige = 15
+			if = {
+				limit = { NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+				change_title_5 = yes
+			}
+			secularisation_effect = yes
+			change_tag = KAF
+			add_absolutism = 10
+			Effect_set_capital = { target=341 }
+			if = {
+				limit = {
+					has_custom_ideas = no
+					#NOT = { has_idea_group = KAF_ideas } # No such ideas - Warial
+				}
+				swap_national_ideas_effect = yes
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+#	repopulate_tunis = {
+#		potential = {
+#			tag = KAF
+#			capital = 341
+#			341 = {
+#				NOT = { has_province_modifier = major_city }
+#			}
+#		}
+#		allow = {
+#			341 = {
+#				controlled_by = owner
+#				has_siege = no
+#				NOT = { has_province_modifier = major_city }
+#				development = 40
+#			}
+#			NOT = { num_of_loans = 1 }
+#			total_development = 150
+#			treasury = 1000
+#			adm_power = 200
+#			OR = {
+#				ADM = 4
+#				architect = 2
+#			}
+#		}
+#		effect = {
+#			add_adm_power = -200
+#			add_treasury = -1000
+#			341 = { add_permanent_province_modifier = { name = major_city duration = -1 } }
+#		}
+#		ai_will_do = {
+#			factor = 1
+#			modifier = {
+#				NOT = { treasury = 1100 }
+#				factor = 0
+#			}
+#		}
+#	}
+	
+}

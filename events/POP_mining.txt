@@ -1,0 +1,219 @@
+namespace = POP_mining
+
+### MOVED TO CENSUS ###
+
+#country_event = { ### This event is for mines potentially discovering new mineral deposits
+#	id = POP_mining.001
+#	title = "POP_mining.001.t"
+#	desc = "POP_mining.001.d"
+#	picture = CITY_DEVELOPMENT_AU_eventPicture
+#	hidden = yes
+#	is_triggered_only = yes
+#
+#	trigger = {
+#		always = no # Code was migrated to census
+#		#owns = 5154
+#		#NOT = { has_country_modifier = mining_check }
+#	}
+#	
+#	immediate = {
+#		add_country_modifier = {
+#			name = mining_check
+#			duration = 365
+#			hidden = yes
+#		}
+#		every_province = {
+#			limit = {
+#				has_province_flag = mined_goods
+#			}
+#			if = {
+#				limit = {
+#					check_variable = { which = tech_admin_level 	which = mine_new_reserves_threshold }
+#				}
+#				
+#				# Random chance of discovering new deposit after tech enables it
+#				set_variable = { which = "mine_random_factor" 				value = 0 }
+#				set_variable = { which = "mine_random_threshold" 			value = 0 }
+#				
+#				random_list = {
+#					1 = { set_variable = { which = "mine_random_factor" 	value = 1 } }
+#					1 = { set_variable = { which = "mine_random_factor" 	value = 2 } }
+#					1 = { set_variable = { which = "mine_random_factor" 	value = 3 } }
+#					1 = { set_variable = { which = "mine_random_factor" 	value = 4 } }
+#					1 = { set_variable = { which = "mine_random_factor" 	value = 5 } }
+#					
+#					2 = { set_variable = { which = "mine_random_factor" 	value = 7 } }
+#					2 = { set_variable = { which = "mine_random_factor" 	value = 9 } }
+#					2 = { set_variable = { which = "mine_random_factor" 	value = 11 } }
+#					2 = { set_variable = { which = "mine_random_factor" 	value = 13 } }
+#					2 = { set_variable = { which = "mine_random_factor" 	value = 15 } }
+#					
+#					5 = { set_variable = { which = "mine_random_factor" 	value = 20 } }
+#					5 = { set_variable = { which = "mine_random_factor" 	value = 25 } }
+#					5 = { set_variable = { which = "mine_random_factor" 	value = 30 } }
+#					5 = { set_variable = { which = "mine_random_factor" 	value = 35 } }
+#					5 = { set_variable = { which = "mine_random_factor" 	value = 40 } }
+#					5 = { set_variable = { which = "mine_random_factor" 	value = 45 } }
+#					5 = { set_variable = { which = "mine_random_factor" 	value = 50 } }
+#					5 = { set_variable = { which = "mine_random_factor" 	value = 55 } }
+#					5 = { set_variable = { which = "mine_random_factor" 	value = 60 } }
+#					5 = { set_variable = { which = "mine_random_factor" 	value = 65 } }
+#					5 = { set_variable = { which = "mine_random_factor" 	value = 70 } }
+#					5 = { set_variable = { which = "mine_random_factor" 	value = 75 } }
+#					5 = { set_variable = { which = "mine_random_factor" 	value = 80 } }
+#					5 = { set_variable = { which = "mine_random_factor" 	value = 85 } }
+#					5 = { set_variable = { which = "mine_random_factor" 	value = 90 } }
+#					5 = { set_variable = { which = "mine_random_factor" 	value = 95 } }
+#					5 = { set_variable = { which = "mine_random_factor" 	value = 100 } }
+#				}
+#				
+#				# Increase chance if way past threshold
+#				set_variable = { which = "mine_random_threshold" 			which = "tech_admin_level" }
+#				subtract_variable = { which = "mine_random_threshold"		which = "mine_new_reserves_threshold" }
+#				divide_variable = { which = "mine_random_threshold"			value = 5 }
+#				change_variable = { which = "mine_random_threshold"			value = 1 }
+#				
+#				# More improved mines have higher chance to discover deposits
+#				if = {
+#					limit = { has_building = mines_1 }
+#					multiply_variable = { which = "mine_random_threshold" 	value = 1 }
+#				}
+#				if = {
+#					limit = { has_building = mines_2 }
+#					multiply_variable = { which = "mine_random_threshold" 	value = 2 }
+#				}
+#				if = {
+#					limit = { has_building = mines_3 }
+#					multiply_variable = { which = "mine_random_threshold" 	value = 4 }
+#				}
+#				if = {
+#					limit = { has_building = mines_4 }
+#					multiply_variable = { which = "mine_random_threshold" 	value = 8 }
+#				}
+#				if = {
+#					limit = { has_building = mines_5 }
+#					multiply_variable = { which = "mine_random_threshold" 	value = 16 }
+#				}
+#				
+#				if = {
+#					limit = { check_variable = { which = "mine_random_factor" which = "mine_random_threshold" } }
+#					
+#					change_variable = { which = mine_new_reserves_threshold		value = 4 }
+#					set_variable = {	which = mine_new_ore_found				value = 0 }
+#					set_variable = {	which = mine_new_ore_found				which = mine_deposit_starting }
+#					if = {
+#						limit = {
+#							check_variable = { which = mine_deposit_starting value = 300 }
+#						}
+#						random_list = {
+#							75 = { multiply_variable = { which = mine_new_ore_found 		value = 0.15 } 	province_event = { id = POP_mining.010 days = 5 random = 100 } }
+#							10 = { multiply_variable = { which = mine_new_ore_found 		value = 0.20 } 	province_event = { id = POP_mining.011 days = 5 random = 100 } }
+#							5 =  { multiply_variable = { which = mine_new_ore_found 		value = 0.25 } 	province_event = { id = POP_mining.011 days = 5 random = 100 } }
+#							5 =  { multiply_variable = { which = mine_new_ore_found 		value = 0.30 } 	province_event = { id = POP_mining.012 days = 5 random = 100 } }
+#							2 =  { multiply_variable = { which = mine_new_ore_found 		value = 0.35 } 	province_event = { id = POP_mining.012 days = 5 random = 100 } }
+#							2 =  { multiply_variable = { which = mine_new_ore_found 		value = 0.50 } 	province_event = { id = POP_mining.013 days = 5 random = 100 } }
+#							1 =  { multiply_variable = { which = mine_new_ore_found 		value = 1 } 	province_event = { id = POP_mining.014 days = 5 random = 100 } }
+#						}
+#					}
+#					if = {
+#						limit = {
+#							NOT = { check_variable = { which = mine_deposit_starting value = 300 } }
+#						}
+#						random_list = {
+#							75 = { multiply_variable = { which = mine_new_ore_found 		value = 0.20 } 	province_event = { id = POP_mining.010 days = 5 random = 100 } }
+#							10 = { multiply_variable = { which = mine_new_ore_found 		value = 0.30 } 	province_event = { id = POP_mining.011 days = 5 random = 100 } }
+#							5 =  { multiply_variable = { which = mine_new_ore_found 		value = 0.40 } 	province_event = { id = POP_mining.011 days = 5 random = 100 } }
+#							5 =  { multiply_variable = { which = mine_new_ore_found 		value = 0.50 } 	province_event = { id = POP_mining.012 days = 5 random = 100 } }
+#							2 =  { multiply_variable = { which = mine_new_ore_found 		value = 0.60 } 	province_event = { id = POP_mining.012 days = 5 random = 100 } }
+#							2 =  { multiply_variable = { which = mine_new_ore_found 		value = 1.25 } 	province_event = { id = POP_mining.013 days = 5 random = 100 } }
+#							1 =  { multiply_variable = { which = mine_new_ore_found 		value = 5 } 	province_event = { id = POP_mining.014 days = 5 random = 100 } }
+#						}
+#					}
+#				}
+#				
+#				change_variable = { which = mine_deposit_current which = mine_new_ore_found }
+#				
+#				# Clears variables
+#				set_variable = { which = "mine_random_factor" 				value = 0 }
+#				set_variable = { which = "mine_random_threshold" 			value = 0 }
+#			}
+#		}
+#	}
+#	
+#	option = {
+#		name = "POP_mining.001.a"
+#	}
+#}
+
+#province_event = { ### Informs the owner of the mine about the new deposit (minor deposit, 75% chance)
+#	id = POP_mining.010
+#	title = "POP_mining.010.t"
+#	desc = "POP_mining.010.d"
+#	picture = CITY_DEVELOPMENT_AU_eventPicture
+#	is_triggered_only = yes
+#	
+#	option = {
+#		name = "POP_mining.010.opta"
+#	}
+#}
+#
+#province_event = { ### Informs the owner of the mine about the new deposit (small deposit, 10 + 5% chance)
+#	id = POP_mining.011
+#	title = "POP_mining.011.t"
+#	desc = "POP_mining.011.d"
+#	picture = CITY_DEVELOPMENT_AU_eventPicture
+#	is_triggered_only = yes
+#	
+#	option = {
+#		name = "POP_mining.011.opta"
+#	}
+#}
+#
+#province_event = { ### Informs the owner of the mine about the new deposit (medium deposit, 5 + 2% chance)
+#	id = POP_mining.012
+#	title = "POP_mining.012.t"
+#	desc = "POP_mining.012.d"
+#	picture = CITY_DEVELOPMENT_AU_eventPicture
+#	is_triggered_only = yes
+#	
+#	option = {
+#		name = "POP_mining.012.opta"
+#	}
+#}
+
+province_event = { ### Informs the owner of the mine about the new deposit (large deposit, 2% chance)
+	id = POP_mining.013
+	title = "POP_mining.013.t"
+	desc = "POP_mining.013.d"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	is_triggered_only = yes
+	
+	option = {
+		name = "POP_mining.013.opta"
+	}
+}
+
+province_event = { ### Informs the owner of the mine about the new deposit (Motherlode! :D, 1% chance)
+	id = POP_mining.014
+	title = "POP_mining.014.t"
+	desc = "POP_mining.014.d"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	is_triggered_only = yes
+	
+	option = {
+		name = "POP_mining.014.opta"
+	}
+}
+
+province_event = { ### New mine discovered in the world.
+	id = POP_mining.015
+	title = "POP_mining.015.t"
+	desc = "POP_mining.015.d"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	is_triggered_only = yes
+	
+	option = {
+		add_building = mines_1
+		name = "POP_mining.015.opta"
+	}
+}

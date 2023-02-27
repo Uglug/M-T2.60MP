@@ -1,0 +1,231 @@
+country_decisions = {
+	create_green_standard_army = {
+		potential = {
+			tag = MCH
+			NOT = { has_country_flag = green_standard_army }
+		}
+		allow = {
+			is_free_or_tributary_trigger = yes
+			is_monarch_leader = yes
+			has_idea = the_green_standard_army
+			any_owned_province = {
+				culture_group = chinese_group
+			}
+			war_with = MNG
+			MNG = {
+				OR = {
+					NOT = { stability = 0 }
+					NOT = { war_score = -10 }
+				}
+			}
+		}
+		effect = {
+			set_country_flag = green_standard_army
+			add_prestige = 10
+			reverse_add_opinion = { who = MNG modifier = opinion_green_standard }
+			MNG = { add_manpower = -8 }
+			infantry = 725
+			infantry = 725
+			infantry = 725
+			infantry = 725
+			infantry = 725
+			infantry = 725
+			cavalry = 725
+			cavalry = 725
+			cavalry = 725
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	create_manchu_alphabet = {
+		potential = {
+			primary_culture = jurchen
+			num_of_cities = 10
+			NOT = { has_country_flag = manchu_alphabet }
+			NOT = { has_country_flag = jurchen_script }
+		}
+		allow = {
+			is_free_or_tributary_trigger = yes
+			or = { adm = 4 statesman = 3 }
+		}
+		effect = {
+			add_prestige = 5
+			country_event = { id = jurchen_ascendancy.1 }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	create_eight_banners = {
+		potential = {
+			primary_culture = jurchen
+			num_of_cities = 10
+			NOT = { has_country_flag = eight_banners }
+			NOT = { has_country_flag = jurchen_clans }
+		}
+		allow = {
+			is_free_or_tributary_trigger = yes
+			is_monarch_leader = yes
+			stability = 3
+			OR = { mil = 4 army_reformer = 3 }
+		}
+		effect = {
+			country_event = { id = jurchen_ascendancy.2 }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	adopt_manchu_name = {
+		potential = {
+			primary_culture = jurchen
+			OR = {
+				has_country_flag = manchu_alphabet
+				has_country_flag = eight_banners
+			}
+		}
+		allow = {
+			has_country_flag = manchu_alphabet
+			has_country_flag = eight_banners
+			is_free_or_tributary_trigger = yes
+			or = { adm = 4 statesman = 3 }
+		}
+		effect = {
+			add_prestige = 10
+			change_primary_culture = manchu
+			every_owned_province = {
+				limit = {
+					culture = jurchen
+				}
+				change_culture = manchu
+			}
+			swap_free_idea_group = yes
+			if = {
+				limit = { ai = yes }
+				country_event = { id = ideagroups.9001 days = 30 }
+			}
+			add_absolutism = 10
+			country_event = { id = jurchen_ascendancy.4 }
+			country_event = { id = jurchen_ascendancy.5 }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	#restore_jurchen_glory = {
+	#	potential = {
+	#		OR = {
+	#			primary_culture = sanggiya
+	#			primary_culture = sunggari
+	#			primary_culture = sahaliyan
+	#			primary_culture = fuluhun
+	#		}
+	#		OR = {
+	#			has_country_flag = jurchen_script
+	#			has_country_flag = jurchen_clans
+	#		}
+	#	}
+	#	allow = {
+	#		has_country_flag = jurchen_script
+	#		has_country_flag = jurchen_clans
+	#		is_free_or_tributary_trigger = yes
+	#		or = { adm = 4 statesman = 3 }
+	#	}
+	#	effect = {
+	#		add_prestige = 10
+	#		change_primary_culture = jurchen
+	#		every_owned_province = {
+	#			limit = {
+	#				culture = sanggiya
+	#				culture = sunggari
+	#				culture = sahaliyan
+	#				culture = fuluhun
+	#			}
+	#			change_culture = jurchen
+	#		}
+	#		swap_free_idea_group = yes
+	#		add_absolutism = 10
+	#		country_event = { id = jurchen_ascendancy.5 }
+	#	}
+	#	ai_will_do = {
+	#		factor = 1
+	#	}
+	#}
+	
+	subjugate_northern_tribes = {
+		potential = {
+			OR = {
+				tag = MCH
+				tag = QNG
+			}
+			NOT = { has_country_flag = manchu_expansion }
+			NOT = { oroqen_area = { owned_by = ROOT is_city = no } }
+			NOT = { amour_area = { owned_by = ROOT is_city = no } }
+			NOT = { heilongjiang_area = { owned_by = ROOT is_city = no } }
+		}
+		allow = {
+			is_free_or_tributary_trigger = yes
+			east_manchuria_region = {
+				any_neighbor_province = {
+					owned_by = ROOT
+				}
+			}
+		}
+		effect = {
+			every_province = {
+				limit = {
+					OR = {
+						area = oroqen_area
+						area = amour_area
+						area = heilongjiang_area
+					}
+					is_city = no
+					is_colony = no
+					NOT = { owned_by = ROOT }
+				}
+				cede_province = ROOT
+			}
+			every_province = {
+				limit = {
+					OR = {
+						area = oroqen_area
+						area = amour_area
+						area = heilongjiang_area
+					}
+				}
+				add_claim = ROOT
+			}
+			set_country_flag = manchu_expansion
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	integrate_new_manchu = {
+		potential = {
+			primary_culture = manchu
+			NOT = { has_country_flag = integrated_new_manchu }
+		}
+		allow = {
+			oroqen_area = { owned_by = ROOT }
+			amour_area = { owned_by = ROOT }
+			heilongjiang_area = { owned_by = ROOT }
+		}
+		effect = {
+			add_prestige = 20
+			add_legitimacy = -10
+			set_country_flag = integrated_new_manchu
+			custom_tooltip = integrated_new_manchu_tt
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+} #End of country decisions

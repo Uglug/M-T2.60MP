@@ -1,0 +1,66 @@
+country_decisions = {
+	
+	treaty_of_vilnius = {
+		potential = {
+			owns = 1264 # Zemgale
+			OR = {
+				tag = LIV
+				tag = LVO
+			}
+			OR = {
+				is_subject_of = LIT
+				is_subject_of = POL
+				is_subject_of = PLC
+			}
+			has_global_flag = livonian_war_decided
+			NOT = { has_global_flag = treaty_of_vilnius }
+		}
+		allow = {
+			is_at_war = no
+		}
+		effect = {
+			set_global_flag = treaty_of_vilnius
+			Effect_set_capital = { target=1264 }
+			if = {
+				limit = {
+					is_subject_other_than_tributary_trigger = yes
+				}
+				every_owned_province = {
+					limit = {
+						NOT = { province_id = 39 } # Kurzeme
+						NOT = { province_id = 1264 } # Zemgale
+						owned_by = ROOT #better to use owned_by here, just to be safe. I know is_at_war = no means both triggers are giving the same results, but if you change it in the future and forget to change this line you can get funny results
+					}
+					remove_core = ROOT
+					set_province_flag = to_cede_treaty_of_vilnius
+				}
+				overlord = {
+					every_province = {
+						limit = {
+							has_province_flag = to_cede_treaty_of_vilnius
+						}
+						clr_province_flag = to_cede_treaty_of_vilnius
+						cede_province = PREV
+						add_claim = PREV
+						add_local_autonomy = 10
+						add_territorial_core_effect = yes
+					}
+				}
+			}
+			change_tag = KUR
+			if = {
+				limit = { government = monarchy OR = { has_country_modifier = title_1 has_country_modifier = title_2 } }
+				change_title_5 = yes
+			}
+			secularisation_effect = yes
+			baltic_region = { hidden_effect = { remove_core = LIV } add_core = LIV }
+			LIV = { change_primary_culture = latvian }
+			add_stability_2 = yes
+			add_legitimacy = 100
+			swap_national_ideas_effect = yes
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+}

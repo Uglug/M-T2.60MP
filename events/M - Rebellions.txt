@@ -1,0 +1,107 @@
+# Cultural Rebellions
+# By Malorn
+# Edits by JF
+
+namespace = rebellions
+
+# Basic rebellion events from wrong culture, culture-group, etc.
+province_event = {
+	id = rebellions.001
+	title = "rebellions.001.name"
+	desc = "rebellions.001.desc"
+	picture = ANGRY_MOB_eventPicture
+	is_triggered_only = yes #rebellions.003
+	
+	trigger = {
+		ai = no
+		NOT = { owner = { has_country_flag = hide_cultural_unrest } }
+	}
+	
+	option = {
+		name = "rebellions.001.opta"
+		custom_tooltip = rebellions.001.cultural_unrest_tooltip
+	}
+}
+country_event = {
+	id = rebellions.002
+	hidden = yes
+	title = "rebellions.001.name"
+	desc = "rebellions.001.desc"
+	picture = ANGRY_MOB_eventPicture
+	is_triggered_only = yes #pulse_system, every year
+	
+	trigger = { NOT = { full_idea_group = democracy_ideas } }
+	
+	immediate = {
+		regiongroup = {
+			region = {
+				clr_province_flag = rebellions_block
+				if = {
+					limit = { NOT = { has_province_flag = rebellions_block } }
+					owner = {
+						export_to_variable = { which = temp value = culture who = PREV }
+						every_owned_province = {
+							limit = { culture = variable:Prev:temp }
+							set_province_flag = rebellions_block
+						}
+					}
+					clr_province_flag = rebellions_block
+				}
+			}
+		}
+	}
+	option = { name = no_localisation }
+}
+province_event = {
+	id = rebellions.003
+	hidden = yes
+	title = "rebellions.001.name"
+	desc = "rebellions.001.desc"
+	picture = ANGRY_MOB_eventPicture
+	trigger = {
+		NOT = { has_province_flag = rebellions_block }
+		NOT = { has_province_modifier = turmoil_organizing }
+		has_owner_accepted_culture = no
+		has_owner_culture = no
+		NOT = {
+			AND = {
+				owner = { total_development = 1200 }
+				culture_group = owner
+			}
+		}
+	}
+	mean_time_to_happen = {
+		years = 8
+		modifier = {
+			factor = 2
+			owner = { government = republic }
+		}
+		modifier = {
+			factor = 1.5
+			religion_group = owner
+		}
+		modifier = {
+			factor = 1.25
+			religion = owner
+		}
+	}
+	immediate = {
+		owner = {
+			every_owned_province = {
+				limit = {
+					culture = ROOT
+				}
+				add_province_modifier = {
+					name = "turmoil_organizing"
+					duration = 1825
+				}
+				hidden_effect = {
+					set_variable = { which = added_unrest value = 5 }
+					add_base_unrest = yes
+				}
+			}
+		}
+		province_event = { id = rebellions.001 }
+	}
+	option = { name = no_localisation }
+}

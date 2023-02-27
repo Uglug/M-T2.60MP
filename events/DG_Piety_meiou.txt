@@ -1,0 +1,3392 @@
+namespace = dg_piety
+#18 of 18 events completed and optimized
+#custom tooltips added
+#flags and variables hidden
+
+#############
+# Low Piety # 00s
+#############
+
+#01 - Faith and Reason
+#02 - The Seekers of Ill Fortune
+#03 - $MONARCH$'s Blasphemy (less likely with a theologian or inquisitor advisor)
+#04 - Clerical Shortage
+
+##############
+# High Piety # 10s
+##############
+
+#11 - Scientist on Trial (high piety and high church influence)
+#12 - Heresy! (more likely with low church influence)
+#13 - Cleric Scientist
+#14 - REMOVED
+#15 - REMOVED
+#16 - Good Omens
+#17 - Bad Omens
+
+##################
+# Moderate Piety # 40s
+##################
+
+#41 - Soul Searching
+#42 - The Prophet's Downfall
+#43 - Lightning strikes place of worship
+#44 - [Alexander]'s Faith
+
+###################
+# Temple building # 50s
+###################
+
+#51 - $MONARCH$'s great work
+#52 - The glory of $PROVINCECAPITAL$
+#53 - Heathen temple in $PROVINCECAPITAL$
+#54 - The Glory of $PROVINCECAPITAL$
+#55 - Renovations needed
+#56* - Capture of a heathen temple (1747 Amritsar)
+#57* - Destruction of the temple
+
+
+
+
+#############
+# Low Piety # 00s
+############# 
+
+country_event = { #Faith and Reason
+	
+	id = dg_piety.001
+	title = dg_piety.001.t
+	desc = dg_piety.001.d
+	picture = catholic_heretic_scientist
+	
+	trigger = {
+		advisor = philosopher
+		tech_1700_trigger = yes
+		NOT = { has_country_flag = enlightenment_thought }
+	}
+	
+	mean_time_to_happen = { months = 6 }
+	
+	immediate = { set_country_flag = enlightenment_thought }
+	
+	option = {
+		name = dg_piety.001.a #Arrest these men for blasphemy
+		ai_chance = {
+			factor = 50
+			modifier = {
+				piety = 0.60
+				factor = 1.4
+			}
+			modifier = {
+				piety = 0.20
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { piety = -0.20 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				has_country_flag = blasphemy_laws
+				factor = 1.4
+			}
+			modifier = {
+				has_idea = bill_of_rights
+				factor = 0.7
+			}
+			modifier = {
+				stability = 1
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { stability = 0 }
+				factor = 1.4
+			}
+		}
+		remove_advisor = philosopher
+		add_adm_power = -25
+		add_piety = -0.10
+	}
+	option = {
+		name = dg_piety.001.b #Allow him to spread these ideas
+		ai_chance = { factor = 50 }
+		if = {
+			limit = { piety = -0.20 }
+			subtract_stability_1 = yes
+		}
+		add_country_modifier = { name = religious_scandal_country duration = 1000 }
+		add_piety = -0.20
+		add_adm_power = 25
+		set_country_flag = enlightenment_deism
+	}
+}
+
+country_event = { #The Seekers of Ill-Fortune
+	
+	id = dg_piety.002
+	title = dg_piety.002.t
+	desc = dg_piety.002.d
+	picture = all_mischief
+	
+	trigger = {
+		NOT = { piety = -0.20 }
+		NOT = { has_country_flag = blasphemy_reaction_pious } #Cleared upon new ruler
+		NOT = { has_country_flag = blasphemy_reaction_impious } #Cleared upon new ruler
+	}
+	
+	mean_time_to_happen = { years = 41 }
+	
+	option = {
+		name = dg_piety.002.a
+		add_country_modifier = { name = religious_scandal_country_weak duration = 1000 }
+		set_country_flag = blasphemy_reaction_religious
+		add_piety = 0.10
+	}
+	option = {
+		name = dg_piety.002.b
+		capital_scope = { add_province_modifier = { name = religious_scandal_province duration = 2000 } }
+		set_country_flag = blasphemy_reaction_secular
+		add_piety = -0.10
+	}
+}
+
+country_event = { #03 - $MONARCH$'s blasphemy
+	
+	id = dg_piety.003
+	title = dg_piety.003.t
+	desc = dg_piety.003.d
+	picture = catholic_scandal
+	
+	trigger = {
+		NOT = { piety = -0.20 }
+		OR = { has_regency = no has_consort_regency = yes }
+		NOT = { advisor = inquisitor }
+		NOT = { advisor = theologian }
+		not_have_religious_scandal = yes
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 83
+		
+		modifier = {
+			DIP = 5
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { DIP = 3 }
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { piety = -0.60 }
+			factor = 0.7
+		}
+	}
+	
+	option = {
+		name = dg_piety.003.a #Show contrition publicly
+		ai_chance = {
+			factor = 50
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.5
+			}
+			modifier = {
+				DIP = 5
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { DIP = 4 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { DIP = 3 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { DIP = 2 }
+				factor = 0.7
+			}
+		}
+		add_dip_power = -10
+	}
+	option = {
+		name = dg_piety.003.b #Embrace the reputation
+		ai_chance = { factor = 50 }
+		if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 400 }
+		}
+		if = {
+			limit = { NOT = { piety = -0.60 } }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 200 }
+		}
+	}
+}
+
+country_event = { #04 - Clerical Shortage
+	
+	id = dg_piety.004
+	title = dg_piety.004.t
+	desc = dg_piety.004.d
+	picture = all_ordination
+	
+	trigger = {
+		OR = {
+			NOT = { piety = 0.20 }
+			NOT = { patriarch_authority = 0.50 }
+		}
+		NOT = { piety = 0.60 }
+		NOT = { has_country_modifier = preacher_shortage }
+		NOT = { has_country_modifier = missionary_shortage }
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 83
+		
+		modifier = {
+			has_country_modifier = married_pastors_aspect
+			factor = 1.4
+		}
+		modifier = {
+			has_country_modifier = celibate_priests_aspect
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { piety = -0.20 }
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { piety = -0.60 }
+			factor = 0.7
+		}
+		modifier = {
+			religion = coptic
+			NOT = { has_country_flag = miaphysite_monasteries_incorporated }
+			factor = 0.5
+		}
+	}
+	
+	option = {
+		name = dg_piety.004.a #Focus on taking care of the faithful
+		ai_chance = { factor = 50 }
+		add_country_modifier = { name = missionary_shortage duration = 5000 }
+	}
+	option = {
+		name = dg_piety.004.b #Focus on missionary work
+		ai_chance = {
+			factor = 50
+			modifier = {
+				religious_unity = 100
+				factor = 0.5
+			}
+			modifier = {
+				NOT = { any_neighbor_country = { NOT = { religion = ROOT } } }
+				factor = 0.5
+			}
+			modifier = {
+				NOT = { religious_unity = 80 }
+				factor = 2
+			}
+			modifier = {
+				NOT = { religious_unity = 60 }
+				factor = 2
+			}
+			modifier = {
+				NOT = { religious_unity = 40 }
+				factor = 2
+			}
+			modifier = {
+				NOT = { religious_unity = 20 }
+				factor = 2
+			}
+		}
+		add_country_modifier = { name = preacher_shortage duration = 5000 }
+	}
+}
+
+##############
+# High Piety # 10s
+##############
+
+country_event = { #11 - Scientist on trial
+	
+	id = dg_piety.011
+	title = dg_piety.011.t
+	desc = dg_piety.011.d
+	picture = catholic_heretic_scientist
+	
+	trigger = {
+		advisor = natural_scientist
+		piety = 0.20
+		patriarch_authority = 0.60
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 41
+		
+		modifier = {
+			piety = 0.60
+			factor = 0.7
+		}
+		modifier = {
+			piety = 1.00
+			factor = 0.7
+		}
+		modifier = {
+			patriarch_authority = 0.80
+			factor = 0.7
+		}
+		modifier = {
+			patriarch_authority = 1.00
+			factor = 0.7
+		}
+		modifier = {
+			religion = catholic
+			NOT = { has_country_flag = secular_courts }
+			factor = 0.7
+		}
+	}
+	
+	option = {
+		name = dg_piety.011.a #Order an end to the trial immediately
+		ai_chance = {
+			factor = 10
+			modifier = {
+				natural_scientist = 2
+				factor = 1.4
+			}
+			modifier = {
+				natural_scientist = 3
+				factor = 1.4
+			}
+		}
+		add_adm_power = -5
+		if = {
+			limit = { patriarch_authority = 0.80 }
+			add_country_modifier = { name = unhappy_church_powerful duration = 400 }
+		}
+		if = {
+			limit = {
+				patriarch_authority = 0.60
+				NOT = { patriarch_authority = 0.80 }
+			}
+			add_country_modifier = { name = unhappy_church_strong duration = 400 }
+		}
+		if = {
+			limit = {
+				patriarch_authority = 0.40
+				NOT = { patriarch_authority = 0.60 }
+			}
+			add_country_modifier = { name = unhappy_church_moderate duration = 400 }
+		}
+		if = {
+			limit = {
+				patriarch_authority = 0.20
+				NOT = { patriarch_authority = 0.40 }
+			}
+			add_country_modifier = { name = unhappy_church_weak duration = 400 }
+		}
+		if = {
+			limit = { NOT = { patriarch_authority = 0.20 } }
+			add_country_modifier = { name = unhappy_church_impotent duration = 400 }
+		}
+		remove_advisor = inquisitor
+		remove_advisor = theologian
+	}
+	option = {
+		name = dg_piety.011.b #Offer our support during the trial
+		ai_chance = {
+			factor = 30
+			modifier = {
+				natural_scientist = 2
+				factor = 2
+			}
+			modifier = {
+				natural_scientist = 3
+				factor = 2
+			}
+		}
+		add_dip_power = -5
+		random_list = {
+			50 = {
+				kill_advisor = natural_scientist
+				if = {
+					limit = { piety = 0.60 }
+					add_prestige = -4
+					add_legitimacy = -4
+				}
+				if = {
+					limit = { NOT = { piety = 0.60 } }
+					add_prestige = -2
+					add_legitimacy = -2
+				}
+			}
+			50 = {
+				if = {
+					limit = { piety = 0.60 }
+					add_prestige = 2
+					add_legitimacy = 2
+				}
+				if = {
+					limit = { NOT = { piety = 0.60 } }
+					add_prestige = 1
+					add_legitimacy = 1
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_piety.011.c #Disavow all knowledge of his blasphemy
+		ai_chance = { factor = 60 }
+		if = {
+			limit = { piety = 0.60 }
+			add_prestige = -4
+		}
+		if = {
+			limit = { NOT = { piety = 0.60 } }
+			add_prestige = -2
+		}
+		kill_advisor = natural_scientist
+	}
+}
+
+country_event = { #12 - Heresy!
+	
+	id = dg_piety.012
+	title = dg_piety.012.t
+	desc = dg_piety.012.d
+	picture = catholic_heresy
+	
+	trigger = {
+		piety = 0.20
+		religious_unity = 0.90
+		NOT = { advisor = theologian }
+		NOT = { advisor = inquisitor }
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 83
+		
+		modifier = {
+			patriarch_authority = 0.60
+			factor = 1.4
+		}
+		modifier = {
+			patriarch_authority = 0.80
+			factor = 1.4
+		}
+		modifier = {
+			patriarch_authority = 1.00
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { patriarch_authority = 0.40 }
+			factor = 0.5
+		}
+		modifier = {
+			NOT = { patriarch_authority = 0.20 }
+			factor = 0.5
+		}
+		modifier = {
+			piety = 0.60
+			factor = 0.7
+		}
+	}
+	
+	immediate = {
+		if = {
+			limit = { NOT = { any_owned_province = { has_province_flag = event_target } } }
+			random_owned_province = {
+				limit = {
+					has_owner_religion = yes
+					NOT = { check_variable = { which = heretics value = 8 } }
+				}
+				hidden_effect = { set_province_flag = event_target }
+				remove_province_modifier = heretic_minority_6
+				remove_province_modifier = heretic_minority_4
+				remove_province_modifier = heretic_minority_2
+				add_province_modifier = { name = heretic_minority_8 duration = -1 }
+				hidden_effect = {
+					change_variable = { which = heretics value = 8 }
+					change_variable = { which = province_religion value = -8 }
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = dg_piety.012.a #Root it out by force
+		trigger = { NOT = { has_country_flag = religious_turmoil_happening } }
+		ai_chance = { factor = 30 }
+		add_mil_power = -10
+		if = {
+			limit = {
+				piety = -0.20
+				NOT = { piety = 0.20 }
+			}
+			add_country_modifier = { name = religious_intolerance duration = 400 }
+		}
+		if = {
+			limit = {
+				piety = 0.20
+				NOT = { piety = 0.60 }
+			}
+			add_country_modifier = { name = religious_intolerance duration = 800 }
+		}
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_intolerance duration = 1600 }
+		}
+		set_country_flag = religious_turmoil_heretics
+		set_country_flag = religious_turmoil_happening
+		every_owned_province = {
+			limit = { has_province_flag = event_target }
+			clr_province_flag = event_target
+			add_province_modifier = { name = expulsion_of_heretics duration = 1500 }
+		}
+	}
+	option = {
+		name = dg_piety.012.b #Send missionaries to show them the error of their ways
+		trigger = { num_of_missionaries = 1 }
+		ai_chance = {
+			factor = 60
+			modifier = {
+				any_owned_province = { has_construction = missionary }
+				factor = 0.5
+			}
+			modifier = {
+				any_owned_province = { has_province_modifier = minority_missionary }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 0.80 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 0.40 }
+				factor = 0.7
+			}
+		}
+		if = {
+			limit = { NOT = { any_owned_province = { has_province_modifier = minority_missionary } } }
+			add_dip_power = -5
+			add_treasury = -5
+		}
+		if = {
+			limit = { any_owned_province = { has_province_modifier = minority_missionary } }
+			add_dip_power = -10
+			add_treasury = -10
+		}
+		every_owned_province = {
+			limit = { has_province_flag = event_target }
+			clr_province_flag = event_target
+			set_province_flag = anti_heretic_missionary
+			add_province_modifier = { name = minority_missionary duration = 2000 }
+		}
+	}
+	option = {
+		name = dg_piety.012.c #Leave them alone
+		ai_chance = {
+			factor = 10
+			modifier = {
+				NOT = { num_of_cities = 2 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { num_of_cities = 4 }
+				factor = 0.7
+			}
+		}
+		if = {
+			limit = { piety = 0.60 }
+			add_prestige = -4
+			add_legitimacy = -2
+			add_country_modifier = { name = religious_controversy duration = 800 }
+		}
+		if = {
+			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+			add_prestige = -3
+			add_legitimacy = -1.5
+			add_country_modifier = { name = religious_controversy duration = 600 }
+		}
+		if = {
+			limit = { piety = -0.20 NOT = { piety = 0.20 } }
+			add_prestige = -2
+			add_legitimacy = -1
+			add_country_modifier = { name = religious_controversy duration = 400 }
+		}
+		if = {
+			limit = { piety = -0.60 NOT = { piety = -0.20 } }
+			add_prestige = -1
+			add_legitimacy = -0.5
+			add_country_modifier = { name = religious_controversy duration = 200 }
+		}
+		random_owned_province = {
+			limit = { has_province_flag = event_target }
+			hidden_effect = {
+				set_variable = { which = added_unrest value = -5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+			hidden_effect = { clr_province_flag = event_target }
+		}
+	}
+}
+
+country_event = { #Scientist Priest
+	
+	id = dg_piety.013
+	title = dg_piety.013.t
+	desc = dg_piety.013.d
+	picture = all_cleric_scientist
+	
+	trigger = {
+		advisor = theologian
+		piety = 0.20
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 83
+		
+		modifier = {
+			patriarch_authority = 0.60
+			factor = 0.7
+		}
+		modifier = {
+			patriarch_authority = 0.80
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { patriarch_authority = 0.40 }
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { patriarch_authority = 0.20 }
+			factor = 1.4
+		}
+	}
+	
+	option = {
+		name = dg_piety.013.a #Reward him for his discoveries
+		ai_chance = { factor = 80 }
+		if = {
+			limit = { NOT = { monthly_income = 20 } }
+			add_treasury = -5
+		}
+		if = {
+			limit = {
+				monthly_income = 20
+				NOT = { monthly_income = 400 }
+			}
+			add_years_of_income = -0.02
+		}
+		if = {
+			limit = { monthly_income = 400 }
+			add_treasury = -100
+		}
+		random_list = {
+			60 = { add_adm_power = 60 }
+			30 = { add_dip_power = 40 }
+			10 = { add_mil_power = 20 }
+		}
+	}
+	option = {
+		name = dg_piety.013.b #Criticize him for his distraction
+		ai_chance = { factor = 20 }
+		remove_advisor = theologian
+		add_country_modifier = { name = theology duration = 800 }
+	}
+}
+
+country_event = { #16 - Good Omens
+	
+	id = dg_piety.016
+	title = dg_piety.016.t
+	desc = dg_piety.016.d
+	picture = all_news
+	
+	trigger = {
+		OR = {
+			piety = 0.20
+			has_country_flag = augury
+		}
+		NOT = { has_country_flag = omens_read }
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 83
+		
+		modifier = {
+			piety = 0.60
+			factor = 0.5
+		}
+	}
+	
+	immediate = {
+		hidden_effect = { set_country_flag = omens_read } #removed upon new ruler
+		clr_country_flag = augury
+		add_piety = 0.10
+	}
+	
+	option = {
+		name = dg_piety.016.a #Prosperity is around the corner
+		trigger = { NOT = { stability = 2 } }
+		ai_chance = {
+			factor = 25
+			modifier = {
+				NOT = { stability = 1 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { stability = 0 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { stability = -1 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { stability = -2 }
+				factor = 1.4
+			}
+		}
+		random = { chance = 30 add_stability_1 = yes }
+	}
+	
+	option = {
+		name = dg_piety.016.b #Our cause is just!
+		trigger = { is_at_war = yes }
+		ai_chance = {
+			factor = 25
+			modifier = {
+				war_exhaustion = 4
+				factor = 1.4
+			}
+			modifier = {
+				war_exhaustion = 8
+				factor = 1.4
+			}
+			modifier = {
+				war_exhaustion = 12
+				factor = 1.4
+			}
+			modifier = {
+				war_exhaustion = 16
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { manpower_percentage = 0.80 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { manpower_percentage = 0.60 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { manpower_percentage = 0.40 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { manpower_percentage = 0.20 }
+				factor = 1.4
+			}
+		}
+		add_country_modifier = { name = morale_boost duration = 400 }
+	}
+	
+	option = {
+		name = dg_piety.016.c #I am the rightful $MONARCHTITLE$
+		trigger = {
+			OR = {
+				AND = {
+					government = monarchy
+					NOT = { legitimacy = 80 }
+				}
+				AND = {
+					government = republic
+					NOT = { republican_tradition = 80 }
+				}
+			}
+		}
+		ai_chance = {
+			factor = 25
+			modifier = {
+				NOT = { legitimacy = 60 }
+				factor = 2
+			}
+			modifier = {
+				NOT = { legitimacy = 40 }
+				factor = 2
+			}
+			modifier = {
+				NOT = { legitimacy = 20 }
+				factor = 2
+			}
+		}
+		add_legitimacy = 10
+		add_republican_tradition = 10
+		add_devotion = 10
+		add_horde_unity = 10
+	}
+	
+	option = {
+		name = dg_piety.016.e #Our faith is strong
+		ai_chance = {
+			factor = 25
+			modifier = {
+				NOT = { religious_unity = 1.00 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { religious_unity = 0.80 }
+				factor = 2
+			}
+			modifier = {
+				NOT = { religious_unity = 0.60 }
+				factor = 2
+			}
+			modifier = {
+				NOT = { religious_unity = 0.40 }
+				factor = 2
+			}
+			modifier = {
+				NOT = { religious_unity = 0.20 }
+				factor = 2
+			}
+		}
+
+		add_country_modifier = { name = missionary_zeal duration = 600 }
+	}
+}
+
+country_event = { #17 - Bad Omens
+	
+	id = dg_piety.017
+	title = dg_piety.017.t
+	desc = dg_piety.017.d
+	picture = all_news
+	
+	trigger = {
+		OR = {
+			piety = 0.20
+			has_country_flag = augury
+		}
+		NOT = { has_country_flag = omens_read }
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 125
+		
+		modifier = {
+			piety = 0.60
+			factor = 0.5
+		}
+	}
+	
+	immediate = {
+		hidden_effect = { set_country_flag = omens_read } #removed upon new ruler
+		clr_country_flag = augury
+		add_piety = 0.10
+	}
+	
+	option = {
+		name = dg_piety.017.a #Repent our sins
+		if = {
+			limit = { DIP = 6 }
+			random = { chance = 10 subtract_stability_1 = yes }
+			if = {
+				limit = { is_at_war = yes }
+				add_country_modifier = { name = decreased_morale duration = 100 }
+			}
+			if = {
+				limit = { is_at_war = no }
+				add_country_modifier = { name = religious_controversy duration = 100 }
+			}
+		}
+		if = {
+			limit = { DIP = 5 NOT = { DIP = 6 } }
+			random = { chance = 20 subtract_stability_1 = yes }
+			if = {
+				limit = { is_at_war = yes }
+				add_country_modifier = { name = decreased_morale duration = 200 }
+			}
+			if = {
+				limit = { is_at_war = no }
+				add_country_modifier = { name = religious_controversy duration = 200 }
+			}
+		}
+		if = {
+			limit = { DIP = 4 NOT = { DIP = 5 } }
+			random = { chance = 30 subtract_stability_1 = yes }
+			if = {
+				limit = { is_at_war = yes }
+				add_country_modifier = { name = decreased_morale duration = 300 }
+			}
+			if = {
+				limit = { is_at_war = no }
+				add_country_modifier = { name = religious_controversy duration = 300 }
+			}
+		}
+		if = {
+			limit = { DIP = 3 NOT = { DIP = 4 } }
+			random = { chance = 40 subtract_stability_1 = yes }
+			if = {
+				limit = { is_at_war = yes }
+				add_country_modifier = { name = decreased_morale duration = 400 }
+			}
+			if = {
+				limit = { is_at_war = no }
+				add_country_modifier = { name = religious_controversy duration = 400 }
+			}
+		}
+		if = {
+			limit = { DIP = 2 NOT = { DIP = 3 } }
+			random = { chance = 50 subtract_stability_1 = yes }
+			if = {
+				limit = { is_at_war = yes }
+				add_country_modifier = { name = decreased_morale duration = 500 }
+			}
+			if = {
+				limit = { is_at_war = no }
+				add_country_modifier = { name = religious_controversy duration = 500 }
+			}
+		}
+		if = {
+			limit = { NOT = { DIP = 2 } }
+			random = { chance = 60 subtract_stability_1 = yes }
+			if = {
+				limit = { is_at_war = yes }
+				add_country_modifier = { name = decreased_morale duration = 600 }
+			}
+			if = {
+				limit = { is_at_war = no }
+				add_country_modifier = { name = religious_controversy duration = 600 }
+			}
+		}
+	}
+	option = {
+		name = dg_piety.017.b #Condemn it as blasphemy
+		add_dip_power = -5
+		if = {
+			limit = { DIP = 6 }
+			random = { chance = 5 subtract_stability_1 = yes }
+			if = {
+				limit = { piety = 0.60 }
+				add_country_modifier = { name = religious_scandal_country_strong duration = 100 }
+			}
+			if = {
+				limit = { NOT = { piety = 0.60 } }
+				add_country_modifier = { name = religious_scandal_country duration = 100 }
+			}
+		}
+		if = {
+			limit = { DIP = 5 NOT = { DIP = 6 } }
+			random = { chance = 10 subtract_stability_1 = yes }
+			if = {
+				limit = { piety = 0.60 }
+				add_country_modifier = { name = religious_scandal_country_strong duration = 200 }
+			}
+			if = {
+				limit = { NOT = { piety = 0.60 } }
+				add_country_modifier = { name = religious_scandal_country duration = 200 }
+			}
+		}
+		if = {
+			limit = { DIP = 4 NOT = { DIP = 5 } }
+			random = { chance = 15 subtract_stability_1 = yes }
+			if = {
+				limit = { piety = 0.60 }
+				add_country_modifier = { name = religious_scandal_country_strong duration = 300 }
+			}
+			if = {
+				limit = { NOT = { piety = 0.60 } }
+				add_country_modifier = { name = religious_scandal_country duration = 300 }
+			}
+		}
+		if = {
+			limit = { DIP = 3 NOT = { DIP = 4 } }
+			random = { chance = 20 subtract_stability_1 = yes }
+			if = {
+				limit = { piety = 0.60 }
+				add_country_modifier = { name = religious_scandal_country_strong duration = 400 }
+			}
+			if = {
+				limit = { NOT = { piety = 0.60 } }
+				add_country_modifier = { name = religious_scandal_country duration = 400 }
+			}
+		}
+		if = {
+			limit = { DIP = 2 NOT = { DIP = 3 } }
+			random = { chance = 25 subtract_stability_1 = yes }
+			if = {
+				limit = { piety = 0.60 }
+				add_country_modifier = { name = religious_scandal_country_strong duration = 500 }
+			}
+			if = {
+				limit = { NOT = { piety = 0.60 } }
+				add_country_modifier = { name = religious_scandal_country duration = 500 }
+			}
+		}
+		if = {
+			limit = { NOT = { DIP = 2 } }
+			random = { chance = 30 subtract_stability_1 = yes }
+			if = {
+				limit = { piety = 0.60 }
+				add_country_modifier = { name = religious_scandal_country_strong duration = 600 }
+			}
+			if = {
+				limit = { NOT = { piety = 0.60 } }
+				add_country_modifier = { name = religious_scandal_country duration = 600 }
+			}
+		}
+	}
+}
+
+##################
+# Moderate Piety # 40s
+##################
+
+country_event = { #Soul Searching
+	
+	id = dg_piety.041
+	title = dg_piety.041.t
+	desc = dg_piety.041.d
+	picture = catholic_fiery_preacher
+	
+	trigger = {
+		government = republic
+		NOT = { has_country_flag = savonarola }
+		tech_1550_trigger = no
+		#Bad times
+		OR = {
+			NOT = { prestige = -25 }
+			is_bankrupt = yes
+			NOT = { stability = -1 }
+			any_neighbor_country = {
+				is_rival = ROOT
+				truce_with = ROOT
+				any_owned_province = { is_core = ROOT }
+			}
+			AND = {
+				NOT = { war_score = -10 }
+				war_exhaustion = 5
+			}
+		}
+		#Religious influence
+		OR = {
+			advisor = theologian
+			advisor = inquisitor
+			any_ally = { government = theocracy }
+			any_owned_province = { has_province_modifier = dominican_order } #Catholic
+			any_owned_province = { has_province_modifier = jesuit_order } #Catholic
+			has_country_modifier = taborite #Calixtine
+			any_owned_province = { has_province_modifier = witch_hunt } #Christian
+			any_owned_province = { has_province_modifier = anchorite_hermitage } #Orthodox
+			any_owned_province = { has_province_modifier = reform_sufis } #Muslim
+			any_owned_province = { has_province_modifier = charismatic_sufis } #Muslim
+		}
+		piety = -0.20
+		is_tribal = no
+		is_colonial_nation = no
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 8
+		
+		modifier = {
+			piety = 0.60
+			factor = 0.7
+		}
+		modifier = {
+			advisor = inquisitor
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { republican_tradition = 50 }
+			factor = 0.7
+		}
+	}
+	
+	immediate = { set_country_flag = savonarola }
+	
+	option = {
+		name = dg_piety.041.a #He has the answers
+		ai_chance = {
+			factor = 50
+			modifier = {
+				NOT = { religious_unity = 0.80 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 0.20 }
+				factor = 0
+			}
+		}
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_intolerance duration = 2000 }
+		}
+		if = {
+			limit = { NOT = { piety = 0.60 } }
+			add_country_modifier = { name = religious_intolerance duration = 1000 }
+		}
+		if = {
+			limit = {
+				OR = {
+					AND = {
+						NOT = { republican_tradition = 60 }
+						advisor = inquisitor
+					}
+					AND = {
+						NOT = { republican_tradition = 40 }
+						advisor = theologian
+					}
+					NOT = { republican_tradition = 20 }
+				}
+			}
+			hidden_effect = { set_country_flag = populist_theocrat } #Will remain theocracy only as long as has inquisitor, theologian or religious intolerance modifier
+			add_piety = 0.40
+			hidden_effect = {
+				if = {
+					limit = { merchant_trigger = yes }
+					set_country_flag = was_merchant_republic
+				}
+				if = {
+					limit = { nobilisation_trigger = yes }
+					set_country_flag = was_noble_republic
+				}
+				if = {
+					limit = { adm_republic_trigger = yes }
+					set_country_flag = was_administrative_republic
+				}
+				if = {
+					limit = { dictator_trigger = yes }
+					set_country_flag = was_republican_dictatorship
+				}
+				if = {
+					limit = { constitutionalr_trigger = yes }
+					set_country_flag = constitutional_republic
+				}
+				if = {
+					limit = { bureaucracy_trigger = yes }
+					set_country_flag = was_bureaucratic_despotism
+				}
+				if = {
+					limit = { revolution_trigger = yes }
+					set_country_flag = was_revolutionary_republic
+				}
+				if = {
+					limit = {  free_city_trigger = yes }
+					set_country_flag = was_free_city
+				}
+				if = {
+					limit = { merchant_trigger = yes }
+					set_country_flag = was_merchant_republic
+				}
+				if = {
+					limit = { oligarchy_trigger = yes }
+					set_country_flag = was_oligarchic_republic
+				}
+				if = {
+					limit = { OR = { parliamentarisation_trigger = yes crown_republic_trigger = yes } }
+					set_country_flag = was_crowned_republic
+				}
+			}
+			custom_tooltip = temporary_theocracy
+			theocratification_effect = yes
+		}
+		if = {
+			limit = {
+				NOT = { advisor = inquisitor }
+				NOT = { advisor = theologian }
+			}
+			define_advisor = { type = inquisitor discount = yes }
+		}
+	}
+	option = {
+		name = dg_piety.041.b #Look for other answers
+		ai_chance = { factor = 50 }
+		add_republican_tradition = -0.10
+		if = {
+			limit = { capital_scope = { controlled_by = owner } }
+			capital_scope = {
+				add_province_modifier = {
+					name = "fanatics_organizing"
+					duration = 1825
+				}
+				hidden_effect = {
+					set_variable = { which = added_unrest value = 5 }
+					add_base_unrest = yes
+				}
+				custom_tooltip = added_unrest_5
+			}
+		}
+		if = {
+			limit = { capital_scope = { NOT = { controlled_by = owner } } }
+			random_owned_province = {
+				limit = {
+					controlled_by = owner
+					is_city = yes
+					OR = {
+						culture_group = ROOT
+						has_owner_accepted_culture = yes
+					}
+				}
+				add_province_modifier = {
+					name = "fanatics_organizing"
+					duration = 1825
+				}
+				hidden_effect = {
+					set_variable = { which = added_unrest value = 5 }
+					add_base_unrest = yes
+				}
+				custom_tooltip = added_unrest_5
+			}
+		}
+	}
+}
+
+country_event = { #The Prophet's Downfall
+	
+	id = dg_piety.042
+	title = dg_piety.042.t
+	desc = dg_piety.042.d
+	picture = catholic_heretic_execution
+	
+	trigger = {
+		has_country_flag = populist_theocrat
+		NOT = { has_country_modifier = religious_intolerance }
+		NOT = { advisor = theologian }
+		NOT = { advisor = inquisitor }
+	}
+	
+	mean_time_to_happen = { months = 3 }
+	
+	immediate = { hidden_effect = { clr_country_flag = populist_theocrat } }
+	
+	option = {
+		name = dg_piety.042.a #We went too far
+		ai_chance = { factor = 80 }
+		if = {
+			limit = { government = theocracy }
+			if = {
+				limit = { has_country_flag = was_merchant_republic }
+				merchantisation_effect = yes
+				clr_country_flag = was_merchant_republic
+			}
+			else_if = {
+				limit = { has_country_flag = was_noble_republic }
+				nobilisation_effect = yes
+				clr_country_flag = was_noble_republic
+			}
+			else_if = {
+				limit = { has_country_flag = was_administrative_republic }
+				adm_republic_effect = yes
+				clr_country_flag = was_administrative_republic
+			}
+			else_if = {
+				limit = { has_country_flag = was_republican_dictatorship }
+				dictatorisation_effect = yes
+				clr_country_flag = was_republican_dictatorship
+			}
+			else_if = {
+				limit = { has_country_flag = was_constitutional_republic }
+				constitutionalr_effect = yes
+				clr_country_flag = was_constitutional_republic
+			}
+			else_if = {
+				limit = { has_country_flag = was_bureaucratic_despotism }
+				bureaucracy_effect = yes
+				clr_country_flag = was_bureaucratic_despotism
+			}
+			else_if = {
+				limit = { has_country_flag = was_revolutionary_republic }
+				revolution_effect = yes
+				clr_country_flag = was_revolutionary_republic
+			}
+			else_if = {
+				limit = { has_country_flag = was_oligarchic_republic }
+				oligarchisation_effect = yes
+				clr_country_flag = was_oligarchic_republic
+			}
+			else_if = {
+				limit = { has_country_flag = was_free_city }
+				free_city_effect = yes
+				clr_country_flag = was_free_city
+			}
+			else_if = {
+				limit = { has_country_flag = was_crowned_republic }
+				crown_republic_effect = yes
+				clr_country_flag = was_crowned_republic
+			}
+		}
+		add_republican_tradition = -0.10
+	}
+	option = {
+		name = dg_piety.042.b #We did not go far enough
+		ai_chance = {
+			factor = 20
+			modifier = {
+				NOT = { religious_unity = 0.80 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 0.20 }
+				factor = 0
+			}
+		}
+		add_republican_tradition = -0.20
+		add_country_modifier = { name = religious_intolerance duration = 2000 }
+	}
+}
+
+province_event = {
+	
+	id = dg_piety.043
+	title = dg_piety.043.t
+	desc = dg_piety.043.d
+	picture = all_lightning
+	
+	trigger = {
+		temple_trigger = yes
+		has_owner_religion = yes
+		NOT = { has_province_modifier = religious_scandal_province }
+		NOT = { any_neighbor_province = { has_province_modifier = religious_scandal_province } }
+		owner = { piety = -0.60 }
+		NOT = { is_year = 1750 } #Lightning rods
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 833
+		
+		modifier = {
+			owner = { has_country_flag = lightning_is_natural }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { NOT = { num_of_cities = 3 } }
+			factor = 0.5
+		}
+		modifier = {
+			owner = { num_of_cities = 5 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 10 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 20 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 40 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 80 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 160 }
+			factor = 1.6
+		}
+	}
+	
+	immediate = {
+		if = {
+			limit = { owner = { religion_group = christian } }
+			custom_tooltip = dg_piety.043.d_christian
+		}
+		if = {
+			limit = { owner = { religion_group = muslim } }
+			custom_tooltip = dg_piety.043.d_muslim
+		}
+		if = {
+			limit = { owner = { religion_group = jewish_group } }
+			custom_tooltip = dg_piety.043.d_judaic
+		}
+		if = {
+			limit = {
+				owner = {
+					NOT = { religion_group = christian }
+					NOT = { religion_group = muslim }
+					NOT = { religion_group = jewish_group }
+				}
+			}
+			custom_tooltip = dg_piety.043.d_pagan
+		}
+	}
+	
+	option = {
+		name = dg_piety.043.a #Remain quiet
+		ai_chance = { factor = 70 }
+		if = {
+			limit = { owner = { piety = 0.60 } }
+			add_province_modifier = { name = religious_scandal_province duration = 800 }
+		}
+		if = {
+			limit = { owner = { piety = 0.20 NOT = { piety = 0.60 } } }
+			add_province_modifier = { name = religious_scandal_province duration = 400 }
+		}
+		if = {
+			limit = { owner = { piety = -0.20 NOT = { piety = 0.20 } } }
+			add_province_modifier = { name = religious_scandal_province duration = 200 }
+		}
+		if = {
+			limit = { owner = { piety = -0.60 NOT = { piety = -0.20 } } }
+			add_province_modifier = { name = religious_scandal_province duration = 100 }
+		}
+	}
+	option = {
+		name = dg_piety.043.b #Calm their fears
+		ai_chance = {
+			factor = 30
+			modifier = {
+				owner = { piety = 0.60 }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { NOT = { piety = -0.20 } }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { NOT = { dip_power = 10 } }
+				factor = 0
+			}
+			modifier = {
+				owner = { NOT = { DIP = 2 } }
+				factor = 0.5
+			}
+			modifier = {
+				owner = { NOT = { DIP = 3 } }
+				factor = 0.5
+			}
+			modifier = {
+				owner = { DIP = 5 }
+				factor = 2
+			}
+			modifier = {
+				owner = { DIP = 6 }
+				factor = 2
+			}
+		}
+		owner = {
+			add_dip_power = -10
+			set_country_flag = lightning_is_natural
+		}
+	}
+}
+
+country_event = { #44 - [Alexander]'s Faith
+	
+	id = dg_piety.044
+	title = dg_piety.044.t
+	desc = dg_piety.044.d
+	picture = all_lightning # pending a better choice of picture by David
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		if = {
+			limit = { has_country_flag = ruler_piety_fanatical }
+			custom_tooltip = dg_piety.044.fanatical
+		}
+		if = {
+			limit = { has_country_flag = ruler_piety_pious }
+			custom_tooltip = dg_piety.044.pious
+		}
+		if = {
+			limit = { has_country_flag = ruler_piety_observant }
+			custom_tooltip = dg_piety.044.observant
+		}
+		if = {
+			limit = { has_country_flag = ruler_piety_cynical }
+			custom_tooltip = dg_piety.044.cynical
+		}
+		if = {
+			limit = { has_country_flag = ruler_piety_unbeliever }
+			custom_tooltip = dg_piety.044.unbeliever
+		}
+	}
+	
+	option = {
+		name = dg_piety.044.a
+		ai_chance = { factor = 90 }
+		if = {
+			limit = { has_country_flag = ruler_piety_fanatical }
+			add_piety = 0.20
+		}
+		if = {
+			limit = { has_country_flag = ruler_piety_pious }
+			add_piety = 0.10
+		}
+		if = {
+			limit = { has_country_flag = ruler_piety_observant }
+		}
+		if = {
+			limit = { has_country_flag = ruler_piety_cynical }
+			add_piety = -0.10
+		}
+		if = {
+			limit = { has_country_flag = ruler_piety_unbeliever }
+			add_piety = -0.20
+		}
+	}
+	option = {
+		name = dg_piety.044.b #Increase piety
+		trigger = { NOT = { has_country_flag = ruler_piety_fanatical } }
+		ai_chance = { factor = 5 }
+		add_adm_power = -10
+		if = {
+			limit = { has_country_flag = ruler_piety_pious }
+			clr_country_flag = ruler_piety_pious
+			set_country_flag = ruler_piety_fanatical
+			add_piety = 0.20
+		}
+		if = {
+			limit = { has_country_flag = ruler_piety_observant }
+			clr_country_flag = ruler_piety_observant
+			set_country_flag = ruler_piety_pious
+			add_piety = 0.10
+		}
+		if = {
+			limit = { has_country_flag = ruler_piety_cynical }
+			clr_country_flag = ruler_piety_cynical
+			set_country_flag = ruler_piety_observant
+		}
+		if = {
+			limit = { has_country_flag = ruler_piety_unbeliever }
+			clr_country_flag = ruler_piety_unbeliever
+			set_country_flag = ruler_piety_cynical
+			add_piety = -0.10
+		}
+	}
+	option = {
+		name = dg_piety.044.c #Decrease piety
+		trigger = { NOT = { has_country_flag = ruler_piety_unbeliever } }
+		ai_chance = { factor = 5 }
+		add_adm_power = -10
+		if = {
+			limit = { has_country_flag = ruler_piety_cynical }
+			clr_country_flag = ruler_piety_cynical
+			set_country_flag = ruler_piety_unbeliever
+			add_piety = -0.20
+		}
+		if = {
+			limit = { has_country_flag = ruler_piety_observant }
+			clr_country_flag = ruler_piety_observant
+			set_country_flag = ruler_piety_cynical
+			add_piety = -0.10
+		}
+		if = {
+			limit = { has_country_flag = ruler_piety_pious }
+			clr_country_flag = ruler_piety_pious
+			set_country_flag = ruler_piety_observant
+		}
+		if = {
+			limit = { has_country_flag = ruler_piety_fanatical }
+			clr_country_flag = ruler_piety_fanatical
+			set_country_flag = ruler_piety_pious
+			add_piety = 0.10
+		}
+	}
+}
+
+###################
+# Temple building # 50s
+###################
+
+country_event = { #51 - $MONARCH$'s great work
+	
+	id = dg_piety.051
+	title = dg_piety.051.t
+	desc = {
+		trigger = { NOT = { capital_scope = { check_variable = { which = great_temple value = 1 } } } }
+		desc = "dg_piety.051.da"
+	}
+	desc = {
+		trigger = { capital_scope = { check_variable = { which = great_temple value = 1 } } }
+		desc = "dg_piety.051.db"
+	}
+	picture = religion_temple_building
+	
+	trigger = {
+		any_owned_province = { has_province_modifier = great_temple_progress }
+		#NOT = { any_owned_province = { has_province_modifier = great_temple } }
+		#NOT = { any_owned_province = { has_province_modifier = great_cathedral } }
+		#NOT = { any_owned_province = { has_province_modifier = great_mosque } }
+		#NOT = { any_owned_province = { has_province_modifier = great_synagogue } }
+		#NOT = { any_owned_province = { has_building = great_temple } }
+		has_regency = no
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 16
+		
+		modifier = {
+			NOT = { treasury = 100 }
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { years_of_income = 0.40 }
+			factor = 1.4
+		}
+		modifier = {
+			years_of_income = 1
+			factor = 0.7
+		}
+		modifier = {
+			years_of_income = 2
+			factor = 0.7
+		}
+		modifier = {
+			num_of_loans = 1
+			factor = 1.4
+		}
+		modifier = {
+			num_of_loans = 2
+			factor = 1.4
+		}
+		modifier = {
+			is_at_war = yes
+			factor = 1.4
+		}
+		modifier = {
+			has_regency = yes
+			factor = 1.4
+		}
+		modifier = {
+			has_country_flag = great_temple_workers #Cleared on new ruler
+			factor = 2
+		}
+		modifier = {
+			advisor = artist
+			NOT = { has_country_flag = great_temple_artist }
+			factor = 0.5
+		}
+		modifier = {
+			advisor = theologian
+			NOT = { has_country_flag = great_temple_theologian }
+			factor = 0.5
+		}
+	}
+	
+	immediate = {
+		#First time only - makes sure the proper province is being selected (can be removed with next full version)
+		if = {
+			limit = {
+				NOT = { any_owned_province = { has_province_modifier = great_temple_progress } }
+				capital_scope = { check_variable = { which = great_temple value = 1 } }
+			}
+			random_owned_province = {
+				limit = { is_capital = yes check_variable = { which = great_temple value = 1 } }
+				add_province_modifier = { name = great_temple_progress duration = -1 }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { any_owned_province = { has_province_modifier = great_temple_progress } }
+				NOT = { capital_scope = { check_variable = { which = great_temple value = 1 } } }
+				any_owned_province = {
+					check_variable = { which = great_temple value = 1 }
+					has_owner_culture = yes
+					has_owner_religion = yes
+					is_overseas = no #Territory
+				}
+			}
+			random_owned_province = {
+				limit = {
+					check_variable = { which = great_temple value = 1 }
+					culture_group = ROOT
+					religion_group = ROOT
+					is_overseas = no #Territory
+				}
+				add_province_modifier = { name = great_temple_progress duration = -1 }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { any_owned_province = { has_province_modifier = great_temple_progress } }
+				NOT = { capital_scope = { check_variable = { which = great_temple value = 1 } } }
+				NOT = { any_owned_province = { check_variable = { which = great_temple value = 1 } has_owner_culture = yes has_owner_religion = yes is_overseas = no } }
+				any_owned_province = {
+					check_variable = { which = great_temple value = 1 }
+					culture_group = ROOT
+					religion_group = ROOT
+					is_overseas = no #Territory
+				}
+			}
+			random_owned_province = {
+				limit = {
+					check_variable = { which = great_temple value = 1 }
+					culture_group = ROOT
+					religion_group = ROOT
+					is_overseas = no #Territory
+				}
+				add_province_modifier = { name = great_temple_progress duration = -1 }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { any_owned_province = { has_province_modifier = great_temple_progress } }
+				NOT = { capital_scope = { check_variable = { which = great_temple value = 1 } } }
+				NOT = { any_owned_province = { check_variable = { which = great_temple value = 1 } has_owner_culture = yes has_owner_religion = yes is_overseas = no } }
+				NOT = { any_owned_province = { check_variable = { which = great_temple value = 1 } culture_group = ROOT religion_group = ROOT is_overseas = no } }
+				any_owned_province = {
+					check_variable = { which = great_temple value = 1 }
+					OR = {
+						culture_group = ROOT
+						religion_group = ROOT
+					}
+				}
+			}
+			random_owned_province = {
+				limit = {
+					check_variable = { which = great_temple value = 1 }
+					OR = {
+						culture_group = ROOT
+						religion_group = ROOT
+					}
+				}
+				add_province_modifier = { name = great_temple_progress duration = -1 }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { any_owned_province = { has_province_modifier = great_temple_progress } }
+				NOT = { capital_scope = { check_variable = { which = great_temple value = 1 } } }
+				NOT = { any_owned_province = { check_variable = { which = great_temple value = 1 } has_owner_culture = yes has_owner_religion = yes is_overseas = no } }
+				NOT = { any_owned_province = { check_variable = { which = great_temple value = 1 } culture_group = ROOT religion_group = ROOT is_overseas = no } }
+				NOT = { any_owned_province = { check_variable = { which = great_temple value = 1 } OR = { 		culture_group = ROOT religion_group = ROOT } } }
+			}
+			capital_scope = {
+				add_province_modifier = { name = great_temple_progress duration = -1 }
+			}
+		}
+	}
+	
+	option = {
+		name = dg_piety.051.a #Continue this great work
+		ai_chance = {
+			factor = 25
+			modifier = {
+				is_bankrupt = yes
+				factor = 0.25
+			}
+			modifier = {
+				num_of_loans = 1
+				factor = 0.5
+			}
+			modifier = {
+				num_of_loans = 2
+				factor = 0.5
+			}
+			modifier = {
+				NOT = { treasury = 100 }
+				factor = 0.5
+			}
+			modifier = {
+				NOT = { years_of_income = 0.40 }
+				factor = 0.5
+			}
+			modifier = {
+				advisor = artist
+				NOT = { has_country_flag = great_temple_artist }
+				factor = 0.5
+			}
+			modifier = {
+				advisor = theologian
+				NOT = { has_country_flag = great_temple_theologian }
+				factor = 0.5
+			}
+			modifier = {
+				NOT = { ADM = 3 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { ADM = 2 }
+				factor = 0.7
+			}
+			modifier = {
+				ADM = 5
+				factor = 1.4
+			}
+			modifier = {
+				ADM = 6
+				factor = 1.4
+			}
+		}
+		if = {
+			limit = { NOT = { monthly_income = 40 } }
+			add_treasury = -100
+		}
+		if = {
+			limit = {
+				monthly_income = 40
+				NOT = { monthly_income = 100 }
+			}
+			add_years_of_income = -0.40
+		}
+		if = {
+			limit = { monthly_income = 100 }
+			add_treasury = -500
+		}
+		set_country_flag = great_temple_workers
+		if = {
+			limit = {
+				NOT = { ADM = 2 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 9 }
+				}
+			}
+			custom_tooltip = great_temple_9
+		}
+		if = {
+			limit = {
+				ADM = 2
+				NOT = { ADM = 3 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 12 }
+				}
+			}
+			custom_tooltip = great_temple_12
+		}
+		if = {
+			limit = {
+				ADM = 3
+				NOT = { ADM = 4 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 15 }
+				}
+			}
+			custom_tooltip = great_temple_15
+		}
+		if = {
+			limit = {
+				ADM = 4
+				NOT = { ADM = 5 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 18 }
+				}
+			}
+			custom_tooltip = great_temple_18
+		}
+		if = {
+			limit = {
+				ADM = 5
+				NOT = { ADM = 6 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 21 }
+				}
+			}
+			custom_tooltip = great_temple_21
+		}
+		if = {
+			limit = { ADM = 6 }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 24 }
+				}
+			}
+			custom_tooltip = great_temple_24
+		}
+		if = {
+			limit = {
+				any_owned_province = {
+					has_province_modifier = great_temple_progress
+					check_variable = { which = great_temple value = 100 }
+				}
+			}
+			random_owned_province = {
+				limit = { has_province_modifier = great_temple_progress }
+				province_event = { id = dg_piety.052 }
+			}
+		}
+	}
+	option = {
+		name = dg_piety.051.h #Focus entirely on the project
+		ai_chance = {
+			factor = 5
+			modifier = {
+				NOT = { adm_power = 25 }
+				factor = 0.5
+			}
+			modifier = {
+				is_bankrupt = yes
+				factor = 0.25
+			}
+			modifier = {
+				num_of_loans = 1
+				factor = 0.5
+			}
+			modifier = {
+				num_of_loans = 2
+				factor = 0.5
+			}
+			modifier = {
+				NOT = { treasury = 200 }
+				factor = 0
+			}
+			modifier = {
+				NOT = { years_of_income = 0.80 }
+				factor = 0
+			}
+			modifier = {
+				advisor = artist
+				NOT = { has_country_flag = great_temple_artist }
+				factor = 0.5
+			}
+			modifier = {
+				advisor = theologian
+				NOT = { has_country_flag = great_temple_theologian }
+				factor = 0.5
+			}
+			modifier = {
+				NOT = { ADM = 3 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { ADM = 2 }
+				factor = 0.7
+			}
+			modifier = {
+				ADM = 5
+				factor = 1.4
+			}
+			modifier = {
+				ADM = 6
+				factor = 1.4
+			}
+		}
+		if = {
+			limit = { NOT = { monthly_income = 40 } }
+			add_treasury = -200
+		}
+		if = {
+			limit = {
+				monthly_income = 40
+				NOT = { monthly_income = 100 }
+			}
+			add_years_of_income = -0.80
+		}
+		if = {
+			limit = { monthly_income = 100 }
+			add_treasury = -1000
+		}
+		add_adm_power = -25
+		set_country_flag = great_temple_workers
+		if = {
+			limit = {
+				NOT = { ADM = 2 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 18 }
+				}
+			}
+			custom_tooltip = great_temple_18
+		}
+		if = {
+			limit = {
+				ADM = 2
+				NOT = { ADM = 3 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 24 }
+				}
+			}
+			custom_tooltip = great_temple_24
+		}
+		if = {
+			limit = {
+				ADM = 3
+				NOT = { ADM = 4 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 30 }
+				}
+			}
+			custom_tooltip = great_temple_30
+		}
+		if = {
+			limit = {
+				ADM = 4
+				NOT = { ADM = 5 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 36 }
+				}
+			}
+			custom_tooltip = great_temple_36
+		}
+		if = {
+			limit = {
+				ADM = 5
+				NOT = { ADM = 6 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 42 }
+				}
+			}
+			custom_tooltip = great_temple_42
+		}
+		if = {
+			limit = { ADM = 6 }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 48 }
+				}
+			}
+			custom_tooltip = great_temple_48
+		}
+		if = {
+			limit = {
+				any_owned_province = {
+					has_province_modifier = great_temple_progress
+					check_variable = { which = great_temple value = 100 }
+				}
+			}
+			random_owned_province = {
+				limit = { has_province_modifier = great_temple_progress }
+				province_event = { id = dg_piety.052 }
+			}
+		}
+	}
+	option = {
+		name = dg_piety.051.b #Commission $ARTIST$ to decorate it
+		trigger = {
+			advisor = artist
+			NOT = { has_country_flag = great_temple_artist }
+		}
+		ai_chance = {
+			factor = 30
+			modifier = {
+				artist = 2
+				factor = 1.4
+			}
+			modifier = {
+				artist = 3
+				factor = 1.4
+			}
+			modifier = {
+				ADM = 4
+				factor = 0.7
+			}
+			modifier = {
+				ADM = 6
+				factor = 0.7
+			}
+		}
+		if = {
+			limit = { NOT = { monthly_income = 40 } }
+			add_treasury = -25
+		}
+		if = {
+			limit = {
+				monthly_income = 40
+				NOT = { monthly_income = 100 }
+			}
+			add_years_of_income = -0.10
+		}
+		if = {
+			limit = { monthly_income = 100 }
+			add_treasury = -125
+		}
+		set_country_flag = great_temple_artist
+		if = {
+			limit = {
+				artist = 1
+				NOT = { artist = 2 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 15 }
+				}
+			}
+			custom_tooltip = great_temple_15
+		}
+		if = {
+			limit = {
+				artist = 2
+				NOT = { artist = 3 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 30 }
+				}
+			}
+			custom_tooltip = great_temple_30
+		}
+		if = {
+			limit = { artist = 3 }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 36 }
+				}
+			}
+			custom_tooltip = great_temple_45
+		}
+		if = {
+			limit = {
+				any_owned_province = {
+					has_province_modifier = great_temple_progress
+					check_variable = { which = great_temple value = 100 }
+				}
+			}
+			random_owned_province = {
+				limit = { has_province_modifier = great_temple_progress }
+				province_event = { id = dg_piety.052 }
+			}
+		}
+	}
+	option = {
+		name = dg_piety.051.c #Instruct $THEOLOGIAN$ to design it
+		trigger = {
+			advisor = theologian
+			NOT = { has_country_flag = great_temple_theologian }
+		}
+		ai_chance = {
+			factor = 30
+			modifier = {
+				theologian = 2
+				factor = 1.4
+			}
+			modifier = {
+				theologian = 3
+				factor = 1.4
+			}
+			modifier = {
+				ADM = 4
+				factor = 0.7
+			}
+			modifier = {
+				ADM = 6
+				factor = 0.7
+			}
+		}
+		if = {
+			limit = { NOT = { monthly_income = 40 } }
+			add_treasury = -25
+		}
+		if = {
+			limit = {
+				monthly_income = 40
+				NOT = { monthly_income = 100 }
+			}
+			add_years_of_income = -0.10
+		}
+		if = {
+			limit = { monthly_income = 100 }
+			add_treasury = -125
+		}
+		set_country_flag = great_temple_theologian
+		if = {
+			limit = {
+				theologian = 1
+				NOT = { theologian = 2 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 15 }
+				}
+			}
+			custom_tooltip = great_temple_15
+		}
+		if = {
+			limit = {
+				theologian = 2
+				NOT = { theologian = 3 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 30 }
+				}
+			}
+			custom_tooltip = great_temple_30
+		}
+		if = {
+			limit = { theologian = 3 }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 45 }
+				}
+			}
+			custom_tooltip = great_temple_45
+		}
+		if = {
+			limit = {
+				any_owned_province = {
+					has_province_modifier = great_temple_progress
+					check_variable = { which = great_temple value = 100 }
+				}
+			}
+			random_owned_province = {
+				limit = { has_province_modifier = great_temple_progress }
+				province_event = { id = dg_piety.052 }
+			}
+		}
+	}
+	option = {
+		name = dg_piety.051.f #Raise a special tithe from the faithful
+		trigger = {
+			advisor = treasurer
+			NOT = { has_country_flag = great_temple_treasurer }
+		}
+		ai_chance = {
+			factor = 15
+			modifier = {
+				treasurer = 2
+				factor = 1.4
+			}
+			modifier = {
+				treasurer = 3
+				factor = 1.4
+			}
+			modifier = {
+				ADM = 4
+				factor = 0.7
+			}
+			modifier = {
+				ADM = 6
+				factor = 0.7
+			}
+		}
+		set_country_flag = great_temple_treasurer
+		if = {
+			limit = {
+				treasurer = 1
+				NOT = { treasurer = 2 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 9 }
+				}
+			}
+			custom_tooltip = great_temple_9
+		}
+		if = {
+			limit = {
+				treasurer = 2
+				NOT = { treasurer = 3 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 18 }
+				}
+			}
+			custom_tooltip = great_temple_18
+		}
+		if = {
+			limit = { treasurer = 3 }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 27 }
+				}
+			}
+			custom_tooltip = great_temple_27
+		}
+		if = {
+			limit = {
+				any_owned_province = {
+					has_province_modifier = great_temple_progress
+					check_variable = { which = great_temple value = 100 }
+				}
+			}
+			random_owned_province = {
+				limit = { has_province_modifier = great_temple_progress }
+				province_event = { id = dg_piety.052 }
+			}
+		}
+	}
+	option = {
+		name = dg_piety.051.g #Confiscate goods from heretics to pay for it
+		trigger = {
+			advisor = inquisitor
+			NOT = { has_country_flag = great_temple_inquisitor }
+		}
+		ai_chance = {
+			factor = 15
+			modifier = {
+				inquisitor = 2
+				factor = 1.4
+			}
+			modifier = {
+				inquisitor = 3
+				factor = 1.4
+			}
+			modifier = {
+				ADM = 4
+				factor = 0.7
+			}
+			modifier = {
+				ADM = 6
+				factor = 0.7
+			}
+		}
+		set_country_flag = great_temple_inquisitor
+		if = {
+			limit = {
+				inquisitor = 1
+				NOT = { inquisitor = 2 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 9 }
+				}
+			}
+			custom_tooltip = great_temple_9
+		}
+		if = {
+			limit = {
+				inquisitor = 2
+				NOT = { inquisitor = 3 }
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 18 }
+				}
+			}
+			custom_tooltip = great_temple_18
+		}
+		if = {
+			limit = { inquisitor = 3 }
+			hidden_effect = {
+				random_owned_province = {
+					limit = { has_province_modifier = great_temple_progress }
+					change_variable = { which = great_temple value = 27 }
+				}
+			}
+			custom_tooltip = great_temple_27
+		}
+		if = {
+			limit = {
+				any_owned_province = {
+					has_province_modifier = great_temple_progress
+					check_variable = { which = great_temple value = 100 }
+				}
+			}
+			random_owned_province = {
+				limit = { has_province_modifier = great_temple_progress }
+				province_event = { id = dg_piety.052 }
+			}
+		}
+	}
+	option = {
+		name = dg_piety.051.e #Other matters demand our attention
+		ai_chance = {
+			factor = 10
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.20
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.20 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { years_of_income = 0.40 }
+				factor = 2
+			}
+			modifier = {
+				NOT = { years_of_income = 0.10 }
+				factor = 2
+			}
+			modifier = {
+				NOT = { treasury = 100 }
+				factor = 2
+			}
+			modifier = {
+				NOT = { treasury = 25 }
+				factor = 2
+			}
+		}
+		if = {
+			limit = { piety = 0.60 }
+			add_prestige = -4
+		}
+		if = {
+			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+			add_prestige = -3
+		}
+		if = {
+			limit = { piety = -0.20 NOT = { piety = 0.20 } }
+			add_prestige = -2
+		}
+		if = {
+			limit = { piety = -0.60 NOT = { piety = -0.20 } }
+			add_prestige = -1
+		}
+	}
+}
+
+province_event = { #52 - The glory of $PROVINCECAPITAL$
+	
+	id = dg_piety.052
+	title = dg_piety.052.t
+	desc = dg_piety.052.d
+	picture = jewish_temple
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = great_temple value = 0 }
+			set_province_flag = great_temple_built
+			remove_province_modifier = great_temple_progress
+			change_variable = { which = converted_heretics value = 2 }
+			change_variable = { which = converted_heathens value = 2 }
+		}
+	}
+	
+	option = {
+		name = dg_piety.052.a
+		trigger = { owner = { religion_group = christian } }
+		#add_province_modifier = { name = great_cathedral duration = -1 }
+		add_building = great_temple
+		set_province_flag = great_cathedral
+		owner = {
+			if = {
+				limit = { piety = 0.60 }
+				add_prestige = 8
+			}
+			if = {
+				limit = { piety = 0.20 NOT = { piety = 0.60 } }
+				add_prestige = 6
+			}
+			if = {
+				limit = { piety = -0.20 NOT = { piety = 0.20 } }
+				add_prestige = 4
+			}
+			if = {
+				limit = { piety = -0.60 NOT = { piety = -0.20 } }
+				add_prestige = 2
+			}
+		}
+	}
+	option = {
+		name = dg_piety.052.b
+		trigger = { owner = { religion_group = muslim } }
+		#add_province_modifier = { name = great_mosque duration = -1 }
+		add_building = great_temple
+		set_province_flag = great_mosque
+		owner = {
+			if = {
+				limit = { piety = 0.60 }
+				add_prestige = 8
+			}
+			if = {
+				limit = { piety = 0.20 NOT = { piety = 0.60 } }
+				add_prestige = 6
+			}
+			if = {
+				limit = { piety = -0.20 NOT = { piety = 0.20 } }
+				add_prestige = 4
+			}
+			if = {
+				limit = { piety = -0.60 NOT = { piety = -0.20 } }
+				add_prestige = 2
+			}
+		}
+	}
+	option = {
+		name = dg_piety.052.c
+		trigger = { owner = { religion_group = jewish_group } }
+		#add_province_modifier = { name = great_synagogue duration = -1 }
+		add_building = great_temple
+		set_province_flag = great_synagogue
+		owner = {
+			if = {
+				limit = { piety = 0.60 }
+				add_prestige = 8
+			}
+			if = {
+				limit = { piety = 0.20 NOT = { piety = 0.60 } }
+				add_prestige = 6
+			}
+			if = {
+				limit = { piety = -0.20 NOT = { piety = 0.20 } }
+				add_prestige = 4
+			}
+			if = {
+				limit = { piety = -0.60 NOT = { piety = -0.20 } }
+				add_prestige = 2
+			}
+		}
+	}
+	option = {
+		name = dg_piety.052.e
+		trigger = {
+			owner = {
+				NOT = { religion_group = christian }
+				NOT = { religion_group = muslim }
+				NOT = { religion_group = jewish_group }
+			}
+		}
+		#add_province_modifier = { name = great_temple duration = -1 }
+		add_building = great_temple
+		set_province_flag = great_temple
+		owner = {
+			if = {
+				limit = { piety = 0.60 }
+				add_prestige = 8
+			}
+			if = {
+				limit = { piety = 0.20 NOT = { piety = 0.60 } }
+				add_prestige = 6
+			}
+			if = {
+				limit = { piety = -0.20 NOT = { piety = 0.20 } }
+				add_prestige = 4
+			}
+			if = {
+				limit = { piety = -0.60 NOT = { piety = -0.20 } }
+				add_prestige = 2
+			}
+		}
+	}
+}
+
+province_event = { #53 - Heathen temple in $PROVINCECAPITAL$
+	
+	id = dg_piety.053
+	title = dg_piety.053.t
+	desc = dg_piety.053.d
+	picture = catholic_building_project #temp
+	
+	trigger = {
+		has_province_flag = great_temple_built
+		NOT = { religion_group = owner }
+		#NOT = { has_province_modifier = great_temple }
+		#NOT = { has_province_modifier = great_synagogue }
+		#NOT = { has_province_modifier = great_cathedral }
+		#NOT = { has_province_modifier = great_mosque }
+		NOT = { has_building = great_temple }
+		owner = { piety = -0.60 }
+	}
+	
+	mean_time_to_happen = {
+		
+		months = 6
+		
+		modifier = {
+			has_owner_culture = yes
+			factor = 0.5
+		}
+	}
+	
+	immediate = { clr_province_flag = great_temple_built }
+	
+	option = {
+		name = dg_piety.053.a #Hand it over to the $COUNTRYRELIGION$ faith
+		ai_chance = {
+			factor = 40
+			modifier = {
+				owner = { piety = 0.60 }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { piety = 0.20 }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { NOT = { piety = -0.20 } }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { NOT = { piety = -0.60 } }
+				factor = 0.7
+			}
+		}
+		if = {
+			limit = {
+				#NOT = { owner = { any_owned_province = { has_province_modifier = great_temple } } }
+				#NOT = { owner = { any_owned_province = { has_province_modifier = great_synagogue } } }
+				#NOT = { owner = { any_owned_province = { has_province_modifier = great_mosque } } }
+				#NOT = { owner = { any_owned_province = { has_province_modifier = great_cathedral } } }
+				NOT = { owner = { any_owned_province = { has_building = great_temple } } }
+				NOT = { owner = { any_owned_province = { has_province_modifier = great_temple_progress } } }
+			}
+			if = {
+				limit = {
+					owner = { religion_group = christian }
+				}
+				#add_province_modifier = { name = great_cathedral duration = -1 }
+				add_building = great_temple
+				set_province_flag = great_cathedral
+			}
+			if = {
+				limit = {
+					owner = { religion_group = muslim }
+				}
+				#add_province_modifier = { name = great_mosque duration = -1 }
+				add_building = great_temple
+				set_province_flag = great_mosque
+			}
+			if = {
+				limit = {
+					owner = { religion_group = jewish_group }
+				}
+				#add_province_modifier = { name = great_synagogue duration = -1 }
+				add_building = great_temple
+				set_province_flag = great_synagogue
+			}
+			if = {
+				limit = {
+					NOT = { owner = { religion_group = muslim } }
+					NOT = { owner = { religion_group = christian } }
+					NOT = { owner = { religion_group = jewish_group } }
+				}
+				#add_province_modifier = { name = great_temple duration = -1 }
+				add_building = great_temple
+				set_province_flag = great_temple
+				if = {
+					limit = { owner = { religion = mahayana } }
+					if = {
+						limit = { owner = { has_country_flag = meditation_buddhism } }
+						set_province_flag = head_temple_meditation
+						add_province_modifier = { name = temple_town_meditation duration = -1 }
+					}
+					if = {
+						limit = { owner = { has_country_flag = nichiren_buddhism } }
+						set_province_flag = head_temple_nichiren
+						add_province_modifier = { name = temple_town_nichiren duration = -1 }
+					}
+					if = {
+						limit = { owner = { has_country_flag = pure_land_buddhism } }
+						set_province_flag = head_temple_pure_land
+						add_province_modifier = { name = temple_town_pure_land duration = -1 }
+					}
+					if = {
+						limit = { owner = { has_country_flag = lotus_sutra_buddhism } }
+						set_province_flag = head_temple_lotus_sutra
+						add_province_modifier = { name = temple_town_lotus_sutra duration = -1 }
+					}
+				}
+			}
+			set_province_flag = great_temple_built
+		}
+		#if = {
+		#limit = {
+		#	OR = {
+		#		#owner = { any_owned_province = { has_province_modifier = great_temple } }
+		#		#owner = { any_owned_province = { has_province_modifier = great_synagogue } }
+		#		#owner = { any_owned_province = { has_province_modifier = great_mosque } }
+		#		#owner = { any_owned_province = { has_province_modifier = great_cathedral } }
+		#		owner = { any_owned_province = { has_building = great_temple } }
+		#		owner = { any_owned_province = { has_province_modifier = great_temple_progress } }
+		#		}
+		#	NOT = { temple_trigger = yes }
+		#	NOT = { cathedral_trigger = yes }
+		#	num_free_building_slots = 1
+		#	}
+		#add_building = temple
+		#}
+		owner = {
+			if = {
+				limit = { piety = 0.60 }
+				add_legitimacy = 8
+			}
+			if = {
+				limit = {
+					NOT = { piety = 0.60 }
+					piety = 0.20
+				}
+				add_legitimacy = 6
+			}
+			if = {
+				limit = {
+					NOT = { piety = 0.20 }
+					piety = -0.20
+				}
+				add_legitimacy = 4
+			}
+			if = {
+				limit = {
+					NOT = { piety = -0.20 }
+					piety = -0.60
+				}
+				add_legitimacy = 2
+			}
+		}
+	}
+	option = {
+		name = dg_piety.053.b #Turn it into a palace
+		ai_chance = { factor = 10 }
+		owner = {
+			add_adm_power = 25
+			if = {
+				limit = { piety = 0.60 }
+				add_prestige = 10
+			}
+			if = {
+				limit = {
+					NOT = { piety = 0.60 }
+					piety = 0.20
+				}
+				add_legitimacy = 2
+				add_prestige = 8
+			}
+			if = {
+				limit = {
+					NOT = { piety = 0.20 }
+					piety = -0.20
+				}
+				add_legitimacy = 4
+				add_prestige = 6
+			}
+			if = {
+				limit = {
+					NOT = { piety = -0.20 }
+					piety = -0.60
+				}
+				add_legitimacy = 6
+				add_prestige = 4
+			}
+			if = {
+				limit = { NOT = { piety = -0.60 } }
+				add_legitimacy = 8
+				add_prestige = 2
+			}
+		}
+	}
+	option = {
+		name = dg_piety.053.e #Destroy it
+		ai_chance = { factor = 30 }
+		owner = {
+			add_treasury = 40
+			if = {
+				limit = { piety = 0.60 }
+				add_prestige = 4
+			}
+			if = {
+				limit = {
+					NOT = { piety = 0.60 }
+					piety = 0.20
+				}
+				add_prestige = 3
+			}
+			if = {
+				limit = {
+					NOT = { piety = 0.20 }
+					piety = -0.20
+				}
+				add_prestige = 2
+			}
+			if = {
+				limit = {
+					NOT = { piety = -0.20 }
+					piety = -0.60
+				}
+				add_prestige = 1
+			}
+		}
+	}
+}
+
+province_event = { #54 - The Glory of $PROVINCECAPITAL$
+	
+	id = dg_piety.054
+	title = dg_piety.054.t
+	desc = dg_piety.054.d
+	picture = catholic_building_project #temp
+	
+	trigger = {
+		has_province_flag = great_temple_built
+		#NOT = { has_province_modifier = great_temple }
+		#NOT = { has_province_modifier = great_synagogue }
+		#NOT = { has_province_modifier = great_cathedral }
+		#NOT = { has_province_modifier = great_mosque }
+		NOT = { has_building = great_temple }
+		owner = { piety = -0.60 }
+		religion_group = owner
+		culture_group = owner
+		#NOT = { owner = { any_owned_province = { has_province_modifier = great_temple } } }
+		#NOT = { owner = { any_owned_province = { has_province_modifier = great_synagogue } } }
+		#NOT = { owner = { any_owned_province = { has_province_modifier = great_mosque } } }
+		#NOT = { owner = { any_owned_province = { has_province_modifier = great_cathedral } } }
+		NOT = { owner = { any_owned_province = { has_building = great_temple } } }
+		NOT = { owner = { any_owned_province = { has_province_modifier = great_temple_progress } } }
+	}
+	
+	mean_time_to_happen = {
+		
+		months = 6
+		
+		modifier = {
+			has_owner_culture = yes
+			factor = 0.5
+		}
+		modifier = {
+			has_owner_religion = yes
+			factor = 0.5
+		}
+	}
+	
+	option = {
+		name = dg_piety.054.a #Have our priests rededicate it
+		if = {
+			limit = {
+				owner = { religion_group = christian }
+			}
+			#add_province_modifier = { name = great_cathedral duration = -1 }
+			add_building = great_temple
+			set_province_flag = great_cathedral
+		}
+		if = {
+			limit = {
+				owner = { religion_group = muslim }
+			}
+			#add_province_modifier = { name = great_mosque duration = -1 }
+			add_building = great_temple
+			set_province_flag = great_mosque
+		}
+		if = {
+			limit = {
+				owner = { religion_group = jewish_group }
+			}
+			#add_province_modifier = { name = great_synagogue duration = -1 }
+			add_building = great_temple
+			set_province_flag = great_synagogue
+		}
+		if = {
+			limit = {
+				NOT = { owner = { religion_group = muslim } }
+				NOT = { owner = { religion_group = christian } }
+				NOT = { owner = { religion_group = jewish_group } }
+			}
+			#add_province_modifier = { name = great_temple duration = -1 }
+			add_building = great_temple
+			set_province_flag = great_temple
+			if = {
+				limit = { owner = { religion = mahayana } }
+				if = {
+					limit = { owner = { has_country_flag = meditation_buddhism } }
+					set_province_flag = head_temple_meditation
+					add_province_modifier = { name = temple_town_meditation duration = -1 }
+					every_neighbor_province = {
+						limit = { owned_by = ROOT religion = mahayana temple_trigger = yes }
+						add_province_modifier = { name = temple_town_meditation duration = -1 }
+					}
+				}
+				if = {
+					limit = { owner = { has_country_flag = nichiren_buddhism } }
+					set_province_flag = head_temple_nichiren
+					add_province_modifier = { name = temple_town_nichiren duration = -1 }
+					every_neighbor_province = {
+						limit = { owned_by = ROOT religion = mahayana temple_trigger = yes }
+						add_province_modifier = { name = temple_town_nichiren duration = -1 }
+					}
+				}
+				if = {
+					limit = { owner = { has_country_flag = pure_land_buddhism } }
+					set_province_flag = head_temple_pure_land
+					add_province_modifier = { name = temple_town_pure_land duration = -1 }
+					every_neighbor_province = {
+						limit = { owned_by = ROOT religion = mahayana temple_trigger = yes }
+						add_province_modifier = { name = temple_town_pure_land duration = -1 }
+					}
+				}
+				if = {
+					limit = { owner = { has_country_flag = lotus_sutra_buddhism } }
+					set_province_flag = head_temple_lotus_sutra
+					add_province_modifier = { name = temple_town_lotus_sutra duration = -1 }
+					every_neighbor_province = {
+						limit = { owned_by = ROOT religion = mahayana temple_trigger = yes }
+						add_province_modifier = { name = temple_town_lotus_sutra duration = -1 }
+					}
+				}
+			}
+		}
+	}
+}
+
+province_event = { #55 - Renovations
+	
+	id = dg_piety.055
+	title = dg_piety.055.t
+	desc = dg_piety.055.d
+	picture = catholic_building_project #temp
+	
+	trigger = {
+		has_province_flag = great_temple_built
+		has_building = great_temple
+		#OR = {
+		#	has_province_modifier = great_temple
+		#	has_province_modifier = great_cathedral
+		#	has_province_modifier = great_synagogue
+		#	has_province_modifier = great_mosque
+		#	}
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 166
+		
+		modifier = {
+			has_province_flag = partial_renovations
+			factor = 0.25
+		}
+	}
+	
+	option = {
+		name = dg_piety.055.a #Full renovations
+		ai_chance = {
+			factor = 50
+			modifier = {
+				NOT = { owner = { treasury = 100 } }
+				factor = 0.5
+			}
+			modifier = {
+				NOT = { owner = { treasury = 25 } }
+				factor = 0.5
+			}
+			modifier = {
+				owner = { is_bankrupt = yes }
+				factor = 0.5
+			}
+			modifier = {
+				owner = { num_of_loans = 1 }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { num_of_loans = 2 }
+				factor = 0.7
+			}
+		}
+		clr_province_flag = partial_renovations
+		owner = {
+			if = {
+				limit = { NOT = { monthly_income = 40 } }
+				add_treasury = -100
+			}
+			if = {
+				limit = {
+					monthly_income = 40
+					NOT = { monthly_income = 100 }
+				}
+				add_years_of_income = -0.40
+			}
+			if = {
+				limit = { monthly_income = 100 }
+				add_treasury = -500
+			}
+		}
+	}
+	option = {
+		name = dg_piety.055.b #Partial renovations
+		ai_chance = {
+			factor = 40
+		}
+		owner = {
+			if = {
+				limit = { NOT = { monthly_income = 40 } }
+				add_treasury = -25
+			}
+			if = {
+				limit = {
+					monthly_income = 40
+					NOT = { monthly_income = 100 }
+				}
+				add_years_of_income = -0.10
+			}
+			if = {
+				limit = { monthly_income = 100 }
+				add_treasury = -125
+			}
+		}
+		random_list = {
+			50 = { set_province_flag = partial_renovations }
+			50 = {
+				clr_province_flag = great_temple
+				clr_province_flag = great_cathedral
+				clr_province_flag = great_synagogue
+				clr_province_flag = great_mosque
+				remove_building = great_temple
+				remove_building = temple_heathen
+				add_building = temple
+				add_province_modifier = { name = great_temple_progress duration = -1 }
+				clr_province_flag = great_temple_built
+				hidden_effect = { set_variable = { which = great_temple value = 90 } }
+			}
+		}
+	}
+	option = {
+		name = dg_piety.055.c #Let it run down
+		ai_chance = {
+			factor = 10
+			modifier = {
+				NOT = { owner = { religious_unity = 100 } }
+				factor = 0.5
+			}
+			modifier = {
+				NOT = { owner = { religious_unity = 80 } }
+				factor = 0.5
+			}
+			modifier = {
+				NOT = { owner = { religious_unity = 60 } }
+				factor = 0
+			}
+			modifier = {
+				NOT = { owner = { prestige = 0 } }
+				factor = 0.5
+			}
+			modifier = {
+				NOT = { owner = { prestige = 50 } }
+				factor = 0.5
+			}
+		}
+		clr_province_flag = great_temple
+		clr_province_flag = great_cathedral
+		clr_province_flag = great_synagogue
+		clr_province_flag = great_mosque
+		remove_building = great_temple
+		remove_building = temple_heathen
+		add_building = temple
+		add_province_modifier = { name = great_temple_progress duration = -1 }
+		clr_province_flag = great_temple_built
+		hidden_effect = { set_variable = { which = great_temple value = 75 } }
+	}
+}
+
+country_event = { #56 - Capture of heathen temples
+
+	id = dg_piety.056
+	title = dg_piety.056.t
+	desc = dg_piety.056.d
+	picture = catholic_building_project #temp
+
+	is_triggered_only = yes
+
+
+	option = {
+		name = dg_piety.056.a #Hand them over to the $COUNTRYRELIGION$ faith
+		trigger = {
+			piety = 0.20
+		}
+		ai_chance = {
+			factor = 40
+			modifier = {
+				piety = 0.80
+				factor = 0.6
+			}
+			modifier = {
+				piety = 0.60
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.40
+				factor = 0.8
+			}
+		}
+		every_owned_province = {
+			limit = {
+				has_province_flag = temple_to_convert
+			}
+			add_province_modifier = { name = religious_unrest duration = 1825 }
+			if = {
+				limit = {
+					has_building = temple_heathen
+				}
+				remove_building = temple_heathen
+				#if = {
+				#	limit = {
+				#		NOT = { has_building = temple }
+				#	}
+					add_building = temple
+				#}
+			}
+			clr_province_flag = temple_to_convert
+		}
+	}
+	option = {
+		name = dg_piety.056.b #Hand some of them over to the $COUNTRYRELIGION$ faith
+		trigger = {
+			NOT = { piety = 0.20 }
+		}
+		ai_chance = {
+			factor = 40
+			modifier = {
+				NOT = { piety = 0 }
+				factor = 0.8
+			}
+			modifier = {
+				NOT = { piety = -0.20 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.50 }
+				factor = 0.5
+			}
+		}
+		every_owned_province = {
+			limit = {
+				has_province_flag = temple_to_convert
+			}
+			clr_province_flag = temple_to_convert
+			random_list = {
+				60 = {
+					add_province_modifier = { name = religious_unrest duration = 1825 }
+					if = {
+						limit = {
+							has_building = temple_heathen
+						}
+						remove_building = temple_heathen
+						#if = {
+						#	limit = {
+						#		NOT = { has_building = temple }
+						#	}
+							add_building = temple
+						#}
+					}
+				}
+				40 = {
+					if = {
+						limit = {
+							has_building = temple
+						}
+						remove_building = temple
+						#if = {
+						#	limit = {
+						#		NOT = { has_building = temple_heathen }
+						#	}
+							add_building = temple_heathen
+						#}
+					}
+				}
+			}
+		}
+	}
+		
+	option = {
+		name = dg_piety.056.c #Let them be
+		ai_chance = {
+			factor = 10
+		}
+		
+		every_owned_province = {
+			limit = {
+				has_province_flag = temple_to_convert
+			}
+			if = {
+				limit = {
+					has_building = temple
+				}
+				remove_building = temple
+				#if = {
+				#	limit = {
+				#		NOT = { has_building = temple_heathen }
+				#	}
+					add_building = temple_heathen
+				#}
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = -1 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = remove_unrest_1
+			if = {
+				limit = { NOT = { is_core = owner } }
+				add_nationalism = -1
+			}
+			clr_province_flag = temple_to_convert
+		}
+	}
+		
+	option = {
+		name = dg_piety.056.e #Destroy them
+		trigger = {
+			piety = 0.20
+			NOT = { has_idea_group = humanist_ideas }
+		}
+		ai_chance = {
+			factor = 30
+			modifier = {
+				piety = 0.40
+				factor = 1.2
+			}
+			modifier = {
+				piety = 0.60
+				factor = 1.3
+			}
+			modifier = {
+				piety = 0.80
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { years_of_income = 1 }
+				factor = 1.5
+			}
+			modifier = {
+				num_of_loans = 1
+				factor = 3
+			}
+		}
+		if = {
+			limit = {
+				piety = 0.80
+			}
+			add_prestige = 4
+		}
+		else_if = {
+			limit = {
+				piety = 0.60
+			}
+			add_prestige = 3
+		}
+		else_if = {
+			limit = {
+				piety = 0.40
+			}
+			add_prestige = 2
+		}
+		else = {
+			add_prestige = 1
+		}
+		every_owned_province = {
+			limit = {
+				has_province_flag = temple_to_convert
+			}
+			owner = {
+				add_treasury = 40
+			}
+			add_province_modifier = { name = religious_unrest duration = 3650 }
+			#if = {
+			#	limit = {
+			#		has_building = temple
+			#	}
+				remove_building = temple
+			#}
+			#if = {
+			#	limit = {
+			#		has_building = temple_heathen
+			#	}
+				remove_building = temple_heathen
+			#}
+			clr_province_flag = temple_to_convert
+		}
+	}
+	after = {
+		clr_country_flag = convert_heathen_temples
+	}
+}
+
+country_event = { #57 - Recovery of temple
+
+	id = dg_piety.057
+	title = dg_piety.057.t
+	desc = dg_piety.057.d
+	picture = religion_temple_building #temp
+
+	is_triggered_only = yes
+	option = {
+		name = dg_piety.057.a #Glory to the $COUNTRYRELIGION$ faith
+		ai_chance = { factor = 100 }
+		if = {
+			limit = { piety = 0.60 }
+			add_prestige = 4
+		}
+		if = {
+			limit = {
+				NOT = { piety = 0.60 }
+				piety = 0.20
+			}
+			add_prestige = 3
+		}
+		if = {
+			limit = {
+				NOT = { piety = 0.20 }
+				piety = -0.20
+			}
+			add_prestige = 2
+		}
+		if = {
+			limit = {
+				NOT = { piety = -0.20 }
+				piety = -0.60
+			}
+			add_prestige = 1
+		}
+	}
+	after = {
+		clr_country_flag = convert_temples
+	}
+}

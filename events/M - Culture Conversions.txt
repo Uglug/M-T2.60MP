@@ -1,0 +1,1147 @@
+# `culture_conversions.2` is the core event. When the progress completes it fires `culture_conversions.1` to convert.
+# `culture_conversions.3` clears progress and is called when the province owner changes.
+
+# Author: Phlopsi
+# Author: Sun_Wu
+# Author: Warial (small tweaks)
+
+# Fired by `culture_conversions.2`. Responsible for flipping culture.
+province_event = {
+	id = culture_conversions.1
+	title = culture_conversions.1.t
+	desc = culture_conversions.1.d
+	picture = CITY_VIEW_eventPicture
+	
+	is_triggered_only = yes
+	
+	#trigger = {
+	#	always = yes
+	#}
+	
+	immediate = {
+		
+		hidden_effect = {
+			set_variable = {
+				which = pv_culture_conversion_progress
+				value = 0
+			}
+			if = {
+				limit = {
+					is_capital = yes
+					NOT = { has_province_flag = german_ostsiedlung }
+				}
+				change_culture = owner
+			}
+			else_if = {
+				limit = {
+					has_province_flag = german_ostsiedlung
+					area = hinterpommern_area
+					NOT = { province_id = 264 } # Neumark
+				}
+				change_culture = pommeranian
+				add_province_modifier = { name = ostsiedlung_province_effect duration = 9000 }
+			}
+			else_if = {
+				limit = {
+					has_province_flag = german_ostsiedlung
+					OR = {
+						area = brandenburg_area
+						province_id = 264 # Neumark
+					}
+				}
+				change_culture = low_saxon
+				add_province_modifier = { name = ostsiedlung_province_effect duration = 9000 }
+			}
+			else_if = {
+				limit = {
+					has_province_flag = german_ostsiedlung
+					area = lusatia_area
+					NOT = { province_id = 4002 } # Jawor
+					NOT = { province_id = 4003 } # Glogow
+				}
+				change_culture = low_saxon
+				add_province_modifier = { name = ostsiedlung_province_effect duration = 9000 }
+			}
+			else_if = {
+				limit = {
+					has_province_flag = german_ostsiedlung
+					OR = {
+						culture = silesian
+						area = lower_silesia_area
+						area = upper_silesia_area
+						province_id = 4002 # Jawor
+						province_id = 4003 # Glogow
+					}
+				}
+				change_culture = german_silesian
+				add_province_modifier = { name = ostsiedlung_province_effect duration = 9000 }
+				if = {
+					limit = { owner = { primary_culture = silesian } }
+					owner = { change_primary_culture = german_silesian }
+				}
+			}
+			else_if = {
+				limit = {
+					has_province_flag = german_ostsiedlung
+					owner = {
+						OR = {
+							culture_group = low_germanic
+							culture_group = high_germanic
+						}
+					}
+				}
+				change_culture = owner
+				add_province_modifier = { name = ostsiedlung_province_effect duration = 9000 }
+			}
+			else_if = {
+				limit = {
+					OR = {
+						culture = zhuang
+						culture = tay_nung
+					}
+					owner = { culture_group = chinese_group }
+					any_neighbor_province = {
+						OR = {
+							culture = yueyu
+							culture = xiyue
+							culture = pinghua
+						}
+					}
+				}
+				change_culture = pinghua
+			}
+			else_if = {
+				limit = {
+					culture = malayan
+					owner = { culture_group = thai_group }
+					any_neighbor_province = {
+						OR = {
+							culture = thai
+							culture = dambru
+						}
+					}
+				}
+				change_culture = dambru
+			}
+			else_if = {
+				limit = {
+					OR = {
+						culture = karelian
+						culture = sapmi
+						culture = nenet
+					}
+					owner = { culture_group = east_slavic }
+					any_neighbor_province = {
+						culture_group = east_slavic
+					}
+				}
+				change_culture = pomor
+			}
+			else_if = {
+				limit = {
+					OR = {
+						culture = ruthenian
+						culture = lithuanian
+						culture = byelorussian
+					}
+					region = lithuania_region
+					owner = { culture_group = west_slavic }
+					any_neighbor_province = {
+						culture_group = west_slavic
+					}
+				}
+				change_culture = litvin
+			}
+			else_if = {
+				limit = {
+					owner = { total_development = 1200 }
+					culture_group = owner
+					any_neighbor_province = {
+						has_owner_culture = yes
+					}
+				}
+				change_culture = owner
+			}
+			else = {
+				random_neighbor_province = {
+					limit = {
+						owned_by = ROOT
+						NOT = { culture = ROOT }
+						OR = {
+							AND = {
+								owner = { total_development = 1200 }
+								culture_group = owner
+							}
+							has_owner_accepted_culture = yes
+							has_owner_culture = yes
+						}
+					}
+					ROOT = {
+						change_culture = PREV
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = culture_conversions.1.a
+		trigger = {
+			has_owner_culture = no
+		}
+		
+	}
+	option = {
+		name = culture_conversions.1.b
+		trigger = {
+			has_owner_culture = yes
+		}
+		
+	}
+	
+	after = {
+		hidden_effect = {
+			#if = {
+			#	limit = {
+			#		has_province_flag = german_ostsiedlung
+			#	}
+				clr_province_flag = german_ostsiedlung
+			#}
+			add_province_modifier = {
+				name = culture_conversion_cooldown
+				duration = 7300 # 20 years
+				hidden = yes
+			}
+		}
+	}
+}
+
+province_event = {
+	id = culture_conversions.2
+	title = no_localization
+	desc = no_localization
+	picture = MEIOU_AND_TAXES_eventPicture
+	
+	hidden = yes
+	
+	mean_time_to_happen = { years = 5 }
+	
+	trigger = {
+		is_state_core = owner
+		NOT = { nationalism = 1 }
+		OR = {
+			has_owner_culture = no
+			AND = {
+				has_province_flag = german_ostsiedlung
+				owner = { is_part_of_hre = yes }
+			}
+		}
+		OR = {
+			owner = {
+				any_owned_province = {
+					NOT = { culture = ROOT }
+					owner_has_or_accepts_this_culture = yes
+					any_neighbor_province = {
+						province_id = ROOT
+					}
+				}
+			}
+			AND = {
+				is_capital = yes
+				owner = {
+					calc_true_if = {
+						all_owned_province = {
+							has_owner_culture = yes
+						}
+						
+						amount = 2
+					}
+				}
+			}
+			has_province_modifier = frankish_settlers
+			has_province_flag = german_ostsiedlung
+		}
+		NOT = { has_province_modifier = culture_conversion_cooldown }
+	}
+	
+	# TODO: tolerance_to_this
+	immediate = {
+		# initialize constants
+		export_to_variable = {
+			which = tc_development
+			value = development
+		}
+		
+		export_to_variable = {
+			which = tc_owner_culture_conversion_cost
+			value = modifier:culture_conversion_cost
+			who = owner
+		}
+		
+		export_to_variable = {
+			which = tc_local_culture_conversion_cost
+			value = modifier:local_culture_conversion_cost
+		}
+		
+		export_to_variable = {
+			which = tc_local_autonomy
+			value = local_autonomy
+		}
+		
+		# calculate tv_development_divider
+		set_variable = {
+			which = tv_development_divider
+			which = tc_development
+		}
+		
+		multiply_variable = {
+			which = tv_development_divider
+			value = 0.01
+		}
+		
+		change_variable = {
+			which = tv_development_divider
+			value = 1
+		}
+		
+		# calculate tv_culture_conversion_multiplier
+		if = {
+			limit = {
+				check_variable = {
+					which = tc_owner_culture_conversion_cost
+					value = 0
+				}
+			}
+			
+			set_variable = {
+				which = tv_tmp0
+				value = 1
+			}
+			
+			change_variable = {
+				which = tv_tmp0
+				which = tc_owner_culture_conversion_cost
+			}
+			
+			if = {
+				limit = {
+					check_variable = {
+						which = tc_local_culture_conversion_cost
+						value = 0
+					}
+				}
+				
+				change_variable = {
+					which = tv_tmp0
+					which = tc_local_culture_conversion_cost
+				}
+			}
+			
+			set_variable = {
+				which = tv_culture_conversion_multiplier
+				value = 1
+			}
+			
+			#if = {
+			#	limit = {
+			#		is_variable_equal = {
+			#			which = tv_tmp0
+			#			value = 0
+			#		}
+			#	}
+			#	
+			#	# log = "<ERROR><28D43300><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+			#	
+			#}
+			#else = {
+				divide_variable = {
+					which = tv_culture_conversion_multiplier
+					which = tv_tmp0
+				}
+			#}
+		}
+		else = {
+			set_variable = {
+				which = tv_culture_conversion_multiplier
+				value = 1
+			}
+			
+			subtract_variable = {
+				which = tv_culture_conversion_multiplier
+				which = tc_owner_culture_conversion_cost
+			}
+			
+			subtract_variable = {
+				which = tv_culture_conversion_multiplier
+				which = tc_local_culture_conversion_cost
+			}
+		}
+	
+		# calculate tv_local_autonomy_multiplier
+		set_variable = {
+			which = tv_local_autonomy_multiplier
+			value = 100
+		}
+		
+		subtract_variable = {
+			which = tv_local_autonomy_multiplier
+			which = tc_local_autonomy
+		}
+		
+		multiply_variable = {
+			which = tv_local_autonomy_multiplier
+			value = 0.01
+		}
+		
+		if = {
+			limit = {
+				is_variable_equal = { which = tv_local_autonomy_multiplier value = 0 }
+			}
+			set_variable = { which = tv_local_autonomy_multiplier value = 0.001 }
+		}
+		
+		# calculate culture conversion progress gain
+		set_variable = {
+			which = tv_culture_conversion_progress_gain
+			value = 7.5 # base gain
+		}
+		
+		multiply_variable = {
+			which = tv_culture_conversion_progress_gain
+			which = tv_culture_conversion_multiplier
+		}
+		
+		#Terrain influence. Was historically harder to convert less accessible locations
+		#if = {
+		#	limit = {
+		#		has_province_flag = challenging_terrain
+		#	}
+		#
+		#	multiply_variable = {
+		#		which = v_culture_conversion_progress_gain
+		#		value = 0.75 #-25% gain rate and a binary fraction
+		#	}
+		#
+		#}
+		#else_if = {
+		#	limit = {
+		#		has_province_flag = rugged_terrain
+		#	}
+		#
+		#	multiply_variable = {
+		#		which = v_culture_conversion_progress_gain
+		#		value = 0.375 #-62.5% gain rate and a binary fraction
+		#	}
+		#}
+		
+		
+		# Special historical cases
+		trigger_switch = {
+			on_trigger = continent
+			europe = {
+				trigger_switch = {
+					on_trigger = superregion
+					commonwealth_superregion = {
+						if = {
+							limit = {
+								owner = {
+									OR = {
+										culture_group = low_germanic
+										culture_group = high_germanic
+										culture_group = west_slavic
+									}
+									OR = {
+										has_ruler_modifier = ostsiedlung_promoted_western
+										has_ruler_modifier = ostsiedlung_promoted_eastern
+									}
+								}
+								has_province_flag = german_ostsiedlung # Ostsiedlung
+							}
+							
+							multiply_variable = {
+								which = tv_culture_conversion_progress_gain
+								value = 2
+							}
+							if = { #No penalty from accepted culture to conversion
+								limit = {
+									owner_accepts_this_culture = yes
+								}
+								multiply_variable = {
+									which = tv_culture_conversion_progress_gain
+									value = 4
+								}
+							}
+							multiply_variable = { #divide_variable
+								which = tv_culture_conversion_progress_gain
+								which = tv_local_autonomy_multiplier
+							}
+						}
+					}
+					germany_superregion = {
+						if = {
+							limit = {
+								owner = {
+									OR = {
+										culture_group = low_germanic
+										culture_group = high_germanic
+										culture_group = west_slavic
+									}
+									OR = {
+										has_ruler_modifier = ostsiedlung_promoted_western
+										has_ruler_modifier = ostsiedlung_promoted_eastern
+									}
+								}
+								has_province_flag = german_ostsiedlung # Ostsiedlung
+							}
+							
+							multiply_variable = {
+								which = tv_culture_conversion_progress_gain
+								value = 4
+							}
+							if = { #No penalty from accepted culture to conversion
+								limit = {
+									owner_accepts_this_culture = yes
+								}
+								multiply_variable = {
+									which = tv_culture_conversion_progress_gain
+									value = 4
+								}
+							}
+							multiply_variable = { #divide_variable
+								which = tv_culture_conversion_progress_gain
+								which = tv_local_autonomy_multiplier
+							}
+						}
+					}
+					greater_russia_superregion = {
+						if = {
+							limit = {
+								owner = {
+									culture_group = east_slavic # Uniting Russian cultures
+								}
+							}
+							
+							multiply_variable = {
+								which = tv_culture_conversion_progress_gain
+								value = 1.5
+							}
+						}
+						
+						if = {
+							limit = {
+								change_to_nomadic_trigger = yes
+							}
+							
+							multiply_variable = {
+								which = tv_culture_conversion_progress_gain
+								value = 16
+							}
+						}
+					}
+				}
+			}
+			indian_continent = {
+				if = {
+					limit = {
+						culture_group = hindusthani
+						owner = {
+							primary_culture = urdu
+						}
+					}
+					
+					multiply_variable = {
+						which = tv_culture_conversion_progress_gain
+						value = 4
+					}
+				}
+				
+				if = {
+					limit = {
+						culture_group = deccan_group
+						owner = {
+							primary_culture = dakani
+						}
+					}
+					
+					multiply_variable = {
+						which = tv_culture_conversion_progress_gain
+						value = 4
+					}
+				}
+			}
+			mena = {
+				if = {
+					limit = {
+						OR = {
+							region = north_anatolia_region
+							region = south_anatolia_region
+							province_id = 1333
+						}
+						culture_group = turko_byzantine
+						OR = {
+							AND = {
+								religion_group = muslim
+								OR = {
+									culture = greek
+									culture = pontic
+									culture = cappadocian
+								}
+								owner = {
+									OR = {
+										primary_culture = turkish
+										primary_culture = yorouk
+										primary_culture = turkoman
+									}
+								}
+							}
+							AND = {
+								religion_group = christian
+								OR = {
+									culture = turkish
+									culture = yorouk
+									culture = turkoman
+								}
+								owner = {
+									OR = {
+										primary_culture = greek
+										primary_culture = pontic
+										primary_culture = cappadocian
+									}
+								}
+							}
+						}
+					}
+					
+					multiply_variable = {
+						which = tv_culture_conversion_progress_gain
+						value = 4
+					}
+					if = { #No penalty to conversion between Greek and Turkish if religion is christian or muslim
+						limit = {
+							owner_accepts_this_culture = yes
+						}
+						multiply_variable = {
+							which = tv_culture_conversion_progress_gain
+							value = 4
+						}
+					}
+				}
+				if = {
+					limit = {
+						OR = {
+							AND = {
+								culture = adari
+								owner = {
+									primary_culture = azerbadjani
+								}
+							}
+							AND = {
+								culture = azerbadjani
+								owner = {
+									primary_culture = adari
+								}
+							}
+						}
+					}
+					
+					multiply_variable = {
+						which = tv_culture_conversion_progress_gain
+						value = 4
+					}
+					if = { #No penalty to conversion between Greek and Turkish if religion is christian or muslim
+						limit = {
+							owner_accepts_this_culture = yes
+						}
+						multiply_variable = {
+							which = tv_culture_conversion_progress_gain
+							value = 4
+						}
+					}
+				}
+			}
+			north_asia = {
+				if = {
+					limit = {
+						change_to_nomadic_trigger = yes
+					}
+					
+					multiply_variable = {
+						which = tv_culture_conversion_progress_gain
+						value = 16
+					}
+				}
+			}
+			east_asia = {
+				if = {
+					limit = {
+						change_to_nomadic_trigger = yes
+					}
+					
+					multiply_variable = {
+						which = tv_culture_conversion_progress_gain
+						value = 16
+					}
+				}
+				if = {
+					limit = {
+						culture = uriankhai
+						OR = {
+							area = liaoning_area
+							area = jilin_area
+							area = heilongjiang_area
+						}
+						owner = {
+							primary_culture = jurchen
+						}
+					}
+					
+					multiply_variable = {
+						which = tv_culture_conversion_progress_gain
+						value = 4
+					}
+				}
+			}
+			
+			central_asia = {
+				if = {
+					limit = {
+						change_to_nomadic_trigger = yes
+					}
+					
+					multiply_variable = {
+						which = tv_culture_conversion_progress_gain
+						value = 16
+					}
+				}
+			}
+		}
+		if = { #Formely a hard block, was changed to penalty due to being ahistorical
+			limit = {
+				owner_accepts_this_culture = yes
+			}
+			multiply_variable = {
+				which = tv_culture_conversion_progress_gain
+				value = 0.25
+			}
+		}
+		
+		
+		#if = {
+		#	limit = {
+		#		is_variable_equal = {
+		#			which = tv_development_divider
+		#			value = 0
+		#		}
+		#	}
+		#	
+		#	# log = "<ERROR><29AF39C0><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+		#	
+		#}
+		#else = {
+			divide_variable = {
+				which = tv_culture_conversion_progress_gain
+				which = tv_development_divider
+			}
+		#}
+		
+		#if = {
+		#	limit = {
+		#		is_variable_equal = {
+		#			which = rural_density
+		#			value = 0
+		#		}
+		#	}
+		#	
+		#	# log = "<ERROR><29AF39C0><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+		#	
+		#}
+		#else = {
+			set_variable = {
+				which = tc_rural_density
+				which = rural_density
+			}
+			
+			divide_variable = {
+				which = tc_rural_density
+				value = 1.2
+			}
+			
+			divide_variable = {
+				which = tv_culture_conversion_progress_gain
+				which = tc_rural_density
+			}
+		#}
+		multiply_variable = {
+			which = tv_culture_conversion_progress_gain
+			which = tv_local_autonomy_multiplier
+		}
+		
+		# increase pv_culture_conversion_progress and fire culture conversion event,
+		# if the progress is complete
+		change_variable = {
+			which = pv_culture_conversion_progress
+			which = tv_culture_conversion_progress_gain
+		}
+		
+		if = {
+			limit = {
+				check_variable = {
+					which = pv_culture_conversion_progress
+					value = 100
+				}
+			}
+			
+			province_event = { id = culture_conversions.1 }
+		}
+		
+		# cleanup
+		set_variable = { which = tc_development							value = 0 }
+		set_variable = { which = tc_owner_culture_conversion_cost		value = 0 }
+		set_variable = { which = tc_local_culture_conversion_cost		value = 0 }
+		set_variable = { which = tc_local_autonomy						value = 0 }
+		set_variable = { which = tc_rural_density						value = 0 }
+		set_variable = { which = tv_development_divider					value = 0 }
+		set_variable = { which = tv_tmp0								value = 0 }
+		set_variable = { which = tv_local_autonomy_multiplier			value = 0 }
+		set_variable = { which = tv_culture_conversion_multiplier		value = 0 }
+		set_variable = { which = tv_culture_conversion_progress_gain	value = 0 }
+	}
+	
+	option = {
+		name = no_localization
+	}
+}
+
+province_event = {
+	id = culture_conversions.3
+	title = no_localization
+	desc = no_localization
+	picture = MEIOU_AND_TAXES_eventPicture
+	
+	hidden = yes
+	is_triggered_only = yes
+	
+	#trigger = {
+	#	always = yes
+	#}
+	
+	immediate = {
+		if = {
+			limit = { NOT = { has_province_flag = german_ostsiedlung } }
+			set_variable = {
+				which = pv_culture_conversion_progress
+				value = 0
+			}
+		}
+	}
+	
+	option = {
+		name = no_localization
+	}
+}
+
+province_event = {
+	id = culture_conversions.4
+	title = "culture_conversions.4.name"
+	desc = "culture_conversions.4.desc"
+	picture = REFORM_eventPicture
+	
+	mean_time_to_happen = {
+		years = 50
+		
+		modifier = {
+			factor = 0.9
+			owner = { stability = 2 }
+		}
+		
+		modifier = {
+			factor = 0.9
+			owner = { stability = 3 }
+		}
+	}
+	
+	trigger = {
+		OR = { region = al_sham_region region = al_iraq_region }
+		culture_group = aramaic_group
+		religion_group = muslim
+		NOT = { nationalism = 1 }
+		NOT = {
+			AND = {
+				owner = { religion_group = muslim }
+				has_owner_culture = yes
+			}
+		}
+	}
+	
+	option = {
+		name = "culture_conversions.4.opta"
+		
+		trigger = {
+			area = palestine_area
+		}
+		
+		change_culture = levantine
+	}
+	
+	option = {
+		name = "culture_conversions.4.optb"
+		
+		trigger = {
+			OR = {
+				area = syria_area
+				area = aleppo_area
+			}
+		}
+		
+		change_culture = shami
+	}
+	
+	option = {
+		name = "culture_conversions.4.optc"
+		
+		trigger = {
+			area = mosul_area
+		}
+		
+		change_culture = kurdish
+	}
+	
+	option = {
+		name = "culture_conversions.4.optb"
+		
+		trigger = {
+			OR = {
+				area = iraq_arabi_area
+				area = lower_iraq_area
+				area = basra_area
+			}
+		}
+		
+		change_culture = iraqi
+	}
+}
+
+province_event = {
+	id = culture_conversions.5
+	title = "culture_conversions.5.name"
+	desc = "culture_conversions.5.desc"
+	picture = REFORM_eventPicture
+	
+	mean_time_to_happen = {
+		years = 75
+		
+		modifier = {
+			factor = 0.9
+			owner = { stability = 2 }
+		}
+		
+		modifier = {
+			factor = 0.9
+			owner = { stability = 3 }
+		}
+		
+		modifier = {
+			factor = 0.8
+			base_production = 5 # Urban center
+		}
+		
+		modifier = {
+			factor = 2
+			OR = {
+				# East Palestine
+				province_id = 2636
+				province_id = 2575
+				province_id = 1331
+				area = iraq_arabi_area
+				# South east syria
+				province_id = 4058
+				province_id = 4057
+			}
+		}
+	}
+	
+	trigger = {
+		OR = { region = al_sham_region region = al_iraq_region }
+		religion_group = christian
+		NOT = { culture_group = aramaic_group }
+		NOT = { nationalism = 1 }
+		NOT = { owner = { religion_group = muslim } }
+		NOT = {
+			AND = {
+				owner = { religion_group = christian }
+				has_owner_culture = yes
+			}
+		}
+		NOT = { area = lower_iraq_area }
+		NOT = { area = basra_area }
+		NOT = { check_variable = { which = tribals_ratio value = 21 } }
+	}
+	
+	option = {
+		name = "culture_conversions.5.opta"
+		
+		trigger = {
+			OR = {
+				area = palestine_area
+				province_id = 1334
+				province_id = 875
+				province_id = 378
+			}
+		}
+		
+		change_culture = samaritan_c
+	}
+	
+	option = {
+		name = "culture_conversions.5.optb"
+		
+		trigger = {
+			OR = {
+				area = aleppo_area
+				area = syria_area
+			}
+			NOT = { province_id = 1334 }
+			NOT = { province_id = 875 }
+			NOT = { province_id = 378 }
+		}
+		
+		change_culture = syriac
+	}
+	
+	option = {
+		name = "culture_conversions.5.optc"
+		
+		trigger = {
+			NOT = { area = palestine_area }
+			NOT = { area = syria_area }
+			NOT = { area = aleppo_area }
+		}
+		
+		change_culture = aramaic
+	}
+}
+
+province_event = {
+	id = culture_conversions.6
+	title = "culture_conversions.6.name"
+	desc = "culture_conversions.6.desc"
+	picture = REFORM_eventPicture
+	
+	mean_time_to_happen = {
+		years = 75
+		
+		modifier = {
+			factor = 0.9
+			owner = { stability = 2 }
+		}
+		
+		modifier = {
+			factor = 0.9
+			owner = { stability = 3 }
+		}
+		
+		modifier = {
+			factor = 0.8
+			base_production = 5 # Urban center
+		}
+		
+		modifier = {
+			factor = 2
+			OR = {
+				area = cyrenaica_area
+				area = libyan_desert_area
+				province_id = 3887
+			}
+		}
+	}
+	
+	trigger = {
+		region = egypt_region
+		religion_group = christian
+		culture_group = mashreqi
+		NOT = { owner = { religion_group = muslim } }
+		NOT = { culture_group = coptic_group }
+		NOT = { nationalism = 1 }
+		NOT = {
+			AND = {
+				owner = { religion_group = christian }
+				has_owner_culture = yes
+			}
+		}
+		# Red sea coast
+		NOT = { province_id = 3004 }
+		NOT = { province_id = 1211 }
+		NOT = { province_id = 1208 }
+		NOT = { check_variable = { which = tribals_ratio value = 21 } }
+	}
+	
+	option = {
+		name = "culture_conversions.6.opta"
+		
+		trigger = {
+			region = egypt_region
+		}
+		
+		change_culture = coptic_culture
+	}
+}
+
+province_event = {
+	id = culture_conversions.7
+	title = "culture_conversions.7.name"
+	desc = "culture_conversions.7.desc"
+	picture = REFORM_eventPicture
+	
+	mean_time_to_happen = {
+		years = 75
+		
+		modifier = {
+			factor = 0.9
+			owner = { stability = 2 }
+		}
+		
+		modifier = {
+			factor = 0.9
+			owner = { stability = 3 }
+		}
+		
+		modifier = {
+			factor = 0.8
+			base_production = 5 # Urban center
+		}
+	}
+	
+	trigger = {
+		area = east_adriatic_coast_area
+		NOT = { culture_group = latin }
+		NOT = { nationalism = 1 }
+		owner = { #Latin migrants
+			OR = {
+				culture_group = latin
+				AND = {
+					culture_group = turko_byzantine
+					NOT = { primary_culture = turkish }
+					east_italy_region = {
+						owned_by = PREV
+					}
+					west_italy_region = {
+						owned_by = PREV
+					}
+					central_italy_region = {
+						owned_by = PREV
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "culture_conversions.7.opta"
+		
+		trigger = {
+			area = east_adriatic_coast_area
+		}
+		
+		change_culture = dalmatian
+	}
+}

@@ -1,0 +1,881 @@
+###########################################################
+# Events for the Tribal Estate
+#
+# written by Henrik Lohmander
+###########################################################
+
+namespace = tribal_estate_events
+
+#Tensions between Nomads and Sedentary Population
+country_event = {
+	id = tribal_estate_events.1
+	title = tribal_estate_events.1.t
+	desc = tribal_estate_events.1.d
+	picture = NOMAD_ESTATE_eventPicture
+	
+	trigger = {
+		has_dlc = "The Cossacks"
+		check_variable = { which = estate_tribals_weight_share			value = 0.01 }
+		num_of_cities = 5
+		any_owned_province = {
+			base_production = 1
+			has_province_flag = tribals_control_province
+			check_variable = { which = tribals_ratio			value = 21 }
+			NOT = { check_variable = { which = tribals_ratio			value = 40 } }
+			has_province_flag = nomad_speed_boost
+			can_spawn_rebels = nationalist_rebels
+		}
+		NOT = { has_country_modifier = tribes_nomad_sedentary }
+	}
+
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					base_production = 1
+					has_province_flag = tribals_control_province
+					check_variable = { which = tribals_ratio			value = 21 }
+					NOT = { check_variable = { which = tribals_ratio			value = 40 } }
+					has_province_flag = nomad_speed_boost
+					can_spawn_rebels = nationalist_rebels
+				}
+				area = {
+					limit = {
+						base_production = 1
+						has_province_flag = tribals_control_province
+						check_variable = { which = tribals_ratio			value = 21 }
+						NOT = { check_variable = { which = tribals_ratio			value = 40 } }
+						has_province_flag = nomad_speed_boost
+						can_spawn_rebels = nationalist_rebels
+						owned_by = ROOT
+					}
+					set_province_flag = conflict_regarding_tax_collection
+				}
+			}
+			set_variable = { which = tribes_loyalty_added_a	value = 7 }
+			set_variable = { which = tribes_loyalty_removed_a	value = 7 }
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	option = {
+		name = tribal_estate_events.1.a #	Reprimand the Chiefs.
+		ai_chance = {
+			factor = 75
+			modifier = {
+				factor = 0.5
+				NOT = { check_variable = { which = estate_tribals_loyalty	value = 0.3 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { check_variable = { which = estate_tribals_weight_share	value = 0.8 } }
+			}
+		}
+		reduce_estate_tribes_loyalty_effect = { id=a }
+		hidden_effect = {
+			add_country_modifier = {
+				name = tribes_nomad_sedentary
+				duration = 5475
+				hidden = yes
+			}
+		}
+	}
+	option = {
+		name = tribal_estate_events.1.b #	Let it Slide
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 0.5
+				NOT = { check_variable = { which = estate_tribals_weight_share	value = 0.6 } }
+			}
+		}
+		random_owned_province = {
+			limit = {
+				has_province_flag = conflict_regarding_tax_collection
+			}
+			add_province_modifier = {
+				name = "nationalists_organizing"
+				duration = 1825
+			}
+			clr_province_flag = conflict_regarding_tax_collection
+		}
+		random_owned_province = {
+			limit = {
+				has_province_flag = conflict_regarding_tax_collection
+				owner = { num_of_cities = 10 }
+			}
+			add_province_modifier = {
+				name = "nationalists_organizing"
+				duration = 1825
+			}
+			clr_province_flag = conflict_regarding_tax_collection
+		}
+		random_owned_province = {
+			limit = {
+				has_province_flag = conflict_regarding_tax_collection
+				owner = { num_of_cities = 15 }
+			}
+			add_province_modifier = {
+				name = "nationalists_organizing"
+				duration = 1825
+			}
+			clr_province_flag = conflict_regarding_tax_collection
+		}
+		every_owned_province = {
+			clr_province_flag = conflict_regarding_tax_collection
+		}
+		add_estate_tribes_loyalty_effect = { id=a }
+		hidden_effect = {
+			add_country_modifier = {
+				name = tribes_nomad_sedentary
+				duration = 5475
+				hidden = yes
+			}
+		}
+	}
+}
+
+##Advancement of the Tribes
+##General Event for all estates to keep things harder to predict.
+#country_event = {
+#	id = tribal_estate_events.2
+#	title = tribal_estate_events.2.t
+#	desc = tribal_estate_events.2.d
+#	picture = NOMAD_ESTATE_eventPicture
+#	
+#	is_triggered_only = yes
+#	
+#	trigger = {
+#		has_dlc = "The Cossacks"
+#		check_variable = { which = estate_tribals_weight_share			value = 0.01 }
+#		NOT = {
+#			has_estate_influence_modifier = {
+#				estate = estate_nomadic_tribes
+#				modifier = EST_VAL_TRIBES_DECLINES
+#			}
+#		}
+#		NOT = {
+#			has_estate_influence_modifier = {
+#				estate = estate_nomadic_tribes
+#				modifier = EST_VAL_TRIBES_ADVANCES
+#			}
+#		}
+#		NOT = {
+#			has_estate_influence_modifier = {
+#				estate = estate_nomadic_tribes
+#				modifier = EST_VAL_TRIBES_ADVANCES_20
+#			}
+#		}
+#	}
+#
+#	mean_time_to_happen = {
+#		days = 1
+#	}
+#	
+#
+#	option = {
+#		name = tribal_estate_events.2.a #Ok
+#		add_estate_influence_modifier = {
+#			estate = estate_nomadic_tribes
+#			desc = EST_VAL_TRIBES_ADVANCES
+#			influence = 10
+#			duration = 5475
+#		}
+#	}
+#}
+
+##Tribal Authority Declines
+##General Event for all estates to keep things harder to predict.
+#country_event = {
+#	id = tribal_estate_events.3
+#	title = tribal_estate_events.3.t
+#	desc = tribal_estate_events.3.d
+#	picture = NOMAD_ESTATE_eventPicture
+#	
+#	trigger = {
+#		has_dlc = "The Cossacks"
+#		check_variable = { which = estate_tribals_weight_share			value = 0.01 }
+#		estate_influence = {
+#			estate = estate_nomadic_tribes
+#			influence = 15
+#		}
+#		NOT = {
+#			has_estate_influence_modifier = {
+#				estate = estate_nomadic_tribes
+#				modifier = EST_VAL_TRIBES_DECLINES
+#			}
+#		}
+#		NOT = {
+#			has_estate_influence_modifier = {
+#				estate = estate_nomadic_tribes
+#				modifier = EST_VAL_TRIBES_ADVANCES
+#			}
+#		}
+#		NOT = {
+#			has_estate_influence_modifier = {
+#				estate = estate_nomadic_tribes
+#				modifier = EST_VAL_TRIBES_ADVANCES_20
+#			}
+#		}
+#	}
+#	
+#	is_triggered_only = yes
+#	
+#	mean_time_to_happen = {
+#		days = 1
+#	}
+#	
+#	option = {
+#		name = tribal_estate_events.3.a #Ok
+#		add_estate_influence_modifier = {
+#			estate = estate_nomadic_tribes
+#			desc = EST_VAL_TRIBES_DECLINES
+#			influence = -10
+#			duration = 5475
+#		}
+#	}
+#}
+
+
+
+# Local Chiefs Complain
+country_event = {
+	id = tribal_estate_events.4
+	title = tribal_estate_events.4.t
+	desc = tribal_estate_events.4.d
+	picture = NOMAD_ESTATE_eventPicture
+	
+	trigger = {
+		has_dlc = "The Cossacks"
+		check_variable = { which = estate_tribals_weight_share			value = 0.01 }
+	}
+	
+	is_triggered_only = yes
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = tribes_loyalty_added_a	value = 7 }
+			set_variable = { which = tribes_loyalty_removed_a	value = 7 }
+		}
+	}
+	
+	option = {
+		name = tribal_estate_events.4.a
+		ai_chance = {
+			factor = 99
+			modifier = {
+				factor = 0
+				check_variable = { which = estate_tribals_loyalty		value = 0.97 }
+			}
+		}
+		add_army_tradition = -5
+		add_estate_tribes_loyalty_effect = { id=a }
+
+	}
+	option = {
+		name = tribal_estate_events.4.b
+		ai_chance = {
+			factor = 1
+		}
+		add_army_tradition = 5
+		reduce_estate_tribes_loyalty_effect = { id=a }
+	}
+}
+
+
+# Chiefs are withholding Taxes
+country_event = {
+	id = tribal_estate_events.5
+	title = tribal_estate_events.5.t
+	desc = tribal_estate_events.5.d
+	picture = NOMAD_ESTATE_eventPicture
+	
+	trigger = {
+		has_dlc = "The Cossacks"
+		check_variable = { which = estate_tribals_weight_share			value = 0.01 }
+	}
+	
+	is_triggered_only = yes
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = tribes_loyalty_added_a	value = 7 }
+			set_variable = { which = tribes_loyalty_removed_a	value = 7 }
+		}
+	}
+	
+	option = {
+		name = tribal_estate_events.5.a
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 2.0
+				NOT = { check_variable = { which = estate_tribals_loyalty		value = 0.3 } }
+			}
+		}
+		add_prestige = -10
+		add_estate_tribes_loyalty_effect = { id=a }
+
+	}
+	option = {
+		name = tribal_estate_events.5.b
+		ai_chance = {
+			factor = 75
+			modifier = {
+				factor = 0.25
+				NOT = { check_variable = { which = estate_tribals_loyalty		value = 0.3 } }
+			}
+		}
+		add_years_of_income = 0.25
+		reduce_estate_tribes_loyalty_effect = { id=a }
+	}
+}
+
+
+
+# Our Horde is in disarray!
+country_event = {
+	id = tribal_estate_events.6
+	title = tribal_estate_events.6.t
+	desc = tribal_estate_events.6.d
+	picture = NOMAD_ESTATE_eventPicture
+	
+	trigger = {
+		has_dlc = "The Cossacks"
+		check_variable = { which = estate_tribals_weight_share			value = 0.01 }
+		is_nomad = yes
+		NOT = { stability = 0 }
+		NOT = { has_country_modifier = tribes_horde_disarray }
+	}
+	
+	is_triggered_only = yes
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = tribes_loyalty_removed_a	value = 7 }
+		}
+	}
+	
+	option = {
+		name = tribal_estate_events.6.a
+		ai_chance = {
+			factor = 75
+			modifier = {
+				factor = 0.25
+				NOT = { check_variable = { which = estate_tribals_weight_share			value = 0.6 } }
+			}
+		}
+		add_stability_1 = yes
+		hidden_effect = {
+			add_country_modifier = {
+				name = tribes_horde_disarray
+				duration = 5475
+				hidden = yes
+			}
+		}
+
+	}
+	option = {
+		name = tribal_estate_events.6.b
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 2.0
+				NOT = { check_variable = { which = estate_tribals_loyalty			value = 0.01 } }
+			}
+		}
+		hidden_effect = {
+			add_country_modifier = {
+				name = tribes_horde_disarray
+				duration = 5475
+				hidden = yes
+			}
+		}
+		reduce_estate_tribes_loyalty_effect = { id=a }
+	}
+}
+
+
+# The Army is too weak.
+country_event = {
+	id = tribal_estate_events.7
+	title = tribal_estate_events.7.t
+	desc = tribal_estate_events.7.d
+	picture = NOMAD_ESTATE_eventPicture
+	
+	trigger = {
+		has_dlc = "The Cossacks"
+		check_variable = { which = estate_tribals_weight_share			value = 0.2 }
+		is_tribal = yes
+		NOT = { army_tradition = 30 }
+		NOT = { has_country_modifier = tribes_army_weak }
+	}
+	
+	is_triggered_only = yes
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = tribes_loyalty_removed_a	value = 7 }
+		}
+	}
+	
+	option = {
+		name = tribal_estate_events.7.a
+		ai_chance = {
+			factor = 75
+			modifier = {
+				factor = 0.25
+				NOT = { check_variable = { which = estate_tribals_weight_share			value = 0.6 } }
+			}
+		}
+		add_army_tradition = 10
+		hidden_effect = {
+			add_country_modifier = {
+				name = tribes_army_weak
+				duration = 7300
+				hidden = yes
+			}
+		}
+
+	}
+	option = {
+		name = tribal_estate_events.7.b
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 2.0
+				NOT = { check_variable = { which = estate_tribals_loyalty		value = 0.3 } }
+			}
+		}
+		hidden_effect = {
+			add_country_modifier = {
+				name = tribes_army_weak
+				duration = 7300
+				hidden = yes
+			}
+		}
+		reduce_estate_tribes_loyalty_effect = { id=a }
+	}
+}
+
+
+# The Horde is not unified!
+country_event = {
+	id = tribal_estate_events.8
+	title = tribal_estate_events.8.t
+	desc = tribal_estate_events.8.d
+	picture = NOMAD_ESTATE_eventPicture
+	
+	trigger = {
+		has_dlc = "The Cossacks"
+		check_variable = { which = estate_tribals_weight_share			value = 0.2 }
+		is_nomad = yes
+		NOT = { horde_unity = 70 }
+		NOT = { has_country_modifier = tribes_horde_unified }
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = tribes_loyalty_removed_a	value = 7 }
+		}
+	}
+	
+	is_triggered_only = yes
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	option = {
+		name = tribal_estate_events.8.a
+		ai_chance = {
+			factor = 75
+			modifier = {
+				factor = 0.25
+				NOT = { check_variable = { which = estate_tribals_weight_share			value = 0.6 } }
+			}
+		}
+		add_horde_unity = 20
+		hidden_effect = {
+			add_country_modifier = {
+				name = tribes_horde_unified
+				duration = 7300
+				hidden = yes
+			}
+		}
+	}
+	option = {
+		name = tribal_estate_events.8.b
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 2.0
+				NOT = { check_variable = { which = estate_tribals_loyalty		value = 0.3 } }
+			}
+		}
+		hidden_effect = {
+			add_country_modifier = {
+				name = tribes_horde_unified
+				duration = 7300
+				hidden = yes
+			}
+		}
+		reduce_estate_tribes_loyalty_effect = { id=a }
+	}
+}
+
+
+# Chiefs want return to old ways.
+country_event = {
+	id = tribal_estate_events.9
+	title = tribal_estate_events.9.t
+	desc = tribal_estate_events.9.d
+	picture = NOMAD_ESTATE_eventPicture
+	
+	trigger = {
+		has_dlc = "The Cossacks"
+		is_nomad = yes
+		check_variable = { which = estate_tribals_weight_share			value = 0.3 }
+		check_variable = { which = estate_tribals_weight_share			value = 0.6 }
+		NOT = { has_country_modifier = the_proper_old_ways }
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = tribes_loyalty_removed_a	value = 7 }
+		}
+	}
+	
+	is_triggered_only = yes
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	option = {
+		name = tribal_estate_events.9.a
+		ai_chance = {
+			factor = 50
+		}
+		add_country_modifier = {
+			name = the_proper_old_ways
+			duration = 3650
+		}
+
+	}
+	option = {
+		name = tribal_estate_events.9.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 1.5
+				NOT = { check_variable = { which = estate_tribals_loyalty		value = 0.3 } }
+			}
+		}
+		reduce_estate_tribes_loyalty_effect = { id=a }
+	}
+}
+
+#Local Revolt
+#province_event = {
+#	id = tribal_estate_events.10
+#	title = tribal_estate_events.10.t
+#	desc = tribal_estate_events.10.d
+#	picture = NOMAD_ESTATE_eventPicture
+#	
+#	is_triggered_only = yes
+#	
+#	option = {
+#		name = tribal_estate_events.10.a
+#	}
+#}
+
+#Nomadic Tribes Demand weak candidate to be next in line to be Khan
+#Demands at High Influence
+country_event = {
+	id = tribal_estate_events.11
+	title = tribal_estate_events.11.t
+	desc = tribal_estate_events.11.d
+	picture = NOMAD_ESTATE_eventPicture
+	
+	trigger = {
+		has_dlc = "The Cossacks"
+		is_nomad = yes
+		has_regency = no
+		check_variable = { which = estate_tribals_weight_share			value = 0.8 }
+		NOT = { check_variable = { which = estate_tribals_loyalty		value = 0.3 } }
+		NOT = { has_country_modifier = tribes_demand_khan }
+	}
+	
+	is_triggered_only = yes
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = tribes_loyalty_removed_a	value = 7 }
+		}
+	}
+	
+	option = {
+		name = tribal_estate_events.11.a
+		ai_chance = {
+			factor = 1
+		}
+		if = {
+			limit = { has_heir = yes }
+			kill_heir = yes
+		}
+		define_heir = {
+			dynasty = ROOT
+			claim = 15
+			age = 45
+		}
+		hidden_effect = {
+			add_country_modifier = {
+				name = tribes_demand_khan
+				duration = 7300
+				hidden = yes
+			}
+		}
+	}
+	option = {
+		name = tribal_estate_events.11.b
+		ai_chance = {
+			factor = 99
+			modifier = {
+				factor = 0.01
+				NOT = { check_variable = { which = estate_tribals_loyalty		value = 0.2 } }
+			}
+		}
+		reduce_estate_tribes_loyalty_effect = { id=a }
+		hidden_effect = {
+			add_country_modifier = {
+				name = tribes_demand_khan
+				duration = 7300
+				hidden = yes
+			}
+		}
+	}
+}
+
+#Tribes demand use of your men.
+#Demands at High Influence
+country_event = {
+	id = tribal_estate_events.12
+	title = tribal_estate_events.12.t
+	desc = tribal_estate_events.12.d
+	picture = NOMAD_ESTATE_eventPicture
+	
+	trigger = {
+		has_dlc = "The Cossacks"
+		is_nomad = yes
+		check_variable = { which = estate_tribals_weight_share			value = 0.8 }
+		NOT = { check_variable = { which = estate_tribals_loyalty		value = 0.3 } }
+		NOT = { has_country_modifier = tribes_demand_men }
+	}
+	
+	is_triggered_only = yes
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = tribes_loyalty_removed_a	value = 7 }
+		}
+	}
+	
+	option = {
+		name = tribal_estate_events.12.a
+		ai_chance = {
+			factor = 1
+		}
+		add_yearly_manpower = -1
+		hidden_effect = {
+			add_country_modifier = {
+				name = tribes_demand_men
+				duration = 7300
+				hidden = yes
+			}
+		}
+	}
+	option = {
+		name = tribal_estate_events.12.b
+		ai_chance = {
+			factor = 99
+			modifier = {
+				factor = 0.01
+				NOT = { check_variable = { which = estate_tribals_loyalty		value = 0.2 } }
+			}
+		}
+		hidden_effect = {
+			add_country_modifier = {
+				name = tribes_demand_men
+				duration = 7300
+				hidden = yes
+			}
+		}
+		reduce_estate_tribes_loyalty_effect = { id=a }
+	}
+}
+
+#Demands at High Influence
+#Tribes demand greater Autonomy
+country_event = {
+	id = tribal_estate_events.13
+	title = tribal_estate_events.13.t
+	desc = tribal_estate_events.13.d
+	picture = NOMAD_ESTATE_eventPicture
+	
+	trigger = {
+		has_dlc = "The Cossacks"
+		is_nomad = yes
+		check_variable = { which = estate_tribals_weight_share			value = 0.8 }
+		NOT = { check_variable = { which = estate_tribals_loyalty		value = 0.3 } }
+		NOT = { has_country_modifier = tribes_demand_autonomy }
+	}
+	
+	is_triggered_only = yes
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = tribes_loyalty_removed_a	value = 7 }
+		}
+	}
+	
+	option = {
+		name = tribal_estate_events.13.a
+		ai_chance = {
+			factor = 1
+		}
+		custom_tooltip = tribal_estate_events.13.a.tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					has_province_flag = tribals_control_province
+				}
+				add_local_autonomy = 35
+			}
+			every_owned_province = {
+				limit = {
+					check_variable = { which = tribals_ratio			value = 1 }
+					NOT = { check_variable = { which = tribals_ratio	value = 20 } }
+				}
+				add_local_autonomy = 15
+			}
+		}
+		hidden_effect = {
+			add_country_modifier = {
+				name = tribes_demand_autonomy
+				duration = 7300
+				hidden = yes
+			}
+		}
+	}
+	option = {
+		name = tribal_estate_events.13.b
+		ai_chance = {
+			factor = 99
+			modifier = {
+				factor = 0.01
+				NOT = { check_variable = { which = estate_tribals_loyalty		value = 0.2 } }
+			}
+		}
+		hidden_effect = {
+			add_country_modifier = {
+				name = tribes_demand_autonomy
+				duration = 7300
+				hidden = yes
+			}
+		}
+		reduce_estate_tribes_loyalty_effect = { id=a }
+	}
+}
+
+#Demands at High Influence
+#Tribes demand to general their own troops
+country_event = {
+	id = tribal_estate_events.14
+	title = tribal_estate_events.14.t
+	desc = tribal_estate_events.14.d
+	picture = NOMAD_ESTATE_eventPicture
+	
+	trigger = {
+		has_dlc = "The Cossacks"
+		is_nomad = yes
+		check_variable = { which = estate_tribals_weight_share			value = 0.8 }
+		NOT = { check_variable = { which = estate_tribals_loyalty		value = 0.3 } }
+		NOT = { has_country_modifier = tribes_demand_general }
+	}
+	
+	is_triggered_only = yes
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	option = {
+		name = tribal_estate_events.14.a
+		ai_chance = {
+			factor = 1
+		}
+		add_country_modifier = {
+			name = "no_tribal_leaders"
+			duration = 1825
+		}
+		hidden_effect = {
+			add_country_modifier = {
+				name = tribes_demand_general
+				duration = 7300
+				hidden = yes
+			}
+		}
+	}
+	option = {
+		name = tribal_estate_events.14.b
+		ai_chance = {
+			factor = 99
+			modifier = {
+				factor = 0.01
+				NOT = { check_variable = { which = estate_tribals_loyalty		value = 0.2 } }
+			}
+		}
+		hidden_effect = {
+			add_country_modifier = {
+				name = tribes_demand_general
+				duration = 7300
+				hidden = yes
+			}
+		}
+		reduce_estate_tribes_loyalty_effect = { id=a }
+	}
+}

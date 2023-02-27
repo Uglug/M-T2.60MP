@@ -1,0 +1,305 @@
+country_decisions = {
+	hold_naadam = {
+		potential = {
+			culture_group = altaic
+			NOT = { has_country_flag = naadam_prepared }
+			NOT = { has_country_modifier = naadam_wrestling }
+			NOT = { has_country_modifier = naadam_horse_racing }
+			NOT = { has_country_modifier = naadam_archery }
+		}
+		allow = {
+			treasury = 50
+			is_month = 2
+			NOT = { is_month = 5 }
+		}
+		effect = {
+			add_treasury = -50
+			set_country_flag = naadam_prepared
+			country_event = { id = flavor_psmod.32 days = 90 }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	unite_mongolia = {
+		major = yes
+		potential = {
+			culture_group = altaic
+			NOT = { has_ruler_modifier = united_mongol_tribes }
+		}
+		provinces_to_highlight = {
+			OR = {
+				region = inner_mongolia_region
+				region = outer_mongolia_region
+			}
+		}
+		allow = {
+			is_at_war = no
+			is_free_or_tributary_trigger = yes
+			custom_trigger_tooltip = {
+				calc_true_if = {
+					eastern_steppe_superregion = {
+						type = all
+						OR = {
+							region = inner_mongolia_region
+							region = outer_mongolia_region
+						}
+						owner = {
+							OR = {
+								tag = ROOT
+								is_subject_of = ROOT
+							}
+						}
+					}
+					amount = 10
+				}
+				YUA = {
+					OR = {
+						ROOT = { tag = YUA }
+						exists = no
+						is_subject_of = ROOT
+					}
+				}
+				TMD = {
+					OR = {
+						ROOT = { tag = TMD }
+						exists = no
+						is_subject_of = ROOT
+					}
+				}
+				KHA = {
+					OR = {
+						ROOT = { tag = KHA }
+						exists = no
+						is_subject_of = ROOT
+					}
+				}
+				CHH = {
+					OR = {
+						ROOT = { tag = CHH }
+						exists = no
+						is_subject_of = ROOT
+					}
+				}
+				KHR = {
+					OR = {
+						ROOT = { tag = KHR }
+						exists = no
+						is_subject_of = ROOT
+					}
+				}
+				tooltip = mongol_tribes_tooltip
+			}
+		}
+		effect = {
+			add_ruler_modifier = {
+				name = "united_mongol_tribes"
+				duration = -1
+			}
+			if = {
+				limit = { NOT = { has_country_modifier = title_6 } }
+				change_title_6 = yes
+			}
+			if = {
+				limit = {
+					borjigin_trigger = no
+				}
+				country_event = { id = flavor_psmod.13 days = 1 }
+			}
+			every_known_country = {
+				limit = {
+					culture_group = altaic
+					NOT = { tag = JAI }
+					has_country_modifier = title_6
+				}
+				change_title_5 = yes
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	return_manchurian_steppe = {
+		potential = {
+			primary_culture = daur
+			OR = {
+				owns = 726 # Tsitsihar
+				owns = 3257 # Amba Hinggan
+				owns = 3260 # Songyuan
+			}
+			NOT = { has_country_flag = returned_manchurian_steppe }
+		}
+		provinces_to_highlight = {
+			province_group = manchurian_steppe_group
+		}
+		allow = {
+			owns = 726 # Tsitsihar
+			owns = 3259 # Jirem
+			owns = 3260 # Songyuan
+			owns = 3261 # Khorchin
+			owns = 3262 # Hada
+		}
+		effect = {
+			set_country_flag = returned_manchurian_steppe
+			add_prestige = 10
+			custom_tooltip = daur_settlement_steppe
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						culture = daur
+						NOT = { province_group = manchurian_steppe_group }
+					}
+					province_event = { id = daur_revival.6 }
+				}
+			}
+			every_owned_province = {
+				limit = {
+					province_group = manchurian_steppe_group
+				}
+				add_core = ROOT
+				add_permanent_claim = ROOT
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	daurs_adopt_script = {
+		potential = {
+			primary_culture = daur
+			OR = {
+				num_of_cities = 10
+				has_country_flag = returned_manchurian_steppe
+			}
+			NOT = { has_country_flag = daur_script }
+		}
+		allow = {
+			adm = 4
+		}
+		effect = {
+			add_prestige = 5
+			country_event = { id = daur_revival.1 }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	daurs_settle_down = {
+		potential = {
+			has_country_flag = returned_manchurian_steppe
+			NOT = { has_country_flag = daur_settled }
+		}
+		allow = {
+			mil = 4
+		}
+		effect = {
+			set_country_flag = daur_settled
+			steppe_effect = yes
+			add_prestige = 5
+			country_event = { id = daur_revival.2 }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	daurs_integrate_khorchin = {
+		major = yes
+		potential = {
+			primary_culture = daur
+			has_country_flag = returned_manchurian_steppe
+			has_country_flag = daur_script
+			NOT = { has_country_flag = khitans_reclaimed }
+			NOT = { has_country_flag = khitans_dead }
+		}
+		provinces_to_highlight = {
+			area = khorchin_area
+		}
+		allow = {
+			or = { dip = 4 statesman = 3 }
+			custom_trigger_tooltip = {
+				OR = {
+					KHR = { exists = yes }
+					AND = {
+						KHR = { exists = no }
+						num_of_owned_provinces_with = {
+							area = khorchin_area
+							is_core = ROOT
+							value = 4
+						}
+					}
+				}
+				tooltip = khitan_khorchin_tooltip
+			}
+		}
+		effect = {
+			add_prestige = 10
+			if = {
+				limit = {
+					KHR = { exists = no }
+				}
+				set_country_flag = khitans_reclaimed
+				every_owned_province = {
+					limit = {
+						OR = {
+							culture = khorchin
+							culture = daur
+						}
+					}
+					change_culture = khitan
+				}
+				change_primary_culture = khitan
+			}
+			if = {
+				limit = {
+					KHR = { exists = yes }
+				}
+				KHR = { country_event = { id = daur_revival.3 } }
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	uriankhai_surrender = {
+		potential = {
+			tag = MXI
+			any_known_country = {
+				war_with = ROOT
+				OR = {
+					primary_culture = korean
+					culture_group = chinese_group
+					has_country_flag = mandate_of_heaven_claimed
+				}
+			}
+			NOT = { has_country_flag = naghacu_surrendered }
+			ai = yes
+		}
+		allow = {
+			capital_scope = {
+				NOT = {
+					controlled_by = ROOT
+				}
+				NOT = {
+					controlled_by = REB
+				}
+			}
+		}
+		effect = {
+			set_country_flag = naghacu_surrendered
+			capital_scope = {
+				controller = {
+					country_event = { id = red_turban.16 }
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+} #End of country decisions

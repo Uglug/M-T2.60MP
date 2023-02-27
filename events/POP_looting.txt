@@ -1,0 +1,2307 @@
+namespace = POP_looting
+
+### By Dezumann, with significant work by Demian
+
+# Main event for destroying urban assets
+province_event = {
+	id = POP_looting.001
+	title = "POP_looting.001.t"
+	desc = "POP_looting.001.d"
+	picture = LOOT_SCREEN_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		set_variable = { which = building_cost value = 0 }
+		
+		set_variable = { 		   which = wealth_urban_pillaging_threshold		value = 0 }
+		subtract_variable = { 	   which = wealth_urban_pillaging_threshold		which = wealth_urban_as_asset }
+		multiply_variable = { 	   which = wealth_urban_pillaging_threshold		value = 0.1 }
+		province_event = { id = POP_looting.002 }
+	}
+	
+	option = {
+		name = "ok"
+	}
+}
+
+# Destroys buildings until our lust for destruction is satisfied
+province_event = {
+	id = POP_looting.002
+	title = POP_looting.002.t
+	desc = POP_looting.002.d
+	picture = LOOT_SCREEN_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		if = {
+			limit = { NOT = { check_variable = { which = wealth_urban_fluid which = wealth_urban_pillaging_threshold  } } }
+			set_province_flag = no_recalc_infra
+			province_event = { id = POP_looting.003 }
+		}
+		else = { ### Variables set to 0 after calculations are done
+			#limit = {
+			#	NOT = { has_global_flag = show_for_developers }
+			#}
+			clr_province_flag = no_recalc_infra
+			recalc_infra = yes
+			set_variable = { which = wealth_urban_pillaging_threshold		value = 0 }
+		}
+	}
+	
+	option = {
+		name = "ok"
+	}
+}
+
+# Downgrades/destroys a weighted random building and saves its value
+province_event = {
+	id = POP_looting.003
+	title = "POP_looting.003.t"
+	desc = "POP_looting.003.d"
+	picture = LOOT_SCREEN_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		
+	}
+	
+	option = {
+		name = "ok"
+		trigger = { has_building = town_hall }
+		get_upgrade_cost_town_hall = yes
+		remove_building = town_hall
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 50 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = urban_infrastructure_1 }
+		get_upgrade_cost_urban_infrastructure_1 = yes
+		remove_building = urban_infrastructure_1
+		add_building = town_hall
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 50 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = urban_infrastructure_2 }
+		get_upgrade_cost_urban_infrastructure_2 = yes
+		remove_building = urban_infrastructure_2
+		add_building = urban_infrastructure_1
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 50 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = urban_infrastructure_3 }
+		get_upgrade_cost_urban_infrastructure_3 = yes
+		remove_building = urban_infrastructure_3
+		add_building = urban_infrastructure_2
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 50 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = urban_infrastructure_4 }
+		get_upgrade_cost_urban_infrastructure_4 = yes
+		remove_building = urban_infrastructure_4
+		add_building = urban_infrastructure_3
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 50 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = urban_infrastructure_5 }
+		get_upgrade_cost_urban_infrastructure_5 = yes
+		remove_building = urban_infrastructure_5
+		add_building = urban_infrastructure_4
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 50 }
+	}
+	
+	option = {
+		name = "ok"
+		trigger = { has_building = small_university }
+		get_upgrade_cost_small_university = yes
+		remove_building = small_university
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 1 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = medium_university }
+		get_upgrade_cost_big_university = yes
+		remove_building = medium_university
+		add_building = small_university
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 1 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = big_university }
+		get_upgrade_cost_big_university = yes
+		remove_building = big_university
+		add_building = medium_university
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 1 }
+	}
+	
+	option = {
+		name = "ok"
+		trigger = { has_building = marketplace }
+		get_upgrade_cost_marketplace = yes
+		remove_building = marketplace
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 150 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = merchant_guild }
+		get_upgrade_cost_merchant_guild = yes
+		remove_building = merchant_guild
+		add_building = marketplace
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 150 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = trade_depot }
+		get_upgrade_cost_trade_depot = yes
+		remove_building = trade_depot
+		add_building = merchant_guild
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 150 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = customs_house }
+		get_upgrade_cost_customs_house = yes
+		remove_building = customs_house
+		add_building = trade_depot
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 150 }
+	}
+	
+	option = {
+		name = "ok"
+		trigger = { has_building = bank }
+		get_upgrade_cost_bank = yes
+		remove_building = bank
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 150 }
+	}
+	
+	option = {
+		name = "ok"
+		trigger = { has_building = stock_exchange }
+		get_upgrade_cost_stock_exchange = yes
+		remove_building = stock_exchange
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 50 }
+	}
+	
+	option = {
+		name = "ok"
+		trigger = { has_building = workshop }
+		get_upgrade_cost_workshop = yes
+		remove_building = workshop
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 100 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = corporation_guild }
+		get_upgrade_cost_corporation_guild = yes
+		remove_building = corporation_guild
+		add_building = workshop
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 100 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = urban_manufactory }
+		get_upgrade_cost_urban_manufactory = yes
+		remove_building = urban_manufactory
+		add_building = corporation_guild
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 100 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = factory }
+		get_upgrade_cost_factory = yes
+		remove_building = factory
+		add_building = urban_manufactory
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 100 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = steam_powered_factory }
+		get_upgrade_cost_steam_powered_factory = yes
+		remove_building = steam_powered_factory
+		add_building = factory
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 100 }
+	}
+	
+	# option = {
+	# 	name = "ok"
+	# 	trigger = { has_building = constable }
+	# 	get_upgrade_cost_constable = yes
+	# 	remove_building = constable
+	# 	building_destruction_iteration_urban = yes
+	# 	ai_chance = { factor = 200 }
+	# }
+	# option = {
+	# 	name = "ok"
+	# 	trigger = { has_building = bailiff }
+	# 	get_upgrade_cost_bailiff = yes
+	# 	remove_building = bailiff
+	# 	add_building = constable
+	# 	building_destruction_iteration_urban = yes
+	# 	ai_chance = { factor = 200 }
+	# }
+	# option = {
+	# 	name = "ok"
+	# 	trigger = { has_building = courthouse }
+	# 	get_upgrade_cost_courthouse = yes
+	# 	remove_building = courthouse
+	# 	add_building = bailiff
+	# 	building_destruction_iteration_urban = yes
+	# 	ai_chance = { factor = 200 }
+	# }
+	# option = {
+	# 	name = "ok"
+	# 	trigger = { has_building = superintendent }
+	# 	get_upgrade_cost_superintendent = yes
+	# 	remove_building = superintendent
+	# 	add_building = courthouse
+	# 	building_destruction_iteration_urban = yes
+	# 	ai_chance = { factor = 200 }
+	# }
+	
+	option = {
+		name = "ok"
+		trigger = { has_building = military_harbour_1 }
+		get_upgrade_cost_military_harbour_1 = yes
+		remove_building = military_harbour_1
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 50 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = military_harbour_2 }
+		get_upgrade_cost_military_harbour_2 = yes
+		remove_building = military_harbour_2
+		add_building = military_harbour_1
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 50 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = military_harbour_3 }
+		get_upgrade_cost_military_harbour_3 = yes
+		remove_building = military_harbour_3
+		add_building = military_harbour_2
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 50 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = military_harbour_4 }
+		get_upgrade_cost_military_harbour_4 = yes
+		remove_building = military_harbour_4
+		add_building = military_harbour_3
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 50 }
+	}
+	
+	option = {
+		name = "ok"
+		trigger = { has_building = harbour_infrastructure_1 }
+		get_upgrade_cost_harbour_infrastructure_1 = yes
+		remove_building = harbour_infrastructure_1
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 50 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = harbour_infrastructure_2 }
+		get_upgrade_cost_harbour_infrastructure_2 = yes
+		remove_building = harbour_infrastructure_2
+		clr_province_flag = large_port_present
+		add_building = harbour_infrastructure_1
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 50 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = harbour_infrastructure_3x }
+		get_upgrade_cost_harbour_infrastructure_3x = yes
+		remove_building = harbour_infrastructure_3x
+		add_building = harbour_infrastructure_2
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 50 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = harbour_infrastructure_4 }
+		get_upgrade_cost_harbour_infrastructure_4 = yes
+		remove_building = harbour_infrastructure_4
+		add_building = harbour_infrastructure_3x
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 50 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = harbour_infrastructure_5 }
+		get_upgrade_cost_harbour_infrastructure_5 = yes
+		remove_building = harbour_infrastructure_5
+		add_building = harbour_infrastructure_4
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 50 }
+	}
+	
+	option = {
+		name = "ok"
+		trigger = { has_building = bureaucracy_1 }
+		get_upgrade_cost_bureaucracy_1 = yes
+		remove_building = bureaucracy_1
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 1 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = bureaucracy_2 }
+		get_upgrade_cost_bureaucracy_2 = yes
+		remove_building = bureaucracy_2
+		add_building = bureaucracy_1
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 1 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = bureaucracy_3 }
+		get_upgrade_cost_bureaucracy_3 = yes
+		remove_building = bureaucracy_3
+		add_building = bureaucracy_2
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 1 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = bureaucracy_4 }
+		get_upgrade_cost_bureaucracy_4 = yes
+		remove_building = bureaucracy_4
+		add_building = bureaucracy_3
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 1 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = bureaucracy_5 }
+		get_upgrade_cost_bureaucracy_5 = yes
+		remove_building = bureaucracy_5
+		add_building = bureaucracy_4
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 1 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = temple }
+		get_upgrade_cost_temple = yes
+		remove_building = temple
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 125 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = temple_heathen }
+		get_upgrade_cost_temple_heathen = yes
+		remove_building = temple_heathen
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 125 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = great_temple }
+		get_upgrade_cost_great_temple = yes
+		remove_building = great_temple
+		remove_building = temple_heathen
+		add_building = temple
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 100 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = art_corporation }
+		get_upgrade_cost_art_corporation = yes
+		remove_building = art_corporation
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 20 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = fine_arts_academy }
+		get_upgrade_cost_fine_arts_academy = yes
+		remove_building = fine_arts_academy
+		add_building = art_corporation
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 15 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = opera }
+		get_upgrade_cost_opera = yes
+		remove_building = opera
+		add_building = fine_arts_academy
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 10 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = warehouse }
+		get_upgrade_cost_warehouse = yes
+		remove_building = warehouse
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 100 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = warehouse_district }
+		get_upgrade_cost_warehouse_district = yes
+		remove_building = warehouse_district
+		add_building = warehouse
+		building_destruction_iteration_urban = yes
+		ai_chance = { factor = 100 }
+	}
+	option = {
+		name = "ok"
+		# This *should* only get picked when there are no valid buildings to destroy
+		ai_chance = { factor = 0.01 }
+	}
+}
+
+# Main event for destroying rural assets
+province_event = {
+	id = POP_looting.004
+	title = POP_looting.004.t
+	desc = POP_looting.004.d
+	picture = LOOT_SCREEN_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		set_variable = { which = building_cost value = 0 }
+		set_variable = { 		   which = wealth_rural_pillaging_threshold		value = 0 }
+		subtract_variable = { 	   which = wealth_rural_pillaging_threshold		which = wealth_rural_as_asset }
+		multiply_variable = { 	   which = wealth_rural_pillaging_threshold		value = 0.1 }
+		province_event = { id = POP_looting.005 }
+	}
+	
+	option = {
+		name = "ok"
+	}
+}
+
+# Destroys buildings until our lust for destruction is satisfied
+province_event = {
+	id = POP_looting.005
+	title = POP_looting.005.t
+	desc = POP_looting.005.d
+	picture = LOOT_SCREEN_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		if = {
+			limit = { NOT = { check_variable = { which = wealth_rural_fluid which = wealth_rural_pillaging_threshold  } } }
+			province_event = { id = POP_looting.006 }
+		}
+		else = { ### Variables set to 0 after calculations are done
+			#limit = {
+			#	NOT = { has_global_flag = show_for_developers }
+			#}
+			set_variable = { which = wealth_urban_pillaging_threshold		value = 0 }
+		}
+	}
+	
+	option = {
+		name = "ok"
+	}
+}
+
+# Downgrades/destroys a weighted random building and saves its value
+province_event = {
+	id = POP_looting.006
+	title = POP_looting.006.t
+	desc = POP_looting.006.d
+	picture = LOOT_SCREEN_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		
+	}
+	
+	option = {
+		name = "ok"
+		trigger = { has_building = rural_infrastructure_1 }
+		get_upgrade_cost_rural_infrastructure_1 = yes
+		remove_building = rural_infrastructure_1
+		building_destruction_iteration_rural = yes
+		ai_chance = { factor = 100 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = rural_infrastructure_2 }
+		get_upgrade_cost_rural_infrastructure_2 = yes
+		remove_building = rural_infrastructure_2
+		add_building = rural_infrastructure_1
+		building_destruction_iteration_rural = yes
+		ai_chance = { factor = 100 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = rural_infrastructure_3 }
+		get_upgrade_cost_rural_infrastructure_3 = yes
+		remove_building = rural_infrastructure_3
+		add_building = rural_infrastructure_2
+		building_destruction_iteration_rural = yes
+		ai_chance = { factor = 100 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = rural_infrastructure_4 }
+		get_upgrade_cost_rural_infrastructure_4 = yes
+		remove_building = rural_infrastructure_4
+		add_building = rural_infrastructure_3
+		building_destruction_iteration_rural = yes
+		ai_chance = { factor = 100 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = rural_infrastructure_5 }
+		get_upgrade_cost_rural_infrastructure_5 = yes
+		remove_building = rural_infrastructure_5
+		add_building = rural_infrastructure_4
+		building_destruction_iteration_rural = yes
+		ai_chance = { factor = 100 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = rural_infrastructure_6 }
+		get_upgrade_cost_rural_infrastructure_6 = yes
+		remove_building = rural_infrastructure_6
+		add_building = rural_infrastructure_5
+		building_destruction_iteration_rural = yes
+		ai_chance = { factor = 100 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = rural_infrastructure_7 }
+		get_upgrade_cost_rural_infrastructure_7 = yes
+		remove_building = rural_infrastructure_7
+		add_building = rural_infrastructure_6
+		building_destruction_iteration_rural = yes
+		ai_chance = { factor = 100 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = mines_2 }
+		get_upgrade_cost_mines_2 = yes
+		remove_building = mines_2
+		add_building = mines_1
+		building_destruction_iteration_rural = yes
+		ai_chance = { factor = 50 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = mines_3 }
+		get_upgrade_cost_mines_3 = yes
+		remove_building = mines_3
+		add_building = mines_2
+		building_destruction_iteration_rural = yes
+		ai_chance = { factor = 50 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = mines_4 }
+		get_upgrade_cost_mines_4 = yes
+		remove_building = mines_4
+		add_building = mines_3
+		building_destruction_iteration_rural = yes
+		ai_chance = { factor = 50 }
+	}
+	option = {
+		name = "ok"
+		trigger = { has_building = mines_5 }
+		get_upgrade_cost_mines_5 = yes
+		remove_building = mines_5
+		add_building = mines_4
+		building_destruction_iteration_rural = yes
+		ai_chance = { factor = 50 }
+	}
+	
+	
+	option = {
+		name = "ok"
+		# This option *should* be picked if there are no valid buildings to destroy
+		ai_chance = { factor = 0.01 }
+	}
+}
+
+# Event for distributing loot when peace comes
+# Fire from on_action for peace
+country_event = {
+	id = POP_looting.007
+	title = POP_looting.007.t
+	desc = POP_looting.007.d
+	picture = LOOT_SCREEN_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	trigger = {
+		#	is_at_war = no
+		#	check_variable = { which = loot_pool value = 1 }
+	}
+	
+	immediate = {
+		hidden_effect = {
+			# log = "BEGIN: POP_looting.007"
+			### The Following is used to determine how angry estates are at having been gyped of loot.  How angry they get is scaled based on how big the loot pool is relative to your yearly income ###
+			
+			#set_variable = { 	  which = loot_anger_base				value = 0 } ### Will represent yearly income as its base, then multiplied by random seed
+			set_variable = {   which = loot_anger_base				which = upper_pop }
+			multiply_variable = { which = loot_anger_base 				value = 20 }
+			random_list = {
+				15 = { multiply_variable = { which = loot_anger_base value = 0.5 } }
+				20 = { multiply_variable = { which = loot_anger_base value = 0.75 } }
+				30 = {
+					#multiply_variable = { which = loot_anger_base value = 1 }
+				}
+				20 = { multiply_variable = { which = loot_anger_base value = 1.5 } }
+				15 = { multiply_variable = { which = loot_anger_base value = 2 } }
+			}
+			#set_variable = { 	  which = loot_stability_gain 					value = 0 }
+			set_variable = { 	  which = loot_stability_gain					which = loot_pool }
+			#if = {
+			#	limit = {
+			#		is_variable_equal = {
+			#			which = loot_anger_base
+			#			value = 0
+			#		}
+			#	}
+			#	
+			#	# log = "<ERROR><8CCEAC70><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+			#	
+			#}
+			#else = {
+				divide_variable = {
+					which = loot_stability_gain
+					which = loot_anger_base
+				}
+			#}
+			#set_variable = { 	  which = stability_point_gain 					value = 0 }
+			set_variable = { 	  which = stability_point_gain 					which = loot_stability_gain }
+			multiply_variable = { which = stability_point_gain					value = 5 }
+			#	multiply_variable = { which = loot_stability_gain					value = 10 }
+			
+			#set_variable = { 	  which = loot_soldiers_angry 					value = 0 }
+			set_variable = { 	  which = loot_soldiers_angry 					which = loot_pool }
+			#if = {
+			#	limit = {
+			#		is_variable_equal = {
+			#			which = loot_anger_base
+			#			value = 0
+			#		}
+			#	}
+			#	
+			#	# log = "<ERROR><6AFF3680><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+			#	
+			#}
+			#else = {
+				divide_variable = {
+					which = loot_soldiers_angry
+					which = loot_anger_base
+				}
+			#}
+			multiply_variable = { which = loot_soldiers_angry					value = 2 }
+			#set_variable = { 	  which = loot_soldiers_angry_20				value = 0 }
+			set_variable = { 	  which = loot_soldiers_angry_20				which = loot_soldiers_angry }
+			#set_variable = { 	  which = loot_soldiers_angry_40				value = 0 }
+			set_variable = { 	  which = loot_soldiers_angry_40				which = loot_soldiers_angry }
+			#	multiply_variable {   which = loot_soldiers_angry_40				value = 3 }
+			
+			twenty_angry_soldiers_express = yes
+			forty_angry_soldiers_express = yes
+			### Calculating change in tribe's loyalty due to net gain or loss of money ###
+			
+			if = { ### Tribal loot
+				limit = {
+					check_variable = { which = estate_tribals_weight_share 	value = 0.01 }
+				}
+				if = { ### Promise Loot ###
+					limit = {
+						has_country_flag = tribals_promised_loot
+					}
+					#set_variable = { which = tribes_loyalty_removed_b 				value = 0 }
+					set_variable = { which = tribes_loyalty_removed_b 				value = 15 }
+					subtract_variable = { which = tribes_loyalty_removed_b			which = ruler_diplo_ability }
+					multiply_variable = { which = tribes_loyalty_removed_b			value = 0.001 }
+					multiply_variable = { which = tribes_loyalty_removed_b 			value = 1000 }
+
+					#set_variable = { which = tribes_loyalty_removed_c 				value = 0 }
+					set_variable = { which = tribes_loyalty_removed_c 				value = 30 }
+					subtract_variable = { which = tribes_loyalty_removed_c			which = ruler_diplo_ability }
+					subtract_variable = { which = tribes_loyalty_removed_c			which = ruler_diplo_ability }
+					multiply_variable = { which = tribes_loyalty_removed_c			value = 0.001 }
+					multiply_variable = { which = tribes_loyalty_removed_c 			value = 1000 }
+				}
+				
+				if = { ### Loyalty change if you didn't call your host
+					limit = {
+						is_nomad = yes
+						NOT = { has_country_flag = TR_partial_support }
+						NOT = { has_country_flag = TR_full_support }
+					}
+					#set_variable = { 	  which = estate_tribals_wealth_at_war_start 	value = 0 }
+					#set_variable = { 	  which = estate_tribal_loot_share				value = 0 }
+					#set_variable = { 	  which = total_landed_estates 					value = 0 }
+					
+					set_variable = { 	  which = estate_tribals_wealth_at_war_start	which = estate_tribals_wealth }
+					set_variable = { 	  which = estate_tribal_loot_share 				which = estate_tribals_weight_share }
+					set_variable = { 	  which = total_landed_estates 					which = estate_tribals_weight_share }
+					change_variable = {   which = total_landed_estates					which = estate_greater_nobles_weight_share }
+					change_variable = {   which = total_landed_estates					which = estate_lesser_nobles_weight_share }
+					change_variable = {   which = total_landed_estates					which = estate_burghers_weight_share }
+					#change_variable = {   which = total_landed_estates					which = estate_freeholders_weight_share }
+					divide_variable = {   which = estate_tribal_loot_share				which = total_landed_estates }
+					
+					#set_variable = { 	  which = loot_tribes 							value = 0 }
+					set_variable = { 	  which = loot_tribes 							which = loot_pool }
+					multiply_variable = { which = loot_tribes							which = estate_tribal_loot_share }
+					#set_variable = { 	  which = loot_tribes_10						value = 0 }
+					set_variable = { 	  which = loot_tribes_10						which = loot_tribes }
+					multiply_variable = { which = loot_tribes_10						value = 0.9 }
+					#set_variable = { 	  which = loot_tribes_20						value = 0 }
+					set_variable = { 	  which = loot_tribes_20						which = loot_tribes }
+					multiply_variable = { which = loot_tribes_20						value = 0.8 }
+					#set_variable = { 	  which = loot_tribes_40						value = 0 }
+					set_variable = { 	  which = loot_tribes_40						which = loot_tribes }
+					multiply_variable = { which = loot_tribes_40						value = 0.6 }
+					
+					#set_variable = { 	  which = estate_tribal_gained_or_lost			value = 0 }
+					set_variable = { 	  which = estate_tribal_gained_or_lost			which = estate_tribals_wealth_at_war_start }
+					set_country_flag = estate_tribal_give_loot
+				}
+				
+				if = { ### Loyalty change if you DID call your host
+					limit = {
+						OR = {
+							has_country_flag = TR_partial_support
+							has_country_flag = TR_full_support
+						}
+					}
+					#set_variable = { 	  which = estate_tribals_wealth_at_war_start 	value = 0 }
+					#set_variable = { 	  which = estate_tribal_loot_share				value = 0 }
+					#set_variable = { 	  which = total_landed_estates 					value = 0 }
+					
+					set_variable = { 	  which = estate_tribals_wealth_at_war_start	which = estate_tribals_wealth }
+					set_variable = { 	  which = estate_tribal_loot_share 				which = estate_tribals_weight_share }
+					set_variable = { 	  which = total_landed_estates 					which = estate_tribals_weight_share }
+					change_variable = {   which = total_landed_estates					which = estate_greater_nobles_weight_share }
+					change_variable = {   which = total_landed_estates					which = estate_lesser_nobles_weight_share }
+					change_variable = {   which = total_landed_estates					which = estate_burghers_weight_share }
+					#change_variable = {   which = total_landed_estates					which = estate_freeholders_weight_share }
+					divide_variable = {   which = estate_tribal_loot_share				which = total_landed_estates }
+					
+					#set_variable = { 	  which = loot_tribes 						value = 0 }
+					set_variable = { 	  which = loot_tribes 						which = loot_pool }
+					multiply_variable = { which = loot_tribes						which = estate_tribal_loot_share }
+					
+					#set_variable = { 	  which = loot_tribes_10					value = 0 }
+					set_variable = { 	  which = loot_tribes_10					which = loot_tribes }
+					multiply_variable = { which = loot_tribes_10					value = 0.9 }
+					#set_variable = { 	  which = loot_tribes_20					value = 0 }
+					set_variable = { 	  which = loot_tribes_20					which = loot_tribes }
+					multiply_variable = { which = loot_tribes_20					value = 0.8 }
+					#set_variable = { 	  which = loot_tribes_40					value = 0 }
+					set_variable = { 	  which = loot_tribes_40					which = loot_tribes }
+					multiply_variable = { which = loot_tribes_40					value = 0.6 }
+					
+					#set_variable = { 	  which = estate_tribal_gained_or_lost			value = 0 }
+					set_variable = { 	  which = estate_tribal_gained_or_lost		which = estate_tribals_wealth_at_war_start }
+					subtract_variable = { which = estate_tribal_gained_or_lost		which = estate_tribals_war_spent }
+					set_country_flag = estate_tribal_give_loot
+				}
+				if = {
+					limit = {
+						has_country_flag = estate_tribal_give_loot
+					}
+					#set_variable = { 	  which = estate_tribal_gained_or_lost_10	value = 0 }
+					set_variable = { 	  which = estate_tribal_gained_or_lost_10	which = estate_tribal_gained_or_lost }
+					change_variable = {   which = estate_tribal_gained_or_lost_10	which = loot_tribes_10 }
+					#set_variable = { 	  which = estate_tribal_gained_or_lost_20	value = 0 }
+					set_variable = { 	  which = estate_tribal_gained_or_lost_20	which = estate_tribal_gained_or_lost }
+					change_variable = {   which = estate_tribal_gained_or_lost_20	which = loot_tribes_20 }
+					#set_variable = { 	  which = estate_tribal_gained_or_lost_40	value = 0 }
+					set_variable = { 	  which = estate_tribal_gained_or_lost_40	which = estate_tribal_gained_or_lost }
+					change_variable = {   which = estate_tribal_gained_or_lost_40	which = loot_tribes_40 }
+					
+					#set_variable = { 	  which = estate_tribal_GvL_ratio_10		value = 0 }
+					set_variable = { 	  which = estate_tribal_GvL_ratio_10		which = estate_tribal_gained_or_lost_10 }
+					if = { limit = { check_variable = { which = estate_tribals_wealth_at_war_start	value = 0.001 } }
+						divide_variable = {   which = estate_tribal_GvL_ratio_10		which = estate_tribals_wealth_at_war_start }
+					}
+					
+					#set_variable = { 	  which = estate_tribal_GvL_ratio_20		value = 0 }
+					set_variable = { 	  which = estate_tribal_GvL_ratio_20		which = estate_tribal_gained_or_lost_20 }
+					if = { limit = { check_variable = { which = estate_tribals_wealth_at_war_start	value = 0.001 } }
+						divide_variable = {   which = estate_tribal_GvL_ratio_20		which = estate_tribals_wealth_at_war_start }
+					}
+					
+					#set_variable = { 	  which = estate_tribal_GvL_ratio_40		value = 0 }
+					set_variable = { 	  which = estate_tribal_GvL_ratio_40		which = estate_tribal_gained_or_lost_40 }
+					if = { limit = { check_variable = { which = estate_tribals_wealth_at_war_start	value = 0.001 } }
+						divide_variable = {   which = estate_tribal_GvL_ratio_40		which = estate_tribals_wealth_at_war_start }
+					}
+					
+					if = {
+						limit = {
+							NOT = { check_variable = { which = estate_tribal_GvL_ratio_10	value = 1 } }
+						}
+						set_variable = { 	  which = tribes_loyalty_removed_temp 	value = 100 }
+						multiply_variable = { which = tribes_loyalty_removed_temp	which = estate_tribal_GvL_ratio_10 }
+						set_variable = { 	  which = tribes_loyalty_removed_a 		value = 100 }
+						subtract_variable = { which = tribes_loyalty_removed_a		which = tribes_loyalty_removed_temp }
+						multiply_variable = { which = tribes_loyalty_removed_a		value = 0.001 }
+						multiply_variable = { which = tribes_loyalty_removed_a 		value = 1000 }
+						if = {
+							limit = {
+								check_variable = { which = tribes_loyalty_removed_a value = 30 }
+							}
+							set_variable = { which = tribes_loyalty_removed_a		value = 30 }
+						}
+					}
+					else_if = {
+						limit = {
+							check_variable = { which = estate_tribal_GvL_ratio_10	value = 1 }
+						}
+						set_variable = { 	  which = tribes_loyalty_added_a 			value = 100 }
+						multiply_variable = { which = tribes_loyalty_added_a			which = estate_tribal_GvL_ratio_10 }
+						subtract_variable = { which = tribes_loyalty_added_a			value = 100 }
+						#set_variable = { 	  which = tribes_loyalty_added_a_ticker		value = 0 }
+						set_variable = { 	  which = tribes_loyalty_added_a_ticker 	which = tribes_loyalty_added_a }
+						while = {
+							limit = {
+								check_variable = { which = tribes_loyalty_added_a_ticker value = 5.01 }
+							}
+							multiply_variable = { which = tribes_loyalty_added_a 			value = 0.9 }
+							subtract_variable = { which = tribes_loyalty_added_a_ticker		value = 5 }
+						}
+						set_variable = { which = tribes_loyalty_added_a_ticker		value = 0 }
+						if = {
+							limit = {
+								NOT = { has_country_flag = TR_partial_support }
+								NOT = { has_country_flag = TR_full_support }
+							}
+							divide_variable = { which = tribes_loyalty_added_a 	value = 1.5 }
+						}
+						multiply_variable = {   which = tribes_loyalty_added_a 		value = 0.001 }
+						multiply_variable = { which = tribes_loyalty_added_a 		value = 1000 }
+					}
+					
+					if = {
+						limit = {
+							NOT = { check_variable = { which = estate_tribal_GvL_ratio_20	value = 1 } }
+						}
+						set_variable = { 	  which = tribes_loyalty_removed_temp 	value = 100 }
+						multiply_variable = { which = tribes_loyalty_removed_temp	which = estate_tribal_GvL_ratio_20 }
+						set_variable = { 	  which = tribes_loyalty_removed_b 		value = 100 }
+						subtract_variable = { which = tribes_loyalty_removed_b		which = tribes_loyalty_removed_temp }
+						multiply_variable = {   which = tribes_loyalty_removed_b 		value = 0.001 }
+						multiply_variable = { which = tribes_loyalty_removed_b 		value = 1000 }
+					}
+					else_if = {
+						limit = {
+							check_variable = { which = estate_tribal_GvL_ratio_20	value = 1 }
+						}
+						set_variable = { 	  which = tribes_loyalty_added_b 			value = 100 }
+						multiply_variable = { which = tribes_loyalty_added_b			which = estate_tribal_GvL_ratio_20 }
+						subtract_variable = { which = tribes_loyalty_added_b			value = 100 }
+						#set_variable = { 	  which = tribes_loyalty_added_b_ticker		value = 0 }
+						set_variable = { 	  which = tribes_loyalty_added_b_ticker 	which = tribes_loyalty_added_b }
+						while = {
+							limit = {
+								check_variable = { which = tribes_loyalty_added_b_ticker value = 5.01 }
+							}
+							multiply_variable = { which = tribes_loyalty_added_b 			value = 0.9 }
+							subtract_variable = { which = tribes_loyalty_added_b_ticker		value = 5 }
+						}
+						set_variable = { which = tribes_loyalty_added_b_ticker		value = 0 }
+						if = {
+							limit = {
+								NOT = { has_country_flag = TR_partial_support }
+								NOT = { has_country_flag = TR_full_support }
+							}
+							divide_variable = { which = tribes_loyalty_added_b 	value = 1.5 }
+						}
+						multiply_variable = {   which = tribes_loyalty_added_b 		value = 0.001 }
+						multiply_variable = { which = tribes_loyalty_added_b 		value = 1000 }
+					}
+					
+					if = {
+						limit = {
+							NOT = { check_variable = { which = estate_tribal_GvL_ratio_40	value = 1 } }
+						}
+						set_variable = { 	  which = tribes_loyalty_removed_temp 	value = 100 }
+						multiply_variable = { which = tribes_loyalty_removed_temp	which = estate_tribal_GvL_ratio_40 }
+						set_variable = { 	  which = tribes_loyalty_removed_c 		value = 100 }
+						subtract_variable = { which = tribes_loyalty_removed_c		which = tribes_loyalty_removed_temp }
+						multiply_variable = {   which = tribes_loyalty_removed_c 		value = 0.001 }
+						multiply_variable = { which = tribes_loyalty_removed_c 		value = 1000 }
+					}
+					else_if = {
+						limit = {
+							check_variable = { which = estate_tribal_GvL_ratio_40	value = 1 }
+						}
+						set_variable = { 	  which = tribes_loyalty_added_c 			value = 100 }
+						multiply_variable = { which = tribes_loyalty_added_c			which = estate_tribal_GvL_ratio_40 }
+						subtract_variable = { which = tribes_loyalty_added_c			value = 100 }
+						#set_variable = { 	  which = tribes_loyalty_added_c_ticker		value = 0 }
+						set_variable = { 	  which = tribes_loyalty_added_c_ticker 	which = tribes_loyalty_added_c }
+						while = {
+							limit = {
+								check_variable = { which = tribes_loyalty_added_c_ticker value = 5.01 }
+							}
+							multiply_variable = { which = tribes_loyalty_added_c 			value = 0.9 }
+							subtract_variable = { which = tribes_loyalty_added_c_ticker		value = 5 }
+						}
+						set_variable = { which = tribes_loyalty_added_c_ticker	value = 0 }
+						if = {
+							limit = {
+								NOT = { has_country_flag = TR_partial_support }
+								NOT = { has_country_flag = TR_full_support }
+							}
+							divide_variable = { which = tribes_loyalty_added_c 	value = 1.5 }
+						}
+						multiply_variable = {   which = tribes_loyalty_added_c 		value = 0.001 }
+						multiply_variable = { which = tribes_loyalty_added_c 		value = 1000 }
+					}
+				}
+			}
+			clr_country_flag = TR_partial_support
+			clr_country_flag = TR_full_support
+			
+			#if = {
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = estate_tribals_war_spent				value = 0 }
+				set_variable = { which = estate_tribals_wealth_at_war_start		value = 0 }
+				set_variable = { which = estate_tribal_loot_share				value = 0 }
+				set_variable = { which = total_landed_estates					value = 0 }
+			#}
+		}
+		
+		hidden_effect = {
+			set_variable = { which = total_loot_weight value = 0 }
+			every_owned_province = {
+				limit = {
+					NOT = { has_province_flag = tribals_control_province }
+					is_city = yes
+				}
+				set_variable = { which = rural_loot_weight which = rural_pop }
+				random_list = {
+					10 = { multiply_variable = { which = rural_loot_weight value = 3 } }
+					20 = { multiply_variable = { which = rural_loot_weight value = 2 } }
+					30 = { multiply_variable = { which = rural_loot_weight value = 1.5 } }
+					40 = { }
+				}
+				set_variable = { which = urban_loot_weight which = urban_pop }
+				random_list = {
+					10 = { multiply_variable = { which = urban_loot_weight value = 3 } }
+					20 = { multiply_variable = { which = urban_loot_weight value = 2 } }
+					30 = { multiply_variable = { which = urban_loot_weight value = 1.5 } }
+					40 = { }
+				}
+				if = {
+					limit = { is_territory = yes }
+					multiply_variable = { which = urban_loot_weight value = 0.5 }
+					multiply_variable = { which = rural_loot_weight value = 0.5 }
+				}
+				if = {
+					limit = { NOT = { is_core = owner } }
+					multiply_variable = { which = urban_loot_weight value = 0.5 }
+					multiply_variable = { which = rural_loot_weight value = 0.5 }
+				}
+				set_variable = { which = total_loot_weight which = rural_loot_weight }
+				change_variable = { which = total_loot_weight which = urban_loot_weight }
+				owner = { change_variable = { which = total_loot_weight which = PREV } }
+				set_variable = { which = total_loot_weight value = 0 }
+			}
+			
+			set_variable = { 		which = total_loot_10 	which = loot_pool }
+			multiply_variable = { 	which = total_loot_10 	value = 0.10 }
+			set_variable = { 		which = total_loot_20 	which = loot_pool }
+			multiply_variable = { 	which = total_loot_20 	value = 0.20 }
+			set_variable = { 		which = total_loot_40 	which = loot_pool }
+			multiply_variable = { 	which = total_loot_40 	value = 0.30 }
+			#set_variable = { 		which = total_loot_court	value = 0 }
+			set_variable = { 		which = total_loot_court 	which = loot_pool }
+			multiply_variable = {   which = total_loot_court 	value = 0.1 }
+			set_variable = { 		which = total_loot_60 	which = loot_pool }
+			multiply_variable = { 	which = total_loot_60 	value = 0.60 }
+			set_variable = { 		which = total_loot_80 	which = loot_pool }
+			multiply_variable = { 	which = total_loot_80 	value = 0.80 }
+			set_variable = { 		which = total_loot_90 	which = loot_pool }
+			multiply_variable = { 	which = total_loot_90 	value = 0.90 }
+			
+			#divide_variable = { which = loot_pool which = total_loot_weight }
+		}
+	}
+	
+	### Take 10% of the loot
+	option = {
+		name = "POP_looting.007.opta"
+		custom_tooltip = stability_point_gain
+		if = { ### Tribal loot
+			limit = {
+				check_variable = { which = estate_tribals_weight_share 	value = 0.01 }
+				has_country_flag = estate_tribal_give_loot
+			}
+			if = {
+				limit = {
+					check_variable = { which = estate_tribal_GvL_ratio_10	value = 1 }
+				}
+				custom_tooltip = estate_tribes_loyalty_added_a
+				hidden_effect = {
+					#set_variable = { which = tribes_loyalty_added	value = 0 }
+					set_variable = { which = tribes_loyalty_added	which = tribes_loyalty_added_a }
+					estate_tribes_loyalty_added = yes
+				}
+			}
+			if = {
+				limit = {
+					NOT = { check_variable = { which = estate_tribal_GvL_ratio_10	value = 1 } }
+				}
+				custom_tooltip = estate_tribes_loyalty_removed_a
+				hidden_effect = {
+					#set_variable = { which = tribes_loyalty_removed	value = 0 }
+					set_variable = { which = tribes_loyalty_removed	which = tribes_loyalty_removed_a }
+					estate_tribes_loyalty_removed = yes
+				}
+			}
+		}
+		hidden_effect = {
+			change_variable = { 	which = stability_points 		which = stability_point_gain }
+			check_stability_gain = yes
+			set_variable = { 		which = state_loot_pool 		which = loot_pool }
+			multiply_variable = { 	which = state_loot_pool 		value = 0.1 }
+			set_variable = { 		which = country_loot_pool 	which = loot_pool }
+			multiply_variable = { 	which = country_loot_pool 	value = 0.9 }
+			set_variable = { 		which = loot_pool 			value = 0 }
+			#if = {
+			#	limit = {
+			#		has_global_flag = show_for_developers
+			#	}
+			#	change_variable = { 	which = zzz_total_loot_taken	which = state_loot_pool }
+			#}
+			#	subtract_variable = { 	which = country_loot_pool		which = loot_tribes_10 }
+			#	change_variable = {     which = estate_tribals_wealth   which = loot_tribes_10 }
+			#if = {
+			#	limit = {
+			#		has_global_flag = show_for_developers
+			#	}
+			#	change_variable = { 	which = zzz_total_loot_taken	which = state_loot_pool }
+			#}
+			if = { ### Tribal loot
+				limit = {
+					has_country_flag = estate_tribal_give_loot
+					check_variable = { which = estate_tribals_weight_share 	value = 0.01 }
+				}
+				subtract_variable = { 	which = country_loot_pool		which = loot_tribes_10 }
+				change_variable = {     which = estate_tribals_wealth   which = loot_tribes_10 }
+			}
+			clr_country_flag = estate_tribal_give_loot
+			
+			country_event = {
+				id = "POP_looting.008"
+			}
+			#if = {
+			#	limit = {
+			#		NOT = { check_variable = { which = loot_chose_least 	value = 1 } }
+			#	}
+			#	set_variable = { which = loot_chose_least 	value = 0 }
+			#}
+			#change_variable = { which = loot_chose_least 	value = 1 }
+		}
+		
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 10
+				NOT = { stability = 1 }
+			}
+			modifier = {
+				factor = 50
+				is_tribal = yes
+			}
+			modifier = {
+				factor = 25
+				is_nomad = yes
+			}
+			modifier = {
+				factor = 1000
+				has_country_flag = tribals_promised_loot
+			}
+		}
+	}
+	
+	### Take 20% of the loot
+	option = {
+		name = "POP_looting.007.optb"
+		if = {
+			limit = {
+				check_variable = { which = loot_soldiers_angry_20	value = 1 }
+			}
+			custom_tooltip = angry_soldiers_twenty
+		}
+		twenty_angry_soldiers = yes
+		hidden_effect = {
+			trigger_switch = {
+				on_trigger = has_country_modifier
+				denied_soldiers_loot_bad = {
+					remove_country_modifier = denied_soldiers_loot_bad
+				}
+				denied_soldiers_loot_worse = {
+					remove_country_modifier = denied_soldiers_loot_worse
+				}
+			}
+			
+			every_owned_province = {
+				trigger_switch = {
+					on_trigger = has_province_modifier
+					denied_soldiers_loot_prov_bad = {
+						remove_province_modifier = denied_soldiers_loot_prov_bad
+					}
+					denied_soldiers_loot_prov_worse = {
+						remove_province_modifier = denied_soldiers_loot_prov_worse
+					}
+				}
+			}
+		}
+		if = { ### Tribal loot
+			limit = {
+				has_country_flag = tribals_promised_loot
+				check_variable = { which = estate_tribals_weight_share 	value = 0.01 }
+			}
+			custom_tooltip = tribals_promised_loot_20
+			custom_tooltip = estate_tribes_loyalty_removed_b
+			hidden_effect = {
+				set_variable = { which = tribes_loyalty_removed			which = tribes_loyalty_removed_b }
+				estate_tribes_loyalty_removed = yes
+			}
+		}
+		else_if = { ### Tribal loot
+			limit = {
+				has_country_flag = estate_tribal_give_loot
+				check_variable = { which = estate_tribals_weight_share 	value = 0.01 }
+			}
+			if = {
+				limit = {
+					check_variable = { which = estate_tribal_GvL_ratio_20	value = 1 }
+				}
+				custom_tooltip = estate_tribes_loyalty_added_b
+				hidden_effect = {
+					#set_variable = { which = tribes_loyalty_added	value = 0 }
+					set_variable = { which = tribes_loyalty_added	which = tribes_loyalty_added_b }
+					estate_tribes_loyalty_added = yes
+				}
+			}
+			if = {
+				limit = {
+					NOT = { check_variable = { which = estate_tribal_GvL_ratio_20	value = 1 } }
+				}
+				custom_tooltip = estate_tribes_loyalty_removed_b
+				hidden_effect = {
+					#set_variable = { which = tribes_loyalty_removed	value = 0 }
+					set_variable = { which = tribes_loyalty_removed	which = tribes_loyalty_removed_b }
+					estate_tribes_loyalty_removed = yes
+				}
+			}
+		}
+		
+		hidden_effect = {
+			set_variable = { 		which = state_loot_pool 		which = loot_pool }
+			multiply_variable = { 	which = state_loot_pool 		value = 0.2 }
+			set_variable = { 		which = country_loot_pool 	which = loot_pool }
+			multiply_variable = { 	which = country_loot_pool 	value = 0.8 }
+			set_variable = { 		which = loot_pool 			value = 0 }
+			#if = {
+			#	limit = {
+			#		has_global_flag = show_for_developers
+			#	}
+			#	change_variable = { 	which = zzz_total_loot_taken	which = state_loot_pool }
+			#}
+			#	subtract_variable = { 	which = country_loot_pool		which = loot_tribes_20 }
+			#	change_variable = {     which = estate_tribals_wealth   which = loot_tribes_20 }
+			#if = {
+			#	limit = {
+			#		has_global_flag = show_for_developers
+			#	}
+			#	change_variable = { 	which = zzz_total_loot_taken	which = state_loot_pool }
+			#}
+			if = { ### Tribal loot
+				limit = {
+					has_country_flag = estate_tribal_give_loot
+					check_variable = { which = estate_tribals_weight_share 	value = 0.01 }
+				}
+				subtract_variable = { 	which = country_loot_pool		which = loot_tribes_20 }
+				change_variable = {     which = estate_tribals_wealth   which = loot_tribes_20 }
+			}
+			clr_country_flag = estate_tribal_give_loot
+			country_event = {
+				id = "POP_looting.008"
+			}
+		}
+		
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	### Take 40% of the loot
+	option = {
+		name = "POP_looting.007.optc"
+		if = {
+			limit = {
+				check_variable = { which = loot_soldiers_angry_40	value = 1 }
+			}
+			custom_tooltip = angry_soldiers_forty
+		}
+		forty_angry_soldiers = yes
+		hidden_effect = {
+			trigger_switch = {
+				on_trigger = has_country_modifier
+				denied_soldiers_loot_bad = {
+					remove_country_modifier = denied_soldiers_loot_bad
+				}
+				denied_soldiers_loot_worse = {
+					remove_country_modifier = denied_soldiers_loot_worse
+				}
+			}
+			
+			every_owned_province = {
+				trigger_switch = {
+					on_trigger = has_province_modifier
+					denied_soldiers_loot_prov_bad = {
+						remove_province_modifier = denied_soldiers_loot_prov_bad
+					}
+					denied_soldiers_loot_prov_worse = {
+						remove_province_modifier = denied_soldiers_loot_prov_worse
+					}
+				}
+			}
+		}
+		if = { ### Tribal loot
+			limit = {
+				has_country_flag = tribals_promised_loot
+				check_variable = { which = estate_tribals_weight_share 	value = 0.01 }
+			}
+			custom_tooltip = tribals_promised_loot_40
+			custom_tooltip = estate_tribes_loyalty_removed_c
+			hidden_effect = {
+				set_variable = { which = tribes_loyalty_removed			which = tribes_loyalty_removed_c }
+				estate_tribes_loyalty_removed = yes
+			}
+		}
+		else_if = { ### Tribal loot
+			limit = {
+				has_country_flag = estate_tribal_give_loot
+				check_variable = { which = estate_tribals_weight_share 	value = 0.01 }
+			}
+			if = {
+				limit = {
+					check_variable = { which = estate_tribal_GvL_ratio_40	value = 1 }
+				}
+				custom_tooltip = estate_tribes_loyalty_added_c
+				hidden_effect = {
+					#set_variable = { which = tribes_loyalty_added	value = 0 }
+					set_variable = { which = tribes_loyalty_added	which = tribes_loyalty_added_c }
+					estate_tribes_loyalty_added = yes
+				}
+			}
+			if = {
+				limit = {
+					NOT = { check_variable = { which = estate_tribal_GvL_ratio_40	value = 1 } }
+				}
+				custom_tooltip = estate_tribes_loyalty_removed_c
+				hidden_effect = {
+					#set_variable = { which = tribes_loyalty_removed	value = 0 }
+					set_variable = { which = tribes_loyalty_removed	which = tribes_loyalty_removed_c }
+					estate_tribes_loyalty_removed = yes
+				}
+			}
+		}
+		
+		custom_tooltip = court_loot_pool
+		hidden_effect = {
+			set_variable = { 		which = state_loot_pool 		which = loot_pool }
+			multiply_variable = { 	which = state_loot_pool 		value = 0.3 }
+			#set_variable = { 		which = court_loot_pool 		value = 0 }
+			set_variable = { 		which = court_loot_pool 		which = loot_pool }
+			multiply_variable = { 	which = court_loot_pool 		value = 0.1 }
+			change_variable = { 	which = court_money_endowed		which = court_loot_pool }
+			set_variable = { 		which = country_loot_pool 	which = loot_pool }
+			multiply_variable = { 	which = country_loot_pool 	value = 0.6 }
+			set_variable = { 		which = loot_pool 			value = 0 }
+			#if = {
+			#	limit = {
+			#		has_global_flag = show_for_developers
+			#	}
+			#	change_variable = { 	which = zzz_total_loot_taken	which = state_loot_pool }
+			#}
+			#	subtract_variable = { 	which = country_loot_pool		which = loot_tribes_40 }
+			#	change_variable = {     which = estate_tribals_wealth   which = loot_tribes_40 }
+			#if = {
+			#	limit = {
+			#		has_global_flag = show_for_developers
+			#	}
+			#	change_variable = { 	which = zzz_total_loot_taken	which = state_loot_pool }
+			#}
+			if = { ### Tribal loot
+				limit = {
+					has_country_flag = estate_tribal_give_loot
+					check_variable = { which = estate_tribals_weight_share 	value = 0.01 }
+				}
+				subtract_variable = { 	which = country_loot_pool		which = loot_tribes_40 }
+				change_variable = {     which = estate_tribals_wealth   which = loot_tribes_40 }
+			}
+			clr_country_flag = estate_tribal_give_loot
+			
+			#if = {
+			#	limit = {
+			#		has_global_flag = show_for_developers
+			#	}
+			#	change_variable = { 	which = zzz_total_loot_taken	which = state_loot_pool }
+			#}
+			country_event = {
+				id = POP_looting.008
+			}
+			#if = {
+			#	limit = {
+			#		NOT = { check_variable = { which = loot_chose_most 	value = 1 } }
+			#	}
+			#	set_variable = { which = loot_chose_most 	value = 0 }
+			#}
+			#change_variable = { which = loot_chose_most 	value = 1 }
+		}
+		
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 100
+				stability = 1
+			}
+			modifier = {
+				factor = 1000
+				num_of_loans = 4
+			}
+			modifier = {
+				factor = 0
+				is_tribal = yes
+			}
+			modifier = {
+				factor = 0
+				is_nomad = yes
+			}
+		}
+	}
+	after = {
+		# log = "END: POP_looting.007"
+		clr_country_flag = tribals_promised_loot
+	}
+}
+
+# Actually distributes the loot
+country_event = {
+	id = POP_looting.008
+	title = "POP_looting.008.t"
+	desc = "POP_looting.008.d"
+	picture = LOOT_SCREEN_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		if = { # same effect as what game does, but without the report in the error log
+			limit = {
+				is_variable_equal = { which = total_loot_weight value = 0 }
+			}
+			set_variable = { which = total_loot_weight value = 0.001 }
+		}
+		
+		divide_variable = { which = country_loot_pool which = total_loot_weight }
+		every_owned_province = {
+			set_variable = { 		which = country_loot_pool 				which = PREV }
+			set_variable = { 		which = urban_loot 						which = country_loot_pool }
+			set_variable = { 		which = rural_loot 						which = country_loot_pool }
+			
+			multiply_variable = { 	which = urban_loot 						which = urban_loot_weight }
+			multiply_variable = { 	which = rural_loot 						which = rural_loot_weight }
+			#if = {
+			#	limit = {
+			#		has_global_flag = show_for_developers
+			#	}
+			#	change_variable = {		which = wealth_z_urban_gamelong_gained		which = urban_loot }
+			#	change_variable = {		which = wealth_z_urban_gamelong_gain_loot	which = urban_loot }
+			#	change_variable = {		which = wealth_z_rural_gamelong_gained		which = rural_loot }
+			#	change_variable = {		which = wealth_z_rural_gamelong_gain_loot	which = rural_loot }
+			#}
+			change_variable = { 	which = wealth_urban_fluid 				which = urban_loot }
+			
+			# Rural loot is split 50/50 between wealth and FE improvement
+			multiply_variable = { 	which = rural_loot 						value = 0.5 }
+			change_variable = { 	which = wealth_rural_fluid 				which = rural_loot }
+			change_variable = { 	which = farm_efficiency_ducats_invested 	which = rural_loot }
+			
+			set_variable = { 		which = urban_loot 						value = 0 }
+			set_variable = { 		which = urban_loot_weight 				value = 0 }
+			set_variable = { 		which = rural_loot 						value = 0 }
+			set_variable = { 		which = rural_loot_weight 				value = 0 }
+			set_variable = { 		which = country_loot_pool 				value = 0 }
+		}
+		
+		set_variable = { which = ducat_gain which = state_loot_pool }
+		scaled_ducat_gained_country = yes
+		
+		set_variable = { which = country_loot_pool value = 0 }
+		set_variable = { which = state_loot_pool value = 0 }
+		set_variable = { which = total_loot_weight value = 0 }
+		set_variable = { which = total_loot_10 value = 0 }
+		set_variable = { which = total_loot_20 value = 0 }
+		set_variable = { which = total_loot_40 value = 0 }
+		set_variable = { which = total_loot_60 value = 0 }
+		set_variable = { which = total_loot_80 value = 0 }
+		set_variable = { which = total_loot_90 value = 0 }
+	}
+	
+	option = { name = "ok" }
+}
+
+country_event = { ### This event exports loot amount to a variable
+	id = POP_looting.009
+	title = POP_looting.009.t
+	desc = POP_looting.009.d
+	picture = LOOT_SCREEN_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	
+	immediate = {
+		set_variable = { which = country_loot_modifier value = 1 }
+		
+		if = { limit = { has_global_modifier_value = { which = loot_amount value = 0.05 } }
+			if = { limit = { has_global_modifier_value = { which = loot_amount value = 0.500 } }
+				if = { limit = { has_global_modifier_value = { which = loot_amount value = 0.750 } }
+					if = { limit = { has_global_modifier_value = { which = loot_amount value = 0.900 } }
+						if = { limit = { has_global_modifier_value = { which = loot_amount value = 0.950 } }
+							if = { limit = { has_global_modifier_value = { which = loot_amount value = 1.000 } }
+								change_variable = { which = country_loot_modifier value = 1.000 }
+							}
+							else = {
+								change_variable = { which = country_loot_modifier value = 0.950 }
+							}
+						}
+						else = {
+							change_variable = { which = country_loot_modifier value = 0.900 }
+						}
+					}
+					else = {
+						if = { limit = { has_global_modifier_value = { which = loot_amount value = 0.800 } }
+							if = { limit = { has_global_modifier_value = { which = loot_amount value = 0.850 } }
+								change_variable = { which = country_loot_modifier value = 0.850 }
+							}
+							else = {
+								change_variable = { which = country_loot_modifier value = 0.800 }
+							}
+						}
+						else = {
+							change_variable = { which = country_loot_modifier value = 0.750 }
+						}
+					}
+				}
+				else = {
+					if = { limit = { has_global_modifier_value = { which = loot_amount value = 0.600 } }
+						if = { limit = { has_global_modifier_value = { which = loot_amount value = 0.650 } }
+							if = { limit = { has_global_modifier_value = { which = loot_amount value = 0.700 } }
+								change_variable = { which = country_loot_modifier value = 0.700 }
+							}
+							else = {
+								change_variable = { which = country_loot_modifier value = 0.650 }
+							}
+						}
+						else = {
+							change_variable = { which = country_loot_modifier value = 0.600 }
+						}
+					}
+					else = {
+						if = { limit = { has_global_modifier_value = { which = loot_amount value = 0.550 } }
+							change_variable = { which = country_loot_modifier value = 0.550 }
+						}
+						else = {
+							change_variable = { which = country_loot_modifier value = 0.500 }
+						}
+					}
+				}
+			}
+			else = {
+				if = { limit = { has_global_modifier_value = { which = loot_amount value = 0.250 } }
+					if = { limit = { has_global_modifier_value = { which = loot_amount value = 0.350 } }
+						if = { limit = { has_global_modifier_value = { which = loot_amount value = 0.400 } }
+							if = { limit = { has_global_modifier_value = { which = loot_amount value = 0.450 } }
+								change_variable = { which = country_loot_modifier value = 0.450 }
+							}
+							else = {
+								change_variable = { which = country_loot_modifier value = 0.400 }
+							}
+						}
+						else = {
+							change_variable = { which = country_loot_modifier value = 0.350 }
+						}
+					}
+					else = {
+						if = { limit = { has_global_modifier_value = { which = loot_amount value = 0.300 } }
+							change_variable = { which = country_loot_modifier value = 0.300 }
+						}
+						else = {
+							change_variable = { which = country_loot_modifier value = 0.250 }
+						}
+					}
+				}
+				else = {
+					if = { limit = { has_global_modifier_value = { which = loot_amount value = 0.100 } }
+						if = { limit = { has_global_modifier_value = { which = loot_amount value = 0.150 } }
+							if = { limit = { has_global_modifier_value = { which = loot_amount value = 0.200 } }
+								change_variable = { which = country_loot_modifier value = 0.200 }
+							}
+							else = {
+								change_variable = { which = country_loot_modifier value = 0.150 }
+							}
+						}
+						else = {
+							change_variable = { which = country_loot_modifier value = 0.100 }
+						}
+					}
+					else = {
+						if = { limit = { has_global_modifier_value = { which = loot_amount value = 0.050 } }
+							change_variable = { which = country_loot_modifier value = 0.050 }
+						}
+					}
+				}
+			}
+		}
+		else_if = { limit = { NOT = { has_global_modifier_value = { which = loot_amount value = -0.004 } } }
+			if = { limit = { has_global_modifier_value = { which = loot_amount value = -0.500 } }
+				if = { limit = { has_global_modifier_value = { which = loot_amount value = -0.250 } }
+					if = { limit = { has_global_modifier_value = { which = loot_amount value = -0.100 } }
+						if = { limit = { has_global_modifier_value = { which = loot_amount value = -0.050 } }
+							change_variable = { which = country_loot_modifier value = -0.050 }
+						}
+						else = {
+							change_variable = { which = country_loot_modifier value = -0.100 }
+						}
+					}
+					else = {
+						if = { limit = { has_global_modifier_value = { which = loot_amount value = -0.150 } }
+							change_variable = { which = country_loot_modifier value = -0.150 }
+						}
+						else = {
+							if = { limit = { has_global_modifier_value = { which = loot_amount value = -0.200 } }
+								change_variable = { which = country_loot_modifier value = -0.200 }
+							}
+							else = {
+								change_variable = { which = country_loot_modifier value = -0.250 }
+							}
+						}
+					}
+				}
+				else = {
+					if = { limit = { has_global_modifier_value = { which = loot_amount value = -0.350 } }
+						if = { limit = { has_global_modifier_value = { which = loot_amount value = -0.300 } }
+							change_variable = { which = country_loot_modifier value = -0.300 }
+						}
+						else = {
+							change_variable = { which = country_loot_modifier value = -0.350 }
+						}
+					}
+					else = {
+						if = { limit = { has_global_modifier_value = { which = loot_amount value = -0.400 } }
+							change_variable = { which = country_loot_modifier value = -0.400 }
+						}
+						else = {
+							if = { limit = { has_global_modifier_value = { which = loot_amount value = -0.450 } }
+								change_variable = { which = country_loot_modifier value = -0.450 }
+							}
+							else = {
+								change_variable = { which = country_loot_modifier value = -0.500 }
+							}
+						}
+					}
+				}
+			}
+			else = {
+				if = { limit = { has_global_modifier_value = { which = loot_amount value = -0.750 } }
+					if = { limit = { has_global_modifier_value = { which = loot_amount value = -0.600 } }
+						if = { limit = { has_global_modifier_value = { which = loot_amount value = -0.550 } }
+							change_variable = { which = country_loot_modifier value = -0.550 }
+						}
+						else = {
+							change_variable = { which = country_loot_modifier value = -0.600 }
+						}
+					}
+					else = {
+						if = { limit = { has_global_modifier_value = { which = loot_amount value = -0.650 } }
+							change_variable = { which = country_loot_modifier value = -0.650 }
+						}
+						else = {
+							if = { limit = { has_global_modifier_value = { which = loot_amount value = -0.700 } }
+								change_variable = { which = country_loot_modifier value = -0.700 }
+							}
+							else = {
+								change_variable = { which = country_loot_modifier value = -0.750 }
+							}
+						}
+					}
+				}
+				else = {
+					if = { limit = { has_global_modifier_value = { which = loot_amount value = -0.850 } }
+						if = { limit = { has_global_modifier_value = { which = loot_amount value = -0.800 } }
+							change_variable = { which = country_loot_modifier value = -0.800 }
+						}
+						else = {
+							change_variable = { which = country_loot_modifier value = -0.850 }
+						}
+					}
+					else = {
+						if = { limit = { has_global_modifier_value = { which = loot_amount value = -0.900 } }
+							change_variable = { which = country_loot_modifier value = -0.900 }
+						}
+						else = {
+							if = { limit = { has_global_modifier_value = { which = loot_amount value = -0.950 } }
+								change_variable = { which = country_loot_modifier value = -0.950 }
+							}
+							else = {
+								change_variable = { which = country_loot_modifier value = -0.990 }
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "ok"
+	}
+}
+
+# Event for choosing a looting policy
+country_event = {
+	id = POP_looting.010
+	title = "POP_looting.010.t"
+	desc = "POP_looting.010.d"
+	picture = LOOT_SCREEN_eventPicture
+	#is_triggered_only = yes # Stupid, there is no on_action for war START, only end. Siiigh
+	#hidden = yes
+	
+	trigger = {
+		is_at_war = yes
+		NOT = { has_country_flag = loot_policy_selected }
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = loot_policy_selected
+			country_event = { id = POP_looting.013 }
+		}
+	}
+	
+	### Very restrictive looting policy
+	option = {
+		name = "POP_looting.010.opta"
+		
+		add_country_modifier = {
+			name = loot_policy_1
+			duration = -1
+		}
+		
+		hidden_effect = {
+			# Recalculates loot amount variable
+			country_event = {
+				id = POP_looting.009
+			}
+		}
+		
+		ai_chance = {
+			factor = 13
+			modifier = {
+				factor = 0
+				# The logic being that if you are attacking you are most likely stronger and don't need the small boost
+				any_known_country = {
+					defensive_war_with = ROOT
+				}
+			}
+			modifier = {
+				factor = 0.5
+				num_of_loans = 1
+			}
+			modifier = {
+				factor = 0.25
+				num_of_loans = 2
+			}
+			modifier = {
+				factor = 0
+				num_of_loans = 3
+			}
+			modifier = {
+				factor = 0.25
+				is_tribal = yes
+			}
+			modifier = {
+				factor = 0
+				is_nomad = yes
+			}
+			modifier = {
+				factor = 0.5
+				at_war_with_religious_enemy = yes
+			}
+		}
+	}
+	
+	### Restrictive looting policy
+	option = {
+		name = "POP_looting.010.optb"
+		
+		add_country_modifier = {
+			name = loot_policy_2
+			duration = -1
+		}
+		
+		hidden_effect = {
+			# Recalculates loot amount variable
+			country_event = {
+				id = POP_looting.009
+			}
+		}
+		
+		ai_chance = {
+			factor = 12
+			modifier = {
+				factor = 0
+				# The logic being that if you are attacking you are most likely stronger and don't need the small boost
+				any_known_country = {
+					defensive_war_with = ROOT
+				}
+			}
+			modifier = {
+				factor = 0.75
+				num_of_loans = 1
+			}
+			modifier = {
+				factor = 0.5
+				num_of_loans = 2
+			}
+			modifier = {
+				factor = 0.25
+				num_of_loans = 3
+			}
+			modifier = {
+				factor = 0.5
+				is_tribal = yes
+			}
+			modifier = {
+				factor = 0.25
+				is_nomad = yes
+			}
+			modifier = {
+				factor = 0.75
+				at_war_with_religious_enemy = yes
+			}
+		}
+	}
+	
+	# No looting policy
+	option = {
+		name = "POP_looting.010.optc"
+		
+		add_country_modifier = {
+			name = loot_policy_3
+			duration = -1
+			hidden = yes
+		}
+		
+		hidden_effect = {
+			# Recalculates loot amount variable
+			country_event = {
+				id = POP_looting.009
+			}
+		}
+		
+		ai_chance = {
+			factor = 15
+			modifier = {
+				factor = 5
+				OR = { # Not interested in sacking Brittany
+					tag = BLO
+					tag = MNF
+				}
+			}
+		}
+	}
+	
+	# Encourage looting
+	option = {
+		name = "POP_looting.010.optd"
+		
+		add_country_modifier = {
+			name = loot_policy_4
+			duration = -1
+		}
+		
+		hidden_effect = {
+			# Recalculates loot amount variable
+			country_event = {
+				id = POP_looting.009
+			}
+		}
+		
+		ai_chance = {
+			factor = 13
+			modifier = {
+				factor = 0
+				# The logic being that if you are attacked you are most likely weaker and shouldn't pick the option that weakens your army
+				any_known_country = {
+					offensive_war_with = ROOT
+				}
+			}
+			modifier = {
+				factor = 1.25
+				num_of_loans = 1
+			}
+			modifier = {
+				factor = 1.5
+				num_of_loans = 3
+			}
+			modifier = {
+				factor = 2
+				num_of_loans = 5
+			}
+			modifier = {
+				factor = 1.25
+				is_tribal = yes
+			}
+			modifier = {
+				factor = 1.5
+				is_nomad = yes
+			}
+			modifier = {
+				factor = 0.75
+				at_war_with_religious_enemy = no
+			}
+		}
+	}
+	
+	# Strongly encourage looting
+	option = {
+		name = "POP_looting.010.opte"
+		
+		add_country_modifier = {
+			name = loot_policy_5
+			duration = -1
+		}
+		
+		hidden_effect = {
+			# Recalculates loot amount variable
+			country_event = {
+				id = POP_looting.009
+			}
+		}
+		
+		ai_chance = {
+			factor = 12
+			modifier = {
+				factor = 0
+				# The logic being that if you are attacked you are most likely weaker and shouldn't pick the option that weakens your army
+				any_known_country = {
+					offensive_war_with = ROOT
+				}
+			}
+			modifier = {
+				factor = 1.5
+				num_of_loans = 1
+			}
+			modifier = {
+				factor = 2
+				num_of_loans = 3
+			}
+			modifier = {
+				factor = 4
+				num_of_loans = 5
+			}
+			modifier = {
+				factor = 1.5
+				is_tribal = yes
+			}
+			modifier = {
+				factor = 2
+				is_nomad = yes
+			}
+			modifier = {
+				factor = 0.5
+				at_war_with_religious_enemy = no
+			}
+		}
+	}
+	
+	option = {
+		name = "POP_looting.010.optf"
+		
+		# Great leaders, Militaristic Tribes and nomads have extra looting available
+		trigger = {
+			OR = {
+				mil = 6
+				is_nomad = yes
+				AND = {
+					is_tribal = yes
+					mil = 3
+				}
+			}
+		}
+		
+		add_country_modifier = {
+			name = loot_policy_6
+			duration = -1
+		}
+		
+		hidden_effect = {
+			# Recalculates loot amount variable
+			country_event = {
+				id = POP_looting.009
+			}
+		}
+		
+		ai_chance = {
+			factor = 13
+			modifier = {
+				factor = 1.75
+				num_of_loans = 1
+			}
+			modifier = {
+				factor = 2.5
+				num_of_loans = 3
+			}
+			modifier = {
+				factor = 5
+				num_of_loans = 5
+			}
+			modifier = {
+				factor = 2
+				is_tribal = yes
+			}
+			modifier = {
+				factor = 2.5
+				is_nomad = yes
+			}
+			modifier = {
+				factor = 0.5
+				at_war_with_religious_enemy = no
+			}
+		}
+	}
+	
+	option = {
+		name = "POP_looting.010.optg"
+		
+		# Militaristic nomads can have really strong looting
+		trigger = {
+			is_nomad = yes
+			mil = 4
+		}
+		
+		add_country_modifier = {
+			name = loot_policy_7
+			duration = -1
+		}
+		
+		hidden_effect = {
+			# Recalculates loot amount variable
+			country_event = {
+				id = POP_looting.009
+			}
+		}
+		
+		ai_chance = {
+			factor = 12
+			modifier = {
+				factor = 2
+				num_of_loans = 1
+			}
+			modifier = {
+				factor = 3
+				num_of_loans = 3
+			}
+			modifier = {
+				factor = 6
+				num_of_loans = 5
+			}
+			modifier = {
+				factor = 4.5
+				is_nomad = yes
+			}
+			modifier = {
+				factor = 0.5
+				at_war_with_religious_enemy = no
+			}
+		}
+	}
+	option = {
+		name = "POP_looting.010.opth"
+		
+		# Timur like nomads can loot to their hearts content
+		trigger = {
+			is_nomad = yes
+			mil = 6
+		}
+		
+		add_country_modifier = {
+			name = loot_policy_8
+			duration = -1
+		}
+		
+		hidden_effect = {
+			# Recalculates loot amount variable
+			country_event = {
+				id = POP_looting.009
+			}
+		}
+		
+		ai_chance = {
+			factor = 13
+			modifier = {
+				factor = 2.5
+				num_of_loans = 1
+			}
+			modifier = {
+				factor = 4
+				num_of_loans = 3
+			}
+			modifier = {
+				factor = 8
+				num_of_loans = 5
+			}
+			modifier = {
+				factor = 6
+				is_nomad = yes
+			}
+			modifier = {
+				factor = 0.5
+				at_war_with_religious_enemy = no
+			}
+		}
+	}
+}
+
+# Event removing looting policy and if reasonable, distribute loot
+country_event = {
+	id = POP_looting.011
+	title = POP_looting.011.t
+	desc = POP_looting.011.d
+	picture = LOOT_SCREEN_eventPicture
+	#is_triggered_only = yes
+	hidden = yes
+	
+	trigger = {
+		has_country_flag = loot_policy_selected
+		is_at_war = no
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = "POP_looting.010.opta"
+		
+		set_variable = { which = urbans_dead value = 0 }
+		set_variable = { which = urbans_killed value = 0 }
+		set_variable = { which = urbans_dead_total value = 0 }
+		set_variable = { which = urbans_killed_total value = 0 }
+		set_variable = { which = rurals_dead value = 0 }
+		set_variable = { which = rurals_killed value = 0 }
+		set_variable = { which = rurals_dead_total value = 0 }
+		set_variable = { which = rurals_killed_total value = 0 }
+		
+		clr_country_flag = loot_policy_selected
+		trigger_switch = {
+			on_trigger = has_country_modifier
+			loot_policy_1 = {
+				remove_country_modifier = loot_policy_1
+			}
+			loot_policy_2 = {
+				remove_country_modifier = loot_policy_2
+			}
+			loot_policy_3 = {
+				remove_country_modifier = loot_policy_3
+			}
+			loot_policy_4 = {
+				remove_country_modifier = loot_policy_4
+			}
+			loot_policy_5 = {
+				remove_country_modifier = loot_policy_5
+			}
+			loot_policy_6 = {
+				remove_country_modifier = loot_policy_6
+			}
+			loot_policy_7 = {
+				remove_country_modifier = loot_policy_7
+			}
+			loot_policy_8 = {
+				remove_country_modifier = loot_policy_8
+			}
+		}
+		
+		# Transfer all remaining loot soldiers have to the country
+		change_variable = { which = loot_pool 		which = loot_pool_moving }
+		set_variable = { 	which = loot_pool_moving 	value = 0 }
+		trigger_switch = {
+			on_trigger = has_country_flag
+			loot_slowdown_1 = {
+				clr_country_flag = loot_slowdown_1
+			}
+			loot_slowdown_2 = {
+				clr_country_flag = loot_slowdown_2
+			}
+			loot_slowdown_3 = {
+				clr_country_flag = loot_slowdown_3
+			}
+			loot_slowdown_4 = {
+				clr_country_flag = loot_slowdown_4
+			}
+			loot_slowdown_5 = {
+				clr_country_flag = loot_slowdown_5
+			}
+		}
+		
+		if = {
+			limit = { check_variable = { which = loot_pool value = 1 } }
+			country_event = {
+				id = POP_looting.007
+			}
+		}
+	}
+}
+
+# Event to view size of loot pool
+country_event = {
+	id = POP_looting.012
+	title = "POP_looting.012.t"
+	desc = "POP_looting.012.d"
+	picture = LOOT_SCREEN_eventPicture
+	is_triggered_only = yes
+	
+	option = {
+		name = "ok"
+	}
+}
+
+# Event for maintenance on loot pool
+country_event = {
+	id = POP_looting.013
+	title = "POP_looting.013.t"
+	desc = "POP_looting.013.d"
+	picture = LOOT_SCREEN_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		if = {
+			limit = { is_at_war = yes }
+			
+			# Transfers 10% of loot soldiers have back home
+			set_variable		= { which = loot_pool_transfer		which = loot_pool_moving }
+			multiply_variable	= { which = loot_pool_transfer		value = 0.1 }
+			
+			change_variable		= { which = loot_pool				which = loot_pool_transfer }
+			subtract_variable	= { which = loot_pool_moving		which = loot_pool_transfer }
+			
+			export_to_variable	= { which = loot_capacity			value = army_size }
+			change_variable		= { which = loot_capacity			value = 5 }
+			
+			set_variable		= { which = loot_slowdown_factor	which = loot_pool_moving }
+			divide_variable		= { which = loot_slowdown_factor	which = loot_capacity }
+			
+			trigger_switch = {
+				on_trigger = has_country_flag
+				loot_slowdown_1 = {
+					clr_country_flag = loot_slowdown_1
+				}
+				loot_slowdown_2 = {
+					clr_country_flag = loot_slowdown_2
+				}
+				loot_slowdown_3 = {
+					clr_country_flag = loot_slowdown_3
+				}
+				loot_slowdown_4 = {
+					clr_country_flag = loot_slowdown_4
+				}
+				loot_slowdown_5 = {
+					clr_country_flag = loot_slowdown_5
+				}
+			}
+			
+			if = {
+				limit = { check_variable = { which = loot_slowdown_factor	value = 200 } }
+				set_country_flag = loot_slowdown_5
+			}
+			else_if = {
+				limit = { check_variable = { which = loot_slowdown_factor	value = 140 } }
+				set_country_flag = loot_slowdown_4
+			}
+			else_if = {
+				limit = { check_variable = { which = loot_slowdown_factor	value = 90 } }
+				set_country_flag = loot_slowdown_3
+			}
+			else_if = {
+				limit = { check_variable = { which = loot_slowdown_factor	value = 50 } }
+				set_country_flag = loot_slowdown_2
+			}
+			else_if = {
+				limit = { check_variable = { which = loot_slowdown_factor	value = 20 } }
+				set_country_flag = loot_slowdown_1
+			}
+			
+			# Clears stuff
+			set_variable = { which = loot_slowdown_factor	value = 0 }
+			set_variable = { which = loot_capacity		value = 0 }
+			set_variable = { which = loot_pool_transfer 	value = 0 }
+			
+			
+			country_event = {
+				id = POP_looting.013
+				days = 90
+			}
+		}
+	}
+	
+	option = {
+		name = "ok"
+	}
+}
+
+

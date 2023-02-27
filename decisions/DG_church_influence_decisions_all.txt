@@ -1,0 +1,1009 @@
+country_decisions = {
+	
+	seize_church_lands = {
+		potential = {
+			check_variable = { which = church_property value = 2 }
+			#NOT = { government = theocracy }
+			is_tribal = no
+			NOT = { government = native }
+			NOT = { has_country_flag = ruler_versus_church } #Cleared upon new ruler
+			NOT = { has_country_flag = church_appropriation }
+			NOT = { has_country_flag = appropriated_land }
+			NOT = { has_country_flag = take_advantage_of_reformation }
+		}
+		allow = {
+			has_regency = no
+			OR = {
+				ADM = 3
+				custom_trigger_tooltip = {
+					tooltip = control_of_benefices
+					OR = {
+						has_country_flag = national_church
+						has_country_flag = catholic_pragmatic_sanction
+						has_country_flag = patronato_real
+						religion = protestant
+						religion = reformed
+						religion = hussite
+						religion = confucianism
+					}
+				}
+			}
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = control_of_benefices
+					OR = {
+						has_country_flag = national_church
+						has_country_flag = catholic_pragmatic_sanction
+						has_country_flag = patronato_real
+						religion = protestant
+						religion = reformed
+						religion = hussite
+						religion = confucianism
+						has_country_flag = non_possessor_movement
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = has_religious_scandal
+					OR = {
+						has_country_modifier = religious_scandal_country
+						has_country_modifier = religious_scandal_country_strong
+						has_country_modifier = religious_scandal_country_weak
+					}
+				}
+				NOT = { stability = -1 }
+				custom_trigger_tooltip = {
+					tooltip = recently_converted
+					check_variable = { which = sympathy_to_old_religion value = 30 }
+				}
+				custom_trigger_tooltip = {
+					tooltip = apostolic_poverty
+					OR = {
+						religion = hussite
+						AND = {
+							has_country_flag = lollard_sympathy
+							religion = catholic
+						}
+						AND = {
+							has_country_flag = non_possessor_movement
+							religion = orthodox
+						}
+					}
+				}
+				AND = {
+					at_war_with_religious_enemy = yes
+					NOT = { war_score = 1 }
+				}
+				AND = {
+					at_war_with_religious_enemy = yes
+					war_exhaustion = 10
+				}
+			}
+		}
+		effect = {
+			set_country_flag = ruler_versus_church
+			clr_country_flag = non_possessor_movement
+			add_piety = -0.05
+			custom_tooltip = church_appropriation_explained
+			hidden_effect = {
+				#Determine chance of church agreeing to this
+				set_variable = { which = church_refusal value = 7 }
+				#Modifiers based on circumstances
+				#Ruler has the authority to do so
+				if = {
+					limit = {
+						OR = {
+							has_country_flag = patronato_real
+							has_country_flag = national_church
+							has_country_flag = catholic_pragmatic_sanction
+						}
+					}
+					change_variable = { which = church_refusal value = -4 }
+				}
+				#Larger states have more power
+				if = {
+					limit = { NOT = { num_of_cities = 3 } }
+					change_variable = { which = church_refusal value = 1 }
+				}
+				if = {
+					limit = { NOT = { num_of_cities = 5 } }
+					change_variable = { which = church_refusal value = 1 }
+				}
+				if = {
+					limit = { num_of_cities = 20 }
+					change_variable = { which = church_refusal value = -1 }
+				}
+				if = {
+					limit = { num_of_cities = 40 }
+					change_variable = { which = church_refusal value = -1 }
+				}
+				#Risks excommunication
+				if = {
+					limit = { religion = catholic } #Risks excommunication
+					change_variable = { which = church_refusal value = 1 }
+				}
+				#The church is more willing to agree to help a pious ruler
+				if = {
+					limit = { piety = 0.20 }
+					change_variable = { which = church_refusal value = -1 }
+				}
+				if = {
+					limit = { piety = 0.60 }
+					change_variable = { which = church_refusal value = -1 }
+				}
+				if = {
+					limit = { NOT = { piety = -0.20 } }
+					change_variable = { which = church_refusal value = 1 }
+				}
+				if = {
+					limit = {
+						OR = {
+							advisor = theologian
+							advisor = inquisitor
+						}
+					}
+					change_variable = { which = church_refusal value = -1 }
+				}
+				#The church is more generous when it has much
+				if = {
+					limit = { check_variable = { which = church_property value = 7 } }
+					change_variable = { which = church_refusal value = -1 }
+				}
+				if = {
+					limit = { check_variable = { which = church_property value = 9 } }
+					change_variable = { which = church_refusal value = -1 }
+				}
+				if = {
+					limit = { NOT = { check_variable = { which = church_property value = 5 } } }
+					change_variable = { which = church_refusal value = 1 }
+				}
+				if = {
+					limit = { NOT = { check_variable = { which = church_property value = 3 } } }
+					change_variable = { which = church_refusal value = 1 }
+				}
+				#The church is more willing to make concessions during times of strife
+				if = {
+					limit = {
+						religion = catholic
+						has_country_flag = take_advantage_of_reformation
+					}
+					change_variable = { which = church_refusal value = -4 }
+				}
+				if = {
+					limit = { at_war_with_religious_enemy = yes }
+					change_variable = { which = church_refusal value = -1 }
+				}
+				if = {
+					limit = { war_exhaustion = 10 }
+					change_variable = { which = church_refusal value = -1 }
+				}
+				if = {
+					limit = { war_exhaustion = 20 }
+					change_variable = { which = church_refusal value = -1 }
+				}
+				if = {
+					limit = { num_of_revolts = 1 }
+					change_variable = { which = church_refusal value = -1 }
+				}
+				if = {
+					limit = { num_of_loans = 1 }
+					change_variable = { which = church_refusal value = -1 }
+				}
+				if = {
+					limit = { DIP = 5 }
+					change_variable = { which = church_refusal value = -1 }
+				}
+				if = {
+					limit = { NOT = { DIP = 2 } }
+					change_variable = { which = church_refusal value = 1 }
+				}
+				if = {
+					limit = {
+						OR = {
+							has_country_modifier = unhappy_church_powerful
+							has_country_modifier = unhappy_church_strong
+							has_country_modifier = unhappy_church_moderate
+							has_country_modifier = unhappy_church_weak
+							has_country_modifier = unhappy_church_impotent
+						}
+					}
+					change_variable = { which = church_refusal value = 8 }
+				}
+			}
+			if = {
+				limit = { check_variable = { which = church_refusal value = 10 } }
+				country_event = { id = dg_church_influence.003 days = 5 }
+			}
+			hidden_effect = {
+				if = {
+					limit = { is_variable_equal = { which = church_refusal value = 9 } }
+					capital_scope = { add_province_triggered_modifier = seize_church_lands_90 }
+					#random_list = {
+					#	90 = { country_event = { id = dg_church_influence.003 days = 10 } }
+					#	10 = { country_event = { id = dg_church_influence.002 days = 10 } }
+					#}
+				}
+				if = {
+					limit = { is_variable_equal = { which = church_refusal value = 8 } }
+					capital_scope = { add_province_triggered_modifier = seize_church_lands_80 }
+					#random_list = {
+					#	80 = { country_event = { id = dg_church_influence.003 days = 15 } }
+					#	20 = { country_event = { id = dg_church_influence.002 days = 15 } }
+					#}
+				}
+				if = {
+					limit = { is_variable_equal = { which = church_refusal value = 7 } }
+					capital_scope = { add_province_triggered_modifier = seize_church_lands_70 }
+					#random_list = {
+					#	70 = { country_event = { id = dg_church_influence.003 days = 20 } }
+					#	30 = { country_event = { id = dg_church_influence.002 days = 20 } }
+					#}
+				}
+				if = {
+					limit = { is_variable_equal = { which = church_refusal value = 6 } }
+					capital_scope = { add_province_triggered_modifier = seize_church_lands_60 }
+					#random_list = {
+					#	60 = { country_event = { id = dg_church_influence.003 days = 25 } }
+					#	40 = { country_event = { id = dg_church_influence.002 days = 25 } }
+					#}
+				}
+				if = {
+					limit = { is_variable_equal = { which = church_refusal value = 5 } }
+					capital_scope = { add_province_triggered_modifier = seize_church_lands_50 }
+					#random_list = {
+					#	50 = { country_event = { id = dg_church_influence.003 days = 30 } }
+					#	50 = { country_event = { id = dg_church_influence.002 days = 30 } }
+					#}
+				}
+				if = {
+					limit = { is_variable_equal = { which = church_refusal value = 4 } }
+					capital_scope = { add_province_triggered_modifier = seize_church_lands_40 }
+					#random_list = {
+					#	40 = { country_event = { id = dg_church_influence.003 days = 35 } }
+					#	60 = { country_event = { id = dg_church_influence.002 days = 35 } }
+					#}
+				}
+				if = {
+					limit = { is_variable_equal = { which = church_refusal value = 3 } }
+					capital_scope = { add_province_triggered_modifier = seize_church_lands_30 }
+					#random_list = {
+					#	30 = { country_event = { id = dg_church_influence.003 days = 40 } }
+					#	70 = { country_event = { id = dg_church_influence.002 days = 40 } }
+					#}
+				}
+				if = {
+					limit = { is_variable_equal = { which = church_refusal value = 2 } }
+					capital_scope = { add_province_triggered_modifier = seize_church_lands_20 }
+					#random_list = {
+					#	20 = { country_event = { id = dg_church_influence.003 days = 45 } }
+					#	80 = { country_event = { id = dg_church_influence.002 days = 45 } }
+					#}
+				}
+				if = {
+					limit = { is_variable_equal = { which = church_refusal value = 1 } }
+					capital_scope = { add_province_triggered_modifier = seize_church_lands_10 }
+					#random_list = {
+					#	10 = { country_event = { id = dg_church_influence.003 days = 50 } }
+					#	90 = { country_event = { id = dg_church_influence.002 days = 50 } }
+					#}
+				}
+				if = {
+					limit = { NOT = { check_variable = { which = church_refusal value = 1 } } }
+					country_event = { id = dg_church_influence.002 days = 55 }
+				}
+				set_variable = { which = church_refusal value = 0 }
+			} #End hidden effect
+			if = {
+				limit = { num_of_cities = 80 }
+				add_papal_influence = -160
+			}
+			else_if = {
+				limit = { num_of_cities = 40 }
+				add_papal_influence = -80
+			}
+			else_if = {
+				limit = { num_of_cities = 20 }
+				add_papal_influence = -40
+			}
+			else_if = {
+				limit = { num_of_cities = 10 }
+				add_papal_influence = -20
+			}
+			else_if = {
+				limit = { num_of_cities = 5 }
+				add_papal_influence = -10
+			}
+			else = {
+				add_papal_influence = -5
+			}
+			hidden_effect = {
+				set_country_flag = church_land_requested
+				if = {
+					limit = { has_country_flag = church_land_donated }
+					clr_country_flag = church_land_donated
+					clr_country_flag = church_land_requested
+				}
+			}
+		}
+		ai_will_do = {
+		#always appropriate, never donate
+		#not as "flavorful", but a correct thing to do
+			factor = 100
+			#modifier = {
+			#	NOT = { check_variable = { which = church_property value = 10 } }
+			#	piety = 0.60
+			#	factor = 0
+			#}
+			#modifier = {
+			#	NOT = { check_variable = { which = church_property value = 8 } }
+			#	piety = 0.20
+			#	factor = 0
+			#}
+			#modifier = {
+			#	NOT = { check_variable = { which = church_property value = 6 } }
+			#	piety = -0.20
+			#	factor = 0
+			#}
+			#modifier = {
+			#	NOT = { check_variable = { which = church_property value = 4 } }
+			#	piety = -0.60
+			#	factor = 0
+			#}
+			#modifier = {					?
+			#	stability = 1
+			#	factor = 0
+			#}
+			#modifier = {					??
+			#	NOT = { religious_unity = 1.00 }
+			#	factor = 0
+			#}
+			#modifier = {
+			#	religion = catholic
+			#	piety = -0.20
+			#	PAP = { check_variable = { which = papal_authority value = 300 } }
+			#	factor = 0
+			#}
+			#modifier = {
+			#	religion = catholic
+			#	piety = -0.60
+			#	PAP = { check_variable = { which = papal_authority value = 400 } }
+			#	factor = 0
+			#}
+		}
+	}
+	donate_land_to_church = {
+		potential = {
+			is_tribal = no
+			#NOT = { government = theocracy }
+			NOT = { government = native }
+			piety = -0.20
+			NOT = { has_country_flag = donated_land_to_church } #Once per ruler
+			check_variable = { which = church_property value = 1 }
+			NOT = { check_variable = { which = church_property value = 13 } }
+			OR = {
+				NOT = { has_country_flag = ruler_versus_church }
+				had_country_flag = { flag = ruler_versus_church days = 4000 }
+			}
+		}
+		allow = {
+			has_regency = no
+			years_of_income = 0.10
+			is_lesser_in_union = no #Can't affect legitimacy
+		}
+		effect = {
+			clr_country_flag = ruler_versus_church
+			if = {
+				limit = { piety = 0.60 }
+				add_legitimacy = 4
+				add_prestige = 8
+			}
+			else_if = {
+				limit = { piety = 0.20 }
+				add_legitimacy = 3
+				add_prestige = 6
+			}
+			else_if = {
+				limit = { piety = -0.20 }
+				add_legitimacy = 2
+				add_prestige = 4
+			}
+			else_if = {
+				limit = { piety = -0.60 }
+				add_legitimacy = 1
+				add_prestige = 2
+			}
+			hidden_effect = { set_country_flag = donated_land_to_church }
+			if = {
+				limit = { monthly_income = 500 }
+				add_treasury = -500
+			}
+			else_if = {
+				limit = { monthly_income = 5 }
+				add_years_of_income = -0.08
+			}
+			else = {
+				add_treasury = -5
+			}
+			add_patriarch_authority = 0.05
+			if = {
+				limit = { NOT = { has_country_flag = church_land_donated } }
+				add_piety = 0.05
+				hidden_effect = { set_country_flag = church_land_donated }
+			}
+			hidden_effect = {
+				change_variable = { which = church_property value = 1 }
+				if = {
+					limit = {
+						has_country_flag = church_land_seized
+						has_country_flag = church_land_donated
+					}
+					clr_country_flag = church_land_donated
+					clr_country_flag = church_land_seized
+				}
+				if = {
+					limit = {
+						has_country_flag = church_land_requested
+						has_country_flag = church_land_donated
+					}
+					clr_country_flag = church_land_donated
+					clr_country_flag = church_land_seized
+				}
+			}
+			hidden_effect = {
+				if = {
+					limit = { religion = mahayana }
+					if = {
+						limit = { has_country_flag = meditation_buddhism }
+						capital_scope = { add_province_triggered_modifier = temple_town_meditation }
+						#every_owned_province = {
+						#	limit = {
+						#		religion = mahayana
+						#		temple_trigger = yes
+						#		NOT = { has_province_modifier = temple_town_meditation }
+						#	}
+						#	random = { chance = 10 add_province_modifier = { name = temple_town_meditation duration = -1 } }
+						#}
+					}
+					if = {
+						limit = { has_country_flag = nichiren_buddhism }
+						capital_scope = { add_province_triggered_modifier = temple_town_nichiren }
+						#every_owned_province = {
+						#	limit = {
+						#		religion = mahayana
+						#		temple_trigger = yes
+						#		NOT = { has_province_modifier = temple_town_nichiren }
+						#	}
+						#	random = { chance = 10 add_province_modifier = { name = temple_town_nichiren duration = -1 } }
+						#}
+					}
+					if = {
+						limit = { has_country_flag = pure_land_buddhism }
+						capital_scope = { add_province_triggered_modifier = temple_town_pure_land }
+						#every_owned_province = {
+						#	limit = {
+						#		religion = mahayana
+						#		temple_trigger = yes
+						#		NOT = { has_province_modifier = temple_town_pure_land }
+						#	}
+						#	random = { chance = 10 add_province_modifier = { name = temple_town_pure_land duration = -1 } }
+						#}
+					}
+					if = {
+						limit = { has_country_flag = lotus_sutra_buddhism }
+						capital_scope = { add_province_triggered_modifier = temple_town_lotus_sutra }
+						#every_owned_province = {
+						#	limit = {
+						#		religion = mahayana
+						#		temple_trigger = yes
+						#		NOT = { has_province_modifier = temple_town_lotus_sutra }
+						#	}
+						#	random = { chance = 10 add_province_modifier = { name = temple_town_lotus_sutra duration = -1 } }
+						#}
+					}
+				}
+			}
+			remove_country_modifier = religious_scandal_country_strong
+			remove_country_modifier = religious_scandal_country
+			remove_country_modifier = religious_scandal_country_weak
+			remove_country_modifier = unhappy_church_powerful
+			remove_country_modifier = unhappy_church_strong
+			remove_country_modifier = unhappy_church_moderate
+			remove_country_modifier = unhappy_church_weak
+			remove_country_modifier = unhappy_church_impotent
+		}
+		ai_will_do = {
+		#always appropriate, never donate
+		#not as "flavorful", but a correct thing to do
+			factor = 0
+			#modifier = {
+			#	NOT = { has_country_modifier = religious_scandal_country_strong }
+			#	NOT = { has_country_modifier = religious_scandal_country }
+			#	NOT = { has_country_modifier = unhappy_church_powerful }
+			#	NOT = { has_country_modifier = unhappy_church_strong }
+			#	NOT = { has_country_modifier = unhappy_church_moderate }
+			#	factor = 0
+			#}
+			#modifier = {
+			#	NOT = { piety = 0.20 }
+			#	factor = 0
+			#}
+			#modifier = {
+			#	check_variable = { which = church_property value = 8 }
+			#	factor = 0
+			#}
+			#modifier = {
+			#	NOT = { years_of_income = 1 }
+			#	factor = 0
+			#}
+		}
+	}
+	restore_decaying_temples = {
+		potential = {
+			any_owned_province = { has_province_modifier = decaying_temples }
+		}
+		allow = {
+			years_of_income = 0.08
+			is_at_war = no
+			OR = {
+				patriarch_authority = 0.25
+				piety = 0.20
+				ADM = 4
+				advisor = theologian
+			}
+			treasury = 25
+		}
+		effect = {
+			add_treasury = -25
+			random_owned_province = {
+				limit = { has_province_modifier = decaying_temples }
+				remove_province_modifier = decaying_temples
+			}
+			if = {
+				limit = { piety = 0.60 }
+				add_legitimacy = 1
+				add_prestige = 2
+			}
+			else_if = {
+				limit = { piety = 0.20 }
+				add_legitimacy = 0.8
+				add_prestige = 1.5
+			}
+			else_if = {
+				limit = { piety = -0.20 }
+				add_legitimacy = 0.5
+				add_prestige = 1
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	request_clerical_advisor = {
+		potential = {
+			patriarch_authority = 0.40
+			NOT = { religion = catholic } #They have their own system
+			OR = {
+				has_country_flag = patriarch_theologian
+				has_country_flag = patriarch_zealous
+				has_country_flag = patriarch_obedient
+				has_country_flag = patriarch_controversial
+				has_country_flag = patriarch_corrupt
+				has_country_flag = patriarch_hostile
+			}
+			NOT = { has_country_flag = clerical_advisor }
+		}
+		allow = {
+			adm_power = 10
+			custom_trigger_tooltip = {
+				tooltip = no_unhappy_church
+				NOT = { has_country_modifier = unhappy_church_powerful }
+				NOT = { has_country_modifier = unhappy_church_strong }
+				NOT = { has_country_modifier = unhappy_church_moderate }
+				NOT = { has_country_modifier = unhappy_church_weak }
+				NOT = { has_country_modifier = unhappy_church_impotent }
+			}
+			custom_trigger_tooltip = {
+				tooltip = reasonable_patriarch
+				OR = {
+					has_country_flag = patriarch_theologian
+					has_country_flag = patriarch_zealous
+					has_country_flag = patriarch_obedient
+					has_country_flag = patriarch_controversial
+					has_country_flag = patriarch_corrupt
+				}
+			}
+			hidden_trigger = {
+				NOT = {
+					capital_scope = {
+						has_province_modifier = request_clerical_advisor_trigger
+					}
+				}
+			}
+		}
+		effect = {
+			add_adm_power = -10
+			if = {
+				limit = { has_country_flag = patriarch_corrupt }
+				add_treasury = -10
+			}
+			set_country_flag = clerical_advisor
+			hidden_effect = {
+				capital_scope = {
+					add_province_triggered_modifier = request_clerical_advisor_trigger
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	revoke_heresy_laws = {
+		potential = {
+			has_country_modifier = heresy_laws
+		}
+		allow = {
+			OR = {
+				NOT = { has_country_modifier = religious_tolerance }
+				NOT = { piety = 0.00 }
+			}
+			OR = {
+				ADM = 4
+				advisor = statesman
+			}
+		}
+		effect = {
+			add_adm_power = -50
+			remove_country_modifier = heresy_laws
+		}
+		ai_will_do = {
+			factor = 100
+			#always get rid of them
+			#modifier = {
+			#	NOT = { has_any_disaster = yes }
+			#	is_force_converted = no
+			#	factor = 0
+			#}
+		}
+	}
+	blasphemy_laws = {
+		potential = {
+			adm_tech = 20
+			NOT = { has_country_modifier = blasphemy_laws }
+			piety = -0.20
+			has_country_flag = true_faith
+		}
+		allow = {
+			advisor = theologian
+			stability = 0
+		}
+		effect = {
+			add_country_modifier = { name = "blasphemy_laws" duration = -1 }
+			add_piety = 0.10
+			remove_country_modifier = unhappy_church_powerful
+			remove_country_modifier = unhappy_church_strong
+			remove_country_modifier = unhappy_church_moderate
+			remove_country_modifier = unhappy_church_weak
+			remove_country_modifier = unhappy_church_impotent
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	revoke_blasphemy_laws = {
+		potential = {
+			has_country_modifier = blasphemy_laws
+			NOT = { government = theocracy }
+			NOT = { piety = -0.20 }
+			OR = {
+				adm_tech = 9
+				custom_trigger_tooltip = {
+					tooltip = church_settlement
+					has_country_flag = church_settlement
+					religion = catholic
+				}
+			}
+			has_country_flag = true_faith
+		}
+		allow = {
+			OR = {
+				adm = 3
+				custom_trigger_tooltip = {
+					tooltip = church_settlement
+					has_country_flag = church_settlement
+					religion = catholic
+				}
+			}
+			stability = 0
+		}
+		effect = {
+			remove_country_modifier = blasphemy_laws
+			if = {
+				limit = { NOT = { has_country_flag = church_settlement religion = catholic } }
+				if = {
+					limit = { patriarch_authority = 0.80 }
+					subtract_stability_2 = yes
+					add_country_modifier = { name = "unhappy_church_powerful" duration = 1000 }
+				}
+				else_if = {
+					limit = { patriarch_authority = 0.60 }
+					subtract_stability_1 = yes
+					add_country_modifier = { name = "unhappy_church_strong" duration = 1000 }
+				}
+				else_if = {
+					limit = { patriarch_authority = 0.40 }
+					add_country_modifier = { name = "unhappy_church_moderate" duration = 1000 }
+				}
+				else_if = {
+					limit = { patriarch_authority = 0.20 }
+					add_country_modifier = { name = "unhappy_church_weak" duration = 1000 }
+				}
+				else = {
+					add_country_modifier = { name = "unhappy_church_impotent" duration = 1000 }
+				}
+			}
+			add_piety = -0.10
+			hidden_effect = {
+				#if = {
+				#	limit = { has_country_flag = church_settlement }
+					clr_country_flag = church_settlement
+				#}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				patriarch_authority = 0.40
+				factor = 0
+			}
+		}
+	}
+	monastic_schools = {
+		potential = {
+			tech_1400_trigger = yes
+			tech_1550_trigger = no
+			NOT = { has_country_modifier = monastic_schools }
+			NOT = { has_country_modifier = charity_schools }
+			NOT = { has_country_modifier = preparatory_schools }
+			NOT = { has_country_modifier = jesuit_schools }
+			NOT = { has_country_modifier = public_schools }
+			NOT = { has_country_modifier = public_religious_schools }
+			has_country_flag = true_faith
+		}
+		allow = {
+			adm = 2
+			stability = 0
+		}
+		effect = {
+			add_country_modifier = { name = "monastic_schools" duration = -1 hidden = yes }  ### Demian hid because country modifier window is too cluttered.
+			add_piety = 0.10
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	charity_schools = {
+		potential = {
+			tech_1550_trigger = yes
+			tech_1700_trigger = no
+			NOT = { has_country_modifier = charity_schools }
+			NOT = { has_country_modifier = preparatory_schools }
+			NOT = { has_country_modifier = jesuit_schools }
+			NOT = { has_country_modifier = public_schools }
+			NOT = { has_country_modifier = public_religious_schools }
+			has_country_flag = true_faith
+		}
+		allow = {
+			adm = 2
+			stability = 0
+		}
+		effect = {
+			add_country_modifier = { name = "charity_schools" duration = -1 }
+			remove_country_modifier = monastic_schools
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	preparatory_schools = {
+		potential = {
+			tech_1800_trigger = yes
+			tech_1850_trigger = no
+			NOT = { has_country_modifier = preparatory_schools }
+			NOT = { has_country_modifier = jesuit_schools }
+			NOT = { has_country_modifier = public_schools }
+			NOT = { has_country_modifier = public_religious_schools }
+			has_country_flag = true_faith
+		}
+		allow = {
+			adm = 2
+			stability = 0
+			years_of_income = 0.25
+		}
+		effect = {
+			add_country_modifier = { name = "preparatory_schools" duration = -1 }
+			remove_country_modifier = charity_schools
+			remove_country_modifier = monastic_schools
+			if = {
+				limit = { monthly_income = 5 }
+				add_years_of_income = -0.25
+			}
+			else = {
+				add_treasury = -25
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	public_schools = {
+		potential = {
+			tech_1850_trigger = yes
+			NOT = { has_country_modifier = public_schools }
+			NOT = { has_country_modifier = public_religious_schools }
+			NOT = { government = theocracy }
+			has_country_flag = true_faith
+		}
+		allow = {
+			adm = 3
+			stability = 0
+			years_of_income = 1
+		}
+		effect = {
+			if = {
+				limit = { monthly_income = 5 }
+				add_years_of_income = -1
+			}
+			else = {
+				add_treasury = -100
+			}
+			add_country_modifier = { name = public_schools duration = -1 }
+			remove_country_modifier = public_religious_schools
+			remove_country_modifier = preparatory_schools
+			remove_country_modifier = jesuit_schools
+			remove_country_modifier = charity_schools
+			remove_country_modifier = monastic_schools
+			add_piety = -0.10
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	head_of_church = {
+		potential = {
+			tech_1500_trigger = yes
+			NOT = { has_country_flag = national_church }
+			#Ruler is already head of church
+			NOT = { religion = orthodox } #Has own decision (autocephaly)
+			NOT = { religion = coptic } #Should have own decision (autocephaly)
+			NOT = { religion = hussite }
+			NOT = { religion = protestant }
+			NOT = { religion = reformed }
+			OR = {
+				NOT = { religion = catholic }
+				is_religion_enabled = protestant
+			}
+			papal_trigger = no
+		}
+		allow = {
+			custom_trigger_tooltip = {
+				tooltip = no_unhappy_church
+				NOT = { has_country_modifier = unhappy_church_powerful }
+				NOT = { has_country_modifier = unhappy_church_strong }
+				NOT = { has_country_modifier = unhappy_church_moderate }
+				NOT = { has_country_modifier = unhappy_church_weak }
+				NOT = { has_country_modifier = unhappy_church_impotent }
+			}
+			OR = {
+				legitimacy = 100
+				republican_tradition = 100
+				devotion = 100
+			}
+			prestige = 25
+			OR = {
+				adm = 4
+				advisor = theologian
+			}
+			is_free_or_tributary_trigger = yes
+		}
+		effect = {
+			hidden_effect = { set_country_flag = national_church }
+			if = {
+				limit = { patriarch_authority = 0.80 }
+				subtract_stability_2 = yes
+				add_country_modifier = { name = "unhappy_church_powerful" duration = 1000 }
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.60 }
+				subtract_stability_1 = yes
+				add_country_modifier = { name = "unhappy_church_strong" duration = 1000 }
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.40 }
+				add_country_modifier = { name = "unhappy_church_moderate" duration = 1000 }
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.20 }
+				add_country_modifier = { name = "unhappy_church_weak" duration = 1000 }
+			}
+			else = {
+				add_country_modifier = { name = "unhappy_church_impotent" duration = 1000 }
+			}
+			if = {
+				limit = { piety = 0.20 }
+				subtract_stability_1 = yes
+			}
+			add_piety = -0.10
+		}
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				patriarch_authority = 0.80
+				factor = 0
+			}
+			modifier = {
+				religion = catholic
+				has_country_flag = renaissance
+				factor = 0
+			}
+		}
+	}
+	oath_of_loyalty = {
+		potential = {
+			tech_1750_trigger = yes
+			OR = {
+				has_country_flag = national_church
+				AND = {
+					religion = orthodox
+					any_owned_province = { has_province_modifier = orthodox_patriarchate }
+				}
+				religion = coptic
+				religion = hussite
+				religion = protestant
+				religion = reformed
+			}
+			NOT = { has_country_flag = oath_of_loyalty }
+		}
+		allow = {
+			custom_trigger_tooltip = {
+				tooltip = no_unhappy_church
+				NOT = { has_country_modifier = unhappy_church_powerful }
+				NOT = { has_country_modifier = unhappy_church_strong }
+				NOT = { has_country_modifier = unhappy_church_moderate }
+				NOT = { has_country_modifier = unhappy_church_weak }
+				NOT = { has_country_modifier = unhappy_church_impotent }
+			}
+			NOT = { piety = -0.20 }
+		}
+		effect = {
+			hidden_effect = { set_country_flag = oath_of_loyalty }
+			if = {
+				limit = { patriarch_authority = 0.80 }
+				subtract_stability_2 = yes
+				add_country_modifier = { name = "unhappy_church_powerful" duration = 1000 }
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.60 }
+				subtract_stability_1 = yes
+				add_country_modifier = { name = "unhappy_church_strong" duration = 1000 }
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.40 }
+				add_country_modifier = { name = "unhappy_church_moderate" duration = 1000 }
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.20 }
+				add_country_modifier = { name = "unhappy_church_weak" duration = 1000 }
+			}
+			else = {
+				add_country_modifier = { name = "unhappy_church_impotent" duration = 1000 }
+			}
+			add_piety = -0.10
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				patriarch_authority = 0.60
+				factor = 0
+			}
+		}
+	}
+}

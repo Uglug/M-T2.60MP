@@ -1,0 +1,1944 @@
+#0colonial_goods.1 - Resources_in_the_colonies.txt
+#####################################
+#                                   #
+# Trading goods in the colonies     #
+#                                   #
+#####################################
+#SUMMARY
+#Purpose 1 - upgrade provinces that start as trade_goods = unknown
+#to an appropriate higher value trade_goods.
+#Purpose 2 - give provinces with low value trade_goods
+#a chance to upgrade to a high value trade_goods
+#
+# IDs colonial_goods.1 - 905100
+#colonial_goods.1 wheat for european colonies
+#colonial_goods.2 millet for african colonies
+#colonial_goods.3 rice for asian colonies
+#colonial_goods.4 maize for american colonies
+#colonial_goods.5 wine in south_africa, western_america
+#colonial_goods.6 gold in western_america
+#colonial_goods.7 gold in the_andes
+#colonial_goods.8 gold in amazonia
+#colonial_goods.9 gold in siberia
+#colonial_goods.10 gems in south_africa
+#colonial_goods.11 gems in amazonia, the_andes, colombia, western_america
+#colonial_goods.12 lumber in great_plains, northern_america, pacific, siberia, western_america
+#colonial_goods.13 brazil in amazonia
+#colonial_goods.14 sandal in india_superregion, oceania, south_east_asia
+#colonial_goods.15 SPARE (was ebony in india)
+#colonial_goods.17 pepper in east_africa, india_superregion
+#colonial_goods.18 clove in south_east_asia
+#colonial_goods.19 nutmeg in south_east_asia
+#colonial_goods.20 fish in provinces with a port
+#colonial_goods.22 slaves in africa - high chance
+#colonial_goods.23 slaves in africa - low chance
+#colonial_goods.24 cotton in great_plains, caribbean - high chance
+#colonial_goods.25 cotton in great_plains, caribbean - low chance
+#colonial_goods.26 tobacco in great_plains - high chance
+#colonial_goods.27 tobacco in great_plains - low chance
+#colonial_goods.28 sugar in caribbean, amazonia, colombia - high chance
+#colonial_goods.29 sugar in caribbean, amazonia, colombia - low chance
+#colonial_goods.30 coffee in the_andes, caribbean, colombia - high chance
+#colonial_goods.31 coffee in the_andes, caribbean, colombia - low chance
+#colonial_goods.32 cacao in the_andes, caribbean, colombia - high chance
+#colonial_goods.33 cacao in the_andes, caribbean, colombia - low chance
+#colonial_goods.34 palm in west_africa
+#colonial_goods.35 gold in west_africa
+#colonial_goods.36 silver in the_andes, colombia, western_america
+#colonial_goods.37 copper in the_andes, south_east_asia
+#colonial_goods.38 livestock for european colonies
+#colonial_goods.39 iron in northern_america
+#colonial_goods.40 carmine in colombia, india_superregion - high chance
+#colonial_goods.41 carmine in colombia, india_superregion - low chance
+#colonial_goods.42 tea in fareast_superregion, india_superregion - high chance
+#colonial_goods.43 tea in fareast_superregion, india_superregion - low chance
+#colonial_goods.44 iron in eastern_siberia
+#colonial_goods.45 change slaves to unknown after abolish_slavery_act
+#colonial_goods.46 naval_supplies in north_america
+#colonial_goods.47 copper in north_america
+#colonial_goods.48 lead in north_america
+#colonial_goods.49 tin in north_america
+#colonial_goods.50 coal in north_america
+#colonial_goods.51 sulphur in north_america
+#colonial_goods.52 lead in eastern_siberia
+
+namespace = colonial_goods
+namespace = development_goods
+
+#colonial_goods.1 Wheat for European colonies
+province_event = {
+	id = colonial_goods.1
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.1"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		trade_goods = unknown
+		OR = { colonysize = 300 is_city = yes }
+		OR = {
+			AND = {
+				continent = europe
+				NOT = { superregion = scandinavian_superregion }
+			}
+			AND = {
+				continent = oceania
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = { years = 5 }
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = wheat
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.2 Millet for African colonies
+province_event = {
+	id = colonial_goods.2
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.2"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		trade_goods = unknown
+		OR = { colonysize = 300 is_city = yes }
+		OR = {
+			africa_continent_trigger = yes
+			AND = {
+				continent = oceania
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { africa_continent_trigger = yes }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { africa_continent_trigger = yes } }
+					}
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = { years = 5 }
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = millet
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+
+#colonial_goods.3 Rice for Asian colonies
+province_event = {
+	id = colonial_goods.3
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.3"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		trade_goods = unknown
+		OR = { colonysize = 300 is_city = yes }
+		OR = {
+			AND = {
+				asia_continent_trigger = yes
+				NOT = { region = east_siberia_region region = west_siberia_region }	# Too cold for rice growing in the tundra
+			}
+			AND = {
+				continent = oceania
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { asia_continent_trigger = yes }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { asia_continent_trigger = yes } }
+					}
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = { years = 5 }
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = rice
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.4 Maize for American colonies
+province_event = {
+	id = colonial_goods.4
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.4"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		trade_goods = unknown
+		OR = { colonysize = 300 is_city = yes }
+		OR = {
+			continent = north_america
+			continent = south_america
+			AND = {
+				continent = oceania
+				OR = {
+					OR = {
+						owner = {
+							is_colonial_nation = no
+							capital_scope = { continent = north_america }
+						}
+						owner = {
+							is_colonial_nation = yes
+							colonial_parent = { capital_scope = { continent = north_america } }
+						}
+					}
+					OR = {
+						owner = {
+							is_colonial_nation = no
+							capital_scope = { continent = south_america }
+						}
+						owner = {
+							is_colonial_nation = yes
+							colonial_parent = { capital_scope = { continent = south_america } }
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = { years = 5 }
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = maize
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.5 Wine for South Africa and Western America
+province_event = {
+	id = colonial_goods.5
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.5"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		OR = {
+			trade_goods = unknown
+			AND = {
+				trade_goods = slaves
+				owner = { has_country_modifier = the_abolish_slavery_act }
+			}
+		}
+		OR = { colonysize = 300 is_city = yes }
+		OR = {
+			area = south_africa_plateau_area
+			area = cape_of_good_hope_area
+			area = xhosa_area
+			area = xhosa_area
+			area = kwazulu_area
+			region = california_region
+			area = new_mexico_area
+			area = snake_river_area
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 4
+		
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = wine
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.12 Lumber for Northern America, Pacific, Siberia and Southern America
+province_event = {
+	id = colonial_goods.12
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.12"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		trade_goods = unknown
+		OR = { colonysize = 300 is_city = yes }
+		OR = {
+			region = east_siberia_region
+			region = west_siberia_region
+			region = great_plains_region
+			superregion = north_america_superregion
+			north_america_region_trigger = yes
+			region = north_oceanea_region
+			region = south_oceanea_region
+			region = mississippi_region
+			west_america_region_trigger = yes
+			province_group = colonial_la_plata_old_group
+			province_group = colonial_chile_old_group
+			province_group = colonial_amazonas_old_group
+		}
+		OR = {
+			forest_trigger = yes
+			wood_trigger = yes
+			has_terrain = taiga
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 4
+
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = lumber
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.13 Brazilwood for Brazil and Parana
+province_event = {
+	id = colonial_goods.13
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.13"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		trade_goods = unknown
+		OR = { colonysize = 300 is_city = yes }
+		OR = {
+			province_group = colonial_brazil_old_group
+			province_group = colonial_parana_old_group
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 4
+
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = brazil
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.14 Sandalwood for India, Oceania and Southeast Asia
+province_event = {
+	id = colonial_goods.14
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.14"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		trade_goods = unknown
+		OR = { colonysize = 300 is_city = yes }
+		OR = {
+			continent = indian_continent
+			southeast_asia_region_trigger = yes
+			continent = oceania
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 5
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = sandal
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.15 Wool for Turkmenistan and the steppes
+province_event = {
+	id = colonial_goods.15
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.15"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		trade_goods = unknown
+		OR = { colonysize = 300 is_city = yes }
+		OR = {
+			area = transcaspia_area
+			province_id = 386
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 4
+		
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = wool
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.17 Pepper for East Africa and India
+province_event = {
+	id = colonial_goods.17
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.17"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		OR = {
+			trade_goods = unknown
+			AND = {
+				trade_goods = slaves
+				owner = { has_country_modifier = the_abolish_slavery_act }
+			}
+		}
+		OR = { colonysize = 300 is_city = yes }
+		OR = {
+			east_africa_region_trigger = yes
+			continent = indian_continent
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 4
+
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = pepper
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.18 Clove for Southeast Asia
+province_event = {
+	id = colonial_goods.18
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.18"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		trade_goods = unknown
+		OR = { colonysize = 300 is_city = yes }
+		southeast_asia_region_trigger = yes
+	}
+	
+	mean_time_to_happen = {
+		years = 5
+
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = clove
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.19 Nutmeg for Southeast Asia
+province_event = {
+	id = colonial_goods.19
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.19"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		trade_goods = unknown
+		OR = { colonysize = 300 is_city = yes }
+		southeast_asia_region_trigger = yes
+	}
+	
+	mean_time_to_happen = {
+		years = 5
+		
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = nutmeg
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.20 Fish for provinces with a port
+province_event = {
+	id = colonial_goods.20
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.20"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		trade_goods = unknown
+		OR = { colonysize = 300 is_city = yes }
+		has_port = yes
+	}
+	
+	mean_time_to_happen = {
+		years = 5
+		modifier = {
+			factor = 1.65
+			OR = {
+				region = carribeans_region
+				region = malaya_region
+				region = java_region
+				region = borneo_region
+				region = sumatra_region
+				region = philippines_region
+				region = indonesia_region
+			}
+		}
+		modifier = {
+			factor = 0.8
+			has_terrain = tundra
+		}
+		modifier = {
+			factor = 0.1
+			area = newfoundland_area
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = fish
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.22 Slaves for Africa - high chance
+#there is a high chance of becoming a slave province if trade_goods = unknown
+province_event = {
+	id = colonial_goods.22
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.22"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		trade_goods = unknown
+		OR = { colonysize = 300 is_city = yes }
+		owner = { NOT = { has_country_modifier = the_abolish_slavery_act } }
+		OR = {
+			region = central_africa_region
+			east_africa_region_trigger = yes
+			region = south_africa_region
+			west_africa_region_trigger = yes
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 6
+		
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = slaves
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.24 cotton in great_plains, caribbean - high chance
+#only triggered if owner already has at least one cotton province
+#cotton may replace any low value trade_goods (not just unknown)
+province_event = {
+	id = colonial_goods.24
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.24"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		owner = { cotton = 1 }
+		OR = {
+			trade_goods = unknown
+			farming_province_trigger = yes
+		}
+		OR = { colonysize = 300 is_city = yes }
+		cotton_area_trigger = yes
+		owner = { dip_tech = 24 }
+		NOT = { trade_goods = cotton }
+		NOT = {
+			has_climate = arctic
+			has_climate = arid
+			has_winter = severe_winter
+			has_winter = normal_winter
+			forest_trigger = yes
+			jungle_trigger = yes
+			mountains_trigger = yes
+			highlands_trigger = yes
+			desert_trigger = yes
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 8
+		
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 2.0
+			region = carribeans_region
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = cotton
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.25 cotton in great_plains, caribbean - low chance
+#only triggered if owner has no cotton provinces
+#cotton may replace any low value trade_goods (not just unknown)
+province_event = {
+	id = colonial_goods.25
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.25"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		OR = {
+			trade_goods = unknown
+			farming_province_trigger = yes
+		}
+		OR = { colonysize = 300 is_city = yes }
+		cotton_area_trigger = yes
+		owner = { dip_tech = 24 }
+		NOT = { owner = { cotton = 1 } }
+		NOT = { trade_goods = cotton }
+		NOT = {
+			has_climate = arctic
+			has_climate = arid
+			has_winter = severe_winter
+			has_winter = normal_winter
+			forest_trigger = yes
+			jungle_trigger = yes
+			mountains_trigger = yes
+			highlands_trigger = yes
+			desert_trigger = yes
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 20
+		
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 2.0
+			region = carribeans_region
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = cotton
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.26 tobacco in great_plains - high chance
+#only triggered if owner already has at least one tobacco province
+#tobacco may replace any low value trade_goods (not just unknown)
+province_event = {
+	id = colonial_goods.26
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.26"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		owner = { tobacco = 1 }
+		OR = {
+			trade_goods = unknown
+			farming_province_trigger = yes
+		}
+		OR = { colonysize = 300 is_city = yes }
+		tobacco_area_trigger = yes
+		owner = { dip_tech = 24 }
+		NOT = { trade_goods = tobacco }
+		NOT = {
+			AND = {
+				has_climate = arid
+				NOT = { has_terrain = grass_flats }
+			}
+			has_winter = severe_winter
+			has_terrain = tundra
+			mountains_trigger = yes
+			shrub_trigger = yes
+			desert_trigger = yes
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 8
+		
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = tobacco
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.27 tobacco in great_plains - low chance
+#only triggered if owner has no tobacco provinces
+#tobacco may replace any low value trade_goods (not just unknown)
+province_event = {
+	id = colonial_goods.27
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.27"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		OR = {
+			trade_goods = unknown
+			farming_province_trigger = yes
+		}
+		OR = { colonysize = 300 is_city = yes }
+		tobacco_area_trigger = yes
+		owner = { dip_tech = 24 }
+		NOT = { owner = { tobacco = 1 } }
+		NOT = { trade_goods = tobacco }
+		NOT = {
+			AND = {
+				has_climate = arid
+				NOT = { has_terrain = grass_flats }
+			}
+			has_winter = severe_winter
+			has_terrain = tundra
+			mountains_trigger = yes
+			shrub_trigger = yes
+			desert_trigger = yes
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 20
+		
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = tobacco
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.28 sugar in caribbean, amazonia, colombia - high chance
+#only triggered if owner already has at least one sugar province
+#sugar may replace any low value trade_goods (not just unknown)
+province_event = {
+	id = colonial_goods.28
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.28"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		owner = { sugar = 1 }
+		has_climate = tropical
+		OR = {
+			trade_goods = unknown
+			farming_province_trigger = yes
+		}
+		OR = { colonysize = 300 is_city = yes }
+		OR = {
+			superregion = eastern_south_america_superregion
+			region = carribeans_region
+		}
+		owner = { dip_tech = 24 }
+		NOT = { trade_goods = sugar }
+		NOT = {
+			hills_trigger = yes
+			forest_trigger = yes
+			jungle_trigger = yes
+			mountains_trigger = yes
+			highlands_trigger = yes
+			desert_trigger = yes
+			steppes_trigger = yes
+		}
+		
+	}
+	
+	mean_time_to_happen = {
+		years = 8
+		
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = sugar
+		hidden_effect = { set_base_price_of_goods = yes }
+		if = {
+			limit = {
+				OR = {
+					continent = north_america
+					continent = south_america
+				}
+			}
+			AAA = { change_variable = { which = american_sugar value = 1 } }
+		}
+	}
+}
+
+#colonial_goods.29 sugar in caribbean, amazonia, colombia - low chance
+#only triggered if owner has no sugar provinces
+#sugar may replace any low value trade_goods (not just unknown)
+province_event = {
+	id = colonial_goods.29
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.29"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		has_climate = tropical
+		OR = {
+			trade_goods = unknown
+			farming_province_trigger = yes
+		}
+		OR = { colonysize = 300 is_city = yes }
+		OR = {
+			superregion = eastern_south_america_superregion
+			region = carribeans_region
+		}
+		owner = { dip_tech = 24 }
+		NOT = { owner = { sugar = 1 } }
+		NOT = { trade_goods = sugar }
+		NOT = {
+			has_winter = severe_winter
+			has_winter = normal_winter
+			hills_trigger = yes
+			forest_trigger = yes
+			jungle_trigger = yes
+			mountains_trigger = yes
+			highlands_trigger = yes
+			desert_trigger = yes
+			steppes_trigger = yes
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 18
+		
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = sugar
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.30 coffee in the_andes, caribbean, colombia - high chance
+#only triggered if owner already has at least one coffee province
+#coffee may replace any low value trade_goods (not just unknown)
+province_event = {
+	id = colonial_goods.30
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.30"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		owner = { coffee = 1 }
+		OR = {
+			trade_goods = unknown
+			farming_province_trigger = yes
+		}
+		OR = { colonysize = 300 is_city = yes }
+		OR = {
+			region = peru_region
+			region = carribeans_region
+			region = colombia_region
+		}
+		owner = { dip_tech = 24 }
+		NOT = { trade_goods = coffee }
+		NOT = {
+			has_terrain = tundra
+			has_terrain = taiga
+			has_climate = arctic
+			has_winter = severe_winter
+			has_winter = normal_winter
+			forest_trigger = yes
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 8
+		
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = coffee
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.31 coffee in the_andes, caribbean, colombia - low chance
+#only triggered if owner has no coffee provinces
+#coffee may replace any low value trade_goods (not just unknown)
+province_event = {
+	id = colonial_goods.31
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.31"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		OR = {
+			trade_goods = unknown
+			farming_province_trigger = yes
+		}
+		OR = { colonysize = 300 is_city = yes }
+		OR = {
+			region = peru_region
+			region = carribeans_region
+			region = colombia_region
+		}
+		owner = { dip_tech = 24 }
+		NOT = { owner = { coffee = 1 } }
+		NOT = { trade_goods = coffee }
+		NOT = {
+			has_terrain = tundra
+			has_terrain = taiga
+			has_climate = arctic
+			has_winter = severe_winter
+			has_winter = normal_winter
+			forest_trigger = yes
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 20
+		
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = coffee
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.32 cacao in the_andes, caribbean, colombia - high chance
+#only triggered if owner already has at least one cacao province
+#cacao may replace any low value trade_goods (not just unknown)
+province_event = {
+	id = colonial_goods.32
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.32"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		owner = { cacao = 1 }
+		OR = {
+			trade_goods = unknown
+			farming_province_trigger = yes
+		}
+		OR = { colonysize = 300 is_city = yes }
+		OR = {
+			region = peru_region
+			region = carribeans_region
+			region = colombia_region
+			region = central_america_region
+		}
+		owner = { dip_tech = 24 }
+		NOT = { trade_goods = cacao }
+		NOT = {
+			has_terrain = tundra
+			has_terrain = taiga
+			has_climate = arctic
+			has_winter = severe_winter
+			has_winter = normal_winter
+			forest_trigger = yes
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 8
+		
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = cacao
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.33 cacao in the_andes, caribbean, colombian - low chance
+#only triggered if owner has no cacao provinces
+#cacao may replace any low value trade_goods (not just unknown)
+province_event = {
+	id = colonial_goods.33
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.33"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		OR = {
+			trade_goods = unknown
+			farming_province_trigger = yes
+		}
+		OR = { colonysize = 300 is_city = yes }
+		OR = {
+			region = peru_region
+			region = carribeans_region
+			region = colombia_region
+			region = central_america_region
+		}
+		owner = { dip_tech = 24 }
+		NOT = { owner = { cacao = 1 } }
+		NOT = { trade_goods = cacao }
+		NOT = {
+			has_terrain = tundra
+			has_terrain = taiga
+			has_climate = arctic
+			has_winter = severe_winter
+			has_winter = normal_winter
+			forest_trigger = yes
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 20
+		
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = cacao
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.34 palm in west_africa
+province_event = {
+	id = colonial_goods.34
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.34"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		OR = {
+			trade_goods = unknown
+			AND = {
+				trade_goods = slaves
+				owner = { has_country_modifier = the_abolish_slavery_act }
+			}
+		}
+		OR = { colonysize = 300 is_city = yes }
+		west_africa_region_trigger = yes
+	}
+	
+	mean_time_to_happen = {
+		years = 5
+		
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = palm
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+
+#colonial_goods.38 Livestock for European colonies
+province_event = {
+	id = colonial_goods.38
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.38"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		trade_goods = unknown
+		OR = { colonysize = 300 is_city = yes }
+		OR = {
+			owner = {
+				is_colonial_nation = no
+				capital_scope = { continent = europe }
+			}
+			owner = {
+				is_colonial_nation = yes
+				colonial_parent = { capital_scope = { continent = europe } }
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 5
+		modifier = {
+			factor = 0.75
+			prominence_terrain_trigger = yes
+		}
+		modifier = {
+			factor = 0.8
+			region = la_plata_region
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = livestock
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.40 carmine in colombia, india_superregion - high chance
+#only triggered if owner already has at least one dye province
+#dye may replace any low value trade_goods (not just unknown)
+province_event = {
+	id = colonial_goods.40
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.40"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		NOT = { AAA = { check_variable = { which = world_dye_supply value = 10 } } }
+		owner = { carmine = 1 }
+		farming_province_trigger = yes
+		OR = { colonysize = 300 is_city = yes }
+		OR = {
+			region = colombia_region
+			continent = indian_continent
+			area = oaxaca_area
+			area = zapotec_area
+		}
+		owner = { dip_tech = 24 }
+		NOT = { trade_goods = carmine }
+		NOT = {
+			has_climate = arid
+			has_climate = arctic
+			has_winter = severe_winter
+			has_winter = normal_winter
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 8
+		
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.40"
+	picture = TRADEGOODS_eventPicture
+	
+	immediate = { hidden_effect = { AAA = { change_variable = { which = world_dye_supply value = 1 } } } }
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = carmine
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.41 carmine in colombia, india_superregion - low chance
+#only triggered if owner has no dye provinces
+#dye may replace any low value trade_goods (not just unknown)
+province_event = {
+	id = colonial_goods.41
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.41"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		NOT = { AAA = { check_variable = { which = world_dye_supply value = 10 } } }
+		OR = {
+			trade_goods = unknown
+			farming_province_trigger = yes
+		}
+		OR = { colonysize = 300 is_city = yes }
+		OR = {
+			region = colombia_region
+			continent = indian_continent
+			area = oaxaca_area
+			area = zapotec_area
+		}
+		owner = { dip_tech = 24 }
+		NOT = { trade_goods = carmine }
+		NOT = {
+			has_climate = arid
+			has_climate = arctic
+			has_winter = severe_winter
+			has_winter = normal_winter
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 20
+		
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.41"
+	picture = TRADEGOODS_eventPicture
+	
+	immediate = { hidden_effect = { AAA = { change_variable = { which = world_dye_supply value = 1 } } } }
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = carmine
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.42 tea in fareast_superregion, india_superregion - high chance
+#only triggered if owner already has at least one tea province
+#tea may replace any low value trade_goods (not just unknown)
+province_event = {
+	id = colonial_goods.42
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.42"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		is_year = 1650
+		NOT = { AAA = { check_variable = { which = world_tea_supply value = 10 } } }
+		owner = { tea = 1 }
+		OR = {
+			trade_goods = unknown
+			farming_province_trigger = yes
+		}
+		OR = { colonysize = 300 is_city = yes }
+		OR = {
+			fareast_region_trigger = yes
+			area = assam_area
+			region = la_plata_region
+		}
+		NOT = { trade_goods = tea }
+		NOT = {
+			mountains_trigger = yes
+			shrub_trigger = yes
+			highlands_trigger = yes
+			desert_trigger = yes
+			has_climate = arid
+			has_winter = severe_winter
+			has_winter = normal_winter
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 8
+		
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.42"
+	picture = TRADEGOODS_eventPicture
+	
+	immediate = { hidden_effect = { AAA = { change_variable = { which = world_tea_supply value = 1 } } } }
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = tea
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.43 tea in fareast_superregion, india_superregion - low chance
+#only triggered if owner has no tea provinces
+#tea may replace any low value trade_goods (not just unknown)
+province_event = {
+	id = colonial_goods.43
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.43"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		is_year = 1650
+		NOT = { AAA = { check_variable = { which = world_tea_supply value = 10 } } }
+		OR = {
+			trade_goods = unknown
+			farming_province_trigger = yes
+		}
+		OR = { colonysize = 300 is_city = yes }
+		OR = {
+			fareast_region_trigger = yes
+			area = assam_area
+			region = la_plata_region
+		}
+		NOT = { owner = { tea = 1 } }
+		NOT = { trade_goods = tea }
+		NOT = {
+			mountains_trigger = yes
+			shrub_trigger = yes
+			highlands_trigger = yes
+			desert_trigger = yes
+			has_climate = arid
+			has_winter = severe_winter
+			has_winter = normal_winter
+		}
+	}
+	
+	immediate = { hidden_effect = { AAA = { change_variable = { which = world_tea_supply value = 1 } } } }
+	
+	mean_time_to_happen = {
+		years = 20
+		
+		modifier = {
+			factor = 2
+			NOT = {
+				OR = {
+					owner = {
+						is_colonial_nation = no
+						capital_scope = { continent = europe }
+					}
+					owner = {
+						is_colonial_nation = yes
+						colonial_parent = { capital_scope = { continent = europe } }
+					}
+				}
+			}
+		}
+	}
+	
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.43"
+	picture = TRADEGOODS_eventPicture
+	
+	option = {
+		name = "OPT.VERYWELL"
+		change_trade_goods = tea
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#colonial_goods.45 change slaves to unknown after abolish_slavery_act
+province_event = {
+	id = colonial_goods.45
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.45"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		trade_goods = slaves
+		owner = { has_country_modifier = the_abolish_slavery_act }
+	}
+	
+	mean_time_to_happen = { years = 1 }
+	
+	title = "NEWS_FROM_COL"
+	desc = "EVTDESCcolonial_goods.45"
+	picture = TRADEGOODS_eventPicture
+	
+	option = {
+		name = "OPT.OHWELL"
+		change_trade_goods = unknown
+	}
+}
+
+# American Sugar Kills Cyprus Sugar
+province_event = {
+	id = colonial_goods.101
+	title = "EVTNAMEcolonial_goods.101"
+	desc = "EVTDESCcolonial_goods.101"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		province_id = 321
+		trade_goods = sugar
+		AAA = { check_variable = { which = american_sugar value = 7 } }
+		owner = { dip_tech = 25 }
+	}
+	
+	mean_time_to_happen = { years = 30 }
+	
+	option = {
+		name = "EVTOPTAcolonial_goods.101"
+		change_trade_goods = cotton
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}
+
+#Spread of Coffee Production
+province_event = {
+	id = colonial_goods.102
+	title = "EVTNAMEcolonial_goods.102"
+	desc = "EVTDESCcolonial_goods.102"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		owner = { dip_tech = 15 }
+		OR = {
+			area = sanaa_area
+			area = yemen_area
+		}
+		NOT = { province_id = 388 }
+		OR = {
+			trade_goods = wheat
+			trade_goods = wool
+			trade_goods = livestock
+		}
+		NOT = { has_province_flag = had_event_coffee }
+		AAA = { NOT = { check_variable = { which = yemen_coffee value = 7 } } }
+	}
+	
+	mean_time_to_happen = { years = 15 }
+	
+	option = {
+		name = "EVTOPTAcolonial_goods.102"
+		change_trade_goods = coffee
+		hidden_effect = {
+			set_base_price_of_goods = yes
+			set_province_flag = had_event_coffee
+			AAA = { change_variable = { which = yemen_coffee value = 1 } }
+		}
+	}
+}
+
+province_event = {
+	id = colonial_goods.103
+	title = "EVTNAMEcolonial_goods.103"
+	desc = "EVTDESCcolonial_goods.103"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		OR = {
+			sanaa_area = { trade_goods = coffee }
+			yemen_area = { trade_goods = coffee }
+		}
+		owner = {
+			dip_tech = 23
+			NOT = { religion = coptic }
+		}
+		OR = {
+			area = sidamo_area
+			area = hadiya_area
+			area = ifat_area
+		}
+		OR = {
+			trade_goods = wheat
+			trade_goods = wool
+			trade_goods = livestock
+		}
+		NOT = { has_province_flag = had_event_coffee }
+		AAA = { NOT = { check_variable = { which = ethiopia_coffee value = 6 } } }
+	}
+	
+	mean_time_to_happen = { years = 5 }
+	
+	option = {
+		name = "EVTOPTAcolonial_goods.102"
+		change_trade_goods = coffee
+		hidden_effect = {
+			set_base_price_of_goods = yes
+			set_province_flag = had_event_coffee
+			AAA = { change_variable = { which = ethiopia_coffee value = 1 } }
+		}
+	}
+}
+
+province_event = {
+	id = colonial_goods.104
+	title = "EVTNAMEcolonial_goods.104"
+	desc = "EVTDESCcolonial_goods.104"
+	picture = TRADEGOODS_eventPicture
+	
+	trigger = {
+		trade_goods = coffee
+		OR = {
+			area = sidamo_area
+			area = hadiya_area
+			area = ifat_area
+		}
+		owner = { religion = coptic }
+	}
+	
+	mean_time_to_happen = { years = 5 }
+	
+	option = {
+		name = "EVTOPTAcolonial_goods.102"
+		trigger = {
+			OR = {
+				area = hadiya_area
+				area = ifat_area
+			}
+		}
+		change_trade_goods = wheat
+		hidden_effect = {
+			set_base_price_of_goods = yes
+			clr_province_flag = had_event_coffee
+			AAA = { change_variable = { which = ethiopia_coffee value = -1 } }
+		}
+	}
+	option = {
+		name = "EVTOPTBcolonial_goods.102"
+		trigger = {
+			OR = {
+				area = sidamo_area
+				area = hadiya_area
+			}
+		}
+		change_trade_goods = livestock
+		hidden_effect = {
+			set_base_price_of_goods = yes
+			clr_province_flag = had_event_coffee
+			AAA = { change_variable = { which = ethiopia_coffee value = -1 } }
+		}
+	}
+	option = {
+		name = "EVTOPTCcolonial_goods.102"
+		trigger = {
+			OR = {
+				area = sidamo_area
+				area = hadiya_area
+				area = ifat_area
+			}
+		}
+		change_trade_goods = wool
+		hidden_effect = {
+			set_base_price_of_goods = yes
+			clr_province_flag = had_event_coffee
+			AAA = { change_variable = { which = ethiopia_coffee value = -1 } }
+		}
+	}
+	option = {
+		name = "EVTOPTEcolonial_goods.102"
+		trigger = { owner = { ai = no } }
+	}
+}
+
+#####################################
+#                                   #
+# Appearance of new TRADE GOODS     #
+#                                   #
+#####################################
+
+province_event = {
+	id = development_goods.100
+	title = "EVTNAMEdevelopment_goods.100"
+	desc = "EVTDESCdevelopment_goods.100"
+	picture = TRADEGOODS_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		province_id = 118 # Lazio
+		is_year = 1440
+		owner = {
+			adm_tech = 15
+			is_at_war = no
+		}
+		NOT = { has_province_flag = mined_goods }
+	}
+	
+	mean_time_to_happen = {
+		years = 50
+		modifier = { factor = 0.85 owner = { adm_tech = 16 } }
+		modifier = { factor = 0.85 owner = { adm_tech = 18 } }
+		modifier = { factor = 0.85 owner = { adm_tech = 20 } }
+		modifier = { factor = 0.75 base_production = 2 }
+		modifier = {
+			factor = 0.5
+			2530 = { has_province_modifier = provincial_medici_bank }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAdevelopment_goods.100"
+		add_building = mines_2
+		hidden_effect = {
+			set_province_flag = mined_goods
+			set_province_flag = alum
+			set_base_price_of_goods = yes
+		}
+	}
+}
+
+province_event = {
+	id = development_goods.101
+	title = "EVTNAMEdevelopment_goods.101"
+	desc = "EVTDESCdevelopment_goods.101"
+	picture = TRADEGOODS_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		province_id = 196 # Tolzan
+		trade_goods = wheat
+		is_year = 1400
+		owner = { is_at_war = no }
+	}
+	
+	mean_time_to_happen = {
+		years = 41
+		modifier = { factor = 0.85 owner = { adm_tech = 14 } }
+		modifier = { factor = 0.85 owner = { adm_tech = 15 } }
+		modifier = { factor = 0.85 owner = { adm_tech = 16 } }
+		modifier = { factor = 0.75 base_production = 4 }
+		modifier = {
+			factor = 0.5
+			GUY = { exists = yes }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAdevelopment_goods.101"
+		change_trade_goods = indigo
+		hidden_effect = { set_base_price_of_goods = yes }
+	}
+}

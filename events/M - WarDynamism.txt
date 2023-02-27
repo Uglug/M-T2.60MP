@@ -1,0 +1,1038 @@
+######################################
+#                                    #
+#         Dynamic war feature        #
+#                                    #
+# by Gigau based on an idea by Alvya #
+#     (adapted from Magna Mundi)     #
+# v 11/07/2008                       #
+#                                    #
+######################################
+#HISTORY
+#2011-jun-06 FB	war_dynamism.06 - Russian conquest of the Steppes nations - reactivated and applied to all nomads
+#2011-jun-06 FB	fixes to war_dynamism.91/392; slightly slowed down all province transfers; removed some redundant script
+#2011-jun-11 FB	fixes to war_dynamism.82 and war_dynamism.91
+#2011-jun-27 FB	increased the time taken by the HP to gain provinces (compensate for AI dimness)
+#2011-jul-24 FB	added DIP/MIL MTTH modifiers (with Timur in mind)
+#		experiment with shorter timers
+#		added war_dynamism.83 for cities retaken due to peace
+#2011-aug-10 FB	added event war_dynamism.21 to allow controlled nomad OPMs to be inherited
+#2015-aug-29 MYZ major rework
+#
+######################################
+#CONTENTS
+# war_dynamism.1 - City is taken
+# war_dynamism.2 - The city is retaken while still at war
+# war_dynamism.3 - Post-war clean-up
+# war_dynamism.4 - Province lost
+# war_dynamism.5 - Province gained
+#
+######################################
+
+namespace = war_dynamism
+
+# Check if war leader has enough war score for WD to apply
+country_event = {
+	id = war_dynamism.91
+	title = no_localization
+	desc = no_localization
+	picture = CIVIL_WAR_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		every_country = {
+			limit = {
+				is_at_war = yes
+				ai = yes
+				ai = no
+				is_in_war = {
+					attacker_leader = THIS
+				}
+			}
+			save_event_target_as = attacker_leader
+			
+			every_country = {
+				limit = {
+					is_at_war = yes
+					ai = yes
+					ai = no
+					is_in_war = {
+						attacker_leader = event_target:attacker_leader
+						
+						defender_leader = THIS
+					}
+				}
+				save_event_target_as = defender_leader
+				
+				# If offensive war leader has enough war score, flag necessary participants
+				if = {
+					limit = {
+						NOT = {
+							war_score_against = {
+								who = event_target:attacker_leader
+								value = -5
+							}
+						}
+					}
+					every_country = {
+						limit = {
+							is_in_war = {
+								attacker_leader = event_target:attacker_leader
+								
+								defender_leader = event_target:defender_leader
+							}
+							
+							defensive_war_with = event_target:attacker_leader
+						}
+						every_country = {
+							limit = {
+								is_in_war = {
+									attacker_leader = event_target:attacker_leader
+									
+									defender_leader = event_target:defender_leader
+								}
+								
+								offensive_war_with = event_target:defender_leader
+							}
+							set_country_flag = has_wd_flag
+							set_country_flag = winning_against_@PREV
+						}
+					}
+				}
+				else = {
+					every_country = {
+						limit = {
+							is_in_war = {
+								attacker_leader = event_target:attacker_leader
+								
+								defender_leader = event_target:defender_leader
+							}
+							
+							defensive_war_with = event_target:attacker_leader
+						}
+						every_country = {
+							limit = {
+								is_in_war = {
+									attacker_leader = event_target:attacker_leader
+									
+									defender_leader = event_target:defender_leader
+								}
+								
+								offensive_war_with = event_target:defender_leader
+							}
+							if = {
+								limit = {
+									has_country_flag = winning_against_@PREV
+								}
+								clr_country_flag = winning_against_@PREV
+							}
+						}
+					}
+				}
+				
+				# If defensive war leader has enough war score, flag necessary participants
+				if = {
+					limit = {
+						war_score_against = {
+							who = event_target:attacker_leader
+							value = 5
+						}
+					}
+					every_country = {
+						limit = {
+							is_in_war = {
+								attacker_leader = event_target:attacker_leader
+								
+								defender_leader = event_target:defender_leader
+							}
+							
+							offensive_war_with = event_target:defender_leader
+						}
+						every_country = {
+							limit = {
+								is_in_war = {
+									attacker_leader = event_target:attacker_leader
+									
+									defender_leader = event_target:defender_leader
+								}
+								
+								defensive_war_with = event_target:attacker_leader
+							}
+							set_country_flag = has_wd_flag
+							set_country_flag = winning_against_@PREV
+						}
+					}
+				}
+				else = {
+					every_country = {
+						limit = {
+							is_in_war = {
+								attacker_leader = event_target:attacker_leader
+								
+								defender_leader = event_target:defender_leader
+							}
+							
+							offensive_war_with = event_target:defender_leader
+						}
+						every_country = {
+							limit = {
+								is_in_war = {
+									attacker_leader = event_target:attacker_leader
+									
+									defender_leader = event_target:defender_leader
+								}
+								
+								defensive_war_with = event_target:attacker_leader
+							}
+							if = {
+								limit = {
+									has_country_flag = winning_against_@PREV
+								}
+								clr_country_flag = winning_against_@PREV
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = no_localization
+	}
+}
+
+country_event = {
+	id = war_dynamism.92
+	title = no_localization
+	desc = no_localization
+	picture = CIVIL_WAR_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		every_country = {
+			limit = {
+				has_country_flag = has_wd_flag
+				
+				is_at_war = no
+			}
+			clr_country_flag = has_wd_flag
+			
+			every_country = {
+				PREV = {
+					if = {
+						limit = {
+							has_country_flag = winning_against_@PREV
+						}
+						clr_country_flag = winning_against_@PREV
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = no_localization
+	}
+}
+
+
+# war_dynamism.1 - City is taken
+province_event = {
+	id = war_dynamism.1
+	title = "war_dynamism.1.t"
+	desc = "war_dynamism.1.d"
+	picture = CIVIL_WAR_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		# Basic requirements
+		NOT = { controlled_by = owner }
+		NOT = { has_province_modifier = war_dynamism }
+		NOT = { controlled_by = REB }
+		NOT = { has_siege = yes }
+		
+		is_capital = no
+		
+		controller = {
+			has_country_flag = winning_against_@PREV
+		}
+		#range = controller
+		
+		# Different conditions
+		OR = {
+			is_core = controller
+			war_dynamism_trigger_culture = yes
+			war_dynamism_trigger_religion = yes
+			#war_dynamism_trigger_colonial = yes
+			war_dynamism_trigger_russia = yes
+			war_dynamism_trigger_steppes = yes
+			war_dynamism_trigger_ottoman = yes
+			war_dynamism_trigger_chinese = yes
+			war_dynamism_trigger_crimea = yes
+			war_dynamism_trigger_persia = yes
+			war_dynamism_trigger_horde = yes
+			war_dynamism_trigger_safavids = yes
+			war_dynamism_trigger_hindustani = yes
+			war_dynamism_trigger_afghani = yes
+			war_dynamism_trigger_vietnamese = yes
+			war_dynamism_trigger_japanese = yes
+			war_dynamism_trigger_lithuania = yes
+		}
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				is_core = controller
+			}
+			custom_tooltip = war_dynamism_trigger_core_tt
+		}
+		if = {
+			limit = {
+				war_dynamism_trigger_culture = yes
+			}
+			custom_tooltip = war_dynamism_trigger_culture_tt
+		}
+		if = {
+			limit = {
+				war_dynamism_trigger_religion = yes
+			}
+			custom_tooltip = war_dynamism_trigger_religion_tt
+		}
+		#if = {
+		#	limit = {
+		#		war_dynamism_trigger_colonial = yes
+		#	}
+		#	custom_tooltip = war_dynamism_trigger_colonial_tt
+		#}
+		if = {
+			limit = {
+				war_dynamism_trigger_russia = yes
+			}
+			custom_tooltip = war_dynamism_trigger_russia_tt
+		}
+		if = {
+			limit = {
+				FROM = { war_dynamism_trigger_steppes = yes }
+			}
+			custom_tooltip = war_dynamism_trigger_steppes_tt
+		}
+		if = {
+			limit = {
+				war_dynamism_trigger_ottoman = yes
+			}
+			custom_tooltip = war_dynamism_trigger_ottoman_tt
+		}
+		if = {
+			limit = {
+				war_dynamism_trigger_chinese = yes
+			}
+			custom_tooltip = war_dynamism_trigger_chinese_tt
+		}
+		if = {
+			limit = {
+				war_dynamism_trigger_crimea = yes
+				religion_group = christian
+			}
+			custom_tooltip = war_dynamism_trigger_ere_crimea_tt
+		}
+		if = {
+			limit = {
+				war_dynamism_trigger_crimea = yes
+				religion_group = muslim
+			}
+			custom_tooltip = war_dynamism_trigger_tur_crimea_tt
+		}
+		if = {
+			limit = {
+				war_dynamism_trigger_persia = yes
+			}
+			custom_tooltip = war_dynamism_trigger_persia_tt
+		}
+		if = {
+			limit = {
+				war_dynamism_trigger_horde = yes
+			}
+			custom_tooltip = war_dynamism_trigger_horde_tt
+		}
+		if = {
+			limit = {
+				war_dynamism_trigger_safavids = yes
+			}
+			custom_tooltip = war_dynamism_trigger_safavids_tt
+		}
+		if = {
+			limit = {
+				war_dynamism_trigger_hindustani = yes
+			}
+			custom_tooltip = war_dynamism_trigger_hindustani_tt
+		}
+		if = {
+			limit = {
+				war_dynamism_trigger_afghani = yes
+			}
+			custom_tooltip = war_dynamism_trigger_afghani_tt
+		}
+		if = {
+			limit = {
+				war_dynamism_trigger_vietnamese = yes
+			}
+			custom_tooltip = war_dynamism_trigger_vietnamese_tt
+		}
+		if = {
+			limit = {
+				war_dynamism_trigger_japanese = yes
+			}
+			custom_tooltip = war_dynamism_trigger_japanese_tt
+		}
+		if = {
+			limit = {
+				war_dynamism_trigger_lithuania = yes
+			}
+			custom_tooltip = war_dynamism_trigger_lithuania_tt
+		}
+	}
+	
+	option = {
+		name = "war_dynamism.1.a" #It shall be retaken !
+		add_province_modifier = {
+			name = "war_dynamism"
+			duration = -1
+		}
+		if = {
+			limit = {
+				war_dynamism_trigger_chinese = yes
+			}
+			add_province_modifier = {
+				name = "surrendered_timer"
+				duration = 30
+			}
+		}
+		else_if = {
+			limit = {
+				OR = {
+					war_dynamism_trigger_hindustani = yes
+					war_dynamism_trigger_russia = yes
+					war_dynamism_trigger_steppes = yes
+				}
+			}
+			add_province_modifier = {
+				name = "surrendered_timer"
+				duration = 60
+			}
+		}
+		else_if = {
+			limit = {
+				war_dynamism_trigger_ottoman = yes
+			}
+			add_province_modifier = {
+				name = "surrendered_timer"
+				duration = 120
+			}
+		}
+		else = {
+			add_province_modifier = {
+				name = "surrendered_timer"
+				duration = 365
+			}
+		}
+	}
+}
+
+# war_dynamism.2 - Conditions for WD no longer apply
+province_event = {
+	id = war_dynamism.2
+	title = "war_dynamism.2.t"
+	desc = "war_dynamism.2.d"
+	picture = CIVIL_WAR_eventPicture
+	
+	is_triggered_only = yes
+	
+	hidden = yes
+	
+	trigger = {
+		has_province_modifier = war_dynamism
+		
+		OR = {
+			AND = {
+				controlled_by = ROOT
+				owner = { is_at_war = yes }
+			}
+			
+			NOT = { controller = { has_country_flag = winning_against_@PREV } }
+		}
+	}
+	
+	option = {
+		name = "OPT.VERYWELL" # Very well
+		remove_province_modifier = war_dynamism
+		remove_province_modifier = surrendered_timer
+	}
+}
+
+# war_dynamism.3 - Post-war clean-up
+country_event = {
+	id = war_dynamism.3
+	title = "war_dynamism.3.t"
+	desc = "war_dynamism.3.d"
+	picture = CIVIL_WAR_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	trigger = {
+		any_owned_province = {
+			controlled_by = ROOT
+			OR = {
+				has_province_modifier = surrendered_timer
+				has_province_modifier = war_dynamism
+			}
+		}
+	}
+	
+	option = {
+		name = "OPT.GOOD1" # Good
+		every_owned_province = {
+			limit = {
+				controlled_by = ROOT
+				has_province_modifier = surrendered_timer
+			}
+			remove_province_modifier = surrendered_timer
+		}
+		every_owned_province = {
+			limit = {
+				controlled_by = ROOT
+				has_province_modifier = war_dynamism
+			}
+			remove_province_modifier = war_dynamism
+		}
+	}
+}
+
+# war_dynamism.9 - Province loss check
+province_event = {
+	id = war_dynamism.9
+	title = "no_localisation"
+	desc = "no_localisation"
+	picture = CIVIL_WAR_eventPicture
+	
+	hidden = yes
+	
+	trigger = {
+		NOT = { controlled_by = ROOT }
+		NOT = { controlled_by = REB }
+		has_province_modifier = "war_dynamism"
+		NOT = { has_province_modifier = "surrendered_timer" }
+		has_siege = no
+		controller = {
+			dip_power = 30
+		}
+		OR = {
+			has_port = yes
+			any_neighbor_province = {
+				ROOT = { controlled_by = PREV }
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 4
+		modifier = { #China
+			OR = {
+				has_province_flag = part_of_5266
+				has_province_flag = part_of_5267
+				has_province_flag = part_of_5268
+			}
+			factor = 0.5
+		}
+		modifier = { #Border provinces
+			# any_neighbor_province = { owner = { controls = ROOT } }
+			# validator says the above is wrong so use the following instead
+			any_neighbor_province = { ROOT = { controlled_by = PREV } }
+			factor = 0.5
+		}
+		modifier = { #Isolated provinces like Philadelphia
+			NOT = { any_neighbor_province = { owned_by = ROOT } }
+			factor = 0.5
+		}
+		modifier = { #Legitimate claims
+			is_core = controller
+			factor = 0.5
+		}
+		modifier = { #Loss of control
+			local_autonomy = 50
+			factor = 0.5
+		}
+		modifier = { #Popular resistance
+			is_core = owner
+			factor = 2
+		}
+		modifier = {
+			has_owner_culture = yes
+			factor = 2
+		}
+	}
+	
+	immediate = {
+		if = {
+			limit = { # re-check WD triggers
+				OR = {
+					is_core = controller
+					war_dynamism_trigger_culture = yes
+					war_dynamism_trigger_religion = yes
+					#war_dynamism_trigger_colonial = yes
+					war_dynamism_trigger_russia = yes
+					war_dynamism_trigger_steppes = yes
+					war_dynamism_trigger_ottoman = yes
+					war_dynamism_trigger_chinese = yes
+					war_dynamism_trigger_crimea = yes
+					war_dynamism_trigger_persia = yes
+					war_dynamism_trigger_horde = yes
+					war_dynamism_trigger_safavids = yes
+					war_dynamism_trigger_hindustani = yes
+					war_dynamism_trigger_afghani = yes
+					war_dynamism_trigger_vietnamese = yes
+					war_dynamism_trigger_japanese = yes
+					war_dynamism_trigger_lithuania = yes
+				}
+			}
+			province_event = { id = war_dynamism.4 days = 0 }
+		}
+		else = {
+			remove_province_modifier = war_dynamism
+			remove_province_modifier = surrendered_timer
+		}
+	}
+	option = {
+	}
+}
+
+# war_dynamism.4 - Province lost
+province_event = {
+	id = war_dynamism.4
+	title = "war_dynamism.4.t"
+	desc = "war_dynamism.4.d"
+	picture = CIVIL_WAR_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "OPT.BASTARD"
+		controller = {
+			country_event = { id = war_dynamism.5 days = 0 }
+		}
+	}
+}
+
+# war_dynamism.5 - Province gained
+country_event = {
+	id = war_dynamism.5
+	title = "war_dynamism.5.t"
+	desc = "war_dynamism.5.d"
+	picture = CIVIL_WAR_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		if = {
+			limit = {
+				FROM = { is_core = controller }
+			}
+			custom_tooltip = war_dynamism_trigger_core_tt
+		}
+		if = {
+			limit = {
+				FROM = { war_dynamism_trigger_culture = yes }
+			}
+			custom_tooltip = war_dynamism_trigger_culture_tt
+		}
+		if = {
+			limit = {
+				FROM = { war_dynamism_trigger_religion = yes }
+			}
+			custom_tooltip = war_dynamism_trigger_religion_tt
+		}
+		#if = {
+		#	limit = {
+		#		FROM = { war_dynamism_trigger_colonial = yes
+		#	}
+		#	custom_tooltip = war_dynamism_trigger_colonial_tt
+		#}
+		if = {
+			limit = {
+				FROM = { war_dynamism_trigger_russia = yes }
+			}
+			custom_tooltip = war_dynamism_trigger_russia_tt
+		}
+		if = {
+			limit = {
+				FROM = { war_dynamism_trigger_steppes = yes }
+			}
+			custom_tooltip = war_dynamism_trigger_steppes_tt
+		}
+		if = {
+			limit = {
+				FROM = { war_dynamism_trigger_ottoman = yes }
+			}
+			custom_tooltip = war_dynamism_trigger_ottoman_tt
+		}
+		if = {
+			limit = {
+				FROM = { war_dynamism_trigger_chinese = yes }
+			}
+			custom_tooltip = war_dynamism_trigger_chinese_tt
+		}
+		if = {
+			limit = {
+				FROM = { war_dynamism_trigger_crimea = yes }
+				religion_group = christian
+			}
+			custom_tooltip = war_dynamism_trigger_ere_crimea_tt
+		}
+		if = {
+			limit = {
+				FROM = { war_dynamism_trigger_crimea = yes }
+				religion_group = muslim
+			}
+			custom_tooltip = war_dynamism_trigger_tur_crimea_tt
+		}
+		if = {
+			limit = {
+				FROM = { war_dynamism_trigger_persia = yes }
+			}
+			custom_tooltip = war_dynamism_trigger_persia_tt
+		}
+		if = {
+			limit = {
+				FROM = { war_dynamism_trigger_horde = yes }
+			}
+			custom_tooltip = war_dynamism_trigger_horde_tt
+		}
+		if = {
+			limit = {
+				FROM = { war_dynamism_trigger_safavids = yes }
+			}
+			custom_tooltip = war_dynamism_trigger_safavids_tt
+		}
+		if = {
+			limit = {
+				FROM = { war_dynamism_trigger_hindustani = yes }
+			}
+			custom_tooltip = war_dynamism_trigger_hindustani_tt
+		}
+		if = {
+			limit = {
+				FROM = { war_dynamism_trigger_afghani = yes }
+			}
+			custom_tooltip = war_dynamism_trigger_afghani_tt
+		}
+		if = {
+			limit = {
+				FROM = { war_dynamism_trigger_vietnamese = yes }
+			}
+			custom_tooltip = war_dynamism_trigger_vietnamese_tt
+		}
+		if = {
+			limit = {
+				FROM = { war_dynamism_trigger_japanese = yes }
+			}
+			custom_tooltip = war_dynamism_trigger_japanese_tt
+		}
+		if = {
+			limit = {
+				FROM = { war_dynamism_trigger_lithuania = yes }
+			}
+			custom_tooltip = war_dynamism_trigger_lithuania_tt
+		}
+	}
+	
+	option = {
+		name = "OPT.EXCELLENT" # Excellent
+		ai_chance = {
+			factor = 70
+			modifier = {
+				FROM = { culture = ROOT }
+				factor = 1.05
+			}
+			modifier = {
+				FROM = { culture_group = ROOT }
+				factor = 1.05
+			}
+			modifier = {
+				FROM = { religion = ROOT }
+				factor = 1.05
+			}
+			modifier = {
+				FROM = { religion_group = ROOT }
+				factor = 1.05
+			}
+			modifier = {
+				FROM = { is_core = ROOT }
+				factor = 1.5
+			}
+			modifier = {
+				FROM = {
+					any_neighbor_province = {
+						owned_by = ROOT
+					}
+				}
+				factor = 1.5
+			}
+		}
+		add_prestige = 1
+		
+		add_dip_power = -30
+		
+		FROM = {
+			cede_province = controller
+		}
+		FROM = {
+			if = {
+				limit = {
+					controller = {
+						OR = {
+							culture_group = chinese_group
+							has_country_flag = barbarian_claimant_china
+						}
+					}
+					chinese_region_trigger = yes
+				}
+				add_core = ROOT
+			}
+		}
+		FROM = {
+			if = {
+				limit = {
+					controller = {
+						culture_group = japanese
+					}
+					OR = {
+						region = west_japan_region
+						region = central_japan_region
+						region = east_japan_region
+					}
+				}
+				add_claim = ROOT
+			}
+		}
+		
+		if = {
+			limit = {
+				NOT = { has_country_modifier = blessing_of_god }
+				FROM = {
+					NOT = { is_core = ROOT }
+					NOT = { is_claim = ROOT }
+				}
+			}
+			FROM = { add_local_autonomy = 50 }
+		}
+		if = {
+			limit = {
+				FROM = { NOT = { is_core = ROOT } }
+				OR = {
+					FROM = { is_claim = ROOT }
+					has_country_modifier = blessing_of_god
+				}
+				NOT = {
+					AND = {
+						FROM = { is_claim = ROOT }
+						has_country_modifier = blessing_of_god
+					}
+				}
+			}
+			FROM = { add_local_autonomy = 33 }
+		}
+		if = {
+			limit = {
+				NOT = { culture_group = chinese_group }
+				NOT = { has_country_flag = barbarian_claimant_china }
+			}
+			FROM = { add_scaled_local_adm_power = -2.0 }
+			FROM = { add_scaled_local_dip_power = -2.0 }
+			FROM = { add_scaled_local_mil_power = -2.0 }
+		}
+		if = {
+			limit = {
+				FROM = {
+					controller = {
+						NOT = { government = republic }
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = { owner = { is_emperor_of_china = yes } }
+			}
+			FROM = { owner = { add_mandate = -0.5 } }
+		}
+		else_if = {
+			limit = {
+				FROM = { owner = { is_subject_other_than_tributary_trigger = yes overlord = { is_emperor_of_china = yes } } }
+			}
+			FROM = { owner = { overlord = { add_mandate = -0.5 } } }
+		}
+		else_if = {
+			limit = {
+				ROOT = { is_emperor_of_china = yes }
+			}
+			ROOT = { add_mandate = 0.5 }
+		}
+		else_if = {
+			limit = {
+				ROOT = { is_subject_other_than_tributary_trigger = yes overlord = { is_emperor_of_china = yes } }
+			}
+			ROOT = { overlord = { add_mandate = 0.5 } }
+		}
+	}
+	option = {
+		name = "OPT.DECLINE1" # Decline
+		ai_chance = {
+			factor = 30
+			modifier = {
+				FROM = { NOT = { culture = ROOT } }
+				factor = 1.05
+			}
+			modifier = {
+				FROM = { NOT = { culture_group = ROOT } }
+				factor = 1.05
+			}
+			modifier = {
+				FROM = { NOT = { religion = ROOT } }
+				factor = 1.05
+			}
+			modifier = {
+				FROM = { NOT = { religion_group = ROOT } }
+				factor = 1.05
+			}
+			modifier = {
+				FROM = { NOT = { is_core = ROOT } }
+				factor = 1.1
+			}
+			modifier = {
+				FROM = {
+					NOT = { any_neighbor_province = { owned_by = ROOT } }
+				}
+				factor = 1.5
+			}
+			modifier = {
+				culture_group = chinese_group
+				factor = 0
+			}
+		}
+		FROM = {
+			add_province_modifier = {
+				name = "surrendered_timer"
+				duration = 356
+			}
+		}
+	}
+}
+
+# Is if an offensive war
+country_event = {
+	id = war_dynamism.7
+	title = war_dynamism.7.t
+	desc = war_dynamism.7.d
+	picture = CIVIL_WAR_eventPicture
+	
+	trigger = {
+		NOT = { has_country_modifier = offensive_war }
+		is_at_war = yes
+		NOT = { is_subject_other_than_tributary_trigger = yes }
+		OR = {
+			is_in_war = {
+				attackers = ROOT
+			}
+			is_in_war = {
+				defenders = ROOT
+				casus_belli = cb_independence_war
+			}
+			is_in_war = {
+				defenders = ROOT
+				casus_belli = cb_colonial_independance_war
+			}
+			is_in_war = {
+				defenders = ROOT
+				casus_belli = cb_overlord_attacking_independence_war
+			}
+			is_in_war = {
+				defenders = ROOT
+				casus_belli = cb_religious_independence
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	immediate = {
+		add_country_modifier = {
+			name = offensive_war
+			duration = -1
+		}
+	}
+	
+	option = {
+		name = OPT.NOCHOICE
+	}
+}
+
+# war_dynamism.8 - End offensive war?
+country_event = {
+	id = war_dynamism.8
+	title = "no_localization"
+	desc = "no_localization"
+	picture = CIVIL_WAR_eventPicture
+	
+	hidden = yes
+	
+	trigger = {
+		has_country_modifier = offensive_war
+		OR = {
+			is_at_war = no
+			is_subject_other_than_tributary_trigger = yes
+			NOT = {
+				OR = {
+					is_in_war = {
+						attackers = ROOT
+					}
+					is_in_war = {
+						defenders = ROOT
+						casus_belli = cb_independence_war
+					}
+					is_in_war = {
+						defenders = ROOT
+						casus_belli = cb_colonial_independance_war
+					}
+					is_in_war = {
+						defenders = ROOT
+						casus_belli = cb_overlord_attacking_independence_war
+					}
+					is_in_war = {
+						defenders = ROOT
+						casus_belli = cb_religious_independence
+					}
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	immediate = {
+		remove_country_modifier = offensive_war
+	}
+	
+	option = {
+		name = "no_localization"
+	}
+}

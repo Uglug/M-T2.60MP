@@ -1,0 +1,792 @@
+namespace = POP_estate_levies
+
+### By Demian
+
+country_event = {  ### Removes the flag which prevents unit upgrade during war
+	id = POP_estate_levies.003
+	title = POP_estate_levies.003.t
+	desc = POP_estate_levies.003.d
+	picture = REFORM_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		clr_country_flag = raised_special_units
+	}
+	
+	
+	option = {
+		name = "POP_estate_levies.003.a"
+	}
+}
+
+country_event = {  ### regular event to give war support from estates
+	id = POP_estate_levies.004
+	title = POP_estate_levies.004.t
+	desc = POP_estate_levies.004.d
+	picture = REFORM_eventPicture
+	#is_triggered_only = no
+	hidden = no
+	
+	### greater_nobles_Direct  ###
+	### lesser_nobles_Direct  ###
+	### burghers_Direct  ###
+	### tribes_Direct ###
+	### imperial_estate_Direct ###
+	
+	trigger = {
+		OR = {
+			has_country_flag = raised_special_units
+			has_country_flag = BUR_war_financial_contribution
+			has_country_flag = imperial_war
+		}
+		NOT = { has_country_modifier = estate_war_support }
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = {	  which = estate_total_contribution 	value = 0 }
+			set_variable = { 	  which = ducat_gain 					value = 0 }
+			set_variable = { 	  which = GN_infantry_remaining			value = 0 }
+			set_variable = { 	  which = GN_cavalry_remaining 			value = 0 }
+			set_variable = { 	  which = GN_artillery_remaining 		value = 0 }
+			set_variable = { 	  which = LN_infantry_remaining			value = 0 }
+			set_variable = { 	  which = LN_cavalry_remaining 			value = 0 }
+			set_variable = { 	  which = LN_artillery_remaining 		value = 0 }
+			set_variable = { 	  which = TR_infantry_remaining			value = 0 }
+			set_variable = { 	  which = TR_cavalry_remaining 			value = 0 }
+			### HRE
+			set_variable = { 	  which = IE_infantry_remaining			value = 0 }
+			set_variable = { 	  which = IE_cavalry_remaining 			value = 0 }
+			set_variable = { 	  which = IE_artillery_remaining 		value = 0 }
+			
+			
+			add_country_modifier = {
+				name = estate_war_support
+				duration = 350
+				hidden = yes
+			}
+			
+			if = {
+				limit = {
+					has_country_flag = imperial_estates_war_support
+				}
+				# Entfernt und ersetzt mit eigene HRE mechanic
+				if = {
+					limit = { NOT = { check_variable = { which = hre_support_timer value = 5 } } }
+					multiply_variable = { which = supplied_money value = 0.2 }
+					change_variable = { which = estate_total_contribution which = supplied_money }
+					set_variable = { which = IE_estate_total_contribution which = estate_total_contribution }
+					change_variable = { which = hre_support_timer	value = 1 }
+				}
+				#
+				#set_variable = { 	  which = IE_infantry_cost 					value = 0 }
+				#set_variable = { 	  which = IE_cavalry_cost 					value = 0 }
+				#set_variable = { 	  which = IE_artillery_cost 				value = 0 }
+				#change_variable = {   which = IE_infantry_cost 					which = IE_infantry_remaining }
+				#change_variable = {   which = IE_cavalry_cost 					which = IE_cavalry_remaining }
+				#change_variable = {   which = IE_artillery_cost 				which = IE_cavalry_remaining }
+				#multiply_variable = { which = IE_infantry_cost					value = 1.5 }
+				#multiply_variable = { which = IE_cavalry_cost					value = 2.5 }
+				#multiply_variable = { which = IE_artillery_cost					value = 3.25 }
+				#set_variable = { 	  which = IE_total_war_contribution 		value = 0 }
+				#change_variable = {	  which = IE_total_war_contribution			which = IE_infantry_cost }
+				#change_variable = {	  which = IE_total_war_contribution			which = IE_cavalry_cost }
+				#change_variable = {	  which = IE_total_war_contribution			which = IE_artillery_cost }
+				#change_variable = {   which = estate_total_contribution			which = IE_total_war_contribution }
+				#subtract_variable = { which = imperial_estates_treasury	which = IE_total_war_contribution }
+				
+				### Romzug:
+				#if = {
+				#	limit = {
+				#		has_country_flag = romzug_war
+				#	}
+				#	ERG = {
+				#		set_variable = { which = romzug_army_size_infantry }
+				#	}
+				#}
+			}
+			
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = GN_partial_support
+						has_country_flag = GN_full_support
+					}
+				}
+				
+				### greater_nobles_Direct ###
+				
+				#set_variable = { 	  which = GN_infantry_cost 					value = 0 }
+				#set_variable = { 	  which = GN_cavalry_cost 					value = 0 }
+				#set_variable = { 	  which = GN_artillery_cost 				value = 0 }
+				set_variable = {   which = GN_infantry_cost 					which = GN_infantry_fielded }
+				set_variable = {   which = GN_cavalry_cost 					which = GN_cavalry_fielded }
+				set_variable = {   which = GN_artillery_cost 				which = GN_artillery_fielded }
+				multiply_variable = { which = GN_infantry_cost					value = 1.5 }
+				multiply_variable = { which = GN_cavalry_cost					value = 2.5 }
+				multiply_variable = { which = GN_artillery_cost					value = 3.25 }
+				#set_variable = { 	  which = GN_total_war_contribution 		value = 0 }
+				set_variable = {	  which = GN_total_war_contribution			which = GN_infantry_cost }
+				change_variable = {	  which = GN_total_war_contribution			which = GN_cavalry_cost }
+				change_variable = {	  which = GN_total_war_contribution			which = GN_artillery_cost }
+				change_variable = {   which = estate_total_contribution			which = GN_total_war_contribution }
+				subtract_variable = { which = estate_greater_nobles_treasury	which = GN_total_war_contribution }
+			}
+			
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = LN_partial_support
+						has_country_flag = LN_full_support
+					}
+				}
+				
+				### lesser_nobles_Direct ###
+				
+				#set_variable = { 	  which = LN_infantry_cost 					value = 0 }
+				#set_variable = { 	  which = LN_cavalry_cost 					value = 0 }
+				#set_variable = { 	  which = LN_artillery_cost 				value = 0 }
+				set_variable = {   which = LN_infantry_cost 					which = LN_infantry_fielded }
+				set_variable = {   which = LN_cavalry_cost 					which = LN_cavalry_fielded }
+				set_variable = {   which = LN_artillery_cost 				which = LN_artillery_fielded }
+				multiply_variable = { which = LN_infantry_cost					value = 1.5 }
+				multiply_variable = { which = LN_cavalry_cost					value = 2.5 }
+				multiply_variable = { which = LN_artillery_cost					value = 3.25 }
+				#set_variable = { 	  which = LN_total_war_contribution 		value = 0 }
+				set_variable = {	  which = LN_total_war_contribution			which = LN_infantry_cost }
+				change_variable = {	  which = LN_total_war_contribution			which = LN_cavalry_cost }
+				change_variable = {	  which = LN_total_war_contribution			which = LN_artillery_cost }
+				change_variable = {   which = estate_total_contribution			which = LN_total_war_contribution }
+				subtract_variable = { which = estate_lesser_nobles_treasury		which = LN_total_war_contribution }
+			}
+			
+			if = {
+				limit = {
+					has_country_flag = BUR_war_financial_contribution
+				}
+				change_variable = { which = estate_total_contribution 			which = estate_burghers_war_contribution }
+				subtract_variable = { which = estate_burghers_treasury			which = estate_burghers_war_contribution }
+			}
+			
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = TR_partial_support
+						has_country_flag = TR_full_support
+						#any_owned_province = { has_province_flag = ptm_subtribe_support }
+					}
+				}
+				
+				### tribes_Direct ### 
+				#set_variable = { 	  which = TR_infantry_cost 					value = 0 }
+				#set_variable = { 	  which = TR_cavalry_cost 					value = 0 }
+				set_variable = {   which = TR_infantry_cost 					which = TR_infantry_fielded }
+				set_variable = {   which = TR_cavalry_cost 					which = TR_cavalry_fielded }
+				multiply_variable = { which = TR_infantry_cost					value = 1.5 }
+				multiply_variable = { which = TR_cavalry_cost					value = 2.5 }
+				#set_variable = { 	  which = TR_total_war_contribution 		value = 0 }
+				set_variable = {	  which = TR_total_war_contribution			which = TR_infantry_cost }
+				change_variable = {	  which = TR_total_war_contribution			which = TR_cavalry_cost }
+				#set_variable = {	  which = TR_gives_manpower 				value = 0 }
+				set_variable = {   	  which = TR_gives_manpower 				which = TR_total_war_contribution }
+				divide_variable = {   which = TR_gives_manpower					value = 7.5 }
+				multiply_variable = {   which = TR_gives_manpower					value = 0.001 }
+				multiply_variable = { which = TR_gives_manpower					value = 1000000 }
+				change_variable = {   which = estate_total_contribution			which = TR_total_war_contribution }
+				subtract_variable = { which = estate_tribals_wealth				which = TR_total_war_contribution } ### Twice due to manpower and ducat costs
+				subtract_variable = { which = estate_tribals_wealth				which = TR_total_war_contribution }
+				change_variable = {   which = estate_tribals_war_spent			which = TR_total_war_contribution }
+				change_variable = {   which = estate_tribals_war_spent			which = TR_total_war_contribution }
+			}
+			change_variable = {   which = ducat_gain 							which = estate_total_contribution }
+			#set_variable = { 	  which = estate_logistical_support 			value = 0 }
+			set_variable = {   which = estate_logistical_support				which = GN_infantry_fielded }
+			change_variable = {   which = estate_logistical_support				which = GN_cavalry_fielded }
+			change_variable = {   which = estate_logistical_support				which = GN_artillery_fielded }
+			change_variable = {   which = estate_logistical_support				which = LN_infantry_fielded }
+			change_variable = {   which = estate_logistical_support				which = LN_cavalry_fielded }
+			change_variable = {   which = estate_logistical_support				which = LN_artillery_fielded }
+			change_variable = {   which = estate_logistical_support				which = TR_infantry_fielded }
+			change_variable = {   which = estate_logistical_support				which = TR_cavalry_fielded }
+			#change_variable = {   which = estate_logistical_support				which = ptm_infantry_fielded }
+			#change_variable = {   which = estate_logistical_support				which = ptm_cavalry_fielded }
+			change_variable = {   which = estate_logistical_support 			which = estate_burghers_logistical_support }
+			#	change_variable = {   which = estate_logistical_support 			which = burghers_war_support }
+			#set_variable = {	  which = burghers_loyalty_removed_a 			value = 0 }
+			set_variable = { 	  which = burghers_loyalty_removed_a 			value = 2 }
+		}
+	}
+	
+	option = {
+		name = "POP_estate_levies.004.a"
+		
+		war_logistical_support = yes
+		if = {
+			limit = {
+				OR = {
+					has_country_flag = GN_partial_support
+					has_country_flag = GN_full_support
+				}
+			}
+			custom_tooltip = GN_total_war_contribution
+		}
+		if = {
+			limit = {
+				OR = {
+					has_country_flag = LN_partial_support
+					has_country_flag = LN_full_support
+				}
+			}
+			custom_tooltip = LN_total_war_contribution
+		}
+		if = {
+			limit = {
+				has_country_flag = BUR_war_financial_contribution
+			}
+			custom_tooltip = BUR_financial_war_contribution
+			hidden_effect = {
+				subtract_variable = { which = estate_burghers_treasury	which = estate_burghers_war_contribution }
+			}
+			if = {
+				limit = {
+					NOT = { has_country_modifier = BUR_three_years_support }
+				}
+				custom_tooltip = estate_burghers_loyalty_removed_a
+				hidden_effect = {
+					#set_variable = { which = burghers_loyalty_removed		value = 0 }
+					set_variable = { which = burghers_loyalty_removed 		which = burghers_loyalty_removed_a }
+					estate_burghers_loyalty_removed = yes
+				}
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					has_country_flag = TR_full_support
+					has_country_flag = TR_partial_support
+				}
+			}
+			custom_tooltip = TR_total_war_contribution
+			hidden_effect = {
+				#set_variable = { 	which = manpower_gain		value = 0 }
+				set_variable = { 	which = manpower_gain 		which = TR_gives_manpower }
+				multiply_variable = { which = manpower_gain		value = 0.001 }
+				scaled_manpower_gained_country = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = imperial_estates_war_support
+			}
+			custom_tooltip = IE_war_chest_support
+			hidden_effect = {
+				set_variable = { which = IE_estate_total_contribution value = 0 }
+			}
+		}
+		hidden_effect = {
+			scaled_ducat_gained_country = yes
+		}
+	}
+}
+
+country_event = {  ### Resolves war.  Counts units at peace
+	id = POP_estate_levies.005
+	title = POP_estate_levies.005.t
+	desc = POP_estate_levies.005.d
+	picture = REFORM_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	### greater_nobles_Direct  ###
+	### lesser_nobles_Direct  ###
+	### burghers_Direct  ###
+	
+	#trigger = {
+	#	OR = {
+	#		has_country_flag = raised_special_units
+	#		has_country_flag = BUR_war_financial_contribution
+	#		has_country_flag = estate_war_decisions_made
+	#		has_country_flag = BUR_logistical_support
+	#		has_country_flag = BUR_war_relief
+	#		has_country_flag = imperial_estates_war_support
+	#	}
+	#}
+	
+	immediate = {
+		hidden_effect = {
+			remove_country_modifier = tribal_maintenance_0
+			remove_country_modifier = tribal_maintenance_1
+			remove_country_modifier = tribal_maintenance_2
+			remove_country_modifier = tribal_maintenance_3
+			remove_country_modifier = tribal_maintenance_4
+			clr_country_flag = estate_war_decisions_made
+			set_variable = {	  which = estate_total_contribution 	value = 0 }
+			set_variable = { 	  which = ducat_gain 					value = 0 }
+			###HRE
+			
+			if = {
+				limit = {
+					has_country_flag = imperial_estates_war_support
+				}
+				set_variable = { which = IE_infantry_remaining	value = 0 }
+				set_variable = { which = IE_cavalry_remaining 	value = 0 }
+				set_variable = { which = IE_cavalry_remaining 	value = 0 }
+				
+				estate_infantry_remaining = {
+					estate_prefix = IE
+					estate_name = imperial_estates
+				}
+				estate_cavalry_remaining = {
+					estate_prefix = IE
+					estate_name = imperial_estates
+				}
+				estate_artillery_remaining = {
+					estate_prefix = IE
+					estate_name = imperial_estates
+				}
+			}
+			
+			
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = GN_partial_support
+						has_country_flag = GN_full_support
+					}
+				}
+				set_variable = { which = GN_infantry_remaining		value = 0 }
+				set_variable = { which = GN_cavalry_remaining 		value = 0 }
+				set_variable = { which = GN_artillery_remaining 	value = 0 }
+				
+				estate_infantry_remaining = {
+					estate_prefix = GN
+					estate_name = estate_greater_nobles
+				}
+				estate_cavalry_remaining = {
+					estate_prefix = GN
+					estate_name = estate_greater_nobles
+				}
+				estate_artillery_remaining = {
+					estate_prefix = GN
+					estate_name = estate_greater_nobles
+				}
+			}
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = LN_partial_support
+						has_country_flag = LN_full_support
+					}
+				}
+				set_variable = { which = LN_infantry_remaining		value = 0 }
+				set_variable = { which = LN_cavalry_remaining 		value = 0 }
+				set_variable = { which = LN_artillery_remaining 	value = 0 }
+				
+				estate_infantry_remaining = {
+					estate_prefix = LN
+					estate_name = estate_lesser_nobles
+				}
+				estate_cavalry_remaining = {
+					estate_prefix = LN
+					estate_name = estate_lesser_nobles
+				}
+				estate_artillery_remaining = {
+					estate_prefix = LN
+					estate_name = estate_lesser_nobles
+				}
+			}
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = TR_partial_support
+						has_country_flag = TR_full_support
+						#any_owned_province = { has_province_flag = ptm_subtribe_support }
+					}
+				}
+				set_variable = { which = TR_infantry_remaining		value = 0 }
+				set_variable = { which = TR_cavalry_remaining 		value = 0 }
+				
+				estate_infantry_remaining = {
+					estate_prefix = TR
+					estate_name = estate_tribes
+				}
+				estate_cavalry_remaining = {
+					estate_prefix = TR
+					estate_name = estate_tribes
+				}
+			}
+			
+			change_variable = {   which = estate_greater_nobles_infantry	which = GN_infantry_remaining }
+			change_variable = {   which = estate_greater_nobles_cavalry		which = GN_cavalry_remaining }
+			change_variable = {   which = estate_greater_nobles_artillery	which = GN_artillery_remaining }
+			#set_variable = {	  which = GN_total_survived					value = 0 }
+			set_variable = {   which = GN_total_survived					which = GN_infantry_remaining }
+			change_variable = {   which = GN_total_survived					which = GN_cavalry_remaining }
+			change_variable = {   which = GN_total_survived					which = GN_artillery_remaining }
+			#set_variable = { 	  which = GN_total_started					value = 0 }
+			set_variable = {   which = GN_total_started					which = GN_infantry_fielded }
+			change_variable = {   which = GN_total_started					which = GN_cavalry_fielded }
+			change_variable = {   which = GN_total_started					which = GN_artillery_fielded }
+			#set_variable = { 	  which = GN_total_casualties 				value = 0 }
+			set_variable = { 	  which = GN_total_casualties 				which = GN_total_survived }
+			#if = {
+			#	limit = {
+			#		is_variable_equal = {
+			#			which = GN_total_started
+			#			value = 0
+			#		}
+			#	}
+			#	
+			#	# log = "<ERROR><1D71BF70><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+			#	
+			#}
+			#else = {
+			if = {
+				limit = { NOT = { is_variable_equal = { which = GN_total_started value = 0 } } }
+				divide_variable = { which = GN_total_casualties which = GN_total_started }
+			}
+			#}
+			
+			change_variable = {   which = estate_lesser_nobles_infantry		which = LN_infantry_remaining }
+			change_variable = {   which = estate_lesser_nobles_cavalry		which = LN_cavalry_remaining }
+			change_variable = {   which = estate_lesser_nobles_artillery	which = LN_artillery_remaining }
+			#set_variable = {	  which = LN_total_survived					value = 0 }
+			set_variable = {  	  which = LN_total_survived					which = LN_infantry_remaining }
+			change_variable = {   which = LN_total_survived					which = LN_cavalry_remaining }
+			change_variable = {   which = LN_total_survived					which = LN_artillery_remaining }
+			#set_variable = { 	  which = LN_total_started					value = 0 }
+			set_variable = {  	  which = LN_total_started					which = LN_infantry_fielded }
+			change_variable = {   which = LN_total_started					which = LN_cavalry_fielded }
+			change_variable = {   which = LN_total_started					which = LN_artillery_fielded }
+			#set_variable = { 	  which = LN_total_casualties 				value = 0 }
+			set_variable = { 	  which = LN_total_casualties 				which = LN_total_survived }
+			#if = {
+			#	limit = {
+			#		is_variable_equal = {
+			#			which = LN_total_started
+			#			value = 0
+			#		}
+			#	}
+			#	
+			#	# log = "<ERROR><A2432B20><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+			#	
+			#}
+			#else = {
+			if = {
+				limit = { NOT = { is_variable_equal = { which = LN_total_started value = 0 } } }
+				divide_variable = { which = LN_total_casualties which = LN_total_started }
+			}
+			#}
+			
+			# Update hosts with casualties
+			#ptm_subtribe_casualty_calc = yes
+			
+			#set_variable = {	  which = TR_loyal_infantry_remaining		value = 0 }
+			set_variable = {	  which = TR_loyal_infantry_remaining		which = TR_infantry_remaining }
+			multiply_variable = { which = TR_loyal_infantry_remaining		which = TR_loyal_war_share_infantry }
+			
+			#set_variable = {	  which = TR_loyal_cavalry_remaining		value = 0 }
+			set_variable = {	  which = TR_loyal_cavalry_remaining		which = TR_cavalry_remaining }
+			multiply_variable = { which = TR_loyal_cavalry_remaining		which = TR_loyal_war_share_cavalry }
+			
+			
+			change_variable = {   which = estate_tribals_infantry_loyal		which = TR_loyal_infantry_remaining }
+			multiply_variable = { which = estate_tribals_infantry_loyal		value = 0.001 }
+			multiply_variable = { which = estate_tribals_infantry_loyal		value = 1000 }
+			change_variable = {   which = estate_tribals_cavalry_loyal		which = TR_loyal_cavalry_remaining }
+			multiply_variable = { which = estate_tribals_cavalry_loyal		value = 0.001 }
+			multiply_variable = { which = estate_tribals_cavalry_loyal		value = 1000 }
+			
+			# Recalculate the total hosts
+			#ptm_subtribe_add_all = yes
+			
+			#set_variable = { which = estate_tribals_infantry_host			value = 0 }
+			set_variable = { which = estate_tribals_infantry_host			which = estate_tribals_infantry_loyal }
+			#set_variable = { which = estate_tribals_cavalry_host			value = 0 }
+			set_variable = { which = estate_tribals_cavalry_host			which = estate_tribals_cavalry_loyal }
+			
+			#change_variable = { which = estate_tribals_infantry_host 		which = estate_tribals_subtribe_infantry }
+			#change_variable = { which = estate_tribals_cavalry_host 		which = estate_tribals_subtribe_cavalry }
+			
+			#set_variable = { 	which = estate_tribals_total_soldiers			value = 0 }
+			set_variable = { which = estate_tribals_total_soldiers 			which = estate_tribals_cavalry_host }
+			change_variable = { which = estate_tribals_total_soldiers 			which = estate_tribals_infantry_host }
+			
+			# Loyalty/wealth hits
+			#set_variable = {	  which = TR_loyal_started					value = 0 }
+			set_variable = {	  which = TR_loyal_started					which = TR_infantry_fielded }
+			change_variable = {	  which = TR_loyal_started					which = TR_cavalry_fielded }
+			
+			#set_variable = {	  which = TR_loyal_survived					value = 0 }
+			set_variable = {	  which = TR_loyal_survived					which = TR_loyal_infantry_remaining }
+			change_variable = {	  which = TR_loyal_survived					which = TR_loyal_cavalry_remaining }
+			
+			#set_variable = { 	  which = TR_loyal_casualties_gross			value = 0 }
+			set_variable = { 	  which = TR_loyal_casualties_gross			which = TR_loyal_started }
+			subtract_variable = { which = TR_loyal_casualties_gross			which = TR_loyal_survived }
+			
+			#set_variable = {      which = TR_casualties_reduced_wealth		value = 0 }
+			set_variable = {      which = TR_casualties_reduced_wealth		which = TR_loyal_casualties_gross }
+			multiply_variable = { which = TR_casualties_reduced_wealth		value = 50 }
+			#set_variable = { 	  which = TR_casualties_reduced_loyalty		value = 0 }
+			set_variable = {   	  which = TR_casualties_reduced_loyalty		which = TR_casualties_reduced_wealth }
+			multiply_variable = {   which = TR_casualties_reduced_loyalty		value = 0.4 }
+			change_variable = {   which = estate_tribals_war_spent			which = TR_casualties_reduced_loyalty }
+			subtract_variable = { which = estate_tribals_wealth				which = TR_casualties_reduced_wealth }
+			if = {
+				limit = {
+					NOT = { check_variable = { which = GN_total_casualties			value = 0.75 } }
+				}
+				if = {
+					limit = {
+						has_country_flag = GN_offensive_war_help_partial
+					}
+					#set_variable = { which = greater_nobles_loyalty_removed_a			value = 0 }
+					set_variable = { which = greater_nobles_loyalty_removed_a			which = GN_total_casualties }
+					subtract_variable = { which = greater_nobles_loyalty_removed_a		value = 1 }
+					multiply_variable = { which = greater_nobles_loyalty_removed_a		value = -10 }
+					multiply_variable = {   which = greater_nobles_loyalty_removed_a		value = 0.001 }
+					multiply_variable = { which = greater_nobles_loyalty_removed_a		value = 1000 }
+					set_country_flag = nobles_pissed
+				}
+				if = {
+					limit = {
+						has_country_flag = GN_offensive_war_help_full
+					}
+					#set_variable = { which = greater_nobles_loyalty_removed_a			value = 0 }
+					set_variable = { which = greater_nobles_loyalty_removed_a			which = GN_total_casualties }
+					subtract_variable = { which = greater_nobles_loyalty_removed_a		value = 1 }
+					multiply_variable = { which = greater_nobles_loyalty_removed_a		value = -15 }
+					multiply_variable = {   which = greater_nobles_loyalty_removed_a		value = 0.001 }
+					multiply_variable = { which = greater_nobles_loyalty_removed_a		value = 1000 }
+					set_country_flag = nobles_pissed
+				}
+			}
+			if = {
+				limit = {
+					NOT = { check_variable = { which = LN_total_casualties			value = 0.75 } }
+				}
+				if = {
+					limit = {
+						has_country_flag = LN_offensive_war_help_partial
+					}
+					#set_variable = { which = lesser_nobles_loyalty_removed_a			value = 0 }
+					set_variable = { which = lesser_nobles_loyalty_removed_a			which = LN_total_casualties }
+					subtract_variable = { which = lesser_nobles_loyalty_removed_a		value = 1 }
+					multiply_variable = { which = lesser_nobles_loyalty_removed_a		value = -10 }
+					multiply_variable = {   which = lesser_nobles_loyalty_removed_a		value = 0.001 }
+					multiply_variable = { which = lesser_nobles_loyalty_removed_a		value = 1000 }
+					set_country_flag = nobles_pissed
+				}
+				if = {
+					limit = {
+						has_country_flag = LN_offensive_war_help_full
+					}
+					#set_variable = { which = lesser_nobles_loyalty_removed_a			value = 0 }
+					set_variable = { which = lesser_nobles_loyalty_removed_a			which = LN_total_casualties }
+					subtract_variable = { which = lesser_nobles_loyalty_removed_a		value = 1 }
+					multiply_variable = { which = lesser_nobles_loyalty_removed_a		value = -15 }
+					multiply_variable = {   which = lesser_nobles_loyalty_removed_a		value = 0.001 }
+					multiply_variable = { which = lesser_nobles_loyalty_removed_a		value = 1000 }
+					set_country_flag = nobles_pissed
+				}
+			}
+			#	if = {
+			#		limit = {
+			#			has_country_flag = TR_offensive_war_help_partial
+			#		}
+			#		set_variable = { which = estate_tribes_net_gain			value = 0 }
+			#		set_variable = { which = estate_tribes_net_gain			which = }
+			#	}
+		}
+		country_event = { id = POP_estate_levies.006	days = 1 }
+		#if = {
+		#	limit = {
+		#		has_country_flag = imperial_estates_war_support
+		#	}
+			clr_country_flag = imperial_estates_war_support
+		#}
+		hidden_effect = {
+			clr_country_flag = raised_special_units
+			war_logistical_support_remove = yes
+		}
+	}
+	
+	option = {
+		name = "POP_estate_levies.005.a"
+	}
+}
+
+country_event = {  ### Informs player if estates are pissed off
+	id = POP_estate_levies.006
+	title = POP_estate_levies.006.t
+	desc = {
+		trigger = {
+			OR = {
+				has_country_flag = GN_partial_support
+				has_country_flag = GN_full_support
+				has_country_flag = LN_partial_support
+				has_country_flag = LN_full_support
+			}
+		}
+		desc = "POP_estate_levies.006.da"
+	}
+	desc = {
+		trigger = {
+			NOT = {
+				has_country_flag = GN_partial_support
+				has_country_flag = GN_full_support
+				has_country_flag = LN_partial_support
+				has_country_flag = LN_full_support
+			}
+		}
+		desc = "POP_estate_levies.006.db"
+	}
+	picture = REFORM_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	option = { ### Nobles are Cool
+		name = "POP_estate_levies.006.a"
+		trigger = {
+			NOT = { has_country_flag = nobles_pissed }
+			OR = {
+				has_country_flag = GN_partial_support
+				has_country_flag = GN_full_support
+				has_country_flag = LN_partial_support
+				has_country_flag = LN_full_support
+			}
+		}
+	}
+	
+	option = { ### Nobles not cool
+		name = "POP_estate_levies.006.b"
+		trigger = {
+			has_country_flag = nobles_pissed
+			OR = {
+				has_country_flag = GN_partial_support
+				has_country_flag = GN_full_support
+				has_country_flag = LN_partial_support
+				has_country_flag = LN_full_support
+			}
+		}
+		
+		if = {
+			limit = {
+				NOT = { check_variable = { which = GN_total_casualties 			value = 0.75 } }
+				OR = {
+					has_country_flag = GN_offensive_war_help_partial
+					has_country_flag = GN_offensive_war_help_full
+				}
+			}
+			hidden_effect = {
+				#set_variable = { which = greater_nobles_loyalty_removed		value = 0 }
+				set_variable = { which = greater_nobles_loyalty_removed		which = greater_nobles_loyalty_removed_a }
+				if = {
+					limit = {
+						ai = yes
+					}
+					multiply_variable = { which = greater_nobles_loyalty_removed	value = 0.25 }
+				}
+				estate_greater_nobles_loyalty_removed = yes
+			}
+			custom_tooltip = estate_greater_nobles_loyalty_removed_a
+		}
+		if = {
+			limit = {
+				NOT = { check_variable = { which = LN_total_casualties 			value = 0.75 } }
+				OR = {
+					has_country_flag = LN_offensive_war_help_partial
+					has_country_flag = LN_offensive_war_help_full
+				}
+			}
+			hidden_effect = {
+				#set_variable = { which = lesser_nobles_loyalty_removed		value = 0 }
+				set_variable = { which = lesser_nobles_loyalty_removed		which = lesser_nobles_loyalty_removed_a }
+				if = {
+					limit = {
+						ai = yes
+					}
+					multiply_variable = { which = greater_nobles_loyalty_removed	value = 0.25 }
+				}
+				estate_lesser_nobles_loyalty_removed = yes
+			}
+			custom_tooltip = estate_lesser_nobles_loyalty_removed_a
+		}
+	}
+	option = { ### Others don't care about unraised nobility
+		name = "POP_estate_levies.006.c"
+		trigger = {
+			NOT = {
+				has_country_flag = GN_partial_support
+				has_country_flag = GN_full_support
+				has_country_flag = LN_partial_support
+				has_country_flag = LN_full_support
+			}
+		}
+	}
+	
+	after = {
+		hidden_effect = {
+			clear_estate_war_variables = yes
+			clr_country_flag = nobles_pissed
+			#if = { limit = { has_country_modifier = tribal_maintenance_0 }
+				remove_country_modifier = tribal_maintenance_0
+			#}
+			#else_if = { limit = { has_country_modifier = tribal_maintenance_1 }
+				remove_country_modifier = tribal_maintenance_1
+			#}
+			#else_if = { limit = { has_country_modifier = tribal_maintenance_2 }
+				remove_country_modifier = tribal_maintenance_2
+			#}
+			#else_if = { limit = { has_country_modifier = tribal_maintenance_3 }
+				remove_country_modifier = tribal_maintenance_3
+			#}
+			#else_if = { limit = { has_country_modifier = tribal_maintenance_4 }
+				remove_country_modifier = tribal_maintenance_4
+			#}
+		}
+	}
+}
+
+country_event = {  ### Resolves war.  Counts units at peace
+	id = POP_estate_levies.007
+	title = POP_estate_levies.007.t
+	desc = POP_estate_levies.007.d
+	picture = REFORM_eventPicture
+	#	is_triggered_only = yes
+	hidden = yes
+	
+	### greater_nobles_Direct  ###
+	### lesser_nobles_Direct  ###
+	### burghers_Direct  ###
+	
+	trigger = {
+		OR = {
+			has_country_flag = raised_special_units
+			has_country_flag = BUR_war_financial_contribution
+			has_country_flag = estate_war_decisions_made
+			has_country_flag = BUR_logistical_support
+			has_country_flag = BUR_war_relief
+			has_country_flag = imperial_estates_war_support
+			check_variable = { which = estate_logistical_support_display value = 0.001 }
+		}
+		is_at_war = no
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	immediate = {
+		country_event = { id = POP_estate_levies.005 }
+		set_variable = { which = estate_logistical_support_display value = 0 }
+	}
+	
+	option = { ### Nobles not cool
+		name = "POP_estate_levies.007.a"
+	}
+}
+
+

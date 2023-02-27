@@ -1,0 +1,844 @@
+namespace = MT_general_fixes
+province_event = { ### AAA does not own Adventure Island
+	id = MT_general_fixes.1
+	title = "no_localisation"
+	desc = "no_localisation"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	hidden = yes
+	trigger = {
+		province_id = 5154
+		OR = {
+			is_empty = yes
+			owner = {
+				NOT = { tag = AAA }
+			}
+		}
+	}
+	mean_time_to_happen = {
+		months = 1
+	}
+	immediate = {
+		cede_province = AAA
+	}
+	option = {
+		name = "no_localisation"
+	}
+}
+
+country_event = { ### add canal adjacencies in on_startup
+	id = MT_general_fixes.2
+	hidden = yes
+	title = "no_localisation"
+	desc = "no_localisation"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	is_triggered_only = yes
+	immediate = {
+		if = {
+			limit = {
+				any_country = {
+					has_great_project = kiel_canal
+				}
+			}
+			add_sea_connection = { id1 = 1856 id2 = 1866 }
+		}
+		if = {
+			limit = {
+				any_country = {
+					has_great_project = suez_canal
+				}
+			}
+			add_sea_connection = { id1 = 1909 id2 = 1922 }
+		}
+		if = {
+			limit = {
+				any_country = {
+					has_great_project = panama_canal
+				}
+			}
+			add_sea_connection = { id1 = 1617 id2 = 1650 }
+		}
+	}
+	option = {
+	}
+}
+
+country_event = { ### Forced tech upgrades
+	id = MT_general_fixes.3
+	title = "no_localisation"
+	desc = "no_localisation"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	hidden = yes
+	is_triggered_only = yes
+	trigger = {
+		ai = yes
+		OR = {
+			adm_power = 600
+			dip_power = 600
+			mil_power = 600
+		}
+	}
+	immediate = {
+		adm_available = yes
+		multiply_variable = { which = adm_available value = 0.75 }
+		dip_available = yes
+		multiply_variable = { which = dip_available value = 0.75 }
+		mil_available = yes
+		multiply_variable = { which = mil_available value = 0.75 }
+		export_tech_cost = yes
+		
+		if = {
+			limit = {
+				check_variable = { which = adm_power which = adm_tech_cost }
+			}
+			set_variable = { which = admin_cost which = adm_tech_cost }
+			#log = "TECH_FIX added administrative tech to [This.GetName], costing [This.admin_cost.GetValue] adm points"
+			scaled_admin_cost_country = yes
+			add_adm_tech = 1
+		}
+		if = {
+			limit = {
+				check_variable = { which = dip_power which = dip_tech_cost }
+			}
+			set_variable = { which = diplo_cost which = dip_tech_cost }
+			#log = "TECH_FIX added diplomatic tech to [This.GetName], costing [This.diplo_cost.GetValue] dip points"
+			scaled_diplo_cost_country = yes
+			add_dip_tech = 1
+		}
+		if = {
+			limit = {
+				check_variable = { which = mil_power which = mil_tech_cost }
+			}
+			set_variable = { which = milit_cost which = mil_tech_cost }
+			#log = "TECH_FIX added military tech to [This.GetName], costing [This.milit_cost.GetValue] mil points"
+			scaled_milit_cost_country = yes
+			add_mil_tech = 1
+		}
+		
+		set_variable = { which = adm_power value = 0 }
+		set_variable = { which = dip_power value = 0 }
+		set_variable = { which = mil_power value = 0 }
+		set_variable = { which = adm_tech_cost value = 0 }
+		set_variable = { which = dip_tech_cost value = 0 }
+		set_variable = { which = mil_tech_cost value = 0 }
+	}
+	option = {
+		name = "no_localisation"
+	}
+}
+
+province_event = { ### province built building info
+	id = MT_general_fixes.101
+	title = "general_fixes.101_t"
+	desc = "general_fixes.101_d"
+	picture = CITY_DEVELOPMENT_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		owner = {
+			NOT = { has_country_flag = prov_build_open }
+		}
+	}
+	immediate = {
+		hidden_effect = {
+			owner = {
+				set_country_flag = prov_build_open
+			}
+		}
+	}
+	after = {
+		hidden_effect = {
+			owner = {
+				clr_country_flag = prov_build_open
+				country_event = { id = MT_general_fixes.100 }
+			}
+		}
+	}
+	option = {
+		name = "general_fixes.101_o1"
+		hidden_effect = {
+			set_variable = { which = prov_built_event value = 0 }
+			set_variable = { which = prov_built_type value = 0 }
+			set_variable = { which = prov_built value = 0 }
+			set_variable = { which = prov_built_cost value = 0 }
+		}
+	}
+	option = {
+		name = "general_fixes.101_o2"
+		hidden_effect = {
+			owner = {
+				clr_country_flag = build_info_events
+				every_owned_province = {
+					set_variable = { which = prov_built_event value = 0 }
+					set_variable = { which = prov_built_type value = 0 }
+					set_variable = { which = prov_built value = 0 }
+					set_variable = { which = prov_built_cost value = 0 }
+				}
+			}
+		}
+	}
+}
+province_event = { ### estate built building info
+	id = MT_general_fixes.102
+	title = "general_fixes.102_t"
+	desc = "general_fixes.102_d"
+	picture = CITY_DEVELOPMENT_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		owner = {
+			NOT = { has_country_flag = prov_build_open }
+		}
+	}
+	immediate = {
+		hidden_effect = {
+			owner = {
+				set_country_flag = prov_build_open
+			}
+		}
+	}
+	after = {
+		hidden_effect = {
+			owner = {
+				clr_country_flag = prov_build_open
+				country_event = { id = MT_general_fixes.100 }
+			}
+		}
+	}
+	option = {
+		name = "general_fixes.101_o1"
+		hidden_effect = {
+			set_variable = { which = prov_built_event value = 0 }
+			set_variable = { which = prov_built_type value = 0 }
+			set_variable = { which = prov_built value = 0 }
+			set_variable = { which = prov_built_cost value = 0 }
+		}
+	}
+	option = {
+		name = "general_fixes.101_o2"
+		hidden_effect = {
+			owner = {
+				clr_country_flag = build_info_events
+				every_owned_province = {
+					set_variable = { which = prov_built_event value = 0 }
+					set_variable = { which = prov_built_type value = 0 }
+					set_variable = { which = prov_built value = 0 }
+					set_variable = { which = prov_built_cost value = 0 }
+				}
+			}
+		}
+	}
+}
+province_event = { ### estate built local fort info
+	id = MT_general_fixes.103
+	title = "general_fixes.103_t"
+	desc = "general_fixes.103_d"
+	picture = CITY_DEVELOPMENT_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		owner = {
+			NOT = { has_country_flag = prov_build_open }
+		}
+	}
+	immediate = {
+		hidden_effect = {
+			owner = {
+				set_country_flag = prov_build_open
+			}
+		}
+	}
+	after = {
+		hidden_effect = {
+			owner = {
+				clr_country_flag = prov_build_open
+				country_event = { id = MT_general_fixes.100 }
+			}
+		}
+	}
+	option = {
+		name = "general_fixes.101_o1"
+		hidden_effect = {
+			set_variable = { which = prov_built_event value = 0 }
+			set_variable = { which = prov_built_type value = 0 }
+			set_variable = { which = prov_built value = 0 }
+			set_variable = { which = prov_built_cost value = 0 }
+		}
+	}
+	option = {
+		name = "general_fixes.101_o2"
+		hidden_effect = {
+			owner = {
+				clr_country_flag = build_info_events
+				every_owned_province = {
+					set_variable = { which = prov_built_event value = 0 }
+					set_variable = { which = prov_built_type value = 0 }
+					set_variable = { which = prov_built value = 0 }
+					set_variable = { which = prov_built_cost value = 0 }
+				}
+			}
+		}
+	}
+}
+province_event = { ### auto built building info
+	id = MT_general_fixes.104
+	title = "general_fixes.104_t"
+	desc = "general_fixes.104_d"
+	picture = CITY_DEVELOPMENT_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		owner = {
+			NOT = { has_country_flag = prov_build_open }
+		}
+	}
+	immediate = {
+		hidden_effect = {
+			owner = {
+				set_country_flag = prov_build_open
+			}
+		}
+	}
+	after = {
+		hidden_effect = {
+			owner = {
+				clr_country_flag = prov_build_open
+				country_event = { id = MT_general_fixes.100 }
+			}
+		}
+	}
+	option = {
+		name = "general_fixes.101_o1"
+		hidden_effect = {
+			set_variable = { which = prov_built_event value = 0 }
+			set_variable = { which = prov_built_type value = 0 }
+			set_variable = { which = prov_built value = 0 }
+			set_variable = { which = prov_built_cost value = 0 }
+		}
+	}
+	option = {
+		name = "general_fixes.101_o2"
+		hidden_effect = {
+			owner = {
+				clr_country_flag = build_info_events
+				every_owned_province = {
+					set_variable = { which = prov_built_event value = 0 }
+					set_variable = { which = prov_built_type value = 0 }
+					set_variable = { which = prov_built value = 0 }
+					set_variable = { which = prov_built_cost value = 0 }
+				}
+			}
+		}
+	}
+}
+country_event = { ## more info available
+	id = MT_general_fixes.100
+	is_triggered_only = yes
+	hidden = yes
+	title = "no_localisation"
+	desc = "no_localisation"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	trigger = {
+		NOT = { has_country_flag = prov_build_open }
+	}
+	option = {
+		random_owned_province = {
+			limit = {
+				check_variable = { which = prov_built_event value = 1 }
+			}
+			if = {
+				limit = {
+					check_variable = { which = prov_built_event value = 3 }
+				}
+				if = {
+					limit = {
+						check_variable = { which = prov_built_event value = 4 }
+					}
+					province_event = { id = MT_general_fixes.104 }
+				}
+				else = {
+					province_event = { id = MT_general_fixes.103 }
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = prov_built_event value = 2 }
+					}
+					province_event = { id = MT_general_fixes.102 }
+				}
+				else = {
+					province_event = { id = MT_general_fixes.101 }
+				}
+			}
+		}
+	}
+}
+
+country_event = { ## bankruptcy - forced return of provinces to avoid OE trap
+	id = MT_general_fixes.250
+	title = MT_general_fixes.250_t
+	desc = MT_general_fixes.250_d
+	picture = OVEREXTENSION_eventPicture
+	major = yes
+	trigger = {
+		ai = yes
+		overextension_percentage = 0.01
+		OR = {
+			AND = {
+				num_of_loans = 15
+				NOT = { monthly_income = 0 }
+				is_bankrupt = no
+			}
+			has_country_flag = just_went_bankrupt # triggered in on_bankrupt too
+		}
+		NOT = { has_country_flag = bankrupt_bailout_ask }
+	}
+	mean_time_to_happen = {
+		years = 2
+	}
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = just_went_bankrupt
+			set_variable = { which = MT_bankrupt_count value = 0 }
+			set_variable = { which = MT_bankrupt_dev value = 0 }
+			give_back_provinces_count = yes
+			set_variable = { which = MT_bankrupt_count2 which = MT_bankrupt_count }
+			multiply_variable = { which = MT_bankrupt_count2 value = 0.5 }
+			set_variable = { which = MT_bankrupt_dev2 which = MT_bankrupt_dev }
+			multiply_variable = { which = MT_bankrupt_dev2 value = 0.5 }
+		}
+	}
+	option = { # ask overlord for bailout
+		name = MT_general_fixes.250_o3
+		trigger = {
+			is_subject = yes
+			NOT = {
+				has_country_flag = bankrupt_bailout_full
+				has_country_flag = bankrupt_bailout_half
+				has_country_flag = bankrupt_bailout_refused
+			}
+		}
+		highlight = yes
+		ai_chance = {
+			factor = 100
+		}
+		hidden_effect = {
+			set_variable = { which = MT_bankrupt_value which = MT_bankrupt_dev }
+			multiply_variable = { which = MT_bankrupt_value value = 6.8 } # ~8 years of OE payment, 0.85 ducats per dev per year
+			set_country_flag = bankrupt_bailout_ask
+		}
+		overlord = {
+			country_event = { id = MT_general_fixes.251 }
+		}
+	}
+	option = { # give back all provinces
+		name = MT_general_fixes.250_o1
+		trigger = {
+			OR = {
+				ai = no
+				is_subject = no
+				has_country_flag = bankrupt_bailout_refused
+			}
+		}
+		ai_chance = {
+			factor = 45
+			modifier = {
+				factor = 1.5
+				num_of_loans = 5
+			}
+			modifier = {
+				factor = 2
+				num_of_loans = 15
+			}
+			modifier = {
+				factor = 3
+				num_of_loans = 25
+			}
+		}
+		custom_tooltip = MT_general_fixes.250_tt1
+		every_owned_province = {
+			limit = {
+				has_province_flag = give_back_prov_@ROOT
+			}
+			custom_tooltip = MT_general_fixes.250_tt2
+		}
+		hidden_effect = {
+			give_back_provinces = yes
+		}
+	}
+	option = { # give back some provinces
+		name = MT_general_fixes.250_o2
+		trigger = {
+			OR = {
+				ai = no
+				is_subject = no
+				has_country_flag = bankrupt_bailout_refused
+				has_country_flag = bankrupt_bailout_half
+			}
+		}
+		ai_chance = {
+			factor = 35
+			modifier = {
+				factor = 0.2
+				OR = {
+					NOT = { monthly_income = 0 }
+					is_bankrupt = yes
+				}
+			}
+		}
+		custom_tooltip = MT_general_fixes.250_tt1
+		every_owned_province = {
+			limit = {
+				has_province_flag = give_back_prov_@ROOT
+			}
+			custom_tooltip = MT_general_fixes.250_tt2
+		}
+		hidden_effect = {
+			multiply_variable = { which = MT_bankrupt_count value = 0.5 }
+			multiply_variable = { which = MT_bankrupt_dev value = 0.5 }
+			give_back_provinces = yes
+		}
+	}
+	option = { # give back no provinces
+		name = MT_general_fixes.250_o4
+		trigger = {
+			OR = {
+				ai = no
+				is_subject = no
+				has_country_flag = bankrupt_bailout_full
+				has_country_flag = bankrupt_bailout_half
+			}
+		}
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 0
+				OR = {
+					NOT = { monthly_income = 0 }
+					is_bankrupt = yes
+					num_of_loans = 30
+				}
+			}
+			modifier = {
+				factor = 0.75
+				num_of_loans = 10
+			}
+			modifier = {
+				factor = 0.5
+				num_of_loans = 20
+			}
+		}
+	}
+	after = {
+		hidden_effect = {
+			clr_country_flag = bankrupt_bailout_refused
+			clr_country_flag = bankrupt_bailout_half
+			clr_country_flag = bankrupt_bailout_full
+			give_back_provinces_clear = yes
+		}
+	}
+}
+country_event = { ## overlord gets option to bail out instead
+	id = MT_general_fixes.251
+	title = MT_general_fixes.251_t
+	desc = MT_general_fixes.251_d
+	picture = OVEREXTENSION_eventPicture
+	is_triggered_only = yes
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = MT_bankrupt_value which = FROM }
+			set_variable = { which = MT_bankrupt_value2 which = MT_bankrupt_value }
+			multiply_variable = { which = MT_bankrupt_value2 value = 0.5 }
+		}
+	}
+	option = { # pay full
+		name = MT_general_fixes.251_o1
+		trigger = {
+			OR = {
+				ai = no
+				AND = {
+					monthly_income = 0
+					NOT = { num_of_loans = 10 }
+					scaled_var_trigger = { var=MT_bankrupt_value trigger=treasury }
+				}
+			}
+		}
+		ai_chance = {
+			factor = 25
+		}
+		custom_tooltip = MT_general_fixes.251_tt1
+		hidden_effect = {
+			FROM = {
+				set_country_flag = bankrupt_bailout_full
+				set_variable = { which = MT_bankrupt_value which = PREV }
+				scaled_var_effect = { var=MT_bankrupt_value effect=add_treasury sign=+ }
+				clr_country_flag = bankrupt_bailout_ask
+				country_event = { id = MT_general_fixes.250 }
+			}
+			scaled_var_effect = { var=MT_bankrupt_value effect=add_treasury sign=- }
+		}
+	}
+	option = { # pay half
+		name = MT_general_fixes.251_o2
+		trigger = {
+			OR = {
+				ai = no
+				AND = {
+					monthly_income = 0
+					NOT = { num_of_loans = 15 }
+					scaled_var_trigger = { var=MT_bankrupt_value trigger=treasury }
+				}
+			}
+		}
+		ai_chance = {
+			factor = 5
+		}
+		custom_tooltip = MT_general_fixes.251_tt2
+		hidden_effect = {
+			FROM = {
+				set_country_flag = bankrupt_bailout_half
+				set_variable = { which = MT_bankrupt_value2 which = PREV }
+				scaled_var_effect = { var=MT_bankrupt_value2 effect=add_treasury sign=+ }
+				clr_country_flag = bankrupt_bailout_ask
+				country_event = { id = MT_general_fixes.250 }
+			}
+			scaled_var_effect = { var=MT_bankrupt_value2 effect=add_treasury sign=- }
+		}
+	}
+	option = { # don't pay
+		name = MT_general_fixes.251_o3
+		ai_chance = {
+			factor = 1
+		}
+		custom_tooltip = MT_general_fixes.251_tt3
+		hidden_effect = {
+			FROM = {
+				set_country_flag = bankrupt_bailout_refused
+				clr_country_flag = bankrupt_bailout_ask
+				country_event = { id = MT_general_fixes.250 }
+			}
+		}
+	}
+	after = {
+		hidden_effect = {
+			set_variable = { which = MT_bankrupt_value value = 0 }
+			set_variable = { which = MT_bankrupt_value2 value = 0 }
+		}
+	}
+}
+country_event = { ## country received province
+	id = MT_general_fixes.252
+	is_triggered_only = yes
+	hidden = yes
+	title = "no_localisation"
+	desc = "no_localisation"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	option = {
+		name = MT_general_fixes.253_o
+	}
+	after = {
+		hidden_effect = {
+			country_event = { id = MT_general_fixes.253 }
+		}
+	}
+}
+country_event = { ## country received province
+	id = MT_general_fixes.253
+	title = MT_general_fixes.253_t
+	desc = MT_general_fixes.253_d
+	picture = OVEREXTENSION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = MT_general_fixes.253_o
+		hidden_effect = { set_variable = { which = MT_bankrupt_given value = 0 } }
+	}
+}
+
+country_event = { #government reform progress 1 - monarchy
+	id = MT_general_fixes.200
+	is_triggered_only = yes
+	hidden = yes
+	title = "no_localisation"
+	desc = "no_localisation"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	trigger = {
+		ai = yes
+		government = monarchy
+#				roving_court
+#				delegated_rulers
+#				bureaucracy
+	}
+	option = {
+		
+	}
+}
+country_event = { #government reform progress 2 - monarchy
+	id = MT_general_fixes.201
+	is_triggered_only = yes
+	hidden = yes
+	title = "no_localisation"
+	desc = "no_localisation"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	trigger = {
+		ai = yes
+		government = monarchy
+#				hereditary_elite
+#				appointed_elite
+#				wealthy_elite
+#				military_elite
+	}
+	option = {
+		
+	}
+}
+country_event = { #government reform progress 1 - republic
+	id = MT_general_fixes.202
+	is_triggered_only = yes
+	hidden = yes
+	title = "no_localisation"
+	desc = "no_localisation"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	trigger = {
+		ai = yes
+		government = republic
+#				oligarchy_reform
+#				dictator_reform
+#				assembly_reform
+#				checks_and_balances
+	}
+	option = {
+		
+	}
+}
+country_event = { #government reform progress 2 - republic
+	id = MT_general_fixes.203
+	is_triggered_only = yes
+	hidden = yes
+	title = "no_localisation"
+	desc = "no_localisation"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	trigger = {
+		ai = yes
+		government = republic
+#				vote_nobility
+#				vote_landowners
+#				vote_tax
+#				vote_free
+	}
+	option = {
+		
+	}
+}
+country_event = { #government reform progress 1 - theocracy
+	id = MT_general_fixes.204
+	is_triggered_only = yes
+	hidden = yes
+	title = "no_localisation"
+	desc = "no_localisation"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	trigger = {
+		ai = yes
+		government = theocracy
+#				divine_sign
+#				council_reform
+#				appointment_reform
+	}
+	option = {
+		
+	}
+}
+country_event = { #government reform progress 2 - theocracy
+	id = MT_general_fixes.205
+	is_triggered_only = yes
+	hidden = yes
+	title = "no_localisation"
+	desc = "no_localisation"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	trigger = {
+		ai = yes
+		government = theocracy
+#				secular_nobility
+#				chaotic_organization
+#				churchmen_rule
+	}
+	option = {
+		
+	}
+}
+country_event = { #government reform progress 1 - tribal
+	id = MT_general_fixes.206
+	is_triggered_only = yes
+	hidden = yes
+	title = "no_localisation"
+	desc = "no_localisation"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	trigger = {
+		ai = yes
+		government = tribal
+#				martial_society_reform
+#				civil_society_reform
+	}
+	option = {
+		
+	}
+}
+country_event = { #government reform progress 2 - tribal
+	id = MT_general_fixes.207
+	is_triggered_only = yes
+	hidden = yes
+	title = "no_localisation"
+	desc = "no_localisation"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	trigger = {
+		ai = yes
+		government = tribal
+#				religious_societies_reform
+#				lip_service_reform
+	}
+	option = {
+		
+	}
+}
+country_event = { #government reform progress 3 - tribal
+	id = MT_general_fixes.208
+	is_triggered_only = yes
+	hidden = yes
+	title = "no_localisation"
+	desc = "no_localisation"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	trigger = {
+		ai = yes
+		government = tribal
+#				centralize_tribal_power_reform
+#				retain_tribal_hierarchy_reform
+	}
+	option = {
+		
+	}
+}
+country_event = { #government reform progress 4 - tribal
+	id = MT_general_fixes.209
+	is_triggered_only = yes
+	hidden = yes
+	title = "no_localisation"
+	desc = "no_localisation"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	trigger = {
+		ai = yes
+		government = tribal
+#				tribe_becomes_monarchy_reform
+#				tribe_becomes_republic_reform
+#				tribe_becomes_theocracy_reform
+#				tribe_becomes_horde_reform
+	}
+	option = {
+		
+	}
+}
+province_event = { ## recalc infra
+	id = MT_general_fixes.300
+	is_triggered_only = yes
+	hidden = yes
+	title = "no_localisation"
+	desc = "no_localisation"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	option = {
+		hidden_effect = { recalc_infra = yes }
+	}
+}

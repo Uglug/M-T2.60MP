@@ -1,0 +1,242 @@
+
+
+#Succession crises copied from dharper's work
+country_event = {
+	id = meiouelective_monarchy.101
+	title = meiouelective_monarchy.101.t
+	desc = meiouelective_monarchy.101.d
+	picture = LIBERUM_VETO_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					any_neighbor_country = {
+						NOT = { has_country_flag = declined_election_kingdom }
+						num_of_cities = 10
+						government = monarchy
+						is_lesser_in_union = no
+						is_female = no
+						has_regency = no
+						religion = ROOT
+					}
+				}
+				random_neighbor_country = {
+					limit = {
+						NOT = { has_country_flag = declined_election_kingdom }
+						num_of_cities = 10
+						government = monarchy
+						is_lesser_in_union = no
+						is_female = no
+						has_regency = no
+						religion = ROOT
+					}
+					country_event = { id = meiouelective_monarchy.102 days = 1 }
+				}
+			}
+			else_if = {
+				limit = {
+					any_neighbor_country = {
+						NOT = { has_country_flag = declined_election_kingdom }
+						num_of_cities = 5
+						government = monarchy
+						is_lesser_in_union = no
+						is_female = no
+						has_regency = no
+						religion = ROOT
+					}
+				}
+				random_neighbor_country = {
+					limit = {
+						NOT = { has_country_flag = declined_election_kingdom }
+						num_of_cities = 5
+						government = monarchy
+						is_lesser_in_union = no
+						is_female = no
+						has_regency = no
+						religion = ROOT
+					}
+					country_event = { id = meiouelective_monarchy.102 days = 1 }
+				}
+			}
+			else_if = {
+				limit = {
+					any_neighbor_country = {
+						NOT = { has_country_flag = declined_election_kingdom }
+						num_of_cities = 3
+						government = monarchy
+						is_lesser_in_union = no
+						is_female = no
+						has_regency = no
+						religion = ROOT
+					}
+				}
+				random_neighbor_country = {
+					limit = {
+						NOT = { has_country_flag = declined_election_kingdom }
+						num_of_cities = 3
+						government = monarchy
+						is_lesser_in_union = no
+						is_female = no
+						has_regency = no
+						religion = ROOT
+					}
+					country_event = { id = meiouelective_monarchy.102 days = 1 }
+				}
+			}
+			else_if = {
+				limit = {
+					any_neighbor_country = {
+						NOT = { has_country_flag = declined_election_kingdom }
+						#num_of_cities = 1
+						government = monarchy
+						is_lesser_in_union = no
+						is_female = no
+						has_regency = no
+						religion = ROOT
+					}
+				}
+				random_neighbor_country = {
+					limit = {
+						NOT = { has_country_flag = declined_election_kingdom }
+						#num_of_cities = 1
+						government = monarchy
+						is_lesser_in_union = no
+						is_female = no
+						has_regency = no
+						religion = ROOT
+					}
+					country_event = { id = meiouelective_monarchy.102 days = 1 }
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = meiouelective_monarchy.101.a #oh dear
+		exile_ruler_as = weak_heir_exiled
+		set_country_flag = weak_heir_exiled
+	}
+}
+
+# Crown offered
+country_event = {
+	id = meiouelective_monarchy.102
+	title = meiouelective_monarchy.102.t
+	desc = meiouelective_monarchy.102.d
+	picture = LIBERUM_VETO_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {		# We accept
+		name = meiouelective_monarchy.102.a
+		overlord = {
+			if = {
+				limit = {
+					senior_union_with = FROM
+				}
+				break_union = FROM
+			}
+		}
+		create_union = FROM
+		set_country_flag = overlord_contested_kingdom
+		FROM = { country_event = { id = meiouelective_monarchy.103 days = 1 } } #weak heir become a rebel stack
+		every_known_country = {
+			#limit = {
+			#	has_country_flag = declined_election_kingdom
+			#}
+			clr_country_flag = declined_election_kingdom
+		}
+		ai_chance = { factor = 80 }
+	}
+	option = {		# We decline
+		name = meiouelective_monarchy.102.b
+		set_country_flag = declined_election_kingdom
+		FROM = { country_event = { id = meiouelective_monarchy.101 days = 1 } } #Repeat
+		ai_chance = { factor = 20 }
+	}
+}
+
+# foreign rule
+country_event = {
+	id = meiouelective_monarchy.103
+	title = meiouelective_monarchy.103.t
+	desc = meiouelective_monarchy.103.d
+	picture = LIBERUM_VETO_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = meiouelective_monarchy.103.a
+		random_owned_province = {
+			limit = {
+				NOT = { units_in_province = 1 }
+			}
+			spawn_rebels = {
+				type = pretender_rebels
+				size = 10
+				win = yes
+			}
+		}
+	}
+}
+
+# end of first chain
+country_event = {
+	id = meiouelective_monarchy.104
+	title = meiouelective_monarchy.104.t
+	desc = meiouelective_monarchy.104.d
+	picture = LIBERUM_VETO_eventPicture
+	
+	trigger = {
+		has_disaster = elective_succession_crisis
+		is_lesser_in_union = yes
+		overlord = {
+			has_country_flag = overlord_contested_kingdom
+		}
+		NOT = {
+			num_of_rebel_armies = 1
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = meiouelective_monarchy.104.a
+		clr_country_flag = elective_crises_start
+		end_disaster = elective_succession_crisis
+		overlord = {
+			clr_country_flag = overlord_contested_kingdom
+			#			country_event = { id = meiouelective_monarchy.105 days = 1 }
+		}
+	}
+}
+
+country_event = {
+	id = meiouelective_monarchy.105
+	title = meiouelective_monarchy.104.t
+	desc = meiouelective_monarchy.104.d
+	picture = LIBERUM_VETO_eventPicture
+	
+	trigger = {
+		has_disaster = elective_succession_crisis
+		had_country_flag = {
+			flag = elective_crises_start
+			days = 730
+		}
+		is_subject = no
+		NOT = {
+			num_of_rebel_armies = 1
+		}
+	}
+	
+	mean_time_to_happen = { years = 2 }
+	
+	option = {
+		name = meiouelective_monarchy.104.a
+		clr_country_flag = elective_crises_start
+		end_disaster = elective_succession_crisis
+	}
+}

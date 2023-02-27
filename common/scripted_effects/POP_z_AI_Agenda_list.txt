@@ -1,0 +1,401 @@
+# Written by KJH, Beorsferth, and Thorik
+# List of all agenda evaluation scripts, from primary agendas to secondary agendas, as well as their descriptions
+
+# Primary Agendas
+
+# Agenda related to building up / strengthening the military, as well as various defensive fascilities
+AIEvalAgendaMilitary = {
+	if = {
+		limit = { personality = ai_militarist }
+		change_variable = { which = tmpMultPos value = 0.2 }
+		subtract_variable = { which = tmpMultNeg value = 0.1 }
+	}
+
+	every_neighbor_country = {
+		limit = {
+			OR = {
+				ai_attitude = { who = FROM attitude = attitude_hostile }
+				ai_attitude = { who = FROM attitude = attitude_outraged }
+				is_enemy = FROM
+				AND = {
+					ai = no
+					NOT = { alliance_with = FROM }
+				}
+			}
+		}
+		set_variable = { which = aiEvalAgendaMilitaryThreat value = 1 }
+		PREV = { change_variable = { which = aiEvalAgendaMilitaryThreat which = PREV } }
+		set_variable = { which = aiEvalAgendaMilitaryThreat value = 0 }
+	}
+	change_variable = { which = tmpValPos which = aiEvalAgendaMilitaryThreat }
+	set_variable = { which = aiEvalAgendaMilitaryThreat value = 0 }
+
+	if = {
+		limit = { has_country_modifier = manpower_full }
+		change_variable = { which = tmpValNeg value = 0.5 }
+	}
+	
+	export_to_variable = { which = tmpLandArmy value = army_size }
+	export_to_variable = { which = tmpLandFL value = land_forcelimit }
+	divide_variable = { which = tmpLandArmy which = tmpLandFL }
+	
+	if = {
+		limit = { check_variable = { which = tmpLandArmy value = 0.75 } }
+		change_variable = { which = tmpValNeg value = 1 }
+	}
+	set_variable = { which = tmpLandArmy value = 0 }
+	set_variable = { which = tmpLandFL value = 0 }
+	
+	export_to_variable = { which = tmpNavFL value = naval_forcelimit }
+	export_to_variable = { which = tmpTotalDev value = total_development }
+	divide_variable = { which = tmpNavFL which = tmpTotalDev }
+	
+	if = {
+		limit = { check_variable = { which = tmpNavFL value = 0.25 } }
+		change_variable = { which = tmpValNeg value = 0.5 }
+	}
+	set_variable = { which = tmpNavFL value = 0 }
+	set_variable = { which = tmpTotalDev value = 0 }
+
+	multiply_variable = { which = tmpValPos which = tmpMultPos }
+	multiply_variable = { which = tmpValNeg which = tmpMultNeg }
+	subtract_variable = { which = tmpValPos which = tmpValNeg }
+	set_variable = { which = $return$ which = tmpValPos }
+	
+	set_variable = { which = tmpValPos value = 0 }
+	set_variable = { which = tmpMultPos value = 0 }
+	set_variable = { which = tmpValNeg value = 0 }
+	set_variable = { which = tmpMultNeg value = 0 }
+}
+
+# Agenda related to improving the economy of both the state and its people
+# Mainly, it deals with improving trade income and production income of the state
+# by improving those incomes in its cities
+AIEvalAgendaEconomy = {
+	if = {
+		limit = {
+			OR = {
+				AND = { is_at_war = no treasury = 300 }
+				AND = { is_at_war = yes treasury = 1000 }
+			}
+			NOT = { num_of_revolts = 1 }
+			NOT = { num_of_loans = 1 }
+			has_any_disaster = no
+		}
+		set_variable = { which = $return$ value = 3 }
+	}	
+	else = { set_variable = { which = $return$ value = -3 } }
+}
+
+# Agenda related to internal manageament such as reforms, CE, education and saving
+AIEvalAgendaGovernance = {
+	if = {
+		limit = { NOT = { government = tribal } }
+		if = {
+			limit = { average_autonomy = 60 }
+			change_variable = { which = tmpValPos value = 2.1 }
+		}
+		else_if = {
+			limit = { average_autonomy = 50 }
+			change_variable = { which = tmpValPos value = 1.75 }
+		}
+		else_if = {
+			limit = { average_autonomy = 40 }
+			change_variable = { which = tmpValPos value = 1.4 }
+		}
+		else_if = {
+			limit = { average_autonomy = 30 }
+			change_variable = { which = tmpValPos value = 1.05 }
+		}
+		else_if = {
+			limit = { average_autonomy = 20 }
+			change_variable = { which = tmpValPos value = 0.7 }
+		}
+		else_if = {
+			limit = { average_autonomy = 10 }
+			change_variable = { which = tmpValPos value = 0.35 }
+		}
+	}
+
+	if = {
+		limit = { corruption = 30 }
+		change_variable = { which = tmpValPos value = 2.6 }
+	}
+	else_if = {
+		limit = { corruption = 25 }
+		change_variable = { which = tmpValPos value = 2.25 }
+	}
+	else_if = {
+		limit = { corruption = 20 }
+		change_variable = { which = tmpValPos value = 1.8 }
+	}
+	else_if = {
+		limit = { corruption = 15 }
+		change_variable = { which = tmpValPos value = 1.35 }
+	}
+	else_if = {
+		limit = { corruption = 10 }
+		change_variable = { which = tmpValPos value = 0.9 }
+	}
+	else_if = {
+		limit = { corruption = 7.5 }
+		change_variable = { which = tmpValPos value = 0.45 }
+	}
+
+	export_to_variable = { which = tmpUnrest value = average_unrest }
+	if = {
+		limit = { check_variable = { which = tmpUnrest value = 0 } }
+		multiply_variable = { which = tmpUnrest value = 0.5 }
+	}
+	else = { multiply_variable = { which = tmpUnrest value = 0.05 } }
+	multiply_variable = { which = tmpUnrest value = -1 }
+	change_variable = { which = tmpValPos which = tmpUnrest }
+	set_variable = { which = tmpUnrest value = 0 }
+
+	if = {
+		limit = { estate_influence = { estate = estate_bureaucracy influence = 80 } }
+		change_variable = { which = tmpValNeg value = 0.75 }
+	}
+	else_if = {
+		limit = { estate_influence = { estate = estate_bureaucracy influence = 70 } }
+		change_variable = { which = tmpValNeg value = 0.6 }
+	}
+	else_if = {
+		limit = { estate_influence = { estate = estate_bureaucracy influence = 60 } }
+		change_variable = { which = tmpValNeg value = 0.45 }
+	}
+	else_if = {
+		limit = { estate_influence = { estate = estate_bureaucracy influence = 50 } }
+		change_variable = { which = tmpValNeg value = 0.3 }
+	}
+	else_if = {
+		limit = { estate_influence = { estate = estate_bureaucracy influence = 40 } }
+		change_variable = { which = tmpValNeg value = 0.15 }
+	}
+	
+	subtract_variable = { which = tmpValPos which = tmpValNeg }
+	set_variable = { which = $return$ which = tmpValPos }
+	
+	set_variable = { which = tmpValPos value = 0 }
+	set_variable = { which = tmpValNeg value = 0 }
+}
+
+
+# Secondary Agendas
+# Military / Agenda related to gearing up the military for defensive purpose
+AIEvalAgendaDefense = {
+	export_to_variable = { which = tmpNumOfCit value = num_of_cities }
+	GetFortCand = { return = tmpFortCand }
+	
+	every_owned_province = {
+		limit = { has_province_flag = tmpFortCand }
+		clr_province_flag = tmpFortCand
+		PREV = { change_variable = { which = tmpFortCandNum value = 1 } }
+	}
+	
+	if = {
+		limit = { is_variable_equal = { which = tmpFortCandNum value = 0 } }
+		set_variable = { which = $return$ value = -3 }
+	}
+	else = {
+		multiply_variable = { which = tmpFortCandNum value = 10 }
+		divide_variable = { which = tmpFortCandNum which = tmpNumOfCit }
+		change_variable = { which = tmpValPos which = tmpFortCandNum }
+		set_variable = { which = tmpFortCandNum value = 0 }
+	}
+	
+	set_variable = { which = tmpNumOfCit value = 0 }
+	
+	if = {
+		limit = { is_year = 1806 }
+		multiply_variable = { which = $return$ value = 0.85 }
+	}
+	else_if = {
+		limit = {
+			is_year = 1756
+			NOT = { is_year = 1806 }
+		}
+		multiply_variable = { which = $return$ value = 0.9 }
+	}
+	else_if = {
+		limit = {
+			is_year = 1706
+			NOT = { is_year = 1756 }
+		}
+		multiply_variable = { which = $return$ value = 0.95 }
+	}
+	
+	set_variable = { which = $return$ which = tmpValPos }
+
+	set_variable = { which = tmpValPos value = 0 }
+}
+
+# Governance / Agenda related to technological development
+AIEvalAgendaTech = {
+	if = {
+		limit = { ruler_has_personality = scholar_personality }
+		change_variable = { which = tmpValPos value = 0.15 }
+		change_variable = { which = tmpMultPos value = 0.4 }
+		subtract_variable = { which = tmpMultNeg value = 0.4 }
+	}
+	if = {
+		limit = { ruler_has_personality = free_thinker_personality }
+		change_variable = { which = tmpValPos value = 0.15 }
+		change_variable = { which = tmpMultPos value = 0.4 }
+		subtract_variable = { which = tmpMultNeg value = 0.4 }
+	}
+
+	GetTechLack = { return = tmpValChange }
+	multiply_variable = { which = tmpValChange value = 0.1 }
+	change_variable = { which = tmpValPos which = tmpValChange }
+	divide_variable = { which = tmpValChange value = 3 }
+	change_variable = { which = tmpMultPos which = tmpValChange }
+	set_variable = { which = tmpValChange value = 0 }
+
+	export_to_variable = { which = tmpInc value = monthly_income }
+	
+	# Art
+	set_variable = { which = tmpValChange which = tmpInc }
+	multiply_variable = { which = tmpValChange value = 15 }
+	subtract_variable = { which = tmpValChange which = court_money_endowed }
+	if = {
+		limit = { is_variable_equal = { which = tmpInc value = 0 } }
+		set_variable = { which = tmpInc value = 1 }
+	}
+	divide_variable = { which = tmpValChange which = tmpInc }
+	divide_variable = { which = tmpValChange value = 15 }
+	subtract_variable = { which = tmpValChange value = 0.333 }
+	
+	if = {
+		limit = { check_variable = { which = tmpValChange value = 0 } }
+		multiply_variable = { which = tmpValChange value = 0.5 }
+		change_variable = { which = tmpValPos which = tmpValChange }
+		divide_variable = { which = tmpValChange value = 3 }
+		change_variable = { which = tmpMultPos which = tmpValChange }
+	}
+	else = {
+		multiply_variable = { which = tmpValChange value = -1 }
+		change_variable = { which = tmpValNeg which = tmpValChange }
+		divide_variable = { which = tmpValChange value = 3 }
+		change_variable = { which = tmpMultNeg which = tmpValChange }
+	}
+	
+	set_variable = { which = tmpValChange value = 0 }
+
+	# Education
+	set_variable = { which = tmpValChange which = tmpInc }
+	multiply_variable = { which = tmpValChange value = 30 }
+	subtract_variable = { which = tmpValChange which = court_money_endowed }
+	divide_variable = { which = tmpValChange which = tmpInc }
+	divide_variable = { which = tmpValChange value = 30 }
+	subtract_variable = { which = tmpValChange value = 0.333 }
+	
+	if = {
+		limit = { check_variable = { which = tmpValChange value = 0 } }
+		multiply_variable = { which = tmpValChange value = 0.5 }
+		change_variable = { which = tmpValPos which = tmpValChange }
+		divide_variable = { which = tmpValChange value = 3 }
+		change_variable = { which = tmpMultPos which = tmpValChange }
+	}
+	else = {
+		multiply_variable = { which = tmpValChange value = -1 }
+		change_variable = { which = tmpValNeg which = tmpValChange }
+		divide_variable = { which = tmpValChange value = 3 }
+		change_variable = { which = tmpMultNeg which = tmpValChange }
+	}
+	
+	set_variable = { which = tmpValChange value = 0 }
+
+	multiply_variable = { which = tmpValPos which = tmpMultPos }
+	multiply_variable = { which = tmpValNeg which = tmpMultNeg }
+	subtract_variable = { which = tmpValPos which = tmpValNeg }
+	
+	set_variable = { which = $return$ which = tmpValPos }
+	
+	set_variable = { which = tmpValPos value = 0 }
+	set_variable = { which = tmpMultPos value = 0 }
+	set_variable = { which = tmpValNeg value = 0 }
+	set_variable = { which = tmpMultNeg value = 0 }
+}
+
+# Governance / Agenda related to doing reforms
+AIEvalAgendaReform = {
+	if = {
+		limit = { ruler_has_personality = incorruptible_personality }
+		change_variable = { which = tmpMultPos value = 0.2 }
+		subtract_variable = { which = tmpMultNeg value = 0.1 }
+	}
+
+	export_to_variable = { which = tmpValChange value = corruption }
+	subtract_variable = { which = tmpValChange value = 10 }
+	multiply_variable = { which = tmpValChange value = 0.2 }
+	
+	if = {
+		limit = { check_variable = { which = tmpValChange value = 0 } }
+		change_variable = { which = tmpValPos which = tmpValChange }
+	}
+	else = {
+		multiply_variable = { which = tmpValChange value = -3 }
+		change_variable = { which = tmpValNeg which = tmpValChange }
+	}
+
+	export_to_variable = { which = tmpMultChange value = stability }
+	divide_variable = { which = tmpMultChange value = 3 }
+	
+	if = {
+		limit = { check_variable = { which = tmpMultChange value = 0 } }
+		change_variable = { which = tmpMultChange value = 1 }
+		change_variable = { which = tmpMultPos which = tmpMultChange }
+		multiply_variable = { which = tmpMultChange value = 0.5 }
+		subtract_variable = { which = tmpMultNeg which = tmpMultChange }
+	}
+	else = {
+		multiply_variable = { which = tmpMultChange value = -1 }
+		change_variable = { which = tmpMultChange value = 1 }
+		change_variable = { which = tmpMultNeg which = tmpMultChange }
+		multiply_variable = { which = tmpMultChange value = 0.5 }
+		subtract_variable = { which = tmpMultPos which = tmpMultChange }
+	}
+
+	multiply_variable = { which = tmpValPos which = tmpMultPos }
+	multiply_variable = { which = tmpValNeg which = tmpMultNeg }
+	subtract_variable = { which = tmpValPos which = tmpValNeg }
+	
+	if = {
+		limit = {
+			OR = {
+				is_at_war = yes
+				has_any_disaster = yes
+			}
+		}
+		set_variable = { which = $return$ value = -3 }
+	}
+	else = { set_variable = { which = $return$ which = tmpValPos } }
+	
+	set_variable = { which = tmpValPos value = 0 }
+	set_variable = { which = tmpMultPos value = 0 }
+	set_variable = { which = tmpValNeg value = 0 }
+	set_variable = { which = tmpMultNeg value = 0 }
+	set_variable = { which = tmpValChange value = 0 }
+	set_variable = { which = tmpMultChange value = 0 }
+}
+
+# Governance / Agenda related to CE manageament
+AIEvalAgendaCE = {
+	set_variable = { which = tmpValPos which = country_CE_average }
+	export_to_variable = { which = tmpValMed value = num_of_cities }
+	multiply_variable = { which = tmpValMed value = 0.1 }
+	change_variable = { which = tmpValMed value = 10 }
+	subtract_variable = { which = tmpValPos which = tmpValMed }
+
+	if = {
+		limit = { check_variable = { which = tmpValPos value = 0 } }
+		multiply_variable = {which = tmpValPos value = 0.1 }
+		change_variable = { which = tmpValPos value = 0.3 }
+		set_variable = { which = $return$ which = tmpValPos }
+	}
+	else = { set_variable = { which = $return$ value = -3 } }
+	
+	set_variable = { which = tmpValPos value = 0 }
+	set_variable = { which = tmpValMed value = 0 }
+}

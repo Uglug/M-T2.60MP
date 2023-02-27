@@ -1,0 +1,264 @@
+namespace = dg_knights
+
+country_event = { #01 - Defeat of the Knights
+	
+	id = dg_knights.001
+	title = dg_knights.001.t
+	desc = dg_knights.001.d
+	picture = BATTLE_eventPicture
+	
+	trigger = {
+		owns_small_med_island_trigger = yes
+		num_of_cities = 10
+		religion = catholic
+		KNI = {
+			NOT = { num_of_cities = 2 }
+			OR = {
+				AND = {
+					capital_scope = { has_siege = yes }
+					KNI = { at_war_with_religious_enemy = yes }
+				}
+				NOT = { exists = KNI }
+			}
+			religion = catholic
+			government = theocracy
+		}
+		NOT = { has_global_flag = knights_in_trouble }
+		piety = -0.20
+		is_excommunicated = no
+		NOT = { has_country_flag = knights_abandoned }
+		OR = {
+			NOT = { government = republic }
+			piety = 0.60
+		}
+	}
+	
+	mean_time_to_happen = {
+		
+		months = 6
+		
+		modifier = {
+			piety = 0.20
+			factor = 0.7
+		}
+		modifier = {
+			piety = 0.60
+			factor = 0.7
+		}
+		modifier = {
+			owns = 320 # Rhodes
+			factor = 0.5
+		}
+	}
+	
+	immediate = { set_global_flag = knights_in_trouble }
+	
+	option = {
+		name = dg_knights.001.a #Give them a new home
+		ai_chance = {
+			factor = 70
+			modifier = {
+				PAP = { NOT = { check_variable = { which = papal_authority value = 500 } } }
+				factor = 0.7
+			}
+			modifier = {
+				PAP = { NOT = { check_variable = { which = papal_authority value = 400 } } }
+				factor = 0.7
+			}
+			modifier = {
+				PAP = { NOT = { check_variable = { which = papal_authority value = 300 } } }
+				factor = 0.7
+			}
+			modifier = {
+				government = republic
+				factor = 0.5
+			}
+			modifier = {
+				government = theocracy
+				factor = 2
+			}
+			modifier = {
+				piety = 0.60
+				factor = 1.4
+			}
+			modifier = {
+				has_country_flag = helped_the_knights
+				factor = 0.5
+			}
+		}
+		if = {
+			limit = { PAP = { check_variable = { which = papal_authority value = 500 } } }
+			add_papal_influence = 100
+		}
+		else_if = {
+			limit = { PAP = { check_variable = { which = papal_authority value = 400 } } }
+			add_papal_influence = 80
+		}
+		else_if = {
+			limit = { PAP = { check_variable = { which = papal_authority value = 300 } } }
+			add_papal_influence = 60
+		}
+		else = {
+			add_papal_influence = 40
+		}
+		dg_add_prestige = yes
+		if = {
+			limit = {
+				NOT = { owns = 320 } # Rhodes
+				NOT = {
+					any_owned_province = {
+						small_med_island_trigger = yes
+						NOT = { culture_group = ROOT }
+						has_owner_accepted_culture = no
+					}
+				}
+			}
+			random_owned_province = {
+				limit = { small_med_island_trigger = yes }
+				set_province_flag = knights_new_home
+				add_core = KNI
+				cede_province = KNI
+			}
+		}
+		if = {
+			limit = {
+				NOT = { owns = 320 } # Rhodes
+				any_owned_province = {
+					small_med_island_trigger = yes
+					NOT = { culture_group = ROOT }
+					has_owner_accepted_culture = no
+				}
+			}
+			random_owned_province = {
+				limit = {
+					small_med_island_trigger = yes
+					NOT = { culture_group = ROOT }
+					has_owner_accepted_culture = no
+				}
+				set_province_flag = knights_new_home
+				add_core = KNI
+				cede_province = KNI
+			}
+		}
+		if = {
+			limit = { owns = 320 } # Rhodes
+			320 = { set_province_flag = knights_new_home add_core = KNI cede_province = KNI }
+		}
+		KNI = { country_event = { id = dg_knights.002 } }
+	}
+	option = {
+		name = dg_knights.001.b #Leave them to their fate
+		ai_chance = { factor = 30 }
+		set_country_flag = knights_abandoned
+		clr_global_flag = knights_in_trouble
+		if = {
+			limit = { piety = 0.60 }
+			add_prestige = -5
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_prestige = -4
+		}
+		else = {
+			add_prestige = -3
+		}
+		if = {
+			limit = { PAP = { check_variable = { which = papal_authority value = 500 } } }
+			add_papal_influence = -5
+		}
+		else_if = {
+			limit = { PAP = { check_variable = { which = papal_authority value = 400 } } }
+			add_papal_influence = -4
+		}
+		else_if = {
+			limit = { PAP = { check_variable = { which = papal_authority value = 300 } } }
+			add_papal_influence = -3
+		}
+		else = {
+			add_papal_influence = -2
+		}
+	}
+}
+
+country_event = { #02 - Retreat of the Knights
+	
+	id = dg_knights.002
+	title = dg_knights.002.t
+	desc = dg_knights.002.d
+	picture = BATTLE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = dg_knights.002.a #Abandon [Root.Capital.GetCapitalName]
+		ai_chance = { factor = 90 }
+		if = {
+			limit = { num_of_cities = 2 }
+			capital_scope = {
+				set_province_flag = abandoned_KNI_home
+			}
+			random_known_country = {
+				limit = {
+					war_with = ROOT
+					NOT = { religion = catholic }
+					num_of_cities = 1 #Not REB
+					all_country = {
+						OR = {
+							NOT = { war_with = ROOT }
+							religion = catholic
+							NOT = { army_size = PREV }
+							NOT = { num_of_cities = PREV }
+						}
+					}
+				}
+				country_event = { id = dg_knights.003 days = 1 }
+			}
+			every_country = {
+				limit = {
+					war_with = ROOT
+					#num_of_cities = 1
+				}
+				white_peace = ROOT
+			}
+		}
+		random_owned_province = {
+			limit = { has_province_flag = knights_new_home }
+			clr_province_flag = knights_new_home
+			add_core = ROOT
+			owner = {
+				Effect_set_capital = { target=PREV }
+			}
+		}
+	}
+	option = {
+		name = dg_knights.002.b #Defend our home to the bitter end
+		ai_chance = { factor = 10 }
+		random_owned_province = {
+			limit = { has_province_flag = knights_new_home }
+			clr_province_flag = knights_new_home
+			add_claim = ROOT
+		}
+	}
+}
+
+country_event = {
+	
+	id = dg_knights.003
+	title = dg_knights.002.t
+	desc = dg_knights.003.d
+	picture = BATTLE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = dg_knights.003.a
+		FROM = {
+			random_owned_province = {
+				limit = { has_province_flag = abandoned_KNI_home }
+				clr_province_flag = abandoned_KNI_home
+				cede_province = ROOT
+			}
+		}
+	}
+}
+

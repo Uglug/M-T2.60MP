@@ -1,0 +1,215 @@
+country_decisions = {
+	install_le_emperor = {
+		major = yes
+		potential = {
+			primary_culture = vietnamese
+			NOT = { tag = DAI }
+			NOT = { has_country_modifier = puppet_le_emperor }
+		}
+		allow = {
+			owns = 2395 # Thang Long
+			treasury = 50
+		}
+		effect = {
+			add_country_modifier = {
+				name = "puppet_le_emperor"
+				duration = -1
+			}
+			every_known_country = {
+				limit = { has_country_modifier = puppet_le_emperor }
+				remove_country_modifier = puppet_le_emperor
+				add_prestige = -50
+			}
+			if = {
+				limit = {
+					NOT = { has_global_flag = fall_of_mac }
+				}
+				DAI = { country_event = { id = hundred_viet.2 } }
+			}
+			add_treasury = -50
+			add_adm_power = 100
+			add_dip_power = 100
+			Effect_set_capital = { target=2395 }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+	restore_le_emperor = {
+		major = yes
+		potential = {
+			primary_culture = vietnamese
+			NOT = { tag = DAI }
+			has_country_modifier = puppet_le_emperor
+		}
+		provinces_to_highlight = {
+			OR = {
+				owned_by = TOK
+				owned_by = ANN
+				owned_by = VUU
+				owned_by = MAC
+			}
+			NOT = { owned_by = ROOT }
+		}
+		allow = {
+			OR = {
+				and = {
+					tag = ANN
+					OR = {
+						NOT = { exists = TOK }
+						overlord_of = TOK
+					}
+					OR = {
+						NOT = { exists = VUU }
+						overlord_of = VUU
+					}
+					OR = {
+						NOT = { exists = MAC }
+						overlord_of = MAC
+					}
+				}
+				and = {
+					tag = TOK
+					OR = {
+						NOT = { exists = ANN }
+						overlord_of = ANN
+					}
+					OR = {
+						NOT = { exists = VUU }
+						overlord_of = VUU
+					}
+					OR = {
+						NOT = { exists = MAC }
+						overlord_of = MAC
+					}
+				}
+				and = {
+					tag = VUU
+					OR = {
+						NOT = { exists = TOK }
+						overlord_of = TOK
+					}
+					OR = {
+						NOT = { exists = ANN }
+						overlord_of = ANN
+					}
+					OR = {
+						NOT = { exists = MAC }
+						overlord_of = MAC
+					}
+				}
+			}
+			owns = 2395 # Thang Long
+			treasury = 50
+		}
+		effect = {
+			if = {
+				limit = { government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+				change_title_5 = yes
+			}
+			vietnam_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = DAI }
+			vietnam_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = DAI }
+			champa_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = DAI }
+			champa_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = DAI }
+			change_tag = DAI
+			add_absolutism = 10
+			define_ruler = {
+				dynasty = "Le"
+			}
+			define_heir = {
+				dynasty = "Le"
+			}
+			if = {
+				limit = {
+					has_custom_ideas = no
+					NOT = { has_idea_group = DAI_ideas }
+				}
+				swap_national_ideas_effect = yes
+			}
+			remove_country_modifier = puppet_le_emperor
+			if = {
+				limit = {
+					overlord_of = MAC
+				}
+				inherit = MAC
+			}
+			if = {
+				limit = {
+					overlord_of = TOK
+				}
+				inherit = TOK
+			}
+			if = {
+				limit = {
+					overlord_of = ANN
+				}
+				inherit = ANN
+			}
+			if = {
+				limit = {
+					overlord_of = VUU
+				}
+				inherit = VUU
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		ai_importance = 400
+	}
+	
+	assassinate_kim_nguyen = {
+		potential = {
+			dynasty = "Mac"
+			NOT = { has_global_flag = kim_nguyen_dead }
+		}
+		allow = {
+			3936 = { owned_by = ANN }
+			treasury = 50
+		}
+		effect = {
+			random = {
+				chance = 50
+				ANN = { kill_ruler = yes }
+			}
+			add_treasury = -50
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	introduce_emperor = {
+		potential = {
+			primary_culture = vietnamese
+			religion = mahayana
+			has_country_modifier = title_6
+			has_heir = yes
+			OR = {
+				heir_age = 18
+				has_country_modifier = heir_introduced
+			}
+			NOT = { has_ruler_modifier = retired_emperor }
+		}
+		allow = {
+			years_of_income = 0.05
+			dip_power = 20
+		}
+		effect = {
+			add_ruler_modifier = {
+				name = "retired_emperor"
+				duration = -1
+			}
+			add_heir_claim = 10
+			add_prestige = 5
+			add_years_of_income = -0.05
+			add_dip_power = -20
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+}

@@ -1,0 +1,965 @@
+namespace = dg_shinto
+
+#01 - Shinto and Buddhism
+#02 - Shugendo
+#03 - Ise Grand Shrine
+#04 - $DYNASTY$ Shinto
+#05 - Yuiitso Shinto
+#06 - $COUNTRY_ADJ$ Literature (Kokugaku)
+#07 - The Sonno Joi Movement (1868)
+#08 - The Tenriyko Sect (1838)
+
+##################
+# Shinto (Japan) # 30s
+##################
+
+country_event = { #01 - Shinto
+	
+	id = dg_shinto.001
+	title = dg_shinto.001.t
+	desc = dg_shinto.001.d
+	picture = mahayana_shinto
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = dg_shinto.001.a #Pay tribute to the spirits
+		trigger = { NOT = { has_country_modifier = pure_land_buddhism } } #Intentionally rejected Shinto
+		ai_chance = { factor = 60 }
+		if = {
+			limit = { monthly_income = 500 }
+			add_treasury = -500
+		}
+		else_if = {
+			limit = { monthly_income = 5 }
+			add_years_of_income = -0.08
+		}
+		else = {
+			add_treasury = -5
+		}
+		if = {
+			limit = { NOT = { has_country_flag = buddhist_purification } }
+			if = {
+				limit = { piety = 0.60 }
+				add_legitimacy = 4
+				add_prestige = 2
+			}
+			else_if = {
+				limit = { piety = 0.20 }
+				add_legitimacy = 3
+				add_prestige = 1.5
+			}
+			else_if = {
+				limit = { piety = -0.20 }
+				add_legitimacy = 2
+				add_prestige = 1
+			}
+			else_if = {
+				limit = { piety = -0.60 }
+				add_legitimacy = 1
+				add_prestige = 0.5
+			}
+		}
+		#if = {
+		#	limit = { has_country_flag = yamada_shinto_dominates } #unused
+		#	add_country_modifier = { name = yuiitso_shinto }
+		#}
+		#else = {
+		#	add_country_modifier = { name = shinto_buddhism }
+		#}
+		if = {
+			limit = { NOT = { has_country_modifier = yuiitso_shinto } }
+			add_country_modifier = { name = shinto_buddhism }
+		}
+		hidden_effect = {
+			clr_country_flag = buddhist_purification
+			set_country_flag = adopted_shinto
+		}
+	}
+	option = {
+		name = dg_shinto.001.b #Ignore the rituals
+		ai_chance = {
+			factor = 40
+			modifier = {
+				NOT = { years_of_income = 0.08 }
+				factor = 1.4
+			}
+			modifier = {
+				num_of_loans = 1
+				factor = 1.4
+			}
+			modifier = {
+				num_of_loans = 2
+				factor = 1.4
+			}
+			modifier = {
+				is_bankrupt = yes
+				factor = 2
+			}
+			modifier = {
+				any_owned_province = { has_province_modifier = ise_shrine }
+				factor = 0.7
+			}
+			modifier = {
+				owns = 1030 # Mimasaka
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 0.20 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				religious_unity = 0.80
+				factor = 1.4
+			}
+			modifier = {
+				has_country_flag = adopted_shinto
+				factor = 0.5
+			}
+			modifier = {
+				has_country_flag = buddhist_purification
+				factor = 2
+			}
+			modifier = { #Heathens are encroaching on Japan
+				any_owned_province = {
+					japanese_culture_trigger = yes
+					NOT = { religion_group = taoic }
+				}
+				factor = 2
+			}
+			modifier = { #Heathens are encroaching on Japan
+				any_province = {
+					japanese_culture_trigger = yes
+					NOT = { religion_group = taoic }
+				}
+				factor = 2
+			}
+		}
+		if = {
+			limit = { has_country_flag = adopted_shinto }
+			if = {
+				limit = { piety = 0.60 }
+				add_legitimacy = -2
+				add_prestige = -4
+			}
+			else_if = {
+				limit = { piety = 0.20 }
+				add_legitimacy = -1.5
+				add_prestige = -3
+			}
+			else_if = {
+				limit = { piety = -0.20 }
+				add_legitimacy = -1
+				add_prestige = -2
+			}
+			else_if = {
+				limit = { piety = -0.60 }
+				add_legitimacy = -0.5
+				add_prestige = -1
+			}
+		}
+		hidden_effect = {
+			set_country_flag = buddhist_purification
+			clr_country_flag = adopted_shinto
+		}
+	}
+}
+
+province_event = { #02 - Shugendo
+	
+	id = dg_shinto.002
+	title = dg_shinto.002.t
+	desc = dg_shinto.002.d
+	picture = mahayana_shinto
+	
+	trigger = {
+		owner = {
+			OR = {
+				has_country_modifier = shinto_buddhism
+				has_country_modifier = yuiitso_shinto
+				religion = shinto
+			}
+		}
+		check_variable = { which = shinto value = 2 }
+		NOT = { owner = { has_country_flag = shugendo_amalgamated } }
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 208
+		
+		modifier = {
+			owner = { NOT = { num_of_cities = 3 } }
+			factor = 0.7
+		}
+		modifier = {
+			owner = { num_of_cities = 5 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 10 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 20 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 40 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 80 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 160 }
+			factor = 1.6
+		}
+	}
+	
+	option = {
+		name = dg_shinto.002.a #Let them worship the way they want
+		ai_chance = { factor = 20 }
+		random = {
+			chance = 50
+			if = {
+				limit = { NOT = { owner = { religion = shinto } } }
+				custom_tooltip = shinto_10
+				hidden_effect = {
+					change_variable = { which = shinto value = 2 }
+					change_variable = { which = province_religion value = -2 }
+				}
+			}
+			if = {
+				limit = { owner = { religion = shinto } }
+				custom_tooltip = mahayana_10
+				hidden_effect = {
+					change_variable = { which = mahayana value = 2 }
+					change_variable = { which = province_religion value = -2 }
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_shinto.002.b #Send a priest to correct them
+		ai_chance = {
+			factor = 20
+			modifier = {
+				owner = { piety = 0.60 }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { piety = 0.20 }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { NOT = { piety = -0.20 } }
+				factor = 0.7
+			}
+		}
+		owner = { add_adm_power = -5 }
+	}
+	option = {
+		name = dg_shinto.002.c #Force Shugendo temples to join a Buddhist sect (1613 historically)
+		ai_chance = { factor = 60 }
+		trigger = { owner = { adm_tech = 20 } }
+		owner = {
+			add_adm_power = -25
+			hidden_effect = { set_country_flag = shugendo_amalgamated }
+		}
+	}
+}
+
+province_event = { #033 - Ise Shrine
+	
+	id = dg_shinto.003
+	title = dg_shinto.003.t
+	desc = dg_shinto.003.d
+	picture = mahayana_shinto
+	
+	trigger = {
+		ise_shrine_province_trigger = yes
+		NOT = { has_province_modifier = ise_shrine }
+		OR = {
+			religion = shinto
+			religion = mahayana
+		}
+		check_variable = { which = shinto value = 2 }
+		owner = {
+			OR = {
+				has_country_modifier = shinto_buddhism
+				has_country_modifier = yuiitso_shinto
+				religion = shinto
+			}
+			is_free_or_tributary_trigger = yes
+			num_of_cities = 4
+			piety = -0.60
+			NOT = { has_country_flag = ise_shrine_declined }
+		}
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 8
+		
+		modifier = {
+			owner = { piety = 0.60 }
+			factor = 0.7
+		}
+		modifier = {
+			owner = { piety = 0.20 }
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { owner = { piety = -0.20 } }
+			factor = 1.4
+		}
+	}
+	
+	immediate = {
+		if = {
+			limit = { owner = { religion_group = taoic } }
+			custom_tooltip = dg_shinto.003.mahayana
+		}
+	}
+	
+	option = {
+		name = dg_shinto.003.e #Rebuild the shrine and appoint a new high priest
+		ai_chance = { factor = 50 }
+		owner = { add_treasury = -10 }
+		add_province_modifier = { name = ise_shrine duration = 7300 }
+	}
+	option = {
+		name = dg_shinto.003.b #A $DYNASTY$ princess shall be high priestess
+		trigger = { owner = { government = monarchy } }
+		ai_chance = { factor = 20 }
+		owner = {
+			add_adm_power = -10
+			add_treasury = -10
+			if = {
+				limit = { NOT = { advisor = theologian } }
+				define_advisor = { religion = shinto type = theologian discount = yes }
+			}
+		}
+		add_province_modifier = { name = ise_shrine duration = 7300 }
+		owner = {
+			if = {
+				limit = { piety = 0.60 }
+				add_prestige = 2
+			}
+			else_if = {
+				limit = { piety = 0.20 }
+				add_prestige = 1.5
+			}
+			else_if = {
+				limit = { piety = -0.20 }
+				add_prestige = 1
+			}
+			else_if = {
+				limit = { piety = -0.60 }
+				add_prestige = 0.5
+			}
+		}
+	}
+	option = {
+		name = dg_shinto.003.c #Let the shrine continue to fall into disrepair
+		ai_chance = {
+			factor = 0 #was 20
+			modifier = {
+				owner = { piety = 0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { piety = 0.20 }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { NOT = { piety = -0.20 } }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { num_of_loans = 1 }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { num_of_loans = 2 }
+				factor = 1.4
+			}
+		}
+		owner = {
+			if = {
+				limit = { piety = 0.60 }
+				add_prestige = -4
+			}
+			else_if = {
+				limit = { piety = 0.20 }
+				add_prestige = -3
+			}
+			else_if = {
+				limit = { piety = -0.20 }
+				add_prestige = -2
+			}
+			else_if = {
+				limit = { piety = -0.60 }
+				add_prestige = -1
+			}
+		}
+		owner = {
+			remove_country_modifier = shinto_buddhism
+			remove_country_modifier = yuiitso_shinto
+			set_country_flag = ise_shrine_declined #Per ruler
+		}
+	}
+	option = {
+		name = dg_shinto.003.a #$MONARCH$ shall be the high priest
+		trigger = { owner = { OR = { has_regency = no has_consort_regency = yes } } }
+		ai_chance = {
+			factor = 5
+			modifier = {
+				owner = { religion = shinto }
+				factor = 4
+			}
+			modifier = {
+				owner = { government = republic }
+				factor = 0.5
+			}
+			modifier = {
+				owner = { government = theocracy }
+				factor = 2
+			}
+		}
+		owner = {
+			add_adm_power = -50
+			add_treasury = -10
+			if = {
+				limit = { government = theocracy }
+				2282 = { owner = { Effect_set_capital = { target=PREV } } }
+			}
+		}
+		add_province_modifier = { name = ise_shrine duration = 7300 }
+		owner = {
+			if = {
+				limit = { piety = 0.60 }
+				add_legitimacy = 2
+				add_devotion = 4
+				add_republican_tradition = 1
+				add_prestige = 2
+			}
+			else_if = {
+				limit = { piety = 0.20 }
+				add_legitimacy = 1.5
+				add_devotion = 3
+				add_republican_tradition = 0.75
+				add_prestige = 1.5
+			}
+			else_if = {
+				limit = { piety = -0.20 }
+				add_legitimacy = 1
+				add_devotion = 2
+				add_republican_tradition = 0.5
+				add_prestige = 1
+			}
+			else_if = {
+				limit = { piety = -0.60 }
+				add_legitimacy = 0.5
+				add_devotion = 1
+				add_republican_tradition = 0.25
+				add_prestige = 0.5
+			}
+		}
+		custom_tooltip = shinto_10
+		hidden_effect = {
+			change_variable = { which = shinto value = 2 }
+			change_variable = { which = province_religion value = -2 }
+		}
+	}
+	option = {
+		name = dg_shinto.003.f #Break with tradition and build the shrine to last forever
+		ai_chance = {
+			factor = 0 #was 5
+			modifier = {
+				owner = { NOT = { treasury = 100 } }
+				factor = 0
+			}
+			modifier = {
+				owner = { NOT = { treasury = 200 } }
+				factor = 0.5
+			}
+			modifier = {
+				owner = { num_of_loans = 1 }
+				factor = 0.5
+			}
+			modifier = {
+				owner = { is_bankrupt = yes }
+				factor = 0
+			}
+			modifier = {
+				owner = { num_of_loans = 3 }
+				factor = 0
+			}
+		}
+		add_province_modifier = { name = ise_shrine duration = -1 }
+		owner = {
+			add_treasury = -100
+			add_adm_power = -25
+		}
+		if = {
+			limit = { owner = { piety = 0.60 } }
+			add_province_modifier = { name = religious_scandal_province duration = 8000 }
+			owner = {
+				add_legitimacy = -4
+				add_devotion = -8
+				add_republican_tradition = -2
+				add_prestige = 4
+				add_country_modifier = { name = religious_controversy duration = 4000 }
+			}
+		}
+		else_if = {
+			limit = { owner = { piety = 0.20 } }
+			add_province_modifier = { name = religious_scandal_province duration = 6000 }
+			owner = {
+				add_legitimacy = -3
+				add_devotion = -6
+				add_republican_tradition = -1.5
+				add_prestige = 3
+				add_country_modifier = { name = religious_controversy duration = 3000 }
+			}
+		}
+		else_if = {
+			limit = { owner = { piety = -0.20 } }
+			add_province_modifier = { name = religious_scandal_province duration = 4000 }
+			owner = {
+				add_legitimacy = -2
+				add_devotion = -4
+				add_republican_tradition = -1
+				add_prestige = 2
+				add_country_modifier = { name = religious_controversy duration = 2000 }
+			}
+		}
+		else_if = {
+			limit = { owner = { piety = -0.60 } }
+			add_province_modifier = { name = religious_scandal_province duration = 2000 }
+			owner = {
+				add_legitimacy = -1
+				add_devotion = -2
+				add_republican_tradition = -0.5
+				add_prestige = 1
+				add_country_modifier = { name = religious_controversy duration = 1000 }
+			}
+		}
+	}
+}
+
+country_event = { #04 - $DYNASTY$ Shinto
+	
+	id = dg_shinto.004
+	title = dg_shinto.004.t
+	desc = dg_shinto.004.d
+	picture = mahayana_shinto
+	
+	trigger = {
+		has_country_modifier = shinto_buddhism
+		religion = mahayana
+		advisor = theologian
+		NOT = { has_global_flag = yuiitso_shinto }
+		any_owned_province = { check_variable = { which = shinto value = 2 } }
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 8
+		
+		modifier = {
+			any_owned_province = { has_province_modifier = ise_shrine }
+			factor = 0.5
+		}
+		modifier = {
+			theologian = 2
+			factor = 0.5
+		}
+		modifier = {
+			theologian = 3
+			factor = 0.5
+		}
+	}
+	
+	immediate = {
+		set_global_flag = yuiitso_shinto
+		hidden_effect = {
+			every_country = {
+				limit = {
+					japanese_culture_trigger = yes
+					NOT = { tag = ROOT }
+					OR = {
+						has_country_modifier = shinto_buddhism
+						religion = shinto
+						AND = {
+							has_country_flag = religious_news_trivial
+							religion = mahayana
+						}
+					}
+				}
+				country_event = { id = dg_shinto.005 days = 30 }
+			}
+		}
+	}
+	
+	option = {
+		name = dg_shinto.004.b #Yuiitsu Shinto
+		ai_chance = { factor = 80 }
+		if = {
+			limit = { piety = 0.60 }
+			add_prestige = 8
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_prestige = 6
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_prestige = 4
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_prestige = 2
+		}
+		remove_country_modifier = shinto_buddhism
+		add_country_modifier = { name = yuiitso_shinto }
+	}
+	option = {
+		name = dg_shinto.004.a #Shinbutsu Shugo
+		ai_chance = { factor = 20 }
+		#set_country_flag = shinbutsu_dominates #unused
+		remove_advisor = theologian
+	}
+}
+
+country_event = { #35 - Yuiitso Shinto
+	
+	id = dg_shinto.005
+	title = dg_shinto.005.t
+	desc = dg_shinto.005.d
+	picture = mahayana_shinto
+	
+	is_triggered_only = yes #By dg_shinto.004
+	
+	option = {
+		name = dg_shinto.004.b #Yuiitsu Shinto
+		trigger = { has_country_modifier = shinto_buddhism }
+		ai_chance = { factor = 50 }
+		remove_country_modifier = shinto_buddhism
+		add_country_modifier = { name = yuiitso_shinto }
+	}
+	option = {
+		name = dg_shinto.004.a #Shinbutsu Shugo
+		trigger = { has_country_modifier = shinto_buddhism }
+		ai_chance = { factor = 40 }
+		#set_country_flag = shinbutsu_dominates #unused
+	}
+	option = {
+		name = dg_shinto.005.c #This does not affect us
+		ai_chance = { factor = 10 }
+		trigger = { NOT = { has_country_modifier = shinto_buddhism } }
+	}
+}
+
+country_event = { #06 - Kokugaku
+	
+	id = dg_shinto.006
+	title = dg_shinto.006.t
+	desc = dg_shinto.006.d
+	picture = buddhist_scroll
+	
+	trigger = {
+		japanese_culture_trigger = yes
+		num_of_owned_provinces_with = {
+			japanese_region_trigger = yes
+			value = 15 #28 provinces in vanilla
+		}
+		NOT = { has_country_flag = kokugaku }
+		NOT = { has_country_flag = kangaku }
+		is_free_or_tributary_trigger = yes
+		OR = {
+			ai = yes
+			has_country_flag = religious_news_major
+		}
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 41
+		
+		modifier = {
+			advisor = philosopher
+			factor = 0.5
+		}
+	}
+	
+	option = {
+		name = dg_shinto.006.a #Kokugaku
+		ai_chance = {
+			factor = 50
+			modifier = {
+				any_ally = { OR = { religion = shinto japanese_culture_trigger = yes } }
+				factor = 2
+			}
+		}
+		set_country_flag = kokugaku
+		add_prestige = 5
+		add_adm_power = 50
+		capital_scope = {
+			custom_tooltip = shinto_20
+			hidden_effect = {
+				change_variable = { which = shinto value = 4 }
+				change_variable = { which = province_religion value = -4 }
+			}
+		}
+		every_country = {
+			limit = {
+				OR = {
+					japanese_culture_trigger = yes
+					religion = shinto
+				}
+			}
+			add_opinion = { who = ROOT modifier = shared_literary_tradition }
+		}
+	}
+	option = {
+		name = dg_shinto.006.b #Kangaku
+		trigger = { religion_group = taoic }
+		ai_chance = {
+			factor = 25
+			modifier = {
+				any_ally = { OR = { religion = confucianism chinese_culture_trigger = yes } }
+				factor = 2
+			}
+		}
+		set_country_flag = kangaku
+		add_adm_power = 50
+		capital_scope = {
+			custom_tooltip = confucianism_20
+			hidden_effect = {
+				change_variable = { which = confucianism value = 4 }
+				change_variable = { which = province_religion value = -4 }
+			}
+		}
+		every_country = {
+			limit = {
+				OR = {
+					chinese_culture_trigger = yes
+					religion = confucianism
+				}
+			}
+			add_opinion = { who = ROOT modifier = shared_literary_tradition }
+		}
+	}
+	option = {
+		name = dg_shinto.006.c #The West
+		trigger = {
+			OR = {
+				religion_group = christian
+				religion_group = muslim
+				religion_group = jewish_group
+				religion_group = dharmic
+			}
+		}
+		ai_chance = { factor = 25 }
+		set_country_flag = kangaku
+		add_prestige = -5
+		add_adm_power = 50
+		every_country = {
+			limit = { religion = ROOT }
+			add_opinion = { who = ROOT modifier = shared_literary_tradition }
+		}
+	}
+}
+
+country_event = { #07 - The Sonno Joi Movement
+	
+	id = dg_shinto.007
+	title = dg_shinto.007.t
+	desc = dg_shinto.007.d
+	picture = mahayana_procession #TEMP
+	
+	trigger = {
+		has_country_flag = kokugaku
+		num_of_owned_provinces_with = {
+			japanese_region_trigger = yes
+			value = 25 #28 provinces in vanilla
+		}
+		advisor = theologian
+		NOT = { has_country_flag = sonno_joi }
+		is_at_war = no
+		japanese_culture_trigger = yes
+		government = monarchy
+		any_owned_province = { check_variable = { which = shinto value = 2 } }
+		any_owned_province = { check_variable = { which = confucianism value = 2 } }
+	}
+	
+	mean_time_to_happen = { years = 41 }
+	
+	
+	immediate = { set_country_flag = sonno_joi }
+	
+	option = {
+		name = dg_shinto.007.a #Embrace the movement
+		add_prestige = 5
+		add_legitimacy = 5
+		capital_scope = {
+			add_province_modifier = {
+				name = "pretender_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+	}
+	option = {
+		name = dg_shinto.007.b #Reject the movement
+		add_legitimacy = -10
+	}
+}
+
+country_event = { #08 - The Tenrikyo Sect
+	
+	id = dg_shinto.008
+	title = dg_shinto.008.t
+	desc = dg_shinto.008.d
+	picture = shinto_tenrikyo
+	
+	trigger = {
+		OR = {
+			religion = shinto
+			AND = {
+				japanese_culture_trigger = yes
+				check_variable = { which = shinto_population value = 5 }
+			}
+		}
+		NOT = { has_country_flag = tenrikyo_sect }
+		OR = {
+			is_year = 1800
+			religion = shinto
+			any_neighbor_country = { has_country_flag = tenrikyo_sect }
+		}
+		NOT = { has_country_modifier = religious_tolerance }
+		NOT = { has_country_modifier = religious_intolerance }
+		NOT = { has_country_modifier = religious_controversy }
+	}
+	
+	mean_time_to_happen = { years = 41 }
+	
+	immediate = { set_country_flag = tenrikyo_sect }
+	
+	option = {
+		name = dg_shinto.008.a #Allow it to operate as a $COUNTRY_RELIGION$ sect
+		ai_chance = { factor = 70 }
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_controversy duration = 4000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = religious_controversy duration = 3000 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = religious_controversy duration = 2000 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = religious_controversy duration = 1000 }
+		}
+		hidden_effect = {
+			if = {
+				limit = { religion = shinto }
+				every_owned_province = {
+					limit = {
+						culture_group = owner
+						OR = {
+							has_owner_religion = yes
+							religion = shinto
+						}
+					}
+					random_list = {
+						60 = { change_variable = { which = converted_heathens value = 2 } }
+						40 = { change_variable = { which = heretics value = 2 } }
+					}
+				}
+			}
+			else = {
+				every_owned_province = {
+					limit = {
+						culture_group = owner
+						OR = {
+							has_owner_religion = yes
+							religion = shinto
+						}
+					}
+				}
+				random_list = {
+					25 = { change_variable = { which = converted_heathens value = 2 } }
+					25 = { change_variable = { which = heretics value = 2 } }
+					50 = {
+						change_variable = { which = shinto value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_shinto.008.b #Ban the sect as heresy
+		ai_chance = {
+			factor = 30
+			modifier = {
+				religion = shinto
+				factor = 0.5
+			}
+			modifier = {
+				overlord = { religion = shinto }
+				factor = 0.5
+			}
+		}
+		add_adm_power = -50
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					culture_group = owner
+					OR = {
+						has_owner_religion = yes
+						religion = shinto
+					}
+				}
+				random = { chance = 20 change_variable = { which = heretics value = 2 } }
+			}
+		}
+		add_piety = 0.20
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_intolerance duration = 4000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = religious_intolerance duration = 3000 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = religious_intolerance duration = 2000 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = religious_intolerance duration = 1000 }
+		}
+	}
+}
+
+
+#The Emperor was the object of worship as a living god of Shinto; and since Buddhism had no room in this schema, it was completely separated from Shinto. Buddhist beliefs and worship were banned by the order of the Meiji government in 1868. Many temples and valuable works of Buddhist art were either destroyed or sold. A large number of priests and monks were forced to return to lay life, although this ban was later lifted. The Buddhist institutions were, however, classified under 13 denominations and 56 subsects and the founding of any new sect was strictly prohibited.

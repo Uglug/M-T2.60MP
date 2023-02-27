@@ -1,0 +1,257 @@
+VarSaveSumB = {
+	# Takes in 2 inputs, 'var' for the name of the variable, and 'd' for the divisor,
+	# Then store the variable value from var_1 to var_5 such that var_i = whatever_was_put_in_at_that_time / d^i
+	# Then calculate 2 variables, var_sm and var_old, such that var_sm = var_1 + var_2 + var_3 + var_4 + var_5, and var_old is the sm of the previous iteration
+	
+	set_variable = { which = $var$_old which = $var$_sm }
+		
+	set_variable = { which = $var$_5 which = $var$_4 }
+	set_variable = { which = $var$_4 which = $var$_3 }
+	set_variable = { which = $var$_3 which = $var$_2 }
+	set_variable = { which = $var$_2 which = $var$_1 }
+	set_variable = { which = $var$_1 which = $inp$ }
+		
+	divide_variable = { which = $var$_5 value = $div$ }
+	divide_variable = { which = $var$_4 value = $div$ }
+	divide_variable = { which = $var$_3 value = $div$ }
+	divide_variable = { which = $var$_2 value = $div$ }
+	divide_variable = { which = $var$_1 value = $div$ }
+		
+	set_variable = { which = $var$_sm which = $var$_1 }
+	change_variable = { which = $var$_sm which = $var$_2 }
+	change_variable = { which = $var$_sm which = $var$_3 }
+	change_variable = { which = $var$_sm which = $var$_4 }
+	change_variable = { which = $var$_sm which = $var$_5 }
+}
+
+VarSaveSumA = {
+	# Takes in 2 inputs, 'var' for the name of the variable, and 'd' for the divisor,
+	# Then store the variable value from var_1 to var_5 such that var_i = whatever_was_put_in_at_that_time / d^i
+	# Then calculate 2 variables, var_sm and var_old, such that var_sm = var_1 + var_2 + var_3 + var_4 + var_5, and var_old is the sm of the previous iteration
+	
+	if = {
+		limit = {
+			is_variable_equal = { which = $var$_sm value = 0 }
+		}
+		if = {
+			limit = {
+				NOT = { is_variable_equal = { which = $inp$ value = 0 } }
+			}
+			set_variable = { which = t_VSS1 which = $inp$ }
+			
+			divide_variable = { which = t_VSS1 value = $div$ }
+			set_variable = { which = $var$_1 which = t_VSS1 }
+			divide_variable = { which = t_VSS1 value = $div$ }
+			set_variable = { which = $var$_2 which = t_VSS1 }
+			divide_variable = { which = t_VSS1 value = $div$ }
+			set_variable = { which = $var$_3 which = t_VSS1 }
+			divide_variable = { which = t_VSS1 value = $div$ }
+			set_variable = { which = $var$_4 which = t_VSS1 }
+			divide_variable = { which = t_VSS1 value = $div$ }
+			set_variable = { which = $var$_5 which = t_VSS1 }
+			
+			set_variable = { which = $var$_sm which = $var$_1 }
+			change_variable = { which = $var$_sm which = $var$_2 }
+			change_variable = { which = $var$_sm which = $var$_3 }
+			change_variable = { which = $var$_sm which = $var$_4 }
+			change_variable = { which = $var$_sm which = $var$_5 }
+			
+			set_variable = { which = $var$_old which = $var$_sm }
+			
+			
+			set_variable = { which = t_VSS1 value = 0 }
+		}
+	}
+
+	VarSaveSumB = { var=$var$ inp=$inp$ div=$div$ }
+}
+
+EstateLoyalty_ShiftHelper = {
+	# Take two variable inputs, 'new' and 'old', and one value input, 'rdceFlct',
+	# and returns a 'shift' variable whose value will be used to shift estate loyalty
+	
+	set_variable = { which = dff_EL_SH which = $new$ }
+	subtract_variable = { which = dff_EL_SH which = $old$ }
+	
+	set_variable = { which = div_EL_SH which = $new$ }
+	change_variable = { which = div_EL_SH which = $old$ }
+	multiply_variable = { which = div_EL_SH value = 0.5 }
+	
+	set_variable = { which = shft_EL_SH which = dff_EL_SH }
+	if = {
+		limit = { NOT = { check_variable = { which = div_EL_SH value = 0.001 } } }
+		set_variable = { which = div_EL_SH value = 0.001 }
+	}
+	divide_variable = { which = shft_EL_SH which = div_EL_SH }
+	
+	# Reduce fluctuation by multiplying shift with (abs(diff)/reduce_fluct) if abs(diff) < reduce_fluct
+	if = {
+		limit = {
+			NOT = { check_variable = { which = dff_EL_SH value = 0 } }
+		}
+		multiply_variable = { which = dff_EL_SH value = -1 }
+	}
+	
+	if = {
+		limit = {
+			NOT = { check_variable = { which = dff_EL_SH value = $rdceFlct$ } }
+		}
+		multiply_variable = { which = shft_EL_SH which = dff_EL_SH }
+		divide_variable = { which = shft_EL_SH value = $rdceFlct$ }
+	}
+	
+	set_variable = { which = $return$ which = shft_EL_SH }
+	
+	
+	set_variable = { which = dff_EL_SH value = 0 }
+	set_variable = { which = div_EL_SH value = 0 }
+	set_variable = { which = shft_EL_SH value = 0 }
+}
+
+EstateLoyalty_CalcVar = {
+	VarSaveSumA = { var=estate_$estate$_weight_share inp=estate_$estate$_weight_share div=2 }
+	VarSaveSumA = { var=estate_$estate$_treasury_annual inp=estate_$estate$_treasury_annual div=2 }
+}
+
+EstateLoyalty_CalcShift = {
+	# Take two variable inputs, 'new' and 'old', and one value input, 'rdceFlct',
+	# and returns a variable whose value will be used to shift estate loyalty
+	
+	EstateLoyalty_ShiftHelper = {
+		new=estate_$estate$_weight_share_sm old=estate_$estate$_weight_share_old rdceFlct=0.04
+		return=shft1_EL_CS
+	}
+	EstateLoyalty_ShiftHelper = {
+		new=estate_$estate$_treasury_annual_sm old=estate_$estate$_treasury_annual_old rdceFlct=25
+		return=shft2_EL_CS
+	}
+	
+	set_variable = { which = shft_EL_CS which = shft1_EL_CS }
+	change_variable = { which = shft_EL_CS which = shft2_EL_CS }
+	
+	# Tuning
+	multiply_variable = { which = shft_EL_CS value = 1.25 }
+	
+	# Cap at 20 per year
+	if = {
+		limit = {
+			check_variable = { which = shft_EL_CS value = 1 }
+		}
+		set_variable = { which = shft_EL_CS value = 0.4 }
+	}
+	else_if = {
+		limit = {
+			NOT = { check_variable = { which = shft_EL_CS value = -1 } }
+		}
+		set_variable = { which = shft_EL_CS value = 0 }
+	}
+	else = {
+		logistic_funct = {
+			type1=which type2=value type3=value type4=value
+			inp=shft_EL_CS midpnt=0 steepns=4 maxval=0.4
+		}
+		set_variable = { which = shft_EL_CS which = logistic_val }
+		
+		set_variable = { which = logistic_val value = 0 }
+	}
+	
+	subtract_variable = { which = shft_EL_CS value = 0.2 }
+	
+	# Truncate
+	multiply_variable = { which = shft_EL_CS value = 0.1 }
+	multiply_variable = { which = shft_EL_CS value = 1000 }
+	
+	set_variable = { which = $return$ which = shft_EL_CS }
+	
+	
+	set_variable = { which = shft1_EL_CS value = 0 }
+	set_variable = { which = shft2_EL_CS value = 0 }
+	set_variable = { which = shft_EL_CS value = 0 }
+}
+
+EstateLoyalty_CalcLoyalty = {
+	# Take one variable input, 'shft', one text input, 'estate', and modify the loyalty of 'estate' with the variable 'shft'
+	
+	# Display
+	VarSaveSumB = { var=estate_$estate$_influencechange_display inp=$shft$ div=1 }
+	
+	set_variable = { which = estate_$estate$_influencechange_display which = estate_$estate$_influencechange_display_sm }
+	
+	set_variable = { which = estate_$estate$_influencechange_display_sm value = 0 }
+	#set_variable = { which = estate_$estate$_influencechange_display_old value = 0 }
+	
+	# Actual loyalty change
+	if = {
+		limit = {
+			check_variable = { which = $shft$ value = 0 }
+		}
+		set_variable = { which = $estate$_loyalty_added which = $shft$ }
+		
+		estate_$estate$_loyalty_added = yes
+	}
+	else = {
+		set_variable = { which = $estate$_loyalty_removed which = $shft$ }
+		multiply_variable = { which = $estate$_loyalty_removed value = -1 }
+		
+		estate_$estate$_loyalty_removed = yes
+	}
+}
+
+EstateLoyalty_ClearHelper = {
+	# Helper effect for clearing the variables
+	
+	set_variable = { which = $var$_1 value = 0 }
+	set_variable = { which = $var$_2 value = 0 }
+	set_variable = { which = $var$_3 value = 0 }
+	set_variable = { which = $var$_4 value = 0 }
+	set_variable = { which = $var$_5 value = 0 }
+	
+	set_variable = { which = $var$_sm value = 0 }
+	set_variable = { which = $var$_old value = 0 }
+}
+
+EstateLoyalty_ClearLoyalty = {
+	# Reset estate loyalty to 50%
+	
+	set_variable = { which = loyalty_reset value = 0.5 }
+	subtract_variable = { which = loyalty_reset which = estate_$estate$_loyalty }
+	
+	multiply_variable = { which = loyalty_reset value = 0.1 }
+	multiply_variable = { which = loyalty_reset value = 1000 }
+	
+	if = {
+		limit = {
+			NOT = { is_variable_equal = { which = loyalty_reset value = 0 } }
+		}
+		if = {
+			limit = {
+				is_variable_equal = { which = loyalty_reset value = 0 }
+			}
+			set_variable = { which = $estate$_loyalty_added which = loyalty_reset }
+			
+			estate_$estate$_loyalty_added = yes
+			
+			set_variable = { which = $estate$_loyalty_added value = 0 }
+		}
+		else = {
+			set_variable = { which = $estate$_loyalty_removed which = loyalty_reset }
+			multiply_variable = { which = $estate$_loyalty_removed value = -1 }
+			
+			estate_$estate$_loyalty_removed = yes
+			
+			set_variable = { which = $estate$_loyalty_removed value = 0 }
+		}
+		
+		set_variable = { which = loyalty_reset value = 0 }
+	}
+}
+
+EstateLoyalty_Clear = {
+	# Clear the vars
+	
+	set_variable = { which = estate_$estate$_influencechange_display value = 0 }
+	EstateLoyalty_ClearHelper = { var=estate_$estate$_influencechange_display }
+	
+	EstateLoyalty_ClearHelper = { var=estate_$estate$_weight_share }
+	EstateLoyalty_ClearHelper = { var=estate_$estate$_treasury_annual }
+}

@@ -1,0 +1,1146 @@
+namespace = court
+
+country_event = {
+	### Bureaucracy, main Court event
+	id = court.100
+	title = court.100.title
+	desc = {
+		trigger = { check_variable = { which = court_capital_bonus value = 0.001 } }
+		desc = court.100.desca
+	}
+	desc = {
+		trigger = { NOT = { check_variable = { which = court_capital_bonus value = 0.001 } } }
+		desc = court.100.descb
+	}
+	picture = FEAST_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { ### Current Court
+		name = "court.100.f"
+		ai_chance = { factor = 100 }
+		if = {
+			limit = {
+				NOT = { check_variable = { which = court_level 	value = 15 } }
+			}
+			tooltip = {
+				add_country_modifier = { name = disp_court_level_1 duration = -1 }
+			}
+		}
+		if = {
+			limit = {
+				check_variable = { which = court_level 	value = 15 }
+				NOT = { check_variable = { which = court_level 	value = 30 } }
+			}
+			tooltip = {
+				add_country_modifier = { name = disp_court_level_2 duration = -1 }
+			}
+			custom_tooltip = court_level_2_art_bonus
+		}
+		if = {
+			limit = {
+				check_variable = { which = court_level 	value = 30 }
+				NOT = { check_variable = { which = court_level 	value = 45 } }
+			}
+			tooltip = {
+				add_country_modifier = { name = disp_court_level_3 duration = -1 }
+			}
+			custom_tooltip = court_level_3_art_bonus
+		}
+		if = {
+			limit = {
+				check_variable = { which = court_level 	value = 45 }
+				NOT = { check_variable = { which = court_level 	value = 65 } }
+			}
+			tooltip = {
+				add_country_modifier = { name = disp_court_level_4 duration = -1 }
+			}
+			custom_tooltip = court_level_4_art_bonus
+		}
+		if = {
+			limit = {
+				check_variable = { which = court_level 	value = 65 }
+				NOT = { check_variable = { which = court_level 	value = 90 } }
+			}
+			tooltip = {
+				add_country_modifier = { name = disp_court_level_5 duration = -1 }
+			}
+			custom_tooltip = court_level_5_art_bonus
+		}
+		if = {
+			limit = {
+				check_variable = { which = court_level 	value = 90 }
+			}
+			tooltip = {
+				add_country_modifier = { name = disp_court_level_6 duration = -1 }
+			}
+			custom_tooltip = court_level_6_art_bonus
+		}
+		hidden_effect = {
+			country_event = {
+				id = court.104
+			}
+		}
+	}
+	
+	option = { ### Increase Funding
+		name = "court.100.a"
+		ai_chance = { factor = 100 }
+		country_event = {
+			id = court.101
+		}
+		hidden_effect = {
+			set_variable = { 	which = court_net_increase 		value = 0 }
+			set_variable = { 	which = court_net_reduction 	value = 0 }
+		}
+	}
+	option = { ### Decrease Funding
+		name = "court.100.b"
+		ai_chance = { factor = 100 }
+		country_event = {
+			id = court.102
+		}
+		hidden_effect = {
+			set_variable = { 	which = court_net_increase 		value = 0 }
+			set_variable = { 	which = court_net_reduction 	value = 0 }
+		}
+	}
+	option = { ### Fund
+		name = "court.100.c"
+		ai_chance = { factor = 100 }
+		country_event = {
+			id = court.103
+		}
+		hidden_effect = {
+			set_variable = { 	which = court_net_increase 		value = 0 }
+			set_variable = { 	which = court_net_reduction 	value = 0 }
+		}
+	}
+	
+	option = { ### Court Wizard
+		name = court.100.z
+		ai_chance = { factor = 0 }
+		hidden_effect = {
+			country_event = {
+				id = CourtEduWiz.200
+			}
+		}
+		custom_tooltip = court.100.z_tooltip
+	}
+	
+	#	option = { ### More info
+	#        name = "court.100.d"
+	#        ai_chance = { factor = 100 }
+	#		country_event = {
+	#			id = court.104
+	#		}
+	#		hidden_effect = {
+	#			set_variable = { 	which = court_net_increase 		value = 0 }
+	#			set_variable = { 	which = court_net_reduction 	value = 0 }
+	#		}
+	#	}
+	
+	option = { ### Please DISABLE Court Level Change Popups
+		name = "court.100.g"
+		ai_chance = { factor = 100 }
+		
+		trigger = {
+			NOT = { has_country_flag = court_change_popups_disabled }
+		}
+		
+		hidden_effect = {
+			set_country_flag = court_change_popups_disabled
+		}
+		
+		custom_tooltip = court_change_popups_disable_tooltip
+	}
+	
+	option = { ### Please ENABLE Court Level Change Popups
+		name = "court.100.h"
+		ai_chance = { factor = 100 }
+		
+		trigger = {
+			has_country_flag = court_change_popups_disabled
+			ai = no
+		}
+		
+		hidden_effect = {
+			clr_country_flag = court_change_popups_disabled
+		}
+		
+		custom_tooltip = court_change_popups_enable_tooltip
+	}
+	
+	option = { ### Exit
+		name = exit
+		highlight = yes
+		ai_chance = { factor = 100 }
+		hidden_effect = {
+			set_variable = { 	which = court_net_increase 		value = 0 }
+			set_variable = { 	which = court_net_reduction 	value = 0 }
+		}
+	}
+}
+
+country_event = {
+	### Increase Funding
+	id = court.101
+	title = court.101.title
+	desc = {
+		trigger = { NOT = { check_variable = { which = court_state_contribute 	value = 1 } } }
+		desc = "court.101.desca"
+	}
+	desc = {
+		trigger = { check_variable = { which = court_state_contribute 	value = 1 } }
+		desc = "court.101.descb"
+	}
+	desc = {
+		trigger = { check_variable = { which = court_target_L 	value = 0.001 } }
+		desc = "POP_Estates_Interactions.wizard"
+	}
+	picture = FEAST_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			#set_variable = { which = monthly_country_income 	value = 0 }
+			export_to_variable = {
+				which = monthly_country_income
+				value = monthly_income
+			}
+			if = {
+				limit = {
+					NOT = { check_variable = { which = court_state_contribute	value = 0 } }
+				}
+				set_variable = { which = court_state_contribute 	value = 0 }
+			}
+			#set_variable = { which = court_state_contribute_per_capita 		value = 0 }
+			set_variable = { which = court_state_contribute_per_capita 		which = court_state_contribute }
+			#if = {
+			#	limit = {
+			#		check_variable = { which = court_state_contribute 	value = 0.001 }
+			#	}
+			#	if = {
+			#		limit = {
+			#			is_variable_equal = {
+			#				which = upper_pop
+			#				value = 0
+			#			}
+			#		}
+			#		
+			#		# log = "<ERROR><6AE00981><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+			#		
+			#	}
+			#	else = {
+					divide_variable = {
+						which = court_state_contribute_per_capita
+						which = upper_pop
+					}
+			#	}
+			#}
+		}
+	}
+	option = { ### 1 ducat
+		name = "court.101.a"
+		ai_chance = { factor = 100 }
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = 1 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.1011 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 5 ducats
+		name = "court.101.b"
+		ai_chance = { factor = 100 }
+		trigger = { NOT = { check_variable = { which = monthly_country_income	 value = 50 } } }
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = 5 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.1011 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 10 ducats
+		name = "court.101.c"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = monthly_country_income	value = 10 }
+			NOT = { check_variable = { which = monthly_country_income	 value = 100 } }
+		}
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = 10 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.1011 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 25 ducats
+		name = "court.101.d"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = monthly_country_income	value = 25 }
+			NOT = { check_variable = { which = monthly_country_income	 value = 250 } }
+		}
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = 25 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.1011 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 50 ducats
+		name = "court.101.e"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = monthly_country_income	value = 50 }
+			NOT = { check_variable = { which = monthly_country_income	 value = 500 } }
+		}
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = 50 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.1011 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 100 ducats
+		name = "court.101.f"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = monthly_country_income	value = 100 }
+		}
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = 100 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.1011 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 500 ducats
+		name = "court.101.g"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = monthly_country_income	value = 500 }
+		}
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = 500 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.1011 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	
+	option = { ### Back
+		name = "court.101.y"
+		highlight = yes
+		ai_chance = { factor = 100 }
+		
+		country_event = {
+			id = court.100
+		}
+		
+		hidden_effect = {
+			set_variable = { which = court_state_contribute_per_capita 		value = 0 }
+		}
+	}
+	
+	option = { ### That is all
+		name = "court.101.z"
+		highlight = yes
+		ai_chance = { factor = 100 }
+		
+		hidden_effect = {
+			set_variable = { which = court_state_contribute_per_capita 		value = 0 }
+		}
+	}
+}
+
+country_event = {
+	### Increase Funding
+	id = court.1011
+	title = court.1011.title
+	desc = {
+		trigger = { NOT = { check_variable = { which = court_state_contribute 	value = 1 } } }
+		desc = "court.1011.desca"
+	}
+	desc = {
+		trigger = { check_variable = { which = court_state_contribute 	value = 1 } }
+		desc = "court.1011.descb"
+	}
+	desc = {
+		trigger = { check_variable = { which = court_target_L 	value = 0.001 } }
+		desc = "POP_Estates_Interactions.wizard"
+	}
+	picture = FEAST_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			#set_variable = { which = monthly_country_income 	value = 0 }
+			export_to_variable = {
+				which = monthly_country_income
+				value = monthly_income
+			}
+			if = {
+				limit = {
+					NOT = { check_variable = { which = court_state_contribute	value = 0 } }
+				}
+				set_variable = { which = court_state_contribute 	value = 0 }
+			}
+			#set_variable = { which = court_state_contribute_per_capita 		value = 0 }
+			set_variable = { which = court_state_contribute_per_capita 		which = court_state_contribute }
+			#if = {
+			#	limit = {
+			#		check_variable = { which = court_state_contribute 	value = 0.001 }
+			#	}
+			#	if = {
+			#		limit = {
+			#			is_variable_equal = {
+			#				which = upper_pop
+			#				value = 0
+			#			}
+			#		}
+			#		
+			#		# log = "<ERROR><F087E27B><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+			#		
+			#	}
+			#	else = {
+					divide_variable = {
+						which = court_state_contribute_per_capita
+						which = upper_pop
+					}
+			#	}
+			#}
+		}
+	}
+	option = { ### 1 ducat
+		name = "court.1011.a"
+		ai_chance = { factor = 100 }
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = 1 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.101 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 5 ducats
+		name = "court.1011.b"
+		ai_chance = { factor = 100 }
+		trigger = { NOT = { check_variable = { which = monthly_country_income	 value = 50 } } }
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = 5 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.101 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 10 ducats
+		name = "court.1011.c"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = monthly_country_income	value = 10 }
+			NOT = { check_variable = { which = monthly_country_income	 value = 100 } }
+		}
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = 10 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.101 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 25 ducats
+		name = "court.1011.d"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = monthly_country_income	value = 25 }
+			NOT = { check_variable = { which = monthly_country_income	 value = 250 } }
+		}
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = 25 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.101 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 50 ducats
+		name = "court.1011.e"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = monthly_country_income	value = 50 }
+			NOT = { check_variable = { which = monthly_country_income	 value = 500 } }
+		}
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = 50 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.101 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 100 ducats
+		name = "court.1011.f"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = monthly_country_income	value = 100 }
+		}
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = 100 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.101 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 500 ducats
+		name = "court.1011.g"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = monthly_country_income	value = 500 }
+		}
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = 500 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.101 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	
+	option = { ### Back
+		name = "court.1011.y"
+		highlight = yes
+		ai_chance = { factor = 100 }
+		
+		country_event = {
+			id = court.100
+		}
+		
+		hidden_effect = {
+			set_variable = { which = court_state_contribute_per_capita 		value = 0 }
+		}
+	}
+	
+	option = { ### That is all
+		name = "court.1011.z"
+		highlight = yes
+		ai_chance = { factor = 100 }
+		
+		hidden_effect = {
+			set_variable = { which = court_state_contribute_per_capita 		value = 0 }
+		}
+	}
+}
+
+country_event = {
+	### Decrease Funding
+	id = court.102
+	title = court.102.title
+	desc = {
+		trigger = { NOT = { check_variable = { which = court_state_contribute 	value = 1 } } }
+		desc = "court.102.desca"
+	}
+	desc = {
+		trigger = { check_variable = { which = court_state_contribute 	value = 1 } }
+		desc = "court.102.descb"
+	}
+	desc = {
+		trigger = { check_variable = { which = court_target_L 	value = 0.001 } }
+		desc = "POP_Estates_Interactions.wizard"
+	}
+	picture = FEAST_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			#set_variable = { which = monthly_country_income 	value = 0 }
+			export_to_variable = {
+				which = monthly_country_income
+				value = monthly_income
+			}
+			if = {
+				limit = {
+					NOT = { check_variable = { which = court_state_contribute	value = 0 } }
+				}
+				set_variable = { which = court_state_contribute 	value = 0 }
+			}
+			#set_variable = { which = court_state_contribute_per_capita 		value = 0 }
+			set_variable = { which = court_state_contribute_per_capita 		which = court_state_contribute }
+			#if = {
+			#	limit = {
+			#		check_variable = { which = court_state_contribute 	value = 0.001 }
+			#	}
+			#	if = {
+			#		limit = {
+			#			is_variable_equal = {
+			#				which = upper_pop
+			#				value = 0
+			#			}
+			#		}
+			#		
+			#		# log = "<ERROR><F087E27B><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+			#		
+			#	}
+			#	else = {
+					divide_variable = {
+						which = court_state_contribute_per_capita
+						which = upper_pop
+					}
+			#	}
+			#}
+		}
+	}
+	option = { ### 1 ducat
+		name = "court.102.a"
+		ai_chance = { factor = 100 }
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = -1 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.1021 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 5 ducats
+		name = "court.102.b"
+		ai_chance = { factor = 100 }
+		trigger = { NOT = { check_variable = { which = monthly_country_income	 value = 50 } } check_variable = { which = court_state_contribute 	value = 5 } }
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = -5 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.1021 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 10 ducats
+		name = "court.102.c"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = monthly_country_income	value = 10 }
+			NOT = { check_variable = { which = monthly_country_income	 value = 100 } }
+			check_variable = { which = court_state_contribute 	value = 10 }
+		}
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = -10 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.1021 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 25 ducats
+		name = "court.102.d"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = monthly_country_income	value = 25 }
+			NOT = { check_variable = { which = monthly_country_income	 value = 250 } }
+			check_variable = { which = court_state_contribute 	value = 25 }
+		}
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = -25 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.1021 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 50 ducats
+		name = "court.102.e"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = monthly_country_income	value = 50 }
+			NOT = { check_variable = { which = monthly_country_income	 value = 500 } }
+			check_variable = { which = court_state_contribute 	value = 50 }
+		}
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = -50 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.1021 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 100 ducats
+		name = "court.102.f"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = monthly_country_income	value = 100 }
+			check_variable = { which = court_state_contribute 	value = 100 }
+		}
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = -100 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.1021 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 500 ducats
+		name = "court.102.g"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = monthly_country_income	value = 500 }
+			check_variable = { which = court_state_contribute 	value = 500 }
+		}
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = -500 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.1021 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	
+	option = { ### Back
+		name = "court.102.y"
+		highlight = yes
+		ai_chance = { factor = 100 }
+		
+		country_event = {
+			id = court.100
+		}
+		
+		hidden_effect = {
+			set_variable = { which = court_state_contribute_per_capita 		value = 0 }
+		}
+	}
+	
+	option = { ### That is all
+		name = "court.102.z"
+		highlight = yes
+		ai_chance = { factor = 100 }
+		
+		hidden_effect = {
+			set_variable = { which = court_state_contribute_per_capita 		value = 0 }
+		}
+	}
+}
+
+country_event = {
+	### Decrease Funding
+	id = court.1021
+	title = court.1021.title
+	desc = {
+		trigger = { NOT = { check_variable = { which = court_state_contribute 	value = 1 } } }
+		desc = "court.1021.desca"
+	}
+	desc = {
+		trigger = { check_variable = { which = court_state_contribute 	value = 1 } }
+		desc = "court.1021.descb"
+	}
+	desc = {
+		trigger = { check_variable = { which = court_target_L 	value = 0.001 } }
+		desc = "POP_Estates_Interactions.wizard"
+	}
+	picture = FEAST_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			#set_variable = { which = monthly_country_income 	value = 0 }
+			export_to_variable = {
+				which = monthly_country_income
+				value = monthly_income
+			}
+			if = {
+				limit = {
+					NOT = { check_variable = { which = court_state_contribute	value = 0 } }
+				}
+				set_variable = { which = court_state_contribute 	value = 0 }
+			}
+			#set_variable = { which = court_state_contribute_per_capita 		value = 0 }
+			set_variable = { which = court_state_contribute_per_capita 		which = court_state_contribute }
+			#if = {
+			#	limit = {
+			#		check_variable = { which = court_state_contribute 	value = 0.001 }
+			#	}
+			#	if = {
+			#		limit = {
+			#			is_variable_equal = {
+			#				which = upper_pop
+			#				value = 0
+			#			}
+			#		}
+			#		
+			#		# log = "<ERROR><F087E27B><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+			#		
+			#	}
+			#	else = {
+					divide_variable = {
+						which = court_state_contribute_per_capita
+						which = upper_pop
+					}
+			#	}
+			#}
+		}
+	}
+	option = { ### 1 ducat
+		name = "court.1021.a"
+		ai_chance = { factor = 100 }
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = -1 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.102 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 5 ducats
+		name = "court.1021.b"
+		ai_chance = { factor = 100 }
+		trigger = { NOT = { check_variable = { which = monthly_country_income	 value = 50 } } check_variable = { which = court_state_contribute 	value = 5 } }
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = -5 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.102 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 10 ducats
+		name = "court.1021.c"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = monthly_country_income	value = 10 }
+			NOT = { check_variable = { which = monthly_country_income	 value = 100 } }
+			check_variable = { which = court_state_contribute 	value = 10 }
+		}
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = -10 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.102 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 25 ducats
+		name = "court.1021.d"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = monthly_country_income	value = 25 }
+			NOT = { check_variable = { which = monthly_country_income	 value = 250 } }
+			check_variable = { which = court_state_contribute 	value = 25 }
+		}
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = -25 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.102 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 50 ducats
+		name = "court.1021.e"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = monthly_country_income	value = 50 }
+			NOT = { check_variable = { which = monthly_country_income	 value = 500 } }
+			check_variable = { which = court_state_contribute 	value = 50 }
+		}
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = -50 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.102 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 100 ducats
+		name = "court.1021.f"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = monthly_country_income	value = 100 }
+			check_variable = { which = court_state_contribute 	value = 100 }
+		}
+		
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = -100 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.102 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	option = { ### 500 ducats
+		name = "court.1021.g"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = monthly_country_income	value = 500 }
+			check_variable = { which = court_state_contribute 	value = 500 }
+		}
+		hidden_effect = {
+			change_variable = { which = court_state_contribute 						value = -500 }
+			set_variable = { 	which = court_state_contribute_per_capita 			value = 0 }
+			calc_misc_expenses = yes
+			country_event = { id = court.102 }
+			set_variable = { which = court_target_L value = 0 }
+		}
+	}
+	
+	option = { ### Back
+		name = "court.1021.y"
+		highlight = yes
+		ai_chance = { factor = 100 }
+		
+		country_event = {
+			id = court.100
+		}
+		
+		hidden_effect = {
+			set_variable = { which = court_state_contribute_per_capita 		value = 0 }
+		}
+	}
+	
+	option = { ### That is all
+		name = "court.1021.z"
+		highlight = yes
+		ai_chance = { factor = 100 }
+		
+		hidden_effect = {
+			set_variable = { which = court_state_contribute_per_capita 		value = 0 }
+		}
+	}
+}
+
+country_event = { ### Endowment
+	id = court.103
+	title = "court.103.title"
+	desc = {
+		trigger = { NOT = { check_variable = { which = court_state_contribute 	value = 1 } } }
+		desc = "court.103.desca"
+	}
+	desc = {
+		trigger = { check_variable = { which = court_state_contribute 	value = 1 } }
+		desc = "court.103.descb"
+	}
+	picture = FEAST_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			#set_variable = { which = treasury 	value = 0 }
+			export_to_variable = {
+				which = treasury
+				value = treasury
+			}
+			if = {
+				limit = {
+					NOT = { check_variable = { which = court_state_contribute	value = 0 } }
+				}
+				set_variable = { which = court_state_contribute 	value = 0 }
+			}
+			#set_variable = { which = court_state_contribute_per_capita 		value = 0 }
+			set_variable = { which = court_state_contribute_per_capita 		which = court_state_contribute }
+			#if = {
+			#	limit = {
+			#		check_variable = { which = court_state_contribute 	value = 0.001 }
+			#	}
+			#	if = {
+			#		limit = {
+			#			is_variable_equal = {
+			#				which = upper_pop
+			#				value = 0
+			#			}
+			#		}
+			#		
+			#		# log = "<ERROR><F087E27B><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+			#		
+			#	}
+			#	else = {
+					divide_variable = {
+						which = court_state_contribute_per_capita
+						which = upper_pop
+					}
+			#	}
+			#}
+		}
+	}
+	
+	option = { ### 10 ducat
+		name = "court.103.a"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = treasury	 value = 10 }
+			NOT = { check_variable = { which = treasury	 value = 500 } }
+		}
+		
+		hidden_effect = {
+			set_variable = {    which = ducat_cost				   value = 10 }
+			scaled_ducat_cost_country = yes
+			change_variable = { which = court_money_endowed    value = 10 }
+			country_event = { id = court.100 }
+		}
+	}
+	option = { ### 50 ducats
+		name = "court.103.b"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = treasury	 value = 50 }
+			NOT = { check_variable = { which = treasury	 value = 2500 } }
+		}
+		
+		hidden_effect = {
+			set_variable = {    which = ducat_cost				 value = 50 }
+			scaled_ducat_cost_country = yes
+			change_variable = { which = court_money_endowed  value = 50 }
+			country_event = { id = court.100 }
+		}
+	}
+	option = { ### 100 ducats
+		name = "court.103.c"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = treasury	 value = 100 }
+			NOT = { check_variable = { which = treasury	 value = 500 } }
+		}
+		hidden_effect = {
+			set_variable = {    which = ducat_cost				 value = 100 }
+			scaled_ducat_cost_country = yes
+			change_variable = { which = court_money_endowed  value = 100 }
+			country_event = { id = court.100 }
+		}
+	}
+	option = { ### 500 ducats
+		name = "court.103.d"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = treasury	 value = 500 }
+		}
+		hidden_effect = {
+			set_variable = {    which = ducat_cost				 value = 500 }
+			scaled_ducat_cost_country = yes
+			change_variable = { which = court_money_endowed  value = 500 }
+			country_event = { id = court.100 }
+		}
+	}
+	option = { ### 1000 ducats
+		name = "court.103.e"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = treasury	 value = 1000 }
+		}
+		hidden_effect = {
+			set_variable = {    which = ducat_cost				 value = 1000 }
+			scaled_ducat_cost_country = yes
+			change_variable = { which = court_money_endowed  value = 1000 }
+			country_event = { id = court.100 }
+		}
+	}
+	option = { ### 5000 ducats
+		name = "court.103.f"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = treasury	 value = 5000 }
+		}
+		hidden_effect = {
+			set_variable = {    which = ducat_cost				 value = 5000 }
+			scaled_ducat_cost_country = yes
+			change_variable = { which = court_money_endowed  value = 5000 }
+			country_event = { id = court.100 }
+		}
+	}
+	option = { ### 10000 ducats
+		name = "court.103.g"
+		ai_chance = { factor = 100 }
+		trigger = {
+			check_variable = { which = treasury	 value = 10000 }
+		}
+		hidden_effect = {
+			set_variable = {    which = ducat_cost				 value = 10000 }
+			scaled_ducat_cost_country = yes
+			change_variable = { which = court_money_endowed  value = 10000 }
+			country_event = { id = court.100 }
+		}
+	}
+	
+	option = { ### Back
+		name = "court.103.y"
+		highlight = yes
+		ai_chance = { factor = 100 }
+		
+		country_event = {
+			id = court.100
+		}
+		
+		hidden_effect = {
+			set_variable = { which = court_state_contribute_per_capita 		value = 0 }
+		}
+	}
+	
+	option = { ### Exit
+		name = "court.103.z"
+		highlight = yes
+		ai_chance = { factor = 100 }
+	}
+}
+country_event = { ### More Info
+	id = court.104
+	title = "court.104.title"
+	desc = "court.104.desc"
+	picture = FEAST_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		
+	}
+	
+	option = { ### Back
+		name = "court.104.y"
+		highlight = yes
+		ai_chance = { factor = 100 }
+		
+		country_event = {
+			id = court.100
+		}
+		
+		hidden_effect = {
+			set_variable = { which = court_state_contribute_per_capita 		value = 0 }
+		}
+	}
+	
+	option = { ### Exit
+		name = "court.104.z"
+		highlight = yes
+		ai_chance = { factor = 100 }
+	}
+}

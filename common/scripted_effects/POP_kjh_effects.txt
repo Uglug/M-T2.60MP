@@ -1,0 +1,1460 @@
+export_army_stuff = {
+	export_to_variable = {
+		which = army_size_country
+		value = army_size
+	}
+	export_to_variable = {
+		which = land_forcelimit_country
+		value = land_forcelimit
+	}
+	export_to_variable = {
+		which = manpower_country
+		value = manpower
+	}
+	export_to_variable = {
+		which = navy_size_country
+		value = navy_size
+	}
+	export_to_variable = {
+		which = naval_forcelimit_country
+		value = naval_forcelimit
+	}
+	
+	set_variable = { which = army_size_estate	value = 0 }
+	
+	if = {
+		limit = {
+			check_variable = { which = estate_tribals_loyalty value = 0.11 }
+		}
+		change_variable = { which = army_size_estate which = estate_tribals_infantry_host }
+		change_variable = { which = army_size_estate which = estate_tribals_cavalry_host }
+		
+		divide_variable = { which = army_size_estate value = 0.75 }
+	}
+	if = {
+		limit = {
+			check_variable = { which = estate_greater_nobles_loyalty value = 0.11 }
+		}
+		change_variable = { which = army_size_estate which = estate_greater_nobles_infantry_total }
+		change_variable = { which = army_size_estate which = estate_greater_nobles_cavalry_total }
+		change_variable = { which = army_size_estate which = estate_greater_nobles_artillery_total }
+	}
+	if = {
+		limit = {
+			check_variable = { which = estate_lesser_nobles_loyalty value = 0.11 }
+		}
+		change_variable = { which = army_size_estate which = estate_lesser_nobles_infantry_total }
+		change_variable = { which = army_size_estate which = estate_lesser_nobles_cavalry_total }
+		change_variable = { which = army_size_estate which = estate_lesser_nobles_artillery_total }
+	}
+	
+	multiply_variable = { which = army_size_estate value = 0.75 }
+	multiply_variable = { which = army_size_estate value = 0.75 }
+	
+	multiply_variable = { which = naval_forcelimit_country value = 0.2 }
+}
+
+set_army_total = {
+	set_variable = { which = army_size_total which = manpower_country }
+	multiply_variable = { which = army_size_total value = 0.5 }
+	change_variable = { which = army_size_total which = land_forcelimit_country }
+	multiply_variable = { which = army_size_total value = 0.5 }
+	multiply_variable = { which = army_size_total value = 0.75 }
+	change_variable = { which = army_size_total which = army_size_country }
+	multiply_variable = { which = army_size_total value = 0.5 }
+	change_variable = { which = army_size_total which = army_size_estate }
+}
+
+new_gp_stuff = {
+	set_country_flag = great_predator
+	set_country_flag = testing_flag_gp_2
+	
+	export_to_variable = {
+		which = itr1
+		value = ADM
+	}
+	export_to_variable = {
+		which = itr2
+		value = MIL
+	}
+	
+	while = {
+		limit = {
+			NOT = { check_variable = { which = itr1 value = 4 } }
+		}
+		change_variable = { which = itr1 value = 1 }
+		
+		change_adm = 1
+	}
+	while = {
+		limit = {
+			NOT = { check_variable = { which = itr2 value = 4 } }
+		}
+		change_variable = { which = itr2 value = 1 }
+		
+		change_mil = 1
+	}
+	
+	set_variable = { which = itr1 value = 0 }
+	set_variable = { which = itr2 value = 0 }
+}
+
+set_calc_targ1 = {
+	set_country_flag = calc_targ
+	
+	every_subject_country = {
+		set_country_flag = calc_targ
+		
+		every_subject_country = {
+			set_country_flag = calc_targ
+		}
+	}
+}
+
+set_calc_targ2 = {
+	set_country_flag = calc_targ
+	
+	every_ally = {
+		limit = {
+			has_country_flag = is_independent
+			
+			NOT = { tag = ROOT }
+		}
+		set_country_flag = calc_targ
+	}
+	
+	if = {
+		limit = {
+			is_part_of_hre = yes
+			
+			ROOT = { is_part_of_hre = no }
+		}
+		emperor = {
+			set_country_flag = calc_targ
+			
+			every_ally = {
+				limit = {
+					has_country_flag = is_independent
+				}
+				set_country_flag = calc_targ
+			}
+		}
+	}
+	
+	if = {
+		limit = {
+			has_country_flag = has_been_guaranteed
+		}
+		every_country = {
+			limit = {
+				has_guaranteed = PREV
+				
+				NOT = { tag = ROOT }
+			}
+			set_country_flag = calc_targ
+		}
+	}
+}
+
+calc_prov_vars = {
+	set_variable = { which = conquest_runner_factor_temp value = 80 }
+	subtract_variable = { which = conquest_runner_factor_temp which = conquest_runner_final_time }
+	
+	if = {
+		limit = {
+			NOT = { check_variable = { which = conquest_runner_factor_temp value = 0 } }
+		}
+		set_variable = { which = conquest_runner_factor_temp value = 0 }
+	}
+	
+	divide_variable = { which = conquest_runner_factor_temp value = 80 }
+	multiply_variable = { which = conquest_runner_factor_temp which = conquest_runner_factor_temp }
+	
+	set_variable = { which = pop_weight which = devPointTotal }
+	
+	multiply_variable = { which = conquest_runner_factor_temp which = pop_weight }
+	
+	set_variable = { which = conquest_runner_sum_temp which = conquest_runner_final_time }
+}
+
+set_gp_mod = {
+	remove_country_modifier = gp_3
+	remove_country_modifier = gp_10
+	
+	add_country_modifier = {
+		name = gp_3
+		duration = 1095
+		
+		hidden = yes
+	}
+	add_country_modifier = {
+		name = gp_10
+		duration = 3650
+		
+		hidden = yes
+	}
+}
+
+set_gp_country = {
+	set_gp_mod = yes
+	
+	every_ally = {
+		set_gp_mod = yes
+	}
+	
+	if = {
+		limit = {
+			is_part_of_hre = yes
+			
+			ROOT = { is_part_of_hre = no }
+		}
+		emperor = {
+			set_gp_mod = yes
+			
+			every_ally = {
+				set_gp_mod = yes
+			}
+		}
+	}
+	
+	if = {
+		limit = {
+			has_country_flag = has_been_guaranteed
+		}
+		every_country = {
+			limit = {
+				has_guaranteed = PREV
+			}
+			set_gp_mod = yes
+		}
+	}
+}
+
+set_arm_qual = {
+	export_to_variable = {
+		which = army_quality_tech
+		value = mil_tech
+	}
+	export_to_variable = {
+		which = army_quality_morale
+		value = modifier:land_morale
+	}
+	export_to_variable = {
+		which = army_quality_discipline
+		value = modifier:discipline
+	}
+	
+	multiply_variable = { which = army_quality_tech value = 0.1 }
+	multiply_variable = { which = army_quality_morale value = 2 }
+	multiply_variable = { which = army_quality_discipline value = 5 }
+	
+	change_variable = { which = army_quality_tech value = 1 }
+	change_variable = { which = army_quality_morale value = 1 }
+	change_variable = { which = army_quality_discipline value = 1 }
+	
+	if = {
+		limit = {
+			NOT = { check_variable = { which = army_quality_tech value = 0 } }
+		}
+		set_variable = { which = army_quality_tech value = 0 }
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = army_quality_morale value = 0 } }
+		}
+		set_variable = { which = army_quality_morale value = 0 }
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = army_quality_discipline value = 0 } }
+		}
+		set_variable = { which = army_quality_discipline value = 0 }
+	}
+	
+	set_variable = { which = army_quality_multiplier which = army_quality_tech }
+	multiply_variable = { which = army_quality_multiplier which = army_quality_morale }
+	multiply_variable = { which = army_quality_multiplier which = army_quality_discipline }
+}
+
+set_nav_qual = {
+	export_to_variable = {
+		which = navy_quality_tech
+		value = dip_tech
+	}
+	export_to_variable = {
+		which = navy_quality_morale
+		value = modifier:naval_morale
+	}
+	
+	multiply_variable = { which = navy_quality_tech			value = 0.1 }
+	
+	change_variable = { which = navy_quality_tech value = 1 }
+	change_variable = { which = navy_quality_morale value = 1 }
+	
+	if = {
+		limit = {
+			NOT = { check_variable = { which = navy_quality_tech value = 0 } }
+		}
+		set_variable = { which = navy_quality_tech value = 0 }
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = navy_quality_morale value = 0 } }
+		}
+		set_variable = { which = navy_quality_morale value = 0 }
+	}
+	
+	set_variable = { which = navy_quality_multiplier which = navy_quality_tech }
+	multiply_variable = { which = navy_quality_multiplier which = navy_quality_morale }
+}
+
+set_pop_weight = {
+	set_variable = { which = local_total_population_defense which = devPointTotal }
+	set_variable = { which = local_total_population_spread which = local_total_population_defense }
+	multiply_variable = { which = local_total_population_spread value = 0.5 }
+	change_variable = { which = local_total_population_spread value = 1 }
+}
+
+food_price_bonus = {
+	set_variable = { which = food_price_bonus_local value = 1.3 }
+	set_variable = { which = food_price_bonus_region value = 1.15 }
+	set_variable = { which = food_price_bonus_cont value = 1 }
+}
+
+set_rural_infrastructure_bonus = {
+	set_variable = { which = rural_infrastructure_bonus value = 0.6 }
+	
+	trigger_switch = {
+		on_trigger = has_building
+		
+		rural_infrastructure_1 = { set_variable = { which = rural_infrastructure_bonus value = 0.93 } }
+		rural_infrastructure_2 = { set_variable = { which = rural_infrastructure_bonus value = 1.1 } }
+		rural_infrastructure_3 = { set_variable = { which = rural_infrastructure_bonus value = 1.26 } }
+		rural_infrastructure_4 = { set_variable = { which = rural_infrastructure_bonus value = 1.35 } }
+		rural_infrastructure_5 = { set_variable = { which = rural_infrastructure_bonus value = 1.43 } }
+		rural_infrastructure_6 = { set_variable = { which = rural_infrastructure_bonus value = 1.47 } }
+		rural_infrastructure_7 = { set_variable = { which = rural_infrastructure_bonus value = 1.52 } }
+	}
+}
+
+# Modified trade power per pop determines how efficient it is at importing stuffs
+# It is modified so that the resulting value is different across differing pop size
+# Generally, small cities require more trade power per pop while bigger cities require less
+set_import_bonus = {
+	if = {
+		limit = {
+			is_city = yes
+		}
+		export_to_variable = { which = tp_per_pop value = province_trade_power }
+		
+		if = {
+			limit = {
+				check_variable = { which = urban_pop value = 150 }
+			}
+			divide_variable = { which = tp_per_pop value = 50 }
+			
+		}
+		else = {
+			logistic_funct = {
+				type1=which type2=value type3=value type4=value
+				inp=urban_pop midpnt=0 steepns=0.04 maxval=100
+			}
+			
+			subtract_variable = { which = logistic_val value = 49.999 }
+			
+			divide_variable = { which = tp_per_pop which = logistic_val }
+			
+			set_variable = { which = logistic_val value = 0 }
+		}
+		
+		if = {
+			limit = {
+				check_variable = { which = tp_per_pop value = 7 }
+			}
+			set_variable = { which = import_bonus value = 1.15 }
+			
+		}
+		else = {
+			logistic_funct = {
+				type1=which type2=value type3=value type4=value
+				inp=tp_per_pop midpnt=0 steepns=0.75 maxval=1.5
+			}
+			
+			set_variable = { which = import_bonus which = logistic_val }
+			subtract_variable = { which = import_bonus value = 0.349 }
+			
+			set_variable = { which = logistic_val value = 0 }
+		}
+		
+		set_variable = { which = tp_per_pop value = 0 }
+	}
+	else = {
+		set_variable = { which = import_bonus value = 1 }
+	}
+}
+
+compare_profit = {
+	food_price_bonus = yes
+	
+	set_variable = { which = exam_close which = food_price_local }
+	
+	if = {
+		limit = {
+			check_variable = { which = surplus_food_save value = 0 }
+		}
+		multiply_variable = { which = exam_close which = food_price_bonus_region }
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = surplus_food_save value = 0 } }
+		}
+		multiply_variable = { which = exam_close which = food_price_bonus_local }
+	}
+	set_export_food_transfer_value = yes
+	
+	set_variable = { which = exam_far which = food_price_cont }
+	subtract_variable = { which = exam_far value = 1 }
+	multiply_variable = { which = exam_far which = export_food_transfer_value }
+	multiply_variable = { which = exam_far which = export_food_transfer_value }
+	change_variable = { which = exam_far value = 1 }
+	multiply_variable = { which = exam_far value = 0.45 } # Price tuning
+	
+	multiply_variable = { which = exam_far which = food_price_bonus_cont }
+	multiply_variable = { which = exam_far which = price_of_rural_good }
+	
+	
+	set_variable = { which = export_food_transfer_value value = 0 }
+	set_variable = { which = food_price_bonus_local value = 0 }
+	set_variable = { which = food_price_bonus_region value = 0 }
+	set_variable = { which = food_price_bonus_cont value = 0 }
+}
+
+compare_price = {
+	food_price_bonus = yes
+	
+	set_variable = { which = exam_close which = food_price_local }
+	
+	if = {
+		limit = {
+			check_variable = { which = surplus_food_save value = 0 }
+		}
+		divide_variable = { which = exam_close which = food_price_bonus_local }
+		
+		# Small cities get minor buff to local food price
+		if = {
+			limit = {
+				NOT = {
+					is_variable_equal = { which = urban_pop value = 0 }
+					
+					check_variable = { which = urban_pop value = 5 }
+				}
+			}
+			logistic_funct = {
+				type1=which type2=value type3=value type4=value
+				inp=urban_pop midpnt=0 steepns=0.8 maxval=0.8
+			}
+			change_variable = { which = logistic_val value = 0.2 }
+			
+			multiply_variable = { which = exam_close which = logistic_val }
+			
+			set_variable = { which = logistic_val value = 0 }
+		}
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = surplus_food_save value = 0 } }
+		}
+		divide_variable = { which = exam_close which = food_price_bonus_region }
+	}
+	
+	set_variable = { which = exam_far value = 0.45 }
+	multiply_variable = { which = exam_far which = food_price_cont }
+	multiply_variable = { which = exam_far value = 0.45 }		# Food price tuning
+	divide_variable = { which = exam_far which = food_price_bonus_cont }
+	
+	set_import_bonus = yes
+	
+	divide_variable = { which = exam_far which = import_bonus }
+	
+	set_variable = { which = import_bonus value = 0 }
+	
+	# Tuning
+	#divide_variable = { which = exam_close value = 1.25 }
+	
+	set_variable = { which = food_price_bonus_local value = 0 }
+	set_variable = { which = food_price_bonus_region value = 0 }
+	set_variable = { which = food_price_bonus_cont value = 0 }
+}
+
+kjh_random = {
+	random_list = {
+		61 = {
+			set_variable = { which = random_weight value = 1 }
+		}
+		14 = {
+			set_variable = { which = random_weight value = 2 }
+		}
+		10 = {
+			set_variable = { which = random_weight value = 0.5 }
+		}
+		7 = {
+			set_variable = { which = random_weight value = 4 }
+		}
+		5 = {
+			set_variable = { which = random_weight value = 0.25 }
+		}
+		1 = {
+			set_variable = { which = random_weight value = 8 }
+		}
+		2 = {
+			set_variable = { which = random_weight value = 0.125 }
+		}
+	}
+}
+
+kjh_random_2 = {
+	random_list = {
+		90 = {
+			set_variable = { which = random_weight value = 1 }
+		}
+		8 = {
+			set_variable = { which = random_weight value = 1.5 }
+		}
+		8 = {
+			set_variable = { which = random_weight value = 0.666 }
+		}
+		4 = {
+			set_variable = { which = random_weight value = 2 }
+		}
+		4 = {
+			set_variable = { which = random_weight value = 0.5 }
+		}
+		2 = {
+			set_variable = { which = random_weight value = 4 }
+		}
+		2 = {
+			set_variable = { which = random_weight value = 0.333 }
+		}
+		1 = {
+			set_variable = { which = random_weight value = 8 }
+		}
+		1 = {
+			set_variable = { which = random_weight value = 0.125 }
+		}
+	}
+}
+
+get_fort_price = {
+	if = {
+		limit = {
+			NOT = {
+				has_building = fort_14th
+				has_building = fort_15th
+				has_building = fort_16th
+				has_building = fort_17th
+				has_building = fort_18th
+			}
+		}
+		set_variable = { which = fort_price value = 80 }
+	}
+	trigger_switch = {
+		on_trigger = has_building
+		fort_14th = {
+			set_variable = { which = fort_price value = 120 }
+		}
+		fort_15th = {
+			set_variable = { which = fort_price value = 180 }
+		}
+		fort_16th = {
+			set_variable = { which = fort_price value = 260 }
+		}
+		fort_17th = {
+			set_variable = { which = fort_price value = 360 }
+		}
+	}
+	
+	trigger_switch = {
+		on_trigger = has_terrain
+		arctic = {
+			multiply_variable = { which = fort_price value = 3.50 }
+		}
+		forest_flats = {
+			multiply_variable = { which = fort_price value = 1.75 }
+		}
+		forest_hills = {
+			multiply_variable = { which = fort_price value = 3.06 }
+		}
+		forest_mountain = {
+			multiply_variable = { which = fort_price value = 4.90 }
+		}
+		forest_highlands = {
+			multiply_variable = { which = fort_price value = 3.06 }
+		}
+		wood_flats = {
+			multiply_variable = { which = fort_price value = 1.40 }
+		}
+		wood_hills = {
+			multiply_variable = { which = fort_price value = 2.45 }
+		}
+		wood_mountain = {
+			multiply_variable = { which = fort_price value = 3.92 }
+		}
+		wood_highlands = {
+			multiply_variable = { which = fort_price value = 2.45 }
+		}
+		shrub_flats = {
+			multiply_variable = { which = fort_price value = 1.20 }
+		}
+		shrub_hills = {
+			multiply_variable = { which = fort_price value = 2.10 }
+		}
+		shrub_mountain = {
+			multiply_variable = { which = fort_price value = 3.36 }
+		}
+		shrub_highlands = {
+			multiply_variable = { which = fort_price value = 2.10 }
+		}
+		grass_flats = {
+			multiply_variable = { which = fort_price value = 1.00 }
+		}
+		grass_hills = {
+			multiply_variable = { which = fort_price value = 1.75 }
+		}
+		grass_mountain = {
+			multiply_variable = { which = fort_price value = 2.80 }
+		}
+		grass_highlands = {
+			multiply_variable = { which = fort_price value = 1.75 }
+		}
+		desert_flats = {
+			multiply_variable = { which = fort_price value = 3.50 }
+		}
+		desert_hills = {
+			multiply_variable = { which = fort_price value = 6.12 }
+		}
+		desert_mountain = {
+			multiply_variable = { which = fort_price value = 9.80 }
+		}
+		desert_highlands = {
+			multiply_variable = { which = fort_price value = 6.12 }
+		}
+		jungle_flats = {
+			multiply_variable = { which = fort_price value = 2.80 }
+		}
+		jungle_hills = {
+			multiply_variable = { which = fort_price value = 4.90 }
+		}
+		marsh = {
+			multiply_variable = { which = fort_price value = 2.80 }
+		}
+		alpine_tundra = {
+			multiply_variable = { which = fort_price value = 9.80 }
+		}
+		small_island = {
+			multiply_variable = { which = fort_price value = 2.80 }
+		}
+	}
+}
+
+get_harbour_price = {
+	if = {
+		limit = {
+			NOT = {
+				has_building = harbour_infrastructure_1
+				has_building = harbour_infrastructure_2
+				has_building = harbour_infrastructure_3x
+				has_building = harbour_infrastructure_4
+				has_building = harbour_infrastructure_5
+			}
+		}
+		set_variable = { which = harbour_price value = 50 }
+	}
+	trigger_switch = {
+		on_trigger = has_building
+		harbour_infrastructure_1 = {
+			set_variable = { which = harbour_price value = 150 }
+		}
+		harbour_infrastructure_2 = {
+			set_variable = { which = harbour_price value = 350 }
+		}
+		harbour_infrastructure_3x = {
+			set_variable = { which = harbour_price value = 500 }
+		}
+		harbour_infrastructure_4 = {
+			set_variable = { which = harbour_price value = 700 }
+		}
+	}
+	
+	multiply_variable = { which = harbour_price which = provAI_build_cost_mod }
+}
+
+get_recap_price = {
+	set_variable = { which = recap_price value = 1500 }
+	
+	trigger_switch = {
+		on_trigger = has_building
+		bureaucracy_1 = {
+			set_variable = { which = recap_price value = 2500 }
+		}
+		bureaucracy_2 = {
+			set_variable = { which = recap_price value = 4000 }
+		}
+		bureaucracy_3 = {
+			set_variable = { which = recap_price value = 7000 }
+		}
+		bureaucracy_4 = {
+			set_variable = { which = recap_price value = 15000 }
+		}
+	}
+}
+
+get_estate_fort_price = {
+	set_variable = { which = fort_price value = 40 }
+	
+	if = {
+		limit = {
+			has_building = local_fortification_1
+		}
+		set_variable = { which = fort_price value = 100 }
+	}
+	if = {
+		limit = {
+			has_building = local_fortification_2
+		}
+		set_variable = { which = fort_price value = 240 }
+	}
+}
+
+get_local_fort_value = {
+	every_owned_province = {
+		limit = {
+			is_city = yes
+		}
+		clr_province_flag = fort_dist_0
+		clr_province_flag = fort_dist_1
+	}
+	
+	every_owned_province = {
+		limit = {
+			OR = {
+				has_building = fort_14th
+				has_building = fort_15th
+				has_building = fort_16th
+				has_building = fort_17th
+				has_building = fort_18th
+			}
+		}
+		clr_province_flag = fort_dist_1
+		
+		set_province_flag = fort_dist_0
+		
+		every_neighbor_province = {
+			limit = {
+				owned_by = PREV
+				
+				NOT = { has_province_flag = fort_dist_0 }
+				
+				is_city = yes
+			}
+			set_province_flag = fort_dist_1
+		}
+	}
+	
+	every_owned_province = {
+		limit = {
+			is_city = yes
+		}
+		set_variable = { which = fort_value value = 1 }
+		set_variable = { which = inform_sender value = 0 }
+		set_variable = { which = local_total_population_defense value = 0 }
+		set_variable = { which = local_total_population_spread value = 0 }
+		
+		set_variable = { which = border_value value = 1 }
+		set_variable = { which = border_num value = 1 }
+		set_variable = { which = border_inform_sender value = 0 }
+		set_variable = { which = border_inform_save value = 0 }
+		set_variable = { which = border_inform_num value = 1 }
+	}
+	
+	every_owned_province = {
+		limit = {
+			has_province_flag = fort_calc_targ
+			
+			is_city = yes
+		}
+		set_pop_weight = yes
+		
+		set_variable = { which = increment value = 0 }
+		
+		while = {
+			limit = {
+				check_variable = { which = local_total_population_defense value = 50 }
+			}
+			subtract_variable = { which = local_total_population_defense value = 50 }
+			change_variable = { which = increment value = 1 }
+			
+			multiply_variable = { which = local_total_population_defense value = 0.5 }
+		}
+		
+		multiply_variable = { which = increment value = 50 }
+		change_variable = { which = local_total_population_defense which = increment }
+		
+		set_variable = { which = local_total_population_spread which = local_total_population_defense }
+		multiply_variable = { which = local_total_population_spread value = 0.5 }
+		change_variable = { which = local_total_population_spread value = 1 }
+		
+		change_variable = { which = fort_value which = local_total_population_defense }
+		
+		if = { ### Variables set to 0 after calculations are done
+			limit = {
+				NOT = { has_global_flag = show_for_developers }
+			}
+			set_variable = { which = local_total_population_defense value = 0 }
+			set_variable = { which = local_total_population_spread value = 0 }
+		}
+	}
+	
+	every_owned_province = {
+		limit = {
+			has_province_flag = fort_calc_targ
+			
+			is_city = yes
+		}
+		owner = { save_event_target_as = i_am_owner }
+		
+		every_neighbor_province = {
+			limit = {
+				is_city = yes
+				
+				NOT = {
+					owned_by = PREV
+					owner = { is_subject_of = event_target:i_am_owner }
+				}
+			}
+			PREV = {
+				change_variable = { which = border_value value = 2 }
+				
+				set_province_flag = has_border
+			}
+		}
+	}
+	
+	
+	every_owned_province = {
+		limit = {
+			has_province_flag = has_border
+		}
+		clr_province_flag = has_border
+		
+		set_variable = { which = inc value = 0 }
+		
+		while = {
+			limit = {
+				check_variable = { which = border_value value = 1 }
+			}
+			subtract_variable = { which = border_value value = 1 }
+			divide_variable = { which = border_value value = 1.5 }
+			change_variable = { which = inc value = 1 }
+		}
+		
+		change_variable = { which = border_value which = inc }
+		set_variable = { which = inc value = 0 }
+		
+		set_variable = { which = border_inform_sender which = border_value }
+		
+		subtract_variable = { which = border_inform_sender value = 1 }
+		multiply_variable = { which = border_inform_sender value = 0.5 }
+		
+		every_neighbor_province = {
+			limit = {
+				owned_by = PREV
+			}
+			set_variable = { which = border_inform_sender which = PREV }
+			change_variable = { which = border_inform_save which = border_inform_sender }
+		}
+	}
+	
+	every_owned_province = {
+		limit = {
+			has_province_flag = fort_calc_targ
+		}
+		set_variable = { which = inc value = 0 }
+		
+		while = {
+			limit = {
+				check_variable = { which = border_inform_save value = 1 }
+			}
+			subtract_variable = { which = border_inform_save value = 1 }
+			multiply_variable = { which = border_inform_save value = 0.5 }
+			change_variable = { which = inc value = 1 }
+		}
+		
+		change_variable = { which = border_inform_save which = inc }
+		set_variable = { which = inc value = 0 }
+		
+		change_variable = { which = border_value which = border_inform_save }
+		
+		if = {
+			limit = {
+				has_province_flag = border_prov
+			}
+			multiply_variable = { which = border_value value = 2 }
+			
+			clr_province_flag = border_prov
+		}
+	}
+	
+	every_owned_province = {
+		limit = {
+			has_province_flag = fort_calc_targ
+			
+			is_city = yes
+		}
+		set_variable = { which = fort_level_temp value = 0 }
+		
+		if = {
+			limit = {
+				has_building = fort_14th
+			}
+			change_variable = { which = fort_level_temp value = 2 }
+		}
+		if = {
+			limit = {
+				has_building = fort_15th
+			}
+			change_variable = { which = fort_level_temp value = 4 }
+		}
+		if = {
+			limit = {
+				has_building = fort_16th
+			}
+			change_variable = { which = fort_level_temp value = 6 }
+		}
+		if = {
+			limit = {
+				has_building = fort_17th
+			}
+			change_variable = { which = fort_level_temp value = 8 }
+		}
+		if = {
+			limit = {
+				has_building = fort_18th
+			}
+			change_variable = { which = fort_level_temp value = 10 }
+		}
+		
+		multiply_variable = { which = fort_level_temp value = 0.5 }
+		
+		every_neighbor_province = {
+			limit = {
+				owned_by = PREV
+			}
+			set_variable = { which = fort_level_temp which = PREV }
+			
+			change_variable = { which = fort_level which = fort_level_temp }
+			set_variable = { which = fort_level_temp value = 0 }
+		}
+		
+		multiply_variable = { which = fort_level_temp value = 2 }
+		
+		trigger_switch = {
+			on_trigger = has_building
+			local_fortification_1 = {
+				change_variable = { which = fort_level_temp value = 1 }
+			}
+			local_fortification_2 = {
+				change_variable = { which = fort_level_temp value = 3 }
+			}
+			local_fortification_3 = {
+				change_variable = { which = fort_level_temp value = 6 }
+			}
+		}
+		
+		trigger_switch = {
+			on_trigger = has_building
+			local_fortification_1_off = {
+				change_variable = { which = fort_level_temp value = 1 }
+			}
+			local_fortification_2_off = {
+				change_variable = { which = fort_level_temp value = 3 }
+			}
+			local_fortification_3_off = {
+				change_variable = { which = fort_level_temp value = 6 }
+			}
+		}
+		
+		if = {
+			limit = {
+				is_capital = yes
+			}
+			change_variable = { which = fort_level_temp value = 1 }
+		}
+		
+		if = {
+			limit = {
+				is_variable_equal = {
+					which = fort_level_temp
+					value = 0
+				}
+			}
+			
+			# log = "<ERROR><9467F240><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+			
+		}
+		else = {
+			divide_variable = {
+				which = fort_value
+				which = fort_level_temp
+			}
+		}
+		set_variable = { which = local_autonomy 		value = 0 }
+		# Exports local autonomy
+		export_to_variable = {
+			which = local_autonomy
+			value = local_autonomy
+		}
+		multiply_variable = { which = local_autonomy value = 0.01 }
+		
+		multiply_variable = { which = fort_value which = border_value }
+		multiply_variable = { which = fort_value which = border_value }
+		
+		set_variable = { which = local_autonomy_temp which = local_autonomy }
+		
+		multiply_variable = { which = local_autonomy_temp value = 1.7 }
+		change_variable = { which = local_autonomy_temp value = 0.3 }
+		
+		multiply_variable = { which = fort_value which = local_autonomy_temp }
+		
+		set_variable = { which = fort_level_temp value = 0 }
+		set_variable = { which = local_autonomy_temp value = 0 }
+		set_variable = { which = local_autonomy value = 0 }
+	}
+	
+	if = { ### Variables set to 0 after calculations are done
+		limit = {
+			NOT = { has_global_flag = show_for_developers }
+		}
+		every_owned_province = {
+			limit = {
+				is_city = yes
+			}
+			
+			set_variable = { which = border_value value = 0 }
+			set_variable = { which = border_num value = 0 }
+			set_variable = { which = border_inform_sender value = 0 }
+			set_variable = { which = border_inform_save value = 0 }
+			set_variable = { which = border_inform_num value = 0 }
+		}
+	}
+}
+
+get_privilege_var = {
+	set_variable = { which = privilege_level_gn 	value = 0 }
+	set_variable = { which = privilege_level_ln 	value = 0 }
+	set_variable = { which = privilege_level_bg 	value = 0 }
+	
+	if = {
+		limit = {
+			check_variable = { which = estate_greater_nobles_weight_share		value = 0.01 }
+		}
+		if = { limit = { has_country_flag = commoners_banned_from_officers_corps_1 }
+			change_variable = { which = "privilege_level_gn" value = 1 }
+		}
+		if = { limit = { has_country_flag = commoners_banned_from_officers_corps_2 }
+			change_variable = { which = "privilege_level_gn" value = 2 }
+		}
+		
+		if = { limit = { has_country_flag = ceremonial_generalships_1 }
+			change_variable = { which = "privilege_level_gn" value = 1 }
+		}
+		if = { limit = { has_country_flag = ceremonial_generalships_2 }
+			change_variable = { which = "privilege_level_gn" value = 2 }
+		}
+		
+		if = { limit = { has_country_flag = GN_relaxed_levy_obligations_1 }
+			change_variable = { which = "privilege_level_gn" value = 1 }
+		}
+		if = { limit = { has_country_flag = GN_relaxed_levy_obligations_2 }
+			change_variable = { which = "privilege_level_gn" value = 2 }
+		}
+		
+		if = { limit = { has_country_flag = GN_tax_exemptions_1 }
+			change_variable = { which = "privilege_level_gn" value = 1 }
+		}
+		if = { limit = { has_country_flag = GN_tax_exemptions_2 }
+			change_variable = { which = "privilege_level_gn" value = 2 }
+		}
+		if = { limit = { has_country_flag = GN_tax_exemptions_3 }
+			change_variable = { which = "privilege_level_gn" value = 3 }
+		}
+		if = { limit = { has_country_flag = GN_tax_exemptions_4 }
+			change_variable = { which = "privilege_level_gn" value = 4 }
+		}
+		
+		if = { limit = { has_country_flag = GN_exclude_commoners_cabinet_1 }
+			change_variable = { which = "privilege_level_gn" value = 1 }
+		}
+		if = { limit = { has_country_flag = GN_exclude_commoners_cabinet_2 }
+			change_variable = { which = "privilege_level_gn" value = 2 }
+		}
+		
+		if = { limit = { has_country_flag = GN_high_court_titles_1 }
+			change_variable = { which = "privilege_level_gn" value = 1 }
+		}
+		if = { limit = { has_country_flag = GN_high_court_titles_2 }
+			change_variable = { which = "privilege_level_gn" value = 2 }
+		}
+		
+		if = { limit = { has_country_flag = GN_high_nobles_court_1 }
+			change_variable = { which = "privilege_level_gn" value = 1 }
+		}
+		if = { limit = { has_country_flag = GN_high_nobles_court_2 }
+			change_variable = { which = "privilege_level_gn" value = 2 }
+		}
+	}
+	
+	if = {
+		limit = {
+			check_variable = { which = estate_lesser_nobles_weight_share		value = 0.01 }
+		}
+		if = { limit = { has_country_flag = GN_authority_to_govern_locally_1 }
+			change_variable = { which = "privilege_level_gn" value = 1 }
+		}
+		if = { limit = { has_country_flag = GN_authority_to_govern_locally_2 }
+			change_variable = { which = "privilege_level_gn" value = 2 }
+		}
+		
+		if = { limit = { has_country_flag = LN_relaxed_levy_obligations_1 }
+			change_variable = { which = "privilege_level_ln" value = 1 }
+		}
+		if = { limit = { has_country_flag = LN_relaxed_levy_obligations_2 }
+			change_variable = { which = "privilege_level_ln" value = 2 }
+		}
+		
+		if = { limit = { has_country_flag = LN_tax_exemptions_1 }
+			change_variable = { which = "privilege_level_ln" value = 1 }
+		}
+		if = { limit = { has_country_flag = LN_tax_exemptions_2 }
+			change_variable = { which = "privilege_level_ln" value = 2 }
+		}
+		if = { limit = { has_country_flag = LN_tax_exemptions_3 }
+			change_variable = { which = "privilege_level_ln" value = 3 }
+		}
+		if = { limit = { has_country_flag = LN_tax_exemptions_4 }
+			change_variable = { which = "privilege_level_ln" value = 4 }
+		}
+		
+		if = { limit = { has_country_flag = LN_high_court_titles_1 }
+			change_variable = { which = "privilege_level_ln" value = 1 }
+		}
+		if = { limit = { has_country_flag = LN_high_court_titles_2 }
+			change_variable = { which = "privilege_level_ln" value = 2 }
+		}
+		
+		if = { limit = { has_country_flag = LN_authority_to_govern_locally_1 }
+			change_variable = { which = "privilege_level_ln" value = 1 }
+		}
+		if = { limit = { has_country_flag = LN_authority_to_govern_locally_2 }
+			change_variable = { which = "privilege_level_ln" value = 2 }
+		}
+	}
+	
+	if = {
+		limit = {
+			check_variable = { which = estate_burghers_weight_share		value = 0.01 }
+		}
+		if = { limit = { has_country_flag = BG_tolerate_smuggling_1 }
+			change_variable = { which = "privilege_level_bg" value = 1 }
+		}
+		if = { limit = { has_country_flag = BG_tolerate_smuggling_2 }
+			change_variable = { which = "privilege_level_bg" value = 2 }
+		}
+		
+		if = { limit = { has_country_flag = BG_honorary_noble_titles_1 }
+			change_variable = { which = "privilege_level_bg" value = 1 }
+		}
+		if = { limit = { has_country_flag = BG_honorary_noble_titles_2 }
+			change_variable = { which = "privilege_level_bg" value = 2 }
+		}
+		
+		if = { limit = { has_country_flag = BG_right_of_commerce_1 }
+			change_variable = { which = "privilege_level_bg" value = 1 }
+		}
+		if = { limit = { has_country_flag = BG_right_of_commerce_2 }
+			change_variable = { which = "privilege_level_bg" value = 2 }
+		}
+		
+		if = { limit = { has_country_flag = BG_authority_to_govern_locally_1 }
+			change_variable = { which = "privilege_level_bg" value = 1 }
+		}
+		if = { limit = { has_country_flag = BG_authority_to_govern_locally_2 }
+			change_variable = { which = "privilege_level_bg" value = 2 }
+		}
+		
+		if = { limit = { has_country_flag = BG_resist_embargoes_1 }
+			change_variable = { which = "privilege_level_bg" value = 1 }
+		}
+		if = { limit = { has_country_flag = BG_resist_embargoes_2 }
+			change_variable = { which = "privilege_level_bg" value = 2 }
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = BG_exemption_from_military_services_1
+			}
+			change_variable = { which = privilege_level value = 1 }
+		}
+		if = {
+			limit = {
+				has_country_flag = BG_exemption_from_military_services_2
+			}
+			change_variable = { which = privilege_level value = 2 }
+		}
+		
+		if = { limit = { has_country_flag = BG_expanded_ship_builders_privileges_1 }
+			change_variable = { which = "privilege_level_bg" value = 1 }
+		}
+		if = { limit = { has_country_flag = BG_expanded_ship_builders_privileges_2 }
+			change_variable = { which = "privilege_level_bg" value = 2 }
+		}
+		
+		if = { limit = { has_country_flag = BG_appoint_as_court_suppliers_1 }
+			change_variable = { which = "privilege_level_bg" value = 1 }
+		}
+		if = { limit = { has_country_flag = BG_appoint_as_court_suppliers_2 }
+			change_variable = { which = "privilege_level_bg" value = 2 }
+		}
+	}
+}
+
+
+local_fort_deconst = {
+	
+	
+	every_owned_province = {
+		limit = {
+			has_province_flag = fort_calc_targ
+			
+			OR = {
+				has_building = local_fortification_1
+				has_building = local_fortification_2
+				has_building = local_fortification_3
+				has_building = local_fortification_1_off
+				has_building = local_fortification_2_off
+				has_building = local_fortification_3_off
+			}
+			
+			NOT = { check_variable = { which = fort_value which = owner } }
+		}
+		set_province_flag = deconst_cand
+		
+		owner = { set_variable = { which = fort_value which = PREV } }
+	}
+	every_owned_province = {
+		limit = {
+			has_province_flag = deconst_cand
+		}
+		clr_province_flag = deconst_cand
+		
+		if = {
+			limit = {
+				is_variable_equal = { which = fort_value which = owner }
+			}
+			set_variable = { which = fort_value value = 100000 }
+			
+			if = {
+				limit = {
+					has_building = local_fortification_1
+				}
+				remove_building = local_fortification_1
+				
+				if = {
+					limit = {
+						has_province_flag = greater_nobles_control_province
+					}
+					owner = { change_variable = { which = estate_greater_nobles_treasury value = 10 } }
+				}
+				if = {
+					limit = {
+						has_province_flag = lesser_nobles_control_province
+					}
+					owner = { change_variable = { which = estate_lesser_nobles_treasury value = 10 } }
+				}
+				if = {
+					limit = {
+						has_province_flag = burghers_control_province
+					}
+					owner = { change_variable = { which = estate_burghers_treasury value = 10 } }
+				}
+			}
+			if = {
+				limit = {
+					has_building = local_fortification_1_off
+				}
+				remove_building = local_fortification_1_off
+				
+				if = {
+					limit = {
+						has_province_flag = greater_nobles_control_province
+					}
+					owner = { change_variable = { which = estate_greater_nobles_treasury value = 10 } }
+				}
+				if = {
+					limit = {
+						has_province_flag = lesser_nobles_control_province
+					}
+					owner = { change_variable = { which = estate_lesser_nobles_treasury value = 10 } }
+				}
+				if = {
+					limit = {
+						has_province_flag = burghers_control_province
+					}
+					owner = { change_variable = { which = estate_burghers_treasury value = 10 } }
+				}
+			}
+			
+			if = {
+				limit = {
+					has_building = local_fortification_2
+				}
+				remove_building = local_fortification_2
+				add_building = local_fortification_1
+				
+				if = {
+					limit = {
+						has_province_flag = greater_nobles_control_province
+					}
+					owner = { change_variable = { which = estate_greater_nobles_treasury value = 25 } }
+				}
+				if = {
+					limit = {
+						has_province_flag = lesser_nobles_control_province
+					}
+					owner = { change_variable = { which = estate_lesser_nobles_treasury value = 25 } }
+				}
+				if = {
+					limit = {
+						has_province_flag = burghers_control_province
+					}
+					owner = { change_variable = { which = estate_burghers_treasury value = 25 } }
+				}
+			}
+			if = {
+				limit = {
+					has_building = local_fortification_2_off
+				}
+				remove_building = local_fortification_2_off
+				add_building = local_fortification_1_off
+				
+				if = {
+					limit = {
+						has_province_flag = greater_nobles_control_province
+					}
+					owner = { change_variable = { which = estate_greater_nobles_treasury value = 25 } }
+				}
+				if = {
+					limit = {
+						has_province_flag = lesser_nobles_control_province
+					}
+					owner = { change_variable = { which = estate_lesser_nobles_treasury value = 25 } }
+				}
+				if = {
+					limit = {
+						has_province_flag = burghers_control_province
+					}
+					owner = { change_variable = { which = estate_burghers_treasury value = 25 } }
+				}
+			}
+			
+			if = {
+				limit = {
+					has_building = local_fortification_3
+				}
+				remove_building = local_fortification_3
+				add_building = local_fortification_2
+				
+				if = {
+					limit = {
+						has_province_flag = greater_nobles_control_province
+					}
+					owner = { change_variable = { which = estate_greater_nobles_treasury value = 80 } }
+				}
+				if = {
+					limit = {
+						has_province_flag = lesser_nobles_control_province
+					}
+					owner = { change_variable = { which = estate_lesser_nobles_treasury value = 80 } }
+				}
+				if = {
+					limit = {
+						has_province_flag = burghers_control_province
+					}
+					owner = { change_variable = { which = estate_burghers_treasury value = 80 } }
+				}
+			}
+			if = {
+				limit = {
+					has_building = local_fortification_3_off
+				}
+				remove_building = local_fortification_3_off
+				add_building = local_fortification_2_off
+				
+				if = {
+					limit = {
+						has_province_flag = greater_nobles_control_province
+					}
+					owner = { change_variable = { which = estate_greater_nobles_treasury value = 80 } }
+				}
+				if = {
+					limit = {
+						has_province_flag = lesser_nobles_control_province
+					}
+					owner = { change_variable = { which = estate_lesser_nobles_treasury value = 80 } }
+				}
+				if = {
+					limit = {
+						has_province_flag = burghers_control_province
+					}
+					owner = { change_variable = { which = estate_burghers_treasury value = 80 } }
+				}
+			}
+		}
+	}
+}
+
+get_country_total_value = {
+	set_variable = { which = country_total_value which = wealth_total_fluid }
+	multiply_variable = { which = country_total_value value = 4 }
+	change_variable = { which = country_total_value which = wealth_as_asset }
+	
+	set_variable = { which = country_total_value which = devPointTotal }
+	multiply_variable = { which = country_total_value value = 25 }
+	change_variable = { which = country_total_value which = wealth_total_fluid }
+	multiply_variable = { which = country_total_value value = 4 }
+	change_variable = { which = country_total_value which = wealth_as_asset }
+	
+	multiply_variable = { which = country_total_value value = 0.01 }
+	
+	if = {
+		limit = {
+			has_province_flag = has_small_natural_harbour
+		}
+		multiply_variable = { which = country_total_value value = 1.5 }
+	}
+	if = {
+		limit = {
+			has_province_flag = has_great_natural_harbour
+		}
+		multiply_variable = { which = country_total_value value = 2.5 }
+	}
+	if = {
+		limit = {
+			OR = {
+				has_province_flag = has_confluence
+				
+				has_province_flag = silk_road_town
+			}
+		}
+		multiply_variable = { which = country_total_value value = 1.5 }
+	}
+}

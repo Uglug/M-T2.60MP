@@ -1,0 +1,402 @@
+# Set stat variable
+HelperStatInnate = {
+	set_variable = { which = $statName$Rural value = $statValA$ }
+	set_variable = { which = $statName$Urban value = $statValB$  }
+	set_variable = { which = $statName$Upper value = $statValC$  }
+	
+	multiply_variable = { which = $statName$Rural which = rural_pop }
+	multiply_variable = { which = $statName$Urban which = urban_pop }
+	multiply_variable = { which = $statName$Upper which = upper_pop }
+	
+	multiply_variable = { which = $statName$Rural which = ScalarRural }
+	multiply_variable = { which = $statName$Urban which = ScalarUrban }
+	#multiply_variable = { which = $statName$Upper which = ScalarUpper }
+	
+	#set_variable = { which = $statName$ value = 0 }
+	set_variable = { which = $statName$ which = $statName$Rural }
+	change_variable = { which = $statName$ which = $statName$Urban }
+	change_variable = { which = $statName$ which = $statName$Upper }
+}
+
+
+StatTaxWealth = {
+	# 1% of total wealth is taxed by the govt
+	#set_variable = { which = statTaxWealth value = 0 }
+	set_variable = { which = wealth_taxed_display which = wealth_urban_fluid }
+	change_variable = { which = wealth_taxed_display which = wealth_rural_fluid }
+	multiply_variable = { which = wealth_taxed_display value = 0.01 }
+	
+	multiply_variable = { which = wealth_urban_fluid value = 0.99 }
+	multiply_variable = { which = wealth_rural_fluid value = 0.99 }
+	
+	HelperInfoDisplay = {
+		info=wealth_urban_display income=wealth_urban_fluid min=0.01
+	}
+	HelperInfoDisplay = {
+		info=wealth_rural_display income=wealth_rural_fluid min=0.01
+	}
+	HelperInfoDisplay = {
+		info=wealth_taxed_display income=wealth_taxed_display min=0.01
+	}
+	if = {
+		limit = { NOT = { check_variable = { which = wealth_taxed_display value = 0.01 } } }
+		set_variable = { which = wealth_taxed_display value = 0.01 }
+	}
+	else = {
+		multiply_variable = { which = wealth_taxed_display value = 0.1 }
+		multiply_variable = { which = wealth_taxed_display value = 10 }
+	}
+}
+
+StatProdRural = {
+	foodSaleSell = yes
+	
+	set_variable = { which = statProdRuralLocal which = food_sale_local }
+	change_variable = { which = statProdRuralLocal which = food_sale_region }
+	
+	multiply_variable = { which = statProdRuralLocal value = 0.4 } # due to production efficiency +150%
+	
+	# Local Food Sale is more difficult to tax
+	#multiply_variable = { which = statProdRuralLocal value = 0.5 }
+	
+	#set_variable = { which = statProdRural which = statProdRuralLocal }
+	#change_variable = { which = statProdRural which = food_sale_cont }
+}
+
+StatProdMine = {
+	if = {
+		limit = {
+			check_variable = { which = mine_power   value = 0.01 }
+		}
+		#set_variable = { which = statProdMine value = 0 }
+		set_variable = { which = statProdMine which = mine_power }
+		multiply_variable = { which = statProdMine which = price_of_metal }
+		multiply_variable = { which = statProdMine value = 0.2 }
+		
+		#multiply_variable = { which = statProdMine value = 2.0 } # Tuning
+		
+		# Due to production 150%
+		set_variable = {
+			which = production_mine_display
+			which = statProdMine
+		}
+		multiply_variable = {
+			which = production_mine_display
+			value = 2.5
+		}
+		
+		#HelperInfoDisplay = {
+		#	info=production_mine_display income=production_mine_display min=0.01
+		#}
+		if = {
+			limit = { NOT = { check_variable = { which = production_mine_display value = 0.01 } } }
+			set_variable = { which = production_mine_display value = 0.01 }
+		}
+		else = {
+			multiply_variable = { which = production_mine_display value = 0.1 }
+			multiply_variable = { which = production_mine_display value = 10 }
+		}
+		
+		#set_variable = {
+		#	which = statProdMineTemp
+		#	value = 0
+		#}
+		
+		if = {
+			limit = {
+				OR = {
+					has_province_flag = silver
+					has_province_flag = gold
+				}
+			}
+			set_variable = { which = statTaxMine which = statProdMine }
+			#multiply_variable = { which = statTaxMine value = 0.8 }
+			
+			multiply_variable = { which = statTaxMine value = 2 } # Direct revenue gains the 150% bonus of prod, since its outside trade value
+			multiply_variable = { which = statProdMine value = 0.2 }
+		}
+		else = {
+			set_variable = { which = statTaxMine value = 0 }
+		}
+		
+		set_variable = { which = statIncomeMine which = statProdMine }
+	}
+	else = {
+		set_variable = { which = statTaxMine value = 0 }
+		set_variable = { which = statProdMine value = 0 }
+		set_variable = { which = production_mine_display value = 0 }
+		set_variable = { which = statIncomeMine value = 0 }
+	}
+}
+
+StatProdUrban = {
+	if = {
+		limit = {
+			check_variable = { which = urban_production_power value = 0.004 }
+		}
+		#set_variable = { which = statProdUrban value = 0 }
+		set_variable = { which = statProdUrban which = urban_production_power }
+		
+		if = {
+			limit = {
+				has_province_flag = urban_goods_rank_3
+			}
+			multiply_variable = { which = statProdUrban value = 3.6 }
+		}
+		else_if = {
+			limit = {
+				has_province_flag = urban_goods_rank_2
+			}
+			multiply_variable = { which = statProdUrban value = 3 }
+		}
+		else = {
+			multiply_variable = { which = statProdUrban value = 2.4 }
+		}
+		
+		multiply_variable = { which = statProdUrban value = 0.12 } # Tuning
+		#multiply_variable = { which = statProdUrban value = 0.1 }
+	}
+	else = {
+		set_variable = { which = statProdUrban value = 0 }
+	}
+}
+
+
+StatSetInnate = {
+	# POP Size scalar, capped at a 0.5 effect. Starts with more to nerf innate ducats/value more
+	set_variable = { which = ScalarRural value = 0.01 }
+	set_variable = { which = ScalarUrban value = 0.01 }
+	#set_variable = { which = ScalarUpper value = 0.005 }
+	
+	multiply_variable = { which = ScalarRural which = rural_pop }
+	if = {
+		limit = {
+			check_variable = { which = ScalarRural   value = 0.5 }
+		}
+		set_variable = { which = ScalarRural	value = 0.5 }
+	}
+	
+	multiply_variable = { which = ScalarUrban which = urban_pop }
+	if = {
+		limit = {
+			check_variable = { which = ScalarUrban   value = 0.5 }
+		}
+		set_variable = { which = ScalarUrban	value = 0.5 }
+	}
+	
+	#multiply_variable = { which = ScalarUpper which = upper_pop }
+	#if = {
+	#	limit = {
+	#		check_variable = { which = ScalarUpper   value = 0.5 }
+	#	}
+	#	set_variable = { which = ScalarUpper	value = 0.5 }
+	#}
+	
+	set_variable = { which = PopScalar	value = 1 }
+	subtract_variable = { which = PopScalar	which = ScalarRural }
+	set_variable = { which = ScalarRural which = PopScalar }
+	
+	set_variable = { which = PopScalar	value = 1 }
+	subtract_variable = { which = PopScalar	which = ScalarUrban }
+	set_variable = { which = ScalarUrban which = PopScalar }
+	
+	#set_variable = { which = PopScalar	value = 1 }
+	#subtract_variable = { which = PopScalar	which = ScalarUpper }
+	#set_variable = { which = ScalarUpper which = PopScalar }
+	
+	set_variable = { which = PopScalar	value = 0 }
+	
+	HelperStatInnate = { statName=statTaxPop statValA=0.3 statValB=0.5 statValC=0.2 } # Innate tax from pop
+	HelperStatInnate = { statName=statTradeValue statValA=0.01 statValB=0.04 statValC=0 } # Innate trade value from pop
+	
+	# Reset scalar back to 0.005, other stats shouldnt be nerfed
+	set_variable = { which = ScalarRural value = 0.005 }
+	set_variable = { which = ScalarUrban value = 0.005 }
+	
+	multiply_variable = { which = ScalarRural which = rural_pop }
+	if = {
+		limit = {
+			check_variable = { which = ScalarRural   value = 0.5 }
+		}
+		set_variable = { which = ScalarRural	value = 0.5 }
+	}
+	multiply_variable = { which = ScalarUrban which = urban_pop }
+	if = {
+		limit = {
+			check_variable = { which = ScalarUrban   value = 0.5 }
+		}
+		set_variable = { which = ScalarUrban	value = 0.5 }
+	}
+	
+	set_variable = { which = PopScalar	value = 1 }
+	subtract_variable = { which = PopScalar	which = ScalarRural }
+	set_variable = { which = ScalarRural which = PopScalar }
+	
+	set_variable = { which = PopScalar	value = 1 }
+	subtract_variable = { which = PopScalar	which = ScalarUrban }
+	set_variable = { which = ScalarUrban which = PopScalar }
+	
+	set_variable = { which = PopScalar	value = 0 }
+	
+	HelperStatInnate = { statName=statTradePower statValA=0.075 statValB=0 statValC=0.1 } # Innate trade power from pop
+	POP_modify_trade_power_buildings = yes
+	
+	HelperStatInnate = { statName=statSailors statValA=0.02 statValB=0.2 statValC=0 } # Innate sailor from pop
+	HelperStatInnate = { statName=statManpower statValA=0.2 statValB=0.2 statValC=0 } # Innate manpower from pop
+	
+	HelperStatInnate = { statName=statLandLimit statValA=0.04 statValB=0.04 statValC=0 } # Innate land force limit from pop
+	if = {
+		limit = {
+			has_port = yes
+		}
+		HelperStatInnate = { statName=statNavLimit statValA=0.03 statValB=0.16 statValC=0 } # Innate naval force limit from pop
+	}
+}
+
+# Things that require post-startup variables to function
+#StatSetExtra = {
+#	StatTaxWealth = yes
+#	StatProdRural = yes
+#	StatProdMine = yes
+#	StatProdUrban = yes
+#}
+
+StatSetModifier = {
+	set_variable = { which = statTaxInp which = statTax }
+	set_variable = { which = statProdInp which = statTradeValueRural }
+	change_variable = { which = statProdInp which = statTradeValueUrban }
+	change_variable = { which = statProdInp which = statProd }
+	set_variable = { which = statTradePowerInp which = statTradePower }
+	set_variable = { which = statSailorsInp which = statSailors }
+	set_variable = { which = statManpowerInp which = statManpower }
+	set_variable = { which = statLandLimitInp which = statLandLimit }
+	set_variable = { which = statNavLimitInp which = statNavLimit }
+	
+	set_variable = { which = rural_production_power_inp which = rural_production_power }
+	
+	food_price_bonus = yes
+	
+	multiply_variable = { which = rural_production_power_inp which = food_price_bonus_cont }
+	multiply_variable = { which = rural_production_power_inp value = 0.4 } # Due to +150% production efficiency
+	set_variable = { which = food_price_bonus_cont value = 0 }
+	
+	#set_variable = { which = timber_province_production_inp which = timber_province_production }
+	
+	reset_income_modifier = { varname=statTaxInp modname=statTax value=1310.72 type=province }
+	reset_income_modifier = { varname=statTaxInp modname=statTax value=655.36 type=province }
+	reset_income_modifier = { varname=statTaxInp modname=statTax value=327.68 type=province }
+	set_income_modifier = {
+		varname=statTaxInp modname=statTax type=province
+	}
+	
+	reset_income_modifier = { varname=statProdInp modname=statProd value=1310.72 type=province }
+	reset_income_modifier = { varname=statProdInp modname=statProd value=655.36 type=province }
+	reset_income_modifier = { varname=statProdInp modname=statProd value=327.68 type=province }
+	set_income_modifier = {
+		varname=statProdInp modname=statProd type=province
+	}
+	
+	set_income_modifier = {
+		varname=statTradePowerInp modname=statTradePower type=province
+	}
+	set_income_modifier = {
+		varname=statSailorsInp modname=statSailors type=province
+	}
+	set_income_modifier = {
+		varname=statManpowerInp modname=statManpower type=province
+	}
+	set_income_modifier = {
+		varname=statLandLimitInp modname=statLandLimit type=province
+	}
+	set_income_modifier = {
+		varname=statNavLimitInp modname=statNavLimit type=province
+	}
+	
+	set_income_modifier = {
+		varname=rural_production_power_inp modname=statRuralExport type=province
+	}
+	
+	#set_income_modifier = {
+	#	varname=timber_province_production_inp modname=statTimber type=province
+	#}
+	
+	
+	set_variable = { which = statTaxInp value = 0 }
+	set_variable = { which = statProdInp value = 0 }
+	set_variable = { which = statTradePowerInp value = 0 }
+	set_variable = { which = statSailorsInp value = 0 }
+	set_variable = { which = statManpowerInp value = 0 }
+	set_variable = { which = statLandLimitInp value = 0 }
+	set_variable = { which = statNavLimitInp value = 0 }
+	
+	set_variable = { which = rural_production_power_inp value = 0 }
+	
+	#set_variable = { which = timber_province_production_inp value = 0 }
+}
+StatSetCore = {
+	StatSetInnate = yes
+	StatTaxWealth = yes
+	StatProdRural = yes
+	StatProdMine = yes
+	StatProdUrban = yes
+	
+	#set_variable = { which = statTax value = 0 }
+	set_variable = { which = statTax which = statTaxMine }
+	multiply_variable = { which = statTax value = 0.8 } # account for 20% to prov wealth
+	change_variable = { which = statTax which = statTaxPop }
+	change_variable = { which = statTax which = wealth_taxed_display }
+	
+	#set_variable = { which = statProd value = 0 }
+	set_variable = { which = statProd which = statProdMine }
+	multiply_variable = { which = statProd value = 0.8 } # 80% to local powers
+	change_variable = { which = statProd which = statProdRuralLocal }
+	change_variable = { which = statProd which = statProdUrban }
+	
+	StatSetModifier = yes
+	
+	set_variable = { which = statTax value = 0 }
+	set_variable = { which = statProd value = 0 }
+}
+
+StatCleanup = {
+	# Cleanup
+	#set_variable = { which = TradeRuralContrib	value = 0 }
+	#set_variable = { which = TradeUrbanContrib	value = 0 }
+	#set_variable = { which = TradeUpperContrib	value = 0 }
+	set_variable = { which = ScalarRural value = 0 }
+	set_variable = { which = ScalarUrban value = 0 }
+	#set_variable = { which = ScalarUpper value = 0 }
+	
+	set_variable = { which = statLandLimit value = 0 }
+	#set_variable = { which = statLandLimitUpper value = 0 }
+	#set_variable = { which = statLandLimitUrban value = 0 }
+	#set_variable = { which = statLandLimitRural value = 0 }
+	set_variable = { which = statNavLimit value = 0 }
+	#set_variable = { which = statNavLimitUpper value = 0 }
+	#set_variable = { which = statNavLimitUrban value = 0 }
+	#set_variable = { which = statNavLimitRural value = 0 }
+	set_variable = { which = statProdUrban value = 0 }
+	set_variable = { which = statProdMine value = 0 }
+	set_variable = { which = statProdRuralLocal value = 0 }
+	set_variable = { which = statSailors value = 0 }
+	#set_variable = { which = statSailorsRural value = 0 }
+	#set_variable = { which = statSailorsUrban value = 0 }
+	set_variable = { which = statManpower value = 0 }
+	#set_variable = { which = statManpowerRural value = 0 }
+	#set_variable = { which = statManpowerUrban value = 0 }
+	#set_variable = { which = statManpowerUpper value = 0 }
+	#set_variable = { which = wealth_taxed_display value = 0 }
+	set_variable = { which = statTaxMine value = 0 }
+	set_variable = { which = statTaxPop value = 0 }
+	set_variable = { which = statTaxPopRural value = 0 }
+	set_variable = { which = statTaxPopUrban value = 0 }
+	#set_variable = { which = statTaxPopUpper value = 0 }
+	set_variable = { which = statTradePower value = 0 }
+	set_variable = { which = statTradePowerRural value = 0 }
+	set_variable = { which = statTradePowerUrban value = 0 }
+	#set_variable = { which = statTradePowerUpper value = 0 }
+	set_variable = { which = statTradeValue value = 0 }
+	set_variable = { which = statTradeValueRural value = 0 }
+	set_variable = { which = statTradeValueUrban value = 0 }
+	set_variable = { which = statIncomeMine value = 0 }
+}

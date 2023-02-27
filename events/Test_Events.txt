@@ -1,0 +1,118 @@
+namespace = Test_Events
+
+province_event = {
+	id = Test_Events.304
+	desc = no_localization
+	title = no_localization
+	picture = NOBLE_ESTATE_TAKE_OVER_eventPicture
+	
+	hidden = yes
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		set_variable = { which = added_unrest value = 15 }
+		base_unrest_remove_modifier = yes
+		change_base_unrest = yes
+		base_unrest_add_modifier = yes
+	}
+	
+	option = {
+		name = no_localization
+	}
+}
+
+country_event = {
+	id = Test_Events.405
+	desc = no_localization
+	title = no_localization
+	picture = NOBLE_ESTATE_TAKE_OVER_eventPicture
+	
+	hidden = yes
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		every_owned_province = {
+			set_variable = { which = converts value = 22 }
+		}
+	}
+	
+	option = {
+		name = no_localization
+	}
+}
+
+province_event = {
+	id = Test_Events.406
+	desc = no_localization
+	title = no_localization
+	picture = NOBLE_ESTATE_TAKE_OVER_eventPicture
+	
+	hidden = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = no_localization
+		controller = {
+			country_event = {
+				id = army_professionalism_events.1
+			}
+		}
+	}
+}
+
+country_event = {
+	id = Test_Events.407
+	desc = no_localization
+	title = no_localization
+	picture = NOBLE_ESTATE_TAKE_OVER_eventPicture
+	
+	hidden = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = no_localization
+		every_province = {
+			limit = {
+				is_wasteland = no
+			}
+			set_variable = { which = province_plague_immunity value = 0 }
+			### Setup historical plague immunity
+			if = {
+				limit = {
+					OR = {
+						continent = north_america
+						continent = south_america
+					}
+				}
+				set_variable = { which = province_plague_immunity value = -100 }
+				set_province_flag = no_plagues
+			}
+			else_if = {
+				limit = {
+					superregion = australia_superregion
+				}
+				set_variable = { which = province_plague_immunity value = -100 }
+				set_province_flag = no_plagues
+			}
+			else_if = {
+				limit = {
+					continent = north_asia
+				}
+				set_variable = { which = province_plague_immunity value = -25 }
+			}
+			#if = {
+			#	limit = {
+			#		check_variable = { which = tribals_ratio					value = 0.001 }
+			#	}
+			#	export_to_variable = {
+			#		variable_name = tribal_culture
+			#		value = culture
+			#	}
+			#}
+		}
+	}
+}

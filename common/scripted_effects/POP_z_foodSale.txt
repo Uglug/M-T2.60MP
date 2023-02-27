@@ -1,0 +1,109 @@
+foodSaleSell = {
+	set_variable = { which = food_sale_region value = 0 }
+	
+	set_variable = { which = food_sale_local which = urban_pop }
+	subtract_variable = { which = food_sale_local which = eats_continent_food }
+	
+	if = {
+		limit = {
+			NOT = { check_variable = { which = surplus_food_save value = 0 } }
+		}
+		change_variable = { which = food_sale_local which = surplus_food_save }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = surplus_food_save value = 0 }
+		}
+		set_variable = { which = food_sale_region which = surplus_food_save }
+	}
+	
+	set_variable = { which = food_sale_cont  which = rural_production_power }
+	
+	food_price_bonus = yes
+	
+	multiply_variable = { which = food_sale_local which = food_price_local }
+	multiply_variable = { which = food_sale_local which = food_price_bonus_local }
+	
+	multiply_variable = { which = food_sale_region which = food_price_local }
+	multiply_variable = { which = food_sale_region which = food_price_bonus_region }
+	
+	multiply_variable = { which = food_sale_cont which = food_price_bonus_cont }
+	multiply_variable = { which = food_sale_cont which = price_of_rural_good }
+	
+	set_variable = { which = food_price_bonus_local value = 0 }
+	set_variable = { which = food_price_bonus_region value = 0 }
+	set_variable = { which = food_price_bonus_cont value = 0 }
+	
+	# Display
+	set_variable = { which = food_sale_display which = food_sale_local }
+	change_variable = { which = food_sale_display which = food_sale_region }
+	
+	#HelperInfoDisplay = {
+	#	info=food_sale_display income=food_sale_display min=0.01
+	#}
+	#set_variable = { which = food_sale_disp value = 0 }
+	if = {
+		limit = { NOT = { check_variable = { which = food_sale_display value = 0.01 } } }
+		set_variable = { which = food_sale_display value = 0.01 }
+	}
+	else = {
+		multiply_variable = { which = food_sale_display value = 0.1 }
+		multiply_variable = { which = food_sale_display value = 10 }
+	}
+}
+
+foodSaleBuy = {
+	#set_variable = { which = food_eat_local value = 0 }
+	set_variable = { which = food_eat_region value = 0 }
+	#set_variable = { which = food_eat_cont value = 0 }
+	
+	set_variable = { which = food_eat_local 	which = food_sale_local }
+	set_variable = { which = food_eat_cont 		which = eats_continent_food }
+	
+	if = {
+		limit = {
+			NOT = { check_variable = { which = surplus_food_save value = 0 } }
+		}
+		subtract_variable = { which = food_eat_region which = surplus_food_save }
+	}
+	
+	food_price_bonus = yes
+	set_import_bonus = yes
+	
+	# food_sale_local / food_price_bonus_local^2 = food_eat_local
+	divide_variable = { which = food_eat_local which = food_price_bonus_local }
+	divide_variable = { which = food_eat_local which = food_price_bonus_local }
+	
+	multiply_variable = { which = food_eat_region which = food_price_local }
+	divide_variable = { which = food_eat_region which = food_price_bonus_region }
+	
+	multiply_variable = { which = food_eat_cont value = 0.45 }
+	multiply_variable = { which = food_eat_cont which = food_price_cont }
+	divide_variable = { which = food_eat_cont which = food_price_bonus_cont }
+	divide_variable = { which = food_eat_cont which = import_bonus }
+	
+	# Small cities get minor buff to local food price
+	if = {
+		limit = {
+			NOT = {
+				is_variable_equal = { which = urban_pop value = 0 }
+				
+				check_variable = { which = urban_pop value = 5 }
+			}
+		}
+		logistic_funct = {
+			type1=which type2=value type3=value type4=value
+			inp=urban_pop midpnt=0 steepns=0.8 maxval=0.8
+		}
+		change_variable = { which = logistic_val value = 0.2 }
+		
+		multiply_variable = { which = food_eat_local which = logistic_val }
+		
+		set_variable = { which = logistic_val value = 0 }
+	}
+	
+	set_variable = { which = import_bonus value = 0 }
+	set_variable = { which = food_price_bonus_local value = 0 }
+	set_variable = { which = food_price_bonus_region value = 0 }
+	set_variable = { which = food_price_bonus_cont value = 0 }
+}

@@ -1,0 +1,461 @@
+GetFortCandLocal = {
+	save_event_target_as = getFortWeightLocalTarg
+	
+	every_owned_province = {
+		limit = {
+			any_neighbor_province = {
+				is_city = yes
+				
+				NOT = {
+					owned_by = PREV
+					
+					owner = {
+						is_subject_of = event_target:getFortWeightLocalTarg
+					}
+				}
+			}
+		}
+		set_province_flag = getFortWeightLocalSpread
+		set_province_flag = $return$
+	}
+	
+	every_owned_province = {
+		limit = {
+			OR = {
+				has_building = fort_14th
+				has_building = fort_15th
+				has_building = fort_16th
+				has_building = fort_17th
+				has_building = fort_18th
+			}
+		}
+		set_province_flag = tmpHasFort
+	}
+	
+	every_owned_province = {
+		limit = {
+			has_province_flag = tmpHasFort
+		}
+		every_neighbor_province = {
+			limit = {
+				owned_by = PREV
+				
+				NOT = {
+					has_province_flag = tmpHasFort
+				}
+			}
+			set_province_flag = tmpHasFortNeighb
+		}
+	}
+	
+	set_country_flag = getFortWeightLocalItr
+	
+	while = {
+		limit = {
+			has_country_flag = getFortWeightLocalItr
+		}
+		clr_country_flag = getFortWeightLocalItr
+		
+		every_owned_province = {
+			limit = {
+				has_province_flag = getFortWeightLocalSpread
+			}
+			clr_province_flag = getFortWeightLocalSpread
+			
+			if = {
+				limit = {
+					has_province_flag = tmpHasFortNeighb
+				}
+				every_neighbor_province = {
+					limit = {
+						owned_by = PREV
+						
+						has_province_flag = tmpHasFort
+					}
+					set_province_flag = $return$
+				}
+			}
+			else = {
+				every_neighbor_province = {
+					limit = {
+						owned_by = PREV
+						
+						NOT = {
+							has_province_flag = $return$
+						}
+					}
+					set_province_flag = getFortWeightLocalSpreadCand
+					set_province_flag = $return$
+					
+					owner = {
+						set_country_flag = getFortWeightLocalItr
+					}
+				}
+			}
+		}
+		
+		every_owned_province = {
+			limit = {
+				has_province_flag = getFortWeightLocalSpreadCand
+			}
+			clr_province_flag = getFortWeightLocalSpreadCand
+			
+			set_province_flag = getFortWeightLocalSpread
+		}
+	}
+	
+	every_owned_province = {
+		clr_province_flag = tmpHasFort
+		clr_province_flag = tmpHasFortNeighb
+		
+		if = {
+			limit = {
+				has_province_flag = $return$
+				
+				CanBuildFort$type$ = no
+			}
+			clr_province_flag = $return$
+		}
+	}
+}
+
+DoBuildingFortLocal = {
+	if = {
+		limit = {
+			has_building = local_fortification_2
+		}
+		remove_building = local_fortification_2
+		
+		add_building = local_fortification_3
+	}
+	else_if = {
+		limit = {
+			has_building = local_fortification_2_off
+		}
+		remove_building = local_fortification_2_off
+		
+		add_building = local_fortification_3_off
+	}
+	else_if = {
+		limit = {
+			has_building = local_fortification_1
+		}
+		remove_building = local_fortification_1
+		
+		add_building = local_fortification_2
+	}
+	else_if = {
+		limit = {
+			has_building = local_fortification_1_off
+		}
+		remove_building = local_fortification_1_off
+		
+		add_building = local_fortification_2_off
+	}
+	else = {
+		add_building = local_fortification_1
+	}
+	if = {
+		limit = {
+			owner = {
+				ai = no
+				has_country_flag = build_info_events
+			}
+		}
+		set_variable = { which = prov_built_cost which = estateBuildPrice }
+[[type]
+		if = {
+			limit = {
+				is_variable_equal = { which = estateBuildAssess$type$ which = estateBuildAssessGN }
+			}
+			set_variable = { which = prov_built_type value = 1 }
+		}
+		else_if = {
+			limit = {
+				is_variable_equal = { which = estateBuildAssess$type$ which = estateBuildAssessLN }
+			}
+			set_variable = { which = prov_built_type value = 2 }
+		}
+		else_if = {
+			limit = {
+				is_variable_equal = { which = estateBuildAssess$type$ which = estateBuildAssessBG }
+			}
+			set_variable = { which = prov_built_type value = 3 }
+		}
+]
+		set_variable = { which = prov_built_event value = 3 }
+		province_event = { id = MT_general_fixes.103 }
+	}
+}
+
+GetFortPriceLocal = {
+	set_variable = {
+		which = $return$
+		value = 40
+	}
+	
+	trigger_switch = {
+		on_trigger = has_building
+					
+		local_fortification_1 = {
+			set_variable = {
+				which = $return$
+				value = 100
+			}
+		}
+		local_fortification_1_off = {
+			set_variable = {
+				which = $return$
+				value = 50
+			}
+		}
+		local_fortification_2 = {
+			set_variable = {
+				which = $return$
+				value = 240
+			}
+		}
+		local_fortification_2_off = {
+			set_variable = {
+				which = $return$
+				value = 120
+			}
+		}
+	}
+}
+
+DoEstateConstruction = {
+	# Get estate fort candidates - build everywhere
+	GetFortCandLocal = {
+		type = $type$
+		return = estateBuildFortCand
+	}
+	
+	every_owned_province = {
+		if = {
+			limit = {
+				estateBuildCond$type$ = yes
+			}
+			GetBestBuilding = {
+				root = Estate
+				urban = $urban$
+				rural = $rural$
+				state = no
+				budget = $treasury$
+				buildWeight = estateBuildWeight
+				buildInd = estateBuildInd
+				buildPrice = estateBuildPrice
+			}
+			
+			# Estate checks if it should build fort rather than building
+			if = {
+				limit = {
+					has_province_flag = estateBuildFortCand
+				}
+				set_variable = {
+					which = estateBuildWeightFort
+					which = devPointTotal
+				}
+				
+				trigger_switch = {
+					on_trigger = has_building
+					
+					local_fortification_1 = {
+						multiply_variable = {
+							which = estateBuildWeightFort
+							value = 0.5
+						}
+					}
+					local_fortification_1_off = {
+						multiply_variable = {
+							which = estateBuildWeightFort
+							value = 0.5
+						}
+					}
+					local_fortification_2 = {
+						multiply_variable = {
+							which = estateBuildWeightFort
+							value = 0.25
+						}
+					}
+					local_fortification_2_off = {
+						multiply_variable = {
+							which = estateBuildWeightFort
+							value = 0.25
+						}
+					}
+				}
+				
+				if = {
+					limit = {
+						is_owned_by_trade_company = yes
+						NOT = { fort_level = 1 }
+					}
+					multiply_variable = { which = estateBuildWeightFort value = 3 } #estates prioritise defending their overseas possessions
+				}
+				
+				multiply_variable = {
+					which = estateBuildWeightFort
+					value = 0.1
+				}
+				
+				if = {
+					limit = {
+						check_variable = {
+							which = estateBuildWeightFort
+							which = estateBuildWeight
+						}
+					}
+					set_variable = {
+						which = estateBuildWeight
+						which = estateBuildWeightFort
+					}
+					#set_province_flag = estateBuildFortCand #added
+					GetFortPriceLocal = {
+						return = estateBuildPrice
+					}
+				}
+				else = {
+					clr_province_flag = estateBuildFortCand
+				}
+			}
+			
+			export_to_variable = {
+				which = localAutonomy
+				value = local_autonomy
+			}
+			
+			multiply_variable = {
+				which = localAutonomy
+				value = 0.006
+			}
+			change_variable = {
+				which = localAutonomy
+				value = 0.4
+			}
+			
+			multiply_variable = {
+				which = estateBuildWeight
+				which = localAutonomy
+			}
+			
+			set_variable = {
+				which = localAutonomy
+				value = 0
+			}
+		}
+	}
+	
+	set_country_flag = estateBuildItr
+	
+	while = {
+		limit = {
+			has_country_flag = estateBuildItr
+		}
+		clr_country_flag = estateBuildItr
+		
+		GetMax = {
+			varName = estateBuildWeight
+			type = owned_province
+			cond = is_city
+			varClean = no
+			return = estateBuildBest
+		}
+		
+		event_target:estateBuildBest = {
+			set_variable = {
+				which = $treasury$
+				which = owner
+			}
+			
+			if = {
+				limit = {
+					check_variable = {
+						which = estateBuildInd
+						value = 1
+					}
+					
+					check_variable = {
+						which = $treasury$
+						which = estateBuildPrice
+					}
+				}
+				subtract_variable = {
+					which = $treasury$
+					which = estateBuildPrice
+				}
+				
+				owner = {
+					set_variable = {
+						which = $treasury$
+						which = PREV
+					}
+				}
+				
+				add_province_modifier = {
+					name = estate_built_building
+					duration = 1825
+				}
+				
+				if = {
+					limit = {
+						has_province_flag = estateBuildFortCand
+					}
+					DoBuildingFortLocal = {
+						type = $type$
+					}
+				}
+				else = {
+					DoBuilding = {
+						type = $type$
+						buildInd = estateBuildInd
+					}
+				}
+				
+				PREV = {
+					set_country_flag = estateBuildItr
+				}
+				
+				set_variable = {
+					which = estateBuildWeight
+					value = -1
+				}
+			}
+			
+			set_variable = {
+				which = $treasury$
+				value = 0
+			}
+		}
+		
+		# Estate stop construction when its wealth is below certain threshold
+		if = {
+			limit = {
+				NOT = {
+					check_variable = {
+						which = $treasury$
+						which = $stop$
+					}
+				}
+			}
+			clr_country_flag = estateBuildItr
+		}
+	}
+	
+	every_owned_province = {
+		clr_province_flag = estateBuildFortCand
+		
+		set_variable = {
+			which = estateBuildWeight
+			value = 0
+		}
+		set_variable = {
+			which = estateBuildInd
+			value = 0
+		}
+		set_variable = {
+			which = estateBuildPrice
+			value = 0
+		}
+	}
+}

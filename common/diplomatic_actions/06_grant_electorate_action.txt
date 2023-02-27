@@ -1,0 +1,51 @@
+# INSTRUCTIONS:
+#
+# condition				A diplomatic action can have any number of condition blocks, each with its own
+#						tooltip, potential and allow section
+#
+# 	tooltip					Sets a custom text string similar to the hardcoded limits
+# 							If no tooltip is scripted, the tooltip for the actual condition will be shown
+#							Note that the custom tooltip is only shown if the allow condition is NOT met
+#
+# 	potential				Determines if the condition is applicable or not
+# 	allow					Determines if the action is valid or not
+#
+# effect				A diplomatic action can only have one effect block
+
+# ROOT					actor
+# FROM					target
+
+grant_electorate = {
+	condition = {
+		tooltip = MAX_THREE_THEOCRACIES
+		potential = {
+			FROM = { government = theocracy }
+		}
+		allow = {
+			NOT = {
+				calc_true_if = {
+					all_elector = {
+						government = theocracy
+					}
+					amount = 3
+				}
+			}
+		}
+	}
+	condition = {
+		tooltip = MAX_FOUR_MONARCHIES
+		potential = {
+			FROM = { government = monarchy }
+		}
+		allow = {
+			NOT = {
+				calc_true_if = {
+					all_elector = {
+						NOT = { government = theocracy }
+					}
+					amount = 4
+				}
+			}
+		}
+	}
+}

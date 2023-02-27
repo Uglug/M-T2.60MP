@@ -1,0 +1,150 @@
+education_recalculation = {
+	#set_variable = { which = patriarch_authority 	value = 0 }
+	export_to_variable = {
+		which = church_influence
+		value = patriarch_authority
+		who = ROOT # was THIS, game doesn't like it
+	}
+	#set_variable = { 	  which = education_church_contribute		value = 0 }
+	set_variable = { 	  which = education_church_contribute		which = church_influence }
+	multiply_variable = { which = education_church_contribute		which = upper_pop }
+	multiply_variable = { which = education_church_contribute		value = 2 }
+	#set_variable = {      which = education_money_dispersed			value = 0 }
+	set_variable = {      which = education_money_dispersed			which = education_money_endowed }
+	multiply_variable = { which = education_money_dispersed			value = 0.05 }
+	multiply_variable = { which = education_money_dispersed			which = university_education_multiplier	} ### Money spent is multiplied by university multiplier to amplify effects
+	#set_variable = { 	  which = education_loss					value = 0 } ### Education that decays this year
+	set_variable = { 	  which = education_loss					which = education_level } ### Education that decays this year
+	multiply_variable = { which = education_loss					value = 0.05 } ### 5 percent education decay rate
+	#set_variable = { 	  which = education_yearly_gain				value = 0 }
+	set_variable = { 	  which = education_yearly_gain				which = education_money_dispersed }
+	#set_variable = { 	  which = education_costlier_with_time		value = 0 }
+	set_variable = { 	  which = education_costlier_with_time		value = 1 }
+	#set_variable = { 	  which = education_costlier_time_modi		value = 0 }
+	set_variable = { 	  which = education_costlier_time_modi		which = year_ticker }
+	multiply_variable = {   which = education_costlier_time_modi	value = 0.004 }
+	change_variable = {   which = education_costlier_with_time		which = education_costlier_time_modi }
+	multiply_variable = { which = education_yearly_gain				which = education_costlier_with_time }
+	multiply_variable = { which = education_yearly_gain				value = 0.8 } ### Variable to tune education gain
+	
+	set_variable = {       which = education_increase_cost      value = 1 } ### Increases cost of education over time (need more education to keep pace)
+	set_variable = {       which = education_cost_ticker        which = education_level }
+	
+	while = {
+		limit = {
+			check_variable = { which = education_cost_ticker    value = 0.001 }
+		}
+		multiply_variable = { which = education_increase_cost   value = 1.125 }
+		subtract_variable = { which = education_cost_ticker     value = 5 }
+	}
+	
+	#if = {
+	#	limit = {
+	#		is_variable_equal = {
+	#			which = education_increase_cost
+	#			value = 0
+	#		}
+	#	}
+	#	
+	#	# log = "<ERROR><A61FBEBF><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+	#	
+	#}
+	#else = {
+		divide_variable = {
+			which = education_yearly_gain
+			which = education_increase_cost
+		}
+	#}
+	
+	if = { ### Only divide for countries with at least 1 upper class
+		limit = {
+			check_variable = { which = upper_pop value = 1 }
+		}
+		#if = {
+		#	limit = {
+		#		is_variable_equal = {
+		#			which = upper_pop
+		#			value = 0
+		#		}
+		#	}
+		#	
+		#	# log = "<ERROR><E3DD5FC0><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+		#	
+		#}
+		#else = {
+			divide_variable = {
+				which = education_yearly_gain
+				which = upper_pop
+			}
+		#}
+	}
+	subtract_variable = { which = education_yearly_gain				which = education_loss }
+
+	
+	set_variable = { which = education_cost_ticker value = 0 }
+	set_variable = { which = education_money_dispersed value = 0 }
+	set_variable = { which = education_costlier_time_modi value = 0 }
+	set_variable = { which = education_costlier_with_time value = 0 }
+	set_variable = { which = education_increase_cost value = 0 }
+	set_variable = { which = education_loss value = 0 }
+}
+
+
+calc_tribal_tribute = {
+	set_variable = { which = estate_tribal_tribute_display			which = estate_tribal_tribute }
+	multiply_variable = { which = estate_tribal_tribute_display	value = 0.5 }
+	multiply_variable = { which = estate_tribal_tribute_display value = 0.1 }
+	multiply_variable = { which = estate_tribal_tribute_display		value = 10 }
+	
+	set_variable = { which = estate_tribal_manpower_display			which = estate_tribal_tribute_display }
+	multiply_variable = { which = estate_tribal_manpower_display	value = 0.4 }
+	multiply_variable = { which = estate_tribal_manpower_display	value = 1000 }
+	
+	set_variable = { which = estate_tribal_tribute_calc			which = estate_tribal_tribute }
+	
+	reset_income_modifier = { varname=estate_tribal_tribute_calc modname=tribal_tribute value=32768 type=country }
+	reset_income_modifier = { varname=estate_tribal_tribute_calc modname=tribal_tribute value=16384 type=country }
+	reset_income_modifier = { varname=estate_tribal_tribute_calc modname=tribal_tribute value=8192 type=country }
+	reset_income_modifier = { varname=estate_tribal_tribute_calc modname=tribal_tribute value=4096 type=country }
+	reset_income_modifier = { varname=estate_tribal_tribute_calc modname=tribal_tribute value=2048 type=country }
+	reset_income_modifier = { varname=estate_tribal_tribute_calc modname=tribal_tribute value=1024 type=country }
+	reset_income_modifier = { varname=estate_tribal_tribute_calc modname=tribal_tribute value=512 type=country }
+	reset_income_modifier = { varname=estate_tribal_tribute_calc modname=tribal_tribute value=256 type=country }
+	reset_income_modifier = { varname=estate_tribal_tribute_calc modname=tribal_tribute value=128 type=country }
+	reset_income_modifier = { varname=estate_tribal_tribute_calc modname=tribal_tribute value=64 type=country }
+	reset_income_modifier = { varname=estate_tribal_tribute_calc modname=tribal_tribute value=32 type=country }
+	reset_income_modifier = { varname=estate_tribal_tribute_calc modname=tribal_tribute value=16 type=country }
+	reset_income_modifier = { varname=estate_tribal_tribute_calc modname=tribal_tribute value=8 type=country }
+	reset_income_modifier = { varname=estate_tribal_tribute_calc modname=tribal_tribute value=4 type=country }
+	reset_income_modifier = { varname=estate_tribal_tribute_calc modname=tribal_tribute value=2 type=country }
+	reset_income_modifier = { varname=estate_tribal_tribute_calc modname=tribal_tribute value=1 type=country }
+	reset_income_modifier = { varname=estate_tribal_tribute_calc modname=tribal_tribute value=0.5 type=country }
+	reset_income_modifier = { varname=estate_tribal_tribute_calc modname=tribal_tribute value=0.25 type=country }
+	
+	set_variable = { which = estate_tribal_tribute_calc value = 0 }
+}
+
+clear_tribal_tribute = {
+	set_variable = { which = estate_tribal_tribute value = 0 }
+	set_variable = { which = estate_tribal_tribute_calc value = 0 }
+	set_variable = { which = estate_tribal_tribute_display value = 0 }
+	set_variable = { which = estate_tribal_manpower_display value = 0 }
+	clear_income_modifier = { modname=tribal_tribute value=32768 type=country }
+	clear_income_modifier = { modname=tribal_tribute value=16384 type=country }
+	clear_income_modifier = { modname=tribal_tribute value=8192 type=country }
+	clear_income_modifier = { modname=tribal_tribute value=4096 type=country }
+	clear_income_modifier = { modname=tribal_tribute value=2048 type=country }
+	clear_income_modifier = { modname=tribal_tribute value=1024 type=country }
+	clear_income_modifier = { modname=tribal_tribute value=512 type=country }
+	clear_income_modifier = { modname=tribal_tribute value=256 type=country }
+	clear_income_modifier = { modname=tribal_tribute value=128 type=country }
+	clear_income_modifier = { modname=tribal_tribute value=64 type=country }
+	clear_income_modifier = { modname=tribal_tribute value=32 type=country }
+	clear_income_modifier = { modname=tribal_tribute value=16 type=country }
+	clear_income_modifier = { modname=tribal_tribute value=8 type=country }
+	clear_income_modifier = { modname=tribal_tribute value=4 type=country }
+	clear_income_modifier = { modname=tribal_tribute value=2 type=country }
+	clear_income_modifier = { modname=tribal_tribute value=1 type=country }
+	clear_income_modifier = { modname=tribal_tribute value=0.5 type=country }
+	clear_income_modifier = { modname=tribal_tribute value=0.25 type=country }
+}

@@ -1,0 +1,105 @@
+#01 - The Walking Dead
+
+country_event = { #The Walking Dead
+	
+	id = dg_animist.001
+	title = dg_animist.001.t
+	desc = dg_animist.001.d
+	picture = all_funeral
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		religion = animism
+		piety = -0.60
+		NOT = { check_variable = { which = monastic_decline value = 5 } }
+	}
+	
+	option = {
+		name = dg_animist.001.a #Follow tradition to avoid the wrath of the spirits
+		ai_chance = {
+			factor = 70
+			modifier = {
+				piety = 0.60
+				factor = 1.4
+			}
+			modifier = {
+				piety = 0.20
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { piety = -0.20 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+		}
+		if = {
+			limit = {
+				NOT = { advisor = statesman }
+				NOT = { advisor = treasurer }
+				NOT = { advisor = diplomat }
+				has_advisor = yes
+			}
+			kill_advisor = random
+		}
+		else_if = {
+			limit = {
+				NOT = { advisor = statesman }
+				NOT = { advisor = treasurer }
+				NOT = { advisor = diplomat }
+				has_advisor = no
+			}
+			add_years_of_income = -0.08
+		}
+		kill_advisor = treasurer
+		kill_advisor = statesman
+		kill_advisor = diplomat
+	}
+	option = {
+		name = dg_animist.001.b #Show mercy to them
+		ai_chance = { factor = 30 }
+		hidden_effect = { change_variable = { which = monastic_decline value = 1 } }
+		dg_reduce_legitimacy = yes
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_scandal_country_strong duration = 800 }
+			if = {
+				limit = { stability = 0 }
+				subtract_stability_1 = yes
+			}
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = religious_scandal_country_strong duration = 400 }
+			if = {
+				limit = { stability = 1 }
+				subtract_stability_1 = yes
+			}
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = religious_scandal_country duration = 400 }
+			if = {
+				limit = { stability = 2 }
+				subtract_stability_1 = yes
+			}
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 800 }
+			if = {
+				limit = { stability = 3 }
+				subtract_stability_1 = yes
+			}
+		}
+		else = {
+			add_country_modifier = { name = religious_scandal_country_weak duration = 400 }
+		}
+	}
+}
+
+#religion and myth james macdonald http://www.sacred-texts.com/afr/ram/index.htm
+

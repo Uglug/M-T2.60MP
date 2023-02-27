@@ -1,0 +1,38 @@
+# Call eval script with parameters that corresponds to agenda evaluation
+AIEvalAgenda = {
+	AIEval = {
+		type = Agenda
+		name = $name$
+		tuning = 1.001
+	}
+}
+
+# A scripted effect with no parameter, when called manage list of agendas
+# By first evaluating primary agendas and adding or removing the appropriate ones
+# Then moving on to secondary agendas and adding or removing the appropriate ones
+# Interacts with Eval and Action
+AIAgenda = {
+	# Set primary agenda
+	AIEvalAgenda = { name = Military }
+	AIEvalAgenda = { name = Economy }
+	AIEvalAgenda = { name = Governance }
+	
+	# Set secondary agenda
+	if = {
+		limit = { has_country_flag = aiHasAgendaMilitary }
+		AIEvalAgenda = { name = Defense }
+	}
+	else = { clr_country_flag = aiHasAgendaDefense }
+	
+	if = {
+		limit = { has_country_flag = aiHasAgendaGovernance }
+		AIEvalAgenda = { name = Tech }
+		AIEvalAgenda = { name = Reform }
+		AIEvalAgenda = { name = CE }
+	}
+	else = {
+		clr_country_flag = aiHasAgendaTech
+		clr_country_flag = aiHasAgendaReform
+		clr_country_flag = aiHasAgendaCE
+	}
+}

@@ -1,0 +1,561 @@
+namespace = dg_wahhabi
+#2 of 4 events finished and optimized
+#custom tooltips added
+
+#######################
+# Birth of Wahhabiism # 00s
+#######################
+
+#01 - A Return to the Fundamentals
+#02 - Wahhabism in $PROVINCENAME$
+
+########################
+# Later Wahhabi Events # 10s
+########################
+
+#11* - Salafism
+#12* - History and Idolatry
+
+country_event = { #A Return to the Fundamentals
+	
+	id = dg_wahhabi.001
+	title = dg_wahhabi.001.t
+	desc = dg_wahhabi.001.d
+	picture = arab_caravan
+	
+	trigger = {
+		is_year = 1700 #1744
+		religion = sunni
+		culture_group = arabian
+		OR = { has_regency = no has_consort_regency = yes }
+		NOT = { has_country_flag = wahhabis_tolerated }
+		NOT = { has_country_flag = wahhabis_banned }
+		NOT = { government = theocracy }
+		NOT = { has_country_flag = patriarch_obedient }
+		NOT = { has_country_flag = patriarch_theologian }
+		NOT = { has_country_flag = patriarch_hostile }
+		NOT = { has_country_flag = patriarch_corrupt }
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 83
+		
+		modifier = {
+			has_country_flag = hanbali_school_favored
+			factor = 0.7
+		}
+		modifier = {
+			advisor = theologian
+			factor = 0.7
+		}
+		modifier = {
+			advisor = inquisitor
+			factor = 0.7
+		}
+		modifier = {
+			piety = 0.60
+			factor = 0.7
+		}
+		modifier = {
+			piety = 0.20
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { piety = -0.20 }
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { piety = -0.60 }
+			factor = 1.4
+		}
+		modifier = {
+			any_owned_province = { religion = wahhabi }
+			factor = 0.7
+		}
+		modifier = {
+			capital_scope = { religion = wahhabi }
+			factor = 0.5
+		}
+		modifier = {
+			has_country_flag = patriarch_controversial
+			factor = 0.5
+		}
+	}
+	
+	option = {
+		name = dg_wahhabi.001.a #Champion the cause of Wahhabism and Reform
+		ai_chance = {
+			factor = 30
+			modifier = {
+				has_country_flag = hanbali_school_favored
+				factor = 1.4
+			}
+			modifier = {
+				piety = 0.60
+				factor = 1.4
+			}
+			modifier = {
+				piety = 0.20
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { piety = -0.20 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { num_of_cities = 4 } #Easier to convert
+				factor = 1.4
+			}
+			modifier = {
+				num_of_cities = 8 #Harder to convert
+				factor = 0.7
+			}
+			modifier = {
+				num_of_cities = 16
+				factor = 0.7
+			}
+			modifier = {
+				num_of_cities = 32
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 0.80 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 0.20 }
+				factor = 0.7
+			}
+			modifier = {
+				culture_group = arabian
+				al_iraq_region = { owner = { NOT = { culture_group = arabian } } }
+				factor = 1.4
+			}
+		}
+		every_owned_province = {
+			limit = {
+				culture_group = arabian
+				has_owner_religion = yes
+			}
+			custom_tooltip = wahhabi_10
+			hidden_effect = {
+				change_variable = { which = province_religion value = -2 }
+				change_variable = { which = wahhabi value = 2 }
+			}
+		}
+		every_owned_province = {
+			limit = {
+				near_east_region_trigger = yes
+				temple_trigger = yes
+				has_owner_religion = yes
+			}
+			custom_tooltip = wahhabi_10
+			hidden_effect = {
+				change_variable = { which = province_religion value = -2 }
+				change_variable = { which = wahhabi value = 2 }
+			}
+		}
+		if = {
+			limit = { NOT = { any_known_country = { religion = wahhabi } } } #The first country to convert becomes the champion of the faith
+			add_manpower = 10
+			theocratification_effect = yes
+			add_ruler_modifier = { name = sword_of_faith duration = -1 }
+			add_prestige = 10
+			capital_scope = {
+				custom_tooltip = wahhabi_20
+				hidden_effect = {
+					change_variable = { which = province_religion value = -4 }
+					change_variable = { which = wahhabi value = 4 }
+				}
+			}
+			set_country_flag = arabian_union
+			#arabian_union_effect = yes
+			add_accepted_culture = hejazi
+			add_accepted_culture = najdi
+			add_accepted_culture = bahrani
+			add_accepted_culture = omani
+			add_accepted_culture = hadhrami
+			add_accepted_culture = yemeni
+			al_iraq_region = { add_claim = ROOT }
+		}
+		change_religion = wahhabi
+		add_ruler_modifier = { name = sword_of_faith }
+		hidden_effect = { set_country_flag = wahhabis_tolerated } #To avoid having the event fire a second time if converted
+	}
+	option = {
+		name = dg_wahhabi.001.b #Allow the movement in our lands
+		ai_chance = {
+			factor = 30
+			modifier = {
+				has_country_flag = hanbali_school_favored
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { num_of_cities = 4 } #Easier to convert
+				factor = 1.4
+			}
+			modifier = {
+				num_of_cities = 8 #Harder to convert
+				factor = 0.7
+			}
+			modifier = {
+				num_of_cities = 16
+				factor = 0.7
+			}
+			modifier = {
+				num_of_cities = 32
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 0.80 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 0.20 }
+				factor = 0.7
+			}
+		}
+		every_owned_province = {
+			limit = {
+				culture_group = arabian
+				religion = sunni
+			}
+			custom_tooltip = wahhabi_20
+			hidden_effect = {
+				change_variable = { which = province_religion value = -4 }
+				change_variable = { which = wahhabi value = 4 }
+			}
+		}
+		hidden_effect = { set_country_flag = wahhabis_tolerated }
+	}
+	option = {
+		name = dg_wahhabi.001.c #Ban the Wahhabis from $COUNTRY$
+		ai_chance = {
+			factor = 40
+			modifier = {
+				NOT = { num_of_cities = 4 } #Easier to convert
+				factor = 0.7
+			}
+			modifier = {
+				num_of_cities = 8 #Harder to convert
+				factor = 1.4
+			}
+			modifier = {
+				num_of_cities = 16
+				factor = 1.4
+			}
+			modifier = {
+				num_of_cities = 32
+				factor = 1.4
+			}
+		}
+		every_owned_province = {
+			limit = {
+				culture_group = arabian
+				NOT = { religion = wahhabi }
+			}
+			custom_tooltip = minority_grows_5
+			hidden_effect = {
+				change_variable = { which = province_religion value = -1 }
+				change_variable = { which = wahhabi value = 1 }
+				change_variable = { which = arab_fundamentalism value = 1 } #will suffer one fewer 'Wahhabism' event per province
+			}
+			spawn_rebels = { type = wahhabi_rebels size = 0 }
+		}
+		hidden_effect = { set_country_flag = wahhabis_banned }
+	}
+}
+
+province_event = { #Wahhabism
+	
+	id = dg_wahhabi.002
+	title = dg_wahhabi.002.t
+	desc = dg_wahhabi.002.d
+	picture = muslim_arab_raid
+	
+	trigger = {
+		is_year = 1700 #1744
+		near_east_region_trigger = yes
+		religion = sunni
+		culture_group = arabian
+		NOT = { check_variable = { which = arab_fundamentalism value = 3 } }
+		NOT = { has_province_modifier = heretic_missionary }
+		any_neighbor_province = { check_variable = { which = wahhabi value = 2 } }
+		OR = {
+			owner = { religion = wahhabi }
+			owner = { has_country_flag = wahhabis_tolerated }
+			owner = { NOT = { culture_group = arabian } }
+		}
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 5
+		
+		modifier = {
+			NOT = { culture_group = arabian }
+			factor = 2
+		}
+		modifier = {
+			NOT = { any_neighbor_province = { check_variable = { which = wahhabi value = 4 } } }
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { any_neighbor_province = { check_variable = { which = wahhabi value = 6 } } }
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { any_neighbor_province = { check_variable = { which = wahhabi value = 8 } } }
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { any_neighbor_province = { religion = wahhabi } }
+			factor = 1.4
+		}
+		modifier = {
+			check_variable = { which = arab_fundamentalism value = 1 }
+			factor = 1.4
+		}
+		modifier = {
+			check_variable = { which = arab_fundamentalism value = 2 }
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { tolerance_to_this = -1 }
+			factor = 0.7
+		}
+		modifier = {
+			tolerance_to_this = 1
+			factor = 1.4
+		}
+		modifier = {
+			tolerance_to_this = 3
+			factor = 1.4
+		}
+		modifier = {
+			owner = { religion = wahhabi }
+			factor = 0.5
+		}
+		modifier = {
+			owner = { NOT = { religion = sunni } }
+			factor = 0.5
+		}
+		modifier = {
+			owner = { NOT = { culture_group = arabian } }
+			owner = { NOT = { religion = wahhabi } }
+			factor = 0.5
+		}
+		modifier = {
+			NOT = { is_core = owner }
+			owner = { NOT = { religion = wahhabi } }
+			factor = 0.5
+		}
+		modifier = {
+			owner = { religion = wahhabi }
+			NOT = { is_core = owner }
+			factor = 2
+		}
+	}
+	
+	immediate = { hidden_effect = { change_variable = { which = arab_fundamentalism value = 1 } } }
+	
+	option = {
+		name = dg_wahhabi.002.a #Welcome the Wahhabis to $PROVINCENAME$
+		ai_chance = {
+			factor = 40
+			modifier = {
+				owner = { has_country_flag = hanbali_school_favored }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { has_country_flag = wahhabis_tolerated }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { culture_group = arabian }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { NOT = { culture_group = arabian } }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { NOT = { religion_group = muslim } }
+				factor = 0.7
+			}
+		}
+		add_province_modifier = { name = heretic_missionary duration = 3650 }
+		hidden_effect = {
+			set_province_flag = wahhabi_missionaries
+			change_variable = { which = wahhabi value = 4 }
+			change_variable = { which = province_religion value = -4 }
+		}
+		custom_tooltip = wahhabi_20
+		if = {
+			limit = { is_capital = yes check_variable = { which = wahhabi value = 10 } }
+			owner = { change_religion = wahhabi add_ruler_modifier = { name = sword_of_faith } }
+		}
+	}
+	option = {
+		name = dg_wahhabi.002.b #Drive them out of $COUNTRY$
+		ai_chance = {
+			factor = 60
+			modifier = {
+				owner = { religion = wahhabi }
+				factor = 0
+			}
+			modifier = {
+				owner = { NOT = { religion = wahhabi } }
+				units_in_province = 1
+				factor = 2
+			}
+			modifier = {
+				check_variable = { which = wahhabi value = 2 }
+				factor = 0.7
+			}
+			modifier = {
+				check_variable = { which = wahhabi value = 4 }
+				factor = 0.7
+			}
+			modifier = {
+				check_variable = { which = wahhabi value = 6 }
+				factor = 0.7
+			}
+			modifier = {
+				check_variable = { which = wahhabi value = 8 }
+				factor = 0.7
+			}
+		}
+		hidden_effect = {
+			change_variable = { which = arab_fundamentalism value = 1 }
+			set_province_flag = wahhabi_missionaries
+			change_variable = { which = wahhabi value = 1 }
+			change_variable = { which = province_religion value = -1 }
+		}
+		add_province_modifier = { name = heretic_missionary duration = 730 }
+		if = {
+			limit = {
+				check_variable = { which = wahhabi value = 8 }
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 10 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_10
+			spawn_rebels = { type = wahhabi_rebels size = 1 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = wahhabi value = 6 }
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 8 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_8
+			spawn_rebels = { type = wahhabi_rebels size = 1 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = wahhabi value = 4 }
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 6 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_6
+			spawn_rebels = { type = wahhabi_rebels size = 0 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = wahhabi value = 2 }
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 4 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_4
+			spawn_rebels = { type = wahhabi_rebels size = 0 }
+		}
+		else = {
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 2 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_2
+		}
+		owner = {
+			every_country = {
+				limit = {
+					religion = wahhabi
+				}
+				if = {
+					limit = { piety = 0.6 }
+					add_opinion = { who = ROOT modifier = mistreated_coreligionists_fanatical }
+					hidden_effect = { set_country_flag = saudi_support }
+				}
+				else_if = {
+					limit = { piety = 0.2 }
+					add_opinion = { who = ROOT modifier = mistreated_coreligionists_pious }
+					hidden_effect = { set_country_flag = saudi_support }
+				}
+				else_if = {
+					limit = { piety = -0.2 }
+					add_opinion = { who = ROOT modifier = mistreated_coreligionists_observant }
+					hidden_effect = { set_country_flag = saudi_support }
+				}
+				else_if = {
+					limit = { piety = -0.6 }
+					add_opinion = { who = ROOT modifier = mistreated_coreligionists_decadent }
+					hidden_effect = { set_country_flag = saudi_support }
+				}
+			}
+		}
+		if = {
+			limit = { owner = { has_country_flag = wahhabis_attacked } }
+			spawn_rebels = { type = wahhabi_rebels size = 0 }
+			hidden_effect = { owner = { clr_country_flag = wahhabis_attacked set_country_flag = wahhabis_banned } }
+		}
+		if = {
+			limit = { owner = { has_country_flag = wahhabis_rejected } }
+			spawn_rebels = { type = wahhabi_rebels size = 1 }
+			hidden_effect = { owner = { clr_country_flag = wahhabis_rejected set_country_flag = wahhabis_attacked } }
+		}
+		hidden_effect = { owner = { set_country_flag = wahhabis_rejected } }
+		every_country = {
+			limit = { has_country_flag = saudi_support ai = yes }
+			hidden_effect = { clr_country_flag = saudi_support }
+			add_manpower = 1
+			add_war_exhaustion = -1
+		}
+	}
+}
+
+
+#Event chain similar to the Sufi revolt one: create a kind of rebel for Ulama in Arab provinces ruled by non-Arabs, then have rebels appear if it is controlled by rebels, converting provinces to Wahhabi; new state should get sword of faith modifier (especially Hanbali)
+#Alternate: have Ulama support Arab nationalist rebels in provinces where they exist - better check history
+
+#Should also have an effect on piety of countries to support Wahhabism
+
+#http://www.al-islam.org/shiite-encyclopedia-ahlul-bayt-dilp-team/wahhabis

@@ -1,0 +1,1003 @@
+#by Marco Dandolo
+#Ported by Sun_Wu
+
+#Events concerning Carnival, some inspired by CKII "Summer Fair"
+
+#Events 0-20 Carnival
+
+#0 Carnival ends
+#1 How big should preparations be
+#2 Mock the neighbour
+#3 Narrenbischof
+#4 Svolo del Turco
+#5 Archery
+#6 Thamthon the Thadduthee Thtrangler
+#7 Mascherade
+#8 Gambling
+#9 Vanity laws
+#10 Feast of the Ass
+#11 Mages and Divinators
+#12 Too many peasants visit the city
+#13 Jugglers
+#14 Monk condemns Carnival
+#15 Artist inspired by Carnival
+#16 Advisor gets drunk
+#17 The Table of Sins
+#18 Burning the Scapegoat (Nubbel)
+#19 Carnival Sins
+#20 Notification
+
+
+namespace = festa_carnival
+
+############
+# Carnival #
+############
+
+#Carnival ends
+country_event = {
+	id = festa_carnival.0
+	title = "festa_carnival.EVTNAME0"
+	desc = "festa_carnival.EVTDESC0"
+	picture = CARNIVAL_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		
+		name = "festa_carnival.EVTOPTA0"	#It was fun
+		
+		add_prestige = 5
+		remove_country_modifier = celebrating_carnival
+		add_country_modifier = {
+			name = "glorious_carnival"
+			duration = 1000
+		}
+		
+		clr_country_flag = carnival_decision
+		clr_country_flag = carnival_neighbor
+		clr_country_flag = carnival_narrenbischof
+		clr_country_flag = carnival_svolo
+		clr_country_flag = carnival_archery
+		clr_country_flag = carnival_samson
+		clr_country_flag = carnival_mascherade
+		clr_country_flag = carnival_gambling
+		clr_country_flag = carnival_vanity
+		clr_country_flag = carnival_ass
+		clr_country_flag = carnival_mages
+		clr_country_flag = carnival_peasants
+		clr_country_flag = carnival_jugglers
+		clr_country_flag = carnival_monk
+		clr_country_flag = carnival_artist
+		clr_country_flag = carnival_drunk
+		clr_country_flag = carnival_table
+		clr_country_flag = carnival_sin
+		clr_country_flag = splendid_carnival
+	}
+}
+
+#How big should preparations be
+country_event = {
+	id = festa_carnival.1
+	title = "festa_carnival.EVTNAME1"
+	desc = "festa_carnival.EVTDESC1"
+	picture = CARNIVAL_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "festa_carnival.EVTOPTA1"	#We will have a splendid Carnival
+		add_years_of_income = -0.05
+		add_prestige = 2
+		add_country_modifier = {
+			name = "celebrating_carnival"
+			duration = -1
+		}
+		set_country_flag = splendid_carnival
+	}
+	
+	option = {
+		name = "festa_carnival.EVTOPTB1"	#We will spend more than usual
+		add_years_of_income = -0.02
+		add_prestige = 1
+		add_country_modifier = {
+			name = "celebrating_carnival"
+			duration = -1
+		}
+	}
+	
+	option = {
+		name = "festa_carnival.EVTOPTC1"	#No special preparations
+		add_country_modifier = {
+			name = "celebrating_carnival"
+			duration = -1
+		}
+	}
+}
+
+#Mock the neighbor
+country_event = {
+	id = festa_carnival.2
+	title = "festa_carnival.EVTNAME2"
+	desc = "festa_carnival.EVTDESC2"
+	picture = CARNIVAL_eventPicture
+	
+	trigger = {
+		has_country_modifier = celebrating_carnival
+		NOT = {
+			OR = {
+				culture_group = latin
+				culture_group = napolitan
+				# primary_culture = burgundian
+				primary_culture = bourguignon
+				primary_culture = lorrain
+			}
+		}
+		NOT = {
+			has_country_flag = carnival_neighbor
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 6
+		modifier = {
+			factor = 0.8
+			any_neighbor_country = {
+				is_rival = ROOT
+			}
+		}
+		modifier = {
+			factor = 0.5
+			any_neighbor_country = {
+				is_enemy = ROOT
+			}
+		}
+	}
+	
+	option = {
+		name = "festa_carnival.EVTOPTA2"	#Tell some good jokes!
+		random_neighbor_country = {
+			add_opinion = {
+				who = PREV
+				modifier = opinion_carnival_jokes
+			}
+			country_event = { id = festa_carnival.20 }
+		}
+		add_prestige = 5
+		set_country_flag = carnival_neighbor
+		ai_chance = { factor = 70 }
+	}
+	
+	option = {
+		name = "festa_carnival.EVTOPTB2"	#Please no!
+		add_prestige = -5
+		set_country_flag = carnival_neighbor
+		ai_chance = { factor = 30 }
+	}
+}
+
+#Narrenbischof
+country_event = {
+	id = festa_carnival.3
+	title = "festa_carnival.EVTNAME3"
+	desc = "festa_carnival.EVTDESC3"
+	picture = CARNIVAL_eventPicture
+	
+	trigger = {
+		has_country_modifier = celebrating_carnival
+		NOT = {
+			OR = {
+				culture_group = latin
+				culture_group = napolitan
+			}
+		}
+		NOT = {
+			has_country_flag = carnival_narrenbischof
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 6
+		modifier = {
+			factor = 0.8
+			any_neighbor_country = {
+				is_rival = ROOT
+			}
+		}
+		modifier = {
+			factor = 0.5
+			any_neighbor_country = {
+				is_enemy = ROOT
+			}
+		}
+		modifier = {
+			factor = 0.1
+			tag = FRK
+		}
+	}
+	
+	option = {
+		name = "festa_carnival.EVTOPTA3"	#That's blasphemy!
+		add_papal_influence = 3
+		add_prestige = -1
+		capital_scope = {
+			add_province_modifier = {
+				name = "carnival_peasants_upset"
+				duration = 100
+			}
+		}
+		set_country_flag = carnival_narrenbischof
+	}
+	
+	option = {
+		name = "festa_carnival.EVTOPTB3"	#Tell some good jokes!
+		trigger = {
+			NOT = { government = theocracy }
+			any_neighbor_country = { government = theocracy }
+		}
+		random_neighbor_country = {
+			limit = {
+				government = theocracy
+			}
+			add_opinion = {
+				who = PREV
+				modifier = opinion_carnival_narrenbischof
+			}
+			country_event = { id = festa_carnival.20 }
+		}
+		add_prestige = 3
+		set_country_flag = carnival_narrenbischof
+	}
+	
+	option = {
+		name = "festa_carnival.EVTOPTC3"	#We have to accept that
+		trigger = { government = theocracy }
+		add_prestige = -3
+		set_country_flag = carnival_narrenbischof
+	}
+	
+	option = {
+		name = "festa_carnival.EVTOPTD3"	#It's only entertainment
+		trigger = { NOT = { government = theocracy }
+			NOT = {
+				any_neighbor_country = {
+					government = theocracy
+				}
+			}
+		}
+		add_prestige = 3
+		add_papal_influence = -5
+		set_country_flag = carnival_narrenbischof
+	}
+}
+
+#Svolo del Turco
+country_event = {
+	id = festa_carnival.4
+	title = "festa_carnival.EVTNAME4"
+	desc = "festa_carnival.EVTDESC4"
+	picture = CARNIVAL_eventPicture
+	
+	trigger = {
+		has_country_modifier = celebrating_carnival
+		tag = VEN
+		NOT = {
+			has_country_flag = carnival_svolo
+		}
+		has_country_flag = splendid_carnival
+	}
+	
+	mean_time_to_happen = { months = 3 }
+	
+	option = {
+		name = "festa_carnival.EVTOPTA4"	#Let the Turk fly high!
+		random_list = {
+			65 = { add_prestige = 6 }
+			35 = { add_prestige = -3 }
+		}
+		set_country_flag = carnival_svolo
+		ai_chance = { factor = 80 }
+	}
+	
+	option = {
+		name = "festa_carnival.EVTOPTB4"	#No Svolo this year
+		set_country_flag = carnival_svolo
+		add_prestige = -1
+		ai_chance = { factor = 20 }
+	}
+}
+
+#Archery
+country_event = {
+	id = festa_carnival.5
+	title = "festa_carnival.EVTNAME5"
+	desc = "festa_carnival.EVTDESC5"
+	picture = CARNIVAL_eventPicture
+	
+	trigger = {
+		has_country_modifier = celebrating_carnival
+		NOT = {
+			has_country_flag = carnival_archery
+		}
+		has_country_flag = splendid_carnival
+	}
+	
+	mean_time_to_happen = {
+		months = 6
+		modifier = {
+			factor = 0.8
+			advisor = commandant
+		}
+		modifier = {
+			factor = 0.8
+			advisor = grand_captain
+		}
+		modifier = {
+			factor = 0.8
+			advisor = recruitmaster
+		}
+		modifier = {
+			factor = 0.8
+			advisor = quartermaster
+		}
+		modifier = {
+			factor = 0.8
+			advisor = army_organiser
+		}
+		modifier = {
+			factor = 0.5
+			mil = 4
+		}
+	}
+	
+	option = {
+		name = "festa_carnival.EVTOPTA5"	#Give him a prize
+		random_known_country = {
+			add_opinion = {
+				who = ROOT
+				modifier = opinion_pleased
+			}
+		}
+		add_years_of_income = -0.1
+		set_country_flag = carnival_archery
+	}
+	option = {
+		name = "festa_carnival.EVTOPTB5"	#Men! Arrest this man!
+		add_prestige = 5
+		capital_scope = {
+			add_province_modifier = {
+				name = "carnival_peasants_upset"
+				duration = 100
+			}
+		}
+		set_country_flag = carnival_archery
+	}
+}
+
+#Thamthon the Thadduthee Thtrangler
+country_event = {
+	id = festa_carnival.6
+	title = "festa_carnival.EVTNAME6"
+	desc = "festa_carnival.EVTDESC6"
+	picture = CARNIVAL_eventPicture
+	
+	trigger = {
+		has_country_modifier = celebrating_carnival
+		NOT = {
+			has_country_flag = carnival_samson
+		}
+		has_country_flag = splendid_carnival
+	}
+	
+	mean_time_to_happen = {
+		months = 6
+		modifier = {
+			factor = 0.9
+			ai = no
+		}
+		modifier = {
+			factor = 0.5
+			mil = 4
+		}
+	}
+	
+	option = {
+		name = "festa_carnival.EVTOPTA6"	#He's really strong
+		add_prestige = 5
+		set_country_flag = carnival_samson
+	}
+	option = {
+		name = "festa_carnival.EVTOPTB6"	#Hire him as a guard
+		add_mil_power = 25
+		add_years_of_income = -0.05
+		set_country_flag = carnival_samson
+	}
+	option = {
+		trigger = {
+			mil = 3
+			NOT = { mil = 6 }
+		}
+		name = "festa_carnival.EVTOPTC6"	#Our ruler will prove his strength
+		random_list = {
+			35 = { add_prestige = 7 }
+			50 = { add_prestige = -5 }
+			15 = { change_mil = 1 }
+		}
+		set_country_flag = carnival_samson
+	}
+}
+
+#Mascherade
+country_event = {
+	id = festa_carnival.7
+	title = "festa_carnival.EVTNAME7"
+	desc = "festa_carnival.EVTDESC7"
+	picture = CARNIVAL_eventPicture
+	
+	trigger = {
+		has_country_modifier = celebrating_carnival
+		NOT = {
+			has_country_flag = carnival_mascherade
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 6
+		modifier = {
+			factor = 0.9
+			NOT = { dip = 3 }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { dip = 2 }
+		}
+		modifier = {
+			factor = 0.7
+			NOT = { dip = 1 }
+		}
+	}
+	
+	option = {
+		name = "festa_carnival.EVTOPTA7"	#Allow masks
+		add_prestige = 3
+		add_country_modifier = {
+			name = "carnival_masks"
+			duration = 60
+		}
+		set_country_flag = carnival_mascherade
+	}
+	option = {
+		name = "festa_carnival.EVTOPTB7"	#Don't allow masks
+		capital_scope = {
+			add_province_modifier = {
+				name = "carnival_nobles_upset"
+				duration = 100
+			}
+			add_province_modifier = {
+				name = "carnival_peasants_upset"
+				duration = 100
+			}
+		}
+		set_country_flag = carnival_mascherade
+	}
+}
+
+#Gambling
+country_event = {
+	id = festa_carnival.8
+	title = "festa_carnival.EVTNAME8"
+	desc = "festa_carnival.EVTDESC8"
+	picture = CARNIVAL_eventPicture
+	
+	trigger = {
+		has_country_modifier = celebrating_carnival
+		NOT = {
+			has_country_flag = carnival_gambling
+		}
+	}
+	
+	mean_time_to_happen = { months = 4 }
+	
+	option = {
+		name = "festa_carnival.EVTOPTA8"	#Allow gambling
+		add_years_of_income = -0.1
+		random_list = {
+			5 = { add_years_of_income = 0.5 }
+			10 = { add_years_of_income = 0.35 }
+			15 = { add_years_of_income = 0.25 }
+			20 = { add_years_of_income = 0.20 }
+			25 = { add_years_of_income = 0.15 }
+			25 = { add_prestige = -1 }
+		}
+		set_country_flag = carnival_gambling
+	}
+	option = {
+		name = "festa_carnival.EVTOPTB8"	#Prohibit gambling
+		add_papal_influence = 2
+		set_country_flag = carnival_gambling
+	}
+}
+
+#Vanity laws
+country_event = {
+	id = festa_carnival.9
+	title = "festa_carnival.EVTNAME9"
+	desc = "festa_carnival.EVTDESC9"
+	picture = CARNIVAL_eventPicture
+	
+	trigger = {
+		has_country_modifier = celebrating_carnival
+		NOT = {
+			has_country_flag = carnival_vanity
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 6
+		modifier = {
+			factor = 0.9
+			NOT = { adm = 4 }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { adm = 3 }
+		}
+		modifier = {
+			factor = 0.7
+			NOT = { adm = 2 }
+		}
+	}
+	
+	option = {
+		name = "festa_carnival.EVTOPTA9"	#No, we don't need these laws
+		capital_scope = {
+			add_province_modifier = {
+				name = "carnival_excess"
+				duration = 60
+			}
+		}
+		set_country_flag = carnival_vanity
+	}
+	option = {
+		name = "festa_carnival.EVTOPTB9"	#We need more restrictive laws
+		capital_scope = {
+			add_province_modifier = {
+				name = "carnival_nobles_upset"
+				duration = 100
+			}
+		}
+		set_country_flag = carnival_vanity
+	}
+}
+
+#Feast of the Ass
+country_event = {
+	id = festa_carnival.10
+	title = "festa_carnival.EVTNAME10"
+	desc = "festa_carnival.EVTDESC10"
+	picture = CARNIVAL_eventPicture
+	
+	trigger = {
+		has_country_modifier = celebrating_carnival
+		NOT = {
+			OR = {
+				culture_group = latin
+				culture_group = napolitan
+			}
+		}
+		NOT = {
+			has_country_flag = carnival_ass
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 6
+		modifier = {
+			factor = 2
+			government = theocracy
+		}
+		modifier = {
+			factor = 0.8
+			government = republic
+		}
+	}
+	
+	option = {
+		name = "festa_carnival.EVTOPTA10"	#I liked the perfomance
+		add_prestige = 3
+		add_papal_influence = -5
+		set_country_flag = carnival_ass
+	}
+	option = {
+		name = "festa_carnival.EVTOPTB10"	#That was vulgar!
+		add_papal_influence = 2
+		capital_scope = {
+			add_province_modifier = {
+				name = "carnival_peasants_upset"
+				duration = 60
+			}
+		}
+		set_country_flag = carnival_ass
+	}
+}
+
+#Mages, Divinators and Alchemists
+country_event = {
+	id = festa_carnival.11
+	title = "festa_carnival.EVTNAME11"
+	desc = "festa_carnival.EVTDESC11"
+	picture = CARNIVAL_eventPicture
+	
+	trigger = {
+		has_country_modifier = celebrating_carnival
+		NOT = {
+			has_country_flag = carnival_mages
+		}
+		has_country_flag = splendid_carnival
+	}
+	
+	mean_time_to_happen = {
+		months = 6
+		modifier = {
+			factor = 5
+			advisor = natural_scientist
+		}
+		modifier = {
+			factor = 0.9
+			adm = 4
+		}
+		modifier = {
+			factor = 0.8
+			full_idea_group = innovativeness_ideas
+		}
+	}
+	
+	option = {
+		name = "festa_carnival.EVTOPTA11"	#Allow them
+		add_prestige = -3
+		add_papal_influence = -3
+		random = {
+			chance = 33
+			define_advisor = {
+				type = natural_scientist
+				skill = 1
+				discount = yes
+			}
+		}
+		set_country_flag = carnival_mages
+	}
+	option = {
+		name = "festa_carnival.EVTOPTB11"	#Banish them!
+		add_adm_power = -5
+		set_country_flag = carnival_mages
+	}
+}
+
+#Too many peasents visit the city
+country_event = {
+	id = festa_carnival.12
+	title = "festa_carnival.EVTNAME12"
+	desc = "festa_carnival.EVTDESC12"
+	picture = CARNIVAL_eventPicture
+	
+	trigger = {
+		has_country_modifier = celebrating_carnival
+		NOT = {
+			has_country_flag = carnival_peasants
+		}
+		has_country_flag = splendid_carnival
+	}
+	
+	mean_time_to_happen = {
+		months = 6
+		modifier = {
+			factor = 0.9
+			NOT = { adm = 4 }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { adm = 3 }
+		}
+		modifier = {
+			factor = 0.7
+			NOT = { adm = 2 }
+		}
+	}
+	
+	option = {
+		name = "festa_carnival.EVTOPTA12"	#Allow them
+		add_prestige = -2
+		set_country_flag = carnival_peasants
+	}
+	option = {
+		name = "festa_carnival.EVTOPTB12"	#Limit access
+		capital_scope = {
+			add_province_modifier = {
+				name = "carnival_peasants_upset"
+				duration = 60
+			}
+		}
+		set_country_flag = carnival_peasants
+	}
+}
+
+#Jugglers
+country_event = {
+	id = festa_carnival.13
+	title = "festa_carnival.EVTNAME13"
+	desc = "festa_carnival.EVTDESC13"
+	picture = CARNIVAL_eventPicture
+	
+	trigger = {
+		has_country_modifier = celebrating_carnival
+		NOT = {
+			has_country_flag = carnival_jugglers
+		}
+		has_country_flag = splendid_carnival
+	}
+	
+	mean_time_to_happen = {
+		months = 6
+		modifier = {
+			factor = 0.9
+			adm = 3
+		}
+		modifier = {
+			factor = 0.8
+			adm = 4
+		}
+		modifier = {
+			factor = 0.7
+			adm = 5
+		}
+	}
+	
+	option = {
+		name = "festa_carnival.EVTOPTA13"	#Hire them for a special performance!
+		add_prestige = 5
+		add_years_of_income = -0.15
+		set_country_flag = carnival_jugglers
+	}
+	option = {
+		name = "festa_carnival.EVTOPTB13"	#Let me try that, too!
+		trigger = {
+			OR = {
+				dip = 4
+				adm = 4
+			}
+		}
+		add_prestige = 6
+		set_country_flag = carnival_jugglers
+		ai_chance = { factor = 100 }
+	}
+	option = {
+		name = "festa_carnival.EVTOPTC13"	#Not interested
+		set_country_flag = carnival_jugglers
+	}
+}
+
+#Monk condemns Carnival
+country_event = {
+	id = festa_carnival.14
+	title = "festa_carnival.EVTNAME14"
+	desc = "festa_carnival.EVTDESC14"
+	picture = CARNIVAL_eventPicture
+	
+	trigger = {
+		has_country_modifier = celebrating_carnival
+		OR = {
+			advisor = theologian
+			advisor = inquisitor
+		}
+		NOT = {
+			has_country_flag = carnival_monk
+		}
+	}
+	
+	mean_time_to_happen = { months = 2 }
+	
+	option = {
+		name = "festa_carnival.EVTOPTA14"	#He is right!
+		add_prestige = -3
+		set_country_flag = carnival_monk
+	}
+	option = {
+		name = "festa_carnival.EVTOPTB14"	#Some money will do the job
+		add_years_of_income = -0.1
+		set_country_flag = carnival_monk
+		ai_chance = { factor = 100 }
+	}
+	option = {
+		name = "festa_carnival.EVTOPTC14"	#Shut up!
+		if = {
+			limit = {
+				advisor = theologian
+			}
+			remove_advisor = theologian
+		}
+		if = {
+			limit = {
+				advisor = inquisitor
+			}
+			remove_advisor = inquisitor
+		}
+		set_country_flag = carnival_monk
+	}
+}
+
+#Artist inspired by Carnival
+country_event = {
+	id = festa_carnival.15
+	title = "festa_carnival.EVTNAME15"
+	desc = "festa_carnival.EVTDESC15"
+	picture = CARNIVAL_eventPicture
+	
+	trigger = {
+		has_country_modifier = celebrating_carnival
+		OR = {
+			advisor = artist
+			advisor = composer
+		}
+		NOT = {
+			has_country_flag = carnival_artist
+		}
+	}
+	
+	mean_time_to_happen = { months = 2 }
+	
+	option = {
+		name = "festa_carnival.EVTOPTA15"	#That's nice
+		add_prestige = 5
+		set_country_flag = carnival_artist
+	}
+}
+
+#Advisor gets drunk
+country_event = {
+	id = festa_carnival.16
+	title = "festa_carnival.EVTNAME16"
+	desc = "festa_carnival.EVTDESC16"
+	picture = CARNIVAL_eventPicture
+	
+	trigger = {
+		has_country_modifier = celebrating_carnival
+		has_advisor = yes
+		overextension_percentage = 0.5
+		NOT = {
+			has_country_flag = carnival_drunk
+		}
+	}
+	
+	mean_time_to_happen = { months = 2 }
+	
+	option = {
+		name = "festa_carnival.EVTOPTA16"	#This foul smell!
+		add_prestige = -2
+		set_country_flag = carnival_drunk
+	}
+}
+
+#The table of sins
+country_event = {
+	id = festa_carnival.17
+	title = "festa_carnival.EVTNAME17"
+	desc = "festa_carnival.EVTDESC17"
+	picture = FEAST_eventPicture
+	
+	trigger = {
+		has_country_modifier = celebrating_carnival
+		NOT = {
+			has_country_flag = carnival_table
+		}
+	}
+	
+	mean_time_to_happen = { months = 4 }
+	
+	option = {
+		name = "festa_carnival.EVTOPTA17"	#Prepare, eat and drink as much as possible
+		add_prestige = 3
+		add_years_of_income = -0.05
+		set_country_flag = carnival_table
+	}
+	option = {
+		name = "festa_carnival.EVTOPTB17"	#Be modest
+		add_papal_influence = 1
+		set_country_flag = carnival_table
+	}
+}
+
+#Burn the scapegoat
+country_event = {
+	id = festa_carnival.18
+	title = "festa_carnival.EVTNAME18"
+	desc = "festa_carnival.EVTDESC18"
+	picture = FEAST_eventPicture
+	
+	trigger = {
+		has_country_modifier = celebrating_carnival
+		NOT = {
+			OR = {
+				culture_group = latin
+				culture_group = napolitan
+			}
+		}
+		NOT = {
+			has_country_flag = carnival_nubbel
+		}
+	}
+	
+	mean_time_to_happen = { months = 4 }
+	
+	option = {
+		name = "festa_carnival.EVTOPTA18"	#I'll burn it! I'LL BURN IT!
+		add_prestige = 3
+		set_country_flag = carnival_nubbel
+	}
+	option = {
+		name = "festa_carnival.EVTOPTB18"	#We should support more enlightened practices
+		add_prestige = -1
+		add_adm_power = 5
+		set_country_flag = carnival_nubbel
+	}
+}
+
+#Carnival Sins
+country_event = {
+	id = festa_carnival.19
+	title = "festa_carnival.EVTNAME19"
+	desc = "festa_carnival.EVTDESC19"
+	picture = FEAST_eventPicture
+	
+	trigger = {
+		has_country_modifier = celebrating_carnival
+		government = monarchy
+		has_heir = no
+		has_regency = no
+		is_female = no
+		NOT = {
+			has_country_flag = carnival_nubbel
+		}
+		NOT = {
+			tag = BUR
+		}
+		NOT = { has_ruler_modifier = infertile_ruler }
+	}
+	
+	mean_time_to_happen = { months = 4 }
+	
+	option = {
+		name = "festa_carnival.EVTOPTA19"	#I'll give her a good tumble...
+		random = {
+			chance = 66
+			define_heir = {
+				dynasty = ROOT
+				claim = 30
+			}
+		}
+		add_papal_influence = -5
+		set_country_flag = carnival_sin
+	}
+	option = {
+		name = "festa_carnival.EVTOPTB19"	#I'll stay strong!
+		add_papal_influence = 2
+		add_adm_power = 15
+		set_country_flag = carnival_sin
+	}
+}
+
+#Notification
+country_event = {
+	id = festa_carnival.20
+	title = "festa_carnival.EVTNAME20"
+	desc = "festa_carnival.EVTDESC20"
+	picture = CARNIVAL_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		
+		name = "festa_carnival.EVTOPTA20"	#How dare they?!
+		
+		add_prestige = -1
+	}
+}

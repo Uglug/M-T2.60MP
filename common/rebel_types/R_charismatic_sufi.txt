@@ -1,0 +1,154 @@
+
+charismatic_shiite_sufis = { #Charismatic Sufis
+	
+	color = { 235 115 115 }
+	area = nation
+	government = theocracy
+	religion = shiite
+	defection = religion				# Defects to countries of their religion
+	defect_delay = 120				# Held provinces will auto-defect after 18 months, regardless of accept/enforce demands.
+	independence = religion
+	gfx_type = culture_province
+	
+	resilient = yes
+	reinforcing = no
+	general = yes
+	smart = yes
+	unit_transfer = yes				# Units remain after enforcing demands
+	will_relocate = yes				# Units will relocate if they have sieged all provinces nearby and has to move over sea.
+	
+	artillery = 0.0
+	infantry = 0.7
+	cavalry = 0.3
+	morale = 1.0
+	
+	# Possible handle actions
+	handle_action_negotiate = no
+	handle_action_stability = no
+	handle_action_build_core = no
+	handle_action_send_missionary = no
+	
+	# The rebel type with the highest modifier for this province gets picked
+	spawn_chance = {
+		factor = 100
+		modifier = {
+			NOT = { religion_group = muslim }
+			factor = 0.1
+		}
+		modifier = { #Safavid rebels instead
+			persia_region_trigger = yes
+			factor = 0.5
+		}
+		modifier = {
+			factor = 0
+			NOT = { has_province_modifier = charismatic_sufis }
+		}
+		modifier = {
+			has_missionary = yes
+			factor = 100
+		}
+		modifier = {
+			has_province_modifier = sufi_shrine
+			factor = 2
+		}
+		modifier = {
+			has_province_modifier = madrassa
+			factor = 2
+		}
+		modifier = {
+			owner = { religion_group = muslim }
+			has_owner_religion = no
+			factor = 5
+		}
+		modifier = {
+			has_owner_culture = no
+			factor = 2
+		}
+		modifier = {
+			NOT = { is_core = owner }
+			factor = 2
+		}
+		modifier = {
+			NOT = { culture_group = owner }
+			factor = 2
+		}
+		modifier = {
+			has_province_modifier = fanatics_organizing
+			factor = 1.4
+		}
+		modifier = {
+			has_province_modifier = religious_uprising_cooldown
+			factor = 0.1
+		}
+	}
+	
+	# This is checked for EACH province in the Area of Operations
+	movement_evaluation = {
+		factor = 1
+		modifier = {
+			factor = 0.1
+			units_in_province = 1
+		}
+		modifier = {
+			factor = 0.1
+			controlled_by = REB
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 2
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 4
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 6
+		}
+	}
+	
+	# Province Scope
+	siege_won_trigger = {
+	}
+	siege_won_effect = {
+		hidden_effect = {
+			add_province_modifier = { name = religious_uprising_cooldown duration = 7300 hidden = yes }
+		}
+		set_province_flag = sufi_nation
+		if = {
+			limit = { religion_group = muslim }
+			change_variable = { which = province_religion value = -8 }
+			change_variable = { which = shiite value = 8 }
+		}
+		add_nationalism = 10 # Add ten extra years of nationalism
+	}
+	
+	# Country scope
+	can_negotiate_trigger = {
+		num_of_owned_provinces_with = {
+			controlled_by = REB
+			value = 3
+		}
+	}
+	
+	# Country scope
+	can_enforce_trigger = {
+		always = yes
+	}
+	
+	# Localisation for their demands
+	demands_description = "charismatic_shiite_sufis_demand"
+	
+	# Country scope
+	demands_enforced_effect = {
+		hidden_effect = {
+			every_owned_province = {
+				add_province_modifier = { name = religious_uprising_cooldown duration = 7300 hidden = yes }
+			}
+		}
+		#every_owned_province = {
+		#	add_core = REB
+		#	create_vassal = REB
+		#}
+	}
+}

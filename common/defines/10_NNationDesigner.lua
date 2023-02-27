@@ -1,0 +1,13 @@
+NDefines.NNationDesigner.POINTS_AVAILABLE = 400
+NDefines.NNationDesigner.HEIR_MAX_AGE = 30
+NDefines.NNationDesigner.BASE_TAX_COST_MODIFIER = 0.8
+NDefines.NNationDesigner.PRODUCTION_COST_MODIFIER = 1.2
+NDefines.NNationDesigner.MANPOWER_COST_MODIFIER = 0
+NDefines.NNationDesigner.MEMBER_OF_HRE_COST = 0										-- Cost for being part of the HRE (base)
+NDefines.NNationDesigner.MEMBER_OF_HRE_PROVINCE_COST = 0.0		-- Cost for being part of the HRE (extra cost multiplier on provinces)
+NDefines.NNationDesigner.ALL_MALE_MALE_CHANCE = 95										-- Chance for females if starting ruler and heir were both male.
+NDefines.NNationDesigner.MANDATE_SUBCONTINENT_NAME = "north_china_superregion"			-- Name of the subcontinent where the Mandate will be given to the biggest nation by development when using random generated nations
+NDefines.NNationDesigner.MAX_GOVERNMENT_RANK = 6
+NDefines.NNationDesigner.GOVERNMENT_RANK_COST_1 = 0
+NDefines.NNationDesigner.GOVERNMENT_RANK_COST_2 = 0
+NDefines.NNationDesigner.GOVERNMENT_RANK_COST_3 = 0

@@ -1,0 +1,143 @@
+##############################################
+# Royalist army. Civil War factions.
+##############################################
+royalist_armies = {
+	
+	color = { 100 100 179 }
+	area = nation					# Stays within the nation
+	government = monarchy
+	defection = none				# Does not defect
+	independence = none				# Does not strive for independence
+	unit_transfer = yes
+	gfx_type = culture_province
+	
+	resilient = yes
+	reinforcing = yes
+	general = yes
+	smart = yes
+	
+	artillery = 0.1
+	infantry = 0.6
+	cavalry = 0.3
+	
+	morale = 1.1
+	
+	# Possible handle actions
+	handle_action_negotiate = no
+	handle_action_stability = no
+	handle_action_build_core = no
+	handle_action_send_missionary = yes
+	
+	# The rebel type with the highest modifier for this province gets picked
+	spawn_chance = {
+		factor = 1
+		modifier = {
+			factor = 2
+			is_year = 1700
+		}
+		modifier = {
+			factor = 2
+			is_year = 1740
+		}
+		modifier = {
+			factor = 2
+			is_year = 1780
+		}
+		modifier = {
+			factor = 0
+			is_overseas = yes
+		}
+		modifier = {
+			factor = 0.25
+			NOT = { is_year = 1600 }
+		}
+		modifier = {
+			factor = 0
+			owner = {
+				is_colonial_nation = yes
+			}
+		}
+		modifier = {
+			factor = 0.25
+			owner = {
+				government = monarchy
+			}
+		}
+		modifier = {
+			factor = 0.1
+			owner = {
+				NOT = { technology_group = western }	#FB-HT3 was latin
+				NOT = { technology_group = eastern }
+			}
+		}
+	}
+	
+	#This is checked for EACH province in the Area of Operations
+	movement_evaluation = {
+		factor = 1
+		modifier = {
+			factor = 0.1
+			units_in_province = 1
+		}
+		modifier = {
+			factor = 0.001
+			controlled_by = REB
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 2
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 4
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 6
+		}
+	}
+	
+	# Province Scope
+	siege_won_trigger = {
+	}
+	siege_won_effect = {
+	}
+	
+	# Country scope
+	can_negotiate_trigger = {
+		always = no
+	}
+	
+	# Country scope
+	can_enforce_trigger = {
+		always = yes
+	}
+	
+	# Localisation for their demands
+	demands_description = "royalist_armies_demand"
+	
+	# Country Scope
+	demands_enforced_effect = {
+		if = {
+			limit = {
+				NOT = {
+					OR = {
+						papal_trigger = yes
+						native_trigger = yes #was tribal_nomads and tribal_nomads_hereditary
+						steppe_trigger = yes
+						celestial_trigger = yes
+						iqta_trigger = yes
+						colonial_gov_trigger = yes
+						government = native
+					}
+				}
+			}
+			change_government = REB # Special for this effect. Picks preferred rebel government.
+		}
+		# change_religion = REB
+		# force_converted = yes
+		define_ruler = {
+			rebel = yes
+		}
+	}
+}

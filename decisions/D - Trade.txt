@@ -1,0 +1,194 @@
+country_decisions = {
+	
+	close_the_scheldt = {
+		potential = {
+			OR = {
+				owns = 96 # Zeeland
+				owns = 97 # Amsterdam
+			}
+			2360 = {
+				NOT = { owned_by = ROOT }
+				has_province_modifier = scheldt_estuary_modifier
+			}
+		}
+		allow = {
+			owns = 96 # Zeeland
+			owns = 97 # Amsterdam
+			dip_tech = 26
+			2360 = { has_province_modifier = scheldt_estuary_modifier }
+			OR = {
+				any_known_country = {
+					owns = 2360 # Antwerpen
+					war_with = ROOT
+				}
+				AND = {
+					any_known_country = {
+						owns = 2360 # Antwerpen
+						NOT = { primary_culture = flemish }
+						NOT = { primary_culture = brabantian }
+						NOT = { primary_culture = dutch }
+					}
+					OR = {
+						primary_culture = flemish
+						primary_culture = brabantian
+						primary_culture = dutch
+					}
+				}
+			}
+		}
+		effect = {
+			2360 = {
+				province_event = { id = center_of_trade.3 days = 5 }
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	request_byz_trading_privileges = {
+		potential = {
+			OR = {
+				tag = VEN
+				tag = GEN
+			}
+			merchant_trigger = yes
+			exists = BYZ
+			1402 = {
+				owned_by = BYZ
+				NOT = { has_trade_modifier = { who = VEN name = constantinople_trade_privileges } }
+				NOT = { has_trade_modifier = { who = GEN name = constantinople_trade_privileges } }
+			}
+			BYZ = {
+				NOT = { has_country_flag = refused_to_give_trade_privileges_151 }
+				NOT = { has_country_modifier = trade_privileges_renewal_timer }
+				NOT = { has_country_flag = lt_trade_block }
+			}
+		}
+		allow = {
+			NOT = { war_with = BYZ }
+			treasury = 80
+		}
+		effect = {
+			BYZ = { country_event = { id = trade_lt.44000 } }
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				NOT = { treasury = 100 }
+			}
+		}
+	}
+	
+	request_muslim_trading_privileges = {
+		potential = {
+			OR = {
+				tag = VEN
+				tag = GEN
+			}
+			1402 = {
+				NOT = { owned_by = BYZ }
+				owner = {
+					religion_group = muslim
+					NOT = { has_country_flag = refused_to_give_trade_privileges_151 }
+					NOT = { has_country_modifier = trade_privileges_renewal_timer }
+					NOT = { has_country_flag = lt_trade_block }
+				}
+				NOT = { has_trade_modifier = { who = VEN name = constantinople_trade_privileges } }
+				NOT = { has_trade_modifier = { who = GEN name = constantinople_trade_privileges } }
+			}
+			merchant_trigger = yes
+		}
+		allow = {
+			treasury = 80
+			1402 = {
+				owner = { NOT = { war_with = ROOT } }
+			}
+		}
+		effect = {
+			1402 = {
+				owner = { country_event = { id = trade_lt.44007 } }
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				NOT = { treasury = 100 }
+			}
+		}
+	}
+	
+	genoa_sicilian_trade_privileges = {
+		potential = {
+			tag = GEN
+			merchant_trigger = yes
+			NOT = { 2531 = { has_trade_modifier = { who = GEN name = naples_trade_privileges } } }
+			NOT = { 125 = { owned_by = ROOT } }
+			NOT = { 2531 = { owned_by = ROOT } }
+		}
+		allow = {
+			treasury = 75
+			1247 = { owned_by = ROOT }
+			2851 = { owned_by = ROOT }
+		}
+		effect = {
+			2531 = {
+				add_trade_modifier = {
+					who = ROOT
+					duration = -1
+					power = 25
+					key = naples_trade_privileges
+				}
+			}
+			add_treasury = -50
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	stop_foreign_slave_trade = {
+		potential = {
+			has_country_modifier = slave_empire
+		}
+		allow = {
+			has_institution = legalism
+			has_institution = global_trade # new_world_i
+			adm_tech = 12
+			NOT = { government = tribal }
+			adm_power = 200
+		}
+		effect = {
+			add_adm_power = -200
+			remove_country_modifier = slave_empire
+			if = {
+				limit = {
+					any_owned_province = {
+						has_province_modifier = major_slave_market
+					}
+				}
+				every_owned_province = {
+					change_trade_goods = unknown
+					remove_province_modifier = major_slave_market
+				}
+			}
+			custom_tooltip = stop_slave_trade_tooltip
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						trade_goods = slaves
+					}
+					add_province_modifier = {
+						name = "local_slave_chief"
+						duration = 5475
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+}

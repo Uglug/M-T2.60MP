@@ -1,0 +1,453 @@
+namespace = dg_pagan
+
+#4 of 6 planned events finished
+
+##############
+# Local gods # 00s
+##############
+
+#01 - Hero Cult
+#02* - Civic Pantheons
+#03* - Local Gods
+
+############################
+# Spirits and Sacred Spots # 10s
+############################
+
+#11 - Sacred Grove
+#12 - Sacred Grove Destroyed
+#13 - Defining Sacred
+
+##############
+# Local gods # 00s
+##############
+
+#01 - Hero Cult
+#02* - Civic Pantheons
+#03* - Local Gods
+
+province_event = { #01 - $PROVINCECULTURE$ Hero Cult
+	
+	id = dg_pagan.001
+	title = dg_pagan.001.t
+	desc = dg_pagan.001.d
+	picture = european_pagan_hero_cult_saffron
+	
+	trigger = {
+		religion_group = european_pagan
+		has_owner_religion = yes
+		is_in_capital_area = yes
+		NOT = { has_province_modifier = hero_cult }
+		owner = {
+			OR = {
+				ai = yes
+				has_country_flag = religious_news_trivial
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 416
+		
+		modifier = {
+			owner = { NOT = { num_of_cities = 3 } }
+			factor = 0.5
+		}
+		modifier = {
+			owner = { num_of_cities = 5 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 10 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 20 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 40 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 80 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 160 }
+			factor = 1.6
+		}
+	}
+	
+	option = {
+		name = dg_pagan.001.a #Build a shrine to honor this hero
+		ai_chance = { factor = 70 }
+		owner = { add_treasury = -10 }
+		add_province_modifier = { name = hero_cult duration = 10000 }
+	}
+	option = {
+		name = dg_pagan.001.b #Allow the locals to venerate their dead
+		ai_chance = { factor = 30 }
+	}
+}
+
+############################
+# Spirits and Sacred Spots # 10s
+############################
+
+country_event = { #11 - Sacred Grove
+	
+	id = dg_pagan.011
+	title = dg_pagan.011.t
+	desc = dg_pagan.011.d
+	picture = pagan_grove
+	
+	trigger = {
+		OR = {
+			religion_group = european_pagan
+			religion_group = new_world_pagan
+			religion = animism
+			religion = adi_dharam
+			religion = shinto
+			religion = hinduism
+		}
+		OR = {
+			has_country_flag = patriarch_controversial
+			has_country_flag = patriarch_zealous
+		}
+		NOT = { has_country_flag = sacred_grove }
+		NOT = { any_owned_province = { has_province_modifier = sacred_grove } }
+		any_owned_province = {
+			has_owner_religion = yes
+			is_in_capital_area = yes
+			controlled_by = owner
+			has_siege = no
+		}
+		piety = -0.20
+		OR = {
+			ai = yes
+			has_country_flag = religious_news_trivial
+		}
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 83
+		
+		modifier = {
+			piety = 0.20
+			factor = 0.7
+		}
+		modifier = {
+			piety = 0.60
+			factor = 0.7
+		}
+	}
+	
+	option = {
+		name = dg_pagan.011.a #
+		ai_chance = {
+			factor = 90
+			modifier = {
+				has_country_flag = sacred_grove_destroyed
+				factor = 0.5
+			}
+		}
+		add_adm_power = -5
+		add_years_of_income = -0.08
+		random_owned_province = {
+			limit = {
+				has_owner_religion = yes
+				is_in_capital_area = yes
+				controlled_by = owner
+				has_siege = no
+			}
+			add_province_modifier = { name = sacred_grove duration = -1 }
+		}
+		set_country_flag = sacred_grove
+	}
+	option = {
+		name = dg_pagan.011.b #There is no need
+		ai_chance = { factor = 10 }
+		if = {
+			limit = { piety = 0.60 }
+			random_owned_province = {
+				limit = {
+					has_owner_religion = yes
+					is_in_capital_area = yes
+					controlled_by = owner
+					has_siege = no
+				}
+				add_province_modifier = { name = religious_scandal_province duration = 1000 }
+			}
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			random_owned_province = {
+				limit = {
+					has_owner_religion = yes
+					is_in_capital_area = yes
+					controlled_by = owner
+					has_siege = no
+				}
+				add_province_modifier = { name = religious_scandal_province duration = 500 }
+			}
+		}
+		else = {
+			random_owned_province = {
+				limit = {
+					has_owner_religion = yes
+					is_in_capital_area = yes
+					controlled_by = owner
+					has_siege = no
+				}
+				add_province_modifier = { name = religious_scandal_province duration = 250 }
+			}
+		}
+	}
+}
+
+country_event = { #12 - Sacred Grove Destroyed
+	
+	id = dg_pagan.012
+	title = dg_pagan.012.t
+	desc = dg_pagan.012.d
+	picture = pagan_grove
+	
+	trigger = {
+		has_country_flag = sacred_grove
+		OR = {
+			NOT = { any_owned_province = { has_province_modifier = sacred_grove } }
+			any_owned_province = {
+				has_province_modifier = sacred_grove
+				NOT = { controlled_by = owner }
+			}
+			any_owned_province = {
+				has_province_modifier = sacred_grove
+				has_siege = yes
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		
+		months = 3
+		
+		modifier = {
+			any_owned_province = {
+				has_province_modifier = sacred_grove
+				controlled_by = owner
+				has_siege = yes
+			}
+			factor = 4
+		}
+	}
+	
+	option = {
+		name = dg_pagan.012.a #They will pay for this!
+		clr_country_flag = sacred_grove
+		set_country_flag = sacred_grove_destroyed
+		random_owned_province = {
+			limit = { has_province_modifier = sacred_grove }
+			remove_province_modifier = sacred_grove
+			if = {
+				limit = { owner = { piety = 0.60 } }
+				add_province_modifier = { name = religious_scandal_province duration = 2000 }
+			}
+			else_if = {
+				limit = { owner = { piety = 0.20 } }
+				add_province_modifier = { name = religious_scandal_province duration = 1000 }
+			}
+			else_if = {
+				limit = { owner = { piety = -0.20 } }
+				add_province_modifier = { name = religious_scandal_province duration = 500 }
+			}
+			else_if = {
+				limit = { owner = { piety = -0.60 } }
+				add_province_modifier = { name = religious_scandal_province duration = 250 }
+			}
+		}
+		if = {
+			limit = { piety = 0.60 }
+			add_prestige = -8
+			add_country_modifier = { name = morale_boost duration = 200 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_prestige = -6
+			add_country_modifier = { name = morale_boost duration = 150 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_prestige = -4
+			add_country_modifier = { name = morale_boost duration = 100 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_prestige = -2
+			add_country_modifier = { name = morale_boost duration = 50 }
+		}
+	}
+}
+
+country_event = { #Defining Sacred
+	
+	id = dg_pagan.013
+	title = dg_pagan.013.t
+	desc = dg_pagan.013.d
+	picture = pagan_grove
+	
+	trigger = {
+		any_owned_province = {
+			has_province_modifier = sacred_grove
+			has_owner_religion = yes
+		}
+		any_owned_province = {
+			temple_trigger = yes
+			has_owner_religion = yes
+		}
+		NOT = { patriarch_authority = 0.40 }
+		NOT = { has_country_flag = sacred_space_law }
+		NOT = { has_country_flag = denounced_folk_religion }
+		piety = -0.60
+		NOT = { check_variable = { which = church_property value = 13 } }
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 41
+		
+		modifier = {
+			piety = 0.60
+			factor = 0.7
+		}
+		modifier = {
+			piety = 0.20
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { piety = -0.20 }
+			factor = 1.4
+		}
+	}
+	
+	option = {
+		name = dg_pagan.013.a #Pass a law against practicing folk religion
+		ai_chance = {
+			factor = 20
+			modifier = {
+				advisor = inquisitor
+				factor = 2
+			}
+			modifier = {
+				advisor = theologian
+				factor = 1.4
+			}
+			modifier = {
+				piety = 0.60
+				factor = 1.4
+			}
+			modifier = {
+				piety = 0.20
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { piety = -0.20 }
+				factor = 0.5
+			}
+		}
+		add_adm_power = -25
+		set_country_flag = denounced_folk_religion
+		add_piety = -0.10
+		hidden_effect = { change_variable = { which = church_property value = 1 } }
+		random_owned_province = {
+			limit = { has_province_modifier = sacred_grove }
+			remove_province_modifier = sacred_grove
+		}
+		clr_country_flag = sacred_grove
+		add_patriarch_authority = 0.05
+	}
+	option = {
+		name = dg_pagan.013.b #Denounce folk religion
+		ai_chance = { factor = 30 }
+		set_country_flag = denounced_folk_religion
+		add_piety = -0.10
+	}
+	option = {
+		name = dg_pagan.013.c #Remain neutral
+		ai_chance = { factor = 30 }
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_controversy duration = 5000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = religious_controversy duration = 4000 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = religious_controversy duration = 3000 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = religious_controversy duration = 2000 }
+		}
+	}
+	option = {
+		name = dg_pagan.013.e #Denounce the priesthood
+		ai_chance = { factor = 10 }
+		if = {
+			limit = { patriarch_authority = 0.80 }
+			add_country_modifier = { name = unhappy_church_powerful duration = 3000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.60 }
+			add_country_modifier = { name = unhappy_church_strong duration = 3000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.40 }
+			add_country_modifier = { name = unhappy_church_moderate duration = 3000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.20 }
+			add_country_modifier = { name = unhappy_church_weak duration = 3000 }
+		}
+		else = {
+			add_country_modifier = { name = unhappy_church_impotent duration = 3000 }
+		}
+	}
+	option = {
+		name = dg_pagan.013.f #Pass a law restricting the temples
+		ai_chance = { factor = 10 }
+		add_adm_power = -25
+		random_owned_province = {
+			limit = {
+				has_owner_religion = yes
+				temple_trigger = yes
+			}
+			remove_building = temple
+		}
+		if = {
+			limit = { patriarch_authority = 0.80 }
+			add_country_modifier = { name = unhappy_church_powerful duration = 3000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.60 }
+			add_country_modifier = { name = unhappy_church_strong duration = 3000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.40 }
+			add_country_modifier = { name = unhappy_church_moderate duration = 3000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.20 }
+			add_country_modifier = { name = unhappy_church_weak duration = 3000 }
+		}
+		else = {
+			add_country_modifier = { name = unhappy_church_impotent duration = 3000 }
+		}
+		set_country_flag = sacred_space_law
+	}
+}
+

@@ -1,0 +1,598 @@
+#university_head_hunting_big = {
+#	set_province_flag = university_head_hunted
+#	
+#	set_variable = { which = itr value = 1 }
+#		
+#	while = {
+#		limit = {
+#			check_variable = { which = itr value = 1 }
+#			check_variable = { which = university_available_contribution value = 0.1 }
+#		}
+#		
+#		set_variable = { which = art_power_compare value = 0 }
+#		
+#		every_province = {
+#			limit = {
+#				OR = {
+#					is_variable_equal = { which = cont_id which = PREV }
+#					
+#					culture_group = PREV
+#				}
+#				check_variable = { which = population_needing_education	value = 0.1 }
+#				religion_group = PREV
+#				#	NOT = { has_province_flag = university_present }
+#			}
+#			set_variable = { which = art_power_compare which = art_power }
+#			
+#			if = {
+#				limit = {
+#					PREV = { owner = { has_country_flag = sponsor_domestic_students } }
+#					
+#					owned_by = PREV
+#				}
+#				multiply_variable = { which = art_power_compare value = 4 }
+#			}
+#			
+#			if = {
+#				limit = {
+#					PREV = { check_variable = { which = university_local_contribution value = 0.1 } }
+#					
+#					owned_by = PREV
+#				}
+#				change_variable = { which = art_power_compare value = 1 }
+#				multiply_variable = { which = art_power_compare value = 10 }
+#			}
+#			
+#			if = {
+#				limit = {
+#					culture = PREV
+#				}
+#				multiply_variable = { which = art_power_compare value = 1.5 }
+#			}
+#			if = {
+#				limit = {
+#					culture_group = PREV
+#				}
+#				multiply_variable = { which = art_power_compare value = 1.25 }
+#			}
+#			
+#			if = {
+#				limit = {
+#					religion = PREV
+#				}
+#				multiply_variable = { which = art_power_compare value = 1.5 }
+#			}
+#			
+#			if = {
+#				limit = {
+#					area = PREV
+#				}
+#				multiply_variable = { which = art_power_compare value = 2 }
+#			}
+#			if = {
+#				limit = {
+#					region = PREV
+#				}
+#				multiply_variable = { which = art_power_compare value = 2 }
+#			}
+#			if = {
+#				limit = {
+#					is_variable_equal = { which = sr_id which = PREV }
+#				}
+#				multiply_variable = { which = art_power_compare value = 2 }
+#			}
+#			
+#			if = {
+#				limit = {
+#					check_variable = { which = art_power_compare which = PREV }
+#				}
+#				set_province_flag = foreign_university_cand
+#				
+#				PREV = { set_variable = { which = art_power_compare which = PREV } }
+#			}
+#		}
+#		
+#		every_province = {
+#			limit = {
+#				has_province_flag = foreign_university_cand
+#			}
+#			clr_province_flag = foreign_university_cand
+#			
+#			if = {
+#				limit = {
+#					is_variable_equal = { which = art_power_compare which = PREV }
+#					
+#					PREV = { check_variable = { which = university_available_contribution value = 0.1 } }
+#				}
+#				set_global_flag = student_hunt_continue
+#				
+#				set_variable = { which = pop_to_educate								which = population_needing_education }
+#				PREV = {
+#					set_variable = { which = pop_to_educate								which = university_available_contribution }
+#					subtract_variable = { which = pop_to_educate						which = PREV }
+#					if = { ### Upper class in provinces with universities get first dibs
+#						limit = {
+#							NOT = { check_variable = { which = pop_to_educate			value = 0 } }
+#						}
+#						set_variable = { which = pop_to_educate							value = 0 }
+#					}
+#					set_variable = { which = pop_eduatable								which = university_available_contribution }
+#					subtract_variable = { which = pop_eduatable							which = pop_to_educate }
+#					set_variable = { which = pop_to_educate								value = 0 }
+#					
+#					subtract_variable = { which = university_available_contribution		which = pop_eduatable }
+#				}
+#				set_variable = { which = pop_eduatable								which = PREV }
+#				if = {
+#					limit = {
+#						owned_by = PREV
+#					}
+#					PREV = {
+#						subtract_variable = { which = university_local_contribution 		which = pop_eduatable }
+#						if = { ### Upper class in provinces with universities get first dibs
+#							limit = {
+#								NOT = { check_variable = { which = university_local_contribution			value = 0 } }
+#							}
+#							set_variable = { which = university_local_contribution							value = 0 }
+#						}
+#					}
+#					change_variable = { which = university_domestic_student			which = pop_eduatable }
+#				}
+#				else = {
+#					PREV = {
+#						change_variable = { which = university_foreign_students 			which = pop_eduatable }
+#					}
+#					change_variable = { which = university_student_sent_abroad 			which = pop_eduatable }
+#				}
+#				subtract_variable = { which = population_needing_education					which = pop_eduatable }
+#				
+#				change_variable = { which = university_education_multiplier			which = pop_eduatable }
+#				
+#				# A portion of province's art power is sent to the university
+#				set_variable = { which = art_power_sent which = pop_eduatable }
+#				
+#				set_variable = { which = pop_to_educate								value = 0 }
+#				set_variable = { which = pop_eduatable								value = 0 }
+#				PREV = { set_variable = { which = pop_eduatable						value = 0 } }
+#				
+#				if = {
+#					limit = {
+#						check_variable = { which = upper_pop value = 0.1 }
+#						check_variable = { which = art_power_sent value = 0.1 }
+#					}
+#					if = {
+#						limit = {
+#							is_variable_equal = {
+#								which = upper_pop
+#								value = 0
+#							}
+#						}
+#						
+#						# log = "<ERROR><BF596D80><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+#						
+#					}
+#					else = {
+#						divide_variable = {
+#							which = art_power_sent
+#							which = upper_pop
+#						}
+#					}
+#				}
+#				
+#				multiply_variable = { which = art_power_sent value = 0.5 }
+#				multiply_variable = { which = art_power_sent which = art_power }
+#				
+#				PREV = { change_variable = { which = art_power_sent which = PREV } }
+#			}
+#		}
+#		
+#		if = {
+#			limit = {
+#				NOT = { has_global_flag = student_hunt_continue }
+#			}
+#			set_variable = { which = itr value = 0 }
+#		}
+#		clr_global_flag = student_hunt_continue
+#		
+#		every_province = {
+#			limit = {
+#				is_wasteland = no
+#			}
+#			set_variable = { which = art_power_compare value = 0 }
+#		}
+#	}
+#}
+#
+#university_head_hunting_medium = {
+#	set_province_flag = university_head_hunted
+#	
+#	set_variable = { which = itr value = 1 }
+#		
+#	while = {
+#		limit = {
+#			check_variable = { which = itr value = 1 }
+#			check_variable = { which = university_available_contribution value = 0.1 }
+#		}
+#		
+#		set_variable = { which = art_power_compare value = 0 }
+#		
+#		every_province = {
+#			limit = {
+#				OR = {
+#					is_variable_equal = { which = sr_id which = PREV }
+#					
+#					culture_group = PREV
+#				}
+#				check_variable = { which = population_needing_education	value = 0.1 }
+#				religion_group = PREV
+#				#	NOT = { has_province_flag = university_present }
+#			}
+#			set_variable = { which = art_power_compare which = art_power }
+#			
+#			if = {
+#				limit = {
+#					PREV = { owner = { has_country_flag = sponsor_domestic_students } }
+#					
+#					owned_by = PREV
+#				}
+#				multiply_variable = { which = art_power_compare value = 4 }
+#			}
+#			
+#			if = {
+#				limit = {
+#					PREV = { check_variable = { which = university_local_contribution value = 0.1 } }
+#					
+#					owned_by = PREV
+#				}
+#				change_variable = { which = art_power_compare value = 1 }
+#				multiply_variable = { which = art_power_compare value = 10 }
+#			}
+#			
+#			if = {
+#				limit = {
+#					culture = PREV
+#				}
+#				multiply_variable = { which = art_power_compare value = 1.5 }
+#			}
+#			if = {
+#				limit = {
+#					culture_group = PREV
+#				}
+#				multiply_variable = { which = art_power_compare value = 1.25 }
+#			}
+#			
+#			if = {
+#				limit = {
+#					religion = PREV
+#				}
+#				multiply_variable = { which = art_power_compare value = 1.5 }
+#			}
+#			
+#			if = {
+#				limit = {
+#					area = PREV
+#				}
+#				multiply_variable = { which = art_power_compare value = 2 }
+#			}
+#			if = {
+#				limit = {
+#					region = PREV
+#				}
+#				multiply_variable = { which = art_power_compare value = 2 }
+#			}
+#			
+#			if = {
+#				limit = {
+#					check_variable = { which = art_power_compare which = PREV }
+#				}
+#				set_province_flag = foreign_university_cand
+#				
+#				PREV = { set_variable = { which = art_power_compare which = PREV } }
+#			}
+#		}
+#		
+#		every_province = {
+#			limit = {
+#				has_province_flag = foreign_university_cand
+#			}
+#			clr_province_flag = foreign_university_cand
+#			
+#			if = {
+#				limit = {
+#					is_variable_equal = { which = art_power_compare which = PREV }
+#					
+#					PREV = { check_variable = { which = university_available_contribution value = 0.1 } }
+#				}
+#				set_global_flag = student_hunt_continue
+#				
+#				set_variable = { which = pop_to_educate								which = population_needing_education }
+#				PREV = {
+#					set_variable = { which = pop_to_educate								which = university_available_contribution }
+#					subtract_variable = { which = pop_to_educate						which = PREV }
+#					if = { ### Upper class in provinces with universities get first dibs
+#						limit = {
+#							NOT = { check_variable = { which = pop_to_educate			value = 0 } }
+#						}
+#						set_variable = { which = pop_to_educate							value = 0 }
+#					}
+#					set_variable = { which = pop_eduatable								which = university_available_contribution }
+#					subtract_variable = { which = pop_eduatable							which = pop_to_educate }
+#					set_variable = { which = pop_to_educate								value = 0 }
+#					
+#					subtract_variable = { which = university_available_contribution		which = pop_eduatable }
+#				}
+#				set_variable = { which = pop_eduatable								which = PREV }
+#				if = {
+#					limit = {
+#						owned_by = PREV
+#					}
+#					PREV = {
+#						subtract_variable = { which = university_local_contribution 		which = pop_eduatable }
+#						if = { ### Upper class in provinces with universities get first dibs
+#							limit = {
+#								NOT = { check_variable = { which = university_local_contribution			value = 0 } }
+#							}
+#							set_variable = { which = university_local_contribution							value = 0 }
+#						}
+#					}
+#					change_variable = { which = university_domestic_student			which = pop_eduatable }
+#				}
+#				else = {
+#					PREV = {
+#						change_variable = { which = university_foreign_students 			which = pop_eduatable }
+#					}
+#					change_variable = { which = university_student_sent_abroad 			which = pop_eduatable }
+#				}
+#				subtract_variable = { which = population_needing_education				which = pop_eduatable }
+#				
+#				change_variable = { which = university_education_multiplier				which = pop_eduatable }
+#				
+#				# A portion of province's art power is sent to the university
+#				set_variable = { which = art_power_sent which = pop_eduatable }
+#				
+#				set_variable = { which = pop_to_educate								value = 0 }
+#				set_variable = { which = pop_eduatable								value = 0 }
+#				PREV = { set_variable = { which = pop_eduatable						value = 0 } }
+#				
+#				if = {
+#					limit = {
+#						check_variable = { which = upper_pop value = 0.1 }
+#						check_variable = { which = art_power_sent value = 0.1 }
+#					}
+#					if = {
+#						limit = {
+#							is_variable_equal = {
+#								which = upper_pop
+#								value = 0
+#							}
+#						}
+#						
+#						# log = "<ERROR><BF596D80><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+#						
+#					}
+#					else = {
+#						divide_variable = {
+#							which = art_power_sent
+#							which = upper_pop
+#						}
+#					}
+#				}
+#				
+#				multiply_variable = { which = art_power_sent value = 0.5 }
+#				multiply_variable = { which = art_power_sent which = art_power }
+#				
+#				PREV = { change_variable = { which = art_power_sent which = PREV } }
+#			}
+#		}
+#		
+#		if = {
+#			limit = {
+#				NOT = { has_global_flag = student_hunt_continue }
+#			}
+#			set_variable = { which = itr value = 0 }
+#		}
+#		clr_global_flag = student_hunt_continue
+#		
+#		every_province = {
+#			limit = {
+#				is_wasteland = no
+#			}
+#			set_variable = { which = art_power_compare value = 0 }
+#		}
+#	}
+#}
+#
+#
+#university_head_hunting_small = {
+#	set_province_flag = university_head_hunted
+#	
+#	set_variable = { which = itr value = 1 }
+#		
+#	while = {
+#		limit = {
+#			check_variable = { which = itr value = 1 }
+#			check_variable = { which = university_available_contribution value = 0.1 }
+#		}
+#		
+#		set_variable = { which = art_power_compare value = 0 }
+#		
+#		every_province = {
+#			limit = {
+#				OR = {
+#					region = PREV
+#					
+#					culture_group = PREV
+#				}
+#				check_variable = { which = population_needing_education	value = 0.1 }
+#				religion_group = PREV
+#				#	NOT = { has_province_flag = university_present }
+#			}
+#			set_variable = { which = art_power_compare which = art_power }
+#			
+#			if = {
+#				limit = {
+#					PREV = { owner = { has_country_flag = sponsor_domestic_students } }
+#					
+#					owned_by = PREV
+#				}
+#				multiply_variable = { which = art_power_compare value = 4 }
+#			}
+#			
+#			if = {
+#				limit = {
+#					PREV = { check_variable = { which = university_local_contribution value = 0.1 } }
+#					
+#					owned_by = PREV
+#				}
+#				change_variable = { which = art_power_compare value = 1 }
+#				multiply_variable = { which = art_power_compare value = 10 }
+#			}
+#			
+#			if = {
+#				limit = {
+#					culture = PREV
+#				}
+#				multiply_variable = { which = art_power_compare value = 1.5 }
+#			}
+#			if = {
+#				limit = {
+#					culture_group = PREV
+#				}
+#				multiply_variable = { which = art_power_compare value = 1.25 }
+#			}
+#			
+#			if = {
+#				limit = {
+#					religion = PREV
+#				}
+#				multiply_variable = { which = art_power_compare value = 1.5 }
+#			}
+#			
+#			if = {
+#				limit = {
+#					area = PREV
+#				}
+#				multiply_variable = { which = art_power_compare value = 2 }
+#			}
+#			
+#			if = {
+#				limit = {
+#					check_variable = { which = art_power_compare which = PREV }
+#				}
+#				set_province_flag = foreign_university_cand
+#				
+#				PREV = { set_variable = { which = art_power_compare which = PREV } }
+#			}
+#		}
+#		
+#		every_province = {
+#			limit = {
+#				has_province_flag = foreign_university_cand
+#			}
+#			clr_province_flag = foreign_university_cand
+#			
+#			if = {
+#				limit = {
+#					is_variable_equal = { which = art_power_compare which = PREV }
+#					
+#					PREV = { check_variable = { which = university_available_contribution value = 0.1 } }
+#				}
+#				set_global_flag = student_hunt_continue
+#				
+#				set_variable = { which = pop_to_educate								which = population_needing_education }
+#				PREV = {
+#					set_variable = { which = pop_to_educate								which = university_available_contribution }
+#					subtract_variable = { which = pop_to_educate						which = PREV }
+#					if = { ### Upper class in provinces with universities get first dibs
+#						limit = {
+#							NOT = { check_variable = { which = pop_to_educate			value = 0 } }
+#						}
+#						set_variable = { which = pop_to_educate							value = 0 }
+#					}
+#					set_variable = { which = pop_eduatable								which = university_available_contribution }
+#					subtract_variable = { which = pop_eduatable							which = pop_to_educate }
+#					set_variable = { which = pop_to_educate								value = 0 }
+#					
+#					subtract_variable = { which = university_available_contribution		which = pop_eduatable }
+#				}
+#				set_variable = { which = pop_eduatable								which = PREV }
+#				if = {
+#					limit = {
+#						owned_by = PREV
+#					}
+#					PREV = {
+#						subtract_variable = { which = university_local_contribution 		which = pop_eduatable }
+#						if = { ### Upper class in provinces with universities get first dibs
+#							limit = {
+#								NOT = { check_variable = { which = university_local_contribution			value = 0 } }
+#							}
+#							set_variable = { which = university_local_contribution							value = 0 }
+#						}
+#					}
+#					change_variable = { which = university_domestic_student			which = pop_eduatable }
+#				}
+#				else = {
+#					PREV = {
+#						change_variable = { which = university_foreign_students 			which = pop_eduatable }
+#					}
+#					change_variable = { which = university_student_sent_abroad 			which = pop_eduatable }
+#				}
+#				
+#				subtract_variable = { which = population_needing_education					which = pop_eduatable }
+#				
+#				change_variable = { which = university_education_multiplier			which = pop_eduatable }
+#				
+#				# A portion of province's art power is sent to the university
+#				set_variable = { which = art_power_sent which = pop_eduatable }
+#				
+#				set_variable = { which = pop_to_educate								value = 0 }
+#				set_variable = { which = pop_eduatable								value = 0 }
+#				PREV = { set_variable = { which = pop_eduatable						value = 0 } }
+#				
+#				if = {
+#					limit = {
+#						check_variable = { which = upper_pop value = 0.1 }
+#						check_variable = { which = art_power_sent value = 0.1 }
+#					}
+#					if = {
+#						limit = {
+#							is_variable_equal = {
+#								which = upper_pop
+#								value = 0
+#							}
+#						}
+#						
+#						# log = "<ERROR><BF596D80><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+#						
+#					}
+#					else = {
+#						divide_variable = {
+#							which = art_power_sent
+#							which = upper_pop
+#						}
+#					}
+#				}
+#				
+#				multiply_variable = { which = art_power_sent value = 0.5 }
+#				multiply_variable = { which = art_power_sent which = art_power }
+#				
+#				PREV = { change_variable = { which = art_power_sent which = PREV } }
+#			}
+#		}
+#		
+#		if = {
+#			limit = {
+#				NOT = { has_global_flag = student_hunt_continue }
+#			}
+#			set_variable = { which = itr value = 0 }
+#		}
+#		clr_global_flag = student_hunt_continue
+#		
+#		every_province = {
+#			limit = {
+#				is_wasteland = no
+#			}
+#			set_variable = { which = art_power_compare value = 0 }
+#		}
+#	}
+#}

@@ -1,0 +1,3886 @@
+GetSizeArmy = {
+	if = {
+		limit = { always = $state$ }
+		export_to_variable = { which = AIMiscArmySize value = army_size }
+	}
+	else = { set_variable = { which = AIMiscArmySize value = 0 } }
+	export_to_variable = { which = AIMiscLFL value = land_forcelimit }
+	export_to_variable = { which = AIMiscManpow value = manpower }
+	set_variable = { which = AIMiscArmyEstate value = 0 }
+	
+	if = {
+		limit = { check_variable = { which = estate_tribals_loyalty value = 0.11 } }
+		set_variable = { which = tmpArmyTR which = estate_tribals_infantry_host }
+		change_variable = { which = tmpArmyTR which = estate_tribals_cavalry_host }
+		multiply_variable = { which = tmpArmyTR value = 1.25 }
+		change_variable = { which = AIMiscArmyEstate which = tmpArmyTR }
+		set_variable = { which = tmpArmyTR value = 0 }
+	}
+	if = {
+		limit = { check_variable = { which = estate_greater_nobles_loyalty value = 0.11 } }
+		change_variable = { which = AIMiscArmyEstate which = estate_greater_nobles_infantry_total }
+		change_variable = { which = AIMiscArmyEstate which = estate_greater_nobles_cavalry_total }
+		change_variable = { which = AIMiscArmyEstate which = estate_greater_nobles_artillery_total }
+	}
+	if = {
+		limit = { check_variable = { which = estate_lesser_nobles_loyalty value = 0.11 } }
+		change_variable = { which = AIMiscArmyEstate which = estate_lesser_nobles_infantry_total }
+		change_variable = { which = AIMiscArmyEstate which = estate_lesser_nobles_cavalry_total }
+		change_variable = { which = AIMiscArmyEstate which = estate_lesser_nobles_artillery_total }
+	}
+	
+	multiply_variable = { which = AIMiscArmyEstate value = 0.85 }
+	
+	if = {
+		limit = { always = $rest$ }
+		if = {
+			limit = { NOT = { check_variable = { which = AIMiscManpow which = AIMiscLFL } } }
+			subtract_variable = { which = AIMiscLFL which = AIMiscManpow }
+			multiply_variable = { which = AIMiscLFL value = 0.15 }
+			multiply_variable = { which = AIMiscManpow value = 0.3 }
+		}
+		else = {
+			subtract_variable = { which = AIMiscManpow which = AIMiscLFL }
+			multiply_variable = { which = AIMiscManpow value = 0.15 }
+			multiply_variable = { which = AIMiscLFL value = 0.3 }
+		}
+		change_variable = { which = AIMiscArmySize which = AIMiscLFL }
+		change_variable = { which = AIMiscArmySize which = AIMiscManpow }
+	}
+	if = {
+		limit = { always = $estate$ }
+		change_variable = { which = AIMiscArmySize which = AIMiscArmyEstate }
+	}
+	set_variable = { which = $return$ which = AIMiscArmySize }
+
+	set_variable = { which = AIMiscArmySize value = 0 }
+	set_variable = { which = AIMiscLFL value = 0 }
+	set_variable = { which = AIMiscManpow value = 0 }
+	set_variable = { which = AIMiscArmyEstate value = 0 }
+}
+
+GetQualArmy = {
+	export_to_variable = { which = AIMiscMilTech value = mil_tech }
+	export_to_variable = { which = AIMiscLandMorale value = modifier:land_morale }
+	export_to_variable = { which = AIMiscDisc value = modifier:discipline }
+	
+	multiply_variable = { which = AIMiscMilTech value = 0.1 }
+	multiply_variable = { which = AIMiscLandMorale value = 2 }
+	multiply_variable = { which = AIMiscDisc value = 5 }
+	
+	change_variable = { which = AIMiscMilTech value = 1 }
+	change_variable = { which = AIMiscLandMorale value = 1 }
+	change_variable = { which = AIMiscDisc value = 1 }
+	
+	if = {
+		limit = {
+			OR = {
+				NOT = { check_variable = { which = AIMiscMilTech value = 0.001 } }
+				NOT = { check_variable = { which = AIMiscLandMorale value = 0.001 } }
+				NOT = { check_variable = { which = AIMiscDisc value = 0.001 } }
+			}
+		}
+		set_variable = { which = $return$ value = 0 }
+	}
+	else = {
+		set_variable = { which = $return$ which = AIMiscMilTech }
+		multiply_variable = { which = $return$ which = AIMiscLandMorale }
+		multiply_variable = { which = $return$ which = AIMiscLandMorale }
+	}
+	
+	set_variable = { which = AIMiscMilTech value = 0 }
+	set_variable = { which = AIMiscLandMorale value = 0 }
+	set_variable = { which = AIMiscDisc value = 0 }
+}
+
+#GetSizeNavy = {
+#	export_to_variable = {
+#		which = $return$
+#		value = navy_size
+#	}
+#}
+
+#GetQualNavy = {
+#	export_to_variable = {
+#		which = AIMiscDipTech
+#		value = dip_tech
+#	}
+#	export_to_variable = {
+#		which = AIMiscNavMorale
+#		value = modifier:naval_morale
+#	}
+#	
+#	multiply_variable = {
+#		which = AIMiscDipTech
+#		value = 0.1
+#	}
+#	multiply_variable = {
+#		which = AIMiscNavMorale
+#		value = 1.5
+#	}
+#	
+#	change_variable = {
+#		which = AIMiscDipTech
+#		value = 1
+#	}
+#	change_variable = {
+#		which = AIMiscNavMorale
+#		value = 1
+#	}
+#	
+#	if = {
+#		limit = {
+#			OR = {
+#				NOT = {
+#					check_variable = {
+#						which = AIMiscDipTech
+#						value = 0.001
+#					}
+#				}
+#		
+#				NOT = {
+#					check_variable = {
+#						which = AIMiscNavMorale
+#						value = 0.001
+#					}
+#				}
+#			}
+#		}
+#		set_variable = {
+#			which = $return$
+#			value = 0
+#		}
+#	}
+#	else = {
+#		set_variable = {
+#			which = $return$
+#			which = AIMiscDipTech
+#		}
+#		change_variable = {
+#			which = $return$
+#			which = AIMiscNavMorale
+#		}
+#	}
+#	
+#	
+#	set_variable = {
+#		which = AIMiscDipTech
+#		value = 0
+#	}
+#	set_variable = {
+#		which = AIMiscNavMorale
+#		value = 0
+#	}
+#}
+
+#AIMiscDiplSpent = {
+#	if = {
+#		limit = {
+#			NOT = {
+#				has_country_modifier = AIMiscDiplSpent0
+#			}
+#		}
+#		add_country_modifier = {
+#			name = AIMiscDiplSpent0
+#			duration = $duration$
+#		}
+#	}
+#	else_if = {
+#		limit = {
+#			NOT = {
+#				has_country_modifier = AIMiscDiplSpent1
+#			}
+#		}
+#		add_country_modifier = {
+#			name = AIMiscDiplSpent1
+#			duration = $duration$
+#		}
+#	}
+#	else_if = {
+#		limit = {
+#			NOT = {
+#				has_country_modifier = AIMiscDiplSpent2
+#			}
+#		}
+#		add_country_modifier = {
+#			name = AIMiscDiplSpent2
+#			duration = $duration$
+#		}
+#	}
+#	else_if = {
+#		limit = {
+#			NOT = {
+#				has_country_modifier = AIMiscDiplSpent3
+#			}
+#		}
+#		add_country_modifier = {
+#			name = AIMiscDiplSpent3
+#			duration = $duration$
+#		}
+#	}
+#	else_if = {
+#		limit = {
+#			NOT = {
+#				has_country_modifier = AIMiscDiplSpent4
+#			}
+#		}
+#		add_country_modifier = {
+#			name = AIMiscDiplSpent4
+#			duration = $duration$
+#		}
+#	}
+#	else_if = {
+#		limit = {
+#			NOT = {
+#				has_country_modifier = AIMiscDiplSpent5
+#			}
+#		}
+#		add_country_modifier = {
+#			name = AIMiscDiplSpent5
+#			duration = $duration$
+#		}
+#	}
+#	else_if = {
+#		limit = {
+#			NOT = {
+#				has_country_modifier = AIMiscDiplSpent6
+#			}
+#		}
+#		add_country_modifier = {
+#			name = AIMiscDiplSpent6
+#			duration = $duration$
+#		}
+#	}
+#	else_if = {
+#		limit = {
+#			NOT = {
+#				has_country_modifier = AIMiscDiplSpent7
+#			}
+#		}
+#		add_country_modifier = {
+#			name = AIMiscDiplSpent7
+#			duration = $duration$
+#		}
+#	}
+#}
+
+GetMax = {
+	set_variable = { which = $varName$ value = -2147483 }
+	
+	save_event_target_as = $return$
+	
+	every_$type$ = {
+		if = {
+			limit = { $cond$ = yes }
+			if = {
+				limit = { check_variable = { which = $varName$ which = event_target:$return$ } }
+				if = {
+					limit = { always = $varClean$ }
+					event_target:$return$ = { set_variable = { which = $varName$ value = 0 } }
+				}
+				save_event_target_as = $return$
+			}
+			else_if = {
+				limit = { always = $varClean$ }
+				set_variable = { which = $varName$ value = 0 }
+			}
+		}
+		else_if = {
+			limit = { always = $varClean$ }
+			set_variable = { which = $varName$ value = 0 }
+		}
+	}
+	
+	if = {
+		limit = { always = $varClean$ }
+		event_target:$return$ = { set_variable = { which = $varName$ value = 0 } }
+	}
+}
+
+#GetMin = {
+#	set_variable = {
+#		which = $varName$
+#		value = 2147483
+#	}
+#	
+#	save_event_target_as = $return$
+#	
+#	every_$type$ = {
+#		limit = {
+#			$cond$ = yes
+#		}
+#		if = {
+#			limit = {
+#				NOT = {
+#					check_variable = {
+#						which = $varName$
+#						which = event_target:$return$
+#					}
+#				}
+#			}
+#			if = {
+#				limit = {
+#					always = $varClean$
+#				}
+#				event_target:$return$ = {
+#					set_variable = {
+#						which = $varName$
+#						value = 0
+#					}
+#				}
+#			}
+#			
+#			save_event_target_as = $return$
+#		}
+#		else_if = {
+#			limit = {
+#				always = $varClean$
+#			}
+#			set_variable = {
+#				which = $varName$
+#				value = 0
+#			}
+#		}
+#	}
+#	
+#	if = {
+#		limit = {
+#			always = $varClean$
+#		}
+#		event_target:$return$ = {
+#			set_variable = {
+#				which = $varName$
+#				value = 0
+#			}
+#		}
+#	}
+#}
+
+SetTreasury = {
+	export_to_variable = { which = tempTreasuryChange value = treasury }
+	subtract_variable = { which = tempTreasuryChange which = $to$ }
+	if = {
+		limit = { check_variable = { which = tempTreasuryChange value = 0 } }
+		set_variable = { which = ducat_cost which = tempTreasuryChange }
+		scaled_ducat_cost_country = yes
+	}
+	else = {
+		set_variable = { which = ducat_gain which = tempTreasuryChange }
+		multiply_variable = { which = ducat_gain value = -1 }
+		scaled_ducat_gained_country = yes
+	}
+	set_variable = { which = tempTreasuryChange value = 0 }
+}
+
+GetTreasuryLimit = {
+	export_to_variable = {
+		which = $return$
+		value = monthly_income
+	}
+	
+	multiply_variable = {
+		which = $return$
+		value = 3
+	}
+	change_variable = {
+		which = $return$
+		value = 200
+	}
+	
+	#if = {
+	#	limit = {
+	#		has_country_flag = aiHasActionWarchest
+	#	}
+	#	multiply_variable = {
+	#		which = $return$
+	#		value = 2
+	#	}
+	#}
+}
+
+GetTreasury = {
+	$who$ = {
+		export_to_variable = { which = $return$ value = treasury }
+		GetTreasuryLimit = { return = aiTreasuryVanillaLimit }
+		if = {
+			limit = { NOT = { check_variable = { which = $return$ which = aiTreasuryVanillaLimit } } }
+			set_variable = { which = $return$ value = 0 }
+		}
+		else = { subtract_variable = { which = $return$ which = aiTreasuryVanillaLimit } }
+		change_variable = { which = $return$ which = aiTreasuryGeneral }
+		every_owned_province = {
+			limit = { is_city = yes }
+			PREV = { set_variable = { which = $return$ which = PREV } }
+		}
+		set_variable = { which = aiTreasuryVanillaLimit value = 0 }
+	}
+}
+
+GetTreasuryBest = {
+	$who$ = {
+		export_to_variable = { which = $return$ value = treasury }
+		GetTreasuryLimit = { return = aiTreasuryVanillaLimit }
+		if = {
+			limit = { NOT = { check_variable = { which = $return$ which = aiTreasuryVanillaLimit } } }
+			set_variable = { which = $return$ value = 0 }
+		}
+		else = { subtract_variable = { which = $return$ which = aiTreasuryVanillaLimit } }
+		change_variable = { which = $return$ which = aiTreasuryGeneral }
+		PREV = { set_variable = { which = $return$ which = PREV } }
+		set_variable = { which = aiTreasuryVanillaLimit value = 0 }
+	}
+}
+
+DoTreasury = {
+	set_variable = { which = tempSpend which = $spend$ }
+	$who$ = {
+		set_variable = { which = tempSpend which = PREV }
+		if = {
+			limit = { check_variable = { which = tempSpend which = aiTreasuryGeneral } }
+			export_to_variable = { which = aiTreasuryVanilla value = treasury }
+			subtract_variable = { which = tempSpend which = aiTreasuryGeneral }
+			if = {
+				limit = { check_variable = { which = aiTreasuryVanilla which = tempSpend } }
+				subtract_variable = { which = aiTreasuryVanilla which = tempSpend }
+				SetTreasury = { to = aiTreasuryVanilla }
+			}
+			set_variable = { which = aiTreasuryGeneral value = 0 }
+			set_variable = { which = aiTreasuryVanilla value = 0 }
+		}
+		else = { subtract_variable = { which = aiTreasuryGeneral which = tempSpend } }
+		set_variable = { which = tempSpend value = 0 }
+	}
+	set_variable = { which = tempSpend value = 0 }
+}
+
+# Effect that sets a weight variable on every owned province
+# where its value represent the value of improving a CE there
+# with higher being better
+GetCEWeight = {
+	# Init variables
+	every_owned_province = {
+		limit = { is_city = yes }
+		set_road_discount = yes
+		calc_prov_factor = yes
+		change_variable = { which = prov_factor value = 1 }
+		if = {
+			limit = {
+				has_province_flag = large_port_present
+				always = $doPort$
+			}
+			#set_variable = { which = travel_time_sailing_modifier  value = 0 }
+			trigger_switch = {
+				on_trigger = has_building
+				harbour_infrastructure_2 = { set_variable = { which = travel_time_sailing_modifier   	value = 1 } }
+				harbour_infrastructure_3x = { set_variable = { which = travel_time_sailing_modifier   	value = 0.8 } }
+				harbour_infrastructure_4 = { set_variable = { which = travel_time_sailing_modifier   	value = 0.65 } }
+				harbour_infrastructure_5 = { set_variable = { which = travel_time_sailing_modifier   	value = 0.5 } }
+			}
+			trigger_switch = {
+				on_trigger = has_province_flag
+				has_small_natural_harbour = { subtract_variable = { which = travel_time_sailing_modifier value = 0.05 } }
+				has_great_natural_harbour = { subtract_variable = { which = travel_time_sailing_modifier value = 0.15 } }
+			}
+		}
+		set_variable = { which = getCapitalWeightBase which = devPointTotal }
+		multiply_variable = { which = getCapitalWeightBase value = 0.5 }
+		set_variable = { which = getCapitalWeightNeighb value = 0 }
+		set_variable = { which = travel_time_reduced value = 0 }
+		set_variable = { which = prov_rad value = 0 }
+	}
+	# Start the main loop
+	set_variable = { which = getCapitalWeightItr value = 5 }
+	while = {
+		limit = { check_variable = { which = getCapitalWeightItr value = 1 } }
+		subtract_variable = { which = getCapitalWeightItr value = 1 }
+		# Every province finds its neighbors
+		# and draw a portion of their weight into its own
+		# based on the distance between the two
+		every_owned_province = {
+			limit = { is_city = yes }
+			#set_variable = { which = getCapitalWeightReceive value = 0 }
+			set_variable = { which = getCapitalWeightDistance which = prov_factor }
+			every_neighbor_province = {
+				limit = {
+					owned_by = PREV
+					is_city = yes
+				}
+				set_variable = { which = getCapitalWeightReceive which = getCapitalWeightBase }
+				change_variable = { which = getCapitalWeightReceive which = getCapitalWeightNeighb }
+				set_variable = { which = getCapitalWeightDistance which = PREV }
+				change_variable = { which = getCapitalWeightDistance which = prov_factor }
+				divide_variable = { which = getCapitalWeightReceive which = getCapitalWeightDistance }
+				PREV = { change_variable = { which = getCapitalWeightReceive which = PREV } }
+				set_variable = { which = getCapitalWeightReceive value = 0 }
+				set_variable = { which = getCapitalWeightDistance value = 0 }
+			}
+			set_variable = { which = getCapitalWeightDistance value = 0 }
+			# If has large port, then other large ports are neighbors as well
+			if = {
+				limit = {
+					has_province_flag = large_port_present
+					always = $doPort$
+				}
+				set_variable = { which = itr value = 3 }
+				calc_sea_zone_dist = yes
+				set_variable = { which = inform_sender which = travel_time_sailing_modifier }
+				save_event_target_as = getCapitalWeightPort
+				# Distance calculation
+				owner = {
+					every_owned_province = {
+						limit = {
+							has_province_flag = large_port_present
+							sea_zone = { has_province_flag = has_sea_dist }
+							NOT = {
+								province_id = event_target:getCapitalWeightPort
+								any_neighbor_province = { province_id = event_target:getCapitalWeightPort }
+							}
+						}
+						set_variable = { which = inform_sender which = event_target:getCapitalWeightPort }
+						change_variable = { which = inform_sender which = travel_time_sailing_modifier }
+						multiply_variable = { which = inform_sender value = 0.5 }
+						sea_zone = { PREV = { set_variable = { which = sea_dist which = PREV } } }
+						if = {
+							limit = { NOT = { check_variable = { which = sea_dist value = 2 } } }
+							calc_dist_init = { targ=event_target:getCapitalWeightPort x_coord=x_coord y_coord=y_coord }
+							calc_dist = yes
+							multiply_variable = { which = distance value = 0.125 }
+						}
+						else = {
+							multiply_variable = { which = distance which = sea_dist }
+							multiply_variable = { which = distance value = 10 }
+						}
+						change_variable = { which = distance value = 3 }
+						multiply_variable = { which = distance which = inform_sender }
+						multiply_variable = { which = distance value = 3 }
+						set_variable = { which = getCapitalWeightReceive which = getCapitalWeightBase }
+						change_variable = { which = getCapitalWeightReceive which = getCapitalWeightNeighb }
+						divide_variable = { which = getCapitalWeightReceive which = distance }
+						event_target:getCapitalWeightPort = { change_variable = { which = getCapitalWeightReceive which = PREV } }
+						set_variable = { which = distance value = 0 }
+						set_variable = { which = getCapitalWeightReceive value = 0 }
+						set_variable = { which = sea_dist value = 0 }
+						set_variable = { which = inform_sender value = 0 }
+					}
+				}
+				clean_sea_zone_calc = yes
+			}
+			set_variable = { which = getCapitalWeightSave which = getCapitalWeightReceive }
+			set_variable = { which = getCapitalWeightReceive value = 0 }
+		}
+		every_owned_province = {
+			limit = { is_city = yes }
+			set_variable = { which = getCapitalWeightNeighb which = getCapitalWeightSave }
+			set_variable = { which = getCapitalWeightSave value = 0 }
+		}
+	}
+	# Finish up the loop
+	every_owned_province = {
+		limit = { is_city = yes }
+		set_variable = { which = $return$ which = getCapitalWeightBase }
+		change_variable = { which = $return$ which = getCapitalWeightNeighb }
+		# Capital is valuable
+		if = {
+			limit = { is_capital = yes }
+			multiply_variable = { which = $return$ value = 1.35 }
+			change_variable = { which = $return$ value = 5 }
+		}
+		# Good place is valuable
+		trigger_switch = {
+			on_trigger = has_province_flag
+			good_natural_place = { change_variable = { which = $return$ value = 1 } }
+			great_natural_place = {
+				multiply_variable = { which = $return$ value = 1.2 }
+				change_variable = { which = $return$ value = 3 }
+			}
+			awesome_natural_place = {
+				multiply_variable = { which = $return$ value = 1.35 }
+				change_variable = { which = $return$ value = 5 }
+			}
+		}
+		# Bureaucracy building is nice
+		trigger_switch = {
+			on_trigger = has_building
+			bureaucracy_1 = {
+				multiply_variable = { which = $return$ value = 1.2 }
+				change_variable = { which = $return$ value = 3 }
+			}
+			bureaucracy_2 = {
+				multiply_variable = { which = $return$ value = 1.4 }
+				change_variable = { which = $return$ value = 6 }
+			}
+			bureaucracy_3 = {
+				multiply_variable = { which = $return$ value = 1.6 }
+				change_variable = { which = $return$ value = 10 }
+			}
+			bureaucracy_4 = {
+				multiply_variable = { which = $return$ value = 1.8 }
+				change_variable = { which = $return$ value = 15 }
+			}
+			bureaucracy_5 = {
+				multiply_variable = { which = $return$ value = 2 }
+				change_variable = { which = $return$ value = 20 }
+			}
+		}
+		# Scaling
+		divide_variable = { which = $return$ value = 15 }
+		set_variable = { which = prov_factor value = 0 }
+		set_variable = { which = travel_time_sailing_modifier value = 0 }
+		set_variable = { which = getCapitalWeightBase value = 0 }
+		set_variable = { which = getCapitalWeightNeighb value = 0 }
+	}
+}
+
+GetRunnerPrev = {
+	set_variable = { which = getRunnerPrevRP which = runner_prev }
+	save_event_target_as = getRunnerPrevTarg
+	owner = {
+		every_owned_province = {
+			limit = { NOT = { province_id = event_target:getRunnerPrevTarg } }
+			set_variable = { which = getRunnerPrevRP which = event_target:getRunnerPrevTarg }
+			if = {
+				limit = { is_variable_equal = { which = prov_id which = getRunnerPrevRP } }
+				save_event_target_as = $return$
+			}
+			set_variable = { which = getRunnerPrevRP value = 0 }
+		}
+	}
+	set_variable = { which = getRunnerPrevRP value = 0 }
+}
+
+# Effect that flags all fort candidate provinces
+GetFortCand = {
+	if = {
+		limit = { num_of_cities = 200 }
+		set_variable = { which = getFortCandItr value = 5 }
+	}
+	else_if = {
+		limit = { num_of_cities = 80 }
+		set_variable = { which = getFortCandItr value = 4 }
+	}
+	else_if = {
+		limit = { num_of_cities = 30 }
+		set_variable = { which = getFortCandItr value = 3 }
+	}
+	else_if = {
+		limit = { num_of_cities = 10 }
+		set_variable = { which = getFortCandItr value = 2 }
+	}
+	else = { set_variable = { which = getFortCandItr value = 1 } }
+	
+	save_event_target_as = getFortCandTarg
+	
+	every_owned_province = {
+		limit = {
+			any_neighbor_province = {
+				is_city = yes
+				NOT = {
+					owned_by = PREV
+					owner = { is_subject_of = event_target:getFortCandTarg }
+				}
+			}
+		}
+		set_province_flag = getFortCandSpread
+		set_province_flag = $return$
+	}
+	
+	if = {
+		limit = { check_variable = { which = getFortCandItr value = 1 } }
+		while = {
+			limit = { check_variable = { which = getFortCandItr value = 1 } }
+			subtract_variable = { which = getFortCandItr value = 1 }
+			every_owned_province = {
+				limit = { has_province_flag = getFortCandSpread }
+				clr_province_flag = getFortCandSpread
+				every_neighbor_province = {
+					limit = {
+						owned_by = PREV
+						NOT = { has_province_flag = $return$ }
+					}
+					set_province_flag = $return$
+					set_province_flag = getFortCandSpreadCand
+				}
+			}
+			every_owned_province = {
+				limit = { has_province_flag = getFortCandSpreadCand }
+				clr_province_flag = getFortCandSpreadCand
+				set_province_flag = getFortCandSpread
+			}
+		}
+		every_owned_province = {
+			limit = { has_province_flag = getFortCandSpread }
+			clr_province_flag = getFortCandSpread
+		}
+	}
+	
+	every_owned_province = {
+		limit = {
+			OR = {
+				check_variable = { which = devPointTotal value = 30 }
+				check_variable = { which = devPointUrbanCur value = 8 }
+			}
+		}
+		set_province_flag = $return$
+	}
+	
+	capital_scope = {
+		set_province_flag = $return$
+		every_neighbor_province = {
+			limit = { has_province_flag = $return$ }
+			clr_province_flag = $return$
+		}
+	}
+	
+	every_owned_province = {
+		limit = {
+			OR = {
+				has_building = fort_14th
+				has_building = fort_15th
+				has_building = fort_16th
+				has_building = fort_17th
+				has_building = fort_18th
+				has_province_modifier = fort_is_building
+			}
+		}
+		every_neighbor_province = {
+			limit = {
+				has_province_flag = $return$
+				NOT = {
+					has_building = fort_14th
+					has_building = fort_15th
+					has_building = fort_16th
+					has_building = fort_17th
+					has_building = fort_18th
+				}
+			}
+			clr_province_flag = $return$
+		}
+	}
+	
+	every_owned_province = {
+		limit = {
+			has_province_flag = $return$
+			CanBuildFort = no
+		}
+		clr_province_flag = $return$
+	}
+}
+
+# Effect that sets a weight variable on every owned province
+# where its value represent the value of building a fort in a given province
+# with higher being better
+GetFortWeight = {
+	GetFortCand = { return = aiGetFortWeightCand }
+	
+	every_owned_province = {
+		limit = { is_city = yes }
+		set_variable = { which = getFortWeightBase which = devPointTotal }
+		change_variable = { which = getFortWeightBase which = devPointUrbanCur }
+		if = {
+			limit = { has_port = yes }
+			multiply_variable = { which = getFortWeightBase value = 1.1 }
+		}
+		if = {
+			limit = {
+				OR = {
+					has_terrain = wood_hills
+					has_terrain = grass_hills
+					has_terrain = shrub_hills
+					has_terrain = shrub_highlands
+					has_terrain = wood_highlands
+					has_terrain = grass_highlands
+					has_terrain = grass_mountains
+				}
+			}
+			multiply_variable = { which = getFortWeightBase value = 1.1 }
+		}
+		else_if = {
+			limit = {
+				OR = {
+					has_terrain = jungle_flats
+					has_terrain = forest_flats
+					has_terrain = forest_hills
+					has_terrain = forest_highlands
+					has_terrain = jungle_hills
+					has_terrain = marsh
+					has_terrain = small_island
+					has_terrain = taiga
+					has_terrain = desert_hills
+					has_terrain = wood_mountains
+					has_terrain = shrub_mountains
+					has_terrain = desert_mountains
+					has_terrain = desert_highlands
+				}
+			}
+			multiply_variable = { which = getFortWeightBase value = 1.25 }
+		}
+		else = {
+			limit = {
+				OR = {
+					has_terrain = forest_mountains
+					has_terrain = alpine_tundra
+				}
+			}
+			multiply_variable = { which = getFortWeightBase value = 1.5 }
+		}
+		#set_variable = { which = getFortWeightNeighb value = 0 }
+	}
+	
+	# Start the main loop
+	set_variable = { which = getFortWeightItr value = 5 }
+	
+	while = {
+		limit = { check_variable = { which = getFortWeightItr value = 1 } }
+		subtract_variable = { which = getFortWeightItr value = 1 }
+		# Every province finds its neighbors
+		# and draw a portion of their weight into its own
+		# based on the distance between the two
+		every_owned_province = {
+			limit = { is_city = yes }
+			set_variable = { which = getFortWeightReceive value = 0 }
+			every_neighbor_province = {
+				limit = {
+					owned_by = PREV
+					is_city = yes
+				}
+				set_variable = { which = getFortWeightReceive which = getFortWeightBase }
+				change_variable = { which = getFortWeightReceive which = getFortWeightNeighb }
+				multiply_variable = { which = getFortWeightReceive value = 0.3 }
+				PREV = { change_variable = { which = getFortWeightReceive which = PREV } }
+				set_variable = { which = getFortWeightReceive value = 0 }
+			}
+			set_variable = { which = getFortWeightSave which = getFortWeightReceive }
+			set_variable = { which = getFortWeightReceive value = 0 }
+		}
+		every_owned_province = {
+			limit = { is_city = yes }
+			set_variable = { which = getFortWeightNeighb which = getFortWeightSave }
+			set_variable = { which = getFortWeightSave value = 0 }
+		}
+	}
+	
+	# Finish up the loop
+	every_owned_province = {
+		if = {
+			limit = { NOT = { has_province_flag = aiGetFortWeightCand } }
+			set_variable = { which = $return$ value = -10 }
+		}
+		else = {
+			clr_province_flag = aiGetFortWeightCand
+			set_variable = { which = $return$ which = getFortWeightBase }
+			change_variable = { which = $return$ which = getFortWeightNeighb }
+			# Scaling
+			multiply_variable = { which = $return$ value = 0.005 }
+		}
+		set_variable = { which = getFortWeightBase value = 0 }
+		set_variable = { which = getFortWeightNeighb value = 0 }
+	}
+}
+
+GetShipyardWeight = {
+	every_owned_province = {
+		if = {
+			limit = { CanBuildShipyard = yes }
+			export_to_variable = { which = aiDoBuildShipyardsShipBuild value = modifier:ship_recruit_speed }
+			export_to_variable = { which = aiDoBuildShipyardsShipRepair value = modifier:local_ship_repair }
+			multiply_variable = { which = aiDoBuildShipyardsShipBuild value = -1.5 }
+			set_variable = { which = $return$ value = 1 }
+			if = {
+				limit = { has_province_flag = has_great_natural_harbour }
+				change_variable = { which = $return$ value = 2 }
+			}
+			change_variable = { which = $return$ which = aiDoBuildShipyardsShipBuild }
+			change_variable = { which = $return$ which = aiDoBuildShipyardsShipRepair }
+			multiply_variable = { which = $return$ value = 0.25 }
+			set_variable = { which = aiDoBuildShipyardsShipBuild value = 0 }
+			set_variable = { which = aiDoBuildShipyardsShipRepair value = 0 }
+		}
+	}
+}
+
+GetPortWeight = {
+	every_owned_province = {
+		limit = {
+			OR = {
+				check_variable = { which = devPointUrbanCur value = 10 }
+				is_capital = yes
+			}
+		}
+		if = {
+			limit = {
+				has_port = yes
+				NOT = { has_province_modifier = lack_of_harbour }
+			}
+			set_province_flag = tmpPortBuild
+			sea_zone = {
+				set_province_flag = tmpPortHas
+				portgroup = {
+					limit = { has_province_flag = sea_neighbor_of_@PREV }
+					set_province_flag = tmpPortHas
+				}
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					has_port = no
+					has_province_modifier = lack_of_harbour
+					is_capital = yes
+				}
+			}
+			every_neighbor_province = {
+				limit = {
+					OR = {
+						has_province_flag = large_port_present
+						has_province_flag = has_natural_harbour
+						has_province_flag = has_great_natural_harbour
+					}
+					sea_zone = { NOT = { has_province_flag = tmpPortHas } }
+				}
+				set_province_flag = tmpPortBuild
+				sea_zone = {
+					set_province_flag = tmpPortHas
+					portgroup = {
+						limit = { has_province_flag = sea_neighbor_of_@PREV }
+						set_province_flag = tmpPortHas
+					}
+				}
+			}
+			every_neighbor_province = {
+				every_neighbor_province = {
+					if = {
+						limit = {
+							OR = {
+								has_province_flag = large_port_present
+								has_province_flag = has_natural_harbour
+								has_province_flag = has_great_natural_harbour
+							}
+							sea_zone = { NOT = { has_province_flag = tmpPortHas } }
+						}
+						set_province_flag = tmpPortBuild
+						sea_zone = {
+							set_province_flag = tmpPortHas
+							portgroup = {
+								limit = { has_province_flag = sea_neighbor_of_@PREV }
+								set_province_flag = tmpPortHas
+							}
+						}
+					}
+				}
+			}
+			set_variable = { which = tmpCE which = runner_final_time }
+			save_event_target_as = tmpCETarg
+			every_neighbor_province = {
+				limit = {
+					has_port = yes
+					sea_zone = { NOT = { has_province_flag = tmpPortHas } }
+				}
+				set_variable = { which = tmpCE which = runner_final_time }
+				subtract_variable = { which = tmpCE which = event_target:tmpCETarg }
+				if = {
+					limit = {
+						NOT = { check_variable = { which = tmpCE value = 15 } }
+						check_variable = { which = tmpCE value = -15 }
+					}
+					set_province_flag = tmpPortBuild
+					sea_zone = {
+						set_province_flag = tmpPortHas
+						portgroup = {
+							limit = { has_province_flag = sea_neighbor_of_@PREV }
+							set_province_flag = tmpPortHas
+						}
+					}
+				}
+				set_variable = { which = tmpCE value = 0 }
+			}
+			every_neighbor_province = {
+				every_neighbor_province = {
+					if = {
+						limit = {
+							has_port = yes
+							sea_zone = { NOT = { has_province_flag = tmpPortHas } }
+						}
+						set_variable = { which = tmpCE which = runner_final_time }
+						subtract_variable = { which = tmpCE which = event_target:tmpCETarg }
+						if = {
+							limit = {
+								NOT = { check_variable = { which = tmpCE value = 15 } }
+								check_variable = { which = tmpCE value = -15 }
+							}
+							set_province_flag = tmpPortBuild
+							sea_zone = {
+								set_province_flag = tmpPortHas
+								portgroup = {
+									limit = { has_province_flag = sea_neighbor_of_@PREV }
+									set_province_flag = tmpPortHas
+								}
+							}
+						}
+						set_variable = { which = tmpCE value = 0 }
+					}
+				}
+			}
+			
+			set_variable = { which = tmpCE value = 0 }
+		}
+		portgroup = { clr_province_flag = tmpPortHas }
+	}
+	every_owned_province = {
+		if = {
+			limit = {
+				OR = {
+					has_province_flag = has_natural_harbour
+					has_province_flag = tmpPortBuild
+				}
+			}
+			if = {
+				limit = { has_province_flag = tmpPortBuild }
+				clr_province_flag = tmpPortBuild
+				set_variable = { which = $return$ value = 200 }
+			}
+			else = { set_variable = { which = $return$ value = 30 } }
+			if = {
+				limit = { CanBuildPort = no }
+				set_variable = { which = $return$ value = 0 }
+			}
+		}
+		else = { set_variable = { which = $return$ value = 0 } }
+	}
+}
+
+GetRoadWeight = {
+	every_owned_province = { set_variable = { which = $return$ value = 0 } }
+	every_owned_province = {
+		limit = {
+			NOT = { local_autonomy = 100 }
+			is_city = yes
+		}
+		save_event_target_as = aiDoBuildRoadTarg
+		set_variable = { which = $return$Spread which = devPointTotal }
+		multiply_variable = { which = $return$Spread value = 0.8 }
+		while = {
+			limit = {
+				event_target:aiDoBuildRoadTarg = {
+					NOT = {
+						owner = { capital_scope = { province_id = event_target:aiDoBuildRoadTarg } }
+						has_province_modifier = has_regional_capital
+					}
+					check_variable = { which = $return$Spread value = 0.01 }
+				}
+			}
+			event_target:aiDoBuildRoadTarg = {
+				GetRunnerPrev = { return = aiDoBuildRoadTarg }
+				event_target:aiDoBuildRoadTarg = {
+					set_variable = { which = $return$Spread which = PREV }
+					multiply_variable = { which = $return$Spread value = 0.8 }
+					change_variable = { which = $return$ which = $return$Spread }
+					every_neighbor_province = {
+						limit = { owned_by = PREV }
+						set_variable = { which = $return$Spread which = PREV }
+						multiply_variable = { which = $return$Spread value = 0.25 }
+						change_variable = { which = $return$ which = $return$Spread }
+						set_variable = { which = $return$Spread value = 0 }
+					}
+				}
+				set_variable = { which = $return$Spread value = 0 }
+			}
+		}
+		event_target:aiDoBuildRoadTarg = { set_variable = { which = $return$Spread value = 0 } }
+	}
+	
+	every_owned_province = {
+		change_variable = { which = $return$ which = devPointTotal }
+		multiply_variable = { which = $return$ value = 0.05 }
+		if = {
+			limit = { owner = { NOT = { average_home_autonomy = 10 } } }
+			multiply_variable = { which = $return$ value = 0.05 }
+		}
+		else_if = {
+			limit = { owner = { NOT = { average_home_autonomy = 15 } } }
+			multiply_variable = { which = $return$ value = 0.1 }
+		}
+		else_if = {
+			limit = { owner = { NOT = { average_home_autonomy = 20 } } }
+			multiply_variable = { which = $return$ value = 0.15 }
+		}
+		else_if = {
+			limit = { owner = { NOT = { average_home_autonomy = 25 } } }
+			multiply_variable = { which = $return$ value = 0.2 }
+		}
+		else_if = {
+			limit = { owner = { NOT = { average_home_autonomy = 30 } } }
+			multiply_variable = { which = $return$ value = 0.25 }
+		}
+		else_if = {
+			limit = { owner = { NOT = { average_home_autonomy = 35 } } }
+			multiply_variable = { which = $return$ value = 0.3 }
+		}
+		else_if = {
+			limit = { owner = { NOT = { average_home_autonomy = 40 } } }
+			multiply_variable = { which = $return$ value = 0.35 }
+		}
+		else_if = {
+			limit = { owner = { NOT = { average_home_autonomy = 45 } } }
+			multiply_variable = { which = $return$ value = 0.4 }
+		}
+		else_if = {
+			limit = { owner = { NOT = { average_home_autonomy = 50 } } }
+			multiply_variable = { which = $return$ value = 0.45 }
+		}
+		else_if = {
+			limit = { owner = { NOT = { average_home_autonomy = 55 } } }
+			multiply_variable = { which = $return$ value = 0.5 }
+		}
+		else_if = {
+			limit = { owner = { NOT = { average_home_autonomy = 60 } } }
+			multiply_variable = { which = $return$ value = 0.55 }
+		}
+	}
+}
+
+GetBureauWeight = {
+	GetCEWeight = {
+		doPort = yes
+		return = $return$
+	}
+	every_owned_province = {
+		if = {
+			limit = { CanBuildBureau = yes }
+			# Scaling
+			multiply_variable = { which = $return$ value = 5 }
+			if = {
+				limit = { is_capital = no }
+				multiply_variable = { which = $return$ which = runner_final_time }
+				multiply_variable = { which = $return$ value = 0.025 }
+			}
+		}
+		else = { set_variable = { which = $return$ value = -10 } }
+	}
+}
+
+GetTechLack = {
+	export_to_variable = { which = getEduWeightTechAdm value = adm_tech }
+	export_to_variable = { which = getEduWeightTechDip value = dip_tech }
+	export_to_variable = { which = getEduWeightTechMil value = mil_tech }
+	
+	set_variable = { which = getEduWeightTechNeighbAdm value = 0 }
+	set_variable = { which = getEduWeightTechNeighbDip value = 0 }
+	set_variable = { which = getEduWeightTechNeighbMil value = 0 }
+	set_variable = { which = getEduWeightTechNeighb value = 0 }
+	
+	capital_scope = { save_event_target_as = getEduWeightTarg }
+	
+	every_country = {
+		limit = {
+			capital_scope = { continent = event_target:getEduWeightTarg }
+			NOT = { tag = PREV }
+		}
+		export_to_variable = { which = getEduWeightTechNeighbAdm value = adm_tech }
+		export_to_variable = { which = getEduWeightTechNeighbDip value = dip_tech }
+		export_to_variable = { which = getEduWeightTechNeighbMil value = mil_tech }
+		PREV = {
+			change_variable = { which = getEduWeightTechNeighbAdm which = PREV }
+			change_variable = { which = getEduWeightTechNeighbDip which = PREV }
+			change_variable = { which = getEduWeightTechNeighbMil which = PREV }
+			change_variable = { which = getEduWeightTechNeighb value = 1 }
+		}
+		set_variable = { which = getEduWeightTechNeighbAdm value = 0 }
+		set_variable = { which = getEduWeightTechNeighbDip value = 0 }
+		set_variable = { which = getEduWeightTechNeighbMil value = 0 }
+	}
+	
+	every_neighbor_country = {
+		export_to_variable = { which = getEduWeightTechNeighbAdm value = adm_tech }
+		export_to_variable = { which = getEduWeightTechNeighbDip value = dip_tech }
+		export_to_variable = { which = getEduWeightTechNeighbMil value = mil_tech }
+		PREV = {
+			change_variable = { which = getEduWeightTechNeighbAdm which = PREV }
+			change_variable = { which = getEduWeightTechNeighbDip which = PREV }
+			change_variable = { which = getEduWeightTechNeighbMil which = PREV }
+			change_variable = { which = getEduWeightTechNeighb value = 1 }
+		}
+		set_variable = { which = getEduWeightTechNeighbAdm value = 0 }
+		set_variable = { which = getEduWeightTechNeighbDip value = 0 }
+		set_variable = { which = getEduWeightTechNeighbMil value = 0 }
+	}
+	
+	if = {
+		limit = { is_variable_equal = { which = getEduWeightTechNeighb value = 0 } }
+		set_variable = { which = getEduWeightTechNeighb value = 1 } #MASKS AN ISSUE WITH DIVISION BY ZERO!!!
+	}
+	divide_variable = { which = getEduWeightTechNeighbAdm which = getEduWeightTechNeighb }
+	divide_variable = { which = getEduWeightTechNeighbDip which = getEduWeightTechNeighb }
+	divide_variable = { which = getEduWeightTechNeighbMil which = getEduWeightTechNeighb }
+	subtract_variable = { which = getEduWeightTechAdm which = getEduWeightTechNeighbAdm }
+	subtract_variable = { which = getEduWeightTechDip which = getEduWeightTechNeighbDip }
+	subtract_variable = { which = getEduWeightTechMil which = getEduWeightTechNeighbMil }
+	
+	if = {
+		limit = { NOT = { check_variable = { which = getEduWeightTechAdm value = 0 } } }
+		multiply_variable = { which = getEduWeightTechAdm value = -1 }
+	}
+	else = { set_variable = { which = getEduWeightTechAdm value = 0 } }
+	if = {
+		limit = { NOT = { check_variable = { which = getEduWeightTechDip value = 0 } } }
+		multiply_variable = { which = getEduWeightTechDip value = -1 }
+	}
+	else = { set_variable = { which = getEduWeightTechDip value = 0 } }
+	if = {
+		limit = { NOT = { check_variable = { which = getEduWeightTechMil value = 0 } } }
+		multiply_variable = { which = getEduWeightTechMil value = -1 }
+	}
+	else = { set_variable = { which = getEduWeightTechMil value = 0 } }
+	
+	set_variable = { which = $return$ which = getEduWeightTechAdm }
+	change_variable = { which = $return$ which = getEduWeightTechDip }
+	change_variable = { which = $return$ which = getEduWeightTechMil }
+	
+	set_variable = { which = getEduWeightTechAdm value = 0 }
+	set_variable = { which = getEduWeightTechDip value = 0 }
+	set_variable = { which = getEduWeightTechMil value = 0 }
+	set_variable = { which = getEduWeightTechNeighbAdm value = 0 }
+	set_variable = { which = getEduWeightTechNeighbDip value = 0 }
+	set_variable = { which = getEduWeightTechNeighbMil value = 0 }
+	set_variable = { which = getEduWeightTechNeighb value = 0 }
+}
+
+GetEduWeight = {
+	GetTechLack = {
+		return = $return$
+	}
+	
+	trigger_switch = {
+		on_trigger = government_rank
+		6 = {
+			change_variable = { which = $return$ value = 2 }
+		}
+		5 = {
+			change_variable = { which = $return$ value = 2.5 }
+		}
+		4 = {
+			change_variable = { which = $return$ value = 3 }
+		}
+		3 = {
+			change_variable = { which = $return$ value = 4 }
+		}
+		2 = {
+			change_variable = { which = $return$ value = 5 }
+		}
+		1 = {
+			change_variable = { which = $return$ value = 6 }
+		}
+	}
+	
+	set_variable = {
+		which = getEduWeightMult
+		which = university_education_multiplier
+	}
+	
+	if = {
+		limit = {
+			NOT = {
+				check_variable = {
+					which = getEduWeightMult
+					value = 1
+				}
+			}
+		}
+		set_variable = {
+			which = getEduWeightMult
+			value = 1
+		}
+	}
+	
+	multiply_variable = {
+		which = $return$
+		which = getEduWeightMult
+	}
+	
+	set_variable = {
+		which = getEduWeightMult
+		value = 0
+	}
+}
+
+GetCourtWeight = {
+	trigger_switch = {
+		on_trigger = government_rank
+		6 = {
+			set_variable = { which = $return$ value = 4 } #large powers are MUCH more likely to have capital buildings to sustain their courts
+		}
+		5 = {
+			set_variable = { which = $return$ value = 5 }
+		}
+		4 = {
+			set_variable = { which = $return$ value = 6 }
+		}
+		3 = {
+			set_variable = { which = $return$ value = 8 }
+		}
+		2 = {
+			set_variable = { which = $return$ value = 10 }
+		}
+		1 = {
+			set_variable = { which = $return$ value = 12 } #lower ranks need that court for alliances to survive, large powers generally don't need alliances as much
+		}
+	}
+}
+
+SpendCheck = {
+	export_to_variable = {
+		which = tmpInc
+		value = monthly_income
+	}
+	multiply_variable = {
+		which = tmpInc
+		value = $years$
+	}
+	multiply_variable = {
+		which = tmpInc
+		value = 12
+	}
+	
+	set_variable = {
+		which = $return$
+		which = tmpInc
+	}
+	subtract_variable = {
+		which = $return$
+		which = $spent$
+	}
+	divide_variable = {
+		which = $return$
+		which = tmpInc
+	}
+	multiply_variable = {
+		which = $return$
+		value = 3
+	}
+	
+	set_variable = {
+		which = tmpInc
+		value = 0
+	}
+}
+
+FlagAlly = {
+	every_ally = {
+		limit = {
+			is_subject_other_than_tributary_trigger = no
+			
+			NOT = {
+				tag = $att$
+			}
+		}
+		set_country_flag = $return$
+	}
+	
+	if = {
+		limit = {
+			is_part_of_hre = yes
+			
+			is_emperor = no
+			
+			OR = {
+				is_subject = no
+				
+				overlord = {
+					is_emperor = no
+					
+					OR = {
+						is_subject = no
+						
+						overlord = {
+							is_emperor = no
+						}
+					}
+				}
+			}
+			
+			OR = {
+				free_city_trigger = yes
+				
+				$att$ = {
+					is_part_of_hre = no
+				}
+			}
+		}
+		emperor = {
+			if = {
+				limit = {
+					NOT = {
+						tag = $att$
+					}
+				}
+				set_country_flag = $return$
+				
+				every_ally = {
+					limit = {
+						is_subject_other_than_tributary_trigger = no
+					}
+					set_country_flag = $return$
+				}
+			}
+		}
+	}
+	
+	every_country = {
+		limit = {
+			has_guaranteed = PREV
+			
+			NOT = {
+				tag = $att$
+			}
+		}
+		set_country_flag = $return$
+	}
+	
+	if = {
+		limit = {
+			coalition_target = $att$
+		}
+		every_country = {
+			limit = {
+				coalition_target = $att$
+				
+				NOT = {
+					tag = PREV
+					
+					overlord_of = PREV
+				}
+			}
+			set_country_flag = $return$
+		}
+	}
+	
+	if = {
+		limit = {
+			is_in_trade_league = yes
+		}
+		every_country = {
+			limit = {
+				is_in_trade_league_with = PREV
+				
+				NOT = {
+					tag = $att$
+				}
+			}
+			set_country_flag = $return$
+		}
+	}
+}
+
+GetLanchesterSquareLaw = {
+	if = {
+		limit = {
+			check_variable = {
+				which = $att$
+				which = $def$
+			}
+		}
+		set_variable = {
+			which = tmpAtt
+			which = $att$
+		}
+		set_variable = {
+			which = tmpDef
+			which = $def$
+		}
+		
+		multiply_variable = {
+			which = tmpAtt
+			which = tmpAtt
+		}
+		multiply_variable = {
+			which = tmpDef
+			which = tmpDef
+		}
+		
+		subtract_variable = {
+			which = tmpAtt
+			which = tmpDef
+		}
+		
+		exp_funct = {
+			type1=which type2=value
+			inp=tmpAtt exp=0.5
+		}
+		
+		set_variable = {
+			which = $return$
+			which = $att$
+		}
+		subtract_variable = {
+			which = $return$
+			which = exp_val
+		}
+		divide_variable = {
+			which = $return$
+			which = $att$
+		}
+		
+		if = {
+			limit = {
+				always = $clean$
+			}
+			set_variable = {
+				which = $att$
+				value = 0
+			}
+			set_variable = {
+				which = $def$
+				value = 0
+			}
+		}
+		
+		set_variable = {
+			which = tmpAtt
+			value = 0
+		}
+		set_variable = {
+			which = tmpDef
+			value = 0
+		}
+		set_variable = {
+			which = exp_val
+			value = 0
+		}
+	}
+	else = {
+		set_variable = {
+			which = $return$
+			value = 3
+		}
+	}
+}
+
+#GetPowerAtt = {
+#	AIInitGetPower = {
+#		subject = yes
+#		overlord = no
+#		army = yes
+#		state = yes
+#		estate = yes
+#		rest = yes
+#		navy = yes
+#		scope = $root$
+#		return = $return$
+#	}
+#	
+#	if = {
+#		limit = {
+#			coalition_target = $def$
+#		}
+#		$def$ = {
+#			every_country = {
+#				limit = {
+#					coalition_target = PREV
+#					
+#					NOT = {
+#						tag = $root$
+#						
+#						war_with = $def$
+#					}
+#				}
+#				AIInitGetPower = {
+#					subject = yes
+#					overlord = no
+#					army = yes
+#					state = yes
+#					estate = yes
+#					rest = yes
+#					navy = yes
+#					scope = $root$
+#					return = $return$
+#				}
+#				
+#				$root$ = {
+#					change_variable = {
+#						which = $return$
+#						which = PREV
+#					}
+#				}
+#				
+#				set_variable = {
+#					which = $return$
+#					value = 0
+#				}
+#			}
+#		}
+#	}
+#	
+#	if = {
+#		limit = {
+#			$def$ = {
+#				is_at_war = yes
+#			}
+#		}
+#		every_country = {
+#			limit = {
+#				war_with = $def$
+#			}
+#			AIInitGetPower = {
+#				subject = yes
+#				overlord = no
+#				army = yes
+#				state = yes
+#				estate = yes
+#				rest = yes
+#				navy = yes
+#				scope = $root$
+#				return = $return$
+#			}
+#			
+#			multiply_variable = {
+#				which = $return$
+#				value = 0.25
+#			}
+#			
+#			$root$ = {
+#				change_variable = {
+#					which = $return$
+#					which = PREV
+#				}
+#			}
+#			
+#			set_variable = {
+#				which = $return$
+#				value = 0
+#			}
+#		}
+#	}
+#}
+#
+#GetPowerDef = {
+#	overlord = {
+#		if = {
+#			limit = {
+#				is_subject = yes
+#			}
+#			overlord = {
+#				save_event_target_as = tmpOverlordDef
+#			}
+#		}
+#		else = {
+#			save_event_target_as = tmpOverlordDef
+#		}
+#	}
+#	$att$ = {
+#		overlord = {
+#			if = {
+#				limit = {
+#					is_subject = yes
+#				}
+#				overlord = {
+#					save_event_target_as = tmpOverlordAtt
+#				}
+#			}
+#			else = {
+#				save_event_target_as = tmpOverlordAtt
+#			}
+#		}
+#	}
+#	
+#	if = {
+#		limit = {
+#			is_subject = yes
+#			
+#			$att$ = {
+#				is_subject = yes
+#			}
+#			
+#			event_target:tmpOverlordAtt = {
+#				tag = event_target:tmpOverlordDef
+#			}
+#		}
+#		AIInitGetPower = {
+#			subject = yes
+#			overlord = no
+#			army = yes
+#			state = yes
+#			estate = yes
+#			rest = yes
+#			navy = yes
+#			scope = $att$
+#			return = $return$
+#		}
+#	}
+#	else = {
+#		AIInitGetPower = {
+#			subject = yes
+#			overlord = yes
+#			army = yes
+#			state = yes
+#			estate = yes
+#			rest = yes
+#			navy = yes
+#			scope = $att$
+#			return = $return$
+#		}
+#		
+#		overlord = {
+#			FlagAlly = {
+#				att = $att$
+#				return = getPowerDefAlly
+#			}
+#		}
+#	}
+#	
+#	FlagAlly = {
+#		att = $att$
+#		return = getPowerDefAlly
+#	}
+#	
+#	every_country = {
+#		limit = {
+#			has_country_flag = getPowerDefAlly
+#		}
+#		clr_country_flag = getPowerDefAlly
+#		
+#		AIInitGetPower = {
+#			subject = yes
+#			overlord = no
+#			army = yes
+#			state = yes
+#			estate = yes
+#			rest = yes
+#			navy = yes
+#			scope = $att$
+#			return = $return$
+#		}
+#		
+#		PREV = {
+#			change_variable = {
+#				which = $return$
+#				which = PREV
+#			}
+#		}
+#		
+#		set_variable = {
+#			which = $return$
+#			value = 0
+#		}
+#	}
+#}
+
+#DecWar = {
+#	if = {
+#		limit = {
+#			OR = {
+#				AND = {
+#					dip_tech = 35
+#					OR = {
+#						absolutism_trigger = yes
+#						revolution_trigger = yes
+#						enlightening_trigger = yes
+#						dictator_trigger = yes
+#						absolutism = 70
+#					}
+#				}
+#				AND = {
+#					dip_tech = 35
+#					culture_group_claim = $to$
+#				}
+#				invasion_nation = yes
+#			}
+#			OR = {
+#				is_subject = no
+#				NOT = {
+#					overlord = {
+#						overlord_of = $to$
+#					}
+#				}
+#			}
+#			is_tribal = no
+#			is_nomad = no
+#			NOT = { has_country_flag = heir_to_rome }
+#		}
+#		declare_war_with_cb = {
+#			who = $to$
+#			casus_belli = cb_sense_weakness_0.5
+#		}
+#	}
+#	else_if = {
+#		limit = {
+#			OR = {
+#				AND = {
+#					check_variable = { which = piety value = 0.4 }
+#					NOT = { religion_group = $to$ }
+#				}
+#				is_tribal = yes
+#				is_nomad = yes
+#			}
+#		}
+#		declare_war_with_cb = {
+#			who = $to$
+#			casus_belli = cb_sense_weakness_0.75
+#		}
+#	}
+#	else = {
+#		declare_war_with_cb = {
+#			who = $to$
+#			casus_belli = cb_sense_weakness_1
+#		}
+#	}
+#}
+
+#GetPlanInv = {
+#	save_event_target_as = getPlanInvTarg
+#	
+#	# Flag candidate provinces
+#	every_owned_province = {
+#		limit = {
+#			NOT = {
+#				has_province_modifier = martial_law
+#			}
+#		}
+#		every_neighbor_province = {
+#			limit = {
+#				NOT = {
+#					owned_by = event_target:getPlanInvTarg
+#					
+#					owner = {
+#						OR = {
+#							is_subject_of = event_target:getPlanInvTarg
+#							
+#							overlord = {
+#								is_subject_of = event_target:getPlanInvTarg
+#							}
+#						}
+#					}
+#				}
+#			}
+#			set_province_flag = getPlanInvCheck
+#		
+#			owner = {
+#				set_country_flag = getPlanInvCheck
+#			}
+#		}
+#	}
+#	
+#	every_subject_country = {
+#		limit = {
+#			is_subject_other_than_tributary_trigger = yes
+#		}
+#		every_owned_province = {
+#			limit = {
+#				NOT = {
+#					has_province_modifier = martial_law
+#				}
+#			}
+#			every_neighbor_province = {
+#				limit = {
+#					NOT = {
+#						owned_by = event_target:getPlanInvTarg
+#						
+#						owner = {
+#							OR = {
+#								is_subject_of = event_target:getPlanInvTarg
+#								
+#								overlord = {
+#									is_subject_of = event_target:getPlanInvTarg
+#								}
+#							}
+#						}
+#					}
+#				}
+#				set_province_flag = getPlanInvCheck
+#			
+#				owner = {
+#					set_country_flag = getPlanInvCheck
+#				}
+#			}
+#		}
+#	}
+#	
+#	# Prepare variables
+#	save_event_target_as = $return$
+#	
+#	GetSizeArmy = {
+#		state = yes
+#		estate = yes
+#		rest = no
+#		return = armySizeCheck
+#	}
+#	
+#	subtract_variable = {
+#		which = armySizeCheck
+#		value = 1
+#	}
+#	multiply_variable = {
+#		which = armySizeCheck
+#		value = 0.4
+#	}
+#	
+#	set_variable = {
+#		which = getPlanInvVal
+#		value = 0.001
+#	}
+#	
+#	# Disqualify candidates for subjects
+#	if = {
+#		limit = {
+#			is_subject = yes
+#		}
+#		trigger_switch = {
+#			on_trigger = is_subject_of_type
+#			vassal = {
+#				every_country = {
+#					limit = {
+#						has_country_flag = getPlanInvCheck
+#						NOT = { overlord_of = PREV }
+#					}
+#					clr_country_flag = getPlanInvCheck
+#					every_owned_province = {
+#						clr_province_flag = getPlanInvCheck
+#					}
+#				}
+#			}
+#			colony = {
+#				capital_scope = {
+#					save_event_target_as = getPlanInvTarg_cap
+#				}
+#				every_country = {
+#					limit = {
+#						has_country_flag = getPlanInvCheck
+#						NOT = {
+#							overlord_of = PREV
+#							primitives = yes
+#							any_owned_province = {
+#								colonial_region = event_target:getPlanInvTarg_cap
+#							}
+#						}
+#					}
+#					clr_country_flag = getPlanInvCheck
+#					every_owned_province = {
+#						clr_province_flag = getPlanInvCheck
+#					}
+#				}
+#			}
+#			daimyo_vassal = {
+#				every_country = {
+#					limit = {
+#						has_country_flag = getPlanInvCheck
+#						OR = {
+#							overlord_of = PREV
+#							AND = {
+#								is_subject = yes
+#								NOT = { is_subject_of_type = daimyo_vassal }
+#							}
+#						}
+#					}
+#					clr_country_flag = getPlanInvCheck
+#					every_owned_province = {
+#						clr_province_flag = getPlanInvCheck
+#					}
+#				}
+#			}
+#			centralised_daimyo_vassal = {
+#				every_country = {
+#					limit = {
+#						has_country_flag = getPlanInvCheck
+#					}
+#					clr_country_flag = getPlanInvCheck
+#					every_owned_province = {
+#						clr_province_flag = getPlanInvCheck
+#					}
+#				}
+#			}
+#			warlord = {
+#				every_country = {
+#					limit = {
+#						has_country_flag = getPlanInvCheck
+#						OR = {
+#							overlord_of = PREV
+#							overlord = {
+#								overlord_of = event_target:getPlanInvTarg
+#							}
+#							NOT = { is_subject_of_type = warlord }
+#						}
+#					}
+#					clr_country_flag = getPlanInvCheck
+#					every_owned_province = {
+#						clr_province_flag = getPlanInvCheck
+#					}
+#				}
+#			}
+#			personal_union = {
+#				every_country = {
+#					limit = {
+#						has_country_flag = getPlanInvCheck
+#						NOT = { overlord_of = PREV }
+#					}
+#					clr_country_flag = getPlanInvCheck
+#					every_owned_province = {
+#						clr_province_flag = getPlanInvCheck
+#					}
+#				}
+#			}
+#			permanent_union = {
+#				every_country = {
+#					limit = {
+#						has_country_flag = getPlanInvCheck
+#						NOT = { overlord_of = PREV }
+#					}
+#					clr_country_flag = getPlanInvCheck
+#					every_owned_province = {
+#						clr_province_flag = getPlanInvCheck
+#					}
+#				}
+#			}
+#			appanage_subject = {
+#				every_country = {
+#					limit = {
+#						has_country_flag = getPlanInvCheck
+#						NOT = {
+#							overlord_of = PREV
+#							AND = {
+#								overlord = {
+#									overlord_of = event_target:getPlanInvTarg
+#								}
+#								is_subject_of_type = appanage_subject
+#								is_subject_of_type = autonomous_vassal
+#							}
+#						}
+#					}
+#					clr_country_flag = getPlanInvCheck
+#					every_owned_province = {
+#						clr_province_flag = getPlanInvCheck
+#					}
+#				}
+#			}
+#			autonomous_vassal = {
+#				every_country = {
+#					limit = {
+#						has_country_flag = getPlanInvCheck
+#						NOT = {
+#							overlord_of = PREV
+#							AND = {
+#								overlord = {
+#									overlord_of = event_target:getPlanInvTarg
+#								}
+#								is_subject_of_type = appanage_subject
+#								is_subject_of_type = autonomous_vassal
+#							}
+#						}
+#					}
+#					clr_country_flag = getPlanInvCheck
+#					every_owned_province = {
+#						clr_province_flag = getPlanInvCheck
+#					}
+#				}
+#			}
+#			decentralized_vassal = {
+#				every_country = {
+#					limit = {
+#						has_country_flag = getPlanInvCheck
+#						NOT = { overlord_of = PREV }
+#					}
+#					clr_country_flag = getPlanInvCheck
+#					every_owned_province = {
+#						clr_province_flag = getPlanInvCheck
+#					}
+#				}
+#			}
+#			rebellious_decentralized_vassal = {
+#				every_country = {
+#					limit = {
+#						has_country_flag = getPlanInvCheck
+#						NOT = {
+#							overlord_of = PREV
+#							is_subject = no
+#							AND = {
+#								overlord = {
+#									overlord_of = event_target:getPlanInvTarg
+#								}
+#								is_subject_of_type = decentralized_vassal
+#								is_subject_of_type = rebellious_decentralized_vassal
+#							}
+#						}
+#					}
+#					clr_country_flag = getPlanInvCheck
+#					every_owned_province = {
+#						clr_province_flag = getPlanInvCheck
+#					}
+#				}
+#			}
+#			subjugated_vassal = {
+#				every_country = {
+#					limit = {
+#						has_country_flag = getPlanInvCheck
+#						NOT = {
+#							overlord_of = PREV
+#							AND = {
+#								overlord = {
+#									overlord_of = event_target:getPlanInvTarg
+#								}
+#								is_subject_of_type = decentralized_vassal
+#								is_subject_of_type = rebellious_decentralized_vassal
+#							}
+#						}
+#					}
+#					clr_country_flag = getPlanInvCheck
+#					every_owned_province = {
+#						clr_province_flag = getPlanInvCheck
+#					}
+#				}
+#			}
+#			rebellious_subjugated_vassal = {
+#				every_country = {
+#					limit = {
+#						has_country_flag = getPlanInvCheck
+#						overlord = {
+#							overlord_of = event_target:getPlanInvTarg
+#						}
+#						NOT = {
+#							is_subject_of_type = decentralized_vassal
+#							is_subject_of_type = rebellious_decentralized_vassal
+#						}
+#					}
+#					clr_country_flag = getPlanInvCheck
+#					every_owned_province = {
+#						clr_province_flag = getPlanInvCheck
+#					}
+#				}
+#			}
+#			tributary_state = {
+#				every_country = {
+#					limit = {
+#						has_country_flag = getPlanInvCheck
+#						OR = {
+#							overlord_of = PREV
+#							AND = {
+#								overlord = {
+#									overlord_of = event_target:getPlanInvTarg
+#								}
+#								NOT = { is_subject_of_type = tributary_state }
+#							}
+#						}
+#					}
+#					clr_country_flag = getPlanInvCheck
+#					every_owned_province = {
+#						clr_province_flag = getPlanInvCheck
+#					}
+#				}
+#			}
+#			close_tributary_state = {
+#				every_country = {
+#					limit = {
+#						has_country_flag = getPlanInvCheck
+#					}
+#					clr_country_flag = getPlanInvCheck
+#					every_owned_province = {
+#						clr_province_flag = getPlanInvCheck
+#					}
+#				}
+#			}
+#			march = {
+#				every_country = {
+#					limit = {
+#						has_country_flag = getPlanInvCheck
+#						NOT = { overlord_of = PREV }
+#					}
+#					clr_country_flag = getPlanInvCheck
+#					every_owned_province = {
+#						clr_province_flag = getPlanInvCheck
+#					}
+#				}
+#			}
+#			overseas_fief = {
+#				every_country = {
+#					limit = {
+#						has_country_flag = getPlanInvCheck
+#						NOT = { overlord_of = PREV }
+#					}
+#					clr_country_flag = getPlanInvCheck
+#					every_owned_province = {
+#						clr_province_flag = getPlanInvCheck
+#					}
+#				}
+#			}
+#			roman_territories = {
+#				every_country = {
+#					limit = {
+#						has_country_flag = getPlanInvCheck
+#						NOT = { overlord_of = PREV }
+#					}
+#					clr_country_flag = getPlanInvCheck
+#					every_owned_province = {
+#						clr_province_flag = getPlanInvCheck
+#					}
+#				}
+#			}
+#			client_vassal = {
+#				every_country = {
+#					limit = {
+#						has_country_flag = getPlanInvCheck
+#						NOT = { overlord_of = PREV }
+#					}
+#					clr_country_flag = getPlanInvCheck
+#					every_owned_province = {
+#						clr_province_flag = getPlanInvCheck
+#					}
+#				}
+#			}
+#			client_march = {
+#				every_country = {
+#					limit = {
+#						has_country_flag = getPlanInvCheck
+#						NOT = { overlord_of = PREV }
+#					}
+#					clr_country_flag = getPlanInvCheck
+#					every_owned_province = {
+#						clr_province_flag = getPlanInvCheck
+#					}
+#				}
+#			}
+#			protectorate = {
+#				every_country = {
+#					limit = {
+#						has_country_flag = getPlanInvCheck
+#						NOT = { overlord_of = PREV }
+#					}
+#					clr_country_flag = getPlanInvCheck
+#					every_owned_province = {
+#						clr_province_flag = getPlanInvCheck
+#					}
+#				}
+#			}
+#		}
+#	}
+#	
+#	# Iterate through all candidates
+#	every_country = {
+#		limit = {
+#			has_country_flag = getPlanInvCheck
+#		}
+#		clr_country_flag = getPlanInvCheck
+#		
+#		if = {
+#			limit = {	# Conditions that block conquest
+#				NOT = {
+#					AND = { #subject restructions
+#						event_target:getPlanInvTarg = {
+#							is_subject = yes
+#						}
+#						OR = { #subject type doesn't allow independent attack
+#							AND = {
+#								is_subject = no
+#							}
+#						}
+#					}
+#					#subject type doesn't allow independence war
+#					
+#					#subject attack restrictions
+#					
+#					
+#					overlord = { #double-subject
+#						is_subject_of = event_target:getPlanInvTarg
+#					}
+#					
+#					AND = { #HRE reform block/emperor doesn't attack members
+#						is_part_of_hre = yes
+#						
+#						event_target:getPlanInvTarg = {
+#							is_part_of_hre = yes
+#						}
+#						
+#						OR = {
+#							event_target:getPlanInvTarg = {
+#								is_emperor = yes
+#							}
+#							
+#							hre_reform_level = 6
+#						}
+#					}
+#					
+#					AND = { #catholics don't attack pope
+#						event_target:getPlanInvTarg = {
+#							religion = catholic
+#						}
+#						
+#						OR = {
+#							tag = PAP
+#							
+#							overlord = {
+#								OR = {
+#									tag = PAP
+#									tag = PA2
+#								}
+#							}
+#						}
+#					}
+#					
+#					AND = { #hyw war declaration block
+#						has_global_flag = hundred_years_war
+#						
+#						OR = {
+#							AND = {
+#								event_target:getPlanInvTarg = {
+#									tag = FRA
+#								}
+#								
+#								NOT = {
+#									tag = ENG
+#									is_subject_of = ENG
+#								}
+#							}
+#							
+#							AND = {
+#								event_target:getPlanInvTarg = {
+#									tag = ENG
+#								}
+#								
+#								NOT = {
+#									tag = FRA
+#									is_subject_of = FRA
+#									tag = SCO
+#									is_subject_of = SCO
+#									tag = TLI
+#									is_subject_of = TLI
+#								}
+#							}
+#						}
+#					}
+#				}
+#			}
+#			# Get attacker and defender strengths
+#			save_event_target_as = getPlanInvTargDef
+#			
+#			PREV = {
+#				GetPowerAtt = {
+#					root = event_target:getPlanInvTarg
+#					def = event_target:getPlanInvTargDef
+#					return = getPlanInvPowerAtt
+#				}
+#				
+#				PREV = {
+#					set_variable = {
+#						which = getPlanInvPowerAtt
+#						which = PREV
+#					}
+#				}
+#				
+#				set_variable = {
+#					which = getPlanInvPowerAtt
+#					value = 0
+#				}
+#			}
+#			
+#			GetPowerDef = {
+#				att = event_target:getPlanInvTarg
+#				return = getPlanInvPowerDef
+#			}
+#			
+#			multiply_variable = {
+#				which = getPlanInvPowerDef
+#				value = 1.25
+#			}
+#			
+#			# Use attacker and defender strength to calculate the proportion of attacker lost
+#			# Using lanchester's square law
+#			GetLanchesterSquareLaw = {
+#				att = getPlanInvPowerAtt
+#				def = getPlanInvPowerDef
+#				clean = yes
+#				return = getPlanInvPowerLanch
+#			}
+#			
+#			if = {
+#				limit = {	# Attacker did not lose all of its army
+#					NOT = {
+#						check_variable = {
+#							which = getPlanInvPowerLanch
+#							value = 1
+#						}
+#					}
+#				}
+#				every_owned_province = {
+#					limit = {
+#						has_province_flag = getPlanInvCheck
+#					}
+#					# Check if attacker army is strong enough to besiege it
+#					set_variable = {
+#						which = armySizeCheck
+#						which = event_target:getPlanInvTarg
+#					}
+#					
+#					export_to_variable = {
+#						which = getPlanInvFortLevel
+#						value = trigger_value:fort_level
+#					}
+#
+#					# Fix off-by-one error
+#					subtract_variable = {
+#						which = getPlanInvFortLevel
+#						value = 1
+#					}
+#					
+#					if = {
+#						limit = {
+#							check_variable = {
+#								which = armySizeCheck
+#								which = getPlanInvFortLevel
+#							}
+#						}
+#						set_variable = {
+#							which = getPlanInvPowerLanch
+#							which = owner
+#						}
+#						subtract_variable = {
+#							which = getPlanInvPowerLanch
+#							value = 1
+#						}
+#						multiply_variable = {
+#							which = getPlanInvPowerLanch
+#							which = getPlanInvPowerLanch
+#						}
+#						
+#						# Get best neighboring attacker CE
+#						set_variable = {
+#							which = getPlanInvCE
+#							value = 300
+#						}
+#						
+#						every_neighbor_province = {
+#							limit = {
+#								NOT = {
+#									has_province_modifier = martial_law
+#								}
+#						
+#								OR = {
+#									owned_by = event_target:getPlanInvTarg
+#									
+#									owner = {
+#										OR = {
+#											is_subject_of = event_target:getPlanInvTarg
+#											
+#											overlord = {
+#												is_subject_of = event_target:getPlanInvTarg
+#											}
+#										}
+#									}
+#								}
+#							}
+#							if = {
+#								limit = {
+#									owner = {
+#										OR = {
+#											is_subject_of = event_target:getPlanInvTarg
+#											
+#											overlord = {
+#												is_subject_of = event_target:getPlanInvTarg
+#											}
+#										}
+#									}
+#								}
+#								set_variable = {
+#									which = getPlanInvCE
+#									which = runner_final_time_overlord
+#								}
+#							}
+#							else = {
+#								set_variable = {
+#									which = getPlanInvCE
+#									which = runner_final_time
+#								}
+#							}
+#							
+#							if = {
+#								limit = {
+#									NOT = {
+#										check_variable = {
+#											which = getPlanInvCE
+#											which = PREV
+#										}
+#									}
+#								}
+#								PREV = {
+#									set_variable = {
+#										which = getPlanInvCE
+#										which = PREV
+#									}
+#								}
+#							}
+#							
+#							set_variable = {
+#								which = getPlanInvCE
+#								value = 0
+#							}
+#						}
+#						
+#						if = {
+#							limit = {
+#								event_target:getPlanInvTarg = {
+#									government = nomad
+#								}
+#							}
+#							subtract_variable = {
+#								which = getPlanInvCE
+#								value = 120
+#							}
+#							multiply_variable = {
+#								which = getPlanInvCE
+#								value = -0.1
+#							}
+#						}
+#						else = {
+#							subtract_variable = {
+#								which = getPlanInvCE
+#								value = 60
+#							}
+#							multiply_variable = {
+#								which = getPlanInvCE
+#								value = -0.2
+#							}
+#						}
+#						
+#						if = {
+#							limit = {
+#								NOT = {
+#									check_variable = {
+#										which = getPlanInvCE
+#										value = 0
+#									}
+#								}
+#							}
+#							set_variable = {
+#								which = getPlanInvCE
+#								value = 0
+#							}
+#						}
+#						
+#						# Calculate value of this province in attacker's eye
+#						set_variable = {
+#							which = getPlanInvVal
+#							value = 1
+#						}
+#						
+#						if = {
+#							limit = {
+#								event_target:getPlanInvTarg = {
+#									OR = {
+#										accepted_culture = PREV
+#										primary_culture = PREV
+#										culture_group = PREV
+#									}
+#								}
+#							}
+#							if = {
+#								limit = {
+#									NOT = {
+#										event_target:getPlanInvTarg = {
+#											total_development = 50
+#										}
+#									}
+#								}
+#								change_variable = {
+#									which = getPlanInvVal
+#									value = 4
+#								}
+#							}
+#							else_if = {
+#								limit = {
+#									event_target:getPlanInvTarg = {
+#										total_development = 1000
+#									}
+#								}
+#								change_variable = {
+#									which = getPlanInvVal
+#									value = 1
+#								}
+#							}
+#							else = {
+#								change_variable = {
+#									which = getPlanInvVal
+#									value = 2
+#								}
+#							}
+#						}
+#						if = {
+#							limit = {
+#								event_target:getPlanInvTarg = {
+#									religion = PREV
+#								}
+#							}
+#							change_variable = {
+#								which = getPlanInvVal
+#								value = 0.5
+#							}
+#						}
+#						if = {
+#							limit = {
+#								event_target:getPlanInvTarg = {
+#									religion_group = PREV
+#									NOT = {
+#										AND = {
+#											PREV = { religion = catholic }
+#											religion = orthodox
+#										}
+#									}
+#								}
+#							}
+#							change_variable = {
+#								which = getPlanInvVal
+#								value = 0.5
+#							}
+#						}
+#
+#						if = {
+#							limit = {
+#								is_core = event_target:getPlanInvTarg
+#							}
+#							change_variable = {
+#								which = getPlanInvVal
+#								value = 100
+#							}
+#						}
+#						if = {
+#							limit = {
+#								is_claim = event_target:getPlanInvTarg
+#							}
+#							change_variable = {
+#								which = getPlanInvVal
+#								value = 0.5
+#							}
+#						}
+#						if = {
+#							limit = {
+#								has_province_flag = tribals_control_province
+#								
+#								NOT = {
+#									event_target:getPlanInvTarg = {
+#										OR = {
+#											government = tribal
+#											government = nomad
+#										}
+#									}
+#								}
+#							}
+#							multiply_variable = {
+#								which = getPlanInvVal
+#								value = 0.5
+#							}
+#						}
+#
+#						if = {
+#							limit = {
+#								NOT = {
+#									check_variable = {
+#										which = getPlanInvVal
+#										value = 0.001
+#									}
+#								}
+#							}
+#							set_variable = {
+#								which = getPlanInvVal
+#								value = 0.001
+#							}
+#						}
+#						
+#						multiply_variable = {
+#							which = getPlanInvVal
+#							which = aiProvValue
+#						}
+#						multiply_variable = {
+#							which = getPlanInvVal
+#							which = getPlanInvCE
+#						}
+#						multiply_variable = {
+#							which = getPlanInvVal
+#							which = getPlanInvPowerLanch
+#						}
+#						
+#						# Can't declare war right now
+#						if = {
+#							limit = {
+#								owner = {
+#									OR = {
+#										event_target:getPlanInvTarg = {
+#											is_subject_of = PREV
+#										}
+#										
+#										alliance_with = event_target:getPlanInvTarg
+#										
+#										marriage_with = event_target:getPlanInvTarg
+#										
+#										truce_with = event_target:getPlanInvTarg
+#										
+#										any_ally = {
+#											alliance_with = event_target:getPlanInvTarg
+#										}
+#										
+#										any_country = {
+#											has_guaranteed = PREV
+#											
+#											OR = {
+#												tag = event_target:getPlanInvTarg
+#												
+#												alliance_with = event_target:getPlanInvTarg
+#											}
+#										}
+#										
+#										overlord = {
+#											OR = {
+#												alliance_with = event_target:getPlanInvTarg
+#										
+#												marriage_with = event_target:getPlanInvTarg
+#												
+#												any_ally = {
+#													alliance_with = event_target:getPlanInvTarg
+#												}
+#												
+#												any_country = {
+#													has_guaranteed = PREV
+#													
+#													OR = {
+#														tag = event_target:getPlanInvTarg
+#														
+#														alliance_with = event_target:getPlanInvTarg
+#													}
+#												}
+#											}
+#										}
+#									}
+#								}
+#							}
+#							multiply_variable = {
+#								which = getPlanInvVal
+#								value = 0.5
+#							}
+#						}
+#						
+#						# If better than the previous max, become the new max
+#						if = {
+#							limit = {
+#								check_variable = {
+#									which = getPlanInvVal
+#									which = event_target:$return$
+#								}
+#							}
+#							event_target:$return$ = {
+#								set_variable = {
+#									which = getPlanInvVal
+#									value = 0
+#								}
+#							}
+#							
+#							save_event_target_as = $return$
+#						}
+#						else = {
+#							set_variable = {
+#								which = getPlanInvVal
+#								value = 0
+#							}
+#						}
+#						
+#						set_variable = {
+#							which = getPlanInvCE
+#							value = 0
+#						}
+#						set_variable = {
+#							which = getPlanInvPowerLanch
+#							value = 0
+#						}
+#					}
+#					
+#					set_variable = {
+#						which = armySizeCheck
+#						value = 0
+#					}
+#					set_variable = {
+#						which = getPlanInvFortLevel
+#						value = 0
+#					}
+#				}
+#			}
+#			
+#			set_variable = {
+#				which = getPlanInvPowerAtt
+#				value = 0
+#			}
+#			set_variable = {
+#				which = getPlanInvPowerDef
+#				value = 0
+#			}
+#			set_variable = {
+#				which = getPlanInvPowerLanch
+#				value = 0
+#			}
+#		}
+#		
+#		every_owned_province = {
+#			clr_province_flag = getPlanInvCheck
+#		}
+#	}
+#	
+#	event_target:$return$ = {
+#		set_variable = {
+#			which = none
+#			value = 102842.336
+#		}
+#		
+#		if = {
+#			limit = {
+#				NOT = {
+#					is_variable_equal = {
+#						which = $var$
+#						value = 102842.336
+#					}
+#				}
+#			}
+#			set_variable = {
+#				which = $var$
+#				which = getPlanInvVal
+#			}
+#		}
+#		
+#		set_variable = {
+#			which = none
+#			value = 0
+#		}
+#		set_variable = {
+#			which = getPlanInvVal
+#			value = 0
+#		}
+#	}
+#	
+#	set_variable = {
+#		which = getPlanInvVal
+#		value = 0
+#	}
+#	set_variable = {
+#		which = armySizeCheck
+#		value = 0
+#	}
+#}
+
+#GetAE = {
+#	if = {	# When AE is 0
+#		limit = {
+#			NOT = {
+#				has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -1000 }
+#			}
+#		}
+#		set_variable = { which = $return$ value = 0 }
+#	}
+#	else = {	# When AE is not 0
+#		if = {
+#			limit = {
+#				has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -63 }
+#			}
+#			if = {
+#				limit = {
+#					has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -31 }
+#				}
+#				if = {
+#					limit = {
+#						has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -15 }
+#					}
+#					if = {
+#						limit = {
+#							has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -7 }
+#						}
+#						if = {
+#							limit = {
+#								has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -3 }
+#							}
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -1 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = 0 }
+#									}
+#									set_variable = { which = $return$ value = 0 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -1 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -2 }
+#									}
+#									set_variable = { which = $return$ value = -2 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -3 }
+#								}
+#							}
+#						}
+#						else = {
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -5 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -4 }
+#									}
+#									set_variable = { which = $return$ value = -4 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -5 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -6 }
+#									}
+#									set_variable = { which = $return$ value = -6 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -7 }
+#								}
+#							}
+#						}
+#					}
+#					else = {
+#						if = {
+#							limit = {
+#								has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -11 }
+#							}
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -9 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -8 }
+#									}
+#									set_variable = { which = $return$ value = -8 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -9 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -10 }
+#									}
+#									set_variable = { which = $return$ value = -10 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -11 }
+#								}
+#							}
+#						}
+#						else = {
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -13 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -12 }
+#									}
+#									set_variable = { which = $return$ value = -12 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -13 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -14 }
+#									}
+#									set_variable = { which = $return$ value = -14 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -15 }
+#								}
+#							}
+#						}
+#					}
+#				}
+#				else = {
+#					if = {
+#						limit = {
+#							has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -23 }
+#						}
+#						if = {
+#							limit = {
+#								has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -19 }
+#							}
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -17 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -16 }
+#									}
+#									set_variable = { which = $return$ value = -16 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -17 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -18 }
+#									}
+#									set_variable = { which = $return$ value = -18 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -19 }
+#								}
+#							}
+#						}
+#						else = {
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -21 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -20 }
+#									}
+#									set_variable = { which = $return$ value = -20 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -21 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -22 }
+#									}
+#									set_variable = { which = $return$ value = -22 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -23 }
+#								}
+#							}
+#						}
+#					}
+#					else = {
+#						if = {
+#							limit = {
+#								has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -27 }
+#							}
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -25 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -24 }
+#									}
+#									set_variable = { which = $return$ value = -24 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -25 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -26 }
+#									}
+#									set_variable = { which = $return$ value = -26 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -27 }
+#								}
+#							}
+#						}
+#						else = {
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -29 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -28 }
+#									}
+#									set_variable = { which = $return$ value = -28 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -29 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -30 }
+#									}
+#									set_variable = { which = $return$ value = -30 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -31 }
+#								}
+#							}
+#						}
+#					}
+#				}
+#			}
+#			else = {
+#				if = {
+#					limit = {
+#						has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -47 }
+#					}
+#					if = {
+#						limit = {
+#							has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -39 }
+#						}
+#						if = {
+#							limit = {
+#								has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -35 }
+#							}
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -33 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -32 }
+#									}
+#									set_variable = { which = $return$ value = -32 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -33 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -34 }
+#									}
+#									set_variable = { which = $return$ value = -34 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -35 }
+#								}
+#							}
+#						}
+#						else = {
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -37 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -36 }
+#									}
+#									set_variable = { which = $return$ value = -36 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -37 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -38 }
+#									}
+#									set_variable = { which = $return$ value = -38 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -39 }
+#								}
+#							}
+#						}
+#					}
+#					else = {
+#						if = {
+#							limit = {
+#								has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -43 }
+#							}
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -41 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -40 }
+#									}
+#									set_variable = { which = $return$ value = -40 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -41 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -42 }
+#									}
+#									set_variable = { which = $return$ value = -42 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -43 }
+#								}
+#							}
+#						}
+#						else = {
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -45 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -44 }
+#									}
+#									set_variable = { which = $return$ value = -44 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -45 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -46 }
+#									}
+#									set_variable = { which = $return$ value = -46 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -47 }
+#								}
+#							}
+#						}
+#					}
+#				}
+#				else = {
+#					if = {
+#						limit = {
+#							has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -55 }
+#						}
+#						if = {
+#							limit = {
+#								has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -51 }
+#							}
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -49 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -48 }
+#									}
+#									set_variable = { which = $return$ value = -48 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -49 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -50 }
+#									}
+#									set_variable = { which = $return$ value = -50 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -51 }
+#								}
+#							}
+#						}
+#						else = {
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -53 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -52 }
+#									}
+#									set_variable = { which = $return$ value = -52 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -53 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -54 }
+#									}
+#									set_variable = { which = $return$ value = -54 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -55 }
+#								}
+#							}
+#						}
+#					}
+#					else = {
+#						if = {
+#							limit = {
+#								has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -59 }
+#							}
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -57 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -56 }
+#									}
+#									set_variable = { which = $return$ value = -56 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -57 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -58 }
+#									}
+#									set_variable = { which = $return$ value = -58 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -59 }
+#								}
+#							}
+#						}
+#						else = {
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -61 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -60 }
+#									}
+#									set_variable = { which = $return$ value = -60 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -61 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -62 }
+#									}
+#									set_variable = { which = $return$ value = -62 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -63 }
+#								}
+#							}
+#						}
+#					}
+#				}
+#			}
+#		}
+#		else = {
+#			if = {
+#				limit = {
+#					has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -95 }
+#				}
+#				if = {
+#					limit = {
+#						has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -79 }
+#					}
+#					if = {
+#						limit = {
+#							has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -71 }
+#						}
+#						if = {
+#							limit = {
+#								has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -67 }
+#							}
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -65 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -64 }
+#									}
+#									set_variable = { which = $return$ value = -64 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -65 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -66 }
+#									}
+#									set_variable = { which = $return$ value = -66 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -67 }
+#								}
+#							}
+#						}
+#						else = {
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -69 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -68 }
+#									}
+#									set_variable = { which = $return$ value = -68 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -69 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -70 }
+#									}
+#									set_variable = { which = $return$ value = -70 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -71 }
+#								}
+#							}
+#						}
+#					}
+#					else = {
+#						if = {
+#							limit = {
+#								has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -75 }
+#							}
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -73 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -72 }
+#									}
+#									set_variable = { which = $return$ value = -72 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -73 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -74 }
+#									}
+#									set_variable = { which = $return$ value = -74 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -75 }
+#								}
+#							}
+#						}
+#						else = {
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -77 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -76 }
+#									}
+#									set_variable = { which = $return$ value = -76 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -77 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -78 }
+#									}
+#									set_variable = { which = $return$ value = -78 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -79 }
+#								}
+#							}
+#						}
+#					}
+#				}
+#				else = {
+#					if = {
+#						limit = {
+#							has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -87 }
+#						}
+#						if = {
+#							limit = {
+#								has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -83 }
+#							}
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -81 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -80 }
+#									}
+#									set_variable = { which = $return$ value = -80 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -81 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -82 }
+#									}
+#									set_variable = { which = $return$ value = -82 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -83 }
+#								}
+#							}
+#						}
+#						else = {
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -85 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -84 }
+#									}
+#									set_variable = { which = $return$ value = -84 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -85 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -86 }
+#									}
+#									set_variable = { which = $return$ value = -86 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -87 }
+#								}
+#							}
+#						}
+#					}
+#					else = {
+#						if = {
+#							limit = {
+#								has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -91 }
+#							}
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -89 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -88 }
+#									}
+#									set_variable = { which = $return$ value = -88 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -89 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -90 }
+#									}
+#									set_variable = { which = $return$ value = -90 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -91 }
+#								}
+#							}
+#						}
+#						else = {
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -93 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -92 }
+#									}
+#									set_variable = { which = $return$ value = -92 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -93 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -94 }
+#									}
+#									set_variable = { which = $return$ value = -94 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -95 }
+#								}
+#							}
+#						}
+#					}
+#				}
+#			}
+#			else = {
+#				if = {
+#					limit = {
+#						has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -111 }
+#					}
+#					if = {
+#						limit = {
+#							has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -103 }
+#						}
+#						if = {
+#							limit = {
+#								has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -99 }
+#							}
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -97 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -96 }
+#									}
+#									set_variable = { which = $return$ value = -96 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -97 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -98 }
+#									}
+#									set_variable = { which = $return$ value = -98 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -99 }
+#								}
+#							}
+#						}
+#						else = {
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -101 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -100 }
+#									}
+#									set_variable = { which = $return$ value = -100 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -101 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -102 }
+#									}
+#									set_variable = { which = $return$ value = -102 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -103 }
+#								}
+#							}
+#						}
+#					}
+#					else = {
+#						if = {
+#							limit = {
+#								has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -107 }
+#							}
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -105 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -104 }
+#									}
+#									set_variable = { which = $return$ value = -104 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -105 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -106 }
+#									}
+#									set_variable = { which = $return$ value = -106 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -107 }
+#								}
+#							}
+#						}
+#						else = {
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -109 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -108 }
+#									}
+#									set_variable = { which = $return$ value = -108 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -109 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -110 }
+#									}
+#									set_variable = { which = $return$ value = -110 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -111 }
+#								}
+#							}
+#						}
+#					}
+#				}
+#				else = {
+#					if = {
+#						limit = {
+#							has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -119 }
+#						}
+#						if = {
+#							limit = {
+#								has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -115 }
+#							}
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -113 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -112 }
+#									}
+#									set_variable = { which = $return$ value = -112 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -113 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -114 }
+#									}
+#									set_variable = { which = $return$ value = -114 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -115 }
+#								}
+#							}
+#						}
+#						else = {
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -117 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -116 }
+#									}
+#									set_variable = { which = $return$ value = -116 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -117 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -118 }
+#									}
+#									set_variable = { which = $return$ value = -118 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -119 }
+#								}
+#							}
+#						}
+#					}
+#					else = {
+#						if = {
+#							limit = {
+#								has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -123 }
+#							}
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -121 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -120 }
+#									}
+#									set_variable = { which = $return$ value = -120 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -121 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -122 }
+#									}
+#									set_variable = { which = $return$ value = -122 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -123 }
+#								}
+#							}
+#						}
+#						else = {
+#							if = {
+#								limit = {
+#									has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -125 }
+#								}
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -124 }
+#									}
+#									set_variable = { which = $return$ value = -124 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -125 }
+#								}
+#							}
+#							else = {
+#								if = {
+#									limit = {
+#										has_opinion_modifier = { modifier = aggressive_expansion who = $scope$ value = -126 }
+#									}
+#									set_variable = { which = $return$ value = -126 }
+#								}
+#								else = {
+#									set_variable = { which = $return$ value = -127 }
+#								}
+#							}
+#						}
+#					}
+#				}
+#			}
+#		}
+#	}
+#}

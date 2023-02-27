@@ -1,0 +1,423 @@
+
+# Silting of the bay of the Zwin
+country_event = {
+	id = center_of_trade.1
+	title = "center_of_trade.1.n"
+	desc = "center_of_trade.1.t"
+	picture = FLANDERS_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		owns = 90 # Brugge
+		NOT = {
+			90 = {
+				has_province_modifier = lack_of_harbour
+			}
+		}
+		is_year = 1450
+	}
+	
+	mean_time_to_happen = {
+		years = 60
+		
+		modifier = {
+			is_year = 1475
+			factor = 0.8
+		}
+		modifier = {
+			is_year = 1500
+			factor = 0.8
+		}
+	}
+	
+	option = {
+		name = "center_of_trade.1.a"
+		90 = {
+			add_permanent_province_modifier = {
+				name = lack_of_harbour
+				duration = -1
+			}
+			remove_province_modifier = bruges_natural_harbour
+			clr_province_flag = large_port_present
+			
+			trigger_switch = {
+				on_trigger = has_building
+				harbour_infrastructure_2 = {
+					remove_building = harbour_infrastructure_2
+					add_building = harbour_infrastructure_1
+				}
+				harbour_infrastructure_3x = {
+					remove_building = harbour_infrastructure_3x
+					add_building = harbour_infrastructure_1
+				}
+				harbour_infrastructure_4 = {
+					remove_building = harbour_infrastructure_4
+					add_building = harbour_infrastructure_1
+				}
+				harbour_infrastructure_5 = {
+					remove_building = harbour_infrastructure_5
+					add_building = harbour_infrastructure_1
+				}
+			}
+			
+			clr_province_flag = has_natural_harbour
+			clr_province_flag = has_small_natural_harbour
+		}
+		2363 = {
+			province_event = { id = center_of_trade.4 days = 5 }
+			add_province_modifier = {
+				name = "scheldt_navigable_river"
+				duration = -1
+			}
+		}
+	}
+}
+
+#Migration of the economic center of gravity towards Antwerpen (trade with Indies)
+country_event = {
+	id = center_of_trade.2
+	title = "center_of_trade.2.n"
+	desc = "center_of_trade.2.t"
+	picture = FLANDERS_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		owns = 2363 # Gent
+		2363 = { has_province_modifier = scheldt_navigable_river }
+		OR = {
+			any_active_trade_node = {
+				continent = north_america
+			}
+			any_active_trade_node = {
+				continent = south_america
+			}
+			any_active_trade_node = {
+				asia_continent_trigger = yes
+			}
+			#colony = 1
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 83
+		
+		modifier = {
+			is_at_war = yes
+			factor = 0.9
+		}
+		modifier = {
+			colony = 1
+			factor = 0.9
+		}
+		modifier = {
+			colony = 2
+			factor = 0.9
+		}
+		modifier = {
+			colony = 3
+			factor = 0.9
+		}
+		modifier = {
+			colony = 4
+			factor = 0.9
+		}
+		modifier = {
+			colony = 5
+			factor = 0.9
+		}
+		#		modifier = {
+		#			protectorate = 1
+		#			factor = 0.9
+		#		}
+		#		modifier = {
+		#			protectorate = 2
+		#			factor = 0.9
+		#		}
+		#		modifier = {
+		#			protectorate = 3
+		#			factor = 0.9
+		#		}
+		#		modifier = {
+		#			protectorate = 4
+		#			factor = 0.9
+		#		}
+		#		modifier = {
+		#			protectorate = 5
+		#			factor = 0.9
+		#		}
+	}
+	
+	option = {
+		name = "center_of_trade.2.a"
+		2363 = {
+			remove_province_modifier = scheldt_navigable_river
+		}
+		2360 = {
+			province_event = { id = center_of_trade.4 days = 5 }
+		}
+	}
+}
+
+# Netherlands close the Scheldt
+province_event = {
+	id = center_of_trade.3
+	title = "center_of_trade.3.n"
+	desc = "center_of_trade.3.t"
+	picture = FLANDERS_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = "center_of_trade.3.a"
+		remove_province_modifier = scheldt_estuary_modifier
+		remove_building = trade_depot
+		remove_building = customs_house
+		add_building = merchant_guild
+		97 = {
+			province_event = { id = center_of_trade.4 days = 5 }
+		}
+	}
+}
+
+# Development of $PROVINCECAPITAL$
+province_event = {
+	id = center_of_trade.4
+	title = "center_of_trade.4.n"
+	desc = "center_of_trade.4.t"
+	picture = FLANDERS_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "center_of_trade.4.a"
+		add_prestige = 1
+		if = {
+			limit = {
+				has_building = trade_depot
+			}
+			add_building = customs_house
+		}
+		if = {
+			limit = {
+				has_building = merchant_guild
+			}
+			add_building = trade_depot
+		}
+		if = {
+			limit = {
+				has_building = marketplace
+			}
+			add_building = merchant_guild
+		}
+		add_province_modifier = {
+			name = trade_starting_innertia
+			duration = 3650
+			hidden = yes
+		}
+	}
+}
+
+# Silting of Porto Pisano
+country_event = {
+	id = center_of_trade.5
+	title = "center_of_trade.5.n"
+	desc = "center_of_trade.5.t"
+	picture = FLANDERS_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		owns = 1380 # Pisa
+		NOT = {
+			1380 = {
+				has_province_modifier = lack_of_harbour
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 41
+		
+		modifier = {
+			is_year = 1360
+			factor = 0.9
+		}
+		modifier = {
+			is_year = 1380
+			factor = 0.9
+		}
+		modifier = {
+			is_year = 1400
+			factor = 0.9
+		}
+		modifier = {
+			is_year = 1410
+			factor = 0.9
+		}
+		modifier = {
+			is_year = 1420
+			factor = 0.8
+		}
+		modifier = {
+			is_year = 1450
+			factor = 0.8
+		}
+	}
+	
+	option = {
+		name = "center_of_trade.5.a"
+		1380 = {
+			add_permanent_province_modifier = {
+				name = lack_of_harbour
+				duration = -1
+			}
+			clr_province_flag = large_port_present
+			
+			trigger_switch = {
+				on_trigger = has_building
+				harbour_infrastructure_2 = {
+					remove_building = harbour_infrastructure_2
+					add_building = harbour_infrastructure_1
+				}
+				harbour_infrastructure_3x = {
+					remove_building = harbour_infrastructure_3x
+					add_building = harbour_infrastructure_1
+				}
+				harbour_infrastructure_4 = {
+					remove_building = harbour_infrastructure_4
+					add_building = harbour_infrastructure_1
+				}
+				harbour_infrastructure_5 = {
+					remove_building = harbour_infrastructure_5
+					add_building = harbour_infrastructure_1
+				}
+			}
+		}
+	}
+}
+# Silting of Khambat Harbour
+country_event = {
+	id = center_of_trade.6
+	title = "center_of_trade.6.n"
+	desc = "center_of_trade.6.t"
+	picture = FLANDERS_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		is_year = 1400
+		owns = 515 # Gujaratta
+		NOT = {
+			515 = {
+				has_province_modifier = lack_of_harbour
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 41
+		
+		modifier = {
+			is_year = 1410
+			factor = 0.9
+		}
+		modifier = {
+			is_year = 1420
+			factor = 0.9
+		}
+		modifier = {
+			is_year = 1440
+			factor = 0.9
+		}
+		modifier = {
+			is_year = 1460
+			factor = 0.9
+		}
+		modifier = {
+			is_year = 1480
+			factor = 0.8
+		}
+		modifier = {
+			is_year = 1500
+			factor = 0.5
+		}
+	}
+	
+	option = {
+		name = "center_of_trade.6.a"
+		
+		515 = {
+			add_permanent_province_modifier = {
+				name = lack_of_harbour
+				duration = -1
+			}
+			clr_province_flag = large_port_present
+			
+			trigger_switch = {
+				on_trigger = has_building
+				harbour_infrastructure_2 = {
+					remove_building = harbour_infrastructure_2
+					add_building = harbour_infrastructure_1
+				}
+				harbour_infrastructure_3x = {
+					remove_building = harbour_infrastructure_3x
+					add_building = harbour_infrastructure_1
+				}
+				harbour_infrastructure_4 = {
+					remove_building = harbour_infrastructure_4
+					add_building = harbour_infrastructure_1
+				}
+				harbour_infrastructure_5 = {
+					remove_building = harbour_infrastructure_5
+					add_building = harbour_infrastructure_1
+				}
+			}
+			
+			clr_province_flag = good_natural_place
+		}
+		2568 = {
+			province_event = { id = center_of_trade.7 days = 5 }
+		}
+	}
+}
+# Development of $PROVINCECAPITAL$
+province_event = {
+	id = center_of_trade.7
+	title = "center_of_trade.7.n"
+	desc = "center_of_trade.7.t"
+	picture = FLANDERS_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "center_of_trade.7.a"
+		add_prestige = 1
+		change_variable = { which = city_prestige value = 1 }
+		if = {
+			limit = {
+				has_building = trade_depot
+			}
+			add_building = customs_house
+		}
+		if = {
+			limit = {
+				has_building = merchant_guild
+			}
+			add_building = trade_depot
+		}
+		if = {
+			limit = {
+				has_building = marketplace
+			}
+			add_building = merchant_guild
+		}
+		add_province_modifier = {
+			name = trade_starting_innertia
+			duration = 3650
+			hidden = yes
+		}
+	}
+}

@@ -1,0 +1,152 @@
+########################################
+# Flavor Events for Serbia
+#
+# Scripted by GiGau
+########################################
+
+
+# Simeon Uros proclaims himself Tsar of the Greeks, Serbs, and Albanians and marches on Serbia
+country_event = {
+	id = flavor_ser.1
+	title = "flavor_ser.1.n"
+	desc = "flavor_ser.1.t"
+	picture = SERBIA_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = SER
+		NOT = { is_year = 1360 }
+		owns = 3775 # Rasina
+	}
+	
+	mean_time_to_happen = { months = 12 }
+	
+	option = {
+		name = "flavor_ser.1.a"
+		TSL = {
+			add_casus_belli = {
+				target = SER
+				type = cb_fabricated_claims
+				months = 1825
+			}
+		}
+	}
+}
+country_event = {
+	id = flavor_ser.2
+	title = "flavor_ser.2.n"
+	desc = "flavor_ser.2.t"
+	picture = SERBIA_eventPicture
+	
+	fire_only_once = yes
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		tag = SER
+		NOT = { has_ruler_flag = unexpected_heir }
+	}
+	
+	immediate = {
+		hidden_effect = {
+			free_vassal = MON
+			free_vassal = VUK
+			free_vassal = MKO
+			free_vassal = VBZ
+			free_vassal = SRR
+			free_vassal = HUM
+			every_country = {
+				#limit = {
+				#	marriage_with = SER
+				#}
+				break_marriage = SER
+			}
+		}
+	}
+	
+	option = {
+		name = "flavor_ser.2.a"
+		custom_tooltip = adios_serbia
+		define_ruler = {
+			name = "Lazar Hrebeljanovic"
+			dynasty = "Lazarevic"
+			DIP = 3
+			ADM = 3
+			MIL = 3
+			age = 40
+		}
+		remove_country_modifier = obstacle_feudal_fragmentation
+		if = {
+			limit = {
+				has_country_modifier = title_1
+			}
+			change_title_2 = yes
+		}
+	}
+}
+country_event = {
+	id = flavor_ser.3
+	title = "flavor_ser.3.t"
+	desc = "flavor_ser.3.d"
+	picture = SERBIA_eventPicture
+	
+	trigger = {
+		tag = SER
+		NOT = { has_ruler_flag = unexpected_heir }
+		any_subject_country = {
+			is_subject_of_type = vassal
+			primary_culture = serbian
+		}
+		has_country_modifier = obstacle_feudal_fragmentation
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+		modifier = {
+			factor = 2
+			stability = 1
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { stability = 0 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { stability = -1 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { stability = -2 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { war_exhaustion = 4 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { war_exhaustion = 8 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { war_exhaustion = 12 }
+		}
+	}
+	
+	option = {
+		name = "flavor_ser.3.a"
+		random_subject_country = {
+			limit = {
+				is_subject_of_type = vassal
+				primary_culture = serbian
+			}
+			overlord = {
+				create_subject = {
+					who = PREV
+					subject_type = decentralized_vassal
+				}
+			}
+		}
+	}
+}
+

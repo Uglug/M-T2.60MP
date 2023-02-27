@@ -1,0 +1,190 @@
+# Written by TisAFleshWound
+# Contains effects for managing AI decision making
+
+country_ai_evaluate_estate_war_aid = {
+	set_variable = { which = country_ai_war_strain					value = 0 }
+	set_variable = { which = country_ai_estate_war_aid_threshold	value = 0 }
+	set_variable = { which = country_ai_estate_war_aid_GNobles		value = 0 }
+	set_variable = { which = country_ai_estate_war_aid_LNobles		value = 0 }
+	set_variable = { which = country_ai_estate_war_aid_Burghers		value = 0 }
+	set_variable = { which = cai_war_exhaustion_var					value = 0 }
+	set_variable = { which = cai_war_score_var						value = 0 }
+	set_variable = { which = cai_manpower_percentage_var			value = 0 }
+	set_variable = { which = cai_one_minus_var						value = 0 }
+	set_variable = { which = cai_average_unrest_var					value = 0 }
+	set_variable = { which = cai_num_of_cities_var					value = 0 }
+	set_variable = { which = cai_mult_var							value = 0 }
+	#This threshold scales based on estate loyalty, the value is the needed war strain at maximum estate loyalty
+	set_variable = { which = country_ai_estate_war_aid_threshold	value = 100 }
+	set_variable = { which = country_ai_estate_war_aid_GNobles		which = country_ai_estate_war_aid_threshold }
+	set_variable = { which = country_ai_estate_war_aid_LNobles		which = country_ai_estate_war_aid_threshold }
+	set_variable = { which = country_ai_estate_war_aid_Burghers		which = country_ai_estate_war_aid_threshold }
+	
+	# War Exhaustion, exponential effect just alittle doesn't matter but alot is crippling
+	export_to_variable = {	which = cai_war_exhaustion_var			value = war_exhaustion }
+	set_variable = {		which = cai_mult_var					which = cai_war_exhaustion_var }
+	multiply_variable = {	which = cai_war_exhaustion_var			which = cai_mult_var } #WE * WE
+	change_variable = {		which = country_ai_war_strain			which = cai_war_exhaustion_var }
+	# War Score, very important, especially if it is getting very low.
+	if = {
+		limit = {
+			any_enemy_country = {
+				war_score_against = {
+					who = ROOT
+					value = 15
+				}
+			}
+		}
+		change_variable = { which = country_ai_war_strain value = 50 }
+	}
+	if = {
+		limit = {
+			any_enemy_country = {
+				war_score_against = {
+					who = ROOT
+					value = 30
+				}
+			}
+		}
+		change_variable = { which = country_ai_war_strain value = 100 }
+	}
+	if = {
+		limit = {
+			any_enemy_country = {
+				war_score_against = {
+					who = ROOT
+					value = 45
+				}
+			}
+		}
+		change_variable = { which = country_ai_war_strain value = 200 }
+	}
+	# Manpower Percentage, if it get very low we are going to start having to hire mercenaries,
+	# so we will need estate money and units.
+	export_to_variable = { which = cai_manpower_percentage_var value = manpower_percentage }
+	if = { limit = { manpower_percentage = 1 } set_variable = { which = cai_manpower_percentage_var value = 1 } }
+	set_variable = {		which = cai_one_minus_var		value = 1 }
+	subtract_variable = {	which = cai_one_minus_var		which = cai_manpower_percentage_var }
+	multiply_variable = {	which = cai_one_minus_var		value = 10 }
+	set_variable = {		which = cai_mult_var			which = cai_one_minus_var }
+	multiply_variable = {	which = cai_one_minus_var		which = cai_mult_var }
+	change_variable = {		which = country_ai_war_strain	which = cai_one_minus_var }
+	# Average Unrest, If our provinces are rebelling we might need some help
+	export_to_variable = {	which = cai_average_unrest_var	value = average_unrest }
+	if = { limit = { NOT = { average_unrest = 0.0 } }
+		set_variable = {	which = cai_average_unrest_var 	value = 0 }
+	}
+	export_to_variable = {	which = cai_num_of_cities_var	value = num_of_cities }
+	multiply_variable = {	which = cai_average_unrest_var	which = cai_num_of_cities_var }
+	multiply_variable = {	which = cai_average_unrest_var	value = 0.1 }
+	change_variable = {		which = country_ai_war_strain	which = cai_average_unrest_var }
+	# If we get stack wiped, or we don't have an army for some reason we should definitely get help
+	if = { limit = { NOT = { army_size_percentage = 0.10 } }
+		change_variable = { which = country_ai_war_strain	value = 200 }
+	}
+	if = { limit = { NOT = { army_size_percentage = 0.20 } }
+		change_variable = { which = country_ai_war_strain	value = 100 }
+	}
+	if = { limit = { NOT = { army_size_percentage = 0.50 } }
+		change_variable = { which = country_ai_war_strain	value = 25 }
+	}
+	# Having loans would obviously be a problem
+#	export_to_variable = {
+#		which = total_loan
+#		value = trigger_value:num_of_loans
+#	}
+
+	Export_num_of_loans = { output=total_loan }
+	
+	if = { limit = { check_variable = { which = total_loan	value = 5 } }
+		set_variable = { which = total_loan					value = 5 }
+	}
+	multiply_variable = { which = total_loan				value = 25 }
+	change_variable = { which = country_ai_war_strain		which = total_loan }
+	set_variable = { which = total_loan						value = 0 }
+	# Bankruptcy is red alert mode
+	if = { limit = { is_bankrupt = yes }
+		change_variable = { which = country_ai_war_strain value = 200 }
+	}
+	### Now that we have figured out the strain, we need to take into account the estates' loyalty.
+	### It is a really bad idea to demand support from them if they are really low loyalty
+	if = { limit = { NOT = { check_variable = { which = estate_greater_nobles_loyalty value = 0.01 } } }
+		set_variable = { which = country_ai_estate_war_aid_GNobles value = 10000 }
+	}
+	if = { limit = { NOT = { check_variable = { which = estate_lesser_nobles_loyalty value = 0.01 } } }
+		set_variable = { which = country_ai_estate_war_aid_LNobles value = 10000 }
+	}
+	if = { limit = { NOT = { check_variable = { which = estate_burghers_loyalty value = 0.01 } } }
+		set_variable = { which = country_ai_estate_war_aid_Burghers value = 10000 }
+	}
+	#if = {
+	#	limit = {
+	#		is_variable_equal = {
+	#			which = estate_greater_nobles_loyalty
+	#			value = 0
+	#		}
+	#	}
+	#	
+	#	# log = "<ERROR><B7D2D323><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+	#	
+	#}
+	#else = {
+		divide_variable = {
+			which = country_ai_estate_war_aid_GNobles
+			which = estate_greater_nobles_loyalty
+		}
+	#}
+	#if = {
+	#	limit = {
+	#		is_variable_equal = {
+	#			which = estate_lesser_nobles_loyalty
+	#			value = 0
+	#		}
+	#	}
+	#	
+	#	# log = "<ERROR><64D1CAE4><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+	#	
+	#}
+	#else = {
+		divide_variable = {
+			which = country_ai_estate_war_aid_LNobles
+			which = estate_lesser_nobles_loyalty
+		}
+	#}
+	#if = {
+	#	limit = {
+	#		is_variable_equal = {
+	#			which = estate_burghers_loyalty
+	#			value = 0
+	#		}
+	#	}
+	#	
+	#	# log = "<ERROR><43AE4A2C><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+	#	
+	#}
+	#else = {
+		divide_variable = {
+			which = country_ai_estate_war_aid_Burghers
+			which = estate_burghers_loyalty
+		}
+	#}
+}
+
+country_ai_clear_all_estate_war_aid = {
+	clr_country_flag = country_ai_estate_war_running
+	clr_country_flag = country_ai_request_war_aid_GNobles
+	clr_country_flag = country_ai_request_war_aid_LNobles
+	clr_country_flag = country_ai_request_war_aid_Burghers
+	set_variable = { which = country_ai_war_strain					value = 0 }
+	set_variable = { which = country_ai_estate_war_aid_threshold	value = 0 }
+	set_variable = { which = country_ai_estate_war_aid_GNobles		value = 0 }
+	set_variable = { which = country_ai_estate_war_aid_LNobles		value = 0 }
+	set_variable = { which = country_ai_estate_war_aid_Burghers		value = 0 }
+	set_variable = { which = cai_war_exhaustion_var					value = 0 }
+	set_variable = { which = cai_war_score_var						value = 0 }
+	set_variable = { which = cai_manpower_percentage_var			value = 0 }
+	set_variable = { which = cai_one_minus_var						value = 0 }
+	set_variable = { which = cai_average_unrest_var					value = 0 }
+	set_variable = { which = cai_num_of_cities_var					value = 0 }
+	set_variable = { which = cai_mult_var							value = 0 }
+}

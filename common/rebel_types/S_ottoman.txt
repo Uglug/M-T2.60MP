@@ -1,0 +1,191 @@
+turkish_ghazi = { #Ottoman Adventurers
+	
+	color = { 25 180 25 }
+	area = nation
+	government = any
+	defection = none
+	independence = none
+	defect_delay = 24
+	gfx_type = culture_province
+	
+	resilient = yes
+	reinforcing = yes
+	general = yes
+	smart = yes
+	unit_transfer = yes				# Units remain after enforcing demands
+	will_relocate = yes				# Units will relocate if they have sieged all provinces nearby and has to move over sea.
+	
+	artillery = 0.0
+	infantry = 0.6
+	cavalry = 0.4
+	morale = 1.00
+	
+	# Possible handle actions
+	handle_action_negotiate = no
+	handle_action_stability = no
+	handle_action_build_core = no
+	handle_action_send_missionary = no
+	
+	# The rebel type with the highest modifier for this province gets picked
+	spawn_chance = {
+		factor = 0.25
+		modifier = {
+			OR = {
+				region = north_anatolia_region
+				region = south_anatolia_region
+				area = thrace_area
+				province_id = 1333
+			}
+			factor = 4
+		}
+		modifier = {
+			OR = {
+				is_core = TUR
+				is_core = OTT
+			}
+			factor = 3
+		}
+		modifier = {
+			OR = {
+				culture = greek
+				culture = turkish
+				culture = yorouk
+				culture = turkoman
+			}
+			factor = 2
+		}
+		modifier = {
+			NOT = { any_neighbor_province = { owned_by = TUR } }
+			NOT = { any_neighbor_province = { owned_by = OTT } }
+			factor = 0
+		}
+		modifier = {
+			owner = { OR = { tag = TUR tag = OTT } }
+			factor = 0
+		}
+		modifier = {
+			OR = {
+				TUR = { num_of_cities = 50 }
+				OTT = { num_of_cities = 50 }
+			}
+			factor = 0
+		}
+		modifier = {
+			is_year = 1500
+			factor = 0
+		}
+		modifier = {
+			has_province_flag = turkish_ghazi
+			factor = 0
+		}
+		modifier = {
+			has_province_flag = turkish_adventurers
+			factor = 0.5
+		}
+		modifier = {
+			has_province_modifier = nationalists_organizing
+			factor = 1.4
+		}
+	}
+	
+	# This is checked for EACH province in the Area of Operations
+	movement_evaluation = {
+		factor = 1
+		modifier = {
+			factor = 2
+			is_capital = yes
+		}
+		modifier = {
+			factor = 0.1
+			units_in_province = 1
+		}
+		modifier = {
+			factor = 0.001
+			controlled_by = REB
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 2
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 4
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 6
+		}
+	}
+	
+	# Province Scope
+	siege_won_trigger = {
+		any_neighbor_province = { OR = { owned_by = TUR owned_by = OTT } }
+	}
+	siege_won_effect = {
+		if = {
+			limit = { NOT = { has_province_flag = turkish_ghazi } }
+			if = {
+				limit = { exists = TUR }
+				TUR = { add_treasury = 10 }
+			}
+			if = {
+				limit = {
+					NOT = { exists = TUR }
+					exists = OTT
+				}
+				OTT = { add_treasury = 10 }
+			}
+			if = {
+				limit = { NOT = { religion = sunni } }
+				custom_tooltip = sunni_20
+				hidden_effect = {
+					change_variable = { which = sunni value = 4 }
+					change_variable = { which = province_religion value = -4 }
+				}
+			}
+		}
+		set_province_flag = turkish_ghazi
+	}
+	
+	# Country scope
+	can_negotiate_trigger = {
+		any_owned_province = { controlled_by = turkish_ghazi }
+	}
+	
+	# Country scope
+	can_enforce_trigger = {
+		always = yes
+	}
+	
+	# Localisation for their demands
+	demands_description = "turkish_ghazi_demand"
+	
+	# Country scope
+	demands_enforced_effect = {
+		if = {
+			limit = {
+				exists = TUR
+				NOT = { tag = TUR }
+			}
+			every_owned_province = {
+				limit = { controlled_by = turkish_ghazi OR = { region = north_anatolia_region region = south_anatolia_region area = thrace_area province_id = 1333 } }
+				clr_province_flag = turkish_ghazi
+				cede_province = TUR
+				hidden_effect = { TUR = { add_manpower = 1 add_treasury = 25 } }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { exists = TUR }
+				exists = OTT
+				NOT = { tag = OTT }
+			}
+			every_owned_province = {
+				limit = { controlled_by = turkish_ghazi OR = { region = north_anatolia_region region = south_anatolia_region area = thrace_area province_id = 1333 } }
+				clr_province_flag = turkish_ghazi
+				cede_province = OTT
+				hidden_effect = { OTT = { add_manpower = 1 add_treasury = 25 } }
+			}
+		}
+	}
+}

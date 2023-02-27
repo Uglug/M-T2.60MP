@@ -1,0 +1,710 @@
+namespace = dg_ibadi
+#4 of 5 events finished and optimized
+#triggers and variables hidden
+
+#01 - Love and Hate
+#02 - Defence of Ibadism
+#03 - Nationalist Heresy (non-Ibadi Muslim)
+#04* - Doctrine of Kitman (non-Ibadi Muslim)
+#05 - Arab Resentment (non-Ibadi Muslim)
+
+country_event = { #Love and Hate
+	
+	id = dg_ibadi.001
+	title = dg_ibadi.001.t
+	desc = dg_ibadi.001.d
+	picture = muslim_minority_advisor
+	
+	trigger = {
+		religion = ibadi
+		any_owned_province = { NOT = { religion = ibadi } }
+		NOT = { has_country_modifier = religious_tolerance }
+		NOT = { has_country_modifier = religious_intolerance }
+		piety = -0.60
+		OR = {
+			ai = yes
+			has_country_flag = religious_news_major
+		}
+	}
+	
+	mean_time_to_happen = { years = 20 }
+	
+	option = {
+		name = dg_ibadi.001.a #Heretics are misguided but still faithful
+		ai_chance = { factor = 50 }
+		add_country_modifier = { name = religious_tolerance duration = 2000 }
+	}
+	option = {
+		name = dg_ibadi.001.b #Heretics are idolators and must be destroyed
+		ai_chance = {
+			factor = 50
+			modifier = {
+				NOT = { religious_unity = 0.80 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 0.40 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { religious_unity = 0.20 }
+				factor = 0
+			}
+		}
+		add_country_modifier = { name = religious_intolerance duration = 2000 }
+	}
+}
+
+country_event = { #Defence of Ibadism
+	
+	id = dg_ibadi.002
+	title = dg_ibadi.002.t
+	desc = dg_ibadi.002.d
+	picture = muslim_army
+	
+	trigger = {
+		religion = ibadi
+		at_war_with_religious_enemy = yes
+		is_defender_of_faith = no
+		NOT = { war_score = 1 }
+		NOT = { has_country_flag = imam_elected_defence }
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 8
+		
+		modifier = {
+			NOT = { war_score = -25 }
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { war_score = -50 }
+			factor = 0.7
+		}
+	}
+	
+	immediate = { set_country_flag = imam_elected_defence }
+	
+	option = {
+		name = dg_ibadi.002.a #Allow the Imam to lead our armies against the foe
+		ai_chance = {
+			factor = 40
+			modifier = {
+				num_of_generals = 1
+				factor = 0.7
+			}
+			modifier = {
+				num_of_generals = 2
+				factor = 0.7
+			}
+			modifier = {
+				num_of_generals = 3
+				factor = 0.7
+			}
+			modifier = {
+				num_of_generals = 4
+				factor = 0.7
+			}
+			modifier = {
+				army_tradition = 20
+				factor = 0.7
+			}
+			modifier = {
+				army_tradition = 40
+				factor = 0.7
+			}
+			modifier = {
+				army_tradition = 60
+				factor = 0.7
+			}
+			modifier = {
+				army_tradition = 80
+				factor = 0.7
+			}
+			modifier = {
+				piety = 0.60
+				factor = 1.4
+			}
+			modifier = {
+				piety = 0.20
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { piety = -0.20 }
+				factor = 0.5
+			}
+		}
+		create_general = { tradition = 0 }
+		set_country_flag = elected_imam
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = morale_boost duration = 2000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = morale_boost duration = 1000 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = morale_boost duration = 500 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = morale_boost duration = 250 }
+		}
+	}
+	option = {
+		name = dg_ibadi.002.b #Hand over control of the government to the Imam
+		trigger = {
+			piety = 0.60
+			patriarch_authority = 0.60
+			NOT = { government = theocracy }
+		}
+		ai_chance = { factor = 20 }
+		theocratification_effect = yes
+		kill_ruler = yes
+		create_general = { tradition = 50 }
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = morale_boost duration = 4000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = morale_boost duration = 2000 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = morale_boost duration = 1000 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = morale_boost duration = 500 }
+		}
+	}
+	option = {
+		name = dg_ibadi.002.c #Have the Ulama elect $MONARCH$ as the Imam
+		trigger = { NOT = { government = theocracy } }
+		ai_chance = {
+			factor = 40
+			modifier = {
+				government = monarchy
+				factor = 1.4
+			}
+		}
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = decreased_morale duration = 1000 }
+			add_legitimacy = 4
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = decreased_morale duration = 500 }
+			add_legitimacy = 3
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = decreased_morale duration = 250 }
+			add_legitimacy = 2
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = decreased_morale duration = 125 }
+			add_legitimacy = 1
+		}
+	}
+}
+
+province_event = { #Nationalist Heresy
+	
+	id = dg_ibadi.003
+	title = dg_ibadi.003.t
+	desc = dg_ibadi.003.d
+	picture = muslim_jihad
+	
+	trigger = {
+		OR = {
+			religion = sunni
+			religion = shiite
+		}
+		has_owner_religion = yes
+		has_owner_culture = no
+		has_owner_accepted_culture = no
+		near_east_region_trigger = no
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 416
+		
+		modifier = {
+			unrest = 5
+			factor = 0.7
+		}
+		modifier = {
+			unrest = 10
+			factor = 0.7
+		}
+		modifier = {
+			check_variable = { which = ibadi value = 2 }
+			factor = 0.7
+		}
+		modifier = {
+			any_neighbor_province = { check_variable = { which = ibadi value = 2 } }
+			factor = 0.7
+		}
+		modifier = {
+			owner = { num_of_cities = 5 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 10 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 20 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 40 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 80 }
+			factor = 1.6
+		}
+	}
+	
+	option = {
+		name = dg_ibadi.003.a #We must contain this heresy!
+		ai_chance = { factor = 80 }
+		owner = {
+			every_owned_province = {
+				limit = { culture = ROOT has_owner_religion = yes }
+				custom_tooltip = ibadi_20
+				hidden_effect = {
+					change_variable = { which = province_religion value = -4 }
+					change_variable = { which = ibadi value = 4 }
+				}
+			}
+		}
+	}
+	option = {
+		name = dg_ibadi.003.b #We shall embrace this heresy
+		ai_chance = {
+			factor = 20
+			modifier = {
+				NOT = { owner = { num_of_cities = 3 } }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { owner = { num_of_cities = 5 } }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { num_of_cities = 10 }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { num_of_cities = 20 }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { num_of_cities = 40 }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { num_of_cities = 80 }
+				factor = 0.7
+			}
+		}
+		trigger = { owner = { capital_scope = { check_variable = { which = ibadi value = 4 } } } }
+		owner = {
+			set_country_flag = voluntary_conversion
+			if = {
+				limit = { NOT = { is_religion_enabled = ibadi } }
+				custom_tooltip = convert_dangerous_religion
+				subtract_stability_1 = yes
+			}
+			if = {
+				limit = { check_variable = { which = ibadi_population value = 75 } }
+				custom_tooltip = convert_population_75
+				add_stability_1 = yes
+			}
+			else_if = {
+				limit = { check_variable = { which = ibadi_population value = 50 } }
+				custom_tooltip = convert_population_50
+			}
+			else_if = {
+				limit = { check_variable = { which = ibadi_population value = 25 } }
+				custom_tooltip = convert_population_25
+				subtract_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_population_0
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = { patriarch_authority = 0.75 }
+				custom_tooltip = convert_church_strong
+				subtract_stability_2 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.50 }
+				custom_tooltip = convert_piety_moderate
+				subtract_stability_1 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.25 }
+				custom_tooltip = convert_church_weak
+			}
+			else = {
+				custom_tooltip = convert_church_insignificant
+			}
+			if = {
+				limit = { ADM = 5 }
+				if = {
+					limit = {
+						capital_scope = { religion = ibadi }
+					}
+					custom_tooltip = convert_ruler_strong
+					add_stability_3 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+			}
+			else_if = {
+				limit = { ADM = 3 }
+				if = {
+					limit = {
+						capital_scope = { religion = ibadi }
+					}
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						capital_scope = { religion = ibadi }
+					}
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_incompetent
+				}
+			}
+			if = {
+				limit = { advisor = theologian }
+				custom_tooltip = convert_theologian
+				add_stability_1 = yes
+			}
+			if = {
+				limit = {
+					has_country_flag = was_ibadi
+				}
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_previous_recent
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_previous_old
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_recent
+					add_stability_1 = yes
+				}
+			}
+			change_religion = ibadi
+			every_owned_province = {
+				limit = {
+					religion_group = muslim
+					has_owner_religion = yes
+					has_owner_culture = yes
+				}
+				custom_tooltip = ibadi_20
+				hidden_effect = {
+					change_variable = { which = province_religion value = -5 }
+					change_variable = { which = ibadi value = 5 }
+				}
+			}
+		}
+		custom_tooltip = ibadi_50
+		hidden_effect = {
+			#set_province_flag = local_heresy
+			change_variable = { which = province_religion value = -10 }
+			change_variable = { which = ibadi value = 10 }
+		}
+	}
+}
+
+province_event = { #Arab Resentment
+	
+	id = dg_ibadi.005
+	title = dg_ibadi.005.t
+	desc = dg_ibadi.005.d
+	picture = muslim_arab_raid
+	
+	trigger = {
+		near_east_region_trigger = yes
+		OR = {
+			religion = sunni
+			religion = shiite
+		}
+		NOT = { is_religion_enabled = wahhabi }
+		bedouin_culture_province_trigger = yes
+		owner = { NOT = { num_of_cities = 10 } }
+		NOT = { owner = { religion = ibadi } }
+		#This event is for Arab provinces; use dg_ibadi.003 for non-Arab provinces
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 250
+		
+		modifier = {
+			has_owner_culture = no
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { is_core = ROOT }
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { owner = { culture_group = ROOT } }
+			factor = 0.7
+		}
+		modifier = {
+			check_variable = { which = ibadi value = 2 }
+			factor = 0.7
+		}
+		modifier = {
+			any_neighbor_province = { check_variable = { which = ibadi value = 2 } }
+			factor = 0.7
+		}
+		modifier = {
+			owner = { num_of_cities = 5 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 10 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 20 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 40 }
+			factor = 1.6
+		}
+		modifier = {
+			owner = { num_of_cities = 80 }
+			factor = 1.6
+		}
+	}
+	
+	option = {
+		name = dg_ibadi.005.a #$PROVINCENAME$ has embraced heresy
+		ai_chance = { factor = 80 }
+		custom_tooltip = ibadi_20
+		hidden_effect = {
+			change_variable = { which = province_religion value = -4 }
+			change_variable = { which = ibadi value = 4 }
+		}
+		every_neighbor_province = {
+			limit = {
+				religion_group = muslim
+				has_owner_religion = yes
+				culture = ROOT
+			}
+			custom_tooltip = ibadi_20
+			hidden_effect = {
+				change_variable = { which = province_religion value = -2 }
+				change_variable = { which = ibadi value = 2 }
+			}
+		}
+	}
+	option = {
+		name = dg_ibadi.005.b #$MONARCH$ embraces this heresy
+		ai_chance = {
+			factor = 20
+			modifier = {
+				NOT = { owner = { num_of_cities = 3 } }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { owner = { num_of_cities = 5 } }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { num_of_cities = 10 }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { num_of_cities = 20 }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { num_of_cities = 40 }
+				factor = 0.7
+			}
+			modifier = {
+				owner = { num_of_cities = 80 }
+				factor = 0.7
+			}
+		}
+		trigger = { owner = { capital_scope = { check_variable = { which = ibadi value = 4 } } } }
+		owner = {
+			set_country_flag = voluntary_conversion
+			if = {
+				limit = { NOT = { is_religion_enabled = ibadi } }
+				custom_tooltip = convert_dangerous_religion
+				subtract_stability_1 = yes
+			}
+			if = {
+				limit = { check_variable = { which = ibadi_population value = 75 } }
+				custom_tooltip = convert_population_75
+				add_stability_1 = yes
+			}
+			else_if = {
+				limit = { check_variable = { which = ibadi_population value = 50 } }
+				custom_tooltip = convert_population_50
+			}
+			else_if = {
+				limit = { check_variable = { which = ibadi_population value = 25 } }
+				custom_tooltip = convert_population_25
+				subtract_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_population_0
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = { patriarch_authority = 0.75 }
+				custom_tooltip = convert_church_strong
+				subtract_stability_2 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.50 }
+				custom_tooltip = convert_piety_moderate
+				subtract_stability_1 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.25 }
+				custom_tooltip = convert_church_weak
+			}
+			else = {
+				custom_tooltip = convert_church_insignificant
+			}
+			if = {
+				limit = { ADM = 5 }
+				if = {
+					limit = {
+						capital_scope = { religion = ibadi }
+					}
+					custom_tooltip = convert_ruler_strong
+					add_stability_3 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+			}
+			else_if = {
+				limit = { ADM = 3 }
+				if = {
+					limit = {
+						capital_scope = { religion = ibadi }
+					}
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						capital_scope = { religion = ibadi }
+					}
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_incompetent
+				}
+			}
+			if = {
+				limit = { advisor = theologian }
+				custom_tooltip = convert_theologian
+				add_stability_1 = yes
+			}
+			if = {
+				limit = {
+					has_country_flag = was_ibadi
+				}
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_previous_recent
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_previous_old
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_recent
+					add_stability_1 = yes
+				}
+			}
+			change_religion = ibadi
+			every_owned_province = {
+				limit = {
+					religion_group = muslim
+					has_owner_religion = yes
+					has_owner_culture = yes
+				}
+				custom_tooltip = ibadi_20
+				hidden_effect = {
+					change_variable = { which = province_religion value = -4 }
+					change_variable = { which = ibadi value = 4 }
+				}
+			}
+		}
+		custom_tooltip = ibadi_40
+		hidden_effect = {
+			change_variable = { which = province_religion value = -8 }
+			change_variable = { which = ibadi value = 8 }
+		}
+	}
+}

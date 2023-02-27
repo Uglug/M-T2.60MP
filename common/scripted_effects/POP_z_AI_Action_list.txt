@@ -1,0 +1,326 @@
+# List of all action evaluation scripts, as well as their descriptions
+
+# Military / Spending
+# Action related to building new shipyards
+# with the purpose of increasing fleet size
+AIEvalActionBuildShipyards = {
+	if = {
+		limit = { has_country_flag = aiEvalActionBuildShipyards }
+		clr_country_flag = aiEvalActionBuildShipyards
+		if = {
+			limit = { any_owned_province = { CanBuildShipyard = yes } }
+			export_to_variable = { which = $return$ value = naval_forcelimit }
+			export_to_variable = { which = tmpTotalDev value = total_development }
+			divide_variable = { which = $return$ which = tmpTotalDev }
+			subtract_variable = { which = $return$ value = 0.35 }
+			multiply_variable = { which = $return$ value = -22 }
+			set_variable = { which = tmpTotalDev value = 0 }
+		}
+		else = { set_variable = { which = $return$ value = -3 } }
+	}
+	else = { set_variable = { which = $return$ value = -3 } }
+}
+
+# Military / Defensive / Spending
+# Action related to building new forts
+# With the intention of obtaining border security
+AIEvalActionBuildForts = {
+	if = {
+		limit = { has_country_flag = aiEvalActionBuildForts }
+		clr_country_flag = aiEvalActionBuildForts
+		if = {
+			limit = { any_owned_province = { CanBuildFort = yes } }
+			set_variable = { which = $return$ value = 3 }
+		}
+		else = { set_variable = { which = $return$ value = -3 } }
+	}
+	else = { set_variable = { which = $return$ value = -3 } }
+}
+
+# Economy / Spending
+# Action related to building up cities
+AIEvalActionBuildCity = {
+	if = {
+		limit = { has_country_flag = aiEvalActionBuildCity }
+		clr_country_flag = aiEvalActionBuildCity
+		set_variable = { which = $return$ value = 3 }
+	}
+	else = { set_variable = { which = $return$ value = -3 } }
+}
+
+# Governance
+# Action related to improving estate loyalty
+AIEvalActionEstFavor = {
+	if = {
+		limit = { has_country_flag = aiEvalActionEstFavor }
+		clr_country_flag = aiEvalActionEstFavor
+		set_variable = { which = $return$ value = 3 }
+	}
+	else = { set_variable = { which = $return$ value = -3 } }
+}
+
+# Governance
+# Action related to spending estate favors
+AIEvalActionEstDemand = {
+	if = {
+		limit = { has_country_flag = aiEvalActionEstDemand }
+		clr_country_flag = aiEvalActionEstDemand
+		set_variable = { which = $return$ value = 3 }
+	}
+	else = { set_variable = { which = $return$ value = -3 } }
+}
+
+# Governance / Reform
+# Action related to demoting powerful estates
+AIEvalActionEstDemote = {
+	if = {
+		limit = { has_country_flag = aiEvalActionEstDemote }
+		clr_country_flag = aiEvalActionEstDemote
+		set_variable = { which = $return$ value = 3 }
+	}
+	else = { set_variable = { which = $return$ value = -3 } }
+}
+
+# Governance
+# Action related to granting new privileges
+AIEvalActionEstGrant = {
+	if = {
+		limit = { has_country_flag = aiEvalActionEstGrant }
+		clr_country_flag = aiEvalActionEstGrant
+		set_variable = { which = $return$ value = 3 }
+	}
+	else = { set_variable = { which = $return$ value = -3 } }
+}
+
+# Governance / Reform
+# Action related to revoking old privileges
+AIEvalActionEstRevoke = {
+	if = {
+		limit = { has_country_flag = aiEvalActionEstRevoke }
+		clr_country_flag = aiEvalActionEstRevoke
+		set_variable = { which = $return$ value = 3 }
+	}
+	else = { set_variable = { which = $return$ value = -3 } }
+}
+
+# Governance / Reform
+# Action related to managing stability
+AIEvalActionImpStab = {
+	if = {
+		limit = { has_country_flag = aiEvalActionImpStab }
+		clr_country_flag = aiEvalActionImpStab
+		set_variable = { which = $return$ value = 3 }
+	}
+	else = { set_variable = { which = $return$ value = -3 } }
+}
+
+# Governance / CE
+# Action related to moving capital
+AIEvalActionMoveCapital = {
+	if = {
+		limit = { has_country_flag = aiEvalActionMoveCapital }
+		clr_country_flag = aiEvalActionMoveCapital
+		if = {
+			limit = {
+				NOT = { has_country_modifier = ConsideredNewCapital }
+				average_autonomy = 33
+			}
+			set_variable = { which = $return$ value = 3 }
+		}
+		else = { set_variable = { which = $return$ value = -3 } }
+	}
+	else = { set_variable = { which = $return$ value = -3 } }
+}
+
+# Governance / Tech / Spending
+# Action related to improving / maintaining proper education and art
+AIEvalActionEduArt = {
+	if = {
+		limit = { has_country_flag = aiEvalActionEduArt }
+		clr_country_flag = aiEvalActionEduArt
+		set_variable = { which = $return$ value = 3 }
+	}
+	else = { set_variable = { which = $return$ value = -3 } }
+}
+
+# Governance / Spending
+# Action related to saving up treasury as an all-purpose back up fund
+AIEvalActionSaveTreasury = {
+	if = {
+		limit = { has_country_flag = aiEvalActionSaveTreasury }
+		clr_country_flag = aiEvalActionSaveTreasury
+		if = {
+			limit = {
+				OR = {
+					has_country_flag = aiHasActionBuildCity
+					has_country_flag = aiHasActionBuildForts
+					has_country_flag = aiHasActionBuildShipyards
+					has_country_flag = aiHasActionEduArt
+					has_country_flag = aiHasActionBuildRoad
+					has_country_flag = aiHasActionBuildPort
+					has_country_flag = aiHasActionBuildBureau
+				}
+			}
+			set_variable = { which = $return$ value = 3 }
+		}
+		else = { set_variable = { which = $return$ value = -3 } }
+	}
+	else = { set_variable = { which = $return$ value = -3 } }
+}
+
+# Governance / CE / Spending
+# Action related to building and getting funding for bureaucracy buildings
+AIEvalActionBuildBureau = {
+	if = {
+		limit = { has_country_flag = aiEvalActionBuildBureau }
+		clr_country_flag = aiEvalActionBuildBureau
+		if = {
+			limit = {
+				total_development = 400
+				treasury = 1500
+			}
+			if = {
+				limit = {
+					NOT = { check_variable = { which = capital_num value = 1 } }
+					average_autonomy = 20
+				}
+				set_variable = { which = $return$ value = 3 }
+			}
+			else = {
+				export_to_variable = { which = tmpTotalDev value = total_development }
+				set_variable = { which = tmpSubtract which = capital_num }
+				multiply_variable = { which = tmpSubtract value = 300 }
+				set_variable = { which = $return$ which = tmpTotalDev }
+				subtract_variable = { which = $return$ which = tmpSubtract }
+				divide_variable = { which = $return$ which = tmpTotalDev }
+				multiply_variable = { which = $return$ value = 6 }
+				set_variable = { which = tmpTotalDev value = 0 }
+				set_variable = { which = tmpSubtract value = 0 }
+			}
+		}
+		else = { set_variable = { which = $return$ value = -3 } }
+	}
+	else = { set_variable = { which = $return$ value = -3 } }
+}
+
+# Governance / CE / Spending
+# Action related to building and getting funding for roads
+AIEvalActionBuildRoad = {
+	if = {
+		limit = { has_country_flag = aiEvalActionBuildRoad }
+		clr_country_flag = aiEvalActionBuildRoad
+		if = {
+			limit = { any_owned_province = { CanBuildRoad = yes } }
+			if = {
+				limit = { average_home_autonomy = 90 }
+				set_variable = { which = $return$ value = 3 }
+			}
+			else_if = {
+				limit = { average_home_autonomy = 85 }
+				set_variable = { which = $return$ value = 2.8 }
+			}
+			else_if = {
+				limit = { average_home_autonomy = 80 }
+				set_variable = { which = $return$ value = 2.6 }
+			}
+			else_if = {
+				limit = { average_home_autonomy = 75 }
+				set_variable = { which = $return$ value = 2.4 }
+			}
+			else_if = {
+				limit = { average_home_autonomy = 70 }
+				set_variable = { which = $return$ value = 2.2 }
+			}
+			else_if = {
+				limit = { average_home_autonomy = 65 }
+				set_variable = { which = $return$ value = 2 }
+			}
+			else_if = {
+				limit = { average_home_autonomy = 60 }
+				set_variable = { which = $return$ value = 1.8 }
+			}
+			else_if = {
+				limit = { average_home_autonomy = 55 }
+				set_variable = { which = $return$ value = 1.6 }
+			}
+			else_if = {
+				limit = { average_home_autonomy = 50 }
+				set_variable = { which = $return$ value = 1.4 }
+			}
+			else_if = {
+				limit = { average_home_autonomy = 45 }
+				set_variable = { which = $return$ value = 1.2 }
+			}
+			else_if = {
+				limit = { average_home_autonomy = 40 }
+				set_variable = { which = $return$ value = 1 }
+			}
+			else_if = {
+				limit = { average_home_autonomy = 35 }
+				set_variable = { which = $return$ value = 0.8 }
+			}
+			else_if = {
+				limit = { average_home_autonomy = 30 }
+				set_variable = { which = $return$ value = 0.6 }
+			}
+			else_if = {
+				limit = { average_home_autonomy = 25 }
+				set_variable = { which = $return$ value = 0.4 }
+			}
+			else_if = {
+				limit = { average_home_autonomy = 20 }
+				set_variable = { which = $return$ value = 0.2 }
+			}
+			else_if = {
+				limit = { average_home_autonomy = 15 }
+				set_variable = { which = $return$ value = 0 }
+			}
+			else = { set_variable = { which = $return$ value = -3 } }
+		}
+		else = { set_variable = { which = $return$ value = -3 } }
+	}
+	else = { set_variable = { which = $return$ value = -3 } }
+}
+
+# Governance / CE / Spending
+# Action related to building and getting funding for ports
+AIEvalActionBuildPort = {
+	if = {
+		limit = { has_country_flag = aiEvalActionBuildPort }
+		clr_country_flag = aiEvalActionBuildPort
+		if = {
+			limit = { any_owned_province = { CanBuildPort = yes } }
+			export_to_variable = { which = tmpDevTotal value = total_development }
+			#set_variable = { which = $return$ value = 0 }
+			every_owned_province = {
+				limit = { has_port = yes }
+				if = {
+					limit = { NOT = { has_province_flag = tmpFlag } }
+					set_province_flag = tmpFlag
+					set_variable = { which = $return$ which = devPointTotal }
+				}
+				else = { set_variable = { which = $return$ value = 0 } }
+				every_neighbor_province = {
+					limit = {
+						owned_by = PREV
+						NOT = { has_province_flag = tmpFlag }
+					}
+					set_province_flag = tmpFlag
+					set_variable = { which = $return$ which = devPointTotal }
+					PREV = { change_variable = { which = $return$ which = PREV } }
+					set_variable = { which = $return$ value = 0 }
+				}
+				PREV = { change_variable = { which = $return$ which = PREV } }
+				set_variable = { which = $return$ value = 0 }
+			}
+			multiply_variable = { which = $return$ value = 4 }
+			divide_variable = { which = $return$ which = tmpDevTotal }
+			subtract_variable = { which = $return$ value = 1 }
+			multiply_variable = { which = $return$ value = 3 }
+			every_owned_province = { clr_province_flag = tmpFlag }
+			set_variable = { which = tmpDevTotal value = 0 }
+		}
+		else = { set_variable = { which = $return$ value = -3 } }
+	}
+	else = { set_variable = { which = $return$ value = -3 } }
+}

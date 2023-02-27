@@ -1,0 +1,738 @@
+country_decisions = {
+	
+	make_donation_of_constantine = {
+		
+		potential = {
+			OR = {
+				AND = {
+					is_papal_controller = yes
+					NOT = { has_country_flag = support_antipope }
+				}
+				AND = {
+					NOT = { exists = PAP }
+					NOT = { AVI = { papal_trigger = yes religion = catholic num_of_cities = 1 } }
+				}
+			}
+			OR = {
+				num_of_cities = 15
+				AND = {
+					tag = PA2
+					pagan_trigger = no
+					ai = yes
+					NOT = { exists = PAP }
+				}
+			}
+			OR = {
+				capital_distance = { who = PAP distance = 200 }
+				NOT = { exists = PAP }
+			}
+			religion = catholic
+			NOT = { 2530 = { has_province_modifier = independent_vatican } }
+			NOT = { PAP = { num_of_cities = 5 } }
+			PAP = { NOT = { any_owned_province = { has_province_flag = constantine_donation_pf } } }
+			OR = {
+				NOT = { exists = PAP }
+				PAP = {
+					is_free_or_tributary_trigger = yes
+					NOT = { num_of_subjects = 1 }
+				}
+				overlord_of = PAP
+			}
+			NOT = { has_country_flag = donated_land_to_pope }
+			NOT = { tag = PAP }
+			pagan_trigger = no
+		}
+		allow = {
+			OR = {
+				is_papal_controller = yes
+				custom_trigger_tooltip = {
+					tooltip = papacy_gone
+					NOT = { exists = PAP }
+					num_of_owned_provinces_with = {
+						has_province_flag = catholic_archbishopric
+						value = 4
+					}
+				}
+				tag = PA2
+			}
+			is_at_war = no
+			custom_trigger_tooltip = {
+				tooltip = corrupt_pope
+				OR = {
+					PAP = { has_country_flag = corrupt_pope }
+					overlord_of = PAP
+					NOT = { exists = PAP }
+				}
+			}
+			OR = {
+				PAP = { capital_scope = { has_siege = yes } }
+				PAP = { capital_scope = { NOT = { controlled_by = PAP } } }
+				PAP = { NOT = { num_of_cities = 3 } }
+			}
+			papal_influence = 5
+		}
+		effect = {
+			custom_tooltip = donate_province_to_papacy
+			add_papal_influence = -40
+			hidden_effect = { set_country_flag = donated_land_to_pope } #cleared upon new ruler? 
+			hidden_effect = {
+				every_owned_province = {
+					set_variable = { which = papal_suitability value = 2 }
+				}
+				every_owned_province = {
+					limit = {
+						NOT = { any_neighbor_province = { NOT = { owned_by = ROOT } } }
+					}
+					change_variable = { which = papal_suitability value = 1 }
+				}
+				every_owned_province = {
+					limit = {
+						any_neighbor_province = {
+							NOT = { owned_by = ROOT }
+							owner = { NOT = { alliance_with = ROOT } }
+							owner = { NOT = { is_subject_of = ROOT } }
+						}
+					}
+					change_variable = { which = papal_suitability value = -1 }
+				}
+				every_owned_province = {
+					limit = {
+						any_neighbor_province = {
+							NOT = { owned_by = ROOT }
+							owner = { is_rival = ROOT }
+						}
+					}
+					change_variable = { which = papal_suitability value = -1 }
+				}
+				every_owned_province = {
+					limit = {
+						any_neighbor_province = {
+							NOT = { owned_by = ROOT }
+							owner = { NOT = { religion = catholic } }
+						}
+					}
+					change_variable = { which = papal_suitability value = -1 }
+				}
+				every_owned_province = {
+					limit = {
+						any_neighbor_province = {
+							NOT = { owned_by = ROOT }
+							owner = { NOT = { religion_group = christian } }
+						}
+					}
+					change_variable = { which = papal_suitability value = -1 }
+				}
+				every_owned_province = {
+					limit = { any_neighbor_province = { NOT = { religion = catholic } } }
+					change_variable = { which = papal_suitability value = -1 }
+				}
+				every_owned_province = {
+					limit = { any_neighbor_province = { NOT = { religion_group = christian } } }
+					change_variable = { which = papal_suitability value = -1 }
+				}
+				every_owned_province = {
+					limit = { any_neighbor_province = { owned_by = ROOT } }
+					change_variable = { which = papal_suitability value = 3 }
+				}
+				every_owned_province = {
+					limit = { has_province_modifier = catholic_archbishopric }
+					change_variable = { which = papal_suitability value = 1 }
+				}
+				every_owned_province = {
+					limit = { culture_group = ROOT }
+					change_variable = { which = papal_suitability value = 1 }
+				}
+				every_owned_province = {
+					limit = { any_neighbor_province = { owned_by = ROOT is_capital = yes } }
+					change_variable = { which = papal_suitability value = -1 }
+				}
+				every_owned_province = {
+					limit = { has_port = yes }
+					change_variable = { which = papal_suitability value = -1 }
+				}
+				every_owned_province = {
+					limit = { base_tax = 7 }
+					change_variable = { which = papal_suitability value = -1 }
+				}
+				every_owned_province = {
+					limit = { base_tax = 14 }
+					change_variable = { which = papal_suitability value = -1 }
+				}
+				#every_owned_province = {
+				#	limit = { trade_goods = gold }
+				#	change_variable = { which = papal_suitability value = -1 }
+				#}
+				every_owned_province = {
+					limit = {
+						OR = {
+							is_colony = yes
+							NOT = { religion = catholic }
+							NOT = { continent = europe }
+							is_capital = yes
+							NOT = { is_core = owner }
+						}
+					}
+					set_variable = { which = papal_suitability value = 0 }
+				}
+				#Find up to 3 appropriate provinces
+				random_owned_province = {
+					limit = {
+						owner = { NOT = { check_variable = { which = provinces_selected value = 3 } } }
+						check_variable = { which = papal_suitability value = 6 }
+						NOT = { has_province_flag = behind_door_number_1 }
+						NOT = { has_province_flag = behind_door_number_2 }
+						NOT = { has_province_flag = behind_door_number_3 }
+					}
+					if = {
+						limit = { owner = { NOT = { check_variable = { which = provinces_selected value = 1 } } } }
+						set_province_flag = behind_door_number_1
+					}
+					if = {
+						limit = {
+							owner = { is_variable_equal = { which = provinces_selected value = 1 } }
+						}
+						set_province_flag = behind_door_number_2
+					}
+					if = {
+						limit = {
+							owner = { is_variable_equal = { which = provinces_selected value = 2 } }
+						}
+						set_province_flag = behind_door_number_3
+					}
+					owner = { change_variable = { which = provinces_selected value = 1 } }
+				}
+				random_owned_province = {
+					limit = {
+						owner = { NOT = { check_variable = { which = provinces_selected value = 3 } } }
+						check_variable = { which = papal_suitability value = 5 }
+						NOT = { has_province_flag = behind_door_number_1 }
+						NOT = { has_province_flag = behind_door_number_2 }
+						NOT = { has_province_flag = behind_door_number_3 }
+					}
+					if = {
+						limit = { owner = { NOT = { check_variable = { which = provinces_selected value = 1 } } } }
+						set_province_flag = behind_door_number_1
+					}
+					if = {
+						limit = {
+							owner = { is_variable_equal = { which = provinces_selected value = 1 } }
+						}
+						set_province_flag = behind_door_number_2
+					}
+					if = {
+						limit = {
+							owner = { is_variable_equal = { which = provinces_selected value = 2 } }
+						}
+						set_province_flag = behind_door_number_3
+					}
+					owner = { change_variable = { which = provinces_selected value = 1 } }
+				}
+				random_owned_province = {
+					limit = {
+						owner = { NOT = { check_variable = { which = provinces_selected value = 3 } } }
+						check_variable = { which = papal_suitability value = 4 }
+						NOT = { has_province_flag = behind_door_number_1 }
+						NOT = { has_province_flag = behind_door_number_2 }
+						NOT = { has_province_flag = behind_door_number_3 }
+					}
+					if = {
+						limit = { owner = { NOT = { check_variable = { which = provinces_selected value = 1 } } } }
+						set_province_flag = behind_door_number_1
+					}
+					if = {
+						limit = {
+							owner = { is_variable_equal = { which = provinces_selected value = 1 } }
+						}
+						set_province_flag = behind_door_number_2
+					}
+					if = {
+						limit = {
+							owner = { is_variable_equal = { which = provinces_selected value = 2 } }
+						}
+						set_province_flag = behind_door_number_3
+					}
+					owner = { change_variable = { which = provinces_selected value = 1 } }
+				}
+				random_owned_province = {
+					limit = {
+						owner = { NOT = { check_variable = { which = provinces_selected value = 3 } } }
+						check_variable = { which = papal_suitability value = 3 }
+						NOT = { has_province_flag = behind_door_number_1 }
+						NOT = { has_province_flag = behind_door_number_2 }
+						NOT = { has_province_flag = behind_door_number_3 }
+					}
+					if = {
+						limit = { owner = { NOT = { check_variable = { which = provinces_selected value = 1 } } } }
+						set_province_flag = behind_door_number_1
+					}
+					if = {
+						limit = {
+							owner = { is_variable_equal = { which = provinces_selected value = 1 } }
+						}
+						set_province_flag = behind_door_number_2
+					}
+					if = {
+						limit = {
+							owner = { is_variable_equal = { which = provinces_selected value = 2 } }
+						}
+						set_province_flag = behind_door_number_3
+					}
+					owner = { change_variable = { which = provinces_selected value = 1 } }
+				}
+				random_owned_province = {
+					limit = {
+						owner = { NOT = { check_variable = { which = provinces_selected value = 3 } } }
+						check_variable = { which = papal_suitability value = 2 }
+						NOT = { has_province_flag = behind_door_number_1 }
+						NOT = { has_province_flag = behind_door_number_2 }
+						NOT = { has_province_flag = behind_door_number_3 }
+					}
+					if = {
+						limit = { owner = { NOT = { check_variable = { which = provinces_selected value = 1 } } } }
+						set_province_flag = behind_door_number_1
+					}
+					if = {
+						limit = {
+							owner = { is_variable_equal = { which = provinces_selected value = 1 } }
+						}
+						set_province_flag = behind_door_number_2
+					}
+					if = {
+						limit = {
+							owner = { is_variable_equal = { which = provinces_selected value = 2 } }
+						}
+						set_province_flag = behind_door_number_3
+					}
+					owner = { change_variable = { which = provinces_selected value = 1 } }
+				}
+				random_owned_province = {
+					limit = {
+						owner = { NOT = { check_variable = { which = provinces_selected value = 3 } } }
+						check_variable = { which = papal_suitability value = 1 }
+						NOT = { has_province_flag = behind_door_number_1 }
+						NOT = { has_province_flag = behind_door_number_2 }
+						NOT = { has_province_flag = behind_door_number_3 }
+					}
+					if = {
+						limit = { owner = { NOT = { check_variable = { which = provinces_selected value = 1 } } } }
+						set_province_flag = behind_door_number_1
+					}
+					if = {
+						limit = {
+							owner = { is_variable_equal = { which = provinces_selected value = 1 } }
+						}
+						set_province_flag = behind_door_number_2
+					}
+					if = {
+						limit = {
+							owner = { is_variable_equal = { which = provinces_selected value = 2 } }
+						}
+						set_province_flag = behind_door_number_3
+					}
+					owner = { change_variable = { which = provinces_selected value = 1 } }
+				}
+				#cleaning up
+				every_owned_province = { set_variable = { which = papal_suitability value = 0 } }
+				set_variable = { which = provinces_selected value = 0 }
+			}
+			country_event = { id = dg_papacy.031 }
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				NOT = { num_of_cities = 25 }
+				any_neighbor_country = { num_of_cities = ROOT }
+				factor = 0
+			}
+		}
+	}
+	
+	offer_concordat_with_rome = { #Begins an event chain
+		potential = {
+			owns = 2530 # Rome
+			NOT = { tag = PAP }
+			NOT = { overlord = { tag = PAP } }
+			NOT = { PAP = { check_variable = { which = papal_authority value = 400 } } }
+			NOT = { has_country_flag = concordat_with_vatican } #Can't do after you successfully do it
+			NOT = { PAP = { has_country_flag = concordat_offered } } #In the process of this event chain
+			NOT = { has_country_flag = Roman_crusade } #You have promised to give Rome back to the pope
+			pagan_trigger = no #You are a papacy or anti-pope
+			has_country_flag = true_faith
+		}
+		allow = {
+			NOT = { PAP = { check_variable = { which = papal_authority value = 300 } } }
+			is_core = 2530 # Rome
+			OR = {
+				NOT = { exists = PAP }
+				PAP = { NOT = { is_core = 2530 } }
+				NOT = { PAP = { check_variable = { which = papal_authority value = 200 } } }
+			}
+		}
+		effect = {
+			if = { #Conquered offering to conqueror
+				limit = {
+					OR = { tag = PAP is_papal_controller = yes }
+					NOT = { owns = 2530 } # Rome
+				}
+				PAP = { set_country_flag = concordat_offered }
+				if = {
+					limit = { piety = 0.60 }
+					add_prestige = -8
+				}
+				else_if = {
+					limit = { piety = 0.20 }
+					add_prestige = -6
+				}
+				else_if = {
+					limit = { piety = -0.20 }
+					add_prestige = -4
+				}
+				else_if = {
+					limit = { piety = -0.60 }
+					add_prestige = -2
+				}
+				#random_country = {
+				#	limit = { owns = 2530 }
+				#	country_event = { id = dg_papacy.010 days = 30 }
+				#}
+				2530 = { owner = { country_event = { id = dg_papacy.010 days = 30 } } }
+				every_known_country = {
+					limit = {
+						religion = catholic
+						is_papal_controller = no
+						NOT = { tag = PAP }
+						pagan_trigger = no
+						NOT = { has_country_flag = support_antipope }
+						OR = {
+							piety = 0.60
+							has_country_flag = Roman_crusade
+							is_defender_of_faith = yes
+						}
+					}
+					add_opinion = { who = ROOT modifier = babylonian_captivity_observant }
+				}
+				hidden_effect = { #Just too many Catholic countries
+					every_known_country = {
+						limit = {
+							religion = catholic
+							is_papal_controller = no
+							NOT = { tag = PAP }
+							pagan_trigger = no
+							NOT = { has_country_flag = support_antipope }
+							NOT = { piety = 0.60 }
+							NOT = { has_country_flag = Roman_crusade }
+							is_defender_of_faith = no
+							piety = 0.20
+						}
+						add_opinion = { who = ROOT modifier = babylonian_captivity_decadent }
+					}
+				}
+			}
+			if = { #Conqueror offering to conquered
+				limit = {
+					NOT = { tag = PAP }
+					is_papal_controller = no
+					owns = 2530 # Roma
+				}
+				PAP = { set_country_flag = concordat_offered }
+				set_country_flag = concordat_offer_made
+				random_known_country = {
+					limit = { is_papal_controller = yes }
+					country_event = { id = dg_papacy.008 days = 30 }
+				}
+			}
+			if = { #Fait accomplit
+				limit = {
+					is_papal_controller = yes
+					owns = 2530 # Roma
+				}
+				PAP = { set_country_flag = concordat_signed }
+				2530 = { add_province_modifier = { name = independent_vatican duration = -1 } }
+				if = {
+					limit = { piety = 0.60 }
+					add_prestige = -16
+				}
+				else_if = {
+					limit = { piety = 0.20 }
+					add_prestige = -12
+				}
+				else_if = {
+					limit = { piety = -0.20 }
+					add_prestige = -8
+				}
+				else_if = {
+					limit = { piety = -0.60 }
+					add_prestige = -4
+				}
+				set_country_flag = concordat_with_vatican
+				clr_country_flag = dispensation_denied
+				set_country_flag = dispensation_granted
+				if = {
+					limit = { NOT = { exists = PAP } }
+					PAP = { remove_core = 2530 }
+				}
+				every_known_country = {
+					limit = {
+						religion = catholic
+						is_papal_controller = no
+						NOT = { tag = PAP }
+						pagan_trigger = no
+						NOT = { has_country_flag = support_antipope }
+						OR = {
+							piety = 0.60
+							has_country_flag = Roman_crusade
+							is_defender_of_faith = yes
+						}
+					}
+					add_opinion = { who = ROOT modifier = babylonian_captivity_observant }
+				}
+				every_country = {
+					limit = {
+						religion = catholic
+						OR = {
+							has_country_flag = religious_news_all
+							AND = {
+								has_country_flag = religious_news_trivial
+								piety = 0.20
+							}
+							AND = {
+								has_country_flag = religious_news_major
+								OR = {
+									piety = 0.60
+									any_neighbor_country = { owns = 2530 }
+									any_known_country = {
+										owns = 2530
+										OR = {
+											war_with = ROOT
+											alliance_with = ROOT
+											vassal_of = ROOT
+											overlord_of = ROOT
+											marriage_with = ROOT
+										}
+									}
+								}
+							}
+							is_defender_of_faith = yes
+							has_country_flag = Roman_crusade
+							government = theocracy
+						}
+					}
+					country_event = { id = dg_papacy.011 days = 30 }
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				is_at_war = yes
+				factor = 0
+			}
+			modifier = {
+				NOT = { catholic = 0 }
+				factor = 0
+			}
+		}
+	}
+	
+	promulgate_papal_constitution = {
+		potential = {
+			tag = PAP
+			num_of_owned_provinces_with = {
+				has_province_modifier = roman_autonomy
+				value = 2
+			}
+		}
+		allow = {
+			is_at_war = no
+			ADM = 3
+			OR = {
+				capital_scope = { superregion = italy_superregion }
+				adm_tech = 39 #constitutional monarchy
+				advisor = statesman
+			}
+			adm_power = 50
+			devotion = 90
+		}
+		effect = {
+			add_devotion = -25
+			add_adm_power = -50
+			set_country_flag = papal_constitution
+			every_owned_province = {
+				limit = { has_province_modifier = roman_autonomy }
+				remove_province_modifier = roman_autonomy
+				random = { chance = 50 spawn_rebels = { type = nationalist_rebels size = 1 } change_controller = REB }
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				NOT = {
+					any_owned_province = {
+						has_province_modifier = roman_autonomy
+						units_in_province = 1
+					}
+				}
+				factor = 0
+			}
+		}
+	}
+	
+	reconquer_papal_states = {
+		potential = {
+			tag = PAP
+			PA2 = {
+				is_subject_of = PAP
+				num_of_cities = 1
+				ai = yes
+				is_at_war = no
+			}
+			papal_trigger = yes
+			capital_scope = { province_rome_trigger = yes }
+		}
+		allow = {
+			is_at_war = no
+			NOT = { war_exhaustion = 5 }
+			manpower_percentage = 0.50
+			mil_power = 50
+			devotion = 75
+			MIL = 3
+			custom_trigger_tooltip = {
+				tooltip = no_schism
+				NOT = {
+					AND = {
+						exists = AVI
+						AVI = { papal_trigger = yes }
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = papal_reconquest_time
+				NOT = { has_country_flag = papal_reconquest } #Removed upon new ruler
+			}
+		}
+		effect = {
+			add_war_exhaustion = 2
+			add_manpower = -2
+			add_devotion = -10
+			add_mil_power = -50
+			
+			PA2 = {
+				random_owned_province = {
+					limit = { any_neighbor_province = { owned_by = PAP } }
+					save_event_target_as = province_to_be_ceded
+				}
+			}
+			
+			if = {
+				limit = { NOT = { has_saved_event_target = province_to_be_ceded } }
+				
+				PA2 = {
+					random_owned_province = {
+						save_event_target_as = province_to_be_ceded
+					}
+				}
+			}
+			
+			event_target:province_to_be_ceded = {
+				cede_province = PAP
+				
+				if = {
+					limit = { is_core = PA2 }
+				
+					remove_core = PA2
+					
+					if = {
+						limit = { is_core = PAP }
+						add_local_autonomy = 50
+					}
+					else = {
+						add_core_construction = { cost = 0 speed = 0.5 }
+						add_local_autonomy = 100
+					}
+				}
+				else = { add_local_autonomy = 100 }
+			}
+			
+			set_country_flag = papal_reconquest
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	reconquer_papal_states_other = {
+		potential = {
+			PA2 = {
+				is_subject_of = ROOT
+				is_subject_of_type = roman_territories
+				num_of_cities = 1
+				ai = yes
+				is_at_war = no
+			}
+			NOT = { tag = PAP }
+		}
+		allow = {
+			is_at_war = no
+			NOT = { war_exhaustion = 5 }
+			manpower_percentage = 0.50
+			mil_power = 50
+			legitimacy_equivalent = 75
+			MIL = 3
+			custom_trigger_tooltip = {
+				tooltip = papal_reconquest_time
+				NOT = { has_country_flag = papal_reconquest } #Removed upon new ruler
+			}
+		}
+		effect = {
+			add_war_exhaustion = 2
+			add_manpower = -2
+			add_devotion = -10
+			add_legitimacy = -10
+			add_republican_tradition = -10
+			add_mil_power = -50
+			
+			PA2 = {
+				add_liberty_desire = 25
+				random_owned_province = {
+					limit = { any_neighbor_province = { owned_by = ROOT } }
+					save_event_target_as = province_to_be_ceded
+				}
+			}
+			
+			if = {
+				limit = { NOT = { has_saved_event_target = province_to_be_ceded } }
+				
+				PA2 = {
+					random_owned_province = {
+						save_event_target_as = province_to_be_ceded
+					}
+				}
+			}
+			
+			event_target:province_to_be_ceded = {
+				cede_province = ROOT
+				
+				if = {
+					limit = { is_core = PA2 }
+				
+					remove_core = PA2
+					
+					if = {
+						limit = { is_core = ROOT }
+						add_local_autonomy = 50
+					}
+					else = {
+						add_core_construction = { cost = 1 speed = 0.75 }
+						add_local_autonomy = 100
+					}
+				}
+				else = { add_local_autonomy = 100 }
+			}
+			
+			set_country_flag = papal_reconquest
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+}

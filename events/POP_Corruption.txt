@@ -1,0 +1,1700 @@
+namespace = POP_Corruption
+
+### By Demian
+
+country_event = { ### Bribery
+	id = POP_Corruption.001
+	title = "POP_Corruption.001.t"
+	desc = "POP_Corruption.001.d"
+	is_triggered_only = yes
+	hidden = no
+	picture = CORRUPTION_eventPicture
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = ai_corruption_choice 	value = 0 } ### Used to inform AI as to whether to take the corruption or not
+			random_list = { ### Monarch Point Volume
+				10 = { set_variable = { which = admin_cost_a 	value = 20 } subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = admin_cost_a 	value = 40 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = admin_cost_a 	value = 100 } }
+				20 = { set_variable = { which = admin_cost_a 	value = 150 } change_variable = { which = ai_corruption_choice		value = 3 } }
+				10 = { set_variable = { which = admin_cost_a 	value = 200 } change_variable = { which = ai_corruption_choice		value = 5 } }
+			}
+			random_list = { ### Stability Hit
+				10 = { set_variable = { which = stability_hit 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 6 } }
+				25 = { set_variable = { which = stability_hit 	value = 20 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				30 = { set_variable = { which = stability_hit 	value = 40 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				25 = { set_variable = { which = stability_hit 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 4 } }
+				10 = { set_variable = { which = stability_hit 	value = 70 } change_variable = { which = ai_corruption_choice 		value = 6 } }
+			}
+			random_list = { ### Stability Modifier Malus
+				10 = { set_variable = { which = fight_corruption_malus 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 15 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = fight_corruption_malus 	value = 25 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 35 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				10 = { set_variable = { which = fight_corruption_malus 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 5 } }
+			}
+			if = {
+				limit = {
+					ai = no
+				}
+				#set_variable = { 	  which = BU_corruption_current 		value = 0 }
+				set_variable = {   which = BU_corruption_current 		which = privilege_corruption_BU }
+				multiply_variable = {   which = BU_corruption_current			value = 0.01 }
+				
+				#set_variable = {      which = BU_corruption_cost_1 			value = 0 }
+				set_variable = {   which = BU_corruption_cost_1 			value = 5 }
+				#	multiply_variable = { which = BU_corruption_cost_1 			value = 2 }
+				multiply_variable = {   which = BU_corruption_cost_1			value = 0.01 }
+			}
+		}
+	}
+	
+	option = { ### Accept it
+		name = "POP_Corruption.001.a"
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1000
+				check_variable = { which = ai_corruption_choice 	value = 0 }
+			}
+		}
+		add_country_modifier = {
+			name = accept_bribe_corruption
+			duration = 3650
+		}
+		BU_corruption_added_1_tooltip_effect = yes
+		hidden_effect = {
+			add_country_modifier = {
+				name = recently_corrupted
+				duration = 1825
+				hidden = yes
+			}
+		}
+		
+		if = {
+			limit = {
+				has_country_modifier = BU_bribery_common_3
+				NOT = { has_country_modifier = BU_bribery_common_4 }
+			}
+			remove_country_modifier = BU_bribery_common_3
+			add_country_modifier = { name = BU_bribery_common_4 duration = -1 }
+			remove_country_modifier = BU_bribery_common_4
+			add_country_modifier = { name = BU_bribery_common_4 duration = -1 hidden = yes }
+		}
+		if = {
+			limit = {
+				has_country_modifier = BU_bribery_common_2
+				NOT = { has_country_modifier = BU_bribery_common_3 }
+			}
+			remove_country_modifier = BU_bribery_common_2
+			add_country_modifier = { name = BU_bribery_common_3 duration = -1 }
+			remove_country_modifier = BU_bribery_common_3
+			add_country_modifier = { name = BU_bribery_common_3 duration = -1 hidden = yes }
+		}
+		if = {
+			limit = {
+				has_country_modifier = BU_bribery_common_1
+				NOT = { has_country_modifier = BU_bribery_common_2 }
+			}
+			remove_country_modifier = BU_bribery_common_1
+			add_country_modifier = { name = BU_bribery_common_2 duration = -1 }
+			remove_country_modifier = BU_bribery_common_2
+			add_country_modifier = { name = BU_bribery_common_2 duration = -1 hidden = yes }
+		}
+		if = {
+			limit = {
+				NOT = { has_country_modifier = BU_bribery_common_1 }
+				NOT = { has_country_modifier = BU_bribery_common_2 }
+				NOT = { has_country_modifier = BU_bribery_common_3 }
+				NOT = { has_country_modifier = BU_bribery_common_4 }
+			}
+			add_country_modifier = { name = BU_bribery_common_1 duration = -1 }
+			remove_country_modifier = BU_bribery_common_1
+			add_country_modifier = { name = BU_bribery_common_1 duration = -1 hidden = yes }
+		}
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = admin_cost_a				value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = admin_cost					value = 0 }
+			#}
+		}
+	}
+	
+	option = { ### Fight it
+		name = "POP_Corruption.001.b"
+		ai_chance = { factor = 10 }
+		trigger = { stability = 0 }
+		
+		custom_tooltip = admin_cost_a
+		hidden_effect = {
+			#set_variable = { which = admin_cost 	value = 0 }
+			set_variable = { which = admin_cost 	which = admin_cost_a }
+			scaled_admin_cost_country = yes
+		}
+		fight_corruption_stability = yes
+		corruption_stab_modifier = yes
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = admin_cost_a				value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = admin_cost					value = 0 }
+			#}
+		}
+	}
+}
+
+country_event = { ### Hereditary Admin Positions
+	id = POP_Corruption.002
+	title = "POP_Corruption.002.t"
+	desc = "POP_Corruption.002.d"
+	is_triggered_only = yes
+	hidden = no
+	picture = CORRUPTION_eventPicture
+	
+	immediate = {
+		hidden_effect = {
+			random_list = { ### Monarch Point Volume
+				10 = { set_variable = { which = diplo_cost_a 	value = 20 } 	subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = diplo_cost_a 	value = 40 } 	subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = diplo_cost_a 	value = 100 } }
+				20 = { set_variable = { which = diplo_cost_a 	value = 150 }	change_variable = { which = ai_corruption_choice		value = 3 } }
+				10 = { set_variable = { which = diplo_cost_a 	value = 200 } 	change_variable = { which = ai_corruption_choice		value = 5 } }
+			}
+			random_list = { ### Stability Hit
+				10 = { set_variable = { which = stability_hit 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 6 } }
+				25 = { set_variable = { which = stability_hit 	value = 20 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				30 = { set_variable = { which = stability_hit 	value = 40 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				25 = { set_variable = { which = stability_hit 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 4 } }
+				10 = { set_variable = { which = stability_hit 	value = 70 } change_variable = { which = ai_corruption_choice 		value = 6 } }
+			}
+			random_list = { ### Stability Modifier Malus
+				10 = { set_variable = { which = fight_corruption_malus 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 15 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = fight_corruption_malus 	value = 25 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 35 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				10 = { set_variable = { which = fight_corruption_malus 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 5 } }
+			}
+			if = {
+				limit = {
+					ai = no
+				}
+				#set_variable = { 	  which = BU_corruption_current 		value = 0 }
+				set_variable = {   which = BU_corruption_current 		which = privilege_corruption_BU }
+				multiply_variable = {   which = BU_corruption_current			value = 0.01 }
+				
+				#set_variable = {      which = BU_corruption_cost_1 			value = 0 }
+				set_variable = {   which = BU_corruption_cost_1 			value = 5 }
+				#	multiply_variable = { which = BU_corruption_cost_1 			value = 2 }
+				multiply_variable = {   which = BU_corruption_cost_1			value = 0.01 }
+			}
+		}
+	}
+	
+	option = { ### Accept it
+		name = "POP_Corruption.002.a"
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1000
+				check_variable = { which = ai_corruption_choice 	value = 0 }
+			}
+		}
+		add_country_modifier = {
+			name = accept_hereditary_positions
+			duration = 3650
+		}
+		BU_corruption_added_1_tooltip_effect = yes
+		if = {
+			limit = {
+				has_country_modifier = BU_hereditary_admin_position_1
+				NOT = { has_country_modifier = BU_hereditary_admin_position_2 }
+			}
+			remove_country_modifier = BU_hereditary_admin_position_1
+			add_country_modifier = { name = BU_hereditary_admin_position_2 duration = -1 }
+			remove_country_modifier = BU_hereditary_admin_position_2
+			add_country_modifier = { name = BU_hereditary_admin_position_2 duration = -1 hidden = yes }
+		}
+		if = {
+			limit = {
+				NOT = { has_country_modifier = BU_hereditary_admin_position_1 }
+				NOT = { has_country_modifier = BU_hereditary_admin_position_1 }
+			}
+			add_country_modifier = { name = BU_hereditary_admin_position_1 duration = -1 }
+			remove_country_modifier = BU_hereditary_admin_position_1
+			add_country_modifier = { name = BU_hereditary_admin_position_1 duration = -1 hidden = yes }
+		}
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = diplo_cost_a				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = diplo_cost					value = 0 }
+			#}
+		}
+	}
+	
+	option = { ### Fight it
+		name = "POP_Corruption.002.b"
+		ai_chance = { factor = 10 }
+		trigger = { stability = 0 }
+		
+		custom_tooltip = diplo_cost_a
+		hidden_effect = {
+			#set_variable = { which = diplo_cost 	value = 0 }
+			set_variable = { which = diplo_cost 	which = diplo_cost_a }
+			scaled_diplo_cost_country = yes
+		}
+		fight_corruption_stability = yes
+		corruption_stab_modifier = yes
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = diplo_cost_a				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = diplo_cost					value = 0 }
+			#}
+		}
+	}
+}
+
+country_event = { ### Vulnerable to Foreign Spies
+	id = POP_Corruption.003
+	title = "POP_Corruption.003.t"
+	desc = "POP_Corruption.003.d"
+	is_triggered_only = yes
+	hidden = no
+	picture = CORRUPTION_eventPicture
+	
+	immediate = {
+		hidden_effect = {
+			random_list = { ### Monarch Point Volume
+				10 = { set_variable = { which = milit_cost_a 	value = 20 } 	subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = milit_cost_a 	value = 40 } 	subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = milit_cost_a 	value = 100 } }
+				20 = { set_variable = { which = milit_cost_a 	value = 150 } 	change_variable = { which = ai_corruption_choice		value = 3 } }
+				10 = { set_variable = { which = milit_cost_a 	value = 200 } 	change_variable = { which = ai_corruption_choice		value = 5 } }
+			}
+			random_list = { ### Stability Hit
+				10 = { set_variable = { which = stability_hit 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 6 } }
+				25 = { set_variable = { which = stability_hit 	value = 20 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				30 = { set_variable = { which = stability_hit 	value = 40 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				25 = { set_variable = { which = stability_hit 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 4 } }
+				10 = { set_variable = { which = stability_hit 	value = 70 } change_variable = { which = ai_corruption_choice 		value = 6 } }
+			}
+			random_list = { ### Stability Modifier Malus
+				10 = { set_variable = { which = fight_corruption_malus 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 15 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = fight_corruption_malus 	value = 25 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 35 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				10 = { set_variable = { which = fight_corruption_malus 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 5 } }
+			}
+			if = {
+				limit = {
+					ai = no
+				}
+				#set_variable = { 	  which = BU_corruption_current 		value = 0 }
+				set_variable = {   which = BU_corruption_current 		which = privilege_corruption_BU }
+				multiply_variable = {   which = BU_corruption_current			value = 0.01 }
+				
+				#set_variable = {      which = BU_corruption_cost_1 			value = 0 }
+				set_variable = {   which = BU_corruption_cost_1 			value = 5 }
+				#	multiply_variable = { which = BU_corruption_cost_1 			value = 2 }
+				multiply_variable = {   which = BU_corruption_cost_1			value = 0.01 }
+			}
+		}
+	}
+	
+	option = { ### Accept it
+		name = "POP_Corruption.003.a"
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1000
+				check_variable = { which = ai_corruption_choice 	value = 0 }
+			}
+		}
+		#	add_country_modifier = {
+		#		name = accept_hereditary_positions
+		#		duration = 3650
+		#	}
+		BU_corruption_added_1_tooltip_effect = yes
+		add_country_modifier = { name = BU_vulnerable_to_foreign_spies_1 duration = -1 }
+		remove_country_modifier = BU_vulnerable_to_foreign_spies_1
+		add_country_modifier = { name = BU_vulnerable_to_foreign_spies_1 duration = -1 hidden = yes }
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = milit_cost_a				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = milit_cost					value = 0 }
+			#}
+		}
+	}
+	
+	option = { ### Fight it
+		name = "POP_Corruption.003.b"
+		ai_chance = { factor = 10 }
+		trigger = { stability = 0 }
+		
+		custom_tooltip = milit_cost_a
+		hidden_effect = {
+			#set_variable = { which = milit_cost 	value = 0 }
+			set_variable = { which = milit_cost 	which = milit_cost_a }
+			scaled_milit_cost_country = yes
+		}
+		fight_corruption_stability = yes
+		corruption_stab_modifier = yes
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = milit_cost_a				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = milit_cost					value = 0 }
+			#}
+		}
+	}
+}
+
+country_event = { ### Decadence
+	id = POP_Corruption.004
+	title = "POP_Corruption.004.t"
+	desc = "POP_Corruption.004.d"
+	is_triggered_only = yes
+	hidden = no
+	picture = CORRUPTION_eventPicture
+	
+	immediate = {
+		hidden_effect = {
+			random_list = { ### Monarch Point Volume
+				10 = { set_variable = { which = admin_cost_a 	value = 20 } 	subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = admin_cost_a 	value = 40 } 	subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = admin_cost_a 	value = 100 } }
+				20 = { set_variable = { which = admin_cost_a 	value = 150 } 	change_variable = { which = ai_corruption_choice		value = 3 } }
+				10 = { set_variable = { which = admin_cost_a 	value = 200 } 	change_variable = { which = ai_corruption_choice		value = 5 } }
+			}
+			random_list = { ### Stability Hit
+				10 = { set_variable = { which = stability_hit 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 6 } }
+				25 = { set_variable = { which = stability_hit 	value = 20 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				30 = { set_variable = { which = stability_hit 	value = 40 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				25 = { set_variable = { which = stability_hit 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 4 } }
+				10 = { set_variable = { which = stability_hit 	value = 70 } change_variable = { which = ai_corruption_choice 		value = 6 } }
+			}
+			random_list = { ### Stability Modifier Malus
+				10 = { set_variable = { which = fight_corruption_malus 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 15 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = fight_corruption_malus 	value = 25 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 35 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				10 = { set_variable = { which = fight_corruption_malus 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 5 } }
+			}
+			if = {
+				limit = {
+					ai = no
+				}
+				#set_variable = { 	  which = BU_corruption_current 		value = 0 }
+				set_variable = {   which = BU_corruption_current 		which = privilege_corruption_BU }
+				multiply_variable = {   which = BU_corruption_current			value = 0.01 }
+				
+				#set_variable = {      which = BU_corruption_cost_1 			value = 0 }
+				set_variable = {   which = BU_corruption_cost_1 			value = 5 }
+				#	multiply_variable = { which = BU_corruption_cost_1 			value = 2 }
+				multiply_variable = {   which = BU_corruption_cost_1			value = 0.01 }
+			}
+		}
+	}
+	
+	option = { ### Accept it
+		name = "POP_Corruption.004.a"
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1000
+				check_variable = { which = ai_corruption_choice 	value = 0 }
+			}
+		}
+		add_country_modifier = {
+			name = accept_decadence
+			duration = 3650
+		}
+		BU_corruption_added_1_tooltip_effect = yes
+		hidden_effect = {
+			add_country_modifier = {
+				name = recently_corrupted
+				duration = 1825
+				hidden = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_modifier = BU_culture_of_decadence_and_lazyness_2
+				NOT = { has_country_modifier = BU_culture_of_decadence_and_lazyness_3 }
+			}
+			remove_country_modifier = BU_culture_of_decadence_and_lazyness_2
+			add_country_modifier = { name = BU_culture_of_decadence_and_lazyness_3 duration = -1 }
+			remove_country_modifier = BU_culture_of_decadence_and_lazyness_3
+			add_country_modifier = { name = BU_culture_of_decadence_and_lazyness_3 duration = -1 hidden = yes }
+		}
+		if = {
+			limit = {
+				has_country_modifier = BU_culture_of_decadence_and_lazyness_1
+				NOT = { has_country_modifier = BU_culture_of_decadence_and_lazyness_2 }
+			}
+			remove_country_modifier = BU_culture_of_decadence_and_lazyness_1
+			add_country_modifier = { name = BU_culture_of_decadence_and_lazyness_2 duration = -1 }
+			remove_country_modifier = BU_culture_of_decadence_and_lazyness_2
+			add_country_modifier = { name = BU_culture_of_decadence_and_lazyness_2 duration = -1 hidden = yes }
+		}
+		if = {
+			limit = {
+				NOT = { has_country_modifier = BU_culture_of_decadence_and_lazyness_1 }
+				NOT = { has_country_modifier = BU_culture_of_decadence_and_lazyness_2 }
+				NOT = { has_country_modifier = BU_culture_of_decadence_and_lazyness_3 }
+			}
+			add_country_modifier = { name = BU_culture_of_decadence_and_lazyness_1 duration = -1 }
+			remove_country_modifier = BU_culture_of_decadence_and_lazyness_1
+			add_country_modifier = { name = BU_culture_of_decadence_and_lazyness_1 duration = -1 hidden = yes }
+		}
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = admin_cost_a				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = admin_cost					value = 0 }
+			#}
+		}
+	}
+	
+	option = { ### Fight it
+		name = "POP_Corruption.004.b"
+		ai_chance = { factor = 10 }
+		trigger = { stability = 0 }
+		
+		custom_tooltip = admin_cost_a
+		hidden_effect = {
+			#set_variable = { which = admin_cost 	value = 0 }
+			set_variable = { which = admin_cost 	which = admin_cost_a }
+			scaled_admin_cost_country = yes
+		}
+		fight_corruption_stability = yes
+		corruption_stab_modifier = yes
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = admin_cost_a				value = 0 }
+				set_variable = { which = diplo_cost_a				value = 0 }
+				set_variable = { which = milit_cost_a				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = admin_cost					value = 0 }
+				set_variable = { which = diplo_cost					value = 0 }
+				set_variable = { which = milit_cost					value = 0 }
+			#}
+		}
+	}
+}
+
+country_event = { ### Factionalism
+	id = POP_Corruption.005
+	title = "POP_Corruption.005.t"
+	desc = "POP_Corruption.005.d"
+	is_triggered_only = yes
+	hidden = no
+	picture = CORRUPTION_eventPicture
+	
+	immediate = {
+		hidden_effect = {
+			random_list = { ### Monarch Point Volume
+				10 = { set_variable = { which = diplo_cost_a 	value = 20 } 	subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = diplo_cost_a 	value = 40 } 	subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = diplo_cost_a 	value = 100 } }
+				20 = { set_variable = { which = diplo_cost_a 	value = 150 } 	change_variable = { which = ai_corruption_choice		value = 3 } }
+				10 = { set_variable = { which = diplo_cost_a 	value = 200 } 	change_variable = { which = ai_corruption_choice		value = 5 } }
+			}
+			random_list = { ### Stability Hit
+				10 = { set_variable = { which = stability_hit 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 6 } }
+				25 = { set_variable = { which = stability_hit 	value = 20 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				30 = { set_variable = { which = stability_hit 	value = 40 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				25 = { set_variable = { which = stability_hit 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 4 } }
+				10 = { set_variable = { which = stability_hit 	value = 70 } change_variable = { which = ai_corruption_choice 		value = 6 } }
+			}
+			random_list = { ### Stability Modifier Malus
+				10 = { set_variable = { which = fight_corruption_malus 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 15 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = fight_corruption_malus 	value = 25 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 35 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				10 = { set_variable = { which = fight_corruption_malus 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 5 } }
+			}
+			if = {
+				limit = {
+					ai = no
+				}
+				#set_variable = { 	  which = BU_corruption_current 		value = 0 }
+				set_variable = {   which = BU_corruption_current 		which = privilege_corruption_BU }
+				multiply_variable = {   which = BU_corruption_current			value = 0.01 }
+				
+				#set_variable = {      which = BU_corruption_cost_1 			value = 0 }
+				set_variable = {   which = BU_corruption_cost_1 			value = 5 }
+				#	multiply_variable = { which = BU_corruption_cost_1 			value = 2 }
+				multiply_variable = {   which = BU_corruption_cost_1			value = 0.01 }
+			}
+		}
+	}
+	
+	option = { ### Accept it
+		name = "POP_Corruption.005.a"
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1000
+				check_variable = { which = ai_corruption_choice 	value = 0 }
+			}
+		}
+		add_country_modifier = {
+			name = accept_factionalism
+			duration = 3650
+		}
+		BU_corruption_added_1_tooltip_effect = yes
+		hidden_effect = {
+			add_country_modifier = {
+				name = recently_corrupted
+				duration = 1825
+				hidden = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_modifier = BU_factionalism_common_1
+				NOT = { has_country_modifier = BU_factionalism_common_2 }
+			}
+			remove_country_modifier = BU_factionalism_common_1
+			add_country_modifier = { name = BU_factionalism_common_2 duration = -1 }
+			remove_country_modifier = BU_factionalism_common_2
+			add_country_modifier = { name = BU_factionalism_common_2 duration = -1 hidden = yes }
+		}
+		if = {
+			limit = {
+				NOT = { has_country_modifier = BU_factionalism_common_1 }
+				NOT = { has_country_modifier = BU_factionalism_common_2 }
+			}
+			add_country_modifier = { name = BU_factionalism_common_1 duration = -1 }
+			remove_country_modifier = BU_factionalism_common_1
+			add_country_modifier = { name = BU_factionalism_common_1 duration = -1 hidden = yes }
+		}
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = admin_cost_a				value = 0 }
+				set_variable = { which = diplo_cost_a				value = 0 }
+				set_variable = { which = milit_cost_a				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = admin_cost					value = 0 }
+				set_variable = { which = diplo_cost					value = 0 }
+				set_variable = { which = milit_cost					value = 0 }
+			#}
+		}
+	}
+	
+	option = { ### Fight it
+		name = "POP_Corruption.005.b"
+		ai_chance = { factor = 10 }
+		trigger = { stability = 0 }
+		
+		custom_tooltip = admin_cost_a
+		hidden_effect = {
+			#set_variable = { which = diplo_cost 	value = 0 }
+			set_variable = { which = diplo_cost 	which = diplo_cost_a }
+			scaled_diplo_cost_country = yes
+		}
+		fight_corruption_stability = yes
+		corruption_stab_modifier = yes
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = admin_cost_a				value = 0 }
+				set_variable = { which = diplo_cost_a				value = 0 }
+				set_variable = { which = milit_cost_a				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = admin_cost					value = 0 }
+				set_variable = { which = diplo_cost					value = 0 }
+				set_variable = { which = milit_cost					value = 0 }
+			#}
+		}
+	}
+}
+
+country_event = { ### Corrupted Judiciary
+	id = POP_Corruption.006
+	title = "POP_Corruption.006.t"
+	desc = "POP_Corruption.006.d"
+	is_triggered_only = yes
+	hidden = no
+	picture = CORRUPTION_eventPicture
+	
+	immediate = {
+		hidden_effect = {
+			random_list = { ### Monarch Point Volume
+				10 = { set_variable = { which = admin_cost_a 	value = 20 } 	subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = admin_cost_a 	value = 40 } 	subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = admin_cost_a 	value = 100 } }
+				20 = { set_variable = { which = admin_cost_a 	value = 150 } 	change_variable = { which = ai_corruption_choice		value = 3 } }
+				10 = { set_variable = { which = admin_cost_a 	value = 200 } 	change_variable = { which = ai_corruption_choice		value = 5 } }
+			}
+			random_list = { ### Stability Hit
+				10 = { set_variable = { which = stability_hit 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 6 } }
+				25 = { set_variable = { which = stability_hit 	value = 20 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				30 = { set_variable = { which = stability_hit 	value = 40 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				25 = { set_variable = { which = stability_hit 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 4 } }
+				10 = { set_variable = { which = stability_hit 	value = 70 } change_variable = { which = ai_corruption_choice 		value = 6 } }
+			}
+			random_list = { ### Stability Modifier Malus
+				10 = { set_variable = { which = fight_corruption_malus 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 15 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = fight_corruption_malus 	value = 25 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 35 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				10 = { set_variable = { which = fight_corruption_malus 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 5 } }
+			}
+			if = {
+				limit = {
+					ai = no
+				}
+				#set_variable = { 	  which = BU_corruption_current 		value = 0 }
+				set_variable = {   which = BU_corruption_current 		which = privilege_corruption_BU }
+				multiply_variable = {   which = BU_corruption_current			value = 0.01 }
+				
+				#set_variable = {      which = BU_corruption_cost_1 			value = 0 }
+				set_variable = {   which = BU_corruption_cost_1 			value = 5 }
+				#	multiply_variable = { which = BU_corruption_cost_1 			value = 2 }
+				multiply_variable = {   which = BU_corruption_cost_1			value = 0.01 }
+			}
+			set_variable = { which = greater_nobles_loyalty_added_a 		value = 3 }
+			set_variable = { which = lesser_nobles_loyalty_added_a 			value = 3 }
+			set_variable = { which = burghers_loyalty_added_a 				value = 3 }
+		}
+	}
+	
+	option = { ### Accept it
+		name = "POP_Corruption.006.a"
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1000
+				check_variable = { which = ai_corruption_choice 	value = 0 }
+			}
+		}
+		if = {
+			limit = {
+				check_variable = { which = estate_greater_nobles_weight_share value = 0.05 }
+			}
+			custom_tooltip = estate_greater_nobles_loyalty_added_a
+		}
+		if = {
+			limit = {
+				check_variable = { which = estate_lesser_nobles_weight_share value = 0.05 }
+			}
+			custom_tooltip = estate_lesser_nobles_loyalty_added_a
+		}
+		if = {
+			limit = {
+				check_variable = { which = estate_burghers_weight_share value = 0.05 }
+			}
+			custom_tooltip = estate_burghers_loyalty_added_a
+		}
+		BU_corruption_added_1_tooltip_effect = yes
+		hidden_effect = {
+			add_country_modifier = {
+				name = recently_corrupted
+				duration = 1825
+				hidden = yes
+			}
+			if = {
+				limit = {
+					check_variable = { which = estate_greater_nobles_weight_share value = 0.05 }
+				}
+				#set_variable = { 	which = greater_nobles_loyalty_added		value = 0 }
+				set_variable = { 	which = greater_nobles_loyalty_added		which = greater_nobles_loyalty_added_a }
+				estate_greater_nobles_loyalty_added = yes
+			}
+			if = {
+				limit = {
+					check_variable = { which = estate_lesser_nobles_weight_share value = 0.05 }
+				}
+				#set_variable = { 	which = lesser_nobles_loyalty_added		value = 0 }
+				set_variable = { 	which = lesser_nobles_loyalty_added		which = lesser_nobles_loyalty_added_a }
+				estate_lesser_nobles_loyalty_added = yes
+			}
+			if = {
+				limit = {
+					check_variable = { which = estate_burghers_weight_share value = 0.05 }
+				}
+				#set_variable = { 	which = burghers_loyalty_added		value = 0 }
+				set_variable = { 	which = burghers_loyalty_added		which = burghers_loyalty_added_a }
+				estate_burghers_loyalty_added = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_modifier = BU_corrupted_judiciary_1
+				NOT = { has_country_modifier = BU_corrupted_judiciary_2 }
+			}
+			remove_country_modifier = BU_corrupted_judiciary_1
+			add_country_modifier = { name = BU_corrupted_judiciary_2 duration = -1 }
+			remove_country_modifier = BU_corrupted_judiciary_2
+			add_country_modifier = { name = BU_corrupted_judiciary_2 duration = -1 hidden = yes }
+		}
+		if = {
+			limit = {
+				NOT = { has_country_modifier = BU_corrupted_judiciary_1 }
+				NOT = { has_country_modifier = BU_corrupted_judiciary_2 }
+			}
+			add_country_modifier = { name = BU_corrupted_judiciary_1 duration = -1 }
+			remove_country_modifier = BU_corrupted_judiciary_1
+			add_country_modifier = { name = BU_corrupted_judiciary_1 duration = -1 hidden = yes }
+		}
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = admin_cost_a				value = 0 }
+				set_variable = { which = diplo_cost_a				value = 0 }
+				set_variable = { which = milit_cost_a				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = admin_cost					value = 0 }
+				set_variable = { which = diplo_cost					value = 0 }
+				set_variable = { which = milit_cost					value = 0 }
+			#}
+		}
+	}
+	
+	option = { ### Fight it
+		name = "POP_Corruption.006.b"
+		ai_chance = { factor = 10 }
+		trigger = { stability = 0 }
+		
+		custom_tooltip = admin_cost_a
+		hidden_effect = {
+			#set_variable = { which = admin_cost 	value = 0 }
+			set_variable = { which = admin_cost 	which = admin_cost_a }
+			scaled_admin_cost_country = yes
+		}
+		fight_corruption_stability = yes
+		corruption_stab_modifier = yes
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = admin_cost_a				value = 0 }
+				set_variable = { which = diplo_cost_a				value = 0 }
+				set_variable = { which = milit_cost_a				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = admin_cost					value = 0 }
+				set_variable = { which = diplo_cost					value = 0 }
+				set_variable = { which = milit_cost					value = 0 }
+			#}
+		}
+	}
+}
+
+country_event = { ### Corrupted Army
+	id = POP_Corruption.007
+	title = "POP_Corruption.007.t"
+	desc = "POP_Corruption.007.d"
+	is_triggered_only = yes
+	hidden = no
+	picture = CORRUPTION_eventPicture
+	
+	immediate = {
+		hidden_effect = {
+			random_list = { ### Monarch Point Volume
+				10 = { set_variable = { which = milit_cost_a 	value = 20 } 	subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = milit_cost_a 	value = 40 } 	subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = milit_cost_a 	value = 100 } }
+				20 = { set_variable = { which = milit_cost_a 	value = 150 } 	change_variable = { which = ai_corruption_choice		value = 3 } }
+				10 = { set_variable = { which = milit_cost_a 	value = 200 } 	change_variable = { which = ai_corruption_choice		value = 5 } }
+			}
+			random_list = { ### Stability Hit
+				10 = { set_variable = { which = stability_hit 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 6 } }
+				25 = { set_variable = { which = stability_hit 	value = 20 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				30 = { set_variable = { which = stability_hit 	value = 40 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				25 = { set_variable = { which = stability_hit 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 4 } }
+				10 = { set_variable = { which = stability_hit 	value = 70 } change_variable = { which = ai_corruption_choice 		value = 6 } }
+			}
+			random_list = { ### Stability Modifier Malus
+				10 = { set_variable = { which = fight_corruption_malus 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 15 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = fight_corruption_malus 	value = 25 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 35 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				10 = { set_variable = { which = fight_corruption_malus 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 5 } }
+			}
+			if = {
+				limit = {
+					ai = no
+				}
+				#set_variable = { 	  which = BU_corruption_current 		value = 0 }
+				set_variable = {   which = BU_corruption_current 		which = privilege_corruption_BU }
+				multiply_variable = {   which = BU_corruption_current			value = 0.01 }
+				
+				#set_variable = {      which = BU_corruption_cost_1 			value = 0 }
+				set_variable = {   which = BU_corruption_cost_1 			value = 5 }
+				#	multiply_variable = { which = BU_corruption_cost_1 			value = 2 }
+				multiply_variable = {   which = BU_corruption_cost_1			value = 0.01 }
+			}
+		}
+	}
+	
+	option = { ### Accept it
+		name = "POP_Corruption.007.a"
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1000
+				check_variable = { which = ai_corruption_choice 	value = 0 }
+			}
+		}
+		add_country_modifier = {
+			name = accept_army_corruption
+			duration = 3650
+		}
+		BU_corruption_added_1_tooltip_effect = yes
+		hidden_effect = {
+			add_country_modifier = {
+				name = recently_corrupted
+				duration = 1825
+				hidden = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_modifier = BU_corrupted_army_1
+				NOT = { has_country_modifier = BU_corrupted_army_2 }
+			}
+			remove_country_modifier = BU_corrupted_army_1
+			add_country_modifier = { name = BU_corrupted_army_2 duration = -1 }
+			remove_country_modifier = BU_corrupted_army_2
+			add_country_modifier = { name = BU_corrupted_army_2 duration = -1 hidden = yes }
+		}
+		if = {
+			limit = {
+				NOT = { has_country_modifier = BU_corrupted_army_1 }
+				NOT = { has_country_modifier = BU_corrupted_army_2 }
+			}
+			add_country_modifier = { name = BU_corrupted_army_1 duration = -1 }
+			remove_country_modifier = BU_corrupted_army_1
+			add_country_modifier = { name = BU_corrupted_army_1 duration = -1 hidden = yes }
+		}
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = admin_cost_a				value = 0 }
+				set_variable = { which = diplo_cost_a				value = 0 }
+				set_variable = { which = milit_cost_a				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = admin_cost					value = 0 }
+				set_variable = { which = diplo_cost					value = 0 }
+				set_variable = { which = milit_cost					value = 0 }
+			#}
+		}
+	}
+	
+	option = { ### Fight it
+		name = "POP_Corruption.007.b"
+		ai_chance = { factor = 10 }
+		trigger = { stability = 0 }
+		
+		custom_tooltip = admin_cost_a
+		hidden_effect = {
+			#set_variable = { which = milit_cost 	value = 0 }
+			set_variable = { which = milit_cost 	which = milit_cost_a }
+			scaled_milit_cost_country = yes
+		}
+		fight_corruption_stability = yes
+		corruption_stab_modifier = yes
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = admin_cost_a				value = 0 }
+				set_variable = { which = diplo_cost_a				value = 0 }
+				set_variable = { which = milit_cost_a				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = admin_cost					value = 0 }
+				set_variable = { which = diplo_cost					value = 0 }
+				set_variable = { which = milit_cost					value = 0 }
+			#}
+		}
+	}
+}
+
+country_event = { ### Corrupted Navy
+	id = POP_Corruption.008
+	title = "POP_Corruption.008.t"
+	desc = "POP_Corruption.008.d"
+	is_triggered_only = yes
+	hidden = no
+	picture = CORRUPTION_eventPicture
+	
+	immediate = {
+		hidden_effect = {
+			random_list = { ### Monarch Point Volume
+				10 = { set_variable = { which = milit_cost_a 	value = 20 } 	subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = milit_cost_a 	value = 40 } 	subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = milit_cost_a 	value = 100 } }
+				20 = { set_variable = { which = milit_cost_a 	value = 150 } 	change_variable = { which = ai_corruption_choice		value = 3 } }
+				10 = { set_variable = { which = milit_cost_a 	value = 200 } 	change_variable = { which = ai_corruption_choice		value = 5 } }
+			}
+			random_list = { ### Stability Hit
+				10 = { set_variable = { which = stability_hit 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 6 } }
+				25 = { set_variable = { which = stability_hit 	value = 20 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				30 = { set_variable = { which = stability_hit 	value = 40 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				25 = { set_variable = { which = stability_hit 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 4 } }
+				10 = { set_variable = { which = stability_hit 	value = 70 } change_variable = { which = ai_corruption_choice 		value = 6 } }
+			}
+			random_list = { ### Stability Modifier Malus
+				10 = { set_variable = { which = fight_corruption_malus 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 15 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = fight_corruption_malus 	value = 25 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 35 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				10 = { set_variable = { which = fight_corruption_malus 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 5 } }
+			}
+			if = {
+				limit = {
+					ai = no
+				}
+				#set_variable = { 	  which = BU_corruption_current 		value = 0 }
+				set_variable = {   which = BU_corruption_current 		which = privilege_corruption_BU }
+				multiply_variable = {   which = BU_corruption_current			value = 0.01 }
+				
+				#set_variable = {      which = BU_corruption_cost_1 			value = 0 }
+				set_variable = {   which = BU_corruption_cost_1 			value = 5 }
+				#	multiply_variable = { which = BU_corruption_cost_1 			value = 2 }
+				multiply_variable = {   which = BU_corruption_cost_1			value = 0.01 }
+			}
+		}
+	}
+	
+	option = { ### Accept it
+		name = "POP_Corruption.008.a"
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1000
+				check_variable = { which = ai_corruption_choice 	value = 0 }
+			}
+		}
+		add_country_modifier = {
+			name = accept_navy_corruption
+			duration = 3650
+		}
+		BU_corruption_added_1_tooltip_effect = yes
+		hidden_effect = {
+			add_country_modifier = {
+				name = recently_corrupted
+				duration = 1825
+				hidden = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_modifier = BU_corrupted_navy_1
+				NOT = { has_country_modifier = BU_corrupted_navy_2 }
+			}
+			remove_country_modifier = BU_corrupted_navy_1
+			add_country_modifier = { name = BU_corrupted_navy_2 duration = -1 }
+			remove_country_modifier = BU_corrupted_navy_2
+			add_country_modifier = { name = BU_corrupted_navy_2 duration = -1 hidden = yes }
+		}
+		if = {
+			limit = {
+				NOT = { has_country_modifier = BU_corrupted_navy_1 }
+				NOT = { has_country_modifier = BU_corrupted_navy_2 }
+			}
+			add_country_modifier = { name = BU_corrupted_navy_1 duration = -1 }
+			remove_country_modifier = BU_corrupted_navy_1
+			add_country_modifier = { name = BU_corrupted_navy_1 duration = -1 hidden = yes }
+		}
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = admin_cost_a				value = 0 }
+				set_variable = { which = diplo_cost_a				value = 0 }
+				set_variable = { which = milit_cost_a				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = admin_cost					value = 0 }
+				set_variable = { which = diplo_cost					value = 0 }
+				set_variable = { which = milit_cost					value = 0 }
+			#}
+		}
+	}
+	
+	option = { ### Fight it
+		name = "POP_Corruption.008.b"
+		ai_chance = { factor = 10 }
+		trigger = { stability = 0 }
+		
+		custom_tooltip = admin_cost_a
+		hidden_effect = {
+			#set_variable = { which = milit_cost 	value = 0 }
+			set_variable = { which = milit_cost 	which = milit_cost_a }
+			scaled_milit_cost_country = yes
+		}
+		fight_corruption_stability = yes
+		corruption_stab_modifier = yes
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = admin_cost_a				value = 0 }
+				set_variable = { which = diplo_cost_a				value = 0 }
+				set_variable = { which = milit_cost_a				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = admin_cost					value = 0 }
+				set_variable = { which = diplo_cost					value = 0 }
+				set_variable = { which = milit_cost					value = 0 }
+			#}
+		}
+	}
+}
+
+country_event = { ### Nepotism
+	id = POP_Corruption.009
+	title = "POP_Corruption.009.t"
+	desc = "POP_Corruption.009.d"
+	is_triggered_only = yes
+	hidden = no
+	picture = CORRUPTION_eventPicture
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = ai_corruption_choice 	value = 0 }
+			random_list = { ### Monarch Point Volume
+				10 = { set_variable = { which = admin_cost_a 	value = 20 } subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = admin_cost_a 	value = 40 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = admin_cost_a 	value = 100 } }
+				20 = { set_variable = { which = admin_cost_a 	value = 150 } change_variable = { which = ai_corruption_choice		value = 3 } }
+				10 = { set_variable = { which = admin_cost_a 	value = 200 } change_variable = { which = ai_corruption_choice		value = 5 } }
+			}
+			random_list = { ### Stability Hit
+				10 = { set_variable = { which = stability_hit 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 6 } }
+				25 = { set_variable = { which = stability_hit 	value = 20 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				30 = { set_variable = { which = stability_hit 	value = 40 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				25 = { set_variable = { which = stability_hit 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 4 } }
+				10 = { set_variable = { which = stability_hit 	value = 70 } change_variable = { which = ai_corruption_choice 		value = 6 } }
+			}
+			random_list = { ### Stability Modifier Malus
+				10 = { set_variable = { which = fight_corruption_malus 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 15 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = fight_corruption_malus 	value = 25 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 35 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				10 = { set_variable = { which = fight_corruption_malus 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 5 } }
+			}
+			if = {
+				limit = {
+					ai = no
+				}
+				#set_variable = { 	  which = BU_corruption_current 		value = 0 }
+				set_variable = {   which = BU_corruption_current 		which = privilege_corruption_BU }
+				multiply_variable = {   which = BU_corruption_current			value = 0.01 }
+				
+				#set_variable = {      which = BU_corruption_cost_1 			value = 0 }
+				set_variable = {   which = BU_corruption_cost_1 			value = 5 }
+				#	multiply_variable = { which = BU_corruption_cost_1 			value = 2 }
+				multiply_variable = {   which = BU_corruption_cost_1			value = 0.01 }
+			}
+		}
+	}
+	
+	option = { ### Accept it
+		name = "POP_Corruption.009.a"
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1000
+				check_variable = { which = ai_corruption_choice 	value = 0 }
+			}
+		}
+		add_country_modifier = {
+			name = accept_bribe_corruption
+			duration = 3650
+		}
+		BU_corruption_added_1_tooltip_effect = yes
+		hidden_effect = {
+			add_country_modifier = {
+				name = recently_corrupted
+				duration = 1825
+				hidden = yes
+			}
+		}
+		
+		if = {
+			limit = {
+				has_country_modifier = BU_rampant_nepotism_3
+				NOT = { has_country_modifier = BU_rampant_nepotism_4 }
+			}
+			remove_country_modifier = BU_rampant_nepotism_3
+			add_country_modifier = { name = BU_rampant_nepotism_4 duration = -1 }
+			remove_country_modifier = BU_rampant_nepotism_4
+			add_country_modifier = { name = BU_rampant_nepotism_4 duration = -1 hidden = yes }
+		}
+		if = {
+			limit = {
+				has_country_modifier = BU_rampant_nepotism_2
+				NOT = { has_country_modifier = BU_rampant_nepotism_3 }
+			}
+			remove_country_modifier = BU_rampant_nepotism_2
+			add_country_modifier = { name = BU_rampant_nepotism_3 duration = -1 }
+			remove_country_modifier = BU_rampant_nepotism_3
+			add_country_modifier = { name = BU_rampant_nepotism_3 duration = -1 hidden = yes }
+		}
+		if = {
+			limit = {
+				has_country_modifier = BU_rampant_nepotism_1
+				NOT = { has_country_modifier = BU_rampant_nepotism_2 }
+			}
+			remove_country_modifier = BU_rampant_nepotism_1
+			add_country_modifier = { name = BU_rampant_nepotism_2 duration = -1 }
+			remove_country_modifier = BU_rampant_nepotism_2
+			add_country_modifier = { name = BU_rampant_nepotism_2 duration = -1 hidden = yes }
+		}
+		if = {
+			limit = {
+				NOT = { has_country_modifier = BU_rampant_nepotism_1 }
+				NOT = { has_country_modifier = BU_rampant_nepotism_2 }
+				NOT = { has_country_modifier = BU_rampant_nepotism_3 }
+				NOT = { has_country_modifier = BU_rampant_nepotism_4 }
+			}
+			add_country_modifier = { name = BU_rampant_nepotism_1 duration = -1 }
+			remove_country_modifier = BU_rampant_nepotism_1
+			add_country_modifier = { name = BU_rampant_nepotism_1 duration = -1 hidden = yes }
+		}
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = admin_cost_a				value = 0 }
+				set_variable = { which = diplo_cost_a				value = 0 }
+				set_variable = { which = milit_cost_a				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = admin_cost					value = 0 }
+				set_variable = { which = diplo_cost					value = 0 }
+				set_variable = { which = milit_cost					value = 0 }
+			#}
+		}
+	}
+	
+	option = { ### Fight it
+		name = "POP_Corruption.009.b"
+		ai_chance = { factor = 10 }
+		trigger = { stability = 0 }
+		
+		custom_tooltip = admin_cost_a
+		hidden_effect = {
+			#set_variable = { which = admin_cost 	value = 0 }
+			set_variable = { which = admin_cost 	which = admin_cost_a }
+			scaled_admin_cost_country = yes
+		}
+		fight_corruption_stability = yes
+		corruption_stab_modifier = yes
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = admin_cost_a				value = 0 }
+				set_variable = { which = diplo_cost_a				value = 0 }
+				set_variable = { which = milit_cost_a				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = admin_cost					value = 0 }
+				set_variable = { which = diplo_cost					value = 0 }
+				set_variable = { which = milit_cost					value = 0 }
+			#}
+		}
+	}
+}
+
+country_event = { ### Trivialized Service Honors
+	id = POP_Corruption.010
+	title = "POP_Corruption.010.t"
+	desc = "POP_Corruption.010.d"
+	is_triggered_only = yes
+	hidden = no
+	picture = CORRUPTION_eventPicture
+	
+	immediate = {
+		hidden_effect = {
+			random_list = { ### Monarch Point Volume
+				10 = { set_variable = { which = admin_cost_a 	value = 20 } 	subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = admin_cost_a 	value = 40 } 	subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = admin_cost_a 	value = 100 } }
+				20 = { set_variable = { which = admin_cost_a 	value = 150 } 	change_variable = { which = ai_corruption_choice		value = 3 } }
+				10 = { set_variable = { which = admin_cost_a 	value = 200 } 	change_variable = { which = ai_corruption_choice		value = 5 } }
+			}
+			random_list = { ### Stability Hit
+				10 = { set_variable = { which = stability_hit 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 6 } }
+				25 = { set_variable = { which = stability_hit 	value = 20 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				30 = { set_variable = { which = stability_hit 	value = 40 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				25 = { set_variable = { which = stability_hit 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 4 } }
+				10 = { set_variable = { which = stability_hit 	value = 70 } change_variable = { which = ai_corruption_choice 		value = 6 } }
+			}
+			random_list = { ### Stability Modifier Malus
+				10 = { set_variable = { which = fight_corruption_malus 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 15 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = fight_corruption_malus 	value = 25 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 35 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				10 = { set_variable = { which = fight_corruption_malus 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 5 } }
+			}
+			if = {
+				limit = {
+					ai = no
+				}
+				#set_variable = { 	  which = BU_corruption_current 		value = 0 }
+				set_variable = {   which = BU_corruption_current 		which = privilege_corruption_BU }
+				multiply_variable = {   which = BU_corruption_current			value = 0.01 }
+				
+				#set_variable = {      which = BU_corruption_cost_1 			value = 0 }
+				set_variable = {   which = BU_corruption_cost_1 			value = 5 }
+				#	multiply_variable = { which = BU_corruption_cost_1 			value = 2 }
+				multiply_variable = {   which = BU_corruption_cost_1			value = 0.01 }
+			}
+		}
+	}
+	
+	option = { ### Accept it
+		name = "POP_Corruption.010.a"
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1000
+				check_variable = { which = ai_corruption_choice 	value = 0 }
+			}
+		}
+		#	add_country_modifier = {
+		#		name = accept_hereditary_positions
+		#		duration = 3650
+		#	}
+		BU_corruption_added_1_tooltip_effect = yes
+		add_country_modifier = { name = BU_trivialized_service_honors_1 duration = -1 }
+		remove_country_modifier = BU_trivialized_service_honors_1
+		add_country_modifier = { name = BU_trivialized_service_honors_1 duration = -1 hidden = yes }
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = admin_cost_a				value = 0 }
+				set_variable = { which = diplo_cost_a				value = 0 }
+				set_variable = { which = milit_cost_a				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = admin_cost					value = 0 }
+				set_variable = { which = diplo_cost					value = 0 }
+				set_variable = { which = milit_cost					value = 0 }
+			#}
+		}
+	}
+	
+	option = { ### Fight it
+		name = "POP_Corruption.010.b"
+		ai_chance = { factor = 10 }
+		trigger = { stability = 0 }
+		
+		custom_tooltip = admin_cost_a
+		hidden_effect = {
+			#set_variable = { which = admin_cost 	value = 0 }
+			set_variable = { which = admin_cost 	which = admin_cost_a }
+			scaled_admin_cost_country = yes
+		}
+		fight_corruption_stability = yes
+		corruption_stab_modifier = yes
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = admin_cost_a				value = 0 }
+				set_variable = { which = diplo_cost_a				value = 0 }
+				set_variable = { which = milit_cost_a				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = admin_cost					value = 0 }
+				set_variable = { which = diplo_cost					value = 0 }
+				set_variable = { which = milit_cost					value = 0 }
+			#}
+		}
+	}
+}
+
+country_event = { ### Bloated Bureaucratic Salaries
+	id = POP_Corruption.011
+	title = "POP_Corruption.011.t"
+	desc = "POP_Corruption.011.d"
+	is_triggered_only = yes
+	hidden = no
+	picture = CORRUPTION_eventPicture
+	
+	immediate = {
+		hidden_effect = {
+			random_list = { ### Monarch Point Volume
+				10 = { set_variable = { which = diplo_cost_a 	value = 20 } 	subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = diplo_cost_a 	value = 40 } 	subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = diplo_cost_a 	value = 100 } }
+				20 = { set_variable = { which = diplo_cost_a 	value = 150 }	change_variable = { which = ai_corruption_choice		value = 3 } }
+				10 = { set_variable = { which = diplo_cost_a 	value = 200 } 	change_variable = { which = ai_corruption_choice		value = 5 } }
+			}
+			random_list = { ### Stability Hit
+				10 = { set_variable = { which = stability_hit 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 6 } }
+				25 = { set_variable = { which = stability_hit 	value = 20 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				30 = { set_variable = { which = stability_hit 	value = 40 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				25 = { set_variable = { which = stability_hit 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 4 } }
+				10 = { set_variable = { which = stability_hit 	value = 70 } change_variable = { which = ai_corruption_choice 		value = 6 } }
+			}
+			random_list = { ### Stability Modifier Malus
+				10 = { set_variable = { which = fight_corruption_malus 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 15 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = fight_corruption_malus 	value = 25 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 35 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				10 = { set_variable = { which = fight_corruption_malus 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 5 } }
+			}
+			if = {
+				limit = {
+					ai = no
+				}
+				#set_variable = { 	  which = BU_corruption_current 		value = 0 }
+				set_variable = {   which = BU_corruption_current 		which = privilege_corruption_BU }
+				multiply_variable = {   which = BU_corruption_current			value = 0.01 }
+				
+				#set_variable = {      which = BU_corruption_cost_1 			value = 0 }
+				set_variable = {   which = BU_corruption_cost_1 			value = 5 }
+				#	multiply_variable = { which = BU_corruption_cost_1 			value = 2 }
+				multiply_variable = {   which = BU_corruption_cost_1			value = 0.01 }
+			}
+		}
+	}
+	
+	option = { ### Accept it
+		name = "POP_Corruption.011.a"
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1000
+				check_variable = { which = ai_corruption_choice 	value = 0 }
+			}
+		}
+		add_country_modifier = {
+			name = accept_bloated_salaries
+			duration = 3650
+		}
+		BU_corruption_added_1_tooltip_effect = yes
+		if = {
+			limit = {
+				has_country_modifier = BU_bloated_bureaucratic_salaries_1
+				NOT = { has_country_modifier = BU_bloated_bureaucratic_salaries_2 }
+			}
+			remove_country_modifier = BU_bloated_bureaucratic_salaries_1
+			add_country_modifier = { name = BU_bloated_bureaucratic_salaries_2 duration = -1 }
+			remove_country_modifier = BU_bloated_bureaucratic_salaries_2
+			add_country_modifier = { name = BU_bloated_bureaucratic_salaries_2 duration = -1 hidden = yes }
+		}
+		if = {
+			limit = {
+				NOT = { has_country_modifier = BU_bloated_bureaucratic_salaries_1 }
+				NOT = { has_country_modifier = BU_bloated_bureaucratic_salaries_2 }
+			}
+			add_country_modifier = { name = BU_bloated_bureaucratic_salaries_1 duration = -1 }
+			remove_country_modifier = BU_bloated_bureaucratic_salaries_1
+			add_country_modifier = { name = BU_bloated_bureaucratic_salaries_1 duration = -1 hidden = yes }
+		}
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = admin_cost_a				value = 0 }
+				set_variable = { which = diplo_cost_a				value = 0 }
+				set_variable = { which = milit_cost_a				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = admin_cost					value = 0 }
+				set_variable = { which = diplo_cost					value = 0 }
+				set_variable = { which = milit_cost					value = 0 }
+			#}
+		}
+	}
+	
+	option = { ### Fight it
+		name = "POP_Corruption.011.b"
+		ai_chance = { factor = 10 }
+		trigger = { stability = 0 }
+		
+		custom_tooltip = diplo_cost_a
+		hidden_effect = {
+			#set_variable = { which = diplo_cost 	value = 0 }
+			set_variable = { which = diplo_cost 	which = diplo_cost_a }
+			scaled_diplo_cost_country = yes
+		}
+		fight_corruption_stability = yes
+		corruption_stab_modifier = yes
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = admin_cost_a				value = 0 }
+				set_variable = { which = diplo_cost_a				value = 0 }
+				set_variable = { which = milit_cost_a				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = admin_cost					value = 0 }
+				set_variable = { which = diplo_cost					value = 0 }
+				set_variable = { which = milit_cost					value = 0 }
+			#}
+		}
+	}
+}
+
+country_event = { ### Evasion of military service
+	id = POP_Corruption.012
+	title = "POP_Corruption.012.t"
+	desc = "POP_Corruption.012.d"
+	is_triggered_only = yes
+	hidden = no
+	picture = CORRUPTION_eventPicture
+	
+	immediate = {
+		hidden_effect = {
+			random_list = { ### Monarch Point Volume
+				10 = { set_variable = { which = milit_cost_a 	value = 20 } 	subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = milit_cost_a 	value = 40 } 	subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = milit_cost_a 	value = 100 } }
+				20 = { set_variable = { which = milit_cost_a 	value = 150 }	change_variable = { which = ai_corruption_choice		value = 3 } }
+				10 = { set_variable = { which = milit_cost_a 	value = 200 } 	change_variable = { which = ai_corruption_choice		value = 5 } }
+			}
+			random_list = { ### Stability Hit
+				10 = { set_variable = { which = stability_hit 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 6 } }
+				25 = { set_variable = { which = stability_hit 	value = 20 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				30 = { set_variable = { which = stability_hit 	value = 40 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				25 = { set_variable = { which = stability_hit 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 4 } }
+				10 = { set_variable = { which = stability_hit 	value = 70 } change_variable = { which = ai_corruption_choice 		value = 6 } }
+			}
+			random_list = { ### Stability Modifier Malus
+				10 = { set_variable = { which = fight_corruption_malus 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 4 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 15 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+				40 = { set_variable = { which = fight_corruption_malus 	value = 25 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+				20 = { set_variable = { which = fight_corruption_malus 	value = 35 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				10 = { set_variable = { which = fight_corruption_malus 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 5 } }
+			}
+			if = {
+				limit = {
+					ai = no
+				}
+				#set_variable = { 	  which = BU_corruption_current 		value = 0 }
+				set_variable = {   which = BU_corruption_current 		which = privilege_corruption_BU }
+				multiply_variable = {   which = BU_corruption_current			value = 0.01 }
+				
+				#set_variable = {      which = BU_corruption_cost_1 			value = 0 }
+				set_variable = {   which = BU_corruption_cost_1 			value = 5 }
+				#	multiply_variable = { which = BU_corruption_cost_1 			value = 2 }
+				multiply_variable = {   which = BU_corruption_cost_1			value = 0.01 }
+			}
+		}
+	}
+	
+	option = { ### Accept it
+		name = "POP_Corruption.012.a"
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1000
+				check_variable = { which = ai_corruption_choice 	value = 0 }
+			}
+		}
+		add_country_modifier = {
+			name = accept_evade_service
+			duration = 3650
+		}
+		BU_corruption_added_1_tooltip_effect = yes
+		if = {
+			limit = {
+				has_country_modifier = BU_evasion_of_military_service_1
+				NOT = { has_country_modifier = BU_evasion_of_military_service_2 }
+			}
+			remove_country_modifier = BU_evasion_of_military_service_1
+			add_country_modifier = { name = BU_evasion_of_military_service_2 duration = -1 }
+			remove_country_modifier = BU_evasion_of_military_service_2
+			add_country_modifier = { name = BU_evasion_of_military_service_2 duration = -1 hidden = yes }
+		}
+		if = {
+			limit = {
+				NOT = { has_country_modifier = BU_evasion_of_military_service_1 }
+				NOT = { has_country_modifier = BU_evasion_of_military_service_2 }
+			}
+			add_country_modifier = { name = BU_evasion_of_military_service_1 duration = -1 }
+			remove_country_modifier = BU_evasion_of_military_service_1
+			add_country_modifier = { name = BU_evasion_of_military_service_1 duration = -1 hidden = yes }
+		}
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = admin_cost_a				value = 0 }
+				set_variable = { which = diplo_cost_a				value = 0 }
+				set_variable = { which = milit_cost_a				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = admin_cost					value = 0 }
+				set_variable = { which = diplo_cost					value = 0 }
+				set_variable = { which = milit_cost					value = 0 }
+			#}
+		}
+	}
+	
+	option = { ### Fight it
+		name = "POP_Corruption.012.b"
+		ai_chance = { factor = 10 }
+		trigger = { stability = 0 }
+		
+		custom_tooltip = milit_cost_a
+		hidden_effect = {
+			#set_variable = { which = milit_cost 	value = 0 }
+			set_variable = { which = milit_cost 	which = milit_cost_a }
+			scaled_milit_cost_country = yes
+		}
+		fight_corruption_stability = yes
+		corruption_stab_modifier = yes
+		hidden_effect = {
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = admin_cost_a				value = 0 }
+				set_variable = { which = diplo_cost_a				value = 0 }
+				set_variable = { which = milit_cost_a				value = 0 }
+				set_variable = { which = ai_corruption_choice		value = 0 }
+				set_variable = { which = stability_hit				value = 0 }
+				set_variable = { which = fight_corruption_malus		value = 0 }
+				set_variable = { which = BU_corruption_current		value = 0 }
+				set_variable = { which = BU_corruption_cost_1		value = 0 }
+				set_variable = { which = admin_cost					value = 0 }
+				set_variable = { which = diplo_cost					value = 0 }
+				set_variable = { which = milit_cost					value = 0 }
+			#}
+		}
+	}
+}

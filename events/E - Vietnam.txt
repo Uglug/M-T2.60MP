@@ -1,0 +1,474 @@
+########################################
+# Vietnamese events
+#
+# written by Warial
+########################################
+### Death of Kim Nguyen
+country_event = {
+	id = hundred_viet.1
+	
+	title = hundred_viet.1.t
+	desc = hundred_viet.1.d
+	
+	picture = BATTLE_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		NOT = { has_global_flag = kim_nguyen_dead }
+		has_global_flag = 1530_start_date
+		tag = ANN
+		NOT = { exists = TOK }
+	}
+	
+	
+	option = {
+		name = "hundred_viet.1a" # Trinh take over completely
+		ai_chance = { factor = 20 }
+		set_global_flag = kim_nguyen_dead
+		change_tag = TOK
+		define_ruler = {
+			name = "Kiem"
+			dynasty = "Trinh"
+			DIP = 3
+			ADM = 3
+			MIL = 4
+			attach_leader = "Kiem Trinh"
+		}
+		define_heir = {
+			claim = 100
+			dynasty = "Trinh"
+			name = "Coi"
+			adm = 3
+			dip = 3
+			mil = 3
+			birth_date = 1550.1.1
+		}
+		hidden_effect = {
+			remove_country_modifier = nguyen_trinh_alliance
+			VUU = { remove_country_modifier = nguyen_trinh_alliance }
+			vietnam_region = {
+				limit = {
+					is_city = yes
+					owner = { primary_culture = vietnamese }
+				}
+				add_core = owner
+			}
+		}
+		random_owned_province = {
+			limit = {
+				culture = vietnamese
+			}
+			add_province_modifier = {
+				name = "nobles_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+	}
+	option = {
+		name = "hundred_viet.1b" # Grant territories to Nguyen Hoang
+		trigger = {
+			any_owned_province = {
+				area = annam_area
+			}
+		}
+		ai_chance = { factor = 80 }
+		set_global_flag = kim_nguyen_dead
+		every_owned_province = {
+			limit = {
+				OR = {
+					area = northwest_vietnam_area
+					area = northeast_vietnam_area
+					area = song_hong_area
+					area = north_laos_area
+				}
+			}
+			add_core = TOK
+		}
+		release = TOK
+		hidden_effect = {
+			TOK = {
+				define_ruler = {
+					name = "Kiem"
+					dynasty = "Trinh"
+					DIP = 3
+					ADM = 3
+					MIL = 4
+					attach_leader = "Kiem Trinh"
+				}
+				define_heir = {
+					claim = 100
+					dynasty = "Trinh"
+					name = "Coi"
+					adm = 3
+					dip = 3
+					mil = 3
+					birth_date = 1550.1.1
+				}
+				infantry = capital
+				infantry = capital
+				infantry = capital
+				infantry = capital
+				infantry = capital
+				infantry = capital
+				infantry = capital
+				cavalry = capital
+				cavalry = capital
+				artillery = capital
+				artillery = capital
+			}
+			remove_country_modifier = nguyen_trinh_alliance
+			VUU = { remove_country_modifier = nguyen_trinh_alliance }
+			vietnam_region = {
+				limit = {
+					is_city = yes
+					owner = { primary_culture = vietnamese }
+				}
+				add_core = owner
+			}
+			northwest_vietnam_area = {
+				limit = {
+					is_city = yes
+				}
+				add_core = TOK
+			}
+			northeast_vietnam_area = {
+				limit = {
+					is_city = yes
+				}
+				add_core = TOK
+			}
+			song_hong_area = {
+				limit = {
+					is_city = yes
+				}
+				add_core = TOK
+			}
+			annam_area = {
+				limit = {
+					is_city = yes
+				}
+				add_core = ANN
+			}
+		}
+	}
+}
+
+### Fall of Mac
+country_event = {
+	id = hundred_viet.2
+	
+	title = hundred_viet.2.t
+	desc = hundred_viet.2.d
+	
+	picture = BATTLE_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = "hundred_viet.2a" # We are fleeing
+		set_global_flag = fall_of_mac
+		change_tag = MAC
+		change_title_4 = yes
+		add_prestige = -20
+		Effect_set_capital = { target=2393 }
+		every_owned_province = {
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+	}
+}
+### General gains fame
+province_event = {
+	id = hundred_viet.3
+	
+	title = hundred_viet.3.t
+	desc = hundred_viet.3.d
+	
+	picture = BATTLE_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	trigger = {
+		owner = {
+			primary_culture = vietnamese
+			NOT = { has_country_flag = influential_general_court }
+			num_of_generals_with_traits = 1
+		}
+		unit_has_leader = yes
+		NOT = { has_ruler_leader_from = owner }
+	}
+	
+	
+	option = {
+		name = "hundred_viet.3a" #
+		owner = {
+			if = {
+				limit = {
+					check_variable = { which = "fame_general" value = 5 }
+				}
+				set_country_flag = influential_general_court
+				country_event = { id = hundred_viet.4 }
+			}
+			else = {
+				change_variable = { which = "fame_general" value = 1 }
+			}
+		}
+	}
+}
+
+### War hero gains influence in the court
+country_event = {
+	id = hundred_viet.4
+	
+	title = hundred_viet.4.t
+	desc = hundred_viet.4.d
+	
+	picture = BATTLE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Offer him a high post in the government
+		name = "hundred_viet.4a" #
+		add_country_modifier = { name = "prime_minister" duration = 7300 }
+		add_legitimacy = 10
+		add_stability_2 = yes
+		hidden_effect = {
+			exile_heir_as = vietnamese_heir
+			exile_ruler_as = vietnamese_monarch
+			define_leader_to_ruler = {
+				type = general
+				claim = 30
+			}
+			exile_ruler_as = war_hero
+			set_ruler = vietnamese_monarch
+			set_heir = vietnamese_heir
+		}
+	}
+	option = { #Grant him one of your daughters in the marriage
+		name = "hundred_viet.4b" #
+		add_country_modifier = { name = "powerful_in_law" duration = 7300 }
+		add_legitimacy = 5
+		add_stability_1 = yes
+		hidden_effect = {
+			exile_heir_as = vietnamese_heir
+			exile_ruler_as = vietnamese_monarch
+			define_leader_to_ruler = {
+				type = general
+				claim = 30
+			}
+			exile_ruler_as = war_hero
+			set_ruler = vietnamese_monarch
+			set_heir = vietnamese_heir
+		}
+	}
+	option = { #We cannot allow him to become too powerful
+		name = "hundred_viet.4c" #
+		add_country_modifier = { name = "decreased_morale" duration = 1825 }
+		add_prestige = -10
+		subtract_stability_1 = yes
+		hidden_effect = {
+			clr_country_flag = influential_general_court
+			set_variable = { which = "fame_general" value = 0 }
+		}
+	}
+}
+
+### Female ruler and her consort...
+country_event = {
+	id = hundred_viet.5
+	
+	title = hundred_viet.5.t
+	desc = hundred_viet.5.d
+	
+	picture = BATTLE_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		AND = {
+			is_female = yes
+			has_consort_regency = no
+		}
+		has_country_modifier = powerful_in_law
+	}
+	
+	option = { #War Hero becomes the ruler
+		name = "hundred_viet.5a" #
+		remove_country_modifier = powerful_in_law
+		subtract_stability_1 = yes
+		hidden_effect = {
+			clr_country_flag = influential_general_court
+			set_variable = { which = "fame_general" value = 0 }
+		}
+		set_ruler = war_hero
+	}
+}
+
+### Prime Minister assasinates ruler, puts up a puppet heir on the throne
+country_event = {
+	id = hundred_viet.6
+	
+	title = hundred_viet.6.t
+	desc = hundred_viet.6.d
+	
+	picture = BATTLE_eventPicture
+	
+	trigger = {
+		has_country_modifier = prime_minister
+		NOT = { has_country_flag = prime_minister_coup }
+	}
+	
+	mean_time_to_happen = {
+		years = 50
+		
+		modifier = {
+			factor = 0.9
+			NOT = { legitimacy = 75 }
+		}
+		modifier = {
+			factor = 0.6
+			NOT = { legitimacy = 50 }
+		}
+		modifier = {
+			factor = 0.3
+			NOT = { legitimacy = 25 }
+		}
+		modifier = {
+			factor = 0.9
+			NOT = { prestige = 0 }
+		}
+		modifier = {
+			factor = 0.6
+			NOT = { prestige = -30 }
+		}
+		modifier = {
+			factor = 0.3
+			NOT = { prestige = -60 }
+		}
+		modifier = {
+			factor = 0.5
+			NOT = { stability = 0 }
+		}
+		modifier = {
+			factor = 0.3
+			NOT = { stability = -2 }
+		}
+	}
+	
+	option = { #War Hero becomes the ruler
+		name = "hundred_viet.6a" #
+		if = {
+			limit = {
+				heir_age = 11
+			}
+			define_heir = {
+				dynasty = ROOT
+				claim = 60
+				age = 3
+			}
+		}
+		kill_ruler = yes
+		#remove_country_modifier = prime_minister
+		set_country_flag = prime_minister_coup
+		subtract_stability_1 = yes
+		#hidden_effect = {
+		#	clr_country_flag = influential_general_court
+		#	set_variable = { which = "fame_general" value = 0 }
+		#}
+	}
+}
+
+### Prime Minister takes over the throne
+country_event = {
+	id = hundred_viet.7
+	
+	title = hundred_viet.7.t
+	desc = hundred_viet.7.d
+	
+	picture = BATTLE_eventPicture
+	
+	trigger = {
+		has_country_modifier = prime_minister
+		has_country_flag = prime_minister_coup
+	}
+	
+	mean_time_to_happen = { months = 20 }
+	
+	option = { #War Hero becomes the ruler
+		name = "hundred_viet.7a" #
+		remove_country_modifier = prime_minister
+		subtract_stability_1 = yes
+		hidden_effect = {
+			clr_country_flag = prime_minister_coup
+			clr_country_flag = influential_general_court
+			set_variable = { which = "fame_general" value = 0 }
+		}
+		set_ruler = war_hero
+	}
+}
+
+### War Hero dies
+country_event = {
+	id = hundred_viet.8
+	
+	title = hundred_viet.8.t
+	desc = hundred_viet.8.d
+	
+	picture = BATTLE_eventPicture
+	
+	trigger = {
+		OR = {
+			has_country_modifier = prime_minister
+			has_country_modifier = powerful_in_law
+		}
+	}
+	
+	mean_time_to_happen = { years = 50 }
+	
+	option = { #War Hero dies
+		name = "hundred_viet.7a" #
+		remove_country_modifier = prime_minister
+		remove_country_modifier = powerful_in_law
+		hidden_effect = {
+			clr_country_flag = prime_minister_coup
+			clr_country_flag = influential_general_court
+			set_variable = { which = "fame_general" value = 0 }
+		}
+	}
+}
+
+### Nhat Kien changes surname to Duong
+country_event = {
+	id = hundred_viet.9
+	
+	title = hundred_viet.9.t
+	desc = hundred_viet.9.d
+	
+	picture = BATTLE_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_ruler = "Nhat Kien"
+		dynasty = "Tran"
+	}
+	
+	option = { #War Hero becomes the ruler
+		name = "hundred_viet.5a" #
+		set_dynasty = "Duong"
+		subtract_stability_2 = yes
+	}
+}

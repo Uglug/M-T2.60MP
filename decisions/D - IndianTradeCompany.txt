@@ -1,0 +1,238 @@
+country_decisions = {
+	
+	indian_trade_company = {
+		potential = {
+			religion_group = christian
+			#NOT = { tag = NED }
+			NOT = { tag = POR }
+			is_colonial_nation = no
+			NOT = { has_country_flag = trade_company }
+			OR = {
+				capital_scope = { continent = europe }
+				capital_scope = { continent = north_america }
+				capital_scope = { continent = south_america }
+			}
+			eastasian_trade_group = {
+				has_discovered = ROOT
+			}
+			# to prevent overfeeding of provinces into conquer
+			OR = {
+				ai = no
+				eastasian_trade_group = {
+					OR = {
+						owned_by = ROOT
+						owner = { is_colonial_nation_of = ROOT }
+					}
+				}
+			}
+			num_of_ports = 2
+			NOT = {
+				has_country_modifier = india_trade_co
+			}
+		}
+		allow = {
+			dip_tech = 24
+			eastasian_trade_group = {
+				OR = {
+					owned_by = ROOT
+					owner = { is_colonial_nation_of = ROOT }
+				}
+			}
+		}
+		effect = {
+			set_country_flag = trade_company
+			add_treasury = -200
+			add_country_modifier = {
+				name = "india_trade_co"
+				duration = -1
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						OR = {
+							tag = ENG
+							tag = GBR
+						}
+					}
+					country_event = { id = flavor_eng.9145 days = 1 }
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	found_PEIC = {
+		potential = {
+			tag = POR
+			NOT = { has_country_modifier = india_trade_co }
+			NOT = { has_country_flag = trade_company }
+			eastasian_trade_group = {
+				has_discovered = ROOT
+			}
+		}
+		allow = {
+			num_of_ports = 1
+			dip_tech = 22
+			treasury = 50
+			eastasian_trade_group = {
+				OR = {
+					owned_by = ROOT
+					owner = { is_colonial_nation_of = ROOT }
+				}
+			}
+		}
+		effect = {
+			set_country_flag = trade_company
+			add_treasury = -50
+			thalassocratisation_effect = yes
+			add_country_modifier = {
+				name = "india_trade_co"
+				duration = -1
+			}		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	establish_india_trade_country = {
+		potential = {
+			any_owned_province = {
+				continent = indian_continent
+				is_overseas = yes
+			}
+			NOT = { has_country_flag = formed_india }
+			CIC = { exists = no }
+		}
+		allow = {
+			calc_true_if = {
+				all_owned_province = {
+					continent = indian_continent
+				}
+				amount = 25
+			}
+			has_institution = global_trade
+			OR = {
+				jessor_area = {
+					type = all
+					owned_by = ROOT
+				}
+				dakka_area = {
+					type = all
+					owned_by = ROOT
+				}
+				north_coromandel_area = {
+					type = all
+					owned_by = ROOT
+				}
+				south_coromandel_area = {
+					type = all
+					owned_by = ROOT
+				}
+				madura_area = {
+					type = all
+					owned_by = ROOT
+				}
+				kanara_area = {
+					type = all
+					owned_by = ROOT
+				}
+				maharashtra_area = {
+					type = all
+					owned_by = ROOT
+				}
+				gujarat_area = {
+					type = all
+					owned_by = ROOT
+				}
+				#saurashtra_area = {
+				#	type = all
+				#	owned_by = ROOT
+				#}
+			}
+			CIC = { exists = no }
+		}
+		effect = {
+			set_country_flag = formed_india
+			country_event = { id = trade_company_country.1 }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	close_foreign_trading_posts = {
+		potential = {
+			ai = no
+			NOT = { technology_group = western }
+			NOT = { technology_group = eastern }
+			NOT = { technology_group = turkishtech }
+			NOT = { technology_group = high_turkishtech }
+			NOT = { technology_group = muslim }
+			any_owned_province = {
+				has_province_flag = TP_trading_post
+			}
+		}
+		allow = {
+			dip_power = 25
+		}
+		effect = {
+			every_owned_province = {
+				limit = {
+					has_province_flag = TP_trading_post
+				}
+				clr_province_flag = TP_trading_post
+				set_province_flag = closed_to_foreigners
+				remove_building = trading_post
+				owner = { add_dip_power = -5 }
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	expel_foreign_traders = {
+		potential = {
+			any_owned_province = {
+				has_province_modifier = trade_company_factory
+			}
+		}
+		
+		allow = {
+			has_institution = global_trade
+			is_at_war = no
+			is_free_or_tributary_trigger = yes
+			stability = 2
+		}
+		
+		effect = {
+			every_owned_province = {
+				#limit = { has_province_modifier = trade_company_factory }
+				remove_province_modifier = trade_company_factory
+			}
+			every_known_country = {
+				limit = {
+					has_institution = global_trade
+					provinces_on_capital_continent_of = ROOT
+					ROOT = {
+						NOT = { provinces_on_capital_continent_of = PREV }
+					}
+				}
+				add_casus_belli = {
+					target = ROOT
+					type = cb_trade_war_triggered
+					months = 60
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = opinion_expelled_traders
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+}

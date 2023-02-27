@@ -1,0 +1,694 @@
+namespace = dg_chaldean
+#2 of 2 events written
+
+##################
+# The Catholicos # 00s
+##################
+
+#01 - Fate of the Catholicos
+#02 - The Catholicos of Ctestiphon
+
+##########
+# Schism # 10s
+##########
+
+#11 - St. Thomas Christians
+#12 - Chaldean Schism (1552)
+
+##################
+# The Catholicos # 00s
+##################
+
+province_event = { #01 - Fate of the Catholicos
+	
+	id = dg_chaldean.001
+	title = dg_chaldean.001.t
+	desc = dg_chaldean.001.d
+	picture = chaldean_catholicos
+	
+	trigger = {
+		has_province_flag = chaldean_catholicos
+		NOT = { has_province_modifier = chaldean_patriarchate_vacant }
+		NOT = { has_province_modifier = chaldean_patriarchate_captive }
+		NOT = { owner = { religion = chaldean } }
+		controlled_by = owner
+	}
+	
+	mean_time_to_happen = { months = 5 }
+	
+	immediate = {
+		remove_province_modifier = chaldean_patriarchate
+		hidden_effect = {
+			regiongroup = {
+				region = {
+					limit = { culture = ROOT }
+					if = {
+						limit = { check_variable = { which = chaldean value = 10 } }
+						PREV = { change_variable = { which = patriarch_influence value = 5 } }
+					}
+					else_if = {
+						limit = { check_variable = { which = chaldean value = 8 } }
+						PREV = { change_variable = { which = patriarch_influence value = 4 } }
+					}
+					else_if = {
+						limit = { check_variable = { which = chaldean value = 6 } }
+						PREV = { change_variable = { which = patriarch_influence value = 3 } }
+					}
+					else_if = {
+						limit = { check_variable = { which = chaldean value = 4 } }
+						PREV = { change_variable = { which = patriarch_influence value = 2 } }
+					}
+					else_if = {
+						limit = { check_variable = { which = chaldean value = 2 } }
+						PREV = { change_variable = { which = patriarch_influence value = 1 } }
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = dg_chaldean.001.a #Appoint a loyal Patriarch
+		ai_chance = { factor = 30 }
+		if = {
+			limit = {
+				check_variable = { which = patriarch_influence value = 25 }
+			}
+			add_nationalism = -10
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = patriarch_influence value = 16 }
+			}
+			add_nationalism = -8
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = patriarch_influence value = 9 }
+			}
+			add_nationalism = -6
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = patriarch_influence value = 4 }
+			}
+			add_nationalism = -4
+		}
+		else = {
+			add_nationalism = -2
+		}
+		add_province_modifier = { name = chaldean_patriarchate_captive duration = -1 }
+		hidden_effect = { set_variable = { which = patriarch_influence value = 0 } }
+	}
+	option = {
+		name = dg_chaldean.001.b #Demand a tithe in return for the right
+		ai_chance = { factor = 40 }
+		if = {
+			limit = {
+				check_variable = { which = patriarch_influence value = 25 }
+			}
+			owner = { add_treasury = 50 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = patriarch_influence value = 16 }
+			}
+			owner = { add_treasury = 40 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = patriarch_influence value = 9 }
+			}
+			owner = { add_treasury = 30 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = patriarch_influence value = 4 }
+			}
+			owner = { add_treasury = 20 }
+		}
+		else = {
+			owner = { add_treasury = 10 }
+		}
+		add_province_modifier = { name = chaldean_patriarchate_captive duration = -1 }
+		hidden_effect = { set_variable = { which = patriarch_influence value = 0 } }
+	}
+	option = {
+		name = dg_chaldean.001.c #Close down the patriarchate and confiscate its property
+		ai_chance = {
+			factor = 30
+			modifier = {
+				owner = { any_owned_province = { has_province_modifier = chaldean_patriarchate_captive } }
+				factor = 0.5
+			}
+			modifier = {
+				owner = { chaldean = 1 }
+				factor = 0.5
+			}
+			modifier = {
+				owner = { NOT = { chaldean = 0 } }
+				factor = 1.4
+			}
+			modifier = {
+				owner = { NOT = { chaldean = -2 } }
+				factor = 1.4
+			}
+		}
+		trigger = {
+			owner = { NOT = { chaldean = 2 } }
+			owner = { NOT = { has_country_flag = useful_chaldean } }
+			owner = { NOT = { has_country_flag = useful_coptic } }
+		}
+		if = {
+			limit = {
+				check_variable = { which = patriarch_influence value = 25 }
+			}
+			owner = { add_treasury = 250 }
+			add_nationalism = 10
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = patriarch_influence value = 16 }
+			}
+			owner = { add_treasury = 200 }
+			add_nationalism = 8
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = patriarch_influence value = 9 }
+			}
+			owner = { add_treasury = 150 }
+			add_nationalism = 6
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = patriarch_influence value = 4 }
+			}
+			owner = { add_treasury = 100 }
+			add_nationalism = 4
+		}
+		else = {
+			owner = { add_treasury = 50 }
+			add_nationalism = 2
+		}
+		add_permanent_province_modifier = { name = chaldean_patriarchate_vacant duration = -1 }
+		hidden_effect = { set_variable = { which = patriarch_influence value = 0 } }
+	}
+}
+
+country_event = { #02 - The Catholicos of Ctesiphon
+	
+	id = dg_chaldean.002
+	title = dg_chaldean.002.t
+	desc = dg_chaldean.002.d
+	picture = chaldean_catholicos
+	
+	trigger = {
+		religion = chaldean
+		410 = {
+			owned_by = ROOT
+			has_province_flag = chaldean_catholicos
+			NOT = { has_province_modifier = chaldean_patriarchate }
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	immediate = {
+		set_country_flag = holy_land_ctesiphon
+		410 = {
+			#limit = { has_province_flag = chaldean_catholicos }
+			add_province_modifier = { name = chaldean_patriarchate duration = -1 }
+		}
+		every_owned_province = {
+			limit = {
+				OR = {
+					has_province_modifier = chaldean_patriarchate_vacant
+					has_province_modifier = chaldean_patriarchate_captive
+				}
+			}
+			remove_province_modifier = chaldean_patriarchate_vacant
+			remove_province_modifier = chaldean_patriarchate_captive
+		}
+	}
+	
+	option = {
+		name = dg_chaldean.002.a #Hold a celebration
+		ai_chance = { factor = 30 }
+		add_years_of_income = -0.04
+		if = {
+			limit = { piety = 0.60 }
+			add_prestige = 8
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_prestige = 6
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_prestige = 4
+		}
+		else = {
+			add_prestige = 2
+		}
+	}
+	option = {
+		name = dg_chaldean.002.b #Build a great cathedral for him
+		ai_chance = {
+			factor = 60
+			modifier = {
+				num_of_loans = 1
+				factor = 0.7
+			}
+			modifier = {
+				num_of_loans = 2
+				factor = 0.7
+			}
+			modifier = {
+				is_bankrupt = yes
+				factor = 0.5
+			}
+			modifier = {
+				NOT = { treasury = 100 }
+				factor = 0.5
+			}
+		}
+		trigger = {
+			#NOT = { any_owned_province = { has_province_modifier = great_cathedral } }
+			NOT = { any_owned_province = { has_building = great_temple } }
+			NOT = { any_owned_province = { has_province_modifier = great_temple_progress } }
+		}
+		add_treasury = -100
+		410 = {
+			hidden_effect = { set_variable = { which = great_temple value = 10 } }
+			add_province_modifier = { name = great_temple_progress duration = -1 }
+		}
+		if = {
+			limit = { piety = 0.60 }
+			add_prestige = 8
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_prestige = 6
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_prestige = 4
+		}
+		else = {
+			add_prestige = 2
+		}
+	}
+	option = {
+		name = dg_chaldean.002.c #Move our capital to Baghdad
+		ai_chance = { factor = 10 }
+		trigger = { NOT = { capital_scope = { has_province_flag = chaldean_catholicos } } }
+		add_adm_power = -50
+		410 = {
+			#limit = { has_province_flag = chaldean_catholicos }
+			owner = {
+				Effect_set_capital = { target=PREV }
+			}
+		}
+		if = {
+			limit = { piety = 0.60 }
+			add_prestige = 8
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_prestige = 6
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_prestige = 4
+		}
+		else = {
+			add_prestige = 2
+		}
+	}
+}
+
+##########
+# Schism # 10s
+##########
+
+country_event = { #11 - St. Thomas Christians (1498)
+	
+	id = dg_chaldean.011
+	title = dg_chaldean.011.t
+	desc = dg_chaldean.011.d
+	picture = chaldean_meeting_saffron
+	
+	trigger = {
+		religion_group = christian
+		NOT = { has_country_flag = st_thomas_christians }
+		any_owned_province = { check_variable = { which = chaldean value = 2 } }
+		NOT = { has_country_flag = religious_turmoil_happening }
+		piety = -0.20
+		NOT = { religion = chaldean }
+	}
+	
+	mean_time_to_happen = {
+		
+		months = 25
+		
+		modifier = {
+			piety = 0.20
+			factor = 0.7
+		}
+		modifier = {
+			piety = 0.60
+			factor = 0.7
+		}
+	}
+	
+	immediate = { set_country_flag = st_thomas_christians }
+	
+	option = {
+		name = dg_chaldean.011.a #Court them
+		ai_chance = { factor = 60 }
+		dg_add_prestige_small = yes
+		set_country_flag = st_thomas_communion
+		random_owned_province = {
+			limit = { check_variable = { which = chaldean value = 2 } }
+			add_province_modifier = { name = minority_missionary duration = 2000 }
+			set_province_flag = anti_chaldean_missionary
+		}
+	}
+	option = {
+		name = dg_chaldean.011.b #Persecute them
+		ai_chance = { factor = 30 }
+		dg_add_legitimacy_small = yes
+		set_country_flag = religious_turmoil_happening
+		set_country_flag = religious_turmoil_chaldean
+		random_owned_province = {
+			limit = { check_variable = { which = chaldean value = 2 } }
+			add_province_modifier = { name = expulsion_of_heretics duration = 1500 }
+		}
+	}
+	option = {
+		name = dg_chaldean.011.c #Tolerate them
+		trigger = { chaldean = 2 }
+		ai_chance = {
+			factor = 10
+			modifier = {
+				chaldean = 3
+				factor = 5
+			}
+		}
+		set_country_flag = st_thomas_communion
+		dg_add_prestige = yes
+		add_years_of_income = -0.04
+		random_owned_province = {
+			limit = { check_variable = { which = chaldean value = 2 } }
+			custom_tooltip = chaldean_10
+			hidden_effect = {
+				change_variable = { which = chaldean value = 2 }
+				change_variable = { which = province_religion value = -2 }
+			}
+		}
+	}
+}
+
+country_event = { #12 - Chaldean Schism (1552)
+	
+	id = dg_chaldean.012
+	title = dg_chaldean.012.t
+	desc = dg_chaldean.012.d
+	picture = chaldean_schism_saffron
+	
+	trigger = {
+		has_country_flag = st_thomas_communion
+		NOT = { has_global_flag = st_thomas_schism }
+		piety = 0.20
+		religion_group = christian
+		any_owned_province = { check_variable = { which = chaldean value = 4 } }
+		NOT = { religion = chaldean }
+		NOT = { any_country = { religion = chaldean } }
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 83
+		
+		modifier = {
+			patriarch_authority = 0.80
+			factor = 0.7
+		}
+		modifier = {
+			patriarch_authority = 0.60
+			factor = 0.7
+		}
+	}
+	
+	immediate = { set_global_flag = st_thomas_schism }
+	
+	option = {
+		name = dg_chaldean.012.a
+		hidden_effect = {
+			every_country = {
+				limit = {
+					any_owned_province = { check_variable = { which = chaldean value = 2 } }
+					NOT = { tag = ROOT }
+					NOT = { religion = chaldean }
+					OR = {
+						has_country_flag = religious_news_trivial
+						AND = {
+							has_country_flag = religious_news_major
+							religion = ROOT
+						}
+					}
+				}
+				country_event = { id = dg_chaldean.013 days = 30 }
+			}
+			regiongroup = {
+				region = {
+					if = {
+						limit = { check_variable = { which = chaldean value = 12 } }
+						random = {
+							chance = 50
+							change_variable = { which = chaldean value = -2 }
+							if = {
+								limit = { ROOT = { religion = catholic } }
+								change_variable = { which = catholic value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = protestant } }
+								change_variable = { which = protestant value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = reformed } }
+								change_variable = { which = reformed value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = hussite } }
+								change_variable = { which = hussite value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = gnostic } }
+								change_variable = { which = gnostic value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = orthodox } }
+								change_variable = { which = orthodox value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = coptic } }
+								change_variable = { which = coptic value = 2 }
+							}
+						}
+					}
+					if = {
+						limit = { check_variable = { which = chaldean value = 10 } }
+						random = {
+							chance = 50
+							change_variable = { which = chaldean value = -2 }
+							if = {
+								limit = { ROOT = { religion = catholic } }
+								change_variable = { which = catholic value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = protestant } }
+								change_variable = { which = protestant value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = reformed } }
+								change_variable = { which = reformed value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = hussite } }
+								change_variable = { which = hussite value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = gnostic } }
+								change_variable = { which = gnostic value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = orthodox } }
+								change_variable = { which = orthodox value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = coptic } }
+								change_variable = { which = coptic value = 2 }
+							}
+						}
+					}
+					if = {
+						limit = { check_variable = { which = chaldean value = 8 } }
+						random = {
+							chance = 50
+							change_variable = { which = chaldean value = -2 }
+							if = {
+								limit = { ROOT = { religion = catholic } }
+								change_variable = { which = catholic value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = protestant } }
+								change_variable = { which = protestant value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = reformed } }
+								change_variable = { which = reformed value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = hussite } }
+								change_variable = { which = hussite value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = gnostic } }
+								change_variable = { which = gnostic value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = orthodox } }
+								change_variable = { which = orthodox value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = coptic } }
+								change_variable = { which = coptic value = 2 }
+							}
+						}
+					}
+					if = {
+						limit = { check_variable = { which = chaldean value = 6 } }
+						random = {
+							chance = 50
+							change_variable = { which = chaldean value = -2 }
+							if = {
+								limit = { ROOT = { religion = catholic } }
+								change_variable = { which = catholic value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = protestant } }
+								change_variable = { which = protestant value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = reformed } }
+								change_variable = { which = reformed value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = hussite } }
+								change_variable = { which = hussite value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = gnostic } }
+								change_variable = { which = gnostic value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = orthodox } }
+								change_variable = { which = orthodox value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = coptic } }
+								change_variable = { which = coptic value = 2 }
+							}
+						}
+					}
+					if = {
+						limit = { check_variable = { which = chaldean value = 4 } }
+						random = {
+							chance = 50
+							change_variable = { which = chaldean value = -2 }
+							if = {
+								limit = { ROOT = { religion = catholic } }
+								change_variable = { which = catholic value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = protestant } }
+								change_variable = { which = protestant value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = reformed } }
+								change_variable = { which = reformed value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = hussite } }
+								change_variable = { which = hussite value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = gnostic } }
+								change_variable = { which = gnostic value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = orthodox } }
+								change_variable = { which = orthodox value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = coptic } }
+								change_variable = { which = coptic value = 2 }
+							}
+						}
+					}
+					if = {
+						limit = { check_variable = { which = chaldean value = 2 } }
+						random = {
+							chance = 50
+							change_variable = { which = chaldean value = -2 }
+							if = {
+								limit = { ROOT = { religion = catholic } }
+								change_variable = { which = catholic value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = protestant } }
+								change_variable = { which = protestant value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = reformed } }
+								change_variable = { which = reformed value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = hussite } }
+								change_variable = { which = hussite value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = gnostic } }
+								change_variable = { which = gnostic value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = orthodox } }
+								change_variable = { which = orthodox value = 2 }
+							}
+							else_if = {
+								limit = { ROOT = { religion = coptic } }
+								change_variable = { which = coptic value = 2 }
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #13 - Chaldean Schism (news)
+	
+	id = dg_chaldean.013
+	title = dg_chaldean.012.t
+	desc = dg_chaldean.013.d
+	picture = chaldean_schism_saffron
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = dg_chaldean.013.a
+	}
+}

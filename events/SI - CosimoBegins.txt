@@ -1,0 +1,288 @@
+#by Marco Dandolo
+
+#Events concerning the setup for a Medici rule before 1444
+
+#Events 1-6: History of the Medici before Cosimo gains power
+
+#1 Giovanni di Bicci de' Medici
+#2 Cosimo de' Medici
+#3 The influence of Cosimo de' Medici
+#4 Albizzi or Medici?
+#5 The Medici System
+#6 Medici rule accepted (free points after 10 years)
+
+namespace = cosimo_begins
+
+#Giovanni di Bicci de' Medici
+country_event = {
+	id = cosimo_begins.1
+	title = "cosimo_begins.EVTNAME1"
+	desc = "cosimo_begins.EVTDESC1"
+	picture = MEDICI_DIVIDENDS_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = FIR
+		is_year = 1390
+		NOT = { is_year = 1410 }
+		owns = 116 #The Medici need Florence
+		exists = PAP #The Medici need the Pope
+	}
+	
+	mean_time_to_happen = { months = 12 }
+	
+	immediate = { set_country_flag = giovanni_bicci_medici }
+	
+	option = {
+		name = "cosimo_begins.EVTOPTA1" #The state should take a free credit
+		
+		add_years_of_income = 0.25
+		
+		ai_chance = {
+			factor = 75 #AI more interested in money
+		}
+	}
+	
+	option = {
+		name = "cosimo_begins.EVTOPTB1" #He seems to be a noble banker
+		
+		define_advisor = {
+			type = treasurer
+			name = "Giovanni de' Medici"
+			location = 116
+			skill = 2
+			discount = yes
+		}
+		
+		ai_chance = {
+			factor = 25 #AI more interested in money
+		}
+	}
+}
+
+#Cosimo de' Medici
+country_event = {
+	id = cosimo_begins.2
+	title = "cosimo_begins.EVTNAME2"
+	desc = "cosimo_begins.EVTDESC2"
+	picture = MEDICI_COA_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = FIR
+		is_year = 1410
+		NOT = { is_year = 1420 }
+		owns = 116 #The Medici need Florence
+		exists = PAP #The Medici need the Pope
+		government = republic #The Medici can only seize power in a republic
+		has_country_flag = giovanni_bicci_medici
+	}
+	
+	mean_time_to_happen = { months = 6 }
+	
+	immediate = { set_country_flag = cosimo_de_medici }
+	
+	option = {
+		name = "cosimo_begins.EVTOPTA2" #Florence needs people like him
+		add_adm_power = 15
+		add_dip_power = 15
+	}
+}
+
+#The influence of Cosimo de' Medici
+country_event = {
+	id = cosimo_begins.3
+	title = "cosimo_begins.EVTNAME3"
+	desc = "cosimo_begins.EVTDESC3"
+	picture = MEDICI_FAMILY_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = FIR
+		is_year = 1420
+		NOT = { is_year = 1430 }
+		owns = 116 #The Medici need Florence
+		exists = PAP #The Medici need the Pope
+		government = republic #The Medici can only seize power in a republic
+		has_country_flag = cosimo_de_medici
+	}
+	
+	mean_time_to_happen = { months = 6 }
+	
+	option = {
+		name = "cosimo_begins.EVTOPTA3" #Support Cosimo
+		add_adm_power = 30
+		add_dip_power = 30
+		add_treasury = 100
+		subtract_stability_1 = yes
+		set_country_flag = cosimo_de_medici_support
+		
+		ai_chance = {
+			factor = 100 #AI will take the historical route #was 90
+		}
+	}
+	
+	option = {
+		name = "cosimo_begins.EVTOPTB3" #Florence needs people like him
+		add_adm_power = -15
+		add_dip_power = -15
+		add_stability_1 = yes
+		custom_tooltip = medici_system_will_be_disabled
+		
+		ai_chance = {
+			factor = 0 #AI will take the historical route #was 10
+		}
+	}
+}
+
+#Albizzi or Medici?
+country_event = {
+	id = cosimo_begins.4
+	title = "cosimo_begins.EVTNAME4"
+	desc = "cosimo_begins.EVTDESC4"
+	picture = MEDICI_PALAZZO_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		is_year = 1430
+		NOT = { is_year = 1440 }
+		tag = FIR
+		#is_at_war = no
+		owns = 116 #The Medici need Florence
+		exists = PAP #The Medici need the Pope
+		government = republic #The Medici can only seize power in a republic
+		has_country_flag = cosimo_de_medici_support
+	}
+	
+	mean_time_to_happen = { months = 6 }
+	
+	option = {
+		name = "cosimo_begins.EVTOPTA4" #Palle, Palle, Palle! (Medici)
+		add_adm_power = 15
+		define_ruler = {
+			name = "Cosimo de' Medici"
+			adm = 6
+			dip = 5
+			mil = 5
+			fixed = yes
+		}
+		hidden_effect = {
+			country_event = {
+				id = cosimo_begins.5 days = 7 #It takes some time until someone realizes, who has the REAL power in Florence...
+			}
+		}
+		
+		ai_chance = {
+			factor = 100 #AI will take the historical route  #was 90
+		}
+	}
+	
+	option = {
+		name = "cosimo_begins.EVTOPTB4" #All power to the Albizzi!
+		add_prestige = 10
+		define_ruler = {
+			name = "Rinaldo degli Albizzi"
+			adm = 4
+			dip = 2
+			mil = 3
+			fixed = yes
+		}
+		custom_tooltip = medici_system_will_be_disabled
+		
+		ai_chance = {
+			factor = 0 #AI will take the historical route #was 10
+		}
+	}
+}
+
+#5 The Medici System
+country_event = {
+	id = cosimo_begins.5
+	title = "cosimo_begins.EVTNAME5"
+	desc = "cosimo_begins.EVTDESC5"
+	picture = MEDICI_COSIMO_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+	
+	option = {
+		name = "medici_system.EVTOPTA0"	#If you want to test a man's character, give him power.
+		
+		2530 = {
+			add_province_modifier = {
+				name = "provincial_medici_bank"
+				duration = -1
+			}
+		}
+		add_opinion = {
+			who = PAP
+			modifier = opinion_flo_medici_bank
+		}
+		PAP = {
+			add_opinion = {
+				who = FIR
+				modifier = opinion_flo_medici_bank
+			}
+		}
+		custom_tooltip = medici_system_setup
+		custom_tooltip = medici_system_start_1434
+		set_country_flag = medici_system_triggers_active
+		set_country_flag = cosimo_medici_in_power
+		add_country_modifier = { name = "medici_system_information" duration = -1 }
+		set_country_flag = Medici_new
+		add_country_modifier = {
+			name = "gonfaloniere_artigiani"
+			duration = -1
+		}
+		
+		set_variable = {
+			which = "popolo_favor"
+			value = 5
+		}
+		set_variable = {
+			which = "artigiani_favor"
+			value = 4
+		}
+		set_variable = {
+			which = "mercanti_favor"
+			value = 3
+		}
+		medici_favor_set_effect = yes
+	}
+}
+
+#6 Medici rule accepted (free points after 10 years)
+
+country_event = {
+	id = cosimo_begins.6
+	title = "cosimo_begins.EVTNAME6"
+	desc = "cosimo_begins.EVTDESC6"
+	picture = MEDICI_GONFALONIERE_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		has_country_modifier = "medici_system_information"
+		had_country_flag = { flag = Medici_new days = 3650 }
+	}
+	
+	mean_time_to_happen = { months = 6 }
+	
+	immediate = { clr_country_flag = Medici_new }
+	
+	option = {
+		name = "cosimo_begins.EVTOPTA1"		# Excellent
+		add_prestige = 10
+		add_stability_1 = yes
+		custom_tooltip = mercanti_little_add
+		mercanti_favor_add_effect = yes
+		custom_tooltip = artigiani_little_add
+		artigiani_favor_add_effect = yes
+		custom_tooltip = popolo_little_add
+		popolo_favor_add_effect = yes
+	}
+}

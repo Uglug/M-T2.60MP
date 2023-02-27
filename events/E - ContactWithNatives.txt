@@ -1,0 +1,839 @@
+
+# First Contact with the White Man
+country_event = {
+	
+	id = contact_natives.1
+	title = "contact_natives.1.n"
+	desc = "contact_natives.1.t"
+	picture = NATIVES_eventPicture
+	
+	trigger = {
+		OR = {
+			technology_group = north_american
+			technology_group = mesoamerican
+			technology_group = south_american
+		}
+		any_neighbor_country = {
+			OR = {
+				technology_group = western
+				technology_group = eastern
+			}
+		}
+		NOT = { has_country_flag = contact_with_white_man }
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = "contact_natives.1.a"
+		set_country_flag = contact_with_white_man
+		every_neighbor_country = {
+			limit = {
+				OR = {
+					technology_group = western
+					technology_group = eastern
+				}
+				NOT = { has_country_flag = natives_policy_chosen }
+				NOT = { has_country_flag = ignore_natives }
+				NOT = { has_country_flag = ally_natives }
+				NOT = { has_country_flag = conquer_natives }
+			}
+			country_event = { id = contact_natives.2 days = 3 }
+		}
+	}
+}
+
+#Policy with the Natives
+country_event = {
+	id = contact_natives.2
+	title = "contact_natives.2.n"
+	desc = "contact_natives.2.t"
+	picture = COLONIZATION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "contact_natives.2.a"
+		ai_chance = {
+			factor = 30
+		}
+		set_country_flag = conquer_natives
+		set_country_flag = natives_policy_chosen
+		add_opinion = { who = FROM modifier = conquer_natives_opinion }
+		FROM = { add_opinion = { who = ROOT modifier = conquer_natives_opinion } }
+	}
+	
+	option = {
+		name = "contact_natives.2.b"
+		ai_chance = {
+			factor = 10
+		}
+		set_country_flag = ignore_natives
+		set_country_flag = natives_policy_chosen
+		add_opinion = { who = FROM modifier = ignore_natives_opinion }
+		FROM = { add_opinion = { who = ROOT modifier = ignore_natives_opinion } }
+	}
+	
+	option = {
+		name = "contact_natives.2.c"
+		ai_chance = {
+			factor = 20
+		}
+		set_country_flag = trade_natives
+		set_country_flag = natives_policy_chosen
+		add_opinion = { who = FROM modifier = trade_natives_opinion }
+		FROM = { add_opinion = { who = ROOT modifier = trade_natives_opinion } }
+	}
+	
+	option = {
+		name = "contact_natives.2.d"
+		ai_chance = {
+			factor = 15
+		}
+		set_country_flag = ally_natives
+		set_country_flag = natives_policy_chosen
+		add_opinion = { who = FROM modifier = ally_natives_opinion }
+		FROM = { add_opinion = { who = ROOT modifier = ally_natives_opinion } }
+	}
+}
+
+# Epidemics strike
+#province_event = {
+#	id = contact_natives.3
+#	title = "contact_natives.3.n"
+#	desc = "contact_natives.3.t"
+#	picture = COLONIZATION_eventPicture
+#	
+#	trigger = { always = no #defunct because of New World Plagues (TisAFleshWound)
+#		owner = {
+#			OR = {
+#				technology_group = north_american
+#				technology_group = mesoamerican
+#				technology_group = south_american
+#			}
+#		}
+#		any_neighbor_province = {
+#			OR = {
+#				owner = { technology_group = western }
+#				owner = { technology_group = eastern }
+#				has_province_modifier = epidemics_light
+#				has_province_modifier = epidemics_mild
+#				has_province_modifier = epidemics_important
+#				has_province_modifier = epidemics_heavy
+#				has_province_modifier = epidemics_rampant
+#			}
+#		}
+#		NOT = { has_province_flag = native_epidemics }
+#	}
+#	
+#	mean_time_to_happen = {
+#		years = 7
+#		
+#		modifier = {
+#			owner = { technology_group = south_american }
+#			factor = 0.9
+#		}
+#		modifier = {
+#			owner = { technology_group = mesoamerican }
+#			factor = 0.8
+#		}
+#		modifier = {
+#			owner = { government = native }
+#			factor = 0.50
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_light }
+#			factor = 0.95
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_mild }
+#			factor = 0.90
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_important }
+#			factor = 0.85
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_heavy }
+#			factor = 0.80
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_rampant }
+#			factor = 0.75
+#		}
+#		modifier = {
+#			any_neighbor_province = { owner = { technology_group = western } }
+#			factor = 0.70
+#		}
+#		modifier = {
+#			any_neighbor_province = { owner = { technology_group = eastern } }
+#			factor = 0.70
+#		}
+#	}
+#	
+#	option = {
+#		name = "contact_natives.3.a"
+#		set_province_flag = native_epidemics
+#		add_permanent_province_modifier = {
+#			name = epidemics_light
+#			duration = -1
+#		}
+#	}
+#}
+#
+#province_event = {
+#	id = contact_natives.4
+#	title = "contact_natives.4.n"
+#	desc = "contact_natives.4.t"
+#	picture = COLONIZATION_eventPicture
+#	
+#	trigger = { always = no #defunct because of New World Plagues (TisAFleshWound)
+#		has_province_modifier = epidemics_light
+#		owner = {
+#			OR = {
+#				technology_group = north_american
+#				technology_group = mesoamerican
+#				technology_group = south_american
+#			}
+#		}
+#	}
+#	
+#	mean_time_to_happen = {
+#		years = 7
+#		
+#		modifier = {
+#			owner = { technology_group = south_american }
+#			factor = 0.9
+#		}
+#		modifier = {
+#			owner = { technology_group = mesoamerican }
+#			factor = 0.8
+#		}
+#		modifier = {
+#			owner = { government = native }
+#			factor = 0.50
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_light }
+#			factor = 0.95
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_mild }
+#			factor = 0.90
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_important }
+#			factor = 0.85
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_heavy }
+#			factor = 0.80
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_rampant }
+#			factor = 0.75
+#		}
+#		modifier = {
+#			any_neighbor_province = { owner = { technology_group = western } }
+#			factor = 0.70
+#		}
+#		modifier = {
+#			any_neighbor_province = { owner = { technology_group = eastern } }
+#			factor = 0.70
+#		}
+#	}
+#	
+#	option = {
+#		name = "contact_natives.4.a"
+#		remove_province_modifier = epidemics_light
+#		add_permanent_province_modifier = {
+#			name = epidemics_mild
+#			duration = -1
+#		}
+#		if = {
+#			limit = {
+#				base_tax = 10
+#			}
+#			# add_base_tax = -1
+#		}
+#	}
+#}
+#
+#province_event = {
+#	id = contact_natives.5
+#	title = "contact_natives.5.n"
+#	desc = "contact_natives.5.t"
+#	picture = COLONIZATION_eventPicture
+#	
+#	trigger = { always = no #defunct because of New World Plagues (TisAFleshWound)
+#		has_province_modifier = epidemics_mild
+#		owner = {
+#			OR = {
+#				technology_group = north_american
+#				technology_group = mesoamerican
+#				technology_group = south_american
+#			}
+#		}
+#	}
+#	
+#	mean_time_to_happen = {
+#		years = 7
+#		
+#		modifier = {
+#			owner = { technology_group = south_american }
+#			factor = 0.9
+#		}
+#		modifier = {
+#			owner = { technology_group = mesoamerican }
+#			factor = 0.8
+#		}
+#		modifier = {
+#			owner = { government = native }
+#			factor = 0.50
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_light }
+#			factor = 0.95
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_mild }
+#			factor = 0.90
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_important }
+#			factor = 0.85
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_heavy }
+#			factor = 0.80
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_rampant }
+#			factor = 0.75
+#		}
+#		modifier = {
+#			any_neighbor_province = { owner = { technology_group = western } }
+#			factor = 0.70
+#		}
+#		modifier = {
+#			any_neighbor_province = { owner = { technology_group = eastern } }
+#			factor = 0.70
+#		}
+#	}
+#	
+#	option = {
+#		name = "contact_natives.5.a"
+#		remove_province_modifier = epidemics_mild
+#		add_permanent_province_modifier = {
+#			name = epidemics_important
+#			duration = -1
+#		}
+#		if = {
+#			limit = {
+#				base_tax = 7
+#			}
+#			# add_base_tax = -1
+#		}
+#	}
+#}
+#
+#province_event = {
+#	id = contact_natives.6
+#	title = "contact_natives.6.n"
+#	desc = "contact_natives.6.t"
+#	picture = COLONIZATION_eventPicture
+#	
+#	trigger = { always = no #defunct because of New World Plagues (TisAFleshWound)
+#		has_province_modifier = epidemics_important
+#		owner = {
+#			OR = {
+#				technology_group = north_american
+#				technology_group = mesoamerican
+#				technology_group = south_american
+#			}
+#		}
+#	}
+#	
+#	mean_time_to_happen = {
+#		years = 7
+#		
+#		modifier = {
+#			owner = { technology_group = south_american }
+#			factor = 0.9
+#		}
+#		modifier = {
+#			owner = { technology_group = mesoamerican }
+#			factor = 0.8
+#		}
+#		modifier = {
+#			owner = { government = native }
+#			factor = 0.50
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_light }
+#			factor = 0.95
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_mild }
+#			factor = 0.90
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_important }
+#			factor = 0.85
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_heavy }
+#			factor = 0.80
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_rampant }
+#			factor = 0.75
+#		}
+#		modifier = {
+#			any_neighbor_province = { owner = { technology_group = western } }
+#			factor = 0.70
+#		}
+#		modifier = {
+#			any_neighbor_province = { owner = { technology_group = eastern } }
+#			factor = 0.70
+#		}
+#	}
+#	
+#	option = {
+#		name = "contact_natives.6.a"
+#		remove_province_modifier = epidemics_important
+#		add_permanent_province_modifier = {
+#			name = epidemics_heavy
+#			duration = -1
+#		}
+#		if = {
+#			limit = {
+#				base_tax = 5
+#			}
+#			# add_base_tax = -1
+#		}
+#	}
+#}
+#
+#province_event = {
+#	id = contact_natives.7
+#	title = "contact_natives.7.n"
+#	desc = "contact_natives.7.t"
+#	picture = COLONIZATION_eventPicture
+#	
+#	trigger = { always = no #defunct because of New World Plagues (TisAFleshWound)
+#		has_province_modifier = epidemics_heavy
+#		owner = {
+#			OR = {
+#				technology_group = north_american
+#				technology_group = mesoamerican
+#				technology_group = south_american
+#			}
+#		}
+#	}
+#	
+#	mean_time_to_happen = {
+#		years = 7
+#		
+#		modifier = {
+#			owner = { technology_group = south_american }
+#			factor = 0.9
+#		}
+#		modifier = {
+#			owner = { technology_group = mesoamerican }
+#			factor = 0.8
+#		}
+#		modifier = {
+#			owner = { government = native }
+#			factor = 0.50
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_light }
+#			factor = 0.95
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_mild }
+#			factor = 0.90
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_important }
+#			factor = 0.85
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_heavy }
+#			factor = 0.80
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_rampant }
+#			factor = 0.75
+#		}
+#		modifier = {
+#			any_neighbor_province = { owner = { technology_group = western } }
+#			factor = 0.70
+#		}
+#		modifier = {
+#			any_neighbor_province = { owner = { technology_group = eastern } }
+#			factor = 0.70
+#		}
+#	}
+#	
+#	option = {
+#		name = "contact_natives.7.a"
+#		remove_province_modifier = epidemics_heavy
+#		add_permanent_province_modifier = {
+#			name = epidemics_rampant
+#			duration = -1
+#		}
+#		if = {
+#			limit = {
+#				base_tax = 3
+#			}
+#			# add_base_tax = -1
+#		}
+#	}
+#}
+#
+#province_event = {
+#	id = contact_natives.8
+#	title = "contact_natives.8.n"
+#	desc = "contact_natives.8.t"
+#	picture = COLONIZATION_eventPicture
+#	
+#	trigger = { always = no #defunct because of New World Plagues (TisAFleshWound)
+#		has_province_modifier = epidemics_rampant
+#		owner = {
+#			OR = {
+#				technology_group = north_american
+#				technology_group = mesoamerican
+#				technology_group = south_american
+#			}
+#		}
+#		base_tax = 2
+#	}
+#	
+#	mean_time_to_happen = {
+#		years = 166
+#		
+#		modifier = {
+#			owner = { technology_group = south_american }
+#			factor = 0.9
+#		}
+#		modifier = {
+#			owner = { technology_group = mesoamerican }
+#			factor = 0.8
+#		}
+#		modifier = {
+#			owner = { government = native }
+#			factor = 0.50
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_light }
+#			factor = 0.95
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_mild }
+#			factor = 0.90
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_important }
+#			factor = 0.85
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_heavy }
+#			factor = 0.80
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_rampant }
+#			factor = 0.75
+#		}
+#		modifier = {
+#			any_neighbor_province = { owner = { technology_group = western } }
+#			factor = 0.70
+#		}
+#		modifier = {
+#			any_neighbor_province = { owner = { technology_group = eastern } }
+#			factor = 0.70
+#		}
+#		modifier = {
+#			base_tax = 4
+#			factor = 0.90
+#		}
+#		modifier = {
+#			base_tax = 6
+#			factor = 0.90
+#		}
+#		modifier = {
+#			base_tax = 8
+#			factor = 0.90
+#		}
+#		modifier = {
+#			base_tax = 10
+#			factor = 0.90
+#		}
+#		modifier = {
+#			base_tax = 12
+#			factor = 0.90
+#		}
+#		modifier = {
+#			base_tax = 14
+#			factor = 0.90
+#		}
+#	}
+#	
+#	option = {
+#		name = "contact_natives.8.a"
+#		# add_base_tax = -1
+#	}
+#}
+#
+#province_event = {
+#	id = contact_natives.9
+#	title = "contact_natives.9.n"
+#	desc = "contact_natives.9.t"
+#	picture = COLONIZATION_eventPicture
+#	
+#	trigger = { always = no #defunct because of New World Plagues (TisAFleshWound)
+#		OR = {
+#			has_province_modifier = epidemics_light
+#			has_province_modifier = epidemics_mild
+#			has_province_modifier = epidemics_important
+#			has_province_modifier = epidemics_heavy
+#			has_province_modifier = epidemics_rampant
+#		}
+#		NOT = { has_province_modifier = recovery_first_step }
+#	}
+#	
+#	mean_time_to_happen = {
+#		years = 62
+#		
+#		modifier = {
+#			owner = { government = native }
+#			factor = 1.50
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_light }
+#			factor = 1.05
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_mild }
+#			factor = 1.10
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_important }
+#			factor = 1.15
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_heavy }
+#			factor = 1.20
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_rampant }
+#			factor = 1.25
+#		}
+#		modifier = {
+#			owner = { technology_group = western }
+#			factor = 0.70
+#		}
+#		modifier = {
+#			owner = { technology_group = eastern }
+#			factor = 0.70
+#		}
+#		modifier = {
+#			base_tax = 4
+#			factor = 1.05
+#		}
+#		modifier = {
+#			base_tax = 6
+#			factor = 1.05
+#		}
+#		modifier = {
+#			base_tax = 8
+#			factor = 1.05
+#		}
+#		modifier = {
+#			base_tax = 10
+#			factor = 1.05
+#		}
+#		modifier = {
+#			base_tax = 12
+#			factor = 1.05
+#		}
+#		modifier = {
+#			base_tax = 14
+#			factor = 1.05
+#		}
+#	}
+#	
+#	option = {
+#		name = "contact_natives.9.a"
+#		remove_province_modifier = epidemics_light
+#		remove_province_modifier = epidemics_mild
+#		remove_province_modifier = epidemics_important
+#		remove_province_modifier = epidemics_heavy
+#		remove_province_modifier = epidemics_rampant
+#		add_permanent_province_modifier = {
+#			name = recovery_first_step
+#			duration = -1
+#		}
+#	}
+#}
+#
+#province_event = {
+#	id = contact_natives.10
+#	title = "contact_natives.10.n"
+#	desc = "contact_natives.10.t"
+#	picture = COLONIZATION_eventPicture
+#	
+#	trigger = { always = no #defunct because of New World Plagues (TisAFleshWound)
+#		has_province_modifier = recovery_first_step
+#	}
+#	
+#	mean_time_to_happen = {
+#		years = 62
+#		
+#		modifier = {
+#			owner = { government = native }
+#			factor = 1.50
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_light }
+#			factor = 1.05
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_mild }
+#			factor = 1.10
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_important }
+#			factor = 1.15
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_heavy }
+#			factor = 1.20
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_rampant }
+#			factor = 1.25
+#		}
+#		modifier = {
+#			owner = { technology_group = western }
+#			factor = 0.70
+#		}
+#		modifier = {
+#			owner = { technology_group = eastern }
+#			factor = 0.70
+#		}
+#		modifier = {
+#			base_tax = 4
+#			factor = 1.05
+#		}
+#		modifier = {
+#			base_tax = 6
+#			factor = 1.05
+#		}
+#		modifier = {
+#			base_tax = 8
+#			factor = 1.05
+#		}
+#		modifier = {
+#			base_tax = 10
+#			factor = 1.05
+#		}
+#		modifier = {
+#			base_tax = 12
+#			factor = 1.05
+#		}
+#		modifier = {
+#			base_tax = 14
+#			factor = 1.05
+#		}
+#	}
+#	
+#	option = {
+#		name = "contact_natives.10.a"
+#		remove_province_modifier = recovery_first_step
+#		add_permanent_province_modifier = {
+#			name = recover_underway
+#			duration = -1
+#		}
+#	}
+#}
+#
+#province_event = {
+#	id = contact_natives.11
+#	title = "contact_natives.11.n"
+#	desc = "contact_natives.11.t"
+#	picture = COLONIZATION_eventPicture
+#	
+#	trigger = { always = no #defunct because of New World Plagues (TisAFleshWound)
+#		has_province_modifier = recover_underway
+#	}
+#	
+#	mean_time_to_happen = {
+#		years = 62
+#		
+#		modifier = {
+#			owner = { government = native }
+#			factor = 1.50
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_light }
+#			factor = 1.05
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_mild }
+#			factor = 1.10
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_important }
+#			factor = 1.15
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_heavy }
+#			factor = 1.20
+#		}
+#		modifier = {
+#			any_neighbor_province = { has_province_modifier = epidemics_rampant }
+#			factor = 1.25
+#		}
+#		modifier = {
+#			owner = { technology_group = western }
+#			factor = 0.70
+#		}
+#		modifier = {
+#			owner = { technology_group = eastern }
+#			factor = 0.70
+#		}
+#		modifier = {
+#			base_tax = 4
+#			factor = 1.05
+#		}
+#		modifier = {
+#			base_tax = 6
+#			factor = 1.05
+#		}
+#		modifier = {
+#			base_tax = 8
+#			factor = 1.05
+#		}
+#		modifier = {
+#			base_tax = 10
+#			factor = 1.05
+#		}
+#		modifier = {
+#			base_tax = 12
+#			factor = 1.05
+#		}
+#		modifier = {
+#			base_tax = 14
+#			factor = 1.05
+#		}
+#	}
+#	
+#	option = {
+#		name = "contact_natives.11.a"
+#		remove_province_modifier = recover_underway
+#	}
+#}
+#
+#

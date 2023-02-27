@@ -1,0 +1,119 @@
+AIInitGetPower = {
+	set_country_flag = aiInitDiploRelated
+	if = {
+		limit = { always = $subject$ }
+		every_subject_country = {
+			limit = {
+				NOT = { tag = $scope$ }
+				AIJoinOverlordWar = yes
+			}
+			set_country_flag = aiInitDiploRelated
+			every_subject_country = {
+				limit = {
+					NOT = { tag = $scope$ }
+					AIJoinOverlordWar = yes
+				}
+				set_country_flag = aiInitDiploRelated
+				every_subject_country = {
+					limit = {
+						NOT = { tag = $scope$ }
+						AIJoinOverlordWar = yes
+					}
+					set_country_flag = aiInitDiploRelated
+				}
+			}
+		}
+	}
+	if = {
+		limit = { always = $overlord$ }
+		overlord = {
+			if = {
+				limit = { NOT = { tag = $scope$ } }
+				if = {
+					limit = { is_subject = yes }
+					overlord = {
+						if = {
+							limit = { NOT = { tag = $scope$ } }
+							set_country_flag = aiInitDiploRelated
+							every_subject_country = {
+								limit = {
+									NOT = { tag = $scope$ }
+									AIJoinOverlordWar = yes
+								}
+								set_country_flag = aiInitDiploRelated
+								every_subject_country = {
+									limit = {
+										NOT = { tag = $scope$ }
+										AIJoinOverlordWar = yes
+									}
+									set_country_flag = aiInitDiploRelated
+									every_subject_country = {
+										limit = {
+											NOT = { tag = $scope$ }
+											AIJoinOverlordWar = yes
+										}
+										set_country_flag = aiInitDiploRelated
+									}
+								}
+							}
+						}
+					}
+				}
+				else = {
+					set_country_flag = aiInitDiploRelated
+					every_subject_country = {
+						limit = {
+							NOT = { tag = $scope$ }
+							AIJoinOverlordWar = yes
+						}
+						set_country_flag = aiInitDiploRelated
+						every_subject_country = {
+							limit = {
+								NOT = { tag = $scope$ }
+								AIJoinOverlordWar = yes
+							}
+							set_country_flag = aiInitDiploRelated
+							every_subject_country = {
+								limit = {
+									NOT = { tag = $scope$ }
+									AIJoinOverlordWar = yes
+								}
+								set_country_flag = aiInitDiploRelated
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	set_variable = { which = aiInitDiploArmy value = 0 }
+	every_country = {
+		limit = { has_country_flag = aiInitDiploRelated }
+		clr_country_flag = aiInitDiploRelated
+		if = {
+			limit = { always = $army$ }
+			GetSizeArmy = {
+				state = $state$
+				estate = $estate$
+				rest = $rest$
+				return = tmpAIInitDiploArmy
+			}
+			GetQualArmy = { return = tmpAIInitDiploArmyQual }
+		}
+		else = {
+			set_variable = { which = tmpAIInitDiploArmy value = 0 }
+			set_variable = { which = tmpAIInitDiploArmyQual value = 0 }
+		}
+		multiply_variable = { which = tmpAIInitDiploArmy which = tmpAIInitDiploArmyQual }
+		PREV = {
+			set_variable = { which = tmpAIInitDiploArmy which = PREV }
+			change_variable = { which = aiInitDiploArmy which = tmpAIInitDiploArmy }
+			set_variable = { which = tmpAIInitDiploArmy value = 0 }
+		}
+		set_variable = { which = tmpAIInitDiploArmy value = 0 }
+	}
+	set_variable = { which = $return$ which = aiInitDiploArmy }
+	multiply_variable = { which = $return$ value = 0.02 }
+	set_variable = { which = aiInitDiploArmy value = 0 }
+	set_variable = { which = tmpAIInitDiploArmyQual value = 0 }
+}

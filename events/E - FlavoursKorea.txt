@@ -1,0 +1,904 @@
+namespace = tianxia_sys
+
+### Event List ###
+#1. Strife of Princes
+#2. Treaty between Korea-China
+#3. Hangul Publication
+#4. Gyeyu Coup d'etat
+#5. Factions in Korea
+#6. Gyeongguk Daejeon, AKA Grand Code for State Administration
+#7. First Literati Purge
+#8. Jungjong's Coup d'etat
+#9. Second Literati Purge
+#10. Decay of Factions
+#11. Rebellion of Jeong Yeorip
+#12. Injo's Coup d'etat
+#13. Rebellion of Yi Gwal
+#14. Great Famaine
+#15. Construction of Hwaseong Fortress
+
+### SYSTEM SETTINGS ###
+
+#System Settings
+#country_event = {
+#	id = "tianxia_sys.1"
+#	title = "tianxia_sys.1.t"
+#	desc = "tianxia_sys.1.d"
+#	picture = WESTERNISATION_eventPicture
+#
+#	fire_only_once = yes
+#
+#	trigger = {
+#		ai = yes
+#		all_country = { NOT = { has_country_flag = fire_only_once_all } }
+#	}
+#
+#	mean_time_to_happen = {
+#		days = 1
+#	}
+#
+#	immediate = {
+#		set_country_flag = fire_only_once_all
+#		#Korea & Japan
+#		every_country = {
+#			limit = {
+#				OR = {
+#					tag = KOR
+#					tag = JOS
+#				}
+#				is_year = 1404
+#				NOT = { has_country_flag = king_taejong }
+#			}
+#			set_country_flag = king_taejong
+#		}
+#		every_country = {
+#			limit = {
+#				OR = {
+#					tag = KOR
+#					tag = JOS
+#				}
+#				is_year = 1456
+#				NOT = { has_country_flag = korea_have_no_gyeyu }
+#				has_ruler = "Yu"
+#			}
+#			set_country_flag = korea_have_no_gyeyu
+#			set_country_flag = add_korea_faction
+#		}
+#		every_country = {
+#			limit = {
+#				OR = {
+#					tag = KOR
+#					tag = JOS
+#				}
+#				is_year = 1456
+#				NOT = { has_country_flag = korea_have_no_gyeyu }
+#				NOT = { has_ruler = "Yu" }
+#			}
+#			set_country_flag = korea_have_no_gyeyu
+#			clr_country_flag = add_korea_faction
+#			add_faction = hungu_korea
+#			add_faction = sarim_korea
+#		}
+#		every_country = {
+#			limit = {
+#				OR = {
+#					tag = KOR
+#					tag = JOS
+#				}
+#				is_year = 1546
+#				NOT = { has_country_flag = korea_have_no_sahwa }
+#			}
+#			set_country_flag = korea_have_no_sahwa
+#			set_country_flag = bungdang_korea
+#			remove_faction = hungu_korea
+#			remove_faction = sarim_korea
+#		}
+#	}
+#
+#	option = { name = "tianxia_sys.1a" }
+#}
+
+#### Strife of Princes ####
+# We need a heir
+country_event = {
+	id = "tianxia_sys.30"
+	title = "tianxia.30.t"
+	desc = "tianxia.30.d"
+	picture = COURT_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = JOS
+		OR = {
+			has_country_flag = goryeo_revolt_won
+			has_country_flag = goryeo_revolt_subdued
+		}
+		ruler_age = 40
+		is_year = 1370
+		NOT = { is_year = 1410 }
+		NOT = { has_country_flag = young_heir }
+	}
+	
+	mean_time_to_happen = { months = 36 }
+	
+	option = {
+		name = "tianxia.30a"
+		define_heir = {
+			name = "Bang-gwa"
+			dynasty = ROOT
+			DIP = 2
+			ADM = 3
+			MIL = 3
+			birth_date = 1357.2.11
+		}
+		ai_chance = { factor = 5 }
+	}
+	option = {
+		name = "tianxia.30b"
+		define_heir = {
+			name = "Bang-seok"
+			dynasty = ROOT
+			DIP = 2
+			ADM = 3
+			MIL = 3
+			birth_date = 1382.6.11
+		}
+		set_country_flag = young_heir
+		ai_chance = { factor = 95 }
+	}
+}
+
+# Prince Jeongan's anxiety
+country_event = {
+	id = "tianxia_sys.31"
+	title = "tianxia.31.t"
+	desc = "tianxia.31.d"
+	picture = COURT_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = JOS
+		has_country_flag = young_heir
+	}
+	
+	mean_time_to_happen = { months = 6 }
+	
+	option = {
+		name = "tianxia.31a"
+		set_country_flag = jeongans_anxiety
+		ai_chance = { factor = 95 }
+	}
+	option = {
+		name = "tianxia.31b"
+		define_heir = {
+			name = "Bang-gwa"
+			dynasty = ROOT
+			DIP = 2
+			ADM = 3
+			MIL = 3
+			birth_date = 1357.2.11
+		}
+		clr_country_flag = young_heir
+		ai_chance = { factor = 5 }
+	}
+}
+
+#Jeong Do-jeon's conspiracy, AKA First Strife of Princes
+country_event = {
+	id = "tianxia_sys.32"
+	title = "tianxia.32.t"
+	desc = "tianxia.32.d"
+	picture = COURT_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = JOS
+		has_country_flag = young_heir
+		has_country_flag = jeongans_anxiety
+	}
+	
+	mean_time_to_happen = { months = 3 }
+	
+	option = {
+		name = "tianxia.32a"
+		define_ruler = {
+			name = "Bang-gwa"
+			dynasty = ROOT
+			DIP = 2
+			ADM = 3
+			MIL = 3
+			age = 40
+		}
+		set_country_flag = puppet_king
+		clr_country_flag = jeongans_anxiety
+		clr_country_flag = young_heir
+		ai_chance = { factor = 95 }
+	}
+	option = {
+		name = "tianxia.32b"
+		capital_scope = {
+			spawn_rebels = {
+				type = pretender_rebels
+				size = 8
+				leader = "Bang-won Yi"
+			}
+		}
+		clr_country_flag = jeongans_anxiety
+		clr_country_flag = young_heir
+		ai_chance = { factor = 5 }
+	}
+}
+
+#Rebelion of Grand Prince Hoe'an
+country_event = {
+	id = "tianxia_sys.33"
+	title = "tianxia.33.t"
+	desc = "tianxia.33.d"
+	picture = COURT_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = JOS
+		has_country_flag = puppet_king
+		NOT = { has_country_flag = hoean_revolt }
+	}
+	
+	mean_time_to_happen = { months = 12 }
+	
+	option = {
+		name = "tianxia.33a"
+		capital_scope = {
+			spawn_rebels = {
+				type = pretender_rebels
+				size = 4
+				leader = "Bang-gan Yi"
+			}
+		}
+		set_country_flag = hoean_revolt
+	}
+}
+
+#Rebellion Fails
+country_event = {
+	id = "tianxia_sys.34"
+	title = "tianxia.34.t"
+	desc = "tianxia.34.d"
+	picture = COURT_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = JOS
+		has_country_flag = hoean_revolt
+		all_owned_province = {
+			NOT = { sieged_by = REB }
+			unit_in_battle = no
+		}
+		NOT = { has_country_flag = king_taejong }
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = "tianxia.34a"
+		define_ruler = {
+			name = "Bang-won"
+			dynasty = ROOT
+			DIP = 3
+			ADM = 6
+			MIL = 5
+			age = 33
+		}
+		define_heir = {
+			name = "Do"
+			dynasty = ROOT
+			claim = 100
+			DIP = 4
+			ADM = 6
+			MIL = 5
+		}
+		set_country_flag = king_taejong
+	}
+}
+
+#### Treaty between Korea-China ####
+#Reused what was in older versions of M&T
+
+country_event = {
+	id = "tianxia_sys.17"
+	
+	title = "tianxia.17.t"
+	desc = "tianxia.17.d"
+	
+	picture = DIPLOMACY_eventPicture
+	
+	trigger = {
+		OR = {
+			tag = KOR
+			tag = JOS
+		}
+		any_known_country = {
+			has_country_flag = mandate_of_heaven_claimed
+			culture_group = chinese_group
+			NOT = {
+				war_with = ROOT
+				truce_with = ROOT
+			}
+		}
+		NOT = {
+			has_country_flag = jos_china_relations
+			has_country_flag = jos_ren_relations
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = "tianxia.17a"
+		add_treasury = -50
+		every_country = {
+			limit = {
+				has_country_flag = mandate_of_heaven_claimed
+				culture_group = chinese_group
+			}
+			if = {
+				limit = {
+					ROOT = {
+						tag = JOS
+					}
+				}
+				add_opinion = { who = JOS modifier = jos_tribute }
+			}
+			if = {
+				limit = {
+					ROOT = {
+						tag = KOR
+					}
+				}
+				add_opinion = { who = KOR modifier = kor_tribute }
+			}
+			add_treasury = 50
+		}
+		east_manchuria_region = {
+			limit = {
+				is_city = yes
+				OR = {
+					is_claim = JOS
+					is_claim = KOR
+				}
+			}
+			remove_claim = JOS
+			remove_claim = KOR
+		}
+		west_manchuria_region = {
+			limit = {
+				is_city = yes
+				OR = {
+					is_claim = JOS
+					is_claim = KOR
+				}
+			}
+			remove_claim = JOS
+			remove_claim = KOR
+		}
+		set_country_flag = jos_china_relations
+		ai_chance = { factor = 95 }
+	}
+	option = {
+		name = "tianxia.17b"
+		every_country = {
+			limit = {
+				has_country_flag = mandate_of_heaven_claimed
+				culture_group = chinese_group
+			}
+			if = {
+				limit = {
+					ROOT = {
+						tag = JOS
+					}
+				}
+				add_opinion = { who = JOS modifier = jos_no_tribute }
+			}
+			if = {
+				limit = {
+					ROOT = {
+						tag = KOR
+					}
+				}
+				add_opinion = { who = KOR modifier = kor_no_tribute }
+			}
+		}
+		set_country_flag = jos_ren_relations
+		ai_chance = { factor = 5 }
+	}
+}
+
+### Gyeyu Coup d'etat ###
+country_event = {
+	id = "tianxia_sys.20"
+	title = "tianxia.20.t"
+	desc = "tianxia.20.d"
+	picture = ASSASSINATION_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		OR = {
+			tag = KOR
+			tag = JOS
+		}
+		is_year = 1450
+		NOT = { has_ruler = "Do" }
+		has_regency = yes
+		NOT = { is_year = 1500 }
+		# NOT = { has_country_flag = korea_have_no_gyeyu }
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+		modifier = {
+			factor = 0.5
+			NOT = {
+				ADM = 3
+			}
+		}
+	}
+	
+	option = {
+		name = "tianxia.20a"
+		ai_chance = { factor = 95 }
+		#set_country_flag = add_korea_faction
+		add_prestige = 10
+		exile_heir_as = gyeyu_heir_ROOT
+		exile_ruler_as = gyeyu_ruler_ROOT
+		define_ruler = {
+			name = "Yu"
+			dynasty = "Yi"
+			DIP = 2
+			ADM = 5
+			MIL = 3
+			age = 37
+		}
+		hidden_effect = {
+			define_heir = {
+				name = "Hwang"
+				dynasty = "Yi"
+				DIP = 2
+				ADM = 3
+				MIL = 3
+				birth_date = 1450.1.4
+			}
+		}
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+	}
+	option = {
+		name = "tianxia.20b"
+		ai_chance = { factor = 5 }
+		set_country_flag = bungdang_korea
+		random_owned_province = {
+			limit = {
+				region = korea_region
+			}
+			spawn_rebels = {
+				type = pretender_rebels
+				size = 12
+				leader = "Yu Yi"
+			}
+		}
+	}
+}
+
+### New Factions in Korea ###
+#country_event = {
+#	id = "tianxia_sys.21"
+#	title = "tianxia.21.t"
+#	desc = "tianxia.21.d"
+#	picture = LIBERUM_VETO_eventPicture
+#
+#	fire_only_once = yes
+#
+#	trigger = {
+#		OR = {
+#			tag = KOR
+#			tag = JOS
+#		}
+#		NOT = { is_year = 1600 }
+#		has_factions = no
+#		has_country_flag = add_korea_faction
+#		NOT = { has_country_flag = korea_have_no_sahwa }
+#		NOT = { has_country_flag = bungdang_korea }
+#		NOT = { has_ruler = "Yu" }
+#	}
+#
+#	mean_time_to_happen = {
+#		months = 36
+#	}
+#
+#	option = {
+#		name = "tianxia.21a"
+#	}
+#}
+
+### Gyeongguk daejeon ###
+country_event = {
+	id = "tianxia_sys.22"
+	title = "tianxia.22.t"
+	desc = "tianxia.22.d"
+	picture = BIG_BOOK_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		OR = {
+			tag = KOR
+			tag = JOS
+		}
+		is_year = 1485
+		adm = 1
+	}
+	
+	mean_time_to_happen = { years = 10 }
+	
+	option = {
+		name = "tianxia.22a"
+		add_adm_power = 300
+		add_country_modifier = {
+			name = centralised_state
+			duration = 7300
+		}
+	}
+}
+
+### First Literati Purge ###
+country_event = {
+	id = "tianxia_sys.23"
+	title = "tianxia.23.t"
+	desc = "tianxia.23.d"
+	picture = ACCUSATION_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		OR = {
+			tag = KOR
+			tag = JOS
+		}
+		religion = confucianism
+		#has_factions = yes
+		is_year = 1498
+		NOT = { has_ruler = "Yu" }
+		NOT = { has_country_flag = korea_have_no_sahwa }
+		NOT = { has_ruler_flag = korea_literati_purge1 }
+	}
+	
+	mean_time_to_happen = { years = 5 }
+	
+	option = {
+		name = "tianxia.23a"
+		set_ruler_flag = korea_literati_purge1
+		set_country_flag = korea_literati_purge2
+		add_mil_power = 50
+		#add_faction_influence = {
+		#	faction = hungu_korea
+		#	influence = 100
+		#}
+	}
+	option = {
+		name = "tianxia.23b"
+		set_ruler_flag = korea_literati_purge1
+		set_country_flag = korea_literati_purge2
+		set_country_flag = korea_literati_purge3
+		#add_faction_influence = {
+		#	faction = sarim_korea
+		#	influence = 30
+		#}
+		random_owned_province = {
+			limit = { }
+			spawn_rebels = {
+				type = noble_rebels
+				size = 8
+			}
+		}
+	}
+}
+
+
+### Jungjong's Coup d'etat ###
+country_event = {
+	id = "tianxia_sys.24"
+	title = "tianxia.24.t"
+	desc = "tianxia.24.d"
+	picture = ASSASSINATION_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		OR = {
+			tag = KOR
+			tag = JOS
+		}
+		#dynasty = "Yi"
+		#has_factions = yes
+		is_year = 1504
+		NOT = { is_year = 1600 }
+		NOT = { has_country_flag = korea_have_no_sahwa }
+		#faction_influence = {
+		#	faction = hungu_korea
+		#	influence = 20
+		#}
+	}
+	
+	mean_time_to_happen = { months = 12 }
+	
+	option = {
+		name = "tianxia.24a"
+		#kill_ruler = yes
+		if = {
+			limit = { has_heir = yes }
+			kill_heir = yes
+		}
+		define_ruler = {
+			name = "Yeok"
+			DIP = 4
+			ADM = 5
+			MIL = 3
+			dynasty = ROOT
+			age = 20
+		}
+		#add_faction_influence = {
+		#	faction = hungu_korea
+		#	influence = 100
+		#}
+		random = {
+			chance = 50
+			random_owned_province = {
+				limit = { }
+				spawn_rebels = {
+					type = noble_rebels
+					size = 3
+				}
+			}
+		}
+	}
+}
+
+### Second Literati Purge ###
+country_event = {
+	id = "tianxia_sys.25"
+	title = "tianxia.25.t"
+	desc = "tianxia.25.d"
+	picture = ACCUSATION_eventPicture
+	
+	trigger = {
+		OR = {
+			tag = KOR
+			tag = JOS
+		}
+		religion = confucianism
+		#has_factions = yes
+		has_country_flag = korea_literati_purge2
+		NOT = { has_country_flag = korea_literati_purge5 }
+		NOT = { has_country_flag = korea_have_no_sahwa }
+		#faction_influence = {
+		#	faction = sarim_korea
+		#	influence = 40
+		#}
+	}
+	
+	mean_time_to_happen = { years = 5 }
+	
+	option = {
+		name = "tianxia.25a"
+		if = {
+			limit = {
+				has_country_flag = korea_literati_purge4
+				NOT = { has_country_flag = korea_literati_purge5 }
+			}
+			set_country_flag = korea_literati_purge5
+		}
+		if = {
+			limit = {
+				has_country_flag = korea_literati_purge3
+				NOT = { has_country_flag = korea_literati_purge4 }
+			}
+			set_country_flag = korea_literati_purge4
+		}
+		if = {
+			limit = { NOT = { has_country_flag = korea_literati_purge3 } }
+			set_country_flag = korea_literati_purge3
+		}
+		#add_faction_influence = {
+		#	faction = hungu_korea
+		#	influence = 100
+		#}
+		random = {
+			chance = 50
+			random_owned_province = {
+				limit = { }
+				spawn_rebels = {
+					type = noble_rebels
+					size = 1
+				}
+			}
+		}
+		add_adm_power = -50
+		add_dip_power = -50
+	}
+}
+
+
+### Decay of Factions ###
+country_event = {
+	id = "tianxia_sys.26"
+	title = "tianxia.26.t"
+	desc = "tianxia.26.d"
+	picture = DEBATE_REPUBLICAN_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		OR = {
+			tag = KOR
+			tag = JOS
+		}
+		#has_factions = yes
+		has_country_flag = korea_literati_purge5
+		NOT = { has_country_flag = korea_have_no_sahwa }
+		#faction_influence = {
+		#	faction = sarim_korea
+		#	influence = 50
+		#}
+	}
+	
+	mean_time_to_happen = { years = 5 }
+	
+	option = {
+		name = "tianxia.26a"
+		add_adm_power = 300
+		#remove_faction = hungu_korea
+		#remove_faction = sarim_korea
+		set_country_flag = bungdang_korea
+	}
+}
+
+### Rebellion of Jeong Yeorip ###
+country_event = {
+	id = "tianxia_sys.27"
+	title = "tianxia.27.t"
+	desc = "tianxia.27.d"
+	picture = ANGRY_MOB_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		OR = {
+			tag = KOR
+			tag = JOS
+		}
+		is_year = 1589
+		has_country_flag = bungdang_korea
+	}
+	
+	mean_time_to_happen = { years = 10 }
+	
+	option = {
+		ai_chance = { factor = 50 }
+		name = "tianxia.27a"
+		subtract_stability_2 = yes
+	}
+	option = {
+		ai_chance = { factor = 50 }
+		name = "tianxia.27b"
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+		random = {
+			chance = 90
+			random_owned_province = {
+				limit = { }
+				spawn_rebels = {
+					type = revolutionary_rebels
+					size = 12
+					leader = "Yeorip Jeong"
+				}
+			}
+		}
+	}
+}
+
+### Injo's Coup d'etat ###
+country_event = {
+	id = "tianxia_sys.28"
+	title = "tianxia.28.t"
+	desc = "tianxia.28.d"
+	picture = ASSASSINATION_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		OR = {
+			tag = KOR
+			tag = JOS
+		}
+		is_at_war = no
+		is_year = 1600
+		#dynasty = "Yi"
+		has_country_flag = bungdang_korea
+	}
+	
+	mean_time_to_happen = { months = 12 }
+	
+	option = {
+		set_ruler_flag = igwal_will_happen
+		name = "tianxia.28a"
+		#kill_ruler = yes
+		define_ruler = {
+			name = "Jong"
+			dynasty = ROOT
+			DIP = 3
+			ADM = 4
+			MIL = 3
+			age = 30
+		}
+		define_heir = {
+			name = "Wang"
+			dynasty = ROOT
+			DIP = 4
+			ADM = 6
+			MIL = 5
+			birth_date = 1612.2.15
+		}
+	}
+}
+
+### Rebellion of Yi Gwal ###
+country_event = {
+	id = "tianxia_sys.29"
+	title = "tianxia.29.t"
+	desc = "tianxia.29.d"
+	picture = ANGRY_MOB_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		OR = {
+			tag = KOR
+			tag = JOS
+		}
+		is_at_war = no
+		is_year = 1600
+		has_ruler_flag = igwal_will_happen
+	}
+	
+	mean_time_to_happen = { years = 16 }
+	
+	option = {
+		name = "tianxia.29a"
+		random_owned_province = {
+			limit = { }
+			spawn_rebels = {
+				type = pretender_rebels
+				size = 15
+				leader = "Je Yi"
+			}
+		}
+	}
+}

@@ -1,0 +1,1277 @@
+namespace = POP_MassBuilding
+
+province_event = { ### Tally Event (Roads)
+	id = POP_MassBuilding.001
+	title = no_loc
+	desc = no_loc
+	picture = CITY_DEVELOPMENT_eventPicture
+	#is_triggered_only = no
+	hidden = yes
+	
+	trigger = {
+		has_building = upgrade_roads_build
+		NOT = { has_province_modifier = road_is_building }
+		NOT = { has_province_flag = mass_building_road }
+		NOT = { owner = { has_country_flag = mass_building } }
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	immediate = {
+		hidden_effect = {
+			owner = {
+				set_variable = { which = mass_build_ducat_cost value = 0 }
+				set_variable = { which = mass_build_num value = 0 }
+				every_owned_province = {
+					limit = { has_building = upgrade_roads_build }
+					mass_build_in_prov = { type=road }
+				}
+				mass_build__calc_all = yes
+				country_event = {
+					id = POP_MassBuilding.0021
+				}
+			}
+		}
+	}
+	
+	option = { ### Road building
+		name = no_loc
+	}
+}
+
+country_event = {
+	id = POP_MassBuilding.0021
+	title = POP_MassBuilding.002.title
+	desc = POP_MassBuilding.002.desc
+	picture = ROAD_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = mass_building
+		}
+#		custom_tooltip = mass_build_adm_cost_desc
+		custom_tooltip = mass_build_dip_cost_desc
+		custom_tooltip = mass_build_mil_cost_desc
+		custom_tooltip = mass_build_ducat_cost_desc
+		custom_tooltip = mass_build_estate_cost_desc
+		custom_tooltip = mass_build_manpower_cost_desc
+		if = {
+			limit = {
+				has_country_flag = mass_build_more_road
+			}
+			custom_tooltip = mass_build_more_desc
+		}
+	}
+#	option = { ### Increase Administrative Expenditure
+#		name = "POP_MassBuilding.002.a"
+#		trigger = { NOT = { check_variable = { which = mass_build_admin_expenditure which = mass_build_max_admin_expenditure } } }
+#		hidden_effect = {
+#			change_variable = { which = mass_build_admin_expenditure value = 1 }
+#			mass_build__calc_all = yes
+#			country_event = { id = POP_MassBuilding.0022 }
+#		}
+#	}
+#	option = { ### Decrease Administrative Expenditure
+#		name = "POP_MassBuilding.002.b"
+#		trigger = { check_variable = { which = mass_build_admin_expenditure value = 1 } }
+#		hidden_effect = {
+#			change_variable = { which = mass_build_admin_expenditure value = -1 }
+#			mass_build__calc_all = yes
+#			country_event = { id = POP_MassBuilding.0022 }
+#		}
+#	}
+#	option = { ### Max Administrative Expenditure
+#		name = "POP_MassBuilding.002.c"
+#		trigger = { NOT = { check_variable = { which = mass_build_admin_expenditure which = mass_build_max_admin_expenditure } } }
+#		hidden_effect = {
+#			set_variable = { which = mass_build_admin_expenditure which = mass_build_max_admin_expenditure }
+#			mass_build__calc_all = yes
+#			country_event = { id = POP_MassBuilding.0022 }
+#		}
+#	}
+#	option = { ### Min Administrative Expenditure
+#		name = "POP_MassBuilding.002.d"
+#		trigger = { check_variable = { which = mass_build_admin_expenditure value = 0.001 } }
+#		hidden_effect = {
+#			set_variable = { which = mass_build_admin_expenditure value = 0 }
+#			mass_build__calc_all = yes
+#			country_event = { id = POP_MassBuilding.0022 }
+#		}
+#	}
+	option = { ### Increase Estate Expenditure
+		name = "POP_MassBuilding.002.e"
+		trigger = { NOT = { check_variable = { which = mass_build_estate_expenditure which = mass_build_max_estate_expenditure } } }
+		hidden_effect = {
+			change_variable = { which = mass_build_estate_expenditure value = 1 }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0022 }
+		}
+	}
+	option = { ### Decrease Estate Expenditure
+		name = "POP_MassBuilding.002.f"
+		trigger = { check_variable = { which = mass_build_estate_expenditure value = 1 } }
+		hidden_effect = {
+			change_variable = { which = mass_build_estate_expenditure value = -1 }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0022 }
+		}
+	}
+	option = { ### Max Estate Expenditure
+		name = "POP_MassBuilding.002.g"
+		trigger = { NOT = { check_variable = { which = mass_build_estate_expenditure which = mass_build_max_estate_expenditure } } }
+		hidden_effect = {
+			set_variable = { which = mass_build_estate_expenditure which = mass_build_max_estate_expenditure }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0022 }
+		}
+	}
+	option = { ### Min Estate Expenditure
+		name = "POP_MassBuilding.002.h"
+		trigger = { check_variable = { which = mass_build_estate_expenditure value = 0.001 } }
+		hidden_effect = {
+			set_variable = { which = mass_build_estate_expenditure value = 0 }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0022 }
+		}
+	}
+	option = { ### Increase Manpower Expenditure
+		name = "POP_MassBuilding.002.i"
+		trigger = { NOT = { check_variable = { which = mass_build_manpower_expenditure which = mass_build_max_manpower_expenditure } } }
+		hidden_effect = {
+			change_variable = { which = mass_build_manpower_expenditure value = 1 }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0022 }
+		}
+	}
+	option = { ### Decrease Manpower Expenditure
+		name = "POP_MassBuilding.002.j"
+		trigger = { check_variable = { which = mass_build_manpower_expenditure value = 1 } }
+		hidden_effect = {
+			change_variable = { which = mass_build_manpower_expenditure value = -1 }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0022 }
+		}
+	}
+	option = { ### Max Manpower Expenditure
+		name = "POP_MassBuilding.002.k"
+		trigger = { NOT = { check_variable = { which = mass_build_manpower_expenditure which = mass_build_max_manpower_expenditure } } }
+		hidden_effect = {
+			set_variable = { which = mass_build_manpower_expenditure which = mass_build_max_manpower_expenditure }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0022 }
+		}
+	}
+	option = { ### Min Manpower Expenditure
+		name = "POP_MassBuilding.002.l"
+		trigger = { check_variable = { which = mass_build_manpower_expenditure value = 0.001 } }
+		hidden_effect = {
+			set_variable = { which = mass_build_manpower_expenditure value = 0 }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0022 }
+		}
+	}
+	option = { ### Finalize Payment
+		name = "POP_MassBuilding.002.y"
+		if = {
+			limit = {
+				has_country_flag = mass_build_more_road
+			}
+			custom_tooltip = mass_build_more_option
+		}
+		custom_tooltip = mass_build_adm_cost_tooltip
+		custom_tooltip = mass_build_dip_cost_tooltip
+		custom_tooltip = mass_build_mil_cost_tooltip
+		custom_tooltip = mass_build_ducat_cost_tooltip
+		custom_tooltip = mass_build_estate_cost_tooltip
+		custom_tooltip = mass_build_manpower_cost_tooltip
+		hidden_effect = {
+			mass_build_finish_roads = yes
+			if = {
+				limit = {
+					NOT = {
+						any_owned_province = {
+							has_building = upgrade_roads_build
+							NOT = { has_province_modifier = road_is_building }
+							NOT = { has_province_flag = mass_building_road }
+						}
+					}
+				}
+				clr_country_flag = mass_build_more_road
+			}
+		}
+		highlight = yes
+	}
+	option = {
+		name = "POP_MassBuilding.002.z"
+		hidden_effect = {
+			mass_build_cancel_roads = yes
+		}
+		highlight = yes
+	}
+}
+
+country_event = {
+	id = POP_MassBuilding.0022
+	title = no_loc
+	desc = no_loc
+	picture = ROAD_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	option = {
+		name = no_loc
+		country_event = { id = POP_MassBuilding.0021 }
+	}
+}
+
+province_event = { ### Road building event
+	id = POP_MassBuilding.003
+	title = POP_MassBuilding.003.title
+	desc = POP_MassBuilding.003.desc
+	picture = ROAD_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_building = highway_network
+				}
+				set_province_flag = road_and_rail_network_building
+				add_province_modifier = {
+					name = road_is_building
+					duration = 1825
+				}
+			}
+			if = {
+				limit = {
+					has_building = paved_road_network
+				}
+				set_province_flag = highway_network_building
+				add_province_modifier = {
+					name = road_is_building
+					duration = 1825
+				}
+			}
+			if = {
+				limit = {
+					has_building = road_network
+				}
+				set_province_flag = paved_road_network_building
+				add_province_modifier = {
+					name = road_is_building
+					duration = 1825
+				}
+			}
+			if = {
+				limit = {
+					NOT = { has_building = road_network }
+					NOT = { has_building = paved_road_network }
+					NOT = { has_building = highway_network }
+					NOT = { has_building = road_and_rail_network }
+				}
+				set_province_flag = road_network_building
+				add_province_modifier = {
+					name = road_is_building
+					duration = 1825
+				}
+			}
+			province_event = {
+				id = POP_dev_button_interactions.009
+				days = 1825
+			}
+		}
+	}
+	
+	option = {
+		name = "POP_MassBuilding.003.a"
+		hidden_effect = {
+		}
+	}
+}
+
+province_event = { ### Tally Event (Forts)
+	id = POP_MassBuilding.004
+	title = no_loc
+	desc = no_loc
+	picture = CITY_DEVELOPMENT_eventPicture
+	#is_triggered_only = no
+	hidden = yes
+	
+	trigger = {
+		has_building = upgrade_fort_build
+		NOT = { has_province_flag = mass_building_fort }
+		NOT = { owner = { has_country_flag = mass_building } }
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	immediate = {
+		hidden_effect = {
+			owner = {
+				set_variable = { which = mass_build_ducat_cost value = 0 }
+				set_variable = { which = mass_build_num value = 0 }
+				every_owned_province = {
+					limit = { has_building = upgrade_fort_build }
+					mass_build_in_prov = { type=fort }
+				}
+				mass_build__calc_all = yes
+				country_event = {
+					id = POP_MassBuilding.0051
+				}
+			}
+		}
+	}
+	
+	option = { ### Road building
+		name = no_loc
+	}
+}
+
+country_event = {
+	id = POP_MassBuilding.0051
+	title = POP_MassBuilding.005.title
+	desc = POP_MassBuilding.005.desc
+	picture = FORT_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = mass_building
+		}
+#		custom_tooltip = mass_build_adm_cost_desc
+#		custom_tooltip = mass_build_dip_cost_desc
+		custom_tooltip = mass_build_mil_cost_desc
+		custom_tooltip = mass_build_ducat_cost_desc
+#		custom_tooltip = mass_build_estate_cost_desc
+		custom_tooltip = mass_build_manpower_cost_desc
+		if = {
+			limit = {
+				has_country_flag = mass_build_more_fort
+			}
+			custom_tooltip = mass_build_more_desc
+		}
+	}
+#	option = { ### Increase Administrative Expenditure
+#		name = "POP_MassBuilding.002.a"
+#		trigger = {
+#			NOT = { check_variable = { which = mass_build_admin_expenditure which = mass_build_max_admin_expenditure } }
+#		}
+#		hidden_effect = {
+#			change_variable = { which = mass_build_admin_expenditure value = 1 }
+#			mass_build__calc_all = yes
+#			country_event = { id = POP_MassBuilding.0052 }
+#		}
+#	}
+#	option = { ### Decrease Administrative Expenditure
+#		name = "POP_MassBuilding.002.b"
+#		trigger = { check_variable = { which = mass_build_admin_expenditure value = 1 } }
+#		hidden_effect = {
+#			change_variable = { which = mass_build_admin_expenditure value = -1 }
+#			mass_build__calc_all = yes
+#			country_event = { id = POP_MassBuilding.0052 }
+#		}
+#	}
+#	option = { ### Max Administrative Expenditure
+#		name = "POP_MassBuilding.002.c"
+#		trigger = { NOT = { check_variable = { which = mass_build_admin_expenditure which = mass_build_max_admin_expenditure } } }
+#		hidden_effect = {
+#			set_variable = { which = mass_build_admin_expenditure which = mass_build_max_admin_expenditure }
+#			mass_build__calc_all = yes
+#			country_event = { id = POP_MassBuilding.0052 }
+#		}
+#	}
+#	option = { ### Min Administrative Expenditure
+#		name = "POP_MassBuilding.002.d"
+#		trigger = { check_variable = { which = mass_build_admin_expenditure value = 0.001 } }
+#		hidden_effect = {
+#			set_variable = { which = mass_build_admin_expenditure value = 0 }
+#			mass_build__calc_all = yes
+#			country_event = { id = POP_MassBuilding.0052 }
+#		}
+#	}
+#	option = { ### Increase Estate Expenditure
+#		name = "POP_MassBuilding.002.e"
+#		trigger = { NOT = { check_variable = { which = mass_build_estate_expenditure which = mass_build_max_estate_expenditure } } }
+#		hidden_effect = {
+#			change_variable = { which = mass_build_estate_expenditure value = 1 }
+#			mass_build__calc_all = yes
+#			country_event = { id = POP_MassBuilding.0052 }
+#		}
+#	}
+#	option = { ### Decrease Estate Expenditure
+#		name = "POP_MassBuilding.002.f"
+#		trigger = { check_variable = { which = mass_build_estate_expenditure value = 1 } }
+#		hidden_effect = {
+#			change_variable = { which = mass_build_estate_expenditure value = -1 }
+#			mass_build__calc_all = yes
+#			country_event = { id = POP_MassBuilding.0052 }
+#		}
+#	}
+#	option = { ### Max Estate Expenditure
+#		name = "POP_MassBuilding.002.g"
+#		trigger = { NOT = { check_variable = { which = mass_build_estate_expenditure which = mass_build_max_estate_expenditure } } }
+#		hidden_effect = {
+#			set_variable = { which = mass_build_estate_expenditure which = mass_build_max_estate_expenditure }
+#			mass_build__calc_all = yes
+#			country_event = { id = POP_MassBuilding.0052 }
+#		}
+#	}
+#	option = { ### Min Estate Expenditure
+#		name = "POP_MassBuilding.002.h"
+#		trigger = { check_variable = { which = mass_build_estate_expenditure value = 0.001 } }
+#		hidden_effect = {
+#			set_variable = { which = mass_build_estate_expenditure value = 0 }
+#			mass_build__calc_all = yes
+#			country_event = { id = POP_MassBuilding.0052 }
+#		}
+#	}
+	option = { ### Increase Manpower Expenditure
+		name = "POP_MassBuilding.002.i"
+		trigger = { NOT = { check_variable = { which = mass_build_manpower_expenditure which = mass_build_max_manpower_expenditure } } }
+		hidden_effect = {
+			change_variable = { which = mass_build_manpower_expenditure value = 1 }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0052 }
+		}
+	}
+	option = { ### Decrease Manpower Expenditure
+		name = "POP_MassBuilding.002.j"
+		trigger = { check_variable = { which = mass_build_manpower_expenditure value = 1 } }
+		hidden_effect = {
+			change_variable = { which = mass_build_manpower_expenditure value = -1 }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0052 }
+		}
+	}
+	option = { ### Max Manpower Expenditure
+		name = "POP_MassBuilding.002.k"
+		trigger = { NOT = { check_variable = { which = mass_build_manpower_expenditure which = mass_build_max_manpower_expenditure } } }
+		hidden_effect = {
+			set_variable = { which = mass_build_manpower_expenditure which = mass_build_max_manpower_expenditure }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0052 }
+		}
+	}
+	option = { ### Min Manpower Expenditure
+		name = "POP_MassBuilding.002.l"
+		trigger = { check_variable = { which = mass_build_manpower_expenditure value = 0.001 } }
+		hidden_effect = {
+			set_variable = { which = mass_build_manpower_expenditure value = 0 }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0052 }
+		}
+	}
+	option = { ### Finalize Payment
+		name = "POP_MassBuilding.002.y"
+		if = {
+			limit = {
+				has_country_flag = mass_build_more_fort
+			}
+			custom_tooltip = mass_build_more_option
+		}
+		custom_tooltip = mass_build_adm_cost_tooltip
+		custom_tooltip = mass_build_dip_cost_tooltip
+		custom_tooltip = mass_build_mil_cost_tooltip
+		custom_tooltip = mass_build_ducat_cost_tooltip
+		custom_tooltip = mass_build_estate_cost_tooltip
+		custom_tooltip = mass_build_manpower_cost_tooltip
+		hidden_effect = {
+			mass_build_finish_forts = yes
+			if = {
+				limit = {
+					NOT = {
+						any_owned_province = {
+							has_building = upgrade_fort_build
+							NOT = { has_province_modifier = fort_is_building }
+							NOT = { has_province_flag = mass_building_fort }
+						}
+					}
+				}
+				clr_country_flag = mass_build_more_fort
+			}
+		}
+		highlight = yes
+	}
+	
+	option = {
+		name = "POP_MassBuilding.002.z"
+		hidden_effect = {
+			mass_build_cancel_forts = yes
+		}
+		highlight = yes
+	}
+}
+
+country_event = {
+	id = POP_MassBuilding.0052
+	title = no_loc
+	desc = no_loc
+	picture = FORT_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	option = {
+		name = no_loc
+		country_event = { id = POP_MassBuilding.0051 }
+	}
+}
+
+province_event = { ### Fort building event
+	id = POP_MassBuilding.006
+	title = POP_MassBuilding.006.title
+	desc = POP_MassBuilding.006.desc
+	picture = FORT_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_building = fort_17th
+				}
+				set_province_flag = fort_18th_building
+				add_province_modifier = {
+					name = fort_is_building
+					duration = 900
+				}
+			}
+			if = {
+				limit = {
+					has_building = fort_16th
+				}
+				set_province_flag = fort_17th_building
+				add_province_modifier = {
+					name = fort_is_building
+					duration = 900
+				}
+			}
+			if = {
+				limit = {
+					has_building = fort_15th
+				}
+				set_province_flag = fort_16th_building
+				add_province_modifier = {
+					name = fort_is_building
+					duration = 900
+				}
+			}
+			if = {
+				limit = {
+					has_building = fort_14th
+				}
+				set_province_flag = fort_15th_building
+				add_province_modifier = {
+					name = fort_is_building
+					duration = 900
+				}
+			}
+			if = {
+				limit = {
+					NOT = { has_building = fort_14th }
+					NOT = { has_building = fort_15th }
+					NOT = { has_building = fort_16th }
+					NOT = { has_building = fort_17th }
+					NOT = { has_building = fort_18th }
+				}
+				set_province_flag = fort_14th_building
+				add_province_modifier = {
+					name = fort_is_building
+					duration = 900
+				}
+			}
+			province_event = {
+				id = POP_dev_button_interactions.109
+				days = 900
+			}
+		}
+	}
+	
+	option = {
+		name = "POP_MassBuilding.006.a"
+		hidden_effect = {
+		}
+	}
+}
+
+province_event = { ### Tally Event (Canals)
+	id = POP_MassBuilding.007
+	title = no_loc
+	desc = no_loc
+	picture = CITY_DEVELOPMENT_eventPicture
+	#is_triggered_only = no
+	hidden = yes
+	
+	trigger = {
+		has_building = upgrade_canal_build
+		NOT = { has_province_flag = mass_building_canal }
+		NOT = { owner = { has_country_flag = mass_building } }
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	immediate = {
+		hidden_effect = {
+			owner = {
+				set_variable = { which = mass_build_ducat_cost value = 0 }
+				set_variable = { which = mass_build_num value = 0 }
+				every_owned_province = {
+					limit = { has_building = upgrade_canal_build }
+					mass_build_in_prov = { type=canal }
+				}
+				mass_build__calc_all = yes
+				country_event = {
+					id = POP_MassBuilding.0081
+				}
+			}
+		}
+	}
+	
+	option = { ### Road building
+		name = no_loc
+	}
+}
+
+country_event = {
+	id = POP_MassBuilding.0081
+	title = POP_MassBuilding.008.title
+	desc = POP_MassBuilding.008.desc
+	picture = FARMING_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = mass_building
+		}
+		custom_tooltip = mass_build_adm_cost_desc
+		custom_tooltip = mass_build_dip_cost_desc
+		custom_tooltip = mass_build_mil_cost_desc
+		custom_tooltip = mass_build_ducat_cost_desc
+		custom_tooltip = mass_build_estate_cost_desc
+		custom_tooltip = mass_build_manpower_cost_desc
+		if = {
+			limit = {
+				has_country_flag = mass_build_more_canal
+			}
+			custom_tooltip = mass_build_more_desc
+		}
+	}
+	option = { ### Increase Administrative Expenditure
+		name = "POP_MassBuilding.002.a"
+		trigger = { NOT = { check_variable = { which = mass_build_admin_expenditure which = mass_build_max_admin_expenditure } } }
+		hidden_effect = {
+			change_variable = { which = mass_build_admin_expenditure value = 1 }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0082 }
+		}
+	}
+	option = { ### Decrease Administrative Expenditure
+		name = "POP_MassBuilding.002.b"
+		trigger = { check_variable = { which = mass_build_admin_expenditure value = 1 } }
+		hidden_effect = {
+			change_variable = { which = mass_build_admin_expenditure value = -1 }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0082 }
+		}
+	}
+	option = { ### Max Administrative Expenditure
+		name = "POP_MassBuilding.002.c"
+		trigger = { NOT = { check_variable = { which = mass_build_admin_expenditure which = mass_build_max_admin_expenditure } } }
+		hidden_effect = {
+			set_variable = { which = mass_build_admin_expenditure which = mass_build_max_admin_expenditure }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0082 }
+		}
+	}
+	option = { ### Min Administrative Expenditure
+		name = "POP_MassBuilding.002.d"
+		trigger = { check_variable = { which = mass_build_admin_expenditure value = 0.001 } }
+		hidden_effect = {
+			set_variable = { which = mass_build_admin_expenditure value = 0 }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0082 }
+		}
+	}
+	option = { ### Increase Estate Expenditure
+		name = "POP_MassBuilding.002.e"
+		trigger = { NOT = { check_variable = { which = mass_build_estate_expenditure which = mass_build_max_estate_expenditure } } }
+		hidden_effect = {
+			change_variable = { which = mass_build_estate_expenditure value = 1 }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0082 }
+		}
+	}
+	option = { ### Decrease Estate Expenditure
+		name = "POP_MassBuilding.002.f"
+		trigger = { check_variable = { which = mass_build_estate_expenditure value = 1 } }
+		hidden_effect = {
+			change_variable = { which = mass_build_estate_expenditure value = -1 }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0082 }
+		}
+	}
+	option = { ### Max Estate Expenditure
+		name = "POP_MassBuilding.002.g"
+		trigger = { NOT = { check_variable = { which = mass_build_estate_expenditure which = mass_build_max_estate_expenditure } } }
+		hidden_effect = {
+			set_variable = { which = mass_build_estate_expenditure which = mass_build_max_estate_expenditure }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0082 }
+		}
+	}
+	option = { ### Min Estate Expenditure
+		name = "POP_MassBuilding.002.h"
+		trigger = { check_variable = { which = mass_build_estate_expenditure value = 0.001 } }
+		hidden_effect = {
+			set_variable = { which = mass_build_estate_expenditure value = 0 }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0082 }
+		}
+	}
+	option = { ### Increase Manpower Expenditure
+		name = "POP_MassBuilding.002.i"
+		trigger = { NOT = { check_variable = { which = mass_build_manpower_expenditure which = mass_build_max_manpower_expenditure } } }
+		hidden_effect = {
+			change_variable = { which = mass_build_manpower_expenditure value = 1 }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0082 }
+		}
+	}
+	option = { ### Decrease Manpower Expenditure
+		name = "POP_MassBuilding.002.j"
+		trigger = { check_variable = { which = mass_build_manpower_expenditure value = 1 } }
+		hidden_effect = {
+			change_variable = { which = mass_build_manpower_expenditure value = -1 }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0082 }
+		}
+	}
+	option = { ### Max Manpower Expenditure
+		name = "POP_MassBuilding.002.k"
+		trigger = { NOT = { check_variable = { which = mass_build_manpower_expenditure which = mass_build_max_manpower_expenditure } } }
+		hidden_effect = {
+			set_variable = { which = mass_build_manpower_expenditure which = mass_build_max_manpower_expenditure }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0082 }
+		}
+	}
+	option = { ### Min Manpower Expenditure
+		name = "POP_MassBuilding.002.l"
+		trigger = { check_variable = { which = mass_build_manpower_expenditure value = 0.001 } }
+		hidden_effect = {
+			set_variable = { which = mass_build_manpower_expenditure value = 0 }
+			mass_build__calc_all = yes
+			country_event = { id = POP_MassBuilding.0082 }
+		}
+	}
+	option = { ### Finalize Payment
+		name = "POP_MassBuilding.002.y"
+		if = {
+			limit = {
+				has_country_flag = mass_build_more_canal
+			}
+			custom_tooltip = mass_build_more_option
+		}
+		custom_tooltip = mass_build_adm_cost_tooltip
+		custom_tooltip = mass_build_dip_cost_tooltip
+		custom_tooltip = mass_build_mil_cost_tooltip
+		custom_tooltip = mass_build_ducat_cost_tooltip
+		custom_tooltip = mass_build_estate_cost_tooltip
+		custom_tooltip = mass_build_manpower_cost_tooltip
+		hidden_effect = {
+			mass_build_finish_canals = yes
+			if = {
+				limit = {
+					NOT = {
+						any_owned_province = {
+							has_building = upgrade_canal_build
+							NOT = { has_province_modifier = canal_is_building }
+							NOT = { has_province_flag = mass_building_canal }
+						}
+					}
+				}
+				clr_country_flag = mass_build_more_canal
+			}
+		}
+		highlight = yes
+	}
+	
+	option = {
+		name = "POP_MassBuilding.002.z"
+		hidden_effect = {
+			mass_build_cancel_canals = yes
+		}
+		highlight = yes
+	}
+}
+
+country_event = {
+	id = POP_MassBuilding.0082
+	title = no_loc
+	desc = no_loc
+	picture = FARMING_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	option = {
+		name = no_loc
+		country_event = { id = POP_MassBuilding.0081 }
+	}
+}
+
+province_event = { ### Canal building event
+	id = POP_MassBuilding.009
+	title = POP_MassBuilding.009.title
+	desc = POP_MassBuilding.009.desc
+	picture = ROAD_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_building = canal_level_2
+				}
+				set_province_flag = canal_level_3_building
+				add_province_modifier = {
+					name = canal_is_building
+					duration = 1825
+				}
+			}
+			if = {
+				limit = {
+					has_building = canal_level_1
+				}
+				set_province_flag = canal_level_2_building
+				add_province_modifier = {
+					name = canal_is_building
+					duration = 1825
+				}
+			}
+			if = {
+				limit = {
+					NOT = { has_building = canal_level_1 }
+					NOT = { has_building = canal_level_2 }
+					NOT = { has_building = canal_level_3 }
+				}
+				set_province_flag = canal_level_1_building
+				add_province_modifier = {
+					name = canal_is_building
+					duration = 1825
+				}
+			}
+			province_event = {
+				id = POP_dev_button_interactions.410
+				days = 1825
+			}
+		}
+	}
+	
+	option = {
+		name = "POP_MassBuilding.009.a"
+		hidden_effect = {
+		}
+	}
+}
+
+country_event = { ### Criteria Upgrade Flagging
+	id = POP_MassBuilding.900
+	title = POP_MassBuilding.900.title
+	desc = POP_MassBuilding.900.desc
+	picture = CITY_DEVELOPMENT_eventPicture
+	is_triggered_only = yes
+	
+	#trigger = {
+	#}
+	
+	immediate = {
+		if = { limit = { OR = { has_country_flag = mass_build_flagging_road has_country_flag = mass_build_flagging_canal has_country_flag = mass_build_flagging_canal } }
+			if = { limit = { has_country_flag = mass_build_flagging_road } custom_tooltip = mass_build_flagging_road_tooltip }
+			if = { limit = { has_country_flag = mass_build_flagging_canal } custom_tooltip = mass_build_flagging_canal_tooltip }
+			if = { limit = { has_country_flag = mass_build_flagging_canal } custom_tooltip = mass_build_flagging_fort_tooltip }
+		}
+		if = { limit = { NOT = { has_country_flag = mass_build_flagging_road has_country_flag = mass_build_flagging_canal has_country_flag = mass_build_flagging_canal } }
+			custom_tooltip = mass_building_flagging_nothing_tooltip
+		}
+		hidden_effect = {
+			set_country_flag = mass_building
+		}
+	}
+	
+	option = { ### Build Roads
+		name = "POP_MassBuilding.900.a"
+		trigger = { NOT = { has_country_flag = mass_build_flagging_road has_country_flag = mass_build_flagging_canal has_country_flag = mass_build_flagging_fort }
+		}
+		hidden_effect = {
+			set_country_flag = mass_build_flagging_road
+			country_event = { id = POP_MassBuilding.901 }
+		}
+	}
+	
+	option = { ### Do Not Build Roads
+		name = "POP_MassBuilding.900.b"
+		trigger = { has_country_flag = mass_build_flagging_road
+		}
+		hidden_effect = {
+			clr_country_flag = mass_build_flagging_road
+			country_event = { id = POP_MassBuilding.901 }
+		}
+	}
+	
+	option = { ### Build Canals
+		name = "POP_MassBuilding.900.c"
+		trigger = { NOT = { has_country_flag = mass_build_flagging_road has_country_flag = mass_build_flagging_canal has_country_flag = mass_build_flagging_fort }
+		}
+		hidden_effect = {
+			set_country_flag = mass_build_flagging_canal
+			country_event = { id = POP_MassBuilding.901 }
+		}
+	}
+	
+	option = { ### Do Not Build Canals
+		name = "POP_MassBuilding.900.d"
+		trigger = { has_country_flag = mass_build_flagging_canal
+		}
+		hidden_effect = {
+			clr_country_flag = mass_build_flagging_canal
+			country_event = { id = POP_MassBuilding.901 }
+		}
+	}
+	
+	option = { ### Build Forts
+		name = "POP_MassBuilding.900.e"
+		trigger = { NOT = { has_country_flag = mass_build_flagging_road has_country_flag = mass_build_flagging_canal has_country_flag = mass_build_flagging_fort }
+		}
+		hidden_effect = {
+			set_country_flag = mass_build_flagging_fort
+			country_event = { id = POP_MassBuilding.901 }
+		}
+	}
+	
+	option = { ### Do Not Build Forts
+		name = "POP_MassBuilding.900.f"
+		trigger = { has_country_flag = mass_build_flagging_fort
+		}
+		hidden_effect = {
+			clr_country_flag = mass_build_flagging_fort
+			country_event = { id = POP_MassBuilding.901 }
+		}
+	}
+	
+	option = { ### Build everywhere
+		name = "POP_MassBuilding.900.g"
+		highlight=yes
+		trigger = {
+			OR = {
+				has_country_flag = mass_build_flagging_road
+				has_country_flag = mass_build_flagging_canal
+				has_country_flag = mass_build_flagging_fort
+			}
+		}
+		hidden_effect = {
+			every_owned_province = {
+				if = {
+					limit = {
+						owner = { has_country_flag = mass_build_flagging_road }
+						CanBuildRoad = yes
+					}
+					add_building = upgrade_roads_build
+				}
+				if = {
+					limit = {
+						owner = { has_country_flag = mass_build_flagging_canal }
+						CanBuildCanal = yes
+					}
+					add_building = upgrade_canal_build
+				}
+				if = {
+					limit = {
+						owner = { has_country_flag = mass_build_flagging_fort }
+						CanBuildFort = yes
+					}
+					add_building = upgrade_fort_build
+				}
+			}
+			clr_country_flag = mass_building
+			clr_country_flag = mass_build_flagging_road
+			clr_country_flag = mass_build_flagging_canal
+			clr_country_flag = mass_build_flagging_fort
+		}
+		custom_tooltip = mass_build_all_tooltip
+	}
+	
+	option = { ### Upgrade Existing
+		name = "POP_MassBuilding.900.h"
+		highlight=yes
+		trigger = {
+			OR = {
+				has_country_flag = mass_build_flagging_road
+				has_country_flag = mass_build_flagging_canal
+				has_country_flag = mass_build_flagging_fort
+			}
+		}
+		hidden_effect = {
+			every_owned_province = {
+				if = {
+					limit = {
+						owner = { has_country_flag = mass_build_flagging_road }
+						OR = {
+							has_building = road_network
+							has_building = paved_road_network
+							has_building = highway_network
+						}
+						CanBuildRoad = yes
+					}
+					add_building = upgrade_roads_build
+				}
+				if = {
+					limit = {
+						owner = { has_country_flag = mass_build_flagging_canal }
+						OR = {
+							has_building = canal_level_1
+							has_building = canal_level_2
+						}
+						CanBuildCanal = yes
+					}
+					add_building = upgrade_canal_build
+				}
+				if = {
+					limit = {
+						owner = { has_country_flag = mass_build_flagging_fort }
+						OR = {
+							has_building = fort_14th
+							has_building = fort_15th
+							has_building = fort_16th
+							has_building = fort_17th
+						}
+						CanBuildFort = yes
+					}
+					add_building = upgrade_fort_build
+				}
+			}
+			clr_country_flag = mass_building
+			clr_country_flag = mass_build_flagging_road
+			clr_country_flag = mass_build_flagging_canal
+			clr_country_flag = mass_build_flagging_fort
+		}
+		custom_tooltip = mass_build_upgrade_tooltip
+	}
+	
+	option = { ### Nevermind
+		name = "POP_MassBuilding.900.z"
+		highlight=yes
+		trigger = {
+		}
+		hidden_effect = {
+			clr_country_flag = mass_building
+			clr_country_flag = mass_build_flagging_road
+			clr_country_flag = mass_build_flagging_canal
+			clr_country_flag = mass_build_flagging_fort
+		}
+	}
+}
+
+country_event = { ### Criteria Upgrade Flagging
+	id = POP_MassBuilding.901
+	title = POP_MassBuilding.900.title
+	desc = POP_MassBuilding.900.desc
+	picture = CITY_DEVELOPMENT_eventPicture
+	is_triggered_only = yes
+	
+	#trigger = {
+	#}
+	
+	immediate = {
+		if = { limit = { OR = { has_country_flag = mass_build_flagging_road has_country_flag = mass_build_flagging_fort has_country_flag = mass_build_flagging_canal } }
+			if = { limit = { has_country_flag = mass_build_flagging_road } custom_tooltip = mass_build_flagging_road_tooltip }
+			if = { limit = { has_country_flag = mass_build_flagging_canal } custom_tooltip = mass_build_flagging_canal_tooltip }
+			if = { limit = { has_country_flag = mass_build_flagging_fort } custom_tooltip = mass_build_flagging_fort_tooltip }
+		}
+		if = { limit = { NOT = { has_country_flag = mass_build_flagging_road has_country_flag = mass_build_flagging_fort has_country_flag = mass_build_flagging_canal } }
+			custom_tooltip = mass_building_flagging_nothing_tooltip
+		}
+		hidden_effect = {
+			set_country_flag = mass_building
+		}
+	}
+	
+	option = { ### Build Roads
+		name = "POP_MassBuilding.900.a"
+		trigger = { NOT = { has_country_flag = mass_build_flagging_road has_country_flag = mass_build_flagging_canal has_country_flag = mass_build_flagging_fort }
+		}
+		hidden_effect = {
+			set_country_flag = mass_build_flagging_road
+			country_event = { id = POP_MassBuilding.900 }
+		}
+	}
+	
+	option = { ### Do Not Build Roads
+		name = "POP_MassBuilding.900.b"
+		trigger = { has_country_flag = mass_build_flagging_road
+		}
+		hidden_effect = {
+			clr_country_flag = mass_build_flagging_road
+			country_event = { id = POP_MassBuilding.900 }
+		}
+	}
+	
+	option = { ### Build Canals
+		name = "POP_MassBuilding.900.c"
+		trigger = { NOT = { has_country_flag = mass_build_flagging_road has_country_flag = mass_build_flagging_canal has_country_flag = mass_build_flagging_fort }
+		}
+		hidden_effect = {
+			set_country_flag = mass_build_flagging_canal
+			country_event = { id = POP_MassBuilding.900 }
+		}
+	}
+	
+	option = { ### Do Not Build Canals
+		name = "POP_MassBuilding.900.d"
+		trigger = { has_country_flag = mass_build_flagging_canal
+		}
+		hidden_effect = {
+			clr_country_flag = mass_build_flagging_canal
+			country_event = { id = POP_MassBuilding.900 }
+		}
+	}
+	
+	option = { ### Build Forts
+		name = "POP_MassBuilding.900.e"
+		trigger = { NOT = { has_country_flag = mass_build_flagging_road has_country_flag = mass_build_flagging_canal has_country_flag = mass_build_flagging_fort }
+		}
+		hidden_effect = {
+			set_country_flag = mass_build_flagging_fort
+			country_event = { id = POP_MassBuilding.900 }
+		}
+	}
+	
+	option = { ### Do Not Build Forts
+		name = "POP_MassBuilding.900.f"
+		trigger = { has_country_flag = mass_build_flagging_fort
+		}
+		hidden_effect = {
+			clr_country_flag = mass_build_flagging_fort
+			country_event = { id = POP_MassBuilding.900 }
+		}
+	}
+	
+	option = { ### Build everywhere
+		name = "POP_MassBuilding.900.g"
+		highlight=yes
+		trigger = {
+			OR = {
+				has_country_flag = mass_build_flagging_road
+				has_country_flag = mass_build_flagging_canal
+				has_country_flag = mass_build_flagging_fort
+			}
+		}
+		hidden_effect = {
+			every_owned_province = {
+				if = {
+					limit = {
+						owner = { has_country_flag = mass_build_flagging_road }
+						CanBuildRoad = yes
+					}
+					add_building = upgrade_roads_build
+				}
+				if = {
+					limit = {
+						owner = { has_country_flag = mass_build_flagging_canal }
+						CanBuildCanal = yes
+					}
+					add_building = upgrade_canal_build
+				}
+				if = {
+					limit = {
+						owner = { has_country_flag = mass_build_flagging_fort }
+						CanBuildFort = yes
+					}
+					add_building = upgrade_fort_build
+				}
+			}
+			clr_country_flag = mass_building
+			clr_country_flag = mass_build_flagging_road
+			clr_country_flag = mass_build_flagging_canal
+			clr_country_flag = mass_build_flagging_fort
+		}
+		custom_tooltip = mass_build_all_tooltip
+	}
+	
+	option = { ### Upgrade Existing
+		name = "POP_MassBuilding.900.h"
+		highlight=yes
+		trigger = {
+			OR = {
+				has_country_flag = mass_build_flagging_road
+				has_country_flag = mass_build_flagging_canal
+				has_country_flag = mass_build_flagging_fort
+			}
+		}
+		hidden_effect = {
+			every_owned_province = {
+				if = {
+					limit = {
+						owner = { has_country_flag = mass_build_flagging_road }
+						OR = {
+							has_building = road_network
+							has_building = paved_road_network
+							has_building = highway_network
+						}
+						CanBuildRoad = yes
+					}
+					add_building = upgrade_roads_build
+				}
+				if = {
+					limit = {
+						owner = { has_country_flag = mass_build_flagging_canal }
+						OR = {
+							has_building = canal_level_1
+							has_building = canal_level_2
+						}
+						CanBuildCanal = yes
+					}
+					add_building = upgrade_canal_build
+				}
+				if = {
+					limit = {
+						owner = { has_country_flag = mass_build_flagging_fort }
+						OR = {
+							has_building = fort_14th
+							has_building = fort_15th
+							has_building = fort_16th
+							has_building = fort_17th
+						}
+						CanBuildFort = yes
+					}
+					add_building = upgrade_fort_build
+				}
+			}
+			clr_country_flag = mass_building
+			clr_country_flag = mass_build_flagging_road
+			clr_country_flag = mass_build_flagging_canal
+			clr_country_flag = mass_build_flagging_fort
+		}
+		custom_tooltip = mass_build_upgrade_tooltip
+	}
+	
+	option = { ### Nevermind
+		name = "POP_MassBuilding.900.z"
+		highlight=yes
+		trigger = {
+		}
+		hidden_effect = {
+			clr_country_flag = mass_building
+			clr_country_flag = mass_build_flagging_road
+			clr_country_flag = mass_build_flagging_canal
+			clr_country_flag = mass_build_flagging_fort
+		}
+	}
+}

@@ -1,0 +1,1359 @@
+#create_strong_bonds = {
+#	category = influence
+#	
+#	alert_index = 43
+#	alert_tooltip = ICON_SUBJUGATION
+#	
+#	require_acceptance = yes # Whether the recipient gets an option to decline
+#	
+#	is_visible = {
+#		is_subject_of = FROM
+#		is_subject_of_type = tributary_state
+#		FROM = {
+#			OR = {
+#				culture_group = chinese_group
+#				has_country_flag = barbarian_claimant_china
+#				has_country_flag = mandate_of_heaven_claimed
+#			}
+#		}
+#	}
+#	is_allowed = {
+#		years_in_vassalage_under = {
+#			who = FROM
+#			years = 10
+#			all_subject_country = yes
+#		}
+#		NOT = { has_ruler_modifier = refused_stronger_bonds }
+#	}
+#	on_accept = {
+#		add_adm_power = -100
+#		add_dip_power = -100
+#		add_mil_power = -100
+#		FROM = {
+#			create_subject = { subject_type = close_tributary_state subject = ROOT }
+#		}
+#	}
+#	on_decline = {
+#		add_adm_power = -100
+#		add_dip_power = -100
+#		add_mil_power = -100
+#		add_ruler_modifier = { name = refused_stronger_bonds duration = -1 }
+#	}
+#	
+#	ai_acceptance = {
+#		add_entry = {
+#			name = TRUST
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = trust
+#				who = FROM
+#				with = ROOT
+#			}
+#			subtract_variable = { which = ai_value value = 50 }
+#			multiply_variable = { which = ai_value value = 2 }
+#		}
+#		add_entry = {
+#			name = OPINION
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = opinion
+#				who = FROM
+#				with = ROOT
+#			}
+#			divide_variable = { which = ai_value value = 10 }
+#		}
+#		add_entry = {
+#			name = MYDIPLOREP_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = modifier:diplomatic_reputation
+#			}
+#			multiply_variable = { which = ai_value value = 2 }
+#		}
+#		add_entry = {
+#			name = THEIRDIPLOREP_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = modifier:diplomatic_reputation
+#				who = FROM
+#			}
+#			multiply_variable = { which = ai_value value = -2 }
+#		}
+#		add_entry = {
+#			name = MYLEGITIMACY_TT
+#			export_to_variable = {
+#				which = ai_value
+#				value = trigger_value:legitimacy
+#			}
+#			divide_variable = { which = ai_value value = 2 }
+#		}
+##		add_entry = {
+##			name = THEIRLEGITIMACY_TT
+##			set_variable = {
+##				which = ai_value
+##				value = 1
+##			}
+##			set_variable = {
+##				which = legitimacy
+##				who = FROM
+##			}
+##			set_variable = {
+##				which = ai_value
+##				which = legitimacy
+##			}
+##			multiply_variable = { which = ai_value value = -1 }
+##		}
+#		add_entry = {
+#			name = MYPRESTIGE_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = prestige
+#			}
+#			multiply_variable = { which = ai_value value = 0.75 }
+#		}
+#		add_entry = {
+#			name = THEIRPRESTIGE_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = prestige
+#				who = FROM
+#			}
+#			multiply_variable = { which = ai_value value = -0.75 }
+#		}
+#		add_entry = {
+#			name = ARMYSIZE_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = army_size
+#				who = FROM
+#			}
+#			export_to_variable = {
+#				variable_name = ai_value_calc
+#				value = army_size
+#			}
+#			subtract_variable = { which = ai_value which = ai_value_calc }
+#		}
+#		add_entry = {
+#			name = NAVYSIZE_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = navy_size
+#				who = FROM
+#			}
+#			export_to_variable = {
+#				variable_name = ai_value_calc
+#				value = navy_size
+#			}
+#			subtract_variable = { which = ai_value which = ai_value_calc }
+#		}
+#		add_entry = {
+#			name = DEV_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = total_development
+#			}
+#			divide_variable = { which = ai_value value = 5 }
+#			export_to_variable = {
+#				variable_name = ai_value_calc
+#				value = total_development
+#				who = FROM
+#			}
+#			subtract_variable = { which = ai_value which = ai_value_calc }
+#		}
+#		add_entry = {
+#			name = BORDERDISTANCE_TT
+#			export_to_variable = {
+#				which = ai_value
+#				value = border_distance
+#				who = FROM
+#				with = ROOT
+#			}
+#			multiply_variable = { which = ai_value value = -1000 }
+#		}
+#	}
+#	ai_will_do = { # this is a trigger
+#		adm_power = 100
+#		dip_power = 100
+#		mil_power = 100
+#		religion = confucianism
+#	}
+#}
+#
+#subject_integration = {
+#	category = influence
+#	
+#	alert_index = 44
+#	alert_tooltip = ICON_ASSIMILATION
+#	
+#	require_acceptance = yes # Whether the recipient gets an option to decline
+#	
+#	is_visible = {
+#		overlord_of = FROM
+#		FROM = {
+#			OR = {
+#				is_subject_of_type = vassal
+#				is_subject_of_type = personal_union
+#			}
+#		}
+#	}
+#	
+#	is_allowed = {
+#		FROM = {
+#			NOT = { has_ruler_modifier = policy_partner }
+#			NOT = { liberty_desire = 25 }
+#			OR = {
+#				AND = {
+#					is_subject_of_type = vassal
+#					years_in_vassalage_under = { who = ROOT years = 10 }
+#				}
+#				AND = {
+#					is_subject_of_type = personal_union
+#					years_in_union_under = { who = ROOT years = 10 }
+#				}
+#			}
+#		}
+#		OR = {
+#			ADM = 3
+#			advisor = spymaster
+#			advisor = statesman
+#		}
+#		absolutism = 5
+#	}
+#	
+#	on_accept = {
+#		add_adm_power = -25
+#		add_dip_power = -25
+#		add_mil_power = -25
+#		FROM = {
+#			change_variable = { which = Years_as_Vassal value = 10 }
+#			add_ruler_modifier = {
+#				name = policy_partner
+#				hidden = yes
+#			}
+#		}
+#	}
+#	
+#	on_decline = {
+#		add_adm_power = -25
+#		add_dip_power = -25
+#		add_mil_power = -25
+#		FROM = { add_liberty_desire = 10 }
+#	}
+#	
+#	ai_acceptance = {
+#		add_entry = {
+#			name = TRUST
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = trust
+#				who = FROM
+#				with = ROOT
+#			}
+#			subtract_variable = { which = ai_value value = 50 }
+#			multiply_variable = { which = ai_value value = 2 }
+#		}
+#		add_entry = {
+#			name = OPINION
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = opinion
+#				who = FROM
+#				with = ROOT
+#			}
+#			divide_variable = { which = ai_value value = 10 }
+#		}
+#		add_entry = {
+#			name = MYDIPLOREP_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = modifier:diplomatic_reputation
+#			}
+#			multiply_variable = { which = ai_value value = 2 }
+#		}
+#		add_entry = {
+#			name = THEIRDIPLOREP_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = modifier:diplomatic_reputation
+#				who = FROM
+#			}
+#			multiply_variable = { which = ai_value value = -2 }
+#		}
+#		add_entry = {
+#			name = MYLEGITIMACY_TT
+#			export_to_variable = {
+#				which = ai_value
+#				value = trigger_value:legitimacy
+#			}
+#			divide_variable = { which = ai_value value = 2 }
+#		}
+##		add_entry = {
+##			name = THEIRLEGITIMACY_TT
+##			set_variable = {
+##				which = ai_value
+##				value = 1
+##			}
+##			set_variable = {
+##				which = legitimacy
+##				who = FROM
+##			}
+##			set_variable = {
+##				which = ai_value
+##				which = legitimacy
+##			}
+##			multiply_variable = { which = ai_value value = -1 }
+##		}
+#		add_entry = {
+#			name = MYPRESTIGE_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = prestige
+#			}
+#			multiply_variable = { which = ai_value value = 0.75 }
+#		}
+#		add_entry = {
+#			name = THEIRPRESTIGE_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = prestige
+#				who = FROM
+#			}
+#			multiply_variable = { which = ai_value value = -0.75 }
+#		}
+#		add_entry = {
+#			name = ARMYSIZE_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = army_size
+#				who = FROM
+#			}
+#			export_to_variable = {
+#				variable_name = ai_value_calc
+#				value = army_size
+#			}
+#			subtract_variable = { which = ai_value which = ai_value_calc }
+#		}
+#		add_entry = {
+#			name = NAVYSIZE_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = navy_size
+#				who = FROM
+#			}
+#			export_to_variable = {
+#				variable_name = ai_value_calc
+#				value = navy_size
+#			}
+#			subtract_variable = { which = ai_value which = ai_value_calc }
+#		}
+#		add_entry = {
+#			name = DEV_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = total_development
+#			}
+#			divide_variable = { which = ai_value value = 5 }
+#			export_to_variable = {
+#				variable_name = ai_value_calc
+#				value = total_development
+#				who = FROM
+#			}
+#			subtract_variable = { which = ai_value which = ai_value_calc }
+#		}
+#		add_entry = {
+#			name = BORDERDISTANCE_TT
+#			export_to_variable = {
+#				which = ai_value
+#				value = border_distance
+#				who = FROM
+#				with = ROOT
+#			}
+#			multiply_variable = { which = ai_value value = -1000 }
+#		}
+#	}
+#	
+#	ai_will_do = { # this is a trigger
+#		absolutism = 10
+#		adm_power = 50
+#		dip_power = 50
+#		mil_power = 50
+#	}
+#}
+#
+#curtail_nobility = {
+#	category = influence
+#	
+#	alert_index = 45
+#	alert_tooltip = ICON_VASSAL
+#	
+#	require_acceptance = yes # Whether the recipient gets an option to decline
+#	
+#	is_visible = {
+#		overlord_of = FROM
+#		FROM = {
+#			is_subject_of_type = personal_union
+#		}
+#	}
+#	
+#	is_allowed = {
+#		FROM = {
+#			NOT = { has_country_flag = curtailed_nobility }
+#		}
+#	}
+#	
+#	on_accept = {
+#		add_adm_power = -50
+#		add_dip_power = -50
+#		add_mil_power = -50
+#		FROM = {
+#			set_country_flag = curtailed_nobility
+#			add_opinion = { who = ROOT modifier = curtailed_nobility_accepted }
+#		}
+#	}
+#	
+#	on_decline = {
+#		add_adm_power = -50
+#		add_dip_power = -50
+#		add_mil_power = -50
+#		FROM = {
+#			add_liberty_desire = 20
+#			add_opinion = { who = ROOT modifier = curtailed_nobility_refused }
+#		}
+#	}
+#	
+#	ai_acceptance = {
+#		add_entry = {
+#			name = TRUST
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = trust
+#				who = FROM
+#				with = ROOT
+#			}
+#			subtract_variable = { which = ai_value value = 50 }
+#			multiply_variable = { which = ai_value value = 2 }
+#		}
+#		add_entry = {
+#			name = OPINION
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = opinion
+#				who = FROM
+#				with = ROOT
+#			}
+#			divide_variable = { which = ai_value value = 10 }
+#		}
+#		add_entry = {
+#			name = MYDIPLOREP_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = modifier:diplomatic_reputation
+#			}
+#			multiply_variable = { which = ai_value value = 2 }
+#		}
+#		add_entry = {
+#			name = THEIRDIPLOREP_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = modifier:diplomatic_reputation
+#				who = FROM
+#			}
+#			multiply_variable = { which = ai_value value = -2 }
+#		}
+#		add_entry = {
+#			name = MYLEGITIMACY_TT
+#			export_to_variable = {
+#				which = ai_value
+#				value = trigger_value:legitimacy
+#			}
+#			divide_variable = { which = ai_value value = 2 }
+#		}
+##		add_entry = {
+##			name = THEIRLEGITIMACY_TT
+##			set_variable = {
+##				which = ai_value
+##				value = 1
+##			}
+##			set_variable = {
+##				which = legitimacy
+##				who = FROM
+##			}
+##			set_variable = {
+##				which = ai_value
+##				which = legitimacy
+##			}
+##			multiply_variable = { which = ai_value value = -1 }
+##		}
+#		add_entry = {
+#			name = MYPRESTIGE_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = prestige
+#			}
+#			multiply_variable = { which = ai_value value = 0.75 }
+#		}
+#		add_entry = {
+#			name = THEIRPRESTIGE_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = prestige
+#				who = FROM
+#			}
+#			multiply_variable = { which = ai_value value = -0.75 }
+#		}
+#		add_entry = {
+#			name = ARMYSIZE_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = army_size
+#				who = FROM
+#			}
+#			export_to_variable = {
+#				variable_name = ai_value_calc
+#				value = army_size
+#			}
+#			subtract_variable = { which = ai_value which = ai_value_calc }
+#		}
+#		add_entry = {
+#			name = NAVYSIZE_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = navy_size
+#				who = FROM
+#			}
+#			export_to_variable = {
+#				variable_name = ai_value_calc
+#				value = navy_size
+#			}
+#			subtract_variable = { which = ai_value which = ai_value_calc }
+#		}
+#		add_entry = {
+#			name = DEV_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = total_development
+#			}
+#			divide_variable = { which = ai_value value = 5 }
+#			export_to_variable = {
+#				variable_name = ai_value_calc
+#				value = total_development
+#				who = FROM
+#			}
+#			subtract_variable = { which = ai_value which = ai_value_calc }
+#		}
+#		add_entry = {
+#			name = BORDERDISTANCE_TT
+#			export_to_variable = {
+#				which = ai_value
+#				value = border_distance
+#				who = FROM
+#				with = ROOT
+#			}
+#			multiply_variable = { which = ai_value value = -1000 }
+#		}
+#	}
+#	
+#	ai_will_do = { # this is a trigger
+#		absolutism = 20
+#	}
+#}
+#
+#subject_subjugation = {
+#	category = influence
+#	
+#	alert_index = 46
+#	alert_tooltip = ICON_SUBJUGATION
+#	
+#	require_acceptance = yes # Whether the recipient gets an option to decline
+#	
+#	is_visible = {
+#		overlord_of = FROM
+#		FROM = {
+#			OR = {
+#				AND = {
+#					ROOT = { OR = { NOT = { tag = FRA } has_country_flag = edit_de_moulins } }
+#					is_subject_of_type = appanage_subject
+#				}
+#				is_subject_of_type = autonomous_vassal
+#				is_subject_of_type = decentralized_vassal
+#				is_subject_of_type = rebellious_decentralized_vassal
+#				is_subject_of_type = subjugated_vassal
+#				is_subject_of_type = rebellious_subjugated_vassal
+#				AND = {
+#					ROOT = { has_country_flag = centralised_japan }
+#					is_subject_of_type = daimyo_vassal
+#				}
+#				AND = {
+#					ROOT = { daimyo_trigger = no }
+#					is_subject_of_type = centralised_daimyo_vassal
+#				}
+#			}
+#		}
+#	}
+#	
+#	is_allowed = {
+#		FROM = {
+#			NOT = { has_ruler_modifier = policy_partner }
+#			NOT = { liberty_desire = 25 }
+#			OR = {
+#				AND = {
+#					is_subject_of_type = appanage_subject
+#					ROOT = { OR = { NOT = { tag = FRA } has_country_flag = edit_de_moulins } }
+#				}
+#				is_subject_of_type = autonomous_vassal
+#				is_subject_of_type = decentralized_vassal
+#				is_subject_of_type = rebellious_decentralized_vassal
+#				is_subject_of_type = subjugated_vassal
+#				is_subject_of_type = rebellious_subjugated_vassal
+#				is_subject_of_type = personal_union
+#				AND = {
+#					is_subject_of_type = daimyo_vassal
+#					ROOT = { has_country_flag = centralised_japan }
+#				}
+#				AND = {
+#					is_subject_of_type = centralised_daimyo_vassal
+#					ROOT = { daimyo_trigger = no }
+#				}
+#			}
+#			years_in_vassalage_under = { who = ROOT years = 10 all_subject_country = yes }
+#		}
+#		NOT = { overextension_percentage = 0.01 }
+#		OR = {
+#			ADM = 4
+#			advisor = alderman
+#			advisor = statesman
+#		}
+#		absolutism = 5
+#	}
+#	
+#	on_accept = {
+#		add_adm_power = -100
+#		add_dip_power = -100
+#		add_mil_power = -100
+#		if = {
+#			limit = {
+#				FROM = { is_subject_of_type = appanage_subject }
+#			}
+#			create_subject = { subject_type = vassal subject = FROM }
+#		}
+#		if = {
+#			limit = {
+#				FROM = { is_subject_of_type = autonomous_vassal }
+#			}
+#			create_subject = { subject_type = vassal subject = FROM }
+#		}
+#		if = {
+#			limit = {
+#				FROM = { is_subject_of_type = decentralized_vassal }
+#			}
+#			create_subject = { subject_type = vassal subject = FROM }
+#		}
+#		if = {
+#			limit = {
+#				FROM = { is_subject_of_type = rebellious_decentralized_vassal }
+#			}
+#			create_subject = { subject_type = decentralized_vassal subject = FROM }
+#		}
+#		if = {
+#			limit = {
+#				FROM = { is_subject_of_type = subjugated_vassal }
+#			}
+#			create_subject = { subject_type = vassal subject = FROM }
+#		}
+#		if = {
+#			limit = {
+#				FROM = { is_subject_of_type = rebellious_subjugated_vassal }
+#			}
+#			create_subject = { subject_type = subjugated_vassal subject = FROM }
+#		}
+#		if = {
+#			limit = {
+#				FROM = { is_subject_of_type = daimyo_vassal }
+#			}
+#			create_subject = { subject_type = centralised_daimyo_vassal subject = FROM }
+#		}
+#		if = {
+#			limit = {
+#				FROM = { is_subject_of_type = centralised_daimyo_vassal }
+#			}
+#			create_subject = { subject_type = vassal subject = FROM }
+#		}
+#		FROM = {
+#			add_ruler_modifier = {
+#				name = policy_partner
+#				hidden = yes
+#			}
+#			add_liberty_desire = 10
+#		}
+#		if = {
+#			limit = {
+#				FROM = {
+#					tag = SVP
+#				}
+#			}
+#			if = {
+#				limit = {
+#					FROM = {
+#						is_subject_of_type = subjugated_vassal
+#						any_owned_province = { has_province_modifier = estates_general_1 }
+#					}
+#				}
+#				random_list = {
+#					80 = {
+#						country_event = {
+#							id = flavor_svp.301 #reject
+#							days = 10
+#						}
+#					}
+#					20 = {
+#						country_event = {
+#							id = flavor_svp.302 #accept
+#							days = 10
+#						}
+#					}
+#				}
+#			}
+#			if = {
+#				limit = {
+#					FROM = {
+#						is_subject_of_type = vassal
+#						any_owned_province = { has_province_modifier = estates_general_1 }
+#					}
+#				}
+#				country_event = {
+#					id = flavor_svp.301 #reject
+#					days = 10
+#				}
+#			}
+#			if = {
+#				limit = {
+#					FROM = {
+#						is_subject_of_type = subjugated_vassal
+#						any_owned_province = { has_province_modifier = estates_general_2 }
+#					}
+#				}
+#				random_list = {
+#					40 = {
+#						country_event = {
+#							id = flavor_svp.301 #reject
+#							days = 10
+#						}
+#					}
+#					60 = {
+#						country_event = {
+#							id = flavor_svp.302 #accept
+#							days = 10
+#						}
+#					}
+#				}
+#			}
+#			if = {
+#				limit = {
+#					FROM = {
+#						is_subject_of_type = vassal
+#						any_owned_province = { has_province_modifier = estates_general_2 }
+#					}
+#				}
+#				random_list = {
+#					60 = {
+#						country_event = {
+#							id = flavor_svp.301 #reject
+#							days = 10
+#						}
+#					}
+#					40 = {
+#						country_event = {
+#							id = flavor_svp.302 #accept
+#							days = 10
+#						}
+#					}
+#				}
+#			}
+#			if = {
+#				limit = {
+#					FROM = {
+#						is_subject_of_type = subjugated_vassal
+#						any_owned_province = { has_province_modifier = estates_general_3 }
+#					}
+#				}
+#				country_event = {
+#					id = flavor_svp.302 #accept
+#					days = 10
+#				}
+#			}
+#			if = {
+#				limit = {
+#					FROM = {
+#						is_subject_of_type = vassal
+#						any_owned_province = { has_province_modifier = estates_general_3 }
+#					}
+#				}
+#				random_list = {
+#					20 = {
+#						country_event = {
+#							id = flavor_svp.301 #reject
+#							days = 10
+#						}
+#					}
+#					80 = {
+#						country_event = {
+#							id = flavor_svp.302 #accept
+#							days = 10
+#						}
+#					}
+#				}
+#			}
+#		}
+#	}
+#	
+#	on_decline = {
+#		add_adm_power = -100
+#		add_dip_power = -100
+#		add_mil_power = -100
+#		FROM = { add_liberty_desire = 25 }
+#		if = {
+#			limit = {
+#				FROM = { OR = { is_subject_of_type = daimyo_vassal is_subject_of_type = centralised_daimyo_vassal } }
+#			}
+#			FROM = { country_event = { id = japan.36 } }
+#		}
+#	}
+#	
+#	ai_acceptance = {
+#		add_entry = {
+#			name = TRUST
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = trust
+#				who = FROM
+#				with = ROOT
+#			}
+#			subtract_variable = { which = ai_value value = 50 }
+#			multiply_variable = { which = ai_value value = 2 }
+#		}
+#		add_entry = {
+#			name = OPINION
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = opinion
+#				who = FROM
+#				with = ROOT
+#			}
+#			divide_variable = { which = ai_value value = 10 }
+#		}
+#		add_entry = {
+#			name = MYDIPLOREP_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = modifier:diplomatic_reputation
+#			}
+#			multiply_variable = { which = ai_value value = 2 }
+#		}
+#		add_entry = {
+#			name = THEIRDIPLOREP_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = modifier:diplomatic_reputation
+#				who = FROM
+#			}
+#			multiply_variable = { which = ai_value value = -2 }
+#		}
+#		add_entry = {
+#			name = MYLEGITIMACY_TT
+#			export_to_variable = {
+#				which = ai_value
+#				value = trigger_value:legitimacy
+#			}
+#			divide_variable = { which = ai_value value = 2 }
+#		}
+##		add_entry = {
+##			name = THEIRLEGITIMACY_TT
+##			set_variable = {
+##				which = ai_value
+##				value = 1
+##			}
+##			set_variable = {
+##				which = legitimacy
+##				who = FROM
+##			}
+##			set_variable = {
+##				which = ai_value
+##				which = legitimacy
+##			}
+##			multiply_variable = { which = ai_value value = -1 }
+##		}
+#		add_entry = {
+#			name = MYPRESTIGE_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = prestige
+#			}
+#			multiply_variable = { which = ai_value value = 0.75 }
+#		}
+#		add_entry = {
+#			name = THEIRPRESTIGE_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = prestige
+#				who = FROM
+#			}
+#			multiply_variable = { which = ai_value value = -0.75 }
+#		}
+#		add_entry = {
+#			name = ARMYSIZE_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = army_size
+#				who = FROM
+#			}
+#			export_to_variable = {
+#				variable_name = ai_value_calc
+#				value = army_size
+#			}
+#			subtract_variable = { which = ai_value which = ai_value_calc }
+#		}
+#		add_entry = {
+#			name = NAVYSIZE_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = navy_size
+#				who = FROM
+#			}
+#			export_to_variable = {
+#				variable_name = ai_value_calc
+#				value = navy_size
+#			}
+#			subtract_variable = { which = ai_value which = ai_value_calc }
+#		}
+#		add_entry = {
+#			name = DEV_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = total_development
+#			}
+#			divide_variable = { which = ai_value value = 5 }
+#			export_to_variable = {
+#				variable_name = ai_value_calc
+#				value = total_development
+#				who = FROM
+#			}
+#			subtract_variable = { which = ai_value which = ai_value_calc }
+#		}
+#		add_entry = {
+#			name = BORDERDISTANCE_TT
+#			export_to_variable = {
+#				which = ai_value
+#				value = border_distance
+#				who = FROM
+#				with = ROOT
+#			}
+#			multiply_variable = { which = ai_value value = -1000 }
+#		}
+#	}
+#	
+#	ai_will_do = { # this is a trigger
+#		adm_power = 100
+#		dip_power = 100
+#		mil_power = 100
+#		absolutism = 10
+#		NOT = {
+#			any_subject_country = {
+#				is_subject_of_type = vassal
+#			}
+#		}
+#	}
+#}
+#
+#fief_subjugation = {
+#	category = influence
+#	
+#	alert_index = 47
+#	alert_tooltip = ICON_SUBJUGATION
+#	
+#	require_acceptance = yes # Whether the recipient gets an option to decline
+#	
+#	is_visible = {
+#		overlord_of = FROM
+#		FROM = {
+#			is_subject_of_type = overseas_fief
+#		}
+#	}
+#	
+#	is_allowed = {
+#		FROM = {
+#			NOT = { has_ruler_modifier = policy_partner }
+#			NOT = { liberty_desire = 25 }
+#			AND = {
+#				is_subject_of_type = overseas_fief
+#				#years_in_vassalage_under = { who = ROOT years = 10 }
+#			}
+#		}
+#		NOT = { overextension_percentage = 0.01 }
+#		OR = {
+#			ADM = 4
+#			advisor = alderman
+#			advisor = statesman
+#		}
+#		absolutism = 10
+#	}
+#	
+#	on_accept = {
+#		add_adm_power = -100
+#		add_dip_power = -100
+#		add_mil_power = -100
+#		create_subject = { subject_type = personal_union subject = FROM }
+#		FROM = {
+#			add_ruler_modifier = {
+#				name = policy_partner
+#				hidden = yes
+#			}
+#			add_liberty_desire = 10
+#		}
+#	}
+#	
+#	on_decline = {
+#		add_adm_power = -100
+#		add_dip_power = -100
+#		add_mil_power = -100
+#		FROM = { add_liberty_desire = 25 }
+#	}
+#	
+#	ai_acceptance = {
+#		add_entry = {
+#			name = TRUST
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = trust
+#				who = FROM
+#				with = ROOT
+#			}
+#			subtract_variable = { which = ai_value value = 50 }
+#			multiply_variable = { which = ai_value value = 2 }
+#		}
+#		add_entry = {
+#			name = OPINION
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = opinion
+#				who = FROM
+#				with = ROOT
+#			}
+#			divide_variable = { which = ai_value value = 10 }
+#		}
+#		add_entry = {
+#			name = MYDIPLOREP_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = modifier:diplomatic_reputation
+#			}
+#			multiply_variable = { which = ai_value value = 2 }
+#		}
+#		add_entry = {
+#			name = THEIRDIPLOREP_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = modifier:diplomatic_reputation
+#				who = FROM
+#			}
+#			multiply_variable = { which = ai_value value = -2 }
+#		}
+#		add_entry = {
+#			name = MYLEGITIMACY_TT
+#			export_to_variable = {
+#				which = ai_value
+#				value = trigger_value:legitimacy
+#			}
+#			divide_variable = { which = ai_value value = 2 }
+#		}
+##		add_entry = {
+##			name = THEIRLEGITIMACY_TT
+##			set_variable = {
+##				which = ai_value
+##				value = 1
+##			}
+##			set_variable = {
+##				which = legitimacy
+##				who = FROM
+##			}
+##			set_variable = {
+##				which = ai_value
+##				which = legitimacy
+##			}
+##			multiply_variable = { which = ai_value value = -1 }
+##		}
+#		add_entry = {
+#			name = MYPRESTIGE_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = prestige
+#			}
+#			multiply_variable = { which = ai_value value = 0.75 }
+#		}
+#		add_entry = {
+#			name = THEIRPRESTIGE_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = prestige
+#				who = FROM
+#			}
+#			multiply_variable = { which = ai_value value = -0.75 }
+#		}
+#		add_entry = {
+#			name = ARMYSIZE_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = army_size
+#				who = FROM
+#			}
+#			export_to_variable = {
+#				variable_name = ai_value_calc
+#				value = army_size
+#			}
+#			subtract_variable = { which = ai_value which = ai_value_calc }
+#		}
+#		add_entry = {
+#			name = NAVYSIZE_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = navy_size
+#				who = FROM
+#			}
+#			export_to_variable = {
+#				variable_name = ai_value_calc
+#				value = navy_size
+#			}
+#			subtract_variable = { which = ai_value which = ai_value_calc }
+#		}
+#		add_entry = {
+#			name = DEV_TT
+#			export_to_variable = {
+#				variable_name = ai_value
+#				value = total_development
+#			}
+#			divide_variable = { which = ai_value value = 5 }
+#			export_to_variable = {
+#				variable_name = ai_value_calc
+#				value = total_development
+#				who = FROM
+#			}
+#			subtract_variable = { which = ai_value which = ai_value_calc }
+#		}
+#		add_entry = {
+#			name = BORDERDISTANCE_TT
+#			export_to_variable = {
+#				which = ai_value
+#				value = border_distance
+#				who = FROM
+#				with = ROOT
+#			}
+#			multiply_variable = { which = ai_value value = -1000 }
+#		}
+#	}
+#	
+#	ai_will_do = { # this is a trigger
+#		adm_power = 100
+#		dip_power = 100
+#		mil_power = 100
+#		absolutism = 10
+#		NOT = {
+#			any_subject_country = {
+#				is_subject_of_type = vassal
+#			}
+#		}
+#	}
+#}
+
+establish_protectorate = {
+    category = influence
+
+    alert_index = 6
+    alert_tooltip = ICON_VASSAL
+
+    require_acceptance = yes
+
+    is_visible = {
+		OR = {
+			full_idea_group = exploration_ideas
+			full_idea_group = expansion_ideas
+			full_idea_group = global_empire_ideas
+		}
+        any_neighbor_country = {
+			is_subject = no
+			capital_scope = {
+				OR = {
+					continent = sub_sahara
+					superregion = east_africa_superregion
+					continent = indian_continent
+					continent = southeast_asia
+				}
+			}
+			OR = {
+				technology_group = sub_saharan
+				technology_group = soudantech
+				technology_group = central_african
+				technology_group = malagasy_tech
+				technology_group = east_african
+				technology_group = indian
+				technology_group = austranesian
+				technology_group = chinese
+			}
+		}
+		is_subject = no
+    }
+
+    is_allowed = {
+		hidden_trigger = {
+			is_at_war = no
+			FROM = {
+				is_neighbor_of = ROOT
+				is_at_war = no
+				is_subject = no
+				capital_scope = {
+					OR = {
+						continent = sub_sahara
+						superregion = east_africa_superregion
+						continent = indian_continent
+						continent = southeast_asia
+					}
+				}
+				OR = {
+					technology_group = sub_saharan
+					technology_group = soudantech
+					technology_group = central_african
+					technology_group = malagasy_tech
+					technology_group = east_african
+					technology_group = indian
+					technology_group = austranesian
+					technology_group = chinese
+				}
+			}
+			OR = {
+				AND = {
+					ai = no
+					FROM = {
+						has_opinion = { who = ROOT value = 150 }
+						OR = {
+							ai_attitude = { who = ROOT attitude = attitude_neutral }
+							ai_attitude = { who = ROOT attitude = attitude_friendly }
+							ai_attitude = { who = ROOT attitude = attitude_threatened }
+						}
+					}
+					
+				}
+				AND = {
+					ai = yes
+					FROM = {
+						OR = {
+							ai_attitude = { who = ROOT attitude = attitude_neutral }
+							ai_attitude = { who = ROOT attitude = attitude_friendly }
+							ai_attitude = { who = ROOT attitude = attitude_threatened }
+							any_neighbor_country = { ai_attitude = { who = PREV attitude = attitude_domineering } }
+						}
+					}
+				}
+			}
+		}
+    }
+
+    on_accept = { create_subject = { subject_type = protectorate subject = FROM } }
+
+    on_decline = { }
+
+    ai_acceptance = {
+        add_entry = {
+            name = OPINION
+            export_to_variable = {
+                which = ai_value
+                value = opinion
+                who = FROM
+                with = ROOT
+            }
+			divide_variable = { which = ai_value value = 10 }
+        }
+        add_entry = {
+            name = TRUST
+            export_to_variable = {
+                which = ai_value
+                value = trust
+                who = FROM
+                with = ROOT
+            }
+			subtract_variable = { which = ai_value value = 50 }
+        }
+		add_entry = {
+			name = MYDIPLOREP_TT
+			export_to_variable = {
+				which = ai_value
+				value = modifier:diplomatic_reputation
+			}
+			multiply_variable = { which = ai_value value = 2 }
+		}
+		add_entry = {
+			name = MILTECHDIFF_TT
+			export_to_variable = {
+				which = ai_value
+				value = mil_tech
+			}
+			export_to_variable = {
+				which = ai_value_target
+				value = mil_tech
+				who = FROM
+			}
+			subtract_variable = { which = ai_value which = ai_value_target }
+			multiply_variable = { which = ai_value value = 5 }
+		}
+		add_entry = {
+			name = ARMYSIZE_TT
+			export_to_variable = {
+				which = ai_value
+				value = army_size
+			}
+			export_to_variable = {
+				which = ai_value_target
+				value = army_size
+				who = FROM
+			}
+			subtract_variable = { which = ai_value which = ai_value_target }
+			divide_variable = { which = ai_value value = 5 }
+		}
+		add_entry = {
+			name = DEVTARGET_TT
+			export_to_variable = {
+				which = ai_value
+				value = total_development
+				who = FROM
+			}
+			multiply_variable = { which = ai_value value = -1 }
+			divide_variable = { which = ai_value value = 5 }
+		}
+    }
+
+    ai_will_do = { NOT = { any_subject_country = { liberty_desire = 40 } } }
+}
+
+abandon_protectorate = {
+    category = influence
+
+    alert_index = 6
+    alert_tooltip = ICON_VASSAL
+
+    require_acceptance = no
+
+    is_visible = { any_subject_country = { is_subject_of_type = protectorate } }
+
+    is_allowed = { FROM = { is_subject_of_type = protectorate } }
+
+    on_accept = {
+		FROM = {
+			grant_independence = yes
+			add_opinion = { who = ROOT modifier = opinion_abandoned_protectorate }
+			add_truce_with = ROOT
+		}
+	}
+
+    on_decline = { }
+
+    ai_acceptance = { }
+
+    ai_will_do = { always = no }
+}

@@ -1,0 +1,76 @@
+country_decisions = {
+	
+	heretic_expulsion = {
+		potential = {
+			NOT = { has_country_flag = reconsidered_expulsion }
+			any_owned_province = {
+				has_province_flag = heretic_presence
+				NOT = { has_province_modifier = religious_autonomy }
+				is_core = ROOT
+				is_city = yes
+				controlled_by = owner
+				has_siege = no
+			}
+		}
+		allow = {
+			religious_unity = 0.50
+			is_free_or_tributary_trigger = yes
+			has_any_disaster = no
+			is_at_war = no
+			num_of_missionaries = 1
+			mil_power = 100
+			piety = -0.20
+			custom_trigger_tooltip = {
+				tooltip = no_religious_turmoil
+				NOT = { has_country_flag = religious_turmoil_happening }
+			}
+			#People are upset
+			OR = {
+				NOT = { stability = -1 }
+				war_exhaustion = 10
+				is_bankrupt = yes
+				advisor = inquisitor
+				piety = 0.60
+				NOT = { legitimacy_equivalent = 60 }
+			}
+			#Religions are likely to be blamed
+			NOT = { has_country_modifier = religious_tolerance }
+			OR = {
+				patriarch_authority = 0.70
+				NOT = { religious_unity = 0.60 }
+				advisor = inquisitor
+				is_force_converted = yes
+				check_variable = { which = inquisition value = 2 }
+			}
+		}
+		effect = {
+			country_event = { id = dg_turmoil.099 }
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				any_owned_province = {
+					has_province_modifier = religious_unrest
+					unrest = 1
+				}
+				factor = 0
+			}
+			modifier = {
+				factor = 0
+				average_unrest = -2 #but let's not do the expulsion just to collapse to rebels, yeah?
+			} 
+			modifier = {
+				factor = 0
+				has_country_flag = war_of_religion_lost
+			}
+			modifier = {
+				factor = 0
+				NOT = { army_size_percentage = 0.50 }
+			}
+			modifier = {
+				factor = 0
+				NOT = { manpower_percentage = 0.25 }
+			}
+		}
+	}
+}

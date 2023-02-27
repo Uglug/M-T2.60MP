@@ -1,0 +1,210 @@
+set_art_power = {
+	set_variable = { which = art_power_from_upper_class 	value = 0 }
+	set_variable = { which = art_power_from_education 		value = 0 }
+	set_variable = { which = art_power_from_buildings 		value = 0 }
+	#set_variable = { which = art_power_percentage 			value = 0 }
+	set_variable = { which = art_power_from_modifiers		value = 0 }
+	
+	set_variable = { which = art_power						value = 0 }
+	
+	if = {
+		limit = {
+			check_variable = { which = upper_urban_weight value = 0.1 }
+		}
+		# Art buildings make upper class pop produce art power
+		#set_variable = { which = total_upper_weight value = 0 } # Upper class Weight
+		set_variable = { which = total_upper_weight which = upper_urban_weight }
+		change_variable = { which = total_upper_weight which = upper_rural_weight }
+		set_variable = { which = multiplier which = upper_urban_weight }
+		divide_variable = { which = multiplier which = total_upper_weight }
+		
+		set_variable = { which = art_power_from_upper_class which = upper_pop_r }
+		multiply_variable = { which = art_power_from_upper_class which = multiplier } # Use urban upper class
+		multiply_variable = { which = art_power_from_upper_class value = 0.05 } # Balancing. Move to 10000:1 scale, and 0.25x effect
+		set_variable = { which = total_upper_weight value = 0 }
+		set_variable = { which = multiplier value = 0 }
+	}
+	else = {
+		set_variable = { which = art_power_from_upper_class value = 0.1 }
+	}
+	
+	if = { limit = { has_building = great_temple } change_variable = { which = art_power_from_buildings value = 1 } multiply_variable = { which = art_power_from_upper_class value = 1.25 } }
+	if = { limit = { has_building = temple } change_variable = { which = art_power_from_buildings value = 0.25 } multiply_variable = { which = art_power_from_upper_class value = 1.1 } }
+	if = { limit = { has_building = temple_heathen } change_variable = { which = art_power_from_buildings value = 0.25 } multiply_variable = { which = art_power_from_upper_class value = 1.1 } }
+		
+	set_variable = { which = art_power_percentage value = 1 }
+	
+	if = { limit = { has_building = art_corporation } 	multiply_variable = { 	which = art_power_from_upper_class value = 2 } change_variable = { which = art_power_from_buildings value = 2 } change_variable = { which = art_power_percentage value = 0.10 } }
+	if = { limit = { has_building = fine_arts_academy } multiply_variable = { 	which = art_power_from_upper_class value = 3 } change_variable = { which = art_power_from_buildings value = 4 } change_variable = { which = art_power_percentage value = 0.15 } }
+	if = { limit = { has_building = opera } 			multiply_variable = { 	which = art_power_from_upper_class value = 4 } change_variable = { which = art_power_from_buildings value = 6 } change_variable = { which = art_power_percentage value = 0.20 } }
+	if = { limit = { has_building = small_university }  change_variable = { 	which = art_power_from_buildings value = 2 } }
+	if = { limit = { has_building = medium_university } change_variable = { 	which = art_power_from_buildings value = 4 } }
+	if = { limit = { has_building = big_university }  change_variable = { 		which = art_power_from_buildings value = 6 } }
+	
+	#	Removed as it leads to a report in the error log : [trigger.cpp:424]: Unknown trigger-type
+	#	if = { limit = { banking = 100 } multiply_variable = { which = art_power_from_upper_class value = 1.1 } }
+	#	if = { limit = { renaissance = 100 } multiply_variable = { which = art_power_from_upper_class value = 1.1 } }
+	#	if = { limit = { casual_literacy = 100 } multiply_variable = { which = art_power_from_upper_class value = 1.1 } }
+	
+	# Educated upper class pop also produce art power
+	set_variable = { which = art_power_from_education which = university_education_multiplier }
+	multiply_variable = { which = art_power_from_education value = 0.5 }
+	
+	# Art power from court
+	
+	if = {
+		limit = {
+			OR = {
+				is_capital = yes
+				has_province_modifier = has_regional_capital
+			}
+		}
+		if = {
+			limit = { owner = { has_country_modifier = court_level_2 } }
+			if = {
+				limit = { has_province_modifier = has_regional_capital }
+				change_variable = { which = art_power_percentage value = 0.05 }
+			}
+			else = {
+				change_variable = { which = art_power_percentage value = 0.1 }
+			}
+		}
+		if = {
+			limit = { owner = { has_country_modifier = court_level_3 } }
+			if = {
+				limit = { has_province_modifier = has_regional_capital }
+				change_variable = { which = art_power_percentage value = 0.1 } #Regional cap is not as good as capital
+			}
+			else = {
+				change_variable = { which = art_power_percentage value = 0.2 } # Basic Court
+			}
+		}
+		if = {
+			limit = { owner = { has_country_modifier = court_level_4 } }
+			if = {
+				limit = { has_province_modifier = has_regional_capital }
+				change_variable = { which = art_power_percentage value = 0.15 }
+			}
+			else = {
+				change_variable = { which = art_power_percentage value = 0.3 }
+			}
+		}
+		if = {
+			limit = { owner = { has_country_modifier = court_level_5 } }
+			if = {
+				limit = { has_province_modifier = has_regional_capital }
+				change_variable = { which = art_power_percentage value = 0.2 }
+			}
+			else = {
+				change_variable = { which = art_power_percentage value = 0.4 }
+			}
+		}
+		if = {
+			limit = { owner = { has_country_modifier = court_level_6 } }
+			if = {
+				limit = { has_province_modifier = has_regional_capital }
+				change_variable = { which = art_power_percentage value = 0.25 }
+			}
+			else = {
+				change_variable = { which = art_power_percentage value = 0.5 }
+			}
+		}
+	}
+	
+	if = {
+		limit = {
+			has_province_flag = university_present
+		}
+		change_variable = { which = art_power_percentage which = university_rank_factor }
+	}
+	
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		minor_center_of_trade = {
+			change_variable = { which = art_power_from_modifiers value = 0.25 }
+		}
+		important_center_of_trade = {
+			change_variable = { which = art_power_from_modifiers value = 0.5 }
+		}
+		major_center_of_trade = {
+			change_variable = { which = art_power_from_modifiers value = 0.75 }
+		}
+		dominant_center_of_trade = {
+			change_variable = { which = art_power_from_modifiers value = 1 }
+		}
+	}
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		minor_center_of_production = {
+			change_variable = { which = art_power_from_modifiers value = 0.25 }
+		}
+		important_center_of_production = {
+			change_variable = { which = art_power_from_modifiers value = 0.5 }
+		}
+		major_center_of_production = {
+			change_variable = { which = art_power_from_modifiers value = 0.75 }
+		}
+		dominant_center_of_production = {
+			change_variable = { which = art_power_from_modifiers value = 1 }
+		}
+	}
+	if = {
+		limit = {
+			has_province_modifier = preeminent_sub_continent_city
+		}
+		change_variable = { which = art_power_from_modifiers value = 0.5 }
+	}
+	if = {
+		limit = {
+			has_province_modifier = preeminent_continent_city
+		}
+		change_variable = { which = art_power_from_modifiers 	value = 1 }
+	}
+	
+	### Mission rewards
+	if = {
+		limit = {
+			has_province_modifier = cultural_growth
+		}
+		change_variable = { which = art_power_from_modifiers 	value = 0.25 }
+	}
+	
+	#Global percentage addition with ideas
+	
+	if = { limit = { owner = { has_idea = monuments } }  			change_variable = { which = art_power_percentage value = 0.05 } }
+	if = { limit = { owner = { has_idea = religious_art } }  		change_variable = { which = art_power_percentage value = 0.10 } }
+	if = { limit = { owner = { has_idea = patron_of_art } }  		change_variable = { which = art_power_percentage value = 0.15 } }
+	if = { limit = { owner = { has_idea = state_propaganda } } 		change_variable = { which = art_power_percentage value = 0.10 } }
+	#	if = { limit = { owner = { ruler_has_personality = free_thinker_personality } }  multiply_variable = { which = art_power_from_court value = 1.10 } }
+	#	if = { limit = { owner = { ruler_has_personality = architectural_visionary_personality } }  multiply_variable = { which = art_power_from_court value = 1.20 } }
+	#	if = { limit = { owner = { ruler_has_personality = scholar_personality } }  multiply_variable = { which = art_power_from_education value = 1.20 } }
+	#	if = { limit = { owner = { ruler_has_personality = greedy_personality } }  multiply_variable = { which = art_power_from_court value = 0.75 } }
+	#	if = { limit = { owner = { ruler_has_personality = fanatical_priest_personality } }  multiply_variable = { which = art_power_from_court value = 0.5 } change_variable = { which = art_power_percentage value = -0.25 } }
+	#	if = { limit = { owner = { ruler_has_personality = master_theologian_personality } } multiply_variable = { which = art_power_from_education value = 1.20 } }
+	#	if = { limit = { owner = { ruler_has_personality = generous_personality } }  multiply_variable = { which = art_power_from_court value = 1.20 } }
+	
+	#set_variable = { 	which = art_power 		value = 0 }
+	set_variable = { which = art_power 		which = art_power_from_upper_class }
+	change_variable = { which = art_power 		which = art_power_from_education }
+	change_variable = { which = art_power 		which = art_power_from_buildings }
+	change_variable = { which = art_power 		which = art_power_from_modifiers }
+	
+	if = {
+		limit = {
+			NOT = { check_variable = { which = art_power_percentage value = 0.8 } }
+		}
+		set_variable = { which = art_power_percentage value = 0.8 }
+	}
+	
+	multiply_variable = { which = art_power which = art_power_percentage }
+	
+	#if = { #used for tooltips
+	#	limit = {
+	#		NOT = { has_global_flag = show_for_developers }
+	#	}
+	#	set_variable = { which = art_power_from_education value = 0 }
+	#	set_variable = { which = art_power_from_modifiers value = 0 }
+	#	set_variable = { which = art_power_from_buildings value = 0 }
+	#	set_variable = { which = art_power_from_upper_class value = 0 }
+	#}
+}

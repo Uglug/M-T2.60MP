@@ -1,0 +1,368 @@
+give_back_provinces_count_effect = {
+	export_to_variable = { which = MT_bankrupt_dev value = development }
+	ROOT = {
+		change_variable = { which = MT_bankrupt_dev which = PREV }
+		change_variable = { which = MT_bankrupt_count value = 1 }
+	}
+}
+
+give_back_provinces_count = {
+	every_owned_province = { # give back to previous owner
+		limit = {
+			NOT = { is_core = ROOT }
+			NOT = { has_province_flag = give_back_prov_@ROOT }
+			any_core_country = {
+				PREV = {
+					previous_owner = PREV
+				}
+				NOT = {
+					overlord_of = ROOT
+					overlord = {
+						overlord_of = ROOT
+					}
+				}
+			}
+		}
+		random_core_country = {
+			limit = {
+				PREV = {
+					previous_owner = PREV
+				}
+				NOT = {
+					overlord_of = ROOT
+					overlord = {
+						overlord_of = ROOT
+					}
+				}
+			}
+			save_event_target_as = give_back_prov_to
+			PREV = {
+				set_province_flag = give_back_prov_@ROOT
+				set_province_flag = give_back_to_@PREV
+				give_back_provinces_count_effect = yes
+				every_neighbor_province = {
+					limit = {
+						owned_by = ROOT
+						NOT = { is_core = ROOT }
+						NOT = { has_province_flag = give_back_prov_@ROOT }
+						is_core = event_target:give_back_prov_to
+						previous_owner = event_target:give_back_prov_to
+					}
+					set_province_flag = give_back_prov_@ROOT
+					set_province_flag = give_back_to_@event_target:give_back_prov_to
+					give_back_provinces_count_effect = yes
+				}
+			}
+		}
+	}
+	every_owned_province = { # give to someone else, neighbors & existing countries first
+		limit = {
+			NOT = { is_core = ROOT }
+			NOT = { has_province_flag = give_back_prov_@ROOT }
+			any_core_country = {
+				NOT = {
+					overlord_of = ROOT
+					overlord = {
+						overlord_of = ROOT
+					}
+				}
+			}
+		}
+		save_event_target_as = give_back_prov
+		random_core_country = {
+			limit = {
+				exists = yes
+				any_owned_province = {
+					any_neighbor_province = {
+						province_id = event_target:give_back_prov
+					}
+				}
+				NOT = {
+					overlord_of = ROOT
+					overlord = {
+						overlord_of = ROOT
+					}
+				}
+			}
+			save_event_target_as = give_back_prov_to
+			PREV = {
+				set_province_flag = give_back_prov_@ROOT
+				set_province_flag = give_back_to_@PREV
+				give_back_provinces_count_effect = yes
+				every_neighbor_province = {
+					limit = {
+						owned_by = ROOT
+						NOT = { is_core = ROOT }
+						NOT = { has_province_flag = give_back_prov_@ROOT }
+						is_core = event_target:give_back_prov_to
+					}
+					set_province_flag = give_back_prov_@ROOT
+					set_province_flag = give_back_to_@event_target:give_back_prov_to
+					give_back_provinces_count_effect = yes
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_province_flag = give_back_prov_@ROOT
+				}
+			}
+			random_core_country = {
+				limit = {
+					exists = yes
+					NOT = {
+						overlord_of = ROOT
+						overlord = {
+							overlord_of = ROOT
+						}
+					}
+				}
+				save_event_target_as = give_back_prov_to
+				PREV = {
+					set_province_flag = give_back_prov_@ROOT
+					set_province_flag = give_back_to_@PREV
+					give_back_provinces_count_effect = yes
+					every_neighbor_province = {
+						limit = {
+							owned_by = ROOT
+							NOT = { is_core = ROOT }
+							NOT = { has_province_flag = give_back_prov_@ROOT }
+							is_core = event_target:give_back_prov_to
+						}
+						set_province_flag = give_back_prov_@ROOT
+						set_province_flag = give_back_to_@event_target:give_back_prov_to
+						give_back_provinces_count_effect = yes
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_province_flag = give_back_prov_@ROOT
+				}
+			}
+			random_core_country = {
+				limit = {
+					NOT = {
+						overlord_of = ROOT
+						overlord = {
+							overlord_of = ROOT
+						}
+					}
+				}
+				save_event_target_as = give_back_prov_to
+				PREV = {
+					set_province_flag = give_back_prov_@ROOT
+					set_province_flag = give_back_to_@PREV
+					give_back_provinces_count_effect = yes
+					every_neighbor_province = {
+						limit = {
+							owned_by = ROOT
+							NOT = { is_core = ROOT }
+							NOT = { has_province_flag = give_back_prov_@ROOT }
+							is_core = event_target:give_back_prov_to
+						}
+						set_province_flag = give_back_prov_@ROOT
+						set_province_flag = give_back_to_@event_target:give_back_prov_to
+						give_back_provinces_count_effect = yes
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_province_flag = give_back_prov_@ROOT
+				}
+			}
+			random_neighbor_province = {
+				limit = {
+					NOT = { owned_by = ROOT }
+					owner = {
+						NOT = {
+							overlord_of = ROOT
+							overlord = {
+								overlord_of = ROOT
+							}
+						}
+					}
+				}
+				owner = {
+					save_event_target_as = give_back_prov_to
+				}
+				PREV = {
+					set_province_flag = give_back_prov_@ROOT
+					set_province_flag = give_back_to_@event_target:give_back_prov_to
+					give_back_provinces_count_effect = yes
+					every_neighbor_province = {
+						limit = {
+							owned_by = ROOT
+							NOT = { is_core = ROOT }
+							NOT = { has_province_flag = give_back_prov_@ROOT }
+						}
+						set_province_flag = give_back_prov_@ROOT
+						set_province_flag = give_back_to_@event_target:give_back_prov_to
+						give_back_provinces_count_effect = yes
+					}
+				}
+			}
+		}
+	}
+}
+give_back_provinces = {
+	set_country_flag = give_back_prov_progress
+	while = {
+		limit = {
+			has_country_flag = give_back_prov_progress
+			check_variable = { which = MT_bankrupt_dev value = 1 }
+			check_variable = { which = MT_bankrupt_count value = 1 }
+		}
+		clr_country_flag = give_back_prov_progress
+		random_owned_province = {
+			limit = {
+				any_neighbor_province = {
+					NOT = {
+						owned_by = ROOT
+						owner = {
+							OR = {
+								overlord_of = ROOT
+								any_subject_country = {
+									overlord_of = ROOT
+								}
+							}
+						}
+					}
+				}
+				has_province_flag = give_back_prov_@ROOT
+			}
+			ROOT = {
+				subtract_variable = { which = MT_bankrupt_dev which = PREV }
+				subtract_variable = { which = MT_bankrupt_count value = 1 }
+			}
+			set_variable = { which = MT_bankrupt_dev value = 0 }
+			random_core_country = {
+				limit = {
+					PREV = { has_province_flag = give_back_to_@PREV }
+				}
+				PREV = {
+					clr_province_flag = give_back_prov_@ROOT
+					clr_province_flag = give_back_to_@PREV
+					cede_province = PREV
+					add_nationalism = -100
+				}
+			}
+			if = {
+				limit = {
+					owned_by = ROOT
+				}
+				random_country = {
+					limit = {
+						PREV = { has_province_flag = give_back_to_@PREV }
+					}
+					PREV = {
+						clr_province_flag = give_back_prov_@ROOT
+						clr_province_flag = give_back_to_@PREV
+						cede_province = PREV
+						add_nationalism = -100
+					}
+				}
+			}
+			owner = {
+				change_variable = { which = MT_bankrupt_given value = 1 }
+				country_event = { id = MT_general_fixes.252 }
+			}
+			ROOT = { set_country_flag = give_back_prov_progress }
+		}
+	}
+	set_country_flag = give_back_prov_progress
+	while = {
+		limit = {
+			has_country_flag = give_back_prov_progress
+			check_variable = { which = MT_bankrupt_dev value = 1 }
+			check_variable = { which = MT_bankrupt_count value = 1 }
+		}
+		clr_country_flag = give_back_prov_progress
+		random_owned_province = {
+			limit = {
+				has_province_flag = give_back_prov_@ROOT
+			}
+			ROOT = {
+				subtract_variable = { which = MT_bankrupt_dev which = PREV }
+				subtract_variable = { which = MT_bankrupt_count value = 1 }
+			}
+			set_variable = { which = MT_bankrupt_dev value = 0 }
+			random_core_country = {
+				limit = {
+					PREV = { has_province_flag = give_back_to_@PREV }
+				}
+				PREV = {
+					clr_province_flag = give_back_prov_@ROOT
+					clr_province_flag = give_back_to_@PREV
+					cede_province = PREV
+					add_nationalism = -100
+				}
+			}
+			if = {
+				limit = {
+					owned_by = ROOT
+				}
+				random_country = {
+					limit = {
+						PREV = { has_province_flag = give_back_to_@PREV }
+					}
+					PREV = {
+						clr_province_flag = give_back_prov_@ROOT
+						clr_province_flag = give_back_to_@PREV
+						cede_province = PREV
+						add_nationalism = -100
+					}
+				}
+			}
+			owner = {
+				change_variable = { which = MT_bankrupt_given value = 1 }
+				country_event = { id = MT_general_fixes.252 }
+			}
+			ROOT = { set_country_flag = give_back_prov_progress }
+		}
+	}
+	clr_country_flag = give_back_prov_progress
+}
+give_back_provinces_clear = {
+	every_province = {
+		limit = {
+			has_province_flag = give_back_prov_@ROOT
+		}
+		set_variable = { which = MT_bankrupt_dev value = 0 }
+		random_core_country = {
+			limit = {
+				PREV = {
+					has_province_flag = give_back_to_@PREV
+				}
+			}
+			PREV = {
+				clr_province_flag = give_back_to_@PREV
+				clr_province_flag = give_back_prov_@ROOT
+			}
+			set_variable = { which = MT_bankrupt_given value = 0 }
+		}
+		if = {
+			limit = {
+				has_province_flag = give_back_prov_@ROOT
+			}
+			random_country = {
+				limit = {
+					PREV = {
+						has_province_flag = give_back_to_@PREV
+					}
+				}
+				PREV = {
+					clr_province_flag = give_back_to_@PREV
+					clr_province_flag = give_back_prov_@ROOT
+				}
+				set_variable = { which = MT_bankrupt_given value = 0 }
+			}
+		}
+	}
+}

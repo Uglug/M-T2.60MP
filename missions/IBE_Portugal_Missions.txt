@@ -1,0 +1,310 @@
+
+por_missions_one = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		has_country_flag = k_of_por
+	}
+	has_country_shield = yes
+
+	por_england_relations = {
+		icon = mission_monarch_in_throne_room
+		required_missions = {  }
+		position = 1
+		trigger = {
+			if = {
+				limit = { exists = GBR }
+				GBR = { has_opinion = { who = ROOT value = 100 } }
+				marriage_with = GBR
+			}
+			else = {
+				ENG = { has_opinion = { who = ROOT value = 100 } }
+				marriage_with = ENG
+			}
+		}
+		effect = {
+			add_prestige = 10
+			add_dip_power = 10
+		}
+	}
+	
+	por_english_alliance = {
+		icon = mission_alliances
+		required_missions = { por_england_relations }
+		position = 2
+		trigger = {
+			if = {
+				limit = { exists = GBR }
+				alliance_with = GBR
+			}
+			else = {
+				alliance_with = ENG
+			}
+		}
+		effect = {
+			add_prestige = 5
+			add_dip_power = 150
+		}
+	}
+	
+	por_merchant_guild = {
+		icon = mission_early_game_buildings
+		required_missions = { por_english_alliance }
+		position = 3
+		provinces_to_highlight = {
+			province_id = 3349
+		}
+		trigger = {
+			3349 = {
+				owned_by = ROOT
+				HasBuildingOrBetter = { b1=merchant_guild b2=trade_depot b3=customs_house }
+			}
+		}
+		effect = {
+			3349 = {
+				add_province_modifier = { name = "mission_small_urban_gravity" duration = 3650 }
+			}
+			custom_tooltip = desc_mission_small_urban_gravity_tt
+		}
+	}
+}
+
+por_missions_two = {
+	slot = 6
+	generic = no
+	ai = yes
+	potential = {
+		has_country_flag = k_of_por
+	}
+	has_country_shield = yes
+
+	por_castille_relations = {
+		icon = mission_monarch_in_throne_room
+		required_missions = {  }
+		position = 1
+		trigger = {
+			if = {
+				limit = { exists = SPA }
+				SPA = { has_opinion = { who = ROOT value = 100 } }
+				marriage_with = SPA
+			}
+			else = {
+				CAS = { has_opinion = { who = ROOT value = 100 } }
+				marriage_with = CAS
+			}
+		}
+		effect = {
+			add_prestige = 10
+			add_dip_power = 10
+		}
+	}
+	
+	por_castille_alliance = {
+		icon = mission_alliances
+		required_missions = { por_castille_relations }
+		position = 2
+		trigger = {
+			if = {
+				limit = { exists = SPA }
+				alliance_with = SPA
+			}
+			else = {
+				alliance_with = CAS
+			}
+		}
+		effect = {
+			add_stability_1 = yes
+		}
+	}
+
+	por_papal_relations = {
+		icon = mission_hands_praying
+		position = 3
+		required_missions = { por_castille_alliance }
+		
+		trigger = {
+			if = {
+				limit = {
+					exists = PAP
+				}
+				PAP = {
+					has_opinion = {
+						who = ROOT
+						value = 150
+					}
+				}
+			}
+			OR = {
+				is_papal_controller = yes
+				papal_influence = 100
+			}
+		}
+		
+		effect = {
+			add_prestige = 15
+		}
+	}
+}
+
+por_missions_three = {
+	slot = 7
+	generic = no
+	ai = yes
+	potential = {
+		has_country_flag = k_of_por
+	}
+	has_country_shield = yes
+	
+	por_build_the_navy = {
+		icon = mission_sea_battles
+		required_missions = {  }
+		position = 1
+		completed_by = 1470.1.1
+		
+		trigger = {
+			navy_size_percentage = 1
+		}
+		
+		effect = {
+			add_navy_tradition = 15
+			334 = {
+				if = {
+					limit = {
+						NOT = {
+							owned_by = ROOT
+							is_core = ROOT
+						}
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+		}
+	}
+	
+	por_conquer_tangiers = {
+		icon = mission_unite_home_region
+		required_missions = { por_build_the_navy }
+		position = 2
+		provinces_to_highlight = {
+			OR = {
+				province_id = 334
+				province_id = 1533
+				province_id = 2971
+			}
+			NOT = { owned_by = ROOT }
+		}
+		trigger = {
+			334 = {
+				owned_by = ROOT
+			}
+			1533 = {
+				owned_by = ROOT
+			}
+			2971 = {
+				owned_by = ROOT
+			}
+		}
+		effect = {
+			add_army_tradition = 15
+		}
+	}
+	
+	por_conquer_anfa = {
+		icon = mission_cannons_firing
+		required_missions = { por_conquer_tangiers }
+		position = 3
+		provinces_to_highlight = {
+			OR = {
+				province_id = 2869
+				province_id = 2962
+				province_id = 4073
+			}
+			NOT = { owned_by = ROOT }
+		}
+		trigger = {
+			2869 = {
+				owned_by = ROOT
+				is_core = ROOT
+			}
+			2962 = {
+				owned_by = ROOT
+				is_core = ROOT
+			}
+			4073 = {
+				owned_by = ROOT
+				is_core = ROOT
+			}
+		}
+		effect = {
+			add_prestige = 10
+			add_country_modifier = {
+				name = "the_unknown_frontier"
+				duration = 5475
+			}
+		}
+	}
+	
+	por_conquer_south_morocco = {
+		icon = mission_cannons_firing
+		required_missions = { por_conquer_anfa }
+		position = 4
+		provinces_to_highlight = {
+			OR = {
+				province_id = 1585
+				province_id = 2896
+			}
+			NOT = { owned_by = ROOT }
+		}
+		trigger = {
+			1585 = {
+				owned_by = ROOT
+			}
+			2896 = {
+				owned_by = ROOT
+			}
+		}
+		effect = {
+			add_prestige = 10
+			add_dip_power = 75
+		}
+	}
+	
+	por_control_macaronesia = {
+		icon = mission_cannons_firing
+		required_missions = { por_conquer_south_morocco }
+		position = 5
+		provinces_to_highlight = {
+			area = macaronesia_area
+			NOT = { owned_by = ROOT }
+		}
+		trigger = {
+			macaronesia_area = {
+				type = all
+				owned_by = ROOT
+			}
+		}
+		effect = {
+			add_prestige = 10
+			add_yearly_sailors = 3
+		}
+	}
+	
+	por_azores_arsenal = {
+		icon = mission_early_game_buildings
+		required_missions = { por_control_macaronesia }
+		position = 6
+		provinces_to_highlight = {
+			province_id = 367
+		}
+		trigger = {
+			367 = {
+				owned_by = ROOT
+				HasBuildingOrBetter = { b1=military_harbour_1 b2=military_harbour_2 b3=military_harbour_3 b4=military_harbour_4 }
+			}
+		}
+		effect = {
+			add_navy_tradition = 20
+		}
+	}
+}

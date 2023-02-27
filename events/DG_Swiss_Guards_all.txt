@@ -1,0 +1,199 @@
+namespace = dg_swiss
+#2 of 2 events finished and optimized
+#No tooltips necessary
+#variables and flags hidden
+
+country_event = { #Swiss Mercenaries
+	
+	id = dg_swiss.01
+	title = dg_swiss.01.t
+	desc = dg_swiss.01.d
+	picture = swiss_guards
+	
+	trigger = {
+		SWI = {
+			manpower_percentage = 1
+			religion = ROOT
+			knows_country = ROOT
+			is_at_war = no
+			NOT = { is_rival = ROOT }
+			NOT = { is_enemy = ROOT }
+			NOT = { truce_with = ROOT }
+			num_of_cities = 1
+		}
+		NOT = { manpower_percentage = 0.50 }
+		is_at_war = yes
+		treasury = 20 #Not meant to bankrupt countries
+		NOT = { has_country_flag = swiss_mercenaries }
+		NOT = { has_country_flag = swiss_guards }
+		NOT = { has_country_flag = swiss_guards_denied }
+		NOT = { any_owned_province = { is_core = SWI } }
+		NOT = { has_global_flag = swiss_mercenaries_disbanded }
+		NOT = { tag = SWI }
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 20
+		
+		modifier = {
+			treasury = 50
+			factor = 0.7
+		}
+		modifier = {
+			treasury = 100
+			factor = 0.7
+		}
+		modifier = {
+			treasury = 250
+			factor = 0.7
+		}
+		modifier = {
+			any_neighbor_country = { tag = SWI }
+			factor = 0.7
+		}
+		modifier = {
+			papal_trigger = yes
+			factor = 0.7
+		}
+	}
+	
+	option = {
+		name = dg_swiss.01.a #Hire them to bolster our forces
+		ai_chance = { factor = 50 }
+		set_country_flag = swiss_mercenaries
+		add_prestige = 1
+		add_treasury = -10
+		random_owned_province = {
+			limit = {
+				OR = {
+					AND = {
+						controlled_by = ROOT
+						is_core = ROOT
+						culture_group = ROOT
+					}
+					is_capital = yes
+				}
+			}
+			mercenary_infantry = ROOT
+		}
+		reverse_add_opinion = { who = SWI modifier = hired_swiss_mercenaries }
+		SWI = { country_event = { id = dg_swiss.03 days = 30 } }
+		custom_tooltip = permanent_swsis_force_possible
+	}
+	option = {
+		name = dg_swiss.01.b #We cannot rely on mercenaries
+		ai_chance = { factor = 50 }
+		set_country_flag = swiss_guards_denied
+	}
+}
+
+country_event = { #Swiss Guards
+	
+	id = dg_swiss.02
+	title = dg_swiss.02.t
+	desc = dg_swiss.02.d
+	picture = swiss_guards
+	
+	trigger = {
+		has_country_flag = swiss_mercenaries
+		SWI = {
+			manpower_percentage = 1
+			religion = ROOT
+			knows_country = ROOT
+			is_at_war = no
+			NOT = { is_rival = ROOT }
+			NOT = { is_enemy = ROOT }
+			NOT = { truce_with = ROOT }
+			num_of_cities = 1
+		}
+		NOT = { manpower_percentage = 0.50 }
+		is_at_war = no
+		NOT = { has_country_flag = swiss_guards_denied }
+		NOT = { has_country_flag = swiss_guards }
+		treasury = 50
+		NOT = { any_owned_province = { is_core = SWI } }
+		NOT = { has_global_flag = swiss_mercenaries_disbanded }
+		NOT = { tag = SWI }
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 20
+		
+		modifier = {
+			treasury = 100
+			factor = 0.7
+		}
+		modifier = {
+			treasury = 250
+			factor = 0.7
+		}
+		modifier = {
+			any_neighbor_country = { tag = SWI }
+			factor = 0.7
+		}
+		modifier = {
+			papal_trigger = yes
+			factor = 0.7
+		}
+	}
+	
+	option = {
+		name = dg_swiss.02.a #Establish a permanent force
+		ai_chance = { factor = 50 }
+		set_country_flag = swiss_guards
+		add_treasury = -25
+		add_prestige = 1
+		add_opinion = { who = SWI modifier = hired_swiss_guards }
+		reverse_add_opinion = { who = SWI modifier = hired_swiss_guards }
+		capital_scope = {
+			add_province_modifier = { name = swiss_guard duration = -1 }
+		}
+		SWI = { country_event = { id = dg_swiss.03 days = 30 } }
+	}
+	option = {
+		name = dg_swiss.02.b #We have no need for them
+		ai_chance = { factor = 50 }
+		set_country_flag = swiss_guards_denied
+	}
+}
+
+country_event = {
+	
+	id = dg_swiss.03
+	title = dg_swiss.03.t
+	desc = dg_swiss.03.d
+	picture = swiss_guards
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = dg_swiss.03.a #Send them off with fanfare
+		ai_chance = { factor = 100 }
+		add_manpower = -1
+		add_army_tradition = 2
+		if = {
+			limit = { has_opinion_modifier = { who = FROM modifier = hired_swiss_guards } }
+			add_treasury = 25
+			reverse_add_opinion = { who = FROM modifier = hired_swiss_guards }
+		}
+		else = {
+			add_treasury = 10
+			reverse_add_opinion = { who = FROM modifier = hired_swiss_mercenaries }
+		}
+	}
+	option = {
+		name = dg_swiss.03.b #Forbid the practice
+		ai_chance = { factor = 0 }
+		set_global_flag = swiss_mercenaries_disbanded
+		if = {
+			limit = { has_opinion_modifier = { who = FROM modifier = hired_swiss_guards } }
+			remove_opinion = { who = FROM modifier = hired_swiss_guards }
+		}
+		else = {
+			add_treasury = 10
+			remove_opinion = { who = FROM modifier = hired_swiss_mercenaries }
+		}
+	}
+}

@@ -1,0 +1,152 @@
+meiou_startup = {
+	if = {
+		limit = {
+			is_variable_equal = { which = meiou_version value = 0 }
+		}
+		set_variable = { which = meiou_version value = 252.06 }
+		meiou_setup = yes
+	}
+	else_if = {
+		limit = {
+			NOT = { check_variable = { which = meiou_version value = 252.06 } }
+		}
+		meiou_update_252.06 = yes
+		set_variable = { which = meiou_version value = 252.06 }
+	}
+	country_event = {
+		id = distance_calc.1
+	}
+	country_event = {
+		id = MT_general_fixes.2
+	}
+}
+meiou_setup = {
+	5154 = {
+		export_to_variable = { which = starting_year value = trigger_value:is_year }
+		subtract_variable = { which = starting_year value = 1 }
+		set_variable = { which = year_ticker value = 56 } #1300
+		set_variable = { which = ticker_offset which = year_ticker }
+		subtract_variable = { which = ticker_offset which = starting_year }
+		set_variable = { which = current_year which = starting_year }
+		every_country = {
+			set_variable = { which = year_ticker value = 56 }
+			set_variable = { which = current_year which = PREV }
+		}
+		every_province = {
+			set_variable = { which = year_ticker value = 56 }
+			if = {
+				limit = { is_city = yes }
+				province_event = { id = MT_general_fixes.300 }
+			}
+		}
+	}
+}
+meiou_update_252.06 = {
+	if = {
+		limit = {
+			NOT = { check_variable = { which = meiou_version value = 252.06 } }
+		}
+		every_province = {
+			limit = { is_city = yes }
+			province_event = { id = MT_general_fixes.300 }
+			owner = {
+				change_variable = { which = art_power which = PREV }
+			}
+		}
+		every_country = {
+			limit = {
+				OR = {
+					has_country_flag = christian_devsirme
+					has_country_flag = jewish_devsirme
+					has_country_flag = dharmic_devsirme
+					has_country_flag = buddhist_devsirme
+					has_country_flag = pagan_devsirme
+					has_country_flag = european_pagan_devsirme
+					has_country_flag = new_world_pagan_devsirme
+				}
+			}
+			set_country_flag = general_jizya_in_effect
+		}
+		country_event = { id = rebellions.002 }
+		country_event = { id = italian_power.1 }
+		meiou_update_252.052 = yes
+	}
+}
+meiou_update_252.052 = {
+	if = {
+		limit = {
+			NOT = { check_variable = { which = meiou_version value = 252.052 } }
+		}
+		5154 = {
+			export_to_variable = { which = current_year value = trigger_value:is_year }
+			subtract_variable = { which = current_year value = 1 }
+			set_variable = { which = ticker_offset value = 56 }
+			subtract_variable = { which = ticker_offset which = current_year }
+			every_country = {
+				set_variable = { which = current_year which = PREV }
+			}
+		}
+		meiou_update_252.051 = yes
+	}
+}
+meiou_update_252.051 = {
+	if = {
+		limit = {
+			NOT = { check_variable = { which = meiou_version value = 252.051 } }
+		}
+		5154 = {
+			export_to_variable = { which = current_year value = trigger_value:is_year }
+			subtract_variable = { which = current_year value = 1 }
+			set_variable = { which = ticker_offset value = 56 }
+			subtract_variable = { which = ticker_offset which = current_year }
+			every_country = {
+				set_variable = { which = current_year which = PREV }
+			}
+		}
+		every_province = {
+			limit = { is_city = yes }
+			province_event = { id = MT_general_fixes.300 }
+			if = {
+				limit = {
+					has_province_flag = was_tribes
+				}
+				clr_province_flag = was_tribes
+				set_province_flag = was_tribals
+			}
+		}
+		#if = {
+		#	limit = { is_institution_enabled = legalism }
+		#	set_variable = { which = legalism_date value = -100 }
+		#}
+		#if = {
+		#	limit = { is_institution_enabled = banking }
+		#	set_variable = { which = banking_date value = -100 }
+		#}
+		#if = {
+		#	limit = { is_institution_enabled = I_meritocracy }
+		#	set_variable = { which = I_meritocracy_date value = -100 }
+		#}
+		#if = {
+		#	limit = { is_institution_enabled = renaissance }
+		#	set_variable = { which = renaissance_date value = -100 }
+		#}
+		#if = {
+		#	limit = { is_institution_enabled = casual_literacy }
+		#	set_variable = { which = casual_literacy_date value = -100 }
+		#}
+		#if = {
+		#	limit = { is_institution_enabled = global_trade }
+		#	set_variable = { which = global_trade_date value = -100 }
+		#}
+		#if = {
+		#	limit = { is_institution_enabled = manufactories }
+		#	set_variable = { which = manufactories_date value = -100 }
+		#}
+		#if = {
+		#	limit = { is_institution_enabled = enlightenment }
+		#	set_variable = { which = enlightenment_date value = -100 }
+		#}
+		
+		#meiou_update_252.05 = yes
+	}
+}

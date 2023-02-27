@@ -1,0 +1,4923 @@
+namespace = POP_dev_button_interactions
+
+### By Demian, with assistance from Phlopsi and Tisafleshwound
+
+#province_event = { ### Base Menu
+#	id = POP_dev_button_interactions.700
+#	title = POP_dev_button_interactions.700.t
+#	desc = POP_dev_button_interactions.700.d
+#	picture = CITY_DEVELOPMENT_eventPicture
+#	is_triggered_only = yes
+#	hidden = no
+#	
+#	immediate = {
+#		hidden_effect = {
+#			if = {
+#				limit = {
+#					NOT = { check_variable = { which = ptm_substate_infantry_host	value = 1 } }
+#				}
+#				set_variable = { which = ptm_substate_infantry_host	value = 0 }
+#			}
+#			if = {
+#				limit = {
+#					NOT = { check_variable = { which = ptm_substate_cavalry_host	value = 1 } }
+#				}
+#				set_variable = { which = ptm_substate_cavalry_host	value = 0 }
+#			}
+#			if = {
+#				limit = {
+#					NOT = { check_variable = { which = ptm_substate_power_share	value = 0.01 } }
+#				}
+#				set_variable = { which = ptm_substate_power_share	value = 0 }
+#			}
+#		}
+#	}
+#	
+#	option = {
+#		name = "POP_dev_button_interactions.700.a"
+#	}
+#}
+#
+province_event = { ### Base Menu
+	id = POP_dev_button_interactions.001
+	title = POP_dev_button_interactions.001.t
+	desc = POP_dev_button_interactions.001.d
+	picture = CITY_DEVELOPMENT_eventPicture
+	#is_triggered_only = no
+	hidden = no
+	
+	trigger = {
+		OR = {
+			has_province_flag = interacting_with_province
+			has_building = interact_with_province_build
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	immediate = {
+		hidden_effect = {
+			set_province_flag = dev_button_interact
+			#if = {
+			#	limit = {
+			#		has_building = upgrade_roads_build
+			#	}
+			#	remove_building = upgrade_roads_build
+			#	owner = { change_variable = { which = update_roads } }
+			#	#	add_treasury = 1
+			#}
+			#if = {
+			#	limit = {
+			#		has_building = upgrade_fort_build
+			#	}
+			#	remove_building = upgrade_fort_build
+			#	#	add_treasury = 1
+			#}
+			clr_province_flag = interacting_with_province
+			remove_building = interact_with_province_build
+		}
+	}
+	
+#	option = { ### Visit Tribal Leaders, owner
+#		name = "POP_dev_button_interactions.001.y"
+#		trigger = {
+#			always = no
+#			OR = {
+#				is_variable_equal = { which = ptm_kingdom_type 		value = 2 }
+#				is_variable_equal = { which = ptm_duchy_type 		value = 2 }
+#				is_variable_equal = { which = ptm_country_type 		value = 2 }
+#			}
+#		}
+#		
+#		hidden_effect = {
+#			if = {
+#				limit = {
+#					is_variable_equal = { which = ptm_kingdom_type 			value = 2 }
+#					check_variable = { which = ptm_kingdom_id 				value = 1 }
+#					NOT = { check_variable = { which = ptm_capital_level 	value = 2 } }
+#				}
+#				every_province = {
+#					limit = {
+#						is_city = yes
+#						is_variable_equal = { which = ptm_kingdom_id 		which = PREV }
+#						is_variable_equal = { which = ptm_capital_level 		value = 2 }
+#					}
+#					province_event = {
+#						id = POP_dev_button_interactions.700
+#					}
+#				}
+#			}
+#			else_if = {
+#				limit = {
+#					is_variable_equal = { which = ptm_duchy_type 			value = 2 }
+#					check_variable = { which = ptm_duchy_id 				value = 1 }
+#					NOT = { check_variable = { which = ptm_capital_level 	value = 1 } }
+#				}
+#				every_province = {
+#					limit = {
+#						is_city = yes
+#						is_variable_equal = { which = ptm_parent_type 	which = PREV }
+#						is_variable_equal = { which = ptm_capital_level 	value = 1 }
+#					}
+#					province_event = {
+#						id = POP_dev_button_interactions.700
+#					}
+#				}
+#			}
+#			else = {
+#				province_event = {
+#					id = POP_dev_button_interactions.700
+#				}
+#			}
+#		}
+#	}
+	
+	option = { ### Road building
+		name = "POP_dev_button_interactions.001.a"
+		trigger = {
+			NOT = { has_province_modifier = road_is_building }
+			NOT = { has_province_flag = mass_building_road }
+			NOT = { has_province_flag = country_went_bankrupt_road }
+		}
+		
+		hidden_effect = {
+			if = {
+				limit = {
+					has_province_flag = already_started_building_road
+					NOT = { check_variable = { which = road_cost_remaining value = 0.001 } }
+				}
+				province_event = {
+					id = POP_dev_button_interactions.006
+				}
+			}
+			if = {
+				limit = {
+					OR = {
+						AND = {
+							NOT = { has_building = road_network }
+							NOT = { has_building = paved_road_network }
+							NOT = { has_building = highway_network }
+							NOT = { has_building = road_and_rail_network }
+						}
+						AND = {
+							has_building = road_network
+							owner = { dip_tech = 13 }
+						}
+						AND = {
+							has_building = paved_road_network
+							owner = { dip_tech = 33 }
+						}
+						AND = {
+							has_building = highway_network
+							owner = { dip_tech = 50 }
+						}
+					}
+				}
+				if = {
+					limit = {
+						has_province_flag = already_started_building_road
+					}
+					province_event = {
+						id = POP_dev_button_interactions.007
+					}
+				}
+				else = {
+					province_event = {
+						id = POP_dev_button_interactions.002
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						AND = {
+							has_building = road_network
+							owner = { NOT = { dip_tech = 13 } }
+						}
+						AND = {
+							has_building = paved_road_network
+							owner = { NOT = { dip_tech = 33 } }
+						}
+						AND = {
+							has_building = highway_network
+							owner = { NOT = { dip_tech = 50 } }
+						}
+						has_building = road_and_rail_network
+					}
+				}
+				province_event = {
+					id = POP_dev_button_interactions.008
+				}
+			}
+			else = {
+				clr_province_flag = dev_button_interact
+			}
+		}
+		ai_chance = { factor = 0 }
+	}
+	
+	option = { ### Build Forts
+		name = "POP_dev_button_interactions.001.b"
+		trigger = {
+			NOT = { has_province_flag = mass_building_fort }
+			NOT = { has_province_modifier = fort_is_building }
+			NOT = { has_province_flag = country_went_bankrupt_fort }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					has_province_flag = already_started_building_fort
+					NOT = { check_variable = { which = fort_cost_remaining value = 0.001 } }
+				}
+				province_event = {
+					id = POP_dev_button_interactions.106
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						AND = {
+							NOT = { has_building = fort_14th }
+							NOT = { has_building = fort_15th }
+							NOT = { has_building = fort_16th }
+							NOT = { has_building = fort_17th }
+							NOT = { has_building = fort_18th }
+						}
+						AND = {
+							has_building = fort_14th
+							owner = { mil_tech = 15 }
+						}
+						AND = {
+							has_building = fort_15th
+							owner = { mil_tech = 26 }
+						}
+						AND = {
+							has_building = fort_16th
+							owner = { mil_tech = 35 }
+						}
+						AND = {
+							has_building = fort_17th
+							owner = { mil_tech = 41 }
+						}
+					}
+				}
+				if = {
+					limit = {
+						has_province_flag = already_started_building_fort
+					}
+					province_event = {
+						id = POP_dev_button_interactions.107
+					}
+				}
+				else = {
+					province_event = {
+						id = POP_dev_button_interactions.102
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						AND = {
+							has_building = fort_14th
+							NOT = { owner = { mil_tech = 15 } }
+						}
+						AND = {
+							has_building = fort_15th
+							NOT = { owner = { mil_tech = 26 } }
+						}
+						AND = {
+							has_building = fort_16th
+							NOT = { owner = { mil_tech = 35 } }
+						}
+						AND = {
+							has_building = fort_17th
+							NOT = { owner = { mil_tech = 41 } }
+						}
+						has_building = fort_18th
+					}
+				}
+				province_event = {
+					id = POP_dev_button_interactions.108
+				}
+			}
+			else = {
+				clr_province_flag = dev_button_interact
+			}
+		}
+		ai_chance = { factor = 0 }
+	}
+	
+	option = { ### Build Canals
+		name = "POP_dev_button_interactions.001.j"
+		trigger = {
+			NOT = { has_climate = arctic }
+			NOT = { has_terrain = tundra }
+			NOT = { has_terrain = arctic }
+			NOT = { has_province_flag = mass_building_canal }
+			NOT = { has_province_modifier = canal_is_building }
+			NOT = { has_province_flag = country_went_bankrupt_canal }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					has_province_flag = already_started_building_canal
+					NOT = { check_variable = { which = canal_cost_remaining value = 0.001 } }
+				}
+				province_event = {
+					id = POP_dev_button_interactions.408
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						AND = {
+							NOT = { has_building = canal_level_1 }
+							NOT = { has_building = canal_level_2 }
+							NOT = { has_building = canal_level_3 }
+							owner = { adm_tech = 5 }
+						}
+						AND = {
+							has_building = canal_level_1
+							owner = { adm_tech = 16 }
+						}
+						AND = {
+							has_building = canal_level_2
+							owner = { adm_tech = 40 }
+						}
+					}
+				}
+				if = {
+					limit = {
+						has_province_flag = already_started_building_canal
+					}
+					province_event = {
+						id = POP_dev_button_interactions.409
+					}
+				}
+				else = {
+					province_event = {
+						id = POP_dev_button_interactions.401
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						NOT = { owner = { adm_tech = 5 } }
+						AND = {
+							has_building = canal_level_1
+							NOT = { owner = {   adm_tech = 16 } }
+						}
+						AND = {
+							has_building = canal_level_2
+							NOT = { owner = {   adm_tech = 40 } }
+						}
+					}
+				}
+				province_event = {
+					id = POP_dev_button_interactions.411
+				}
+			}
+			else = {
+				clr_province_flag = dev_button_interact
+			}
+		}
+		ai_chance = { factor = 0 }
+	}
+	
+	#option = { ### Deforestation
+	#	name = "POP_dev_button_interactions.201.a"
+	#	trigger = {
+	#		trade_goods = lumber
+	#		NOT = { has_terrain = taiga }
+	#		NOT = { local_autonomy = 50 }
+	#		owner = {
+	#			absolutism = 10
+	#			#full_idea_group = administrative_ideas
+	#			any_owned_province = {
+	#				NOT = { has_province_flag = deforestation_ongoing }
+	#			}
+	#		}
+	#	}
+	#	hidden_effect = {
+	#		add_permanent_province_modifier = {
+	#			name = deforestation
+	#			duration = -1
+	#		}
+	#		set_province_flag = deforestation_ongoing
+	#	}
+	#	clr_province_flag = dev_button_interact
+	#	ai_chance = { factor = 0 }
+	#}
+	#
+	#option = { ### Deforestation END
+	#	name = "POP_dev_button_interactions.201.c"
+	#	trigger = {
+	#		has_province_flag = deforestation_ongoing
+	#	}
+	#	hidden_effect = {
+	#		remove_province_modifier = deforestation
+	#		clr_province_flag = deforestation_ongoing
+	#	}
+	#	clr_province_flag = dev_button_interact
+	#	ai_chance = { factor = 0 }
+	#}
+	#
+	#option = { ### Build State Forest
+	#	name = "POP_dev_button_interactions.201.b"
+	#	trigger = {
+	#		OR = {
+	#			state_forest_trigger = yes
+	#			has_port = yes
+	#		}
+	#		NOT = { local_autonomy = 50 }
+	#		owner = {
+	#			full_idea_group = naval_ideas
+	#			full_idea_group = administrative_ideas
+	#			absolutism = 30
+	#			NOT = {
+	#				any_owned_province = {
+	#					has_province_flag = state_forest
+	#				}
+	#			}
+	#		}
+	#	}
+	#	hidden_effect = {
+	#		add_permanent_province_modifier = {
+	#			name = state_forest
+	#			duration = -1
+	#		}
+	#		set_province_flag = state_forest
+	#	}
+	#	clr_province_flag = dev_button_interact
+	#	ai_chance = { factor = 0 }
+	#}
+	
+	option = { ### Check Bureaucratic options
+		name = "POP_dev_button_interactions.001.c"
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.202
+			}
+		}
+		ai_chance = { factor = 0 }
+	}
+	
+	option = { ### Administer Urban Production
+		name = "POP_dev_button_interactions.001.k"
+		trigger = {
+			OR = {
+				has_province_modifier = minor_center_of_production
+				has_province_modifier = important_center_of_production
+				has_province_modifier = major_center_of_production
+				has_province_modifier = dominant_center_of_production
+				has_province_flag = urban_goods_rank_2
+				has_province_flag = urban_goods_rank_3
+			}
+		}
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.501
+			}
+		}
+		ai_chance = { factor = 0 }
+	}
+	
+	option = { ### Create Greater Nobility
+		name = "POP_dev_button_interactions.001.e"
+		trigger = {
+			owner = { has_country_flag = create_greater_nobility }
+		}
+		
+		hidden_effect = {
+			owner = { clr_country_flag = create_greater_nobility }
+			province_event = {
+				id = POP_Estates.509
+			}
+			owner = {
+				set_variable = { which = estate_greater_nobles_loyalty 		value = 0.70 }
+				add_estate_loyalty = {
+					estate = estate_greater_nobles
+					loyalty = 35
+				}
+			}
+			
+			
+			#	country_event = {
+			#		id = POP_Estates.510
+			#		days = 5
+			#	}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+	
+	option = { ### Flood Fund
+		name = "POP_dev_button_interactions.001.g"
+		
+		trigger = {
+			has_province_flag = floodgroup_area
+			
+			NOT = { has_province_flag = floodgroup_government_focus }
+		}
+		
+		set_province_flag = floodgroup_government_focus
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+	
+	option = { ### Flood Fund Stop
+		name = "POP_dev_button_interactions.001.h"
+		
+		trigger = {
+			has_province_flag = floodgroup_government_focus
+		}
+		
+		clr_province_flag = floodgroup_government_focus
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+	
+	option = { ### Province Data
+		name = "POP_dev_button_interactions.001.i"
+		
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.901
+			}
+		}
+		ai_chance = { factor = 0 }
+	}
+	
+	option = { ### Fight Emirate of Mount Lebanon
+		name = "POP_dev_button_interactions.001.emld"
+		trigger = {
+			OR = {
+				has_province_modifier = mount_lebanon_emirate_disloyal
+				has_province_modifier = mount_lebanon_emirate_rebellious
+			}
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_syr.101
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+	
+	option = { ### Abrogate Emirate of Mount Lebanon
+		name = "POP_dev_button_interactions.001.emll"
+		trigger = {
+			has_province_modifier = mount_lebanon_emirate_loyal
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_syr.501
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+
+	option = { ### Abrogate county_of_artois
+		name = "POP_dev_button_interactions.001.cart"
+		trigger = {
+			has_province_modifier = county_of_artois
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_svp.501
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+
+	option = { ### Abrogate county_of_flanders
+		name = "POP_dev_button_interactions.001.cfla"
+		trigger = {
+			has_province_modifier = county_of_flanders
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_svp.502
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+
+	option = { ### Abrogate lordship_of_mechelen
+		name = "POP_dev_button_interactions.001.lmec"
+		trigger = {
+			has_province_modifier = lordship_of_mechelen
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_svp.503
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+
+	option = { ### Abrogate county_of_namur
+		name = "POP_dev_button_interactions.001.cnam"
+		trigger = {
+			has_province_modifier = county_of_namur
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_svp.504
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+
+	option = { ### Abrogate county_of_hainaut
+		name = "POP_dev_button_interactions.001.chai"
+		trigger = {
+			has_province_modifier = county_of_hainaut
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_svp.505
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+
+	option = { ### Abrogate county_of_zeeland
+		name = "POP_dev_button_interactions.001.czee"
+		trigger = {
+			has_province_modifier = county_of_zeeland
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_svp.506
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+
+	option = { ### Abrogate county_of_holland
+		name = "POP_dev_button_interactions.001.chol"
+		trigger = {
+			has_province_modifier = county_of_holland
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_svp.507
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+
+	option = { ### Abrogate duchy_of_brabant
+		name = "POP_dev_button_interactions.001.dbrb"
+		trigger = {
+			has_province_modifier = duchy_of_brabant
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_svp.508
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+
+	option = { ### Abrogate duchy_of_limburg
+		name = "POP_dev_button_interactions.001.dlim"
+		trigger = {
+			has_province_modifier = duchy_of_limburg
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_svp.509
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+
+	option = { ### Abrogate duchy_of_luxembourg
+		name = "POP_dev_button_interactions.001.dlux"
+		trigger = {
+			has_province_modifier = duchy_of_luxembourg
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_svp.510
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+
+	option = { ### Abrogate lordship_of_utrecht
+		name = "POP_dev_button_interactions.001.lutr"
+		trigger = {
+			has_province_modifier = lordship_of_utrecht
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_svp.511
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+
+	option = { ### Abrogate lordship_of_frisia
+		name = "POP_dev_button_interactions.001.lfri"
+		trigger = {
+			has_province_modifier = lordship_of_frisia
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_svp.512
+			}
+		}
+		ai_chance = { factor = 0 }
+	}
+
+	option = { ### Abrogate duchy_of_guelders
+		name = "POP_dev_button_interactions.001.dgel"
+		trigger = {
+			has_province_modifier = duchy_of_guelders
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_svp.513
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+
+	option = { ### Abrogate lordship_of_groningen
+		name = "POP_dev_button_interactions.001.lgro"
+		trigger = {
+			has_province_modifier = lordship_of_groningen
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_svp.514
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+
+	option = { ### Abrogate lordship_of_overijssel
+		name = "POP_dev_button_interactions.001.love"
+		trigger = {
+			has_province_modifier = lordship_of_overijssel
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_svp.515
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+
+	option = { ### Abrogate county_of_zutphen
+		name = "POP_dev_button_interactions.001.czut"
+		trigger = {
+			has_province_modifier = county_of_zutphen
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_svp.516
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+
+	option = { ### Abrogate bishopric_of_tournai
+		name = "POP_dev_button_interactions.001.btou"
+		trigger = {
+			has_province_modifier = bishopric_of_tournai
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_svp.517
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+
+	option = { ### Abrogate bishopric_of_liege
+		name = "POP_dev_button_interactions.001.blie"
+		trigger = {
+			has_province_modifier = bishopric_of_liege
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_svp.518
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+	
+	option = { ### Abrogate beylik_of_karasi
+		name = "POP_dev_button_interactions.001.bkar"
+		trigger = {
+			has_province_modifier = beylik_of_karasi
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_tur.2001
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+	
+	option = { ### Abrogate beylik_of_saruhan
+		name = "POP_dev_button_interactions.001.bsar"
+		trigger = {
+			has_province_modifier = beylik_of_saruhan
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_tur.2002
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+	
+	option = { ### Abrogate beylik_of_isfendiyar
+		name = "POP_dev_button_interactions.001.bisf"
+		trigger = {
+			has_province_modifier = beylik_of_isfendiyar
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_tur.2003
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+	
+	option = { ### Abrogate beylik_of_artuqids
+		name = "POP_dev_button_interactions.001.bart"
+		trigger = {
+			has_province_modifier = beylik_of_artuqids
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_tur.2004
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+	
+	option = { ### Abrogate beylik_of_ankara
+		name = "POP_dev_button_interactions.001.bank"
+		trigger = {
+			has_province_modifier = beylik_of_ankara
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_tur.2005
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+	
+	option = { ### Abrogate ahis_fraternity
+		name = "POP_dev_button_interactions.001.fahi"
+		trigger = {
+			has_province_modifier = ahis_fraternity
+		}
+		hidden_effect = {
+			province_event = {
+				id = flavor_tur.2006
+			}
+		}
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 0 }
+	}
+	
+	option = {
+		# name = "POP_dev_button_interactions.001.j"
+		name = exit
+		highlight = yes
+		clr_province_flag = dev_button_interact
+		ai_chance = { factor = 100 }
+	}
+}
+
+province_event = {
+	id = POP_dev_button_interactions.002
+	title = POP_dev_button_interactions.002.t
+	desc = POP_dev_button_interactions.002.d
+	picture = ROAD_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+#	trigger = {
+#		has_building = upgrade_roads_build
+#	}
+	
+	immediate = {
+		hidden_effect = {
+			#	remove_building = upgrade_roads_build
+			set_province_flag = already_started_building_road ### This flag prevents this event from being called again, and instead redirects the player to another event so that all of the variables don't get reset
+			#set_variable = { 	  which = road_cost_base			value = 0 }
+			set_variable = { 	  which = road_cost_base 			value = 80 }
+			#set_variable = { 	  which = road_price_multiplier 	value = 0 }
+			set_variable = {   which = road_price_multiplier 	which = urban_pop }
+			multiply_variable = { which = road_price_multiplier		value = 2 }
+			change_variable = {   which = road_price_multiplier 	which = rural_pop }
+			#set_variable = { 	  which = road_price_multiplier_d 	value = 0 }
+			set_variable = { 	  which = road_price_multiplier_d 	which = road_price_multiplier }
+			multiply_variable = {	  which = road_price_multiplier		value = 0.01 }
+			trigger_switch = {
+				on_trigger = has_building
+				highway_network = {
+					set_variable = { which = road_cost_base		value = 250 }
+				}
+				paved_road_network = {
+					set_variable = { which = road_cost_base		value = 180 }
+				}
+				road_network = {
+					set_variable = { which = road_cost_base		value = 120 }
+				}
+			}
+			#set_variable = { 	  which = road_province_size_multiplier 	value = 0 }
+			set_variable = { 	  which = road_province_size_multiplier 	which = prov_radius }
+			multiply_variable = {   which = road_province_size_multiplier 	value = 0.4 }
+			#set_variable = { 	  which = road_province_size_multiplier_d 	value = 0 }
+			set_variable = { 	  which = road_province_size_multiplier_d 	which = road_province_size_multiplier }
+			multiply_variable = { which = road_province_size_multiplier_d	value = 100 }
+			#set_variable = { 	  which = road_cost_remaining 				value = 0 }
+			#set_variable = { 	  which = road_price_actual 				value = 0 }
+			set_variable = { 	  which = road_price_actual 				which = road_cost_base }
+			#set_variable = { 	  which = road_price_added 					value = 0 }
+			#set_variable = { 	  which = road_price_total_mult 			value = 0 }
+			set_variable = {   which = road_price_total_mult				which = road_price_multiplier }
+			change_variable = {   which = road_price_total_mult 			which = road_terrain_cost }
+			change_variable = {   which = road_price_total_mult				which = road_province_size_multiplier }
+			set_variable = { 	  which = road_price_added 					which = road_cost_base }
+			multiply_variable = { which = road_price_added 					which = road_price_total_mult }
+			change_variable = {   which = road_price_actual					which = road_price_added }
+			multiply_variable = {   which = road_price_actual					value = 0.001 }
+			multiply_variable = { which = road_price_actual					value = 1000 }
+			set_variable = { 	  which = road_cost_remaining				which = road_price_actual }
+			if = {
+				limit = { owner = { full_idea_group = logistic_ideas } }
+				multiply_variable = { which = road_cost_remaining value = 0.66 }
+				set_province_flag = logistic_road_discount
+			}
+			#set_variable = { 	  which = road_necessary_wealth				value = 0 }
+			set_variable = { 	  which = road_necessary_wealth 			which = road_price_actual }
+			multiply_variable = {   which = road_necessary_wealth 			value = 0.25 } ### Used as trigger to allow or exclude seizing provincial wealth
+			#set_variable = { 	  which = road_terrain_price_d  			value = 0 }
+			set_variable = { 	  which = road_terrain_price_d				which = road_terrain_cost }
+			multiply_variable = { which = road_terrain_price_d 				value = 100 }
+			#set_variable = { 	  which = ducat_cost 						value = 0 }
+			set_variable = { 	  which = ducat_cost 						which = road_cost_remaining }
+			multiply_variable = {   which = ducat_cost						value = 0.001 }
+			multiply_variable = { which = ducat_cost						value = 1000 }
+			
+			#owner = { set_variable = { which = ducat_cost 					value = 0 } }
+			owner = { set_variable = { which = ducat_cost 					which = PREV } }
+		}
+	}
+	
+	option = { ### Pay off remaining cost with ducats
+		name = "POP_dev_button_interactions.002.a"
+		hidden_effect = {
+			set_variable = { which = road_cost_remaining	value = 0 }
+			owner = { scaled_ducat_cost_country = yes }
+			province_event = {
+				id = POP_dev_button_interactions.006
+			}
+		}
+		custom_tooltip = ducats_spent
+	}
+	
+	option = { ### Contribute Manpower to the effort
+		name = "POP_dev_button_interactions.002.b"
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.003
+			}
+		}
+	}
+	
+	option = { ### Convince Locals to Contribute Rural
+		name = "POP_dev_button_interactions.002.c"
+		trigger = {
+			check_variable = { which = wealth_rural_fluid	which = road_necessary_wealth }
+		}
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.004
+			}
+		}
+	}
+	
+	option = { ### Convince Locals to Contribute Urban
+		name = "POP_dev_button_interactions.002.e"
+		trigger = {
+			check_variable = { which = wealth_urban_fluid	which = road_necessary_wealth }
+		}
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.005
+			}
+		}
+	}
+	
+	option = {
+		# name = "POP_dev_button_interactions.002.f"
+		name = back
+		highlight = yes
+		hidden_effect = {
+			set_province_flag = interacting_with_province
+			province_event = { id = POP_dev_button_interactions.001 }
+		}
+	}
+}
+
+province_event = { ### Manpower for Roads
+	id = POP_dev_button_interactions.003
+	title = POP_dev_button_interactions.003.t
+	desc = POP_dev_button_interactions.003.d
+	picture = ROAD_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = mil_power 	value = 0 }
+			owner = {
+				mil_available = yes
+				PREV = { set_variable = { which = mil_power		which = PREV } }
+			}
+			if = {
+				limit = {
+					NOT = { check_variable = { which = road_manpower_spent 	value = 0 } }
+				}
+				set_variable = { which = road_manpower_spent		value = 0 }
+			}
+			set_variable = { which = total_manpower value = 0 }
+			
+			#set_variable = { 	  which = manpower_cost			value = 0 }
+			set_variable = { 	  which = manpower_cost 		which = road_price_actual }
+			if = {
+				limit = { owner = { full_idea_group = quantity_ideas } }
+				multiply_variable = { which = manpower_cost value = 0.8 }
+			}
+			multiply_variable = { which = manpower_cost 		value = 50 } ### Conversion rate of 1 ducat for every 50 manpower for AI
+			multiply_variable = {   which = manpower_cost			value = 0.001 }
+			multiply_variable = { which = manpower_cost			value = 1000 }
+			
+			set_variable = { 	  which = manpower_cost_a		which = manpower_cost }
+			set_variable = { 	  which = manpower_cost_b		which = manpower_cost }
+			set_variable = { 	  which = manpower_cost_c		which = manpower_cost }
+			multiply_variable = { which = manpower_cost_a		value = 0.25 }
+			multiply_variable = { which = manpower_cost_b       value = 0.5  }
+			multiply_variable = { which = manpower_cost_c       value = 0.75 }
+			#set_variable = { 	  which = manpower_cost_a_trig	value = 0 }
+			#set_variable = { 	  which = manpower_cost_b_trig	value = 0 }
+			#set_variable = { 	  which = manpower_cost_c_trig	value = 0 }
+			set_variable = { 	  which = manpower_cost_a_trig	which = manpower_cost_a }
+			set_variable = { 	  which = manpower_cost_b_trig	which = manpower_cost_b }
+			set_variable = { 	  which = manpower_cost_c_trig	which = manpower_cost_c }
+			multiply_variable = {   which = manpower_cost_a_trig	value = 0.01 }
+			multiply_variable = {   which = manpower_cost_b_trig	value = 0.01 }
+			multiply_variable = {   which = manpower_cost_c_trig	value = 0.01 }
+			multiply_variable = {   which = manpower_cost_a		value = 0.001 }
+			multiply_variable = { which = manpower_cost_a		value = 1000 }
+			multiply_variable = {   which = manpower_cost_b		value = 0.001 }
+			multiply_variable = { which = manpower_cost_b		value = 1000 }
+			multiply_variable = {   which = manpower_cost_c		value = 0.001 }
+			multiply_variable = { which = manpower_cost_c		value = 1000 }
+			#set_variable = { 	  which = milit_cost			value = 0 }
+			set_variable = { 	  which = milit_cost			which = road_price_actual }
+			owner = {
+				set_variable = { which = div which = upper_pop }
+				PREV = { set_variable = { which = div which = PREV } }
+				set_variable = { which = div value = 0 }
+			}
+			change_variable = { which = div value = 1 }
+			divide_variable = { which = milit_cost which = div }
+			set_variable = { which = div value = 0 }
+			multiply_variable = {   which = milit_cost			value = 0.01 }
+			#set_variable = { 	  which = milit_cost_a			value = 0 } ### 25 percent
+			#set_variable = { 	  which = milit_cost_b			value = 0 } ### 50 percent
+			#set_variable = { 	  which = milit_cost_c			value = 0 } ### 75 percent
+			set_variable = { 	  which = milit_cost_a			which = milit_cost } ### 25 percent
+			set_variable = { 	  which = milit_cost_b			which = milit_cost } ### 50 percent
+			set_variable = { 	  which = milit_cost_c			which = milit_cost } ### 75 percent
+			multiply_variable = { which = milit_cost_a			value = 0.25 }
+			multiply_variable = { which = milit_cost_b			value = 0.5 }
+			multiply_variable = { which = milit_cost_c			value = 0.75 }
+			change_variable = {   which = milit_cost_a 			value = 3 } ### Base milit cost
+			change_variable = {   which = milit_cost_b 			value = 6 } ### Base milit cost
+			change_variable = {   which = milit_cost_c 			value = 9 } ### Base milit cost
+			multiply_variable = {   which = milit_cost_a			value = 0.001 }
+			multiply_variable = { which = milit_cost_a			value = 1000 }
+			multiply_variable = {   which = milit_cost_b			value = 0.001 }
+			multiply_variable = { which = milit_cost_b			value = 1000 }
+			multiply_variable = {   which = milit_cost_c			value = 0.001 }
+			multiply_variable = { which = milit_cost_c			value = 1000 }
+			owner = {
+				#set_variable = { 	  which = total_manpower 		value = 0 }
+				#set_variable = { 	  which = manpower_cost_a 		value = 0 } ### 25 percent
+				#set_variable = { 	  which = manpower_cost_b 		value = 0 } ### 50 percent
+				#set_variable = { 	  which = manpower_cost_c		value = 0 } ### 75 percent
+				#set_variable = { 	  which = milit_cost_a 			value = 0 } ### 25 percent
+				#set_variable = { 	  which = milit_cost_b 			value = 0 } ### 50 percent
+				#set_variable = { 	  which = milit_cost_c			value = 0 } ### 75 percent
+				export_to_variable = {
+					which = total_manpower
+					value = manpower
+				}
+				multiply_variable = { which = total_manpower value = 10 }
+				PREV = { set_variable = { 	  which = total_manpower		which = PREV } }
+				set_variable = { which = total_manpower value = 0 }
+				set_variable = { 	  which = milit_cost_a 			which = PREV } ### 25 percent
+				set_variable = { 	  which = milit_cost_b 			which = PREV } ### 50 percent
+				set_variable = { 	  which = milit_cost_c			which = PREV } ### 75 percent
+				set_variable = { 	  which = manpower_cost_a		which = PREV }
+				set_variable = { 	  which = manpower_cost_b		which = PREV }
+				set_variable = { 	  which = manpower_cost_c		which = PREV }
+				multiply_variable = {   which = manpower_cost_a 		value = 0.001 }
+				multiply_variable = {   which = manpower_cost_b		value = 0.001 }
+				multiply_variable = {   which = manpower_cost_c		value = 0.001 }
+			}
+		}
+	}
+	
+	option = { ### Choose 25 percent
+		name = "POP_dev_button_interactions.003.a"
+		trigger = {
+			check_variable = { which = mil_power					which = milit_cost_a }
+			check_variable = { which = total_manpower 				which = manpower_cost_a_trig }
+			NOT = { check_variable = { which = road_manpower_spent 	value = 75 } }
+		}
+		hidden_effect = {
+			change_variable = { which = road_manpower_spent		value = 25 }
+			#set_variable = { which = road_cost_with_man 		value = 0 }
+			set_variable = { which = road_cost_with_man 		which = road_price_actual }
+			multiply_variable = { which = road_cost_with_man 	value = 0.25 }
+			subtract_variable = { which = road_cost_remaining	which = road_cost_with_man }
+			owner = { set_variable = { which = milit_cost		which = milit_cost_a } }
+			owner = { set_variable = { which = manpower_cost  	which = manpower_cost_a } }
+			owner = { scaled_manpower_cost_country = yes }
+			owner = { scaled_milit_cost_country = yes }
+			Pdbi_check_if_build = { type=road yes=006 no=007 }
+		}
+		custom_tooltip = milit_cost_a
+		custom_tooltip = manpower_cost_a
+	}
+	
+	option = { ### Choose 50 percent
+		name = "POP_dev_button_interactions.003.b"
+		trigger = {
+			check_variable = { which = mil_power						which = milit_cost_b }
+			check_variable = { which = total_manpower 					which = manpower_cost_b_trig }
+			NOT = { check_variable = { which = road_manpower_spent 		value = 50 } }
+		}
+		hidden_effect = {
+			change_variable = { which = road_manpower_spent		value = 50 }
+			#set_variable = { which = road_cost_with_man 		value = 0 }
+			set_variable = { which = road_cost_with_man 		which = road_price_actual }
+			multiply_variable = { which = road_cost_with_man 	value = 0.5 }
+			subtract_variable = { which = road_cost_remaining	which = road_cost_with_man }
+			owner = { set_variable = { which = milit_cost		which = milit_cost_b } }
+			owner = { set_variable = { which = manpower_cost  	which = manpower_cost_b } }
+			owner = { scaled_manpower_cost_country = yes }
+			owner = { scaled_milit_cost_country = yes }
+			Pdbi_check_if_build = { type=road yes=006 no=007 }
+		}
+		custom_tooltip = milit_cost_b
+		custom_tooltip = manpower_cost_b
+	}
+	
+	option = { ### Choose 75 percent
+		name = "POP_dev_button_interactions.003.c"
+		trigger = {
+			check_variable = { which = mil_power						which = milit_cost_c }
+			check_variable = { which = total_manpower					which = manpower_cost_c_trig }
+			NOT = { check_variable = { which = road_manpower_spent 		value = 25 } }
+		}
+		hidden_effect = {
+			change_variable = { which = road_manpower_spent		value = 75 }
+			#set_variable = { which = road_cost_with_man 		value = 0 }
+			set_variable = { which = road_cost_with_man 		which = road_price_actual }
+			multiply_variable = { which = road_cost_with_man 	value = 0.75 }
+			subtract_variable = { which = road_cost_remaining	which = road_cost_with_man }
+			owner = { set_variable = { which = milit_cost		which = milit_cost_c } }
+			owner = { set_variable = { which = manpower_cost  	which = manpower_cost_c } }
+			owner = { scaled_manpower_cost_country = yes }
+			owner = { scaled_milit_cost_country = yes }
+			Pdbi_check_if_build = { type=road yes=006 no=007 }
+		}
+		custom_tooltip = milit_cost_c
+		custom_tooltip = manpower_cost_c
+	}
+	
+	option = {
+		# name = "POP_dev_button_interactions.003.e"
+		name = back
+		highlight = yes
+		hidden_effect = {
+			province_event = { id = POP_dev_button_interactions.007 }
+		}
+	}
+}
+
+province_event = { ### Use rural wealth
+	id = POP_dev_button_interactions.004
+	title = POP_dev_button_interactions.004.t
+	desc = POP_dev_button_interactions.004.d
+	picture = ROAD_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			#set_variable = { 	  which = road_necessary_wealth_25 		value = 0 }
+			set_variable = { 	  which = road_necessary_wealth_25		which = road_necessary_wealth }
+			#set_variable = { 	  which = road_necessary_wealth_50 		value = 0 }
+			set_variable = { 	  which = road_necessary_wealth_50		which = road_necessary_wealth }
+			multiply_variable = { which = road_necessary_wealth_50		value = 2 }
+			#set_variable = {	  which = province_wealth_spent_25		value = 0 }
+			set_variable = {	  which = province_wealth_spent_25		which = road_necessary_wealth_25 }
+			#set_variable = {	  which = province_wealth_spent_50		value = 0 }
+			set_variable = {	  which = province_wealth_spent_50		which = road_necessary_wealth_50 }
+			#set_variable = { 	  which = diplo_cost_a					value = 0 }
+			#set_variable = { 	  which = milit_cost_a					value = 0 }
+			set_variable = { 	  which = diplo_cost_a					which = road_price_actual }
+			set_variable = { 	  which = milit_cost_a					which = road_price_actual }
+			owner = {
+				set_variable = { which = div which = upper_pop }
+				PREV = { set_variable = { which = div which = PREV } }
+				set_variable = { which = div value = 0 }
+			}
+			change_variable = { which = div value = 1 }
+			divide_variable = { which = diplo_cost_a which = div }
+			divide_variable = { which = milit_cost_a which = div }
+			set_variable = { which = div value = 0 }
+			multiply_variable = { which = diplo_cost_a					value = 0.25 }
+			multiply_variable = { which = milit_cost_a					value = 0.35 }
+			change_variable = {   which = diplo_cost_a					value = 5 }
+			change_variable = {   which = milit_cost_a 					value = 8 }
+			multiply_variable = {   which = diplo_cost_a					value = 0.001 }
+			multiply_variable = { which = diplo_cost_a					value = 1000 }
+			multiply_variable = {   which = milit_cost_a					value = 0.001 }
+			multiply_variable = { which = milit_cost_a					value = 1000 }
+			
+			#set_variable = { 	  which = stability_hit_estate_a 		value = 0 }
+			set_variable = { 	  which = stability_hit_estate_a 		which = road_price_actual }
+			owner = {
+				set_variable = { which = div which = upper_pop }
+				PREV = { set_variable = { which = div which = PREV } }
+				set_variable = { which = div value = 0 }
+			}
+			change_variable = { which = div value = 1 }
+			divide_variable = { which = stability_hit_estate_a which = div }
+			set_variable = { which = div value = 0 }
+			multiply_variable = {   which = stability_hit_estate_a		value = 0.25 }
+			
+			owner = {
+				#set_variable = { 	  which = diplo_cost_a 				value = 0 }
+				#set_variable = { 	  which = milit_cost_a 				value = 0 }
+				set_variable = { 	  which = diplo_cost_a 				which = PREV } ### 25 percent
+				set_variable = { 	  which = milit_cost_a 				which = PREV } ### 50 percent
+				#set_variable = { 	  which = stability_hit_estate_a 	value = 0 }
+				set_variable = { 	  which = stability_hit_estate_a 	which = PREV }
+			}
+		}
+	}
+	
+	option = { ### Negotiate for 25%
+		name = "POP_dev_button_interactions.004.a"
+		trigger = {
+			check_variable = { which = wealth_rural_fluid		which = road_necessary_wealth }
+			check_variable = { which = road_cost_remaining		which = road_necessary_wealth }
+		}
+		custom_tooltip = diplo_cost_a
+		custom_tooltip = province_rural_wealth_spent_25
+		hidden_effect = {
+			set_province_flag = taken_wealth_already
+			owner = { set_variable = { which = diplo_cost 				which = diplo_cost_a } }
+			subtract_variable = { 	   which = wealth_rural_fluid		which = road_necessary_wealth }
+			subtract_variable = { 	   which = road_cost_remaining 		which = road_necessary_wealth }
+			owner = { scaled_diplo_cost_country = yes }
+			Pdbi_check_if_build = { type=road yes=006 no=007 }
+		}
+	}
+	
+	option = { ### Demand 50%
+		name = "POP_dev_button_interactions.004.b"
+		trigger = {
+			check_variable = { which = wealth_rural_fluid		which = road_necessary_wealth_50 }
+			check_variable = { which = road_cost_remaining		which = road_necessary_wealth_50 }
+		}
+		custom_tooltip = milit_cost_a
+		custom_tooltip = province_rural_wealth_spent_50
+		owner = { stability_scaling_estates_a = yes }
+		hidden_effect = {
+			set_province_flag = taken_wealth_already
+			owner = { set_variable = { which = milit_cost 				which = milit_cost_a } }
+			subtract_variable = { 	   which = wealth_rural_fluid		which = road_necessary_wealth_50 }
+			subtract_variable = {      which = road_cost_remaining 		which = road_necessary_wealth_50 }
+			owner = { scaled_milit_cost_country = yes }
+			Pdbi_check_if_build = { type=road yes=006 no=007 }
+		}
+	}
+	
+	option = {
+		# name = "POP_dev_button_interactions.004.c"
+		name = back
+		highlight = yes
+		hidden_effect = {
+			province_event = { id = POP_dev_button_interactions.007 }
+		}
+	}
+}
+
+province_event = { ### Urban Wealth Taken
+	id = POP_dev_button_interactions.005
+	title = POP_dev_button_interactions.005.t
+	desc = POP_dev_button_interactions.005.d
+	picture = ROAD_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			#set_variable = { 	  which = road_necessary_wealth_25 		value = 0 }
+			set_variable = { 	  which = road_necessary_wealth_25		which = road_necessary_wealth }
+			#set_variable = { 	  which = road_necessary_wealth_50 		value = 0 }
+			set_variable = { 	  which = road_necessary_wealth_50		which = road_necessary_wealth }
+			multiply_variable = { which = road_necessary_wealth_50		value = 2 }
+			#set_variable = {      which = province_wealth_spent_25		value = 0 }
+			set_variable = {      which = province_wealth_spent_25		which = road_necessary_wealth_25 }
+			#set_variable = {      which = province_wealth_spent_50		value = 0 }
+			set_variable = {      which = province_wealth_spent_50		which = road_necessary_wealth_50 }
+			#set_variable = { 	  which = diplo_cost_a					value = 0 }
+			#set_variable = { 	  which = milit_cost_a					value = 0 }
+			set_variable = { 	  which = diplo_cost_a					which = road_price_actual }
+			set_variable = { 	  which = milit_cost_a					which = road_price_actual }
+			owner = {
+				set_variable = { which = div which = upper_pop }
+				PREV = { set_variable = { which = div which = PREV } }
+				set_variable = { which = div value = 0 }
+			}
+			change_variable = { which = div value = 1 }
+			divide_variable = { which = diplo_cost_a which = div }
+			divide_variable = { which = milit_cost_a which = div }
+			set_variable = { which = div value = 0 }
+			multiply_variable = { which = diplo_cost_a					value = 0.25 }
+			multiply_variable = { which = milit_cost_a					value = 0.35 }
+			change_variable = {   which = diplo_cost_a					value = 5 }
+			change_variable = {   which = milit_cost_a 					value = 8 }
+			multiply_variable = {   which = diplo_cost_a					value = 0.001 }
+			multiply_variable = { which = diplo_cost_a					value = 1000 }
+			multiply_variable = {   which = milit_cost_a					value = 0.001 }
+			multiply_variable = { which = milit_cost_a					value = 1000 }
+			
+			#set_variable = { 	  which = stability_hit_estate_a 		value = 0 }
+			set_variable = { 	  which = stability_hit_estate_a 		which = road_price_actual }
+			owner = {
+				set_variable = { which = div which = upper_pop }
+				PREV = { set_variable = { which = div which = PREV } }
+				set_variable = { which = div value = 0 }
+			}
+			change_variable = { which = div value = 1 }
+			divide_variable = { which = stability_hit_estate_a which = div }
+			set_variable = { which = div value = 0 }
+			multiply_variable = {   which = stability_hit_estate_a		value = 0.25 }
+			
+			owner = {
+				#set_variable = { 	  which = diplo_cost_a 				value = 0 }
+				#set_variable = { 	  which = milit_cost_a 				value = 0 }
+				set_variable = { 	  which = diplo_cost_a 				which = PREV } ### 25 percent
+				set_variable = { 	  which = milit_cost_a 				which = PREV } ### 50 percent
+				#set_variable = { 	  which = stability_hit_estate_a 	value = 0 }
+				set_variable = { 	  which = stability_hit_estate_a 	which = PREV }
+			}
+		}
+	}
+	
+	option = { ### Negotiate for 25%
+		name = "POP_dev_button_interactions.005.a"
+		trigger = {
+			check_variable = { which = wealth_urban_fluid		which = road_necessary_wealth }
+			check_variable = { which = road_cost_remaining		which = road_necessary_wealth }
+		}
+		custom_tooltip = diplo_cost_a
+		custom_tooltip = province_rural_wealth_spent_25
+		hidden_effect = {
+			set_province_flag = taken_wealth_already
+			owner = { set_variable = { which = diplo_cost 				which = diplo_cost_a } }
+			subtract_variable = { 	   which = wealth_urban_fluid		which = road_necessary_wealth }
+			subtract_variable = { 	   which = road_cost_remaining 		which = road_necessary_wealth }
+			owner = { scaled_diplo_cost_country = yes }
+			Pdbi_check_if_build = { type=road yes=006 no=007 }
+		}
+	}
+	
+	option = { ### Demand 50%
+		name = "POP_dev_button_interactions.005.b"
+		trigger = {
+			check_variable = { which = wealth_urban_fluid		which = road_necessary_wealth_50 }
+			check_variable = { which = road_cost_remaining		which = road_necessary_wealth_50 }
+		}
+		custom_tooltip = milit_cost_a
+		custom_tooltip = province_rural_wealth_spent_50
+		owner = { stability_scaling_estates_a = yes }
+		hidden_effect = {
+			set_province_flag = taken_wealth_already
+			owner = { set_variable = { which = milit_cost 				which = milit_cost_a } }
+			subtract_variable = { 	   which = wealth_urban_fluid		which = road_necessary_wealth_50 }
+			subtract_variable = {      which = road_cost_remaining 		which = road_necessary_wealth_50 }
+			owner = { scaled_milit_cost_country = yes }
+			Pdbi_check_if_build = { type=road yes=006 no=007 }
+		}
+	}
+	
+	option = {
+		# name = "POP_dev_button_interactions.005.c"
+		name = back
+		highlight = yes
+		hidden_effect = {
+			province_event = { id = POP_dev_button_interactions.007 }
+		}
+	}
+}
+
+province_event = { ### Road building event
+	id = POP_dev_button_interactions.006
+	title = POP_dev_button_interactions.006.t
+	desc = POP_dev_button_interactions.006.d
+	picture = ROAD_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			trigger_switch = {
+				on_trigger = has_building
+				highway_network = {
+					set_province_flag = road_and_rail_network_building
+					add_province_modifier = {
+						name = road_is_building
+						duration = 1825
+					}
+				}
+				paved_road_network = {
+					set_province_flag = highway_network_building
+					add_province_modifier = {
+						name = road_is_building
+						duration = 1825
+					}
+				}
+				road_network = {
+					set_province_flag = paved_road_network_building
+					add_province_modifier = {
+						name = road_is_building
+						duration = 1825
+					}
+				}
+			}
+			if = {
+				limit = {
+					NOT = { has_building = road_network }
+					NOT = { has_building = paved_road_network }
+					NOT = { has_building = highway_network }
+					NOT = { has_building = road_and_rail_network }
+				}
+				set_province_flag = road_network_building
+				add_province_modifier = {
+					name = road_is_building
+					duration = 1825
+				}
+			}
+			province_event = {
+				id = POP_dev_button_interactions.009
+				days = 1825
+			}
+		}
+	}
+	
+	option = {
+		name = "POP_dev_button_interactions.006.a"
+		hidden_effect = {
+			set_variable = { which = road_cost_base				value = 0 }
+			set_variable = { which = road_price_multiplier		value = 0 }
+			set_variable = { which = road_price_multiplier_d	value = 0 }
+			set_variable = { which = road_cost_remaining		value = 0 }
+			set_variable = { which = road_price_actual			value = 0 }
+			set_variable = { which = road_price_added			value = 0 }
+			set_variable = { which = road_price_total_mult		value = 0 }
+			set_variable = { which = road_necessary_wealth		value = 0 }
+			set_variable = { which = road_terrain_price_d		value = 0 }
+			set_variable = { which = ducat_cost					value = 0 }
+			set_variable = { which = manpower_cost				value = 0 }
+			set_variable = { which = manpower_cost_a			value = 0 }
+			set_variable = { which = manpower_cost_b			value = 0 }
+			set_variable = { which = manpower_cost_c			value = 0 }
+			set_variable = { which = admin_cost					value = 0 }
+			set_variable = { which = admin_cost_a				value = 0 }
+			set_variable = { which = admin_cost_b				value = 0 }
+			set_variable = { which = admin_cost_c				value = 0 }
+			set_variable = { which = total_manpower				value = 0 }
+			set_variable = { which = road_manpower_spent		value = 0 }
+			set_variable = { which = road_cost_with_man			value = 0 }
+			set_variable = { which = road_necessary_wealth_50	value = 0 }
+			set_variable = { which = diplo_cost_a				value = 0 }
+			set_variable = { which = milit_cost_a				value = 0 }
+			set_variable = { which = stability_hit_estate_a		value = 0 }
+			set_variable = { which = diplo_cost					value = 0 }
+			set_variable = { which = milit_cost					value = 0 }
+			owner = { set_variable = { which = ducat_cost				value = 0 } }
+			owner = { set_variable = { which = total_manpower			value = 0 } }
+			owner = { set_variable = { which = manpower_cost_a 			value = 0 } }
+			owner = { set_variable = { which = manpower_cost_b 			value = 0 } }
+			owner = { set_variable = { which = manpower_cost_c			value = 0 } }
+			owner = { set_variable = { which = admin_cost_a 			value = 0 } }
+			owner = { set_variable = { which = admin_cost_b 			value = 0 } }
+			owner = { set_variable = { which = admin_cost_c				value = 0 } }
+			owner = { set_variable = { which = admin_cost				value = 0 } }
+			owner = { set_variable = { which = manpower_cost			value = 0 } }
+			owner = { set_variable = { which = diplo_cost				value = 0 } }
+			owner = { set_variable = { which = milit_cost				value = 0 } }
+			owner = { set_variable = { which = diplo_cost_a				value = 0 } }
+			owner = { set_variable = { which = milit_cost_a				value = 0 } }
+			owner = { set_variable = { which = stability_hit_estate_a	value = 0 } }
+		}
+		clr_province_flag = dev_button_interact
+	}
+}
+
+
+province_event = { ### Already started building roads once and already calculated
+	id = POP_dev_button_interactions.007
+	title = POP_dev_button_interactions.007.t
+	desc = POP_dev_button_interactions.007.d
+	picture = ROAD_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+#	trigger = {
+#		has_building = upgrade_roads_build
+#		has_province_modifier = already_started_building_road
+#	}
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = manpower_cost which = road_price_actual }
+			if = {
+				limit = {
+					owner = { full_idea_group = logistic_ideas }
+					NOT = { has_province_flag = logistic_road_discount }
+				}
+				multiply_variable = { which = road_cost_remaining value = 0.66 }
+				set_province_flag = logistic_road_discount
+			}
+			#	remove_building = upgrade_roads_build
+			set_variable = { which = ducat_cost 	which = road_cost_remaining }
+			owner = { set_variable = { which = ducat_cost 	which = PREV } }
+		}
+	}
+	
+	option = { ### Pay off remaining cost with ducats
+		name = "POP_dev_button_interactions.007.a"
+		
+		hidden_effect = {
+			set_variable = { which = road_cost_remaining	value = 0 }
+			owner = { scaled_ducat_cost_country = yes }
+			province_event = {
+				id = POP_dev_button_interactions.006
+			}
+		}
+		custom_tooltip = ducats_spent
+	}
+	
+	option = { ### Contribute Manpower to the effort
+		name = "POP_dev_button_interactions.007.b"
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.003
+			}
+		}
+	}
+	
+	option = { ### Convince Locals to Contribute Province Wealth
+		name = "POP_dev_button_interactions.007.c"
+		trigger = {
+			NOT = { has_province_flag = taken_wealth_already }
+		}
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.004
+			}
+		}
+	}
+	
+	option = { ### Convince Locals to Contribute Province Wealth
+		name = "POP_dev_button_interactions.007.e"
+		trigger = {
+			NOT = { has_province_flag = taken_wealth_already }
+		}
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.005
+			}
+		}
+	}
+	
+	option = {
+		# name = "POP_dev_button_interactions.007.f"
+		name = exit
+		highlight = yes
+		clr_province_flag = dev_button_interact
+	}
+}
+
+province_event = { ### Sorry, can't build
+	id = POP_dev_button_interactions.008
+	title = POP_dev_button_interactions.008.t
+	desc = POP_dev_button_interactions.008.d
+	picture = ROAD_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		
+	}
+	
+	option = {
+		# name = "POP_dev_button_interactions.008.a"
+		name = exit
+		highlight = yes
+		clr_province_flag = dev_button_interact
+	}
+}
+
+province_event = { ### Finish building
+	id = POP_dev_button_interactions.009
+	title = POP_dev_button_interactions.009.t
+	desc = POP_dev_button_interactions.009.d
+	picture = ROAD_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		if = {
+			limit = {
+				has_province_flag = country_went_bankrupt_road
+			}
+			clr_province_flag = road_network_building
+			clr_province_flag = paved_road_network_building
+			clr_province_flag = highway_network_building
+			clr_province_flag = road_and_rail_network_building
+			clr_province_flag = country_went_bankrupt_road
+		}
+		else = {
+			trigger_switch = {
+				on_trigger = has_province_flag
+				road_network_building = {
+					add_building = road_network
+					hidden_effect = {
+						clr_province_flag = road_network_building
+					}
+				}
+				paved_road_network_building = {
+					remove_building = road_network
+					add_building = paved_road_network
+					hidden_effect = {
+						clr_province_flag = paved_road_network_building
+					}
+				}
+				highway_network_building = {
+					remove_building = paved_road_network
+					add_building = highway_network
+					hidden_effect = {
+						clr_province_flag = highway_network_building
+					}
+				}
+				road_and_rail_network_building = {
+					remove_building = highway_network
+					add_building = road_and_rail_network
+					hidden_effect = {
+						clr_province_flag = road_and_rail_network_building
+					}
+				}
+			}
+		}
+	}
+	
+	option = { ### That is all
+		# name = "POP_dev_button_interactions.009.a"
+		name = exit
+		highlight = yes
+		hidden_effect = {
+			clr_province_flag = already_started_building_road
+			clr_province_flag = taken_wealth_already
+		}
+	}
+}
+
+province_event = { ### Finish building
+	id = POP_dev_button_interactions.010
+	title = POP_dev_button_interactions.010.t
+	desc = POP_dev_button_interactions.010.d
+	picture = ROAD_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	
+	
+	immediate = {
+		
+	}
+	
+	option = { ### That is all
+		# name = "POP_dev_button_interactions.010.a"
+		name = exit
+		highlight = yes
+		clr_province_flag = dev_button_interact
+	}
+}
+
+
+province_event = { ### Build Forts
+	id = POP_dev_button_interactions.102
+	title = POP_dev_button_interactions.102.t
+	desc = POP_dev_button_interactions.102.d
+	picture = FORTPOP_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+#	trigger = {
+#		has_building = upgrade_fort_build
+#	}
+	
+	immediate = {
+		hidden_effect = {
+			#	remove_building = upgrade_fort_build
+			set_province_flag = already_started_building_fort ### This flag prevents this event from being called again, and instead redirects the player to another event so that all of the variables don't get reset
+			#set_variable = { 	  which = fort_cost_base			value = 0 }
+			set_variable = { 	  which = fort_cost_base 			value = 80 }
+			#	set_variable = { 	  which = fort_price_multiplier_d 	value = 0 }
+			#	set_variable = { 	  which = fort_price_multiplier_d 	which = road_price_multiplier }
+			#	multiply_variable = {	  which = fort_price_multiplier		value = 0.01 }
+			trigger_switch = {
+				on_trigger = has_building
+				fort_17th = {
+					set_variable = { which = fort_cost_base		value = 360 }
+				}
+				fort_16th = {
+					set_variable = { which = fort_cost_base		value = 260 }
+				}
+				fort_15th = {
+					set_variable = { which = fort_cost_base		value = 180 }
+				}
+				fort_14th = {
+					set_variable = { which = fort_cost_base		value = 120 }
+				}
+			}
+			#set_variable = { 	  which = fort_price_multiplier_d 	value = 0 }
+			set_variable = {	  which = fort_price_multiplier_d	which = road_terrain_cost }
+			multiply_variable = { which = fort_price_multiplier_d 	value = 100 }
+			#set_variable = { 	  which = fort_cost_remaining 		value = 0 }
+			#set_variable = { 	  which = fort_price_actual 		value = 0 }
+			set_variable = { 	  which = fort_price_actual 		which = fort_cost_base }
+			#set_variable = { 	  which = fort_price_added 			value = 0 }
+			set_variable = { 	  which = fort_price_added 			which = fort_cost_base }
+			multiply_variable = { which = fort_price_added 			which = road_terrain_cost }
+			change_variable = {   which = fort_price_actual			which = fort_price_added }
+			multiply_variable = {   which = fort_price_actual			value = 0.001 }
+			multiply_variable = { which = fort_price_actual			value = 1000 }
+			set_variable = { 	  which = fort_cost_remaining		which = fort_price_actual }
+			if = {
+				limit = { owner = { full_idea_group = fortification_ideas } }
+				multiply_variable = { which = fort_cost_remaining value = 0.5 }
+				set_province_flag = fortification_fort_discount
+			}
+			#set_variable = { 	  which = ducat_cost 				value = 0 }
+			set_variable = { 	  which = ducat_cost 				which = fort_cost_remaining }
+			multiply_variable = {   which = ducat_cost				value = 0.001 }
+			multiply_variable = { which = ducat_cost				value = 1000 }
+			#owner = { set_variable = { which = ducat_cost 			value = 0 } }
+			owner = { set_variable = { which = ducat_cost 			which = PREV } }
+		}
+	}
+	
+	option = { ### Pay off remaining cost with ducats
+		name = "POP_dev_button_interactions.102.a"
+		hidden_effect = {
+			set_variable = { which = fort_cost_remaining	value = 0 }
+			owner = { scaled_ducat_cost_country = yes }
+			province_event = {
+				id = POP_dev_button_interactions.106
+			}
+		}
+		custom_tooltip = ducats_spent
+	}
+	
+	option = { ### Contribute Manpower to the effort
+		name = "POP_dev_button_interactions.102.b"
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.103
+			}
+		}
+	}
+	
+	option = { ### That is all
+		# name = "POP_dev_button_interactions.102.c"
+		name = exit
+		highlight = yes
+		hidden_effect = {
+			set_province_flag = interacting_with_province
+			province_event = {
+				id = POP_dev_button_interactions.001
+			}
+		}
+	}
+}
+
+province_event = { ### Manpower Spent
+	id = POP_dev_button_interactions.103
+	title = POP_dev_button_interactions.103.t
+	desc = POP_dev_button_interactions.103.d
+	picture = FORTPOP_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = mil_power 	value = 0 }
+			owner = {
+				mil_available = yes
+				PREV = { set_variable = { which = mil_power		which = PREV } }
+			}
+			if = {
+				limit = {
+					NOT = { check_variable = { which = fort_manpower_spent 	value = 0 } }
+				}
+				set_variable = { which = fort_manpower_spent		value = 0 }
+			}
+			set_variable = { which = total_manpower value = 0 }
+			
+			#set_variable = { 	  which = manpower_cost			value = 0 }
+			set_variable = { 	  which = manpower_cost 		which = fort_price_actual }
+			if = {
+				limit = { owner = { full_idea_group = quantity_ideas } }
+				multiply_variable = { which = manpower_cost value = 0.8 }
+			}
+			multiply_variable = { which = manpower_cost 		value = 50 } ### Conversion rate of 1 ducat for every 50 manpower for AI
+			set_variable = { 	  which = manpower_cost_a		which = manpower_cost }
+			set_variable = { 	  which = manpower_cost_b		which = manpower_cost }
+			set_variable = { 	  which = manpower_cost_c		which = manpower_cost }
+			multiply_variable = { which = manpower_cost_a		value = 0.25 }
+			multiply_variable = { which = manpower_cost_b       value = 0.5  }
+			multiply_variable = { which = manpower_cost_c       value = 0.75 }
+			multiply_variable = {   which = manpower_cost_a		value = 0.001 }
+			multiply_variable = { which = manpower_cost_a		value = 1000 }
+			multiply_variable = {   which = manpower_cost_b		value = 0.001 }
+			multiply_variable = { which = manpower_cost_b		value = 1000 }
+			multiply_variable = {   which = manpower_cost_c		value = 0.001 }
+			multiply_variable = { which = manpower_cost_c		value = 1000 }
+			
+			#set_variable = { 	  which = manpower_cost_a_trig	value = 0 }
+			#set_variable = { 	  which = manpower_cost_b_trig	value = 0 }
+			#set_variable = { 	  which = manpower_cost_c_trig	value = 0 }
+			set_variable = { 	  which = manpower_cost_a_trig	which = manpower_cost_a }
+			set_variable = { 	  which = manpower_cost_b_trig	which = manpower_cost_b }
+			set_variable = { 	  which = manpower_cost_c_trig	which = manpower_cost_c }
+			multiply_variable = {   which = manpower_cost_a_trig	value = 0.01 }
+			multiply_variable = {   which = manpower_cost_b_trig	value = 0.01 }
+			multiply_variable = {   which = manpower_cost_c_trig	value = 0.01 }
+			#set_variable = { 	  which = milit_cost			value = 0 }
+			set_variable = { 	  which = milit_cost			which = fort_price_actual }
+			owner = {
+				set_variable = { which = div which = upper_pop }
+				PREV = { set_variable = { which = div which = PREV } }
+				set_variable = { which = div value = 0 }
+			}
+			change_variable = { which = div value = 1 }
+			divide_variable = { which = milit_cost which = div }
+			set_variable = { which = div value = 0 }
+			set_variable = { 	  which = milit_cost_a			which = milit_cost } ### 25 percent
+			set_variable = { 	  which = milit_cost_b			which = milit_cost } ### 50 percent
+			set_variable = { 	  which = milit_cost_c			which = milit_cost } ### 75 percent
+			multiply_variable = { which = milit_cost_a			value = 0.25 }
+			multiply_variable = { which = milit_cost_b			value = 0.5 }
+			multiply_variable = { which = milit_cost_c			value = 0.75 }
+			change_variable = {   which = milit_cost_a			value = 3 }
+			change_variable = {   which = milit_cost_b			value = 6 }
+			change_variable = {   which = milit_cost_c			value = 9 }
+			multiply_variable = {   which = milit_cost_a			value = 0.001 }
+			multiply_variable = { which = milit_cost_a			value = 1000 }
+			multiply_variable = {   which = milit_cost_b			value = 0.001 }
+			multiply_variable = { which = milit_cost_b			value = 1000 }
+			multiply_variable = {   which = milit_cost_c			value = 0.001 }
+			multiply_variable = { which = milit_cost_c			value = 1000 }
+			
+			owner = {
+				#set_variable = { 	  which = total_manpower 		value = 0 }
+				#set_variable = { 	  which = manpower_cost_a 		value = 0 } ### 25 percent
+				#set_variable = { 	  which = manpower_cost_b 		value = 0 } ### 50 percent
+				#set_variable = { 	  which = manpower_cost_c		value = 0 } ### 75 percent
+				#set_variable = { 	  which = milit_cost_a 			value = 0 } ### 25 percent
+				#set_variable = { 	  which = milit_cost_b 			value = 0 } ### 50 percent
+				#set_variable = { 	  which = milit_cost_c			value = 0 } ### 75 percent
+				export_to_variable = {
+					which = total_manpower
+					value = manpower
+				}
+				multiply_variable = { which = total_manpower value = 10 }
+				PREV = { set_variable = { 	  which = total_manpower		which = PREV } }
+				set_variable = { which = total_manpower value = 0 }
+				set_variable = { 	  which = milit_cost_a 			which = PREV } ### 25 percent
+				set_variable = { 	  which = milit_cost_b 			which = PREV } ### 50 percent
+				set_variable = { 	  which = milit_cost_c			which = PREV } ### 75 percent
+				set_variable = { 	  which = manpower_cost_a		which = PREV }
+				set_variable = { 	  which = manpower_cost_b		which = PREV }
+				set_variable = { 	  which = manpower_cost_c		which = PREV }
+				multiply_variable = {   which = manpower_cost_a 		value = 0.001 }
+				multiply_variable = {   which = manpower_cost_b		value = 0.001 }
+				multiply_variable = {   which = manpower_cost_c		value = 0.001 }
+			}
+		}
+	}
+	
+	option = { ### Choose 25 percent
+		name = "POP_dev_button_interactions.103.a"
+		trigger = {
+			check_variable = { which = mil_power					which = milit_cost_a }
+			check_variable = { which = total_manpower 				which = manpower_cost_a_trig }
+			NOT = { check_variable = { which = fort_manpower_spent 	value = 75 } }
+		}
+		hidden_effect = {
+			change_variable = { which = fort_manpower_spent		value = 25 }
+			#set_variable = { which = fort_cost_with_man 		value = 0 }
+			set_variable = { which = fort_cost_with_man 		which = fort_price_actual }
+			multiply_variable = { which = fort_cost_with_man 	value = 0.25 }
+			subtract_variable = { which = fort_cost_remaining	which = fort_cost_with_man }
+			owner = { set_variable = { which = milit_cost		which = milit_cost_a } }
+			owner = { set_variable = { which = manpower_cost  	which = manpower_cost_a } }
+			owner = { scaled_manpower_cost_country = yes }
+			owner = { scaled_milit_cost_country = yes }
+			Pdbi_check_if_build = { type=fort yes=106 no=107 }
+		}
+		custom_tooltip = milit_cost_a
+		custom_tooltip = manpower_cost_a
+	}
+	
+	option = { ### Choose 50 percent
+		name = "POP_dev_button_interactions.103.b"
+		trigger = {
+			check_variable = { which = mil_power						which = milit_cost_b }
+			check_variable = { which = total_manpower 					which = manpower_cost_b_trig }
+			NOT = { check_variable = { which = fort_manpower_spent 		value = 50 } }
+		}
+		hidden_effect = {
+			change_variable = { which = fort_manpower_spent		value = 50 }
+			#set_variable = { which = fort_cost_with_man 		value = 0 }
+			set_variable = { which = fort_cost_with_man 		which = fort_price_actual }
+			multiply_variable = { which = fort_cost_with_man 	value = 0.5 }
+			subtract_variable = { which = fort_cost_remaining	which = fort_cost_with_man }
+			owner = { set_variable = { which = milit_cost		which = milit_cost_b } }
+			owner = { set_variable = { which = manpower_cost  	which = manpower_cost_b } }
+			owner = { scaled_manpower_cost_country = yes }
+			owner = { scaled_milit_cost_country = yes }
+			Pdbi_check_if_build = { type=fort yes=106 no=107 }
+		}
+		custom_tooltip = milit_cost_b
+		custom_tooltip = manpower_cost_b
+	}
+	
+	option = { ### Choose 75 percent
+		name = "POP_dev_button_interactions.103.c"
+		trigger = {
+			check_variable = { which = mil_power						which = milit_cost_c }
+			check_variable = { which = total_manpower 					which = manpower_cost_c_trig }
+			NOT = { check_variable = { which = fort_manpower_spent 		value = 25 } }
+		}
+		hidden_effect = {
+			change_variable = { which = fort_manpower_spent		value = 75 }
+			#set_variable = { which = fort_cost_with_man 		value = 0 }
+			set_variable = { which = fort_cost_with_man 		which = fort_price_actual }
+			multiply_variable = { which = fort_cost_with_man 	value = 0.75 }
+			subtract_variable = { which = fort_cost_remaining	which = fort_cost_with_man }
+			owner = { set_variable = { which = milit_cost		which = milit_cost_c } }
+			owner = { set_variable = { which = manpower_cost  	which = manpower_cost_c } }
+			owner = { scaled_manpower_cost_country = yes }
+			owner = { scaled_milit_cost_country = yes }
+			Pdbi_check_if_build = { type=fort yes=106 no=107 }
+		}
+		custom_tooltip = milit_cost_c
+		custom_tooltip = manpower_cost_c
+	}
+	
+	option = {
+		# name = "POP_dev_button_interactions.103.e"
+		name = back
+		highlight = yes
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.107
+			}
+		}
+	}
+}
+
+province_event = { ### Fort building event
+	id = POP_dev_button_interactions.106
+	title = POP_dev_button_interactions.106.t
+	desc = POP_dev_button_interactions.106.d
+	picture = FORTPOP_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			trigger_switch = {
+				on_trigger = has_building
+				fort_17th = {
+					set_province_flag = fort_18th_building
+					add_province_modifier = {
+						name = fort_is_building
+						duration = 900
+					}
+				}
+				fort_16th = {
+					set_province_flag = fort_17th_building
+					add_province_modifier = {
+						name = fort_is_building
+						duration = 900
+					}
+				}
+				fort_15th = {
+					set_province_flag = fort_16th_building
+					add_province_modifier = {
+						name = fort_is_building
+						duration = 900
+					}
+				}
+				fort_14th = {
+					set_province_flag = fort_15th_building
+					add_province_modifier = {
+						name = fort_is_building
+						duration = 900
+					}
+				}
+			}
+			if = {
+				limit = {
+					NOT = { has_building = fort_14th }
+					NOT = { has_building = fort_15th }
+					NOT = { has_building = fort_16th }
+					NOT = { has_building = fort_17th }
+					NOT = { has_building = fort_18th }
+				}
+				set_province_flag = fort_14th_building
+				add_province_modifier = {
+					name = fort_is_building
+					duration = 900
+				}
+			}
+			province_event = {
+				id = POP_dev_button_interactions.109
+				days = 900
+			}
+		}
+	}
+	
+	option = {
+		name = "POP_dev_button_interactions.106.a"
+		hidden_effect = {
+			set_variable = { which = fort_cost_base				value = 0 }
+			set_variable = { which = fort_price_multiplier		value = 0 }
+			set_variable = { which = fort_price_multiplier_d	value = 0 }
+			set_variable = { which = fort_cost_remaining		value = 0 }
+			set_variable = { which = fort_price_actual			value = 0 }
+			set_variable = { which = fort_price_added			value = 0 }
+			set_variable = { which = fort_price_total_mult		value = 0 }
+			set_variable = { which = fort_terrain_price_d		value = 0 }
+			set_variable = { which = ducat_cost					value = 0 }
+			set_variable = { which = manpower_cost				value = 0 }
+			set_variable = { which = manpower_cost_a			value = 0 }
+			set_variable = { which = manpower_cost_b			value = 0 }
+			set_variable = { which = manpower_cost_c			value = 0 }
+			set_variable = { which = admin_cost					value = 0 }
+			set_variable = { which = admin_cost_a				value = 0 }
+			set_variable = { which = admin_cost_b				value = 0 }
+			set_variable = { which = admin_cost_c				value = 0 }
+			set_variable = { which = total_manpower				value = 0 }
+			set_variable = { which = fort_manpower_spent		value = 0 }
+			set_variable = { which = fort_cost_with_man			value = 0 }
+			set_variable = { which = diplo_cost_a				value = 0 }
+			set_variable = { which = milit_cost_a				value = 0 }
+			set_variable = { which = stability_hit_estate_a		value = 0 }
+			set_variable = { which = diplo_cost					value = 0 }
+			set_variable = { which = milit_cost					value = 0 }
+			owner = { set_variable = { which = ducat_cost				value = 0 } }
+			owner = { set_variable = { which = total_manpower			value = 0 } }
+			owner = { set_variable = { which = manpower_cost_a			value = 0 } }
+			owner = { set_variable = { which = manpower_cost_b			value = 0 } }
+			owner = { set_variable = { which = manpower_cost_c			value = 0 } }
+			owner = { set_variable = { which = admin_cost_a 			value = 0 } }
+			owner = { set_variable = { which = admin_cost_b 			value = 0 } }
+			owner = { set_variable = { which = admin_cost_c				value = 0 } }
+			owner = { set_variable = { which = admin_cost				value = 0 } }
+			owner = { set_variable = { which = manpower_cost			value = 0 } }
+			owner = { set_variable = { which = diplo_cost				value = 0 } }
+			owner = { set_variable = { which = milit_cost				value = 0 } }
+			owner = { set_variable = { which = diplo_cost_a				value = 0 } }
+			owner = { set_variable = { which = milit_cost_a				value = 0 } }
+			owner = { set_variable = { which = stability_hit_estate_a	value = 0 } }
+		}
+		clr_province_flag = dev_button_interact
+	}
+}
+
+
+province_event = { ### Already started building fort
+	id = POP_dev_button_interactions.107
+	title = POP_dev_button_interactions.107.t
+	desc = POP_dev_button_interactions.107.d
+	picture = FORTPOP_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+#	trigger = {
+#		has_building = upgrade_fort_build
+#		has_province_modifier = already_started_building_road
+#	}
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = manpower_cost which = fort_price_actual }
+			if = {
+				limit = {
+					owner = { full_idea_group = fortification_ideas }
+					NOT = { has_province_flag = fortification_fort_discount }
+				}
+				multiply_variable = { which = fort_cost_remaining value = 0.5 }
+				set_province_flag = fortification_fort_discount
+			}
+			#		remove_building = upgrade_fort_build
+			set_variable = { which = ducat_cost 	which = fort_cost_remaining }
+			owner = { set_variable = { which = ducat_cost 	which = PREV } }
+		}
+	}
+	
+	option = { ### Pay off remaining cost with ducats
+		name = "POP_dev_button_interactions.107.a"
+		
+		hidden_effect = {
+			set_variable = { which = fort_cost_remaining	value = 0 }
+			owner = { scaled_ducat_cost_country = yes }
+			province_event = {
+				id = POP_dev_button_interactions.106
+			}
+		}
+		custom_tooltip = ducats_spent
+	}
+	
+	option = { ### Contribute Manpower to the effort
+		name = "POP_dev_button_interactions.107.b"
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.103
+			}
+		}
+	}
+	
+	option = { ### That is all
+		# name = "POP_dev_button_interactions.107.c"
+		name = exit
+		highlight = yes
+		clr_province_flag = dev_button_interact
+	}
+}
+
+province_event = { ### Sorry, can't build
+	id = POP_dev_button_interactions.108
+	title = POP_dev_button_interactions.108.t
+	desc = POP_dev_button_interactions.108.d
+	picture = FORTPOP_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		
+	}
+	
+	option = { ### That is all
+		# name = "POP_dev_button_interactions.108.a"
+		name = exit
+		highlight = yes
+		clr_province_flag = dev_button_interact
+	}
+}
+
+province_event = { ### Finish building
+	id = POP_dev_button_interactions.109
+	title = POP_dev_button_interactions.109.t
+	desc = POP_dev_button_interactions.109.d
+	picture = FORTPOP_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		if = {
+			limit = {
+				has_province_flag = country_went_bankrupt_fort
+			}
+			clr_province_flag = fort_14th_building
+			clr_province_flag = fort_15th_building
+			clr_province_flag = fort_16th_building
+			clr_province_flag = fort_17th_building
+			clr_province_flag = fort_18th_building
+			clr_province_flag = country_went_bankrupt_fort
+		}
+		else = {
+			trigger_switch = {
+				on_trigger = has_province_flag
+				fort_14th_building = {
+					add_building = fort_14th
+					hidden_effect = {
+						clr_province_flag = fort_14th_building
+					}
+				}
+				fort_15th_building = {
+					remove_building = fort_14th
+					add_building = fort_15th
+					hidden_effect = {
+						clr_province_flag = fort_15th_building
+					}
+				}
+				fort_16th_building = {
+					remove_building = fort_15th
+					add_building = fort_16th
+					hidden_effect = {
+						clr_province_flag = fort_16th_building
+					}
+				}
+				fort_17th_building = {
+					remove_building = fort_16th
+					add_building = fort_17th
+					hidden_effect = {
+						clr_province_flag = fort_17th_building
+					}
+				}
+				fort_18th_building = {
+					remove_building = fort_17th
+					add_building = fort_18th
+					hidden_effect = {
+						clr_province_flag = fort_18th_building
+					}
+				}
+			}
+		}
+	}
+	
+	option = { ### That is all
+		# name = "POP_dev_button_interactions.109.a"
+		name = exit
+		highlight = yes
+		hidden_effect = {
+			clr_province_flag = already_started_building_fort
+		}
+	}
+}
+
+province_event = { ### Examine capital options
+	id = POP_dev_button_interactions.202
+	title = POP_dev_button_interactions.202.t
+	desc = POP_dev_button_interactions.202.d
+	picture = GREAT_BUILDING_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		
+	}
+	
+	option = { ### Move capital to this location
+		name = "POP_dev_button_interactions.202.a"
+		trigger = {
+			is_state = yes
+			is_capital = no
+		}
+		
+		ai_chance = { factor = 100 }
+		
+		hidden_effect = {
+			if = {
+				limit = {
+					owner = {
+						capital_scope = {
+							NOT = { has_building = bureaucracy_1 }
+							NOT = { has_building = bureaucracy_2 }
+							NOT = { has_building = bureaucracy_3 }
+							NOT = { has_building = bureaucracy_4 }
+							NOT = { has_building = bureaucracy_5 }
+						}
+					}
+				}
+				province_event = {
+					id = POP_dev_button_interactions.203
+				}
+			}
+			else_if = {
+				limit = {
+					owner = {
+						capital_scope = {
+							OR = {
+								has_building = bureaucracy_1
+								has_building = bureaucracy_2
+								has_building = bureaucracy_3
+								has_building = bureaucracy_4
+								has_building = bureaucracy_5
+							}
+						}
+					}
+				}
+				province_event = {
+					id = POP_dev_button_interactions.2031
+				}
+			}
+			else = {
+				clr_province_flag = dev_button_interact
+			}
+		}
+	}
+	
+	option = { ### Improve Capital
+		name = "POP_dev_button_interactions.202.b"
+		
+		ai_chance = { factor = 0 }
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.204
+			}
+		}
+	}
+	
+	option = { ### That is all
+		# name = "POP_dev_button_interactions.202.c"
+		name = exit
+		highlight = yes
+		
+		ai_chance = { factor = 0 }
+		
+		hidden_effect = {
+			set_province_flag = interacting_with_province
+			province_event = { id = POP_dev_button_interactions.001 }
+		}
+	}
+}
+
+province_event = { ### Move Capital, no bureaucracy building needed
+	id = POP_dev_button_interactions.203
+	title = POP_dev_button_interactions.203.t
+	desc = POP_dev_button_interactions.203.d
+	picture = GREAT_BUILDING_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		
+		hidden_effect = {
+			owner = {
+				set_variable = { which = treasury 	value = 0 }
+				adm_available = yes ### Checks how much admin power is available for trigger
+				#PREV = { set_variable = { which = adm_power 	value = 0 } }
+				PREV = { set_variable = { which = adm_power 	which = PREV } }
+			}
+			set_variable = { which = admin_cost_a 	value = 800 }
+			trigger_switch = {
+				on_trigger = has_building
+				bureaucracy_3 = {
+					subtract_variable = { which = admin_cost_a	value = 450 }
+				}
+				bureaucracy_2 = {
+					subtract_variable = { which = admin_cost_a	value = 300 }
+				}
+				bureaucracy_1 = {
+					subtract_variable = { which = admin_cost_a	value = 150 }
+				}
+			}
+			if = { ### The bigger the city, the cheaper the admin cost
+				limit = {
+					check_variable = { which = wealth_urban_as_asset 	value = 1000 }
+				}
+				if = {
+					limit = {
+						check_variable = { which = wealth_urban_as_asset value = 10000 }
+					}
+					set_variable = { which = divisor value = 4 }
+				}
+				else = {
+					set_variable = { which = logistic_input which = wealth_urban_as_asset }
+					multiply_variable = { which = logistic_input value = 0.001 }
+					
+					logistic_funct = {
+						type1=which type2=value type3=value type4=value
+						inp=logistic_input midpnt=0 steepns=0.4 maxval=6
+					}
+					set_variable = { which = divisor which = logistic_val }
+					subtract_variable = { which = divisor value = 2 }
+					
+					set_variable = { which = logistic_val value = 0 }
+				}
+				
+				divide_variable = { which = admin_cost_a which = divisor }
+				
+				set_variable = { which = divisor value = 0 }
+			}
+			
+			if = {
+				limit = {
+					owner = { ai = yes }
+				}
+				set_variable = { which = admin_cost_a value = 0 }
+			}
+			multiply_variable = {   which = admin_cost_a		value = 0.001 }
+			multiply_variable = { which = admin_cost_a		value = 1000 }
+			owner = {
+				#set_variable = { which = admin_cost_a	value = 0 }
+				set_variable = { which = admin_cost_a	which = PREV }
+			}
+		}
+	}
+	
+	option = { ### Follow Through With Move
+		name = "POP_dev_button_interactions.203.a"
+		trigger = {
+			check_variable = { which = adm_power 	which = admin_cost_a } ### need enough admin points to change capitals
+			OR = {
+				has_building = urban_infrastructure_1
+				has_building = urban_infrastructure_2
+				has_building = urban_infrastructure_3
+				has_building = urban_infrastructure_4
+				has_building = urban_infrastructure_5
+				owner = { ai = yes }
+			}
+		}
+		if = {
+			limit = {
+				is_state = yes
+			}
+			hidden_effect = {
+				owner = { set_variable = { which = admin_cost		which = admin_cost_a } }
+				owner = { scaled_admin_cost_country = yes }
+			}
+			custom_tooltip = admin_cost_a
+			hidden_effect = { ### If there is a regional capital, convert to level 1 admin building
+				owner = {
+					if = {
+						limit = {
+							capital_scope = {
+								NOT = { region = ROOT }
+							}
+							chinese_imperial_gov_trigger = yes
+						}
+						Effect_set_capital = { target=PREV }
+						capital_scope = {
+							province_event = { id = tianxia.110 }
+						}
+					}
+					else = {
+						Effect_set_capital = { target=PREV }
+					}
+				}
+			}
+		}
+		else = {
+			custom_tooltip = POP_dev_203_state
+		}
+		clr_province_flag = dev_button_interact
+	}
+	
+	option = { ### No thanks
+		# name = "POP_dev_button_interactions.203.b"
+		name = exit
+		highlight = yes
+		clr_province_flag = dev_button_interact
+	}
+}
+
+province_event = { ### Move Capital, bureaucracy building needed
+	id = POP_dev_button_interactions.2031
+	title = POP_dev_button_interactions.2031.t
+	desc = POP_dev_button_interactions.2031.d
+	picture = GREAT_BUILDING_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			owner = {
+				export_to_variable = {
+					which = treasury
+					value = treasury
+				}
+				adm_available = yes ### Checks how much admin power is available for trigger
+				#PREV = { set_variable = { which = adm_power		value = 0 } }
+				PREV = { set_variable = { which = adm_power		which = PREV } }
+				#PREV = { set_variable = { which = treasury		value = 0 } }
+				PREV = { set_variable = { which = treasury		which = PREV } }
+			}
+			set_variable = { 	  which = admin_cost_a			value = 800 }
+			set_variable = { 	  which = ducat_cost			value = 0 }
+			trigger_switch = {
+				on_trigger = has_building
+				bureaucracy_3 = {
+					subtract_variable = { which = admin_cost_a	value = 450 }
+					subtract_variable = { which = admin_cost_b	value = 450 }
+					subtract_variable = { which = ducat_cost	value = 4000 }
+				}
+				bureaucracy_2 = {
+					subtract_variable = { which = admin_cost_a	value = 300 }
+					subtract_variable = { which = admin_cost_b	value = 300 }
+					subtract_variable = { which = ducat_cost	value = 2000 }
+				}
+				bureaucracy_1 = {
+					subtract_variable = { which = admin_cost_a	value = 150 }
+					subtract_variable = { which = admin_cost_b	value = 150 }
+					subtract_variable = { which = ducat_cost 	value = 750 }
+				}
+			}
+			owner = {
+				capital_scope = {
+					trigger_switch = {
+						on_trigger = has_building
+						bureaucracy_5 = {
+							ROOT = { change_variable = { which = admin_cost_a	value = 1000 } }
+							ROOT = { change_variable = { which = admin_cost_b	value = 1000 } }
+							ROOT = { change_variable = { which = ducat_cost		value = 7500 } }
+						}
+						bureaucracy_4 = {
+							ROOT = { change_variable = { which = admin_cost_a	value = 800 } }
+							ROOT = { change_variable = { which = admin_cost_b	value = 800 } }
+							ROOT = { change_variable = { which = ducat_cost		value = 3500 } }
+						}
+						bureaucracy_3 = {
+							ROOT = { change_variable = { which = admin_cost_a	value = 600 } }
+							ROOT = { change_variable = { which = admin_cost_b	value = 600 } }
+							ROOT = { change_variable = { which = ducat_cost		value = 2000 } }
+						}
+						bureaucracy_2 = {
+							ROOT = { change_variable = { which = admin_cost_a	value = 400 } }
+							ROOT = { change_variable = { which = admin_cost_b	value = 400 } }
+							ROOT = { change_variable = { which = ducat_cost		value = 1200 } }
+						}
+						bureaucracy_1 = {
+							ROOT = { change_variable = { which = admin_cost_a	value = 200 } }
+							ROOT = { change_variable = { which = admin_cost_b	value = 200 } }
+							ROOT = { change_variable = { which = ducat_cost		value = 750 } }
+						}
+					}
+				}
+			}
+			if = { ### The bigger the city, the cheaper the admin cost
+				limit = {
+					check_variable = { which = wealth_urban_as_asset 	value = 1000 }
+				}
+				if = {
+					limit = {
+						check_variable = { which = wealth_urban_as_asset value = 10000 }
+					}
+					set_variable = { which = divisor value = 4 }
+				}
+				else = {
+					set_variable = { which = logistic_input which = wealth_urban_as_asset }
+					multiply_variable = { which = logistic_input value = 0.001 }
+					
+					logistic_funct = {
+						type1=which type2=value type3=value type4=value
+						inp=logistic_input midpnt=0 steepns=0.4 maxval=6
+					}
+					set_variable = { which = divisor which = logistic_val }
+					subtract_variable = { which = divisor value = 2 }
+					
+					set_variable = { which = logistic_val value = 0 }
+				}
+				
+				divide_variable = { which = admin_cost_a which = divisor }
+				divide_variable = { which = admin_cost_b which = divisor }
+				divide_variable = { which = ducat_cost which = divisor }
+				
+				set_variable = { which = divisor value = 0 }
+			}
+			if = {
+				limit = {
+					owner = { ai = yes }
+				}
+				set_variable = { which = admin_cost_a value = 0 }
+				set_variable = { which = admin_cost_b value = 0 }
+			}
+			owner = {
+				#set_variable = { 	  which = admin_cost_a		value = 0 }
+				set_variable = { 	  which = admin_cost_a		which = PREV }
+				multiply_variable = {   which = admin_cost_a		value = 0.001 }
+				multiply_variable = { which = admin_cost_a		value = 1000 }
+				#set_variable = { 	  which = admin_cost_b		value = 0 }
+				set_variable = { 	  which = admin_cost_b		which = PREV }
+				multiply_variable = {   which = admin_cost_b		value = 0.001 }
+				multiply_variable = { which = admin_cost_b		value = 1000 }
+				#set_variable = { 	  which = ducat_cost		value = 0 }
+				set_variable = { 	  which = ducat_cost		which = PREV }
+				multiply_variable = {   which = ducat_cost		value = 0.001 }
+				multiply_variable = { which = ducat_cost		value = 1000 }
+			}
+		}
+	}
+	
+	option = { ### Follow Through With Move without moving capital buildings
+		name = "POP_dev_button_interactions.2031.a"
+		trigger = {
+			check_variable = { which = adm_power 	which = admin_cost_a } ### need enough admin points to change capitals
+			OR = {
+				has_building = urban_infrastructure_1
+				has_building = urban_infrastructure_2
+				has_building = urban_infrastructure_3
+				has_building = urban_infrastructure_4
+				has_building = urban_infrastructure_5
+				owner = { ai = yes }
+			}
+		}
+		if = {
+			limit = {
+				is_state = yes
+			}
+			custom_tooltip = admin_cost_a
+			custom_tooltip = buildings_not_moved_with_capital
+			hidden_effect = {
+				owner = {
+					set_variable = { which = admin_cost		which = admin_cost_a }
+					scaled_ducat_cost_country = yes
+					scaled_admin_cost_country = yes
+					if = {
+						limit = {
+							capital_scope = {
+								NOT = { region = ROOT }
+							}
+							chinese_imperial_gov_trigger = yes
+						}
+						Effect_set_capital = { target=PREV }
+						capital_scope = {
+							province_event = { id = tianxia.110 }
+						}
+					}
+					else = {
+						Effect_set_capital = { target=PREV }
+					}
+				}
+			}
+		}
+		else = {
+			custom_tooltip = POP_dev_203_state
+		}
+		clr_province_flag = dev_button_interact
+	}
+	
+	option = { ### Move capital buildings as well
+		name = "POP_dev_button_interactions.2031.b"
+		trigger = {
+			check_variable = { which = adm_power 	which = admin_cost_a } ### need enough admin points to change capitals
+			OR = {
+				has_building = urban_infrastructure_1
+				has_building = urban_infrastructure_2
+				has_building = urban_infrastructure_3
+				has_building = urban_infrastructure_4
+				has_building = urban_infrastructure_5
+				owner = { ai = yes }
+			}
+		}
+		if = {
+			limit = {
+				is_state = yes
+			}
+			hidden_effect = {
+				owner = { 
+					set_variable = { which = admin_cost		which = admin_cost_b }
+					scaled_ducat_cost_country = yes
+					capital_scope = {
+						trigger_switch = {
+							on_trigger = has_building
+							bureaucracy_5 = {
+								ROOT = { set_province_flag = move_capital_has_bureaucracy_5 }
+							}
+							bureaucracy_4 = {
+								ROOT = { set_province_flag = move_capital_has_bureaucracy_4 }
+							}
+							bureaucracy_3 = {
+								ROOT = { set_province_flag = move_capital_has_bureaucracy_3 }
+							}
+							bureaucracy_2 = {
+								ROOT = { set_province_flag = move_capital_has_bureaucracy_2 }
+							}
+							bureaucracy_1 = {
+								ROOT = { set_province_flag = move_capital_has_bureaucracy_1 }
+							}
+						}
+					}
+				}
+				ROOT = {
+					trigger_switch = {
+						on_trigger = has_building
+						bureaucracy_1 = {
+							owner = {
+								capital_scope = {
+									set_province_flag = prior_capital_has_bureaucracy_1
+								}
+							}
+						}
+						bureaucracy_2 = {
+							owner = {
+								capital_scope = {
+									set_province_flag = prior_capital_has_bureaucracy_2
+								}
+							}
+						}
+						bureaucracy_3 = {
+							owner = {
+								capital_scope = {
+									set_province_flag = prior_capital_has_bureaucracy_3
+								}
+							}
+						}
+						bureaucracy_4 = {
+							owner = {
+								capital_scope = {
+									set_province_flag = prior_capital_has_bureaucracy_4
+								}
+							}
+						}
+						bureaucracy_5 = {
+							owner = {
+								capital_scope = {
+									set_province_flag = prior_capital_has_bureaucracy_5
+								}
+							}
+						}
+					}
+				}
+				ROOT = {
+					remove_building = bureaucracy_1
+					remove_building = bureaucracy_2
+					remove_building = bureaucracy_3
+					remove_building = bureaucracy_4
+					remove_building = bureaucracy_5
+				}
+				owner = {
+					capital_scope = {
+						remove_building = bureaucracy_1
+						remove_building = bureaucracy_2
+						remove_building = bureaucracy_3
+						remove_building = bureaucracy_4
+						remove_building = bureaucracy_5
+					}
+				}
+				trigger_switch = {
+					on_trigger = has_province_flag
+					move_capital_has_bureaucracy_1 = {
+						add_building = bureaucracy_1
+					}
+					move_capital_has_bureaucracy_2 = {
+						add_building = bureaucracy_2
+					}
+					move_capital_has_bureaucracy_3 = {
+						add_building = bureaucracy_3
+					}
+					move_capital_has_bureaucracy_4 = {
+						add_building = bureaucracy_4
+					}
+					move_capital_has_bureaucracy_5 = {
+						add_building = bureaucracy_5
+					}
+				}
+				owner = {
+					capital_scope = {
+						trigger_switch = {
+							on_trigger = has_province_flag
+							prior_capital_has_bureaucracy_5 = {
+								add_building = bureaucracy_5
+							}
+							prior_capital_has_bureaucracy_4 = {
+								add_building = bureaucracy_4
+							}
+							prior_capital_has_bureaucracy_3 = {
+								add_building = bureaucracy_3
+							}
+							prior_capital_has_bureaucracy_2 = {
+								add_building = bureaucracy_2
+							}
+							prior_capital_has_bureaucracy_1 = {
+								add_building = bureaucracy_1
+							}
+						}
+					}
+				}
+				owner = { scaled_admin_cost_country = yes }
+			}
+			custom_tooltip = admin_cost_b
+			custom_tooltip = ducats_spent
+			custom_tooltip = buildings_moved_with_capital
+			hidden_effect = { ### If there is a regional capital, convert to level 1 admin building
+				owner = {
+					if = {
+						limit = {
+							capital_scope = {
+								NOT = { region = ROOT }
+							}
+							chinese_imperial_gov_trigger = yes
+						}
+						Effect_set_capital = { target=PREV }
+						capital_scope = {
+							province_event = { id = tianxia.110 }
+						}
+					}
+					else = {
+						Effect_set_capital = { target=PREV }
+					}
+				}
+			}
+		}
+		clr_province_flag = dev_button_interact
+	}
+	
+	option = { ### No thanks
+		# name = "POP_dev_button_interactions.2031.c"
+		name = exit
+		highlight = yes
+		clr_province_flag = dev_button_interact
+	}
+}
+
+province_event = { ### Improve Capital
+	id = POP_dev_button_interactions.204
+	title = POP_dev_button_interactions.204.t
+	desc = POP_dev_button_interactions.204.d
+	picture = GREAT_BUILDING_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			owner = {
+				export_to_variable = {
+					which = treasury
+					value = treasury
+				}
+				#PREV = { set_variable = { which = treasury		value = 0 } }
+				PREV = { set_variable = { which = treasury 		which = PREV } }
+				#PREV = { set_variable = { which = capital_num 	value = 0 } }
+				PREV = { set_variable = { which = capital_num 	which = PREV } }
+			}
+			#set_variable = { which = bureaucracy_upgrade_cost	value = 0 }
+			multiply_variable = { which = capital_num 			value = 500 }
+			set_variable = { which = bureaucracy_upgrade_cost 	value = 1500 }
+			trigger_switch = {
+				on_trigger = has_building
+				bureaucracy_4 = {
+					set_variable = { which = bureaucracy_upgrade_cost 	value = 15000 }
+				}
+				bureaucracy_3 = {
+					set_variable = { which = bureaucracy_upgrade_cost 	value = 7000 }
+				}
+				bureaucracy_2 = {
+					set_variable = { which = bureaucracy_upgrade_cost 	value = 4000 }
+				}
+				bureaucracy_1 = {
+					set_variable = { which = bureaucracy_upgrade_cost 	value = 2500 }
+				}
+			}
+			
+			owner = { PREV = { set_variable = { which = country_bureaucracy_strength 	which = PREV } } }
+			
+			change_variable = {   which = bureaucracy_upgrade_cost						which = capital_num }
+			#set_variable = {	  which = ducat_cost									value = 0 }
+			set_variable = { 	  which = capital_num									value = 0 }
+			set_variable = { 	  which = ducat_cost									which = bureaucracy_upgrade_cost }
+			multiply_variable = {   which = ducat_cost									value = 0.001 }
+			multiply_variable = { which = ducat_cost									value = 1000 }
+			owner = {
+				#set_variable = { which = ducat_cost 	value = 0 }
+				set_variable = { which = ducat_cost 	which = PREV }
+			}
+		}
+	}
+	
+	option = { ### Improve Capital
+		name = "POP_dev_button_interactions.204.a"
+		trigger = {
+			is_capital = yes
+			check_variable = { which = treasury		which = ducat_cost }
+			NOT = { has_building = bureaucracy_5 }
+		}
+		hidden_effect = {
+			owner = { change_variable = { which = capital_num 	value = 1 } }
+			owner = { scaled_ducat_cost_country = yes }
+			change_variable = { which = country_bureaucracy_strength	value = 1 }
+		}
+		custom_tooltip = ducats_spent
+		if = {
+			limit = {
+				has_building = bureaucracy_4
+			}
+			remove_building = bureaucracy_4
+			remove_building = bureaucracy_3
+			remove_building = bureaucracy_2
+			remove_building = bureaucracy_1
+			add_building = bureaucracy_5
+		}
+		else_if = {
+			limit = {
+				has_building = bureaucracy_3
+			}
+			remove_building = bureaucracy_3
+			remove_building = bureaucracy_2
+			remove_building = bureaucracy_1
+			add_building = bureaucracy_4
+		}
+		else_if = {
+			limit = {
+				has_building = bureaucracy_2
+			}
+			remove_building = bureaucracy_2
+			remove_building = bureaucracy_1
+			add_building = bureaucracy_3
+		}
+		else_if = {
+			limit = {
+				has_building = bureaucracy_1
+			}
+			remove_building = bureaucracy_1
+			add_building = bureaucracy_2
+		}
+		else = {
+			add_building = bureaucracy_1
+		}
+		clr_province_flag = dev_button_interact
+	}
+	
+	option = { ### Build Regional Capital
+		name = "POP_dev_button_interactions.204.b"
+		trigger = {
+			check_variable = { which = treasury		which = ducat_cost }
+			is_capital = no
+			NOT = { has_building = bureaucracy_1 }
+			NOT = { has_building = bureaucracy_2 }
+			NOT = { has_building = bureaucracy_3 }
+			NOT = { has_building = bureaucracy_4 }
+			NOT = { has_building = bureaucracy_5 }
+		}
+		hidden_effect = {
+			owner = { change_variable = { which = capital_num 	value = 1 } }
+			owner = { scaled_ducat_cost_country = yes }
+			change_variable = { which = country_bureaucracy_strength	value = 1 }
+			add_province_modifier = { name = has_regional_capital duration = 600 hidden = yes }
+		}
+		custom_tooltip = ducats_spent
+		add_building = bureaucracy_1
+		clr_province_flag = dev_button_interact
+	}
+	
+	option = { ### Improve Regional Capital
+		name = "POP_dev_button_interactions.204.c"
+		trigger = {
+			check_variable = { which = treasury		which = ducat_cost }
+			is_capital = no
+			OR = {
+				has_building = bureaucracy_1
+				has_building = bureaucracy_2
+			}
+			NOT = { has_building = bureaucracy_3 }
+			NOT = { has_building = bureaucracy_4 }
+			NOT = { has_building = bureaucracy_5 }
+		}
+		
+		hidden_effect = {
+			owner = { scaled_ducat_cost_country = yes }
+			change_variable = { which = country_bureaucracy_strength	value = 1 }
+		}
+		custom_tooltip = ducats_spent
+		remove_building = bureaucracy_1
+		if = {
+			limit = {
+				has_building = bureaucracy_2
+			}
+			remove_building = bureaucracy_2
+			add_building = bureaucracy_3
+		}
+		else = {
+			add_building = bureaucracy_2
+		}
+		clr_province_flag = dev_button_interact
+	}
+	
+	option = { ### Nevermind
+		# name = "POP_dev_button_interactions.204.e"
+		name = exit
+		highlight = yes
+		clr_province_flag = dev_button_interact
+	}
+}
+
+province_event = { ### Demote Nobles
+	id = POP_dev_button_interactions.301
+	title = POP_dev_button_interactions.301.t
+	desc = POP_dev_button_interactions.301.d
+	picture = CITY_DEVELOPMENT_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	trigger = {
+		
+	}
+	
+	immediate = {
+		set_variable = { which = stability_hit						value = 0 }
+		set_variable = { which = greater_nobles_loyalty_removed_a 	value = 0 }
+	}
+	
+	option = {
+		name = "POP_dev_button_interactions.301.a"
+	}
+	
+	option = {
+		name = "POP_dev_button_interactions.301.b"
+	}
+	
+	option = {
+		name = "POP_dev_button_interactions.301.c"
+	}
+	
+	option = {
+		name = "POP_dev_button_interactions.301.e"
+	}
+}
+
+province_event = { ### Promote Nobles
+	id = POP_dev_button_interactions.302
+	title = POP_dev_button_interactions.302.t
+	desc = POP_dev_button_interactions.302.d
+	picture = CITY_DEVELOPMENT_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	trigger = {
+		
+	}
+	
+	immediate = {
+		
+	}
+	
+	option = {
+		name = "POP_dev_button_interactions.302.a"
+	}
+	
+	option = {
+		name = "POP_dev_button_interactions.302.b"
+	}
+	
+	option = {
+		name = "POP_dev_button_interactions.302.c"
+	}
+	
+	option = {
+		name = "POP_dev_button_interactions.302.e"
+	}
+}
+
+province_event = { ### Build Canals
+	id = POP_dev_button_interactions.401
+	title = POP_dev_button_interactions.401.t
+	desc = POP_dev_button_interactions.401.d
+	picture = FARMING_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+#	trigger = {
+#		has_building = upgrade_canals_build
+#	}
+	
+	immediate = {
+		hidden_effect = {
+			set_province_flag = already_started_building_canal ### This flag prevents this event from being called again, and instead redirects the player to another event so that all of the variables don't get reset
+			#set_variable = { 	  which = canal_cost_base				value = 0 }
+			set_variable = { 	  which = canal_cost_base				value = 100 } ### The base which will be multiplied into
+			set_variable = { 	  which = canal_cost_extra				value = 500 } ### The value which adds base ideal population
+			#set_variable = { 	  which = canal_price_multiplier		value = 0 }
+			set_variable = {   which = canal_price_multiplier		which = innate_rural_pop_base }
+			multiply_variable = {	  which = canal_price_multiplier		value = 0.1 }
+			#	set_variable = { 	  which = canal_price_multiplier_d		value = 0 }	### For display purposes
+			#	set_variable = { 	  which = canal_price_multiplier_d		which = canal_price_multiplier }
+			#	multiply_variable = {	  which = canal_price_multiplier		value = 0.01 }
+			
+			if = {
+				limit = {
+					has_building = canal_level_1
+				}
+				set_variable = { which = canal_cost_base				value = 150 }
+			}
+			if = {
+				limit = {
+					has_building = canal_level_2
+				}
+				set_variable = { which = canal_cost_base				value = 200 }
+			}
+			#set_variable = { 	  which = canal_cost_remaining			value = 0 }
+			#set_variable = { 	  which = canal_price_actual			value = 0 }
+			set_variable = { 	  which = canal_price_actual			which = canal_cost_base }
+			multiply_variable = { which = canal_price_actual			which = canal_price_multiplier }
+			change_variable = {   which = canal_price_actual			which = canal_cost_extra }
+
+			multiply_variable = {   which = canal_price_actual			value = 0.001 }
+			multiply_variable = { which = canal_price_actual			value = 1000 }
+			set_variable = { 	  which = canal_cost_remaining			which = canal_price_actual }
+			if = {
+				limit = { owner = { has_idea = pioneer_corps } }
+				multiply_variable = { which = canal_cost_remaining value = 0.75 }
+				set_province_flag = engineering_canal_discount
+			}
+			#set_variable = { 	  which = canal_necessary_wealth		value = 0 }
+			set_variable = { 	  which = canal_necessary_wealth		which = canal_price_actual }
+			multiply_variable = {   which = canal_necessary_wealth		value = 0.25 } ### Used as trigger to allow or exclude seizing provincial wealth
+			#set_variable = { 	  which = ducat_cost					value = 0 }
+			set_variable = { 	  which = ducat_cost					which = canal_cost_remaining }
+			multiply_variable = {   which = ducat_cost					value = 0.001 }
+			multiply_variable = { which = ducat_cost					value = 1000 }
+			
+			#set_variable = { 	  which = canal_cost_remaining_25		value = 0 }
+			#set_variable = { 	  which = canal_cost_remaining_50		value = 0 }
+			#set_variable = { 	  which = canal_cost_remaining_75		value = 0 }
+			set_variable = { 	  which = canal_cost_remaining_25		which = canal_price_actual }
+			set_variable = { 	  which = canal_cost_remaining_50		which = canal_price_actual }
+			set_variable = { 	  which = canal_cost_remaining_75		which = canal_price_actual }
+			multiply_variable = { which = canal_cost_remaining_25		value = 0.25 }
+			multiply_variable = { which = canal_cost_remaining_50		value = 0.5 }
+			multiply_variable = { which = canal_cost_remaining_75		value = 0.75 }
+			subtract_variable = { which = canal_cost_remaining_25		value = 1 }
+			subtract_variable = { which = canal_cost_remaining_50		value = 1 }
+			subtract_variable = { which = canal_cost_remaining_75		value = 1 }
+			
+			
+			
+			#owner = { set_variable = { which = ducat_cost				value = 0 } }
+			owner = { set_variable = { which = ducat_cost				which = PREV } }
+		}
+	}
+	
+	option = { ### Pay off remaining cost with ducats
+		name = "POP_dev_button_interactions.401.a"
+		hidden_effect = {
+			set_variable = { which = canal_cost_remaining	value = 0 }
+			owner = { scaled_ducat_cost_country = yes }
+			province_event = {
+				id = POP_dev_button_interactions.408
+			}
+		}
+		custom_tooltip = ducats_spent
+	}
+	
+	option = { ### Contribute Manpower to the effort
+		name = "POP_dev_button_interactions.401.b"
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.403
+			}
+		}
+	}
+	
+	option = { ### Convince local estate to contribute
+		name = "POP_dev_button_interactions.401.c"
+		trigger = {
+			OR = {
+				has_province_flag = greater_nobles_control_province
+				has_province_flag = lesser_nobles_control_province
+				has_province_flag = burghers_control_province
+			}
+		}
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.404
+			}
+		}
+	}
+	
+	option = { ### Significant Administrative Management of Project
+		name = "POP_dev_button_interactions.401.e"
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.405
+			}
+		}
+	}
+	
+	option = { ### Convince Locals to Contribute Rural
+		name = "POP_dev_button_interactions.401.f"
+		trigger = {
+			check_variable = { which = wealth_rural_fluid	which = canal_necessary_wealth }
+		}
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.406
+			}
+		}
+	}
+	
+	option = { ### Convince Locals to Contribute Urban
+		name = "POP_dev_button_interactions.401.g"
+		trigger = {
+			check_variable = { which = wealth_urban_fluid	which = canal_necessary_wealth }
+		}
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.407
+			}
+		}
+	}
+	
+	option = { ### That is all
+		# name = "POP_dev_button_interactions.401.h"
+		name = exit
+		highlight = yes
+		hidden_effect = {
+			set_province_flag = interacting_with_province
+			province_event = { id = POP_dev_button_interactions.001 }
+		}
+	}
+}
+
+province_event = { ### Manpower for canals
+	id = POP_dev_button_interactions.403
+	title = POP_dev_button_interactions.403.t
+	desc = POP_dev_button_interactions.403.d
+	picture = FARMING_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = mil_power 	value = 0 }
+			owner = {
+				mil_available = yes
+				PREV = { set_variable = { which = mil_power		which = PREV } }
+			}
+			if = {
+				limit = {
+					NOT = { check_variable = { which = canal_manpower_spent 	value = 0 } }
+				}
+				set_variable = { which = canal_manpower_spent		value = 0 }
+			}
+			set_variable = { which = total_manpower value = 0 }
+			
+			#set_variable = { 	  which = manpower_cost			value = 0 }
+			set_variable = { 	  which = manpower_cost			which = canal_price_actual }
+			if = {
+				limit = { owner = { full_idea_group = quantity_ideas } }
+				multiply_variable = { which = manpower_cost value = 0.8 }
+			}
+			multiply_variable = { which = manpower_cost			value = 50 } ### Conversion rate of 1 ducat for every 50 manpower for AI
+			multiply_variable = {   which = manpower_cost			value = 0.001 }
+			multiply_variable = { which = manpower_cost			value = 1000 }
+			
+			set_variable = { 	  which = manpower_cost_a		which = manpower_cost }
+			set_variable = { 	  which = manpower_cost_b		which = manpower_cost }
+			set_variable = { 	  which = manpower_cost_c		which = manpower_cost }
+			multiply_variable = { which = manpower_cost_a		value = 0.25 }
+			multiply_variable = { which = manpower_cost_b		value = 0.5  }
+			multiply_variable = { which = manpower_cost_c		value = 0.75 }
+			#set_variable = { 	  which = manpower_cost_a_trig	value = 0 }
+			#set_variable = { 	  which = manpower_cost_b_trig	value = 0 }
+			#set_variable = { 	  which = manpower_cost_c_trig	value = 0 }
+			set_variable = { 	  which = manpower_cost_a_trig	which = manpower_cost_a }
+			set_variable = { 	  which = manpower_cost_b_trig	which = manpower_cost_b }
+			set_variable = { 	  which = manpower_cost_c_trig	which = manpower_cost_c }
+			multiply_variable = {   which = manpower_cost_a_trig	value = 0.01 }
+			multiply_variable = {   which = manpower_cost_b_trig	value = 0.01 }
+			multiply_variable = {   which = manpower_cost_c_trig	value = 0.01 }
+			multiply_variable = {   which = manpower_cost_a		value = 0.001 }
+			multiply_variable = { which = manpower_cost_a		value = 1000 }
+			multiply_variable = {   which = manpower_cost_b		value = 0.001 }
+			multiply_variable = { which = manpower_cost_b		value = 1000 }
+			multiply_variable = {   which = manpower_cost_c		value = 0.001 }
+			multiply_variable = { which = manpower_cost_c		value = 1000 }
+			#set_variable = { 	  which = milit_cost			value = 0 }
+			set_variable = { 	  which = milit_cost			which = canal_price_actual }
+			owner = {
+				set_variable = { which = div which = upper_pop }
+				PREV = { set_variable = { which = div which = PREV } }
+				set_variable = { which = div value = 0 }
+			}
+			change_variable = { which = div value = 1 }
+			divide_variable = { which = milit_cost which = div }
+			set_variable = { which = div value = 0 }
+			#	multiply_variable = {   which = milit_cost			value = 0.001 }
+			#	multiply_variable = { which = milit_cost			value = 1000 }
+			#set_variable = { 	  which = milit_cost_a			value = 0 } ### 25 percent
+			#set_variable = { 	  which = milit_cost_b			value = 0 } ### 50 percent
+			#set_variable = { 	  which = milit_cost_c			value = 0 } ### 75 percent
+			set_variable = { 	  which = milit_cost_a			which = milit_cost } ### 25 percent
+			set_variable = { 	  which = milit_cost_b			which = milit_cost } ### 50 percent
+			set_variable = { 	  which = milit_cost_c			which = milit_cost } ### 75 percent
+			multiply_variable = { which = milit_cost_a			value = 0.25 }
+			multiply_variable = { which = milit_cost_b			value = 0.5 }
+			multiply_variable = { which = milit_cost_c			value = 0.75 }
+			change_variable = {   which = milit_cost_a			value = 3 } ### Base milit cost
+			change_variable = {   which = milit_cost_b			value = 6 } ### Base milit cost
+			change_variable = {   which = milit_cost_c			value = 9 } ### Base milit cost
+			multiply_variable = {   which = milit_cost_a			value = 0.001 }
+			multiply_variable = { which = milit_cost_a			value = 1000 }
+			multiply_variable = {   which = milit_cost_b			value = 0.001 }
+			multiply_variable = { which = milit_cost_b			value = 1000 }
+			multiply_variable = {   which = milit_cost_c			value = 0.001 }
+			multiply_variable = { which = milit_cost_c			value = 1000 }
+			owner = {
+				#set_variable = { 	  which = total_manpower		value = 0 }
+				#set_variable = { 	  which = manpower_cost_a		value = 0 } ### 25 percent
+				#set_variable = { 	  which = manpower_cost_b		value = 0 } ### 50 percent
+				#set_variable = { 	  which = manpower_cost_c		value = 0 } ### 75 percent
+				#set_variable = { 	  which = milit_cost_a			value = 0 } ### 25 percent
+				#set_variable = { 	  which = milit_cost_b			value = 0 } ### 50 percent
+				#set_variable = { 	  which = milit_cost_c			value = 0 } ### 75 percent
+				export_to_variable = {
+					which = total_manpower
+					value = manpower
+				}
+				multiply_variable = { which = total_manpower value = 10 }
+				PREV = { set_variable = { 	  which = total_manpower		which = PREV } }
+				set_variable = { which = total_manpower value = 0 }
+				set_variable = { 	  which = milit_cost_a			which = PREV } ### 25 percent
+				set_variable = { 	  which = milit_cost_b			which = PREV } ### 50 percent
+				set_variable = { 	  which = milit_cost_c			which = PREV } ### 75 percent
+				set_variable = { 	  which = manpower_cost_a		which = PREV }
+				set_variable = { 	  which = manpower_cost_b		which = PREV }
+				set_variable = { 	  which = manpower_cost_c		which = PREV }
+				multiply_variable = {   which = manpower_cost_a		value = 0.001 }
+				multiply_variable = {   which = manpower_cost_b		value = 0.001 }
+				multiply_variable = {   which = manpower_cost_c		value = 0.001 }
+			}
+		}
+	}
+	
+	option = { ### Choose 25 percent
+		name = "POP_dev_button_interactions.403.a"
+		trigger = {
+			check_variable = { which = mil_power						which = milit_cost_a }
+			check_variable = { which = total_manpower					which = manpower_cost_a_trig }
+			NOT = { check_variable = { which = canal_manpower_spent		value = 75 } }
+		}
+		hidden_effect = {
+			change_variable = { which = canal_manpower_spent		value = 25 }
+			#set_variable = { which = canal_cost_with_man		value = 0 }
+			set_variable = { which = canal_cost_with_man		which = canal_price_actual }
+			multiply_variable = { which = canal_cost_with_man	value = 0.25 }
+			subtract_variable = { which = canal_cost_remaining	which = canal_cost_with_man }
+			owner = { set_variable = { which = milit_cost		which = milit_cost_a } }
+			owner = { set_variable = { which = manpower_cost	which = manpower_cost_a } }
+			owner = { scaled_manpower_cost_country = yes }
+			owner = { scaled_milit_cost_country = yes }
+			Pdbi_check_if_build = { type=canal yes=408 no=409 }
+		}
+		custom_tooltip = milit_cost_a
+		custom_tooltip = manpower_cost_a
+	}
+	
+	option = { ### Choose 50 percent
+		name = "POP_dev_button_interactions.403.b"
+		trigger = {
+			check_variable = { which = mil_power						which = milit_cost_b }
+			check_variable = { which = total_manpower					which = manpower_cost_b_trig }
+			NOT = { check_variable = { which = canal_manpower_spent		value = 50 } }
+			check_variable = { which = canal_cost_remaining				which = canal_cost_remaining_50 }
+		}
+		hidden_effect = {
+			change_variable = { which = canal_manpower_spent		value = 50 }
+			#set_variable = { which = canal_cost_with_man		value = 0 }
+			set_variable = { which = canal_cost_with_man		which = canal_price_actual }
+			multiply_variable = { which = canal_cost_with_man	value = 0.5 }
+			subtract_variable = { which = canal_cost_remaining	which = canal_cost_with_man }
+			owner = { set_variable = { which = milit_cost		which = milit_cost_b } }
+			owner = { set_variable = { which = manpower_cost	which = manpower_cost_b } }
+			owner = { scaled_manpower_cost_country = yes }
+			owner = { scaled_milit_cost_country = yes }
+			Pdbi_check_if_build = { type=canal yes=408 no=409 }
+		}
+		custom_tooltip = milit_cost_b
+		custom_tooltip = manpower_cost_b
+	}
+	
+	option = { ### Choose 75 percent
+		name = "POP_dev_button_interactions.403.c"
+		trigger = {
+			check_variable = { which = mil_power						which = milit_cost_c }
+			check_variable = { which = total_manpower					which = manpower_cost_c_trig }
+			NOT = { check_variable = { which = canal_manpower_spent		value = 25 } }
+			check_variable = { which = canal_cost_remaining				which = canal_cost_remaining_75 }
+		}
+		hidden_effect = {
+			change_variable = { which = canal_manpower_spent		value = 75 }
+			#set_variable = { which = canal_cost_with_man		value = 0 }
+			set_variable = { which = canal_cost_with_man		which = canal_price_actual }
+			multiply_variable = { which = canal_cost_with_man	value = 0.75 }
+			subtract_variable = { which = canal_cost_remaining	which = canal_cost_with_man }
+			owner = { set_variable = { which = milit_cost		which = milit_cost_c } }
+			owner = { set_variable = { which = manpower_cost	which = manpower_cost_c } }
+			owner = { scaled_manpower_cost_country = yes }
+			owner = { scaled_milit_cost_country = yes }
+			Pdbi_check_if_build = { type=canal yes=408 no=409 }
+		}
+		custom_tooltip = milit_cost_c
+		custom_tooltip = manpower_cost_c
+	}
+	
+	option = {
+		# name = "POP_dev_button_interactions.403.e"
+		name = back
+		highlight = yes
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.409
+			}
+		}
+	}
+}
+
+province_event = { ### Get Estates to Help
+	id = POP_dev_button_interactions.404
+	title = POP_dev_button_interactions.404.t
+	desc = POP_dev_button_interactions.404.d
+	picture = FARMING_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = dip_power 	value = 0 }
+			owner = {
+				dip_available = yes
+				PREV = { set_variable = { which = dip_power		which = PREV } }
+			}
+			#set_variable = { 	  which = canal_necessary_estate_cash_25	value = 0 }
+			#set_variable = { 	  which = canal_necessary_estate_cash_50	value = 0 }
+			set_variable = { 	  which = canal_necessary_estate_cash_25	which = canal_price_actual }
+			set_variable = { 	  which = canal_necessary_estate_cash_50	which = canal_price_actual }
+			multiply_variable = {   which = canal_necessary_estate_cash_25	value = 0.25 }
+			multiply_variable = {   which = canal_necessary_estate_cash_50	value = 0.5 }
+			set_variable = { 	  which = estate_money_for_canal			value = 0 }
+			trigger_switch = {
+				on_trigger = has_province_flag
+				greater_nobles_control_province = {
+					owner = {
+						#set_variable = { which = estate_money_for_canal				value = 0 }
+						set_variable = { which = estate_money_for_canal				which = estate_greater_nobles_treasury }
+						PREV = { set_variable = { which = estate_money_for_canal	which = PREV } }
+					}
+				}
+				lesser_nobles_control_province = {
+					owner = {
+						#set_variable = { which = estate_money_for_canal				value = 0 }
+						set_variable = { which = estate_money_for_canal				which = estate_lesser_nobles_treasury }
+						PREV = { set_variable = { which = estate_money_for_canal	which = PREV } }
+					}
+				}
+				burghers_control_province = {
+					owner = {
+						#set_variable = { which = estate_money_for_canal				value = 0 }
+						set_variable = { which = estate_money_for_canal				which = estate_burghers_treasury }
+						PREV = { set_variable = { which = estate_money_for_canal	which = PREV } }
+					}
+				}
+			}
+			#set_variable = { 	  which = diplo_cost_a					value = 0 }
+			#set_variable = { 	  which = diplo_cost_b					value = 0 }
+			set_variable = { 	  which = diplo_cost_a					which = canal_price_actual }
+			set_variable = { 	  which = diplo_cost_b					which = canal_price_actual }
+			multiply_variable = { which = diplo_cost_b					value = 2 }
+			owner = {
+				set_variable = { which = div which = upper_pop }
+				PREV = { set_variable = { which = div which = PREV } }
+				set_variable = { which = div value = 0 }
+			}
+			change_variable = { which = div value = 1 }
+			divide_variable = { which = diplo_cost_a which = div }
+			divide_variable = { which = diplo_cost_b which = div }
+			set_variable = { which = div value = 0 }
+			change_variable = {   which = diplo_cost_a					value = 20 }
+			change_variable = {   which = diplo_cost_b					value = 50 }
+			multiply_variable = {   which = diplo_cost_a					value = 0.001 }
+			multiply_variable = { which = diplo_cost_a					value = 1000 }
+			multiply_variable = {   which = diplo_cost_b					value = 0.001 }
+			multiply_variable = { which = diplo_cost_b					value = 1000 }
+			
+			owner = {
+				#set_variable = { 	  which = diplo_cost_a						value = 0 }
+				#set_variable = { 	  which = diplo_cost_b						value = 0 }
+				set_variable = { 	  which = diplo_cost_a						which = PREV } ### 25 percent
+				set_variable = { 	  which = diplo_cost_b						which = PREV } ### 50 percent
+				#set_variable = { 	  which = canal_necessary_estate_cash_25	value = 0 }
+				#set_variable = { 	  which = canal_necessary_estate_cash_50	value = 0 }
+				set_variable = { 	  which = canal_necessary_estate_cash_25	which = PREV }
+				set_variable = { 	  which = canal_necessary_estate_cash_50	which = PREV }
+			}
+		}
+	}
+	
+	option = { ### Negotiate for 25%
+		name = "POP_dev_button_interactions.404.a"
+		trigger = {
+			check_variable = { which = estate_money_for_canal	which = canal_necessary_estate_cash_25 }
+			check_variable = { which = dip_power				which = diplo_cost_a }
+			NOT = { has_province_flag = requested_money_from_estate_already }
+		}
+		custom_tooltip = diplo_cost_a
+		trigger_switch = {
+			on_trigger = has_province_flag
+			greater_nobles_control_province = {
+				custom_tooltip = cost_GN_ducats_25
+			}
+			lesser_nobles_control_province = {
+				custom_tooltip = cost_LN_ducats_25
+			}
+			burghers_control_province = {
+				custom_tooltip = cost_BG_ducats_25
+			}
+		}
+		hidden_effect = {
+			set_province_flag = requested_money_from_estate_already
+			owner = { set_variable = { which = diplo_cost 					which = diplo_cost_a } }
+			trigger_switch = {
+				on_trigger = has_province_flag
+				greater_nobles_control_province = {
+					owner = { subtract_variable = { which = estate_greater_nobles_treasury	which = canal_necessary_estate_cash_25 } }
+				}
+				lesser_nobles_control_province = {
+					owner = { subtract_variable = { which = estate_lesser_nobles_treasury	which = canal_necessary_estate_cash_25 } }
+				}
+				burghers_control_province = {
+					owner = { subtract_variable = { which = estate_burghers_treasury		which = canal_necessary_estate_cash_25 } }
+				}
+			}
+			subtract_variable = { 	   which = canal_cost_remaining 		which = canal_necessary_estate_cash_25 }
+			owner = { scaled_diplo_cost_country = yes }
+			Pdbi_check_if_build = { type=canal yes=408 no=409 }
+		}
+	}
+	
+	option = { ### Demand 50%
+		name = "POP_dev_button_interactions.404.b"
+		trigger = {
+			check_variable = { which = estate_money_for_canal	which = canal_necessary_estate_cash_50 }
+			check_variable = { which = dip_power				which = diplo_cost_b }
+			check_variable = { which = canal_cost_remaining		which = canal_necessary_estate_cash_50 }
+			NOT = { has_province_flag = requested_money_from_estate_already }
+		}
+		custom_tooltip = diplo_cost_b
+		if = {
+			limit = {
+				has_province_flag = greater_nobles_control_province
+			}
+			custom_tooltip = cost_GN_ducats_50
+		}
+		if = {
+			limit = {
+				has_province_flag = lesser_nobles_control_province
+			}
+			custom_tooltip = cost_LN_ducats_50
+		}
+		if = {
+			limit = {
+				has_province_flag = burghers_control_province
+			}
+			custom_tooltip = cost_BG_ducats_50
+		}
+		hidden_effect = {
+			set_province_flag = requested_money_from_estate_already
+			owner = { set_variable = { which = diplo_cost 					which = diplo_cost_b } }
+			trigger_switch = {
+				on_trigger = has_province_flag
+				greater_nobles_control_province = {
+					owner = { subtract_variable = { which = estate_greater_nobles_treasury	which = canal_necessary_estate_cash_50 } }
+				}
+				lesser_nobles_control_province = {
+					owner = { subtract_variable = { which = estate_lesser_nobles_treasury	which = canal_necessary_estate_cash_50 } }
+				}
+				burghers_control_province = {
+					owner = { subtract_variable = { which = estate_burghers_treasury		which = canal_necessary_estate_cash_50 } }
+				}
+			}
+			subtract_variable = { 	   which = canal_cost_remaining 		which = canal_necessary_estate_cash_50 }
+			owner = { scaled_diplo_cost_country = yes }
+			Pdbi_check_if_build = { type=canal yes=408 no=409 }
+		}
+	}
+	
+	option = { ### No thanks
+		# name = "POP_dev_button_interactions.404.c"
+		name = back
+		highlight = yes
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.409
+			}
+		}
+	}
+}
+
+province_event = { ### Administration helps
+	id = POP_dev_button_interactions.405
+	title = POP_dev_button_interactions.405.t
+	desc = POP_dev_button_interactions.405.d
+	picture = FARMING_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = adm_power 	value = 0 }
+			owner = {
+				adm_available = yes
+				PREV = { set_variable = { which = adm_power		which = PREV } }
+			}
+			#set_variable = { 	  which = admin_cost_a					value = 0 }
+			set_variable = { 	  which = admin_cost_a					which = canal_price_actual }
+			multiply_variable = { which = admin_cost_a					value = 1.6 }
+			owner = {
+				set_variable = { which = upper_pop_temp which = upper_pop }
+				PREV = { set_variable = { which = upper_pop_temp		which = PREV } }
+				set_variable = { which = upper_pop_temp value = 0 }
+			}
+			change_variable = { which = upper_pop_temp value = 1 }
+			divide_variable = { which = admin_cost_a which = upper_pop_temp }
+			set_variable = { which = upper_pop_temp value = 0 }
+			change_variable = {   which = admin_cost_a						value = 40 }
+			multiply_variable = {   which = admin_cost_a						value = 0.001 }
+			multiply_variable = { which = admin_cost_a						value = 1000 }
+			#set_variable = { 	  which = canal_necessary_estate_cash_25	value = 0 }
+			set_variable = { 	  which = canal_necessary_estate_cash_25	which = canal_price_actual }
+			multiply_variable = {   which = canal_necessary_estate_cash_25	value = 0.25 }
+			
+			owner = {
+				#set_variable = { 	  which = admin_cost_a				value = 0 }
+				set_variable = { 	  which = admin_cost_a				which = PREV } ### 25 percent
+			}
+		}
+	}
+	
+	option = { ### Negotiate for 25%
+		name = "POP_dev_button_interactions.405.a"
+		trigger = {
+			check_variable = { which = adm_power				which = admin_cost_a }
+		}
+		custom_tooltip = admin_cost_a
+		hidden_effect = {
+			set_province_flag = admin_power_already_demanded
+			owner = { set_variable = { which = admin_cost 					which = admin_cost_a } }
+			subtract_variable = { 	   which = canal_cost_remaining 		which = canal_necessary_estate_cash_25 }
+			owner = { scaled_admin_cost_country = yes }
+			Pdbi_check_if_build = { type=canal yes=408 no=409 }
+		}
+	}
+	
+	option = { ### No thanks
+		# name = "POP_dev_button_interactions.405.b"
+		name = back
+		highlight = yes
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.409
+			}
+		}
+	}
+}
+
+
+province_event = { ### Use rural wealth
+	id = POP_dev_button_interactions.406
+	title = POP_dev_button_interactions.406.t
+	desc = POP_dev_button_interactions.406.d
+	picture = FARMING_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			#set_variable = { 	  which = canal_necessary_wealth_25		value = 0 }
+			set_variable = { 	  which = canal_necessary_wealth_25		which = canal_necessary_wealth }
+			#set_variable = { 	  which = canal_necessary_wealth_50		value = 0 }
+			set_variable = { 	  which = canal_necessary_wealth_50		which = canal_necessary_wealth }
+			multiply_variable = { which = canal_necessary_wealth_50		value = 2 }
+			#set_variable = {      which = province_wealth_spent_25		value = 0 }
+			set_variable = {      which = province_wealth_spent_25		which = canal_necessary_wealth_25 }
+			#set_variable = {      which = province_wealth_spent_50		value = 0 }
+			set_variable = {      which = province_wealth_spent_50		which = canal_necessary_wealth_50 }
+			#set_variable = { 	  which = diplo_cost_a					value = 0 }
+			#set_variable = { 	  which = milit_cost_a					value = 0 }
+			set_variable = { 	  which = diplo_cost_a					which = canal_price_actual }
+			set_variable = { 	  which = milit_cost_a					which = canal_price_actual }
+			owner = {
+				set_variable = { which = div which = upper_pop }
+				PREV = { set_variable = { which = div which = PREV } }
+				set_variable = { which = div value = 0 }
+			}
+			change_variable = { which = div value = 1 }
+			divide_variable = { which = diplo_cost_a which = div }
+			divide_variable = { which = milit_cost_a which = div }
+			set_variable = { which = div value = 0 }
+			multiply_variable = { which = diplo_cost_a					value = 0.25 }
+			multiply_variable = { which = milit_cost_a					value = 0.35 }
+			change_variable = {   which = diplo_cost_a					value = 5 }
+			change_variable = {   which = milit_cost_a					value = 8 }
+			multiply_variable = {   which = diplo_cost_a					value = 0.001 }
+			multiply_variable = { which = diplo_cost_a					value = 1000 }
+			multiply_variable = {   which = milit_cost_a					value = 0.001 }
+			multiply_variable = { which = milit_cost_a					value = 1000 }
+			
+			#set_variable = { 	  which = stability_hit_estate_a		value = 0 }
+			set_variable = { 	  which = stability_hit_estate_a		which = canal_price_actual }
+			owner = {
+				set_variable = { which = div which = upper_pop }
+				PREV = { set_variable = { which = div which = PREV } }
+				set_variable = { which = div value = 0 }
+			}
+			change_variable = { which = div value = 1 }
+			divide_variable = { which = stability_hit_estate_a which = div }
+			set_variable = { which = div value = 0 }
+			multiply_variable = {   which = stability_hit_estate_a		value = 0.25 }
+			
+			owner = {
+				#set_variable = { 	  which = diplo_cost_a				value = 0 }
+				#set_variable = { 	  which = milit_cost_a				value = 0 }
+				set_variable = { 	  which = diplo_cost_a				which = PREV } ### 25 percent
+				set_variable = { 	  which = milit_cost_a				which = PREV } ### 50 percent
+				#set_variable = { 	  which = stability_hit_estate_a 	value = 0 }
+				set_variable = { 	  which = stability_hit_estate_a 	which = PREV }
+			}
+		}
+	}
+	
+	option = { ### Negotiate for 25%
+		name = "POP_dev_button_interactions.406.a"
+		trigger = {
+			check_variable = { which = wealth_rural_fluid		which = canal_necessary_wealth }
+			check_variable = { which = canal_cost_remaining		which = canal_necessary_wealth }
+		}
+		custom_tooltip = diplo_cost_a
+		custom_tooltip = province_rural_wealth_spent_25
+		hidden_effect = {
+			set_province_flag = taken_wealth_already
+			owner = { set_variable = { which = diplo_cost 				which = diplo_cost_a } }
+			subtract_variable = { 	   which = wealth_rural_fluid		which = canal_necessary_wealth }
+			subtract_variable = { 	   which = canal_cost_remaining 		which = canal_necessary_wealth }
+			owner = { scaled_diplo_cost_country = yes }
+			Pdbi_check_if_build = { type=canal yes=408 no=409 }
+		}
+	}
+	
+	option = { ### Demand 50%
+		name = "POP_dev_button_interactions.406.b"
+		trigger = {
+			check_variable = { which = wealth_rural_fluid		which = canal_necessary_wealth_50 }
+			check_variable = { which = canal_cost_remaining		which = canal_necessary_wealth_50 }
+		}
+		custom_tooltip = milit_cost_a
+		custom_tooltip = province_rural_wealth_spent_50
+		owner = { stability_scaling_estates_a = yes }
+		hidden_effect = {
+			set_province_flag = taken_wealth_already
+			owner = { set_variable = { which = milit_cost 				which = milit_cost_a } }
+			subtract_variable = { 	   which = wealth_rural_fluid		which = canal_necessary_wealth_50 }
+			subtract_variable = {      which = canal_cost_remaining 		which = canal_necessary_wealth_50 }
+			owner = { scaled_milit_cost_country = yes }
+			Pdbi_check_if_build = { type=canal yes=408 no=409 }
+		}
+	}
+	
+	option = { ### No thanks
+		# name = "POP_dev_button_interactions.406.c"
+		name = back
+		highlight = yes
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.409
+			}
+		}
+	}
+}
+
+province_event = { ### Urban Wealth Taken
+	id = POP_dev_button_interactions.407
+	title = POP_dev_button_interactions.407.t
+	desc = POP_dev_button_interactions.407.d
+	picture = FARMING_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			#set_variable = { 	  which = canal_necessary_wealth_25		value = 0 }
+			set_variable = { 	  which = canal_necessary_wealth_25		which = canal_necessary_wealth }
+			#set_variable = { 	  which = canal_necessary_wealth_50		value = 0 }
+			set_variable = { 	  which = canal_necessary_wealth_50		which = canal_necessary_wealth }
+			multiply_variable = { which = canal_necessary_wealth_50		value = 2 }
+			#set_variable = {      which = province_wealth_spent_25		value = 0 }
+			set_variable = {      which = province_wealth_spent_25		which = canal_necessary_wealth_25 }
+			#set_variable = {      which = province_wealth_spent_50		value = 0 }
+			set_variable = {      which = province_wealth_spent_50		which = canal_necessary_wealth_50 }
+			#set_variable = { 	  which = diplo_cost_a					value = 0 }
+			#set_variable = { 	  which = milit_cost_a					value = 0 }
+			set_variable = { 	  which = diplo_cost_a					which = canal_price_actual }
+			set_variable = { 	  which = milit_cost_a					which = canal_price_actual }
+			owner = {
+				set_variable = { which = div which = upper_pop }
+				PREV = { set_variable = { which = div which = PREV } }
+				set_variable = { which = div value = 0 }
+			}
+			change_variable = { which = div value = 1 }
+			divide_variable = { which = diplo_cost_a which = div }
+			divide_variable = { which = milit_cost_a which = div }
+			set_variable = { which = div value = 0 }
+			multiply_variable = { which = diplo_cost_a					value = 0.25 }
+			multiply_variable = { which = milit_cost_a					value = 0.35 }
+			change_variable = {   which = diplo_cost_a					value = 5 }
+			change_variable = {   which = milit_cost_a					value = 8 }
+			multiply_variable = {   which = diplo_cost_a					value = 0.001 }
+			multiply_variable = { which = diplo_cost_a					value = 1000 }
+			multiply_variable = {   which = milit_cost_a					value = 0.001 }
+			multiply_variable = { which = milit_cost_a					value = 1000 }
+			
+			#set_variable = { 	  which = stability_hit_estate_a 		value = 0 }
+			set_variable = { 	  which = stability_hit_estate_a 		which = canal_price_actual }
+			owner = {
+				set_variable = { which = div which = upper_pop }
+				PREV = { set_variable = { which = div which = PREV } }
+				set_variable = { which = div value = 0 }
+			}
+			change_variable = { which = div value = 1 }
+			divide_variable = { which = stability_hit_estate_a which = div }
+			set_variable = { which = div value = 0 }
+			multiply_variable = {   which = stability_hit_estate_a		value = 0.25 }
+			
+			owner = {
+				#set_variable = { 	  which = diplo_cost_a				value = 0 }
+				#set_variable = { 	  which = milit_cost_a				value = 0 }
+				set_variable = { 	  which = diplo_cost_a				which = PREV } ### 25 percent
+				set_variable = { 	  which = milit_cost_a				which = PREV } ### 50 percent
+				#set_variable = { 	  which = stability_hit_estate_a 	value = 0 }
+				set_variable = { 	  which = stability_hit_estate_a 	which = PREV }
+			}
+		}
+	}
+	
+	option = { ### Negotiate for 25%
+		name = "POP_dev_button_interactions.407.a"
+		trigger = {
+			check_variable = { which = wealth_urban_fluid		which = canal_necessary_wealth }
+			check_variable = { which = canal_cost_remaining		which = canal_necessary_wealth }
+		}
+		custom_tooltip = diplo_cost_a
+		custom_tooltip = province_rural_wealth_spent_25
+		hidden_effect = {
+			set_province_flag = taken_wealth_already
+			owner = { set_variable = { which = diplo_cost 				which = diplo_cost_a } }
+			subtract_variable = { 	   which = wealth_urban_fluid		which = canal_necessary_wealth }
+			subtract_variable = { 	   which = canal_cost_remaining 		which = canal_necessary_wealth }
+			owner = { scaled_diplo_cost_country = yes }
+			Pdbi_check_if_build = { type=canal yes=408 no=409 }
+		}
+	}
+	
+	option = { ### Demand 50%
+		name = "POP_dev_button_interactions.407.b"
+		trigger = {
+			check_variable = { which = wealth_urban_fluid		which = canal_necessary_wealth_50 }
+			check_variable = { which = canal_cost_remaining		which = canal_necessary_wealth_50 }
+		}
+		custom_tooltip = milit_cost_a
+		custom_tooltip = province_rural_wealth_spent_50
+		owner = { stability_scaling_estates_a = yes }
+		hidden_effect = {
+			set_province_flag = taken_wealth_already
+			owner = { set_variable = { which = milit_cost 					which = milit_cost_a } }
+			subtract_variable = { 	   which = wealth_urban_fluid			which = canal_necessary_wealth_50 }
+			subtract_variable = {      which = canal_cost_remaining 		which = canal_necessary_wealth_50 }
+			owner = { scaled_milit_cost_country = yes }
+			Pdbi_check_if_build = { type=canal yes=408 no=409 }
+		}
+	}
+	
+	option = { ### No thanks
+		# name = "POP_dev_button_interactions.005.c"
+		name = back
+		highlight = yes
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.409
+			}
+		}
+	}
+}
+
+province_event = { ### Canal building event
+	id = POP_dev_button_interactions.408
+	title = POP_dev_button_interactions.408.t
+	desc = POP_dev_button_interactions.408.d
+	picture = FARMING_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_building = canal_level_2
+				}
+				set_province_flag = canal_level_3_building
+				add_province_modifier = {
+					name = canal_is_building
+					duration = 1825
+				}
+			}
+			if = {
+				limit = {
+					has_building = canal_level_1
+				}
+				set_province_flag = canal_level_2_building
+				add_province_modifier = {
+					name = canal_is_building
+					duration = 1825
+				}
+			}
+			if = {
+				limit = {
+					NOT = { has_building = canal_level_1 }
+					NOT = { has_building = canal_level_2 }
+					NOT = { has_building = canal_level_3 }
+				}
+				set_province_flag = canal_level_1_building
+				add_province_modifier = {
+					name = canal_is_building
+					duration = 1825
+				}
+			}
+			province_event = {
+				id = POP_dev_button_interactions.410
+				days = 1825
+			}
+		}
+	}
+	
+	option = {
+		# name = "POP_dev_button_interactions.408.a"
+		name = exit
+		highlight = yes
+		hidden_effect = {
+			set_variable = { which = canal_cost_base					value = 0 }
+			set_variable = { which = canal_price_multiplier				value = 0 }
+			set_variable = { which = canal_cost_remaining				value = 0 }
+			set_variable = { which = canal_price_actual					value = 0 }
+			set_variable = { which = canal_price_total_mult				value = 0 }
+			set_variable = { which = canal_necessary_wealth				value = 0 }
+			set_variable = { which = canal_terrain_price_d				value = 0 }
+			set_variable = { which = canal_necessary_estate_cash_25 	value = 0 }
+			set_variable = { which = canal_necessary_estate_cash_50 	value = 0 }
+			set_variable = { which = canal_cost_remaining_25			value = 0 }
+			set_variable = { which = canal_cost_remaining_50			value = 0 }
+			set_variable = { which = canal_cost_remaining_75			value = 0 }
+			set_variable = { which = ducat_cost							value = 0 }
+			set_variable = { which = manpower_cost						value = 0 }
+			set_variable = { which = manpower_cost_a					value = 0 }
+			set_variable = { which = manpower_cost_b					value = 0 }
+			set_variable = { which = manpower_cost_c					value = 0 }
+			set_variable = { which = admin_cost							value = 0 }
+			set_variable = { which = admin_cost_a						value = 0 }
+			set_variable = { which = admin_cost_b						value = 0 }
+			set_variable = { which = admin_cost_c						value = 0 }
+			set_variable = { which = total_manpower						value = 0 }
+			set_variable = { which = canal_manpower_spent				value = 0 }
+			set_variable = { which = canal_cost_with_man				value = 0 }
+			set_variable = { which = canal_necessary_wealth_50			value = 0 }
+			set_variable = { which = diplo_cost_a						value = 0 }
+			set_variable = { which = diplo_cost_b						value = 0 }
+			set_variable = { which = milit_cost_a						value = 0 }
+			set_variable = { which = milit_cost_b						value = 0 }
+			set_variable = { which = milit_cost_c						value = 0 }
+			set_variable = { which = stability_hit_estate_a				value = 0 }
+			set_variable = { which = diplo_cost							value = 0 }
+			set_variable = { which = milit_cost							value = 0 }
+			set_variable = { which = manpower_cost_a_trig				value = 0 }
+			set_variable = { which = manpower_cost_b_trig				value = 0 }
+			set_variable = { which = manpower_cost_c_trig				value = 0 }
+			set_variable = { which = canal_cost_with_man 				value = 0 }
+			owner = { set_variable = { which = ducat_cost				value = 0 } }
+			owner = { set_variable = { which = total_manpower			value = 0 } }
+			owner = { set_variable = { which = manpower_cost_a			value = 0 } }
+			owner = { set_variable = { which = manpower_cost_b			value = 0 } }
+			owner = { set_variable = { which = manpower_cost_c			value = 0 } }
+			owner = { set_variable = { which = admin_cost_a				value = 0 } }
+			owner = { set_variable = { which = admin_cost_b				value = 0 } }
+			owner = { set_variable = { which = admin_cost_c				value = 0 } }
+			owner = { set_variable = { which = admin_cost				value = 0 } }
+			owner = { set_variable = { which = manpower_cost			value = 0 } }
+			owner = { set_variable = { which = diplo_cost				value = 0 } }
+			owner = { set_variable = { which = milit_cost				value = 0 } }
+			owner = { set_variable = { which = diplo_cost_a				value = 0 } }
+			owner = { set_variable = { which = milit_cost_a				value = 0 } }
+			owner = { set_variable = { which = stability_hit_estate_a	value = 0 } }
+		}
+		clr_province_flag = dev_button_interact
+	}
+}
+
+province_event = { ### Build Canals
+	id = POP_dev_button_interactions.409
+	title = POP_dev_button_interactions.409.t
+	desc = POP_dev_button_interactions.409.d
+	picture = FARMING_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+#	trigger = {
+#		has_building = upgrade_canals_build
+#	}
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = manpower_cost which = canal_price_actual }
+			if = {
+				limit = {
+					owner = { has_idea = pioneer_corps }
+					NOT = { has_province_flag = engineering_canal_discount }	
+				}
+				multiply_variable = { which = canal_cost_remaining value = 0.75 }
+				set_province_flag = engineering_canal_discount
+			}
+			set_variable = { which = ducat_cost 			which = canal_cost_remaining }
+			owner = { set_variable = { which = ducat_cost 	which = PREV } }
+		}
+	}
+	
+	option = { ### Pay off remaining cost with ducats
+		name = "POP_dev_button_interactions.409.a"
+		hidden_effect = {
+			set_variable = { which = canal_cost_remaining	value = 0 }
+			owner = { scaled_ducat_cost_country = yes }
+			province_event = {
+				id = POP_dev_button_interactions.408
+			}
+		}
+		custom_tooltip = ducats_spent
+	}
+	
+	option = { ### Contribute Manpower to the effort
+		name = "POP_dev_button_interactions.409.b"
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.403
+			}
+		}
+	}
+	
+	option = { ### Convince local estate to contribute
+		name = "POP_dev_button_interactions.409.c"
+		trigger = {
+			OR = {
+				has_province_flag = greater_nobles_control_province
+				has_province_flag = lesser_nobles_control_province
+				has_province_flag = burghers_control_province
+			}
+		}
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.404
+			}
+		}
+	}
+	
+	option = { ### Significant Administrative Management of Project
+		name = "POP_dev_button_interactions.409.e"
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.405
+			}
+		}
+	}
+	
+	option = { ### Convince Locals to Contribute Rural
+		name = "POP_dev_button_interactions.409.f"
+		trigger = {
+			check_variable = { which = wealth_rural_fluid	which = canal_necessary_wealth }
+		}
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.406
+			}
+		}
+	}
+	
+	option = { ### Convince Locals to Contribute Urban
+		name = "POP_dev_button_interactions.409.g"
+		trigger = {
+			check_variable = { which = wealth_urban_fluid	which = canal_necessary_wealth }
+		}
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.407
+			}
+		}
+	}
+	
+	option = { ### That is all
+		# name = "POP_dev_button_interactions.409.h"
+		name = back
+		highlight = yes
+		hidden_effect = {
+			set_province_flag = interacting_with_province
+			province_event = {
+				id = POP_dev_button_interactions.001
+			}
+		}
+	}
+}
+
+province_event = { ### Finish building
+	id = POP_dev_button_interactions.410
+	title = POP_dev_button_interactions.410.t
+	desc = POP_dev_button_interactions.410.d
+	picture = FARMING_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		if = {
+			limit = {
+				has_province_flag = country_went_bankrupt_canal
+			}
+			clr_province_flag = canal_level_1_building
+			clr_province_flag = canal_level_2_building
+			clr_province_flag = canal_level_3_building
+			clr_province_flag = country_went_bankrupt_canal
+		}
+		else = {
+			trigger_switch = {
+				on_trigger = has_province_flag
+				canal_level_1_building = {
+					add_building = canal_level_1
+					hidden_effect = {
+						clr_province_flag = canal_level_1_building
+					}
+				}
+				canal_level_2_building = {
+					remove_building = canal_level_1
+					add_building = canal_level_2
+					hidden_effect = {
+						clr_province_flag = canal_level_2_building
+					}
+				}
+				canal_level_3_building = {
+					remove_building = canal_level_2
+					add_building = canal_level_3
+					hidden_effect = {
+						clr_province_flag = canal_level_3_building
+					}
+				}
+			}
+		}
+	}
+	
+	option = { ### That is all
+		# name = "POP_dev_button_interactions.410.a"
+		name = exit
+		highlight = yes
+		hidden_effect = {
+			clr_province_flag = already_started_building_canal
+			clr_province_flag = taken_wealth_already
+			clr_province_flag = requested_money_from_estate_already
+			clr_province_flag = admin_power_already_demanded
+		}
+	}
+}
+
+province_event = { ### All that can be built has been built
+	id = POP_dev_button_interactions.411
+	title = POP_dev_button_interactions.411.t
+	desc = POP_dev_button_interactions.411.d
+	picture = FARMING_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	
+	
+	immediate = {
+		
+	}
+	
+	option = { ### That is all
+		# name = "POP_dev_button_interactions.411.a"
+		name = exit
+		highlight = yes
+		clr_province_flag = dev_button_interact
+	}
+}
+
+province_event = { ### Urban Production Skill Options
+	id = POP_dev_button_interactions.501
+	title = POP_dev_button_interactions.501.t
+	desc = POP_dev_button_interactions.501.d
+	picture = CITY_DEVELOPMENT_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					NOT = { check_variable = { which = urban_production_skill_added	value = 0.1 } }
+				}
+				set_variable = { which = urban_production_skill_added	value = 0 }
+			}
+			if = {
+				limit = {
+					NOT = { check_variable = { which = urban_production_skill_rec	value = 0.001 } }
+				}
+				set_variable = { which = urban_production_skill_rec	value = 0 }
+			}
+			set_variable = { which = adm_power 	value = 0 }
+			owner = {
+				adm_available = yes
+				PREV = { set_variable = { which = adm_power		which = PREV } }
+			}
+			set_variable = { which = dip_power 	value = 0 }
+			owner = {
+				dip_available = yes
+				PREV = { set_variable = { which = dip_power		which = PREV } }
+			}
+			
+			
+			set_variable = { 	  which = admin_cost			value = 100 }
+			set_variable = { 	  which = diplo_cost			value = 50 }
+			owner = {
+				set_variable = { which = div which = upper_pop }
+				PREV = { set_variable = { which = div which = PREV } }
+				set_variable = { which = div value = 0 }
+			}
+			change_variable = { which = div value = 1 }
+			divide_variable = { which = admin_cost which = div }
+			divide_variable = { which = diplo_cost which = div }
+			set_variable = { which = div value = 0 }
+			#set_variable = { 	  which = admin_cost_a			value = 0 }
+			set_variable = { 	  which = admin_cost_a			which = admin_cost }
+			change_variable = {   which = admin_cost_a 			value = 10 }
+			multiply_variable = {   which = admin_cost_a			value = 0.001 }
+			multiply_variable = { which = admin_cost_a			value = 1000 }
+			owner = {
+				#set_variable = { 	  which = admin_cost_a 			value = 0 } ### 25 percent
+				set_variable = { 	  which = admin_cost_a 			which = PREV } ### 25 percent
+			}
+			#set_variable = { 	  which = diplo_cost_a			value = 0 }
+			set_variable = { 	  which = diplo_cost_a			which = diplo_cost }
+			change_variable = {   which = diplo_cost_a 			value = 5 }
+			multiply_variable = {   which = diplo_cost_a			value = 0.001 }
+			multiply_variable = { which = diplo_cost_a			value = 1000 }
+			owner = {
+				#set_variable = { 	  which = diplo_cost_a 			value = 0 } ### 25 percent
+				set_variable = { 	  which = diplo_cost_a 			which = PREV } ### 25 percent
+			}
+			set_variable = { 	  which = ducat_cost 			value = 10 }
+			if = {
+				limit = {
+					has_province_modifier = important_center_of_production
+				}
+				set_variable = {  which = ducat_cost 			value = 20 }
+			}
+			if = {
+				limit = {
+					has_province_modifier = major_center_of_production
+				}
+				set_variable = {  which = ducat_cost 			value = 30 }
+			}
+			if = {
+				limit = {
+					has_province_modifier = dominant_center_of_production
+				}
+				set_variable = {  which = ducat_cost 			value = 40 }
+			}
+			#owner = { set_variable = { which = ducat_cost 		value = 0 } }
+			owner = { set_variable = { which = ducat_cost 		which = PREV } }
+		}
+	}
+	
+	option = { ### Change urban good
+		name = "POP_dev_button_interactions.501.a"
+		trigger = {
+			OR = {
+				has_province_flag = urban_goods_rank_2
+				has_province_flag = urban_goods_rank_3
+			}
+			check_variable = { which = adm_power value = 0 }
+		}
+		if = {
+			limit = {
+				has_province_flag = urban_goods_rank_2
+			}
+			hidden_effect = {
+				subtract_variable = { which = urban_production_skill value = 15 }
+				if = {
+					limit = {
+						NOT = {
+							check_variable = { which = urban_production_skill value = 0 }
+						}
+					}
+					set_variable = { which = urban_production_skill value = 0 }
+				}
+				POP_downgrade_production_rank_2 = yes
+				
+				owner = { set_variable = { which = admin_cost		which = admin_cost_a } }
+				owner = { scaled_admin_cost_country = yes }
+			}
+			custom_tooltip = admin_cost_a
+			custom_tooltip = demote_to_rank_1_good
+		}
+		else_if = {
+			limit = {
+				has_province_flag = urban_goods_rank_3
+			}
+			hidden_effect = {
+				subtract_variable = { which = urban_production_skill value = 30 }
+				if = {
+					limit = {
+						NOT = {
+							check_variable = { which = urban_production_skill value = 0 }
+						}
+					}
+					set_variable = { which = urban_production_skill value = 0 }
+				}
+				POP_downgrade_production_rank_3 = yes
+				
+				owner = { set_variable = { which = admin_cost		which = admin_cost_a } }
+				owner = { scaled_admin_cost_country = yes }
+			}
+			custom_tooltip = admin_cost_a
+			custom_tooltip = demote_to_rank_2_good
+		}
+		clr_province_flag = dev_button_interact
+	}
+	
+	option = { ### Promote production skill growth
+		name = "POP_dev_button_interactions.501.b"
+		trigger = {
+			check_variable = { which = dip_power 				value = 0 }
+			NOT = { has_province_modifier = promote_urban_industry }
+			OR = {
+				has_province_modifier = minor_center_of_production
+				has_province_modifier = important_center_of_production
+				has_province_modifier = major_center_of_production
+				has_province_modifier = dominant_center_of_production
+			}
+		}
+		
+		hidden_effect = {
+			owner = { set_variable = { which = diplo_cost		which = diplo_cost_a } }
+			owner = { scaled_diplo_cost_country = yes }
+			owner = { scaled_ducat_cost_country = yes }
+			multiply_variable = { which = urban_production_skill_added	value = 2 }
+			add_province_modifier = {
+				name = promote_urban_industry
+				duration = 3650
+			}
+			province_event = {
+				id = POP_dev_button_interactions.502
+				days = 3650
+			}
+		}
+		custom_tooltip = ducats_spent
+		custom_tooltip = diplo_cost_a
+		custom_tooltip = double_production_skill
+		clr_province_flag = dev_button_interact
+	}
+	
+	option = {
+		name = exit
+		highlight = yes
+		clr_province_flag = dev_button_interact
+	}
+}
+
+province_event = { ### Change Urban Good
+	id = POP_dev_button_interactions.502
+	title = POP_dev_button_interactions.502.t
+	desc = POP_dev_button_interactions.502.d
+	picture = CITY_DEVELOPMENT_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	trigger = {
+		check_variable = { which = dip_power 				value = 0 }
+		OR = {
+			has_province_modifier = minor_center_of_production
+			has_province_modifier = important_center_of_production
+			has_province_modifier = major_center_of_production
+			has_province_modifier = dominant_center_of_production
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					NOT = { check_variable = { which = urban_production_skill_added	value = 0.1 } }
+				}
+				set_variable = { which = urban_production_skill_added	value = 0 }
+			}
+			if = {
+				limit = {
+					NOT = { check_variable = { which = urban_production_skill_rec	value = 0.001 } }
+				}
+				set_variable = { which = urban_production_skill_rec	value = 0 }
+			}
+			set_variable = { which = dip_power 	value = 0 }
+			owner = {
+				dip_available = yes
+				PREV = { set_variable = { which = dip_power		which = PREV } }
+			}
+			set_variable = { 	  which = diplo_cost			value = 50 }
+			owner = {
+				set_variable = { which = div which = upper_pop }
+				PREV = { set_variable = { which = div which = PREV } }
+				set_variable = { which = div value = 0 }
+			}
+			change_variable = { which = div value = 1 }
+			divide_variable = { which = diplo_cost which = div }
+			set_variable = { which = div value = 0 }
+			#set_variable = { 	  which = diplo_cost_a			value = 0 }
+			set_variable = { 	  which = diplo_cost_a			which = diplo_cost }
+			change_variable = {   which = diplo_cost_a 			value = 5 }
+			multiply_variable = {   which = diplo_cost_a			value = 0.001 }
+			multiply_variable = { which = diplo_cost_a			value = 1000 }
+			owner = {
+				#set_variable = { 	  which = diplo_cost_a 			value = 0 } ### 25 percent
+				set_variable = { 	  which = diplo_cost_a 			which = PREV } ### 25 percent
+			}
+			set_variable = { 	  which = ducat_cost 			value = 10 }
+			if = {
+				limit = {
+					has_province_modifier = important_center_of_production
+				}
+				set_variable = {  which = ducat_cost 			value = 20 }
+			}
+			if = {
+				limit = {
+					has_province_modifier = major_center_of_production
+				}
+				set_variable = {  which = ducat_cost 			value = 30 }
+			}
+			if = {
+				limit = {
+					has_province_modifier = dominant_center_of_production
+				}
+				set_variable = {  which = ducat_cost 			value = 40 }
+			}
+			#owner = { set_variable = { which = ducat_cost		value = 0 } }
+			owner = { set_variable = { which = ducat_cost		which = PREV } }
+		}
+	}
+	
+	option = { ### Continue
+		name = "POP_dev_button_interactions.502.a"
+		hidden_effect = {
+			owner = { set_variable = { which = diplo_cost		which = diplo_cost_a } }
+			owner = { scaled_diplo_cost_country = yes }
+			owner = { scaled_ducat_cost_country = yes }
+			
+			#if = {
+			#	limit = {
+			#		has_province_modifier = promote_urban_industry
+			#	}
+				remove_province_modifier = promote_urban_industry
+			#}
+			
+			add_province_modifier = {
+				name = promote_urban_industry
+				duration = 3650
+			}
+			
+			province_event = {
+				id = POP_dev_button_interactions.502
+				days = 3650
+			}
+		}
+		custom_tooltip = ducats_spent
+		custom_tooltip = diplo_cost_a
+		custom_tooltip = double_production_skill
+		clr_province_flag = dev_button_interact
+	}
+	
+	option = { ### Abort
+		name = "POP_dev_button_interactions.502.b"
+		# name = exit
+		highlight = yes
+		clr_province_flag = dev_button_interact
+	}
+}
+
+province_event = {
+	id = POP_dev_button_interactions.901
+	title = POP_dev_button_interactions.901.t
+	desc = POP_dev_button_interactions.901.d
+	picture = CITY_DEVELOPMENT_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	trigger = {
+		
+	}
+	
+	immediate = {
+		
+	}
+	
+	option = { ### Population Data
+		name = "POP_dev_button_interactions.901.a"
+		
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.902
+			}
+		}
+	}
+	
+	option = { ### Economic Data
+		name = "POP_dev_button_interactions.901.b"
+		
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.903
+			}
+		}
+	}
+	
+	option = { ### Intellectual data
+		name = "POP_dev_button_interactions.901.e"
+		
+		hidden_effect = {
+			province_event = {
+				id = POP_dev_button_interactions.904
+			}
+		}
+	}
+	
+	option = { ### Bye bye
+		# name = "POP_dev_button_interactions.901.c"
+		name = exit
+		highlight = yes
+		clr_province_flag = dev_button_interact
+	}
+}
+
+province_event = { ### Population Data
+	id = POP_dev_button_interactions.902
+	title = POP_dev_button_interactions.902.t
+	desc = {
+		trigger = {
+			NOT = { check_variable = { which = tribals_ratio 		value = 0.001 } }
+			NOT = { check_variable = { which = pv_culture_conversion_progress 		value = 0.001 } }
+		}
+		desc = "POP_dev_button_interactions.902.da"
+	}
+	desc = {
+		trigger = {
+			check_variable = { which = tribals_ratio 		value = 0.001 }
+			NOT = { check_variable = { which = pv_culture_conversion_progress 		value = 0.001 } }
+		}
+		desc = "POP_dev_button_interactions.902.db"
+	}
+	desc = {
+		trigger = {
+			NOT = { check_variable = { which = tribals_ratio 		value = 0.001 } }
+			check_variable = { which = pv_culture_conversion_progress 		value = 0.001 }
+		}
+		desc = "POP_dev_button_interactions.902.dc"
+	}
+	desc = {
+		trigger = {
+			check_variable = { which = tribals_ratio 		value = 0.001 }
+			check_variable = { which = pv_culture_conversion_progress 		value = 0.001 }
+		}
+		desc = "POP_dev_button_interactions.902.dd"
+	}
+	picture = CITY_DEVELOPMENT_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			update_pop_display = yes
+			#set_variable = { 	  which = tribal_pop_display		value = 0 }
+			#set_variable = { 	  which = rural_growth_display		value = 0 }
+			#set_variable = { 	  which = urban_growth_display		value = 0 }
+			#set_variable = { 	  which = rural_density_display		value = 0 }
+			#set_variable = { 	  which = urban_density_display		value = 0 }
+			set_variable = {   which = tribal_pop_display		which = rural_pop_display }
+			multiply_variable = { which = tribal_pop_display		which = tribals_ratio }
+			multiply_variable = { which = tribal_pop_display		value = 0.01 }
+			set_variable = {   which = rural_growth_display		which = rural_population_growth_pulse }
+			set_variable = {   which = urban_growth_display		which = urban_population_growth_pulse }
+			multiply_variable = { which = rural_growth_display		value = 3 }
+			multiply_variable = { which = urban_growth_display		value = 3 }
+			set_variable = { 	  which = rural_density_display		which = rural_density }
+			set_variable = { 	  which = urban_density_display		which = urban_density }
+			multiply_variable = { which = rural_density_display		value = 100 }
+			multiply_variable = { which = urban_density_display		value = 100 }
+			if = {
+				limit = {
+					check_variable = { which = pv_culture_conversion_progress value = 0.001 }
+				}
+				set_ttt_bar_data = { id=1 scope=province data=pv_culture_conversion_progress datatype=which datamax=100 maxtype=value datamin=0 mintype=value }
+			}
+		}
+	}
+	
+	# option = { ### More information but nothing for now
+		# name = "POP_dev_button_interactions.902.a"
+	# }
+	
+	option = { ### Fare thee well
+		# name = "POP_dev_button_interactions.902.b"
+		name = exit
+		highlight = yes
+		clr_province_flag = dev_button_interact
+	}
+	after = {
+		set_variable = {	which = tribal_pop_display		value = 0 }
+		set_variable = {	which = rural_growth_display	value = 0 }
+		set_variable = {	which = urban_growth_display	value = 0 }
+		set_variable = {	which = rural_density_display	value = 0 }
+		set_variable = {	which = urban_density_display	value = 0 }
+		after_ttt_bar_data = { id=1 scope=province }
+	}
+}
+
+
+province_event = { ### Economic Data
+	id = POP_dev_button_interactions.903
+	title = POP_dev_button_interactions.903.t
+	desc = POP_dev_button_interactions.903.d
+	picture = CITY_DEVELOPMENT_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	trigger = {
+		
+	}
+	
+	immediate = {
+		hidden_effect = {
+			compare_profit = yes
+			
+			set_rural_infrastructure_bonus = yes
+			
+			multiply_variable = { which = exam_far which = rural_infrastructure_bonus }
+			
+			set_variable = { which = exam_close_prof which = exam_close }
+			set_variable = { which = exam_far_prof which = exam_far }
+			
+			compare_price = yes
+			
+			#set_variable = { which = wealth_rural_fluid_temp value = 0 }
+			#set_variable = { which = wealth_urban_fluid_temp value = 0 }
+			#set_variable = { which = food_sale_local_temp value = 0 }
+			#set_variable = { which = food_sale_region_temp value = 0 }
+			#set_variable = { which = food_sale_cont_temp value = 0 }
+			#set_variable = { which = wealth_rural_from_pop_temp value = 0 }
+			#set_variable = { which = wealth_urban_from_production_temp value = 0 }
+			#set_variable = { which = wealth_urban_from_trade_temp value = 0 }
+			#set_variable = { which = wealth_urban_from_pop_temp value = 0 }
+			#set_variable = { which = food_eat_local_temp value = 0 }
+			#set_variable = { which = food_eat_region_temp value = 0 }
+			#set_variable = { which = food_eat_cont_temp value = 0 }
+			#set_variable = { which = wealth_rural_to_farm_temp value = 0 }
+			#set_variable = { which = wealth_urban_to_farm_temp value = 0 }
+			#set_variable = { which = urban_production_skill_temp value = 0 }
+			#set_variable = { which = urban_production_skill_added_temp value = 0 }
+			#set_variable = { which = urban_production_skill_rec_temp value = 0 }
+			
+			set_variable = { which = wealth_rural_fluid_temp which = wealth_rural_fluid }
+			set_variable = { which = wealth_urban_fluid_temp which = wealth_urban_fluid }
+			set_variable = { which = food_sale_local_temp which = food_sale_local }
+			set_variable = { which = food_sale_region_temp which = food_sale_region }
+			set_variable = { which = food_sale_cont_temp which = food_sale_cont }
+			set_variable = { which = wealth_rural_from_pop_temp which = wealth_rural_from_pop }
+			set_variable = { which = wealth_urban_from_production_temp which = wealth_urban_from_production }
+			set_variable = { which = wealth_urban_from_trade_temp which = wealth_urban_from_trade }
+			set_variable = { which = wealth_urban_from_pop_temp which = wealth_urban_from_pop }
+			set_variable = { which = food_eat_local_temp which = food_eat_local }
+			set_variable = { which = food_eat_region_temp which = food_eat_region }
+			set_variable = { which = food_eat_cont_temp which = food_eat_cont }
+			set_variable = { which = wealth_rural_to_farm_temp which = wealth_rural_to_farm }
+			set_variable = { which = wealth_urban_to_farm_temp which = wealth_urban_to_farm }
+			set_variable = { which = urban_production_skill_temp which = urban_production_skill }
+			set_variable = { which = urban_production_skill_added_temp which = urban_production_skill_added }
+			set_variable = { which = urban_production_skill_rec_temp which = urban_production_skill_rec }
+			
+			if = {
+				limit = {
+					NOT = { check_variable = { which = urban_production_skill_added_temp	value = 0.1 } }
+				}
+				set_variable = { which = urban_production_skill_added_temp	value = 0 }
+			}
+			if = {
+				limit = {
+					NOT = { check_variable = { which = urban_production_skill_rec_temp	value = 0.001 } }
+				}
+				set_variable = { which = urban_production_skill_rec_temp	value = 0 }
+			}
+		}
+	}
+	
+	option = { ### Population Data
+		# name = "POP_dev_button_interactions.903.c"
+		name = exit
+		highlight = yes
+		clr_province_flag = dev_button_interact
+	}
+	
+	after = {
+		set_variable = { which = rural_infrastructure_bonus value = 0 }
+		
+		set_variable = { which = exam_close value = 0 }
+		set_variable = { which = exam_far value = 0 }
+		set_variable = { which = exam_close_prof value = 0 }
+		set_variable = { which = exam_far_prof value = 0 }
+		
+		set_variable = { which = wealth_rural_fluid_temp value = 0 }
+		set_variable = { which = wealth_urban_fluid_temp value = 0 }
+		set_variable = { which = food_sale_local_temp value = 0 }
+		set_variable = { which = food_sale_region_temp value = 0 }
+		set_variable = { which = food_sale_cont_temp value = 0 }
+		set_variable = { which = wealth_rural_from_pop_temp value = 0 }
+		set_variable = { which = wealth_urban_from_production_temp value = 0 }
+		set_variable = { which = wealth_urban_from_trade_temp value = 0 }
+		set_variable = { which = wealth_urban_from_pop_temp value = 0 }
+		set_variable = { which = food_eat_local_temp value = 0 }
+		set_variable = { which = food_eat_region_temp value = 0 }
+		set_variable = { which = food_eat_cont_temp value = 0 }
+		set_variable = { which = wealth_rural_to_farm_temp value = 0 }
+		set_variable = { which = wealth_urban_to_farm_temp value = 0 }
+		set_variable = { which = urban_production_skill_temp value = 0 }
+		set_variable = { which = urban_production_skill_added_temp value = 0 }
+		set_variable = { which = urban_production_skill_rec_temp value = 0 }
+	}
+}
+
+province_event = { ### Intellectual Data
+	id = POP_dev_button_interactions.904
+	title = POP_dev_button_interactions.904.t
+	desc = POP_dev_button_interactions.904.d
+	picture = CITY_DEVELOPMENT_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	trigger = {
+		
+	}
+	
+	#immediate = {
+	#	hidden_effect = {
+	#		if = {
+	#			limit = {
+	#				NOT = { check_variable = { which = art_power_sent 	value = 0.1 } }
+	#			}
+	#			set_variable = { which = art_power_sent	value = 0 }
+	#		}
+	#		if = {
+	#			limit = {
+	#				NOT = { check_variable = { which = art_power_received 	value = 0.1 } }
+	#			}
+	#			set_variable = { which = art_power_received	value = 0 }
+	#		}
+	#	}
+	#}
+	
+	#option = {
+	#	name = "POP_dev_button_interactions.904.a"
+	#	
+	#	trigger = {
+	#		always = no
+	#		has_province_flag = has_art_center_modifier
+	#	}
+	#	
+	#	province_event = {
+	#		id = POP_dev_button_interactions.905
+	#	}
+	#}
+	option = {
+		name = "POP_dev_button_interactions.904.b"
+		
+		trigger = {
+			has_province_flag = has_art_center_modifier
+		}
+		
+		province_event = {
+			id = POP_dev_button_interactions.906
+		}
+	}
+	option = {
+		# name = "POP_dev_button_interactions.903.c"
+		name = exit
+		highlight = yes
+		clr_province_flag = dev_button_interact
+	}
+}
+
+province_event = { ### Reinvention
+	id = POP_dev_button_interactions.905
+	title = POP_dev_button_interactions.905.t
+	desc = POP_dev_button_interactions.905.d
+	picture = CITY_DEVELOPMENT_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	trigger = {
+		
+	}
+	
+	immediate = {
+		
+	}
+	option = {
+		# name = "POP_dev_button_interactions.903.c"
+		name = exit
+		highlight = yes
+		clr_province_flag = dev_button_interact
+	}
+}
+
+province_event = { ### Spread
+	id = POP_dev_button_interactions.906
+	title = POP_dev_button_interactions.906.t
+	desc = POP_dev_button_interactions.906.d
+	picture = CITY_DEVELOPMENT_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	trigger = {
+		
+	}
+	
+	immediate = {
+		
+	}
+	option = {
+		# name = "POP_dev_button_interactions.903.c"
+		name = exit
+		highlight = yes
+		clr_province_flag = dev_button_interact
+	}
+}
+province_event = {
+	id = POP_dev_button_interactions.999
+	title = no_localisation
+	desc = no_localisation
+	picture = CITY_DEVELOPMENT_eventPicture
+	hidden = yes
+	trigger = {
+		had_province_flag = {
+			flag = dev_button_interact
+			days = 720
+		}
+	}
+	mean_time_to_happen = {
+		months = 1
+	}
+	option = {
+		name = no_localisation
+		clr_province_flag = dev_button_interact
+	}
+}

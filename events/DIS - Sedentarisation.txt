@@ -1,0 +1,136 @@
+######################################
+#                                    #
+#       Sedentarisation Events       #
+#                  scripted by Gigau #
+#                                    #
+######################################
+#
+# 101 - Hordes
+# 102 -
+#
+# 101 - Pretender Rebels
+# 102 - Noble Rebels
+#
+# 901 - Hordes
+#
+######################################
+
+# Sedentarisation Triggered
+country_event = {
+	id = sedentarisation.001
+	title = "sedentarisation.001.n"
+	desc = "sedentarisation.001.t"
+	picture = CIVIL_WAR_eventPicture
+	
+	major = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = "OPT.VERYBAD"
+		#hidden_effect = {
+			#clr_country_flag = horde_sedentarisation_triggered
+			#set_country_flag = horde_sedentarisation_underway
+		#}
+	}
+}
+
+# Sedentarisation Under Way
+country_event = {
+	id = sedentarisation.101
+	title = "sedentarisation.101.n"
+	desc = "sedentarisation.101.t"
+	picture = CIVIL_WAR_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		num_of_cities = 3
+		government = monarchy
+	}
+	
+	option = {
+		name = "OPT.UNFORTUNATE"
+		random_owned_province = {
+			limit = {
+				OR = {
+					is_core = ROOT
+					is_capital = yes
+				}
+				NOT = { has_province_modifier = nobles_organizing }
+			}
+			add_province_modifier = {
+				name = "pretender_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+	}
+}
+
+country_event = {
+	id = sedentarisation.102
+	title = "sedentarisation.102.n"
+	desc = "sedentarisation.102.t"
+	picture = CIVIL_WAR_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		num_of_cities = 3
+		government = monarchy
+	}
+	
+	option = {
+		name = "OPT.UNFORTUNATE"
+		random_owned_province = {
+			limit = {
+				OR = {
+					is_core = ROOT
+					is_capital = yes
+					NOT = { has_province_modifier = nobles_organizing }
+				}
+			}
+			add_province_modifier = {
+				name = "nobles_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+	}
+}
+
+# Sedentarisation Ending
+country_event = {
+	id = sedentarisation.901
+	title = "sedentarisation.901.n"
+	desc = "sedentarisation.901.t"
+	picture = CIVIL_WAR_eventPicture
+	
+	major = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = "OPT.EXCELLENT"
+		#hidden_effect = {
+			#clr_country_flag = horde_sedentarisation_underway
+			#set_country_flag = horde_sedentarisation_over
+		#}
+		despotisation_effect = yes
+		if = {
+			limit = {
+				NOT = { has_country_modifier = title_5 }
+				NOT = { has_country_modifier = title_6 }
+			}
+			change_title_5 = yes
+		}
+		add_stability_3 = yes
+	}
+}

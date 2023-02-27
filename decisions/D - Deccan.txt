@@ -1,0 +1,383 @@
+########################################
+#                                      #
+#              Deccan.txt              #
+#                                      #
+########################################
+#
+# ported from Trin's Oriental mod
+#
+########################################
+
+country_decisions = {
+	
+	habshi_military_slavery_deccan = {
+		potential = {
+			any_owned_province = {
+				has_port = yes
+				OR = {
+					area = gujarat_area
+					area = maharashtra_area
+					area = north_kerala_area
+					area = south_kerala_area
+				}
+			}
+			primary_culture = dakani
+			OR = {
+				religion = sunni
+				religion = shiite
+			}
+			NOT = { has_country_modifier = habshi_slavery }
+		}
+		allow = {
+			NOT = { has_idea_group = plutocracy_ideas }
+			OR = {
+				has_idea_group = aristocracy_ideas
+				has_idea_group = quantity_ideas
+				MIL = 5
+			}
+			mil_power = 50
+		}
+		effect = {
+			add_country_modifier = {
+				name = "habshi_slavery"
+				duration = -1
+			}
+			add_mil_power = -50
+			custom_tooltip = deccanis_gain_infl
+			gharbians_vs_deccanis_plus_three_effect = yes
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	habshi_military_slavery = {
+		potential = {
+			any_owned_province = {
+				has_port = yes
+				OR = {
+					area = gujarat_area
+					area = maharashtra_area
+					area = north_kerala_area
+					area = south_kerala_area
+				}
+			}
+			OR = {
+				religion = sunni
+				religion = shiite
+			}
+			NOT = { primary_culture = dakani }
+			NOT = { has_country_modifier = habshi_slavery }
+			#NOT = { has_country_modifier = rajput_condominium } #add later
+		}
+		allow = {
+			NOT = { has_idea_group = plutocracy_ideas }
+			OR = {
+				has_idea_group = aristocracy_ideas
+				has_idea_group = quantity_ideas
+				MIL = 5
+			}
+			mil_power = 50
+		}
+		effect = {
+			add_country_modifier = {
+				name = "habshi_slavery"
+				duration = -1
+			}
+			add_mil_power = -50
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	recruit_native_troops = {
+		potential = {
+			primary_culture = dakani
+			capital_scope = {
+				deccan_region_trigger = yes
+			}
+			OR = {
+				religion = sunni
+				religion = shiite
+			}
+			NOT = { has_country_modifier = native_deccan_army }
+		}
+		allow = {
+			absolutism = 50
+			legitimacy = 50
+			OR = {
+				has_country_modifier = habshi_slavery
+				has_country_modifier = native_administrative_language
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = "native_deccan_army"
+				duration = -1
+			}
+			add_mil_power = 25
+			add_legitimacy = -10
+			custom_tooltip = deccanis_gain_infl
+			hidden_effect = {
+				gharbians_vs_deccanis_plus_three_effect = yes
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	indigenize_regime = {
+		potential = {
+			primary_culture = dakani
+			OR = {
+				religion = sunni
+				religion = shiite
+			}
+			OR = {
+				AND = {
+					has_country_modifier = native_deccan_army
+					has_country_modifier = native_administrative_language
+					check_variable = {
+						which = "gharbians_vs_deccanis"
+						value = 11
+					}
+				}
+				ai = no
+			}
+		}
+		allow = {
+			has_country_modifier = native_deccan_army
+			has_country_modifier = native_administrative_language
+			OR = {
+				has_country_modifier = patronize_native_literature
+				has_country_modifier = patronize_dakani_literature
+			}
+			OR = {
+				has_country_modifier = deccani_dominance
+				has_country_modifier = deccani_control
+			}
+			has_idea_group = aristocracy_ideas
+			absolutism = 70
+			legitimacy = 80
+		}
+		effect = {
+			change_primary_culture = capital
+			add_legitimacy = 30
+			remove_country_modifier = native_deccan_army
+			remove_country_modifier = native_administrative_language
+			set_country_flag = indigenized_deccanis
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	attract_persian_talent = {
+		potential = {
+			primary_culture = dakani
+			OR = {
+				religion = sunni
+				religion = shiite
+			}
+			NOT = { has_country_modifier = envoy_to_persia }
+			NOT = { has_country_modifier = great_persian_trader }
+		}
+		allow = {
+			treasury = 30
+			OR = {
+				num_of_ports = 1
+				any_neighbor_country = {
+					alliance_with = ROOT
+					num_of_ports = 1
+				}
+				any_neighbor_country = {
+					NOT = { war_with = ROOT }
+					religion = sunni
+					num_of_ports = 1
+				}
+				any_neighbor_country = {
+					NOT = { war_with = ROOT }
+					religion = shiite
+					num_of_ports = 1
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = "envoy_to_persia"
+				duration = -1
+			}
+			add_legitimacy = 5
+			add_treasury = -30
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	patronize_vernacular_literature = {
+		potential = {
+			primary_culture = dakani
+			OR = {
+				religion = sunni
+				religion = shiite
+			}
+			NOT = { has_country_modifier = patronize_native_literature }
+			NOT = { has_country_modifier = patronize_dakani_literature }
+		}
+		allow = {
+			stability = 2
+			has_idea_group = aristocracy_ideas
+			prestige = 25
+			adm_power = 50
+		}
+		effect = {
+			add_country_modifier = {
+				name = "patronize_native_literature"
+				duration = -1
+			}
+			add_legitimacy = 2
+			add_prestige = -25
+			add_adm_power = -50
+			#change_variable = {	#need to figure out how to mesh with DG
+			#		which = ulema_displeasure
+			#		value = 10
+			#	}
+			custom_tooltip = deccanis_gain_infl
+			hidden_effect = {
+				gharbians_vs_deccanis_plus_three_effect = yes
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	patronize_dakani_literature = {
+		potential = {
+			primary_culture = dakani
+			OR = {
+				religion = sunni
+				religion = shiite
+			}
+			NOT = { has_country_modifier = patronize_dakani_literature }
+			NOT = { has_country_modifier = patronize_native_literature }
+		}
+		allow = {
+			stability = 2
+			legitimacy = 25
+			adm_power = 50
+		}
+		effect = {
+			add_country_modifier = {
+				name = "patronize_dakani_literature"
+				duration = -1
+			}
+			add_legitimacy = -25
+			add_prestige = 25
+			add_adm_power = -50
+			custom_tooltip = deccanis_gain_infl
+			hidden_effect = {
+				gharbians_vs_deccanis_plus_one_effect = yes
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	attract_persian_sheikh = {
+		potential = {
+			primary_culture = dakani
+			OR = {
+				religion = sunni
+				religion = shiite
+			}
+			NOT = { has_country_modifier = attracting_sheikh }
+			NOT = { any_owned_province = { has_province_modifier = sheikh_settled } }
+			NOT = { any_owned_province = { has_province_modifier = sheikh_settled_opposition } }
+		}
+		allow = {
+			OR = {
+				has_country_flag = sufi_patronage
+				capital_scope = {
+					OR = {
+						has_province_modifier = reform_sufis
+						has_province_modifier = sharia_sufis
+						has_province_modifier = shrine_sufis
+						has_province_modifier = charismatic_sufis
+					}
+				}
+			}
+			treasury = 45
+			OR = {
+				num_of_ports = 1
+				any_neighbor_country = {
+					alliance_with = ROOT
+					num_of_ports = 1
+				}
+				any_neighbor_country = {
+					NOT = { war_with = ROOT }
+					religion = sunni
+					num_of_ports = 1
+				}
+				any_neighbor_country = {
+					NOT = { war_with = ROOT }
+					religion = shiite
+					num_of_ports = 1
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = "attracting_sheikh"
+				duration = -1
+			}
+			add_legitimacy = 5
+			add_treasury = -45
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	# TODO Several parts have been commented out for temporary fixes. The decision needs proper reevaluation.
+	build_hyderabad = {
+		potential = {
+			OR = {
+				tag = GOC
+				tag = HYD
+				capital = 545
+			}
+			NOT = { has_country_flag = build_hyderabad }
+		}
+		allow = {
+			adm_tech = 26
+			owns = 545 # Haydarabad
+			is_at_war = no
+			stability = 0
+			treasury = 150
+		}
+		effect = {
+			add_treasury = -100
+			set_country_flag = build_hyderabad
+			add_prestige = 100
+			add_stability_1 = yes
+			Effect_set_capital = { target=545 }
+			#545 = {
+			#	change_trade_goods = jewelery
+			#	add_base_tax = 5
+			#	add_base_manpower = 3
+			#	add_province_modifier = {
+			#		name = "major_city"
+			#		duration = -1
+			#	}
+			#}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+}
+

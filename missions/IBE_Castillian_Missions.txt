@@ -1,0 +1,692 @@
+
+cas_iberia_reconquista = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		OR = {
+			has_country_flag = k_of_cas
+			has_country_flag = k_of_leo
+		}
+	}
+	has_country_shield = yes
+	
+	cas_civil_war = {
+		icon = mission_cannons_firing
+		position = 1
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					ROOT = { tag = CAS }
+					OR = {
+						country_or_non_sovereign_subject_holds = ENR
+						country_or_non_sovereign_subject_holds = LEO
+					}
+				}
+				AND = {
+					ROOT = { tag = ENR }
+					OR = {
+						country_or_non_sovereign_subject_holds = CAS
+						country_or_non_sovereign_subject_holds = LEO
+					}
+				}
+				AND = {
+					ROOT = {
+						NOT = { tag = CAS }
+						NOT = { tag = ENR }
+					}
+					OR = {
+						country_or_non_sovereign_subject_holds = CAS
+						country_or_non_sovereign_subject_holds = ENR
+					}
+				}
+				AND = {
+					region = castille_region
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				}
+			}
+		}
+		trigger = {
+			castille_region = { country_or_non_sovereign_subject_holds = ROOT }
+			if = {
+				limit = { tag = CAS }
+				NOT = { exists = ENR }
+				NOT = { exists = LEO }
+			}
+			else_if = {
+				limit = { tag = ENR }
+				NOT = { exists = CAS }
+				NOT = { exists = LEO }
+			}
+			else = {
+				NOT = { exists = ENR }
+				NOT = { exists = CAS }
+			}
+		}
+		effect = {
+			add_war_exhaustion = -4
+			form_CAS_effect = yes
+			hidden_effect = { complete_mission = cas_civil_war }
+			extremadura_castilla_area = {
+				limit = { NOT = { country_or_non_sovereign_subject_holds = ROOT } }
+				add_claim = ROOT
+			}
+			toledo_area = {
+				limit = { NOT = { country_or_non_sovereign_subject_holds = ROOT } }
+				add_claim = ROOT
+			}
+		}
+	}
+
+	# rebuild the army ?
+	
+	cas_finish_reconquista = {
+		icon = mission_assemble_an_army
+		required_missions = { cas_civil_war }
+		position = 2
+		provinces_to_highlight = {
+			superregion = iberia_superregion
+			owner = { NOT = { religion_group = christian } }
+		}
+		trigger = {
+			iberia_superregion = {
+				type = all
+				OR = {
+					is_city = no
+					owner = { religion_group = christian }
+				}
+			}
+			upper_andalucia_area = {
+				type = all
+				owned_by = ROOT
+			}
+		}
+		effect = {
+			add_war_exhaustion = -4
+			set_country_flag = granada_gone
+			add_country_modifier = {
+				name = "completing_the_reconquista"
+				duration = 3650
+			}
+		}
+	}
+	
+	cas_iberia_christian = {
+		icon = mission_religious
+		required_missions = { cas_finish_reconquista }
+		position = 3
+		provinces_to_highlight = {
+			superregion = iberia_superregion
+			is_city = yes
+		}
+		trigger = {
+			iberia_superregion = {
+				type = all
+				OR = {
+					is_city = no
+					religion_group = christian
+				}
+			}
+		}
+		effect = {
+			add_prestige = 15
+		}
+	}
+	
+	cas_christian_fleet = {
+		icon = mission_sea_battles
+		required_missions = { cas_iberia_christian }
+		position = 4
+		trigger = {
+			if = {
+				limit = { exists = TUR }
+				navy_size = TUR
+			}
+			else_if = {
+				limit = { exists = OTT }
+				navy_size = OTT
+			}
+			else_if = {
+				limit = { exists = MAM }
+				navy_size = MAM
+			}
+			else = {
+				navy_size = FEZ
+			}
+		}
+		effect = {
+			tanja_area = {
+				limit = {
+					NOT = {
+						is_core = ROOT
+						owned_by = ROOT
+					}
+					has_province_flag = barbary_port
+				}
+				add_claim = ROOT
+			}
+			elrif_area = {
+				limit = {
+					NOT = {
+						is_core = ROOT
+						owned_by = ROOT
+					}
+					has_province_flag = barbary_port
+				}
+				add_claim = ROOT
+			}
+		}
+	}
+
+	cas_subjugate_canarias = {
+		icon = mission_establish_high_seas_navy
+		required_missions = { cas_christian_fleet }
+		position = 5
+		provinces_to_highlight = {
+			OR = {
+				province_id = 366
+				province_id = 2751
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			366 = { country_or_non_sovereign_subject_holds = ROOT }
+			2751 = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		effect = { add_navy_tradition = 15 }
+	}
+	
+	cas_mor_barbaresque = {
+		icon = mission_assemble_an_army
+		required_missions = { cas_subjugate_canarias }
+		position = 6
+		provinces_to_highlight = {
+			OR = {
+				area = anfa_area
+				area = tanja_area
+				area = elrif_area
+			}
+			has_province_flag = barbary_port
+		}
+		trigger = {
+			334 = { country_or_non_sovereign_subject_holds = ROOT }
+			1533 = { country_or_non_sovereign_subject_holds = ROOT }
+			1534 = { country_or_non_sovereign_subject_holds = ROOT }
+			2869 = { country_or_non_sovereign_subject_holds = ROOT }
+			2962 = { country_or_non_sovereign_subject_holds = ROOT }
+			4073 = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		effect = {
+			algiers_area = {
+				limit = {
+					NOT = {
+						is_core = ROOT
+						owned_by = ROOT
+					}
+					has_province_flag = barbary_port
+				}
+				add_claim = ROOT
+			}
+			kabylia_area = {
+				limit = {
+					NOT = {
+						is_core = ROOT
+						owned_by = ROOT
+					}
+					has_province_flag = barbary_port
+				}
+				add_claim = ROOT
+			}
+		}
+	}
+	
+	cas_alg_barbaresque = {
+		icon = mission_assemble_an_army
+		required_missions = { cas_mor_barbaresque }
+		position = 7
+		provinces_to_highlight = {
+			OR = {
+				area = algiers_area
+				area = kabylia_area
+			}
+			has_province_flag = barbary_port
+		}
+		trigger = {
+			337 = { country_or_non_sovereign_subject_holds = ROOT }
+			340 = { country_or_non_sovereign_subject_holds = ROOT }
+			350 = { country_or_non_sovereign_subject_holds = ROOT }
+			2863 = { country_or_non_sovereign_subject_holds = ROOT }
+			2865 = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		effect = {
+			tunis_area = {
+				limit = {
+					NOT = {
+						is_core = ROOT
+						owned_by = ROOT
+					}
+					has_province_flag = barbary_port
+				}
+				add_claim = ROOT
+			}
+			kairwan_area = {
+				limit = {
+					NOT = {
+						is_core = ROOT
+						owned_by = ROOT
+					}
+					has_province_flag = barbary_port
+				}
+				add_claim = ROOT
+			}
+		}
+	}
+	
+	cas_tun_barbaresque = {
+		icon = mission_assemble_an_army
+		required_missions = { cas_alg_barbaresque }
+		position = 8
+		provinces_to_highlight = {
+			OR = {
+				area = tunis_area
+				area = kairwan_area
+			}
+			has_province_flag = barbary_port
+		}
+		trigger = {
+			341 = { country_or_non_sovereign_subject_holds = ROOT }
+			351 = { country_or_non_sovereign_subject_holds = ROOT }
+			353 = { country_or_non_sovereign_subject_holds = ROOT }
+			2867 = { country_or_non_sovereign_subject_holds = ROOT }
+			2868 = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		effect = {
+			add_country_modifier = {
+				name = "completing_the_reconquista"
+				duration = 7300
+			}
+		}
+	}
+}
+
+cas_iberia_unification = {
+	slot = 6
+	generic = no
+	ai = yes
+	potential = {
+		OR = {
+			has_country_flag = k_of_cas
+			has_country_flag = k_of_leo
+		}
+	}
+	has_country_shield = yes
+	
+	cas_centralise_state = {
+		icon = mission_conquer_50_development
+		required_missions = { }
+		position = 1
+		trigger = { absolutism = 30 }
+		effect = {
+			add_legitimacy = 10
+			add_horde_unity = 10
+			add_republican_tradition = 10
+			add_heir_claim = 10
+		}
+	}
+
+	cas_aragon_relations = {
+		icon = mission_monarch_in_throne_room
+		required_missions = { cas_centralise_state }
+		position = 2
+		provinces_to_highlight = {
+			region = aragon_region
+			owned_by = ARA
+		}
+		trigger = {
+			if = {
+				limit = { exists = ARA }
+				OR = {
+					AND = {
+						ARA = { has_opinion = { who = ROOT value = 100 } }
+						marriage_with = ARA
+					}
+					ARA = { is_subject_of = CAS }
+					CAS = { is_subject_of = ARA }
+				}
+			}
+			else = {
+				211 = { country_or_non_sovereign_subject_holds = ROOT }
+			}
+		}
+		effect = {
+			add_prestige = 10
+			if = {
+				limit = {
+					exists = ARA
+					is_subject = no
+					ARA = { is_subject = no }
+				}
+				add_casus_belli = {
+					type = cb_restore_personal_union
+					months = 600
+					target = ARA
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						ARA = { is_subject_of = CAS }
+						CAS = { is_subject_of = ARA }
+					}
+				}
+				add_country_modifier = { name = obedient_subjects duration = 3650 }
+			}
+			else = {
+				aragon_region = {
+					limit = {
+						NOT = { owned_by = ROOT	}
+						NOT = { is_core = ROOT	}
+						NOT = { owned_by = ARA }
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+		}
+	}
+	
+	cas_iberian_wedding = {
+		icon = mission_monarch_in_throne_room
+		required_missions = { cas_aragon_relations }
+		position = 3
+		provinces_to_highlight = {
+			region = aragon_region
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			if = {
+				limit = { ai = no }
+				OR = {
+					ARA = { junior_union_with = ROOT }
+					aragon_region = {
+						type = all
+						OR = {
+							province_id = 197
+							country_or_non_sovereign_subject_holds = ROOT
+						}
+					}
+				}
+			}
+			else = {
+				OR = {
+					ARA = { junior_union_with = ROOT }
+					num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+						region = aragon_region
+						value = 14
+					}
+				}
+			}
+		}
+		effect = {
+			add_prestige = 20
+			hidden_effect = {
+				remove_casus_belli = {
+					type = cb_restore_personal_union
+					target = ARA
+				}
+			}
+		}
+	}
+	
+	cas_centralise_more = {
+		icon = mission_conquer_50_development
+		required_missions = { cas_iberian_wedding }
+		position = 3
+		trigger = { absolutism = 50 }
+		effect = {
+			add_legitimacy = 10
+			add_horde_unity = 10
+			add_republican_tradition = 10
+			add_heir_claim = 10
+		}
+	}
+	
+	cas_integrate_aragon = {
+		icon = mission_monarch_in_throne_room
+		required_missions = { cas_centralise_more }
+		position = 4
+		provinces_to_highlight = {
+			region = aragon_region
+		}
+		trigger = {
+			if = {
+				limit = { ai = no }
+				if = {
+					limit = { exists = ARA }
+					ARA = {
+						is_subject_of = ROOT
+						NOT = { liberty_desire = 10 }
+					}
+					aragon_region = {
+						type = all
+						OR = {
+							province_id = 197
+							country_or_non_sovereign_subject_holds = ROOT
+						}
+					}
+				}
+				else = {
+					aragon_region = {
+						type = all
+						owned_by = ROOT
+					}
+				}
+			}
+			else = {
+				hidden_trigger = {
+					if = {
+						limit = { exists = ARA }
+						ARA = {
+							is_subject_of = ROOT
+							NOT = { liberty_desire = 50 }
+						}
+						num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+							region = aragon_region
+							value = 14
+						}
+					}
+					else = {
+						num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+							superregion = iberia_superregion
+							value = 65
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			country_event = { id = mission_formable.009 }
+			hidden_effect = { complete_mission = cas_integrate_aragon }
+		}
+	}
+}
+
+cas_iberia_expansion = {
+	slot = 7
+	generic = no
+	ai = yes
+	potential = {
+		OR = {
+			has_country_flag = k_of_cas
+			has_country_flag = k_of_leo
+		}
+	}
+	has_country_shield = yes
+
+	cas_portuguese_relations = {
+		icon = mission_monarch_in_throne_room
+		required_missions = { cas_centralise_state }
+		position = 2
+		provinces_to_highlight = {
+			OR = {
+				area = beieras_area
+				area = alentejo_area
+			}
+			owned_by = POR
+		}
+		trigger = {
+			POR = { has_opinion = { who = ROOT value = 100 } }
+			marriage_with = POR
+		}
+		effect = {
+			add_prestige = 10
+			if = {
+				limit = {
+					exists = POR
+					is_subject = no
+					POR = {
+						is_subject = no
+					}
+				}
+				add_casus_belli = {
+					type = cb_restore_personal_union
+					months = 600
+					target = POR
+				}
+			}
+			else = {
+				portugal_region = {
+					limit = {
+						NOT = { owned_by = ROOT	}
+						NOT = { is_core = ROOT	}
+						NOT = { owned_by = POR }
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+		}
+	}
+	
+	cas_portuguese_wedding = {
+		icon = mission_monarch_in_throne_room
+		required_missions = { cas_portuguese_relations }
+		position = 3
+		provinces_to_highlight = {
+			OR = {
+				area = beieras_area
+				area = alentejo_area
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			OR = {
+				POR = {
+					junior_union_with = ROOT
+				}
+				beieras_area = {
+					type = all
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+				alentejo_area = {
+					type = all
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+			}
+		}
+		effect = {
+			capital_scope = {
+				add_province_modifier = { name = "mission_medium_urban_gravity" duration = 7300 }
+			}
+			custom_tooltip = desc_mission_medium_urban_gravity_tt
+			hidden_effect = {
+				remove_casus_belli = {
+					type = cb_restore_personal_union
+					target = POR
+				}
+			}
+		}
+	}
+	
+	cas_claim_to_naples = {
+		icon = mission_monarch_in_throne_room
+		required_missions = { cas_iberian_wedding }
+		position = 4
+		provinces_to_highlight = {
+			region = naples_region
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			OR = {
+				KNP = {
+					junior_union_with = ROOT
+				}
+				NAP = {
+					junior_union_with = ROOT
+				}
+				naples_region = {
+					type = all
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+			}
+		}
+		effect = {
+			add_prestige = 20
+		}
+	}
+	
+	cas_conquer_milan = {
+		icon = mission_cannons_firing
+		required_missions = { cas_claim_to_naples }
+		position = 5
+		provinces_to_highlight = {
+			OR = {
+				area = lombardy_area
+				area = padan_area
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			lombardy_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			padan_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		effect = {
+			add_army_tradition = 10
+		}
+	}
+	
+	cas_integrate_twosicilies = {
+		icon = mission_monarch_in_throne_room
+		required_missions = { cas_conquer_milan }
+		position = 6
+		provinces_to_highlight = {
+			OR = {
+				region = naples_region
+				region = sicily_region
+			}
+		}
+		trigger = {
+			naples_region = {
+				type = all
+				owned_by = ROOT
+			}
+			sicily_region = {
+				type = all
+				owned_by = ROOT
+			}
+		}
+		effect = {
+			add_prestige = 20
+		}
+	}
+}

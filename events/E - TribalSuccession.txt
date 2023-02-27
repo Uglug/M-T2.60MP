@@ -1,0 +1,144 @@
+
+# Tribal Succession Crisis
+country_event = {
+	id = tribal_succession.1
+	title = tribal_succession.1.t
+	desc = tribal_succession.1.d
+	picture = KING_SICK_IN_BED_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		steppe_trigger = yes
+		num_of_cities = 4
+		OR = {
+			NOT = { legitimacy_or_horde_unity = 50 }
+			has_regency = yes
+		}
+		OR = {
+			NOT = { tag = CRI }
+			has_global_flag = death_of_haji_giray
+		}
+		OR = {
+			NOT = { tag = CHU }
+			is_year = 1400
+		}
+	}
+	
+	immediate = {
+		random_owned_province = {
+			limit = {
+				NOT = { has_province_modifier = pretender_organizing }
+				culture = ROOT
+			}
+			add_province_modifier = {
+				name = "pretender_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 7 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_7
+		}
+		random_owned_province = {
+			limit = {
+				NOT = { has_province_modifier = pretender_organizing }
+				culture = ROOT
+			}
+			add_province_modifier = {
+				name = "pretender_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 7 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_7
+		}
+		every_owned_province = {
+			limit = {
+				OR = {
+					NOT = { is_core = ROOT }
+					NOT = { culture = ROOT }
+				}
+			}
+			add_province_modifier = {
+				name = "nationalists_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 7 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_7
+		}
+		every_owned_province = {
+			limit = {
+				NOT = { culture = ROOT }
+				NOT = { has_province_modifier = nationalists_organizing }
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 7 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_7
+		}
+	}
+	
+	option = {
+		name = tribal_succession.1.a
+		trigger = {
+			NOT = { legitimacy_or_horde_unity = 50 }
+		}
+		add_ruler_modifier = {
+			name = "tribal_succession_crisis"
+		}
+		custom_tooltip = tribal_crisis_can_end_when
+	}
+	
+	option = {
+		name = tribal_succession.1.b
+		trigger = {
+			has_regency = yes
+		}
+		define_ruler = {
+			dip = 3
+			mil = 3
+			adm = 3
+		}
+		add_ruler_modifier = {
+			name = "tribal_succession_crisis"
+		}
+		kill_heir = yes
+	}
+}
+
+# Succession Secured!
+country_event = {
+	id = tribal_succession.2
+	title = tribal_succession.2.t
+	desc = tribal_succession.2.d
+	picture = NEW_HEIR_eventPicture
+	
+	trigger = {
+		has_ruler_modifier = tribal_succession_crisis
+		steppe_trigger = yes
+		NOT = {
+			any_owned_province = {
+				has_province_modifier = pretender_organizing
+			}
+		}
+		has_regency = no
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = tribal_succession.1.a
+		remove_country_modifier = tribal_succession_crisis
+		add_stability_1 = yes
+		add_legitimacy = 25
+		add_horde_unity = 25
+	}
+}

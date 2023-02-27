@@ -1,0 +1,791 @@
+# INSTRUCTIONS:
+#
+# condition				A diplomatic action can have any number of condition blocks, each with its own
+#						tooltip, potential and allow section
+#
+# 	tooltip					Sets a custom text string similar to the hardcoded limits
+# 							If no tooltip is scripted, the tooltip for the actual trigger will be shown
+#							Note that the custom tooltip is only shown if the allow trigger is NOT met
+#
+# 	potential				Determines if the trigger is applicable or not
+# 	disallow				Determines if the action is valid or not
+#
+# effect				A diplomatic action can only have one effect block
+
+# ROOT					actor
+# FROM					target
+
+# embargo action
+declarewar = {
+	# AI is focusing on internal development
+	condition = {
+		tooltip = AMALGAMATION
+		potential = {
+			OR = {
+				tag = AAA
+				FROM = { tag = AAA }
+			}
+		}
+		allow = {
+			always = no
+		}
+	}
+	#condition = {
+	#	tooltip = AMALGAMATION
+	#	potential = {
+	#		NOT = {
+	#			has_country_flag = aiHasAgendaMilitary
+	#		}
+	#		
+	#		has_country_flag = aiHasAgendaEconomy
+	#		has_country_flag = aiHasAgendaReform
+	#		has_country_flag = aiHasAgendaCE
+	#		
+	#		ai = yes
+	#	}
+	#	allow = {
+	#		always = no
+	#	}
+	#}
+	# AI declares war based on its expansion plan
+	#condition = {
+	#	tooltip = AMALGAMATION
+	#	potential = {
+	#		has_country_flag = aiHasAgendaInvasion
+	#		
+	#		ai = yes
+	#	}
+	#	allow = {
+	#		always = no
+	#	}
+	#}
+	condition = {
+		tooltip = AMALGAMATION
+		potential = {
+			tag = HUN
+			NOT = { is_year = 1420 }
+			ai = yes
+		}
+		allow = {
+			FROM = {
+				NOT = { tag = WHI }
+			}
+		}
+	}
+	
+	#condition = {
+	#	tooltip = AMALGAMATION
+	#	potential = {
+	#		OR = {
+	#			amalgamation_trigger = yes
+	#			FROM = { amalgamation_trigger = yes }
+	#		}
+	#		
+	#	}
+	#	allow = {
+	#		always = no
+	#	}
+	#}
+	condition = {
+		tooltip = TATARTREATY
+		potential = {
+			has_country_flag = tatar_treaty
+		}
+		allow = {
+			OR = {
+				NOT = { FROM = { has_country_flag = tatar_treaty } }
+				AND = {
+					is_nomad = yes
+					FROM = { is_nomad = yes }
+				}
+			}
+		}
+	}
+	#condition = {
+	#	tooltip = HUNDREDYEARSWAR_FRA
+	#	potential = {
+	#		tag = FRA
+	#		has_global_flag = hundred_years_war
+	#	}
+	#	allow = {
+	#		FROM = {
+	#			OR = {
+	#				tag = ENG
+	#				is_subject_of = ENG
+	#			}
+	#		}
+	#	}
+	#}
+	#condition = {
+	#	tooltip = HUNDREDYEARSWAR_ENG
+	#	potential = {
+	#		tag = ENG
+	#		has_global_flag = hundred_years_war
+	#	}
+	#	allow = {
+	#		FROM = {
+	#			OR = {
+	#				tag = FRA
+	#				is_subject_of = FRA
+	#				tag = SCO
+	#				is_subject_of = SCO
+	#				tag = TLI
+	#				is_subject_of = TLI
+	#			}
+	#		}
+	#	}
+	#}
+	#condition = {
+	#	potential = {
+	#		ai = yes
+	#	}
+	#	allow = {
+	#		has_country_flag = in_good_shape
+	#	}
+	#}
+	condition = {
+		tooltip = SHUGOCLAIM
+		potential = {
+			is_subject_of_type = daimyo_vassal
+			FROM = { is_subject_of_type = daimyo_vassal }
+		}
+		allow = {
+			OR = {
+				claim = FROM
+				core_claim = FROM
+				is_subject_of = FROM
+				is_rival = FROM
+				coalition_target = FROM
+				is_threat = FROM
+				FROM = {
+					overlord = {
+						NOT = { overlord_of = ROOT }
+					}
+				}
+			}
+		}
+	}
+	condition = {
+		tooltip = JAPANESEEMPIRE
+		potential = {
+			is_subject = no
+			NOT = { overlord_of = FROM }
+			FROM = { is_daimyo_vassal = yes }
+		}
+		allow = {
+			always = no
+		}
+	}
+	condition = {
+		potential = {
+			is_part_of_hre = no
+			FROM = { is_part_of_hre = yes }
+			ai = yes
+		}
+		allow = {
+			check_variable = { which = hre_war_strength_attacker_total which = hre_war_strength_support }
+		}
+	
+	}
+	condition = {
+		tooltip = CHINESEVASSAL
+		potential = {
+			FROM = {
+				is_subject_of_type = warlord
+				has_country_flag = imperial_appenage
+			}
+		}
+		allow = {
+			OR = {
+				is_subject_of_type = warlord
+				culture_group = chinese_group
+				has_country_flag = mandate_of_heaven_claimed
+				has_country_flag = barbarian_claimant_china
+			}
+		}
+	}
+	condition = {
+		tooltip = DONTTOUCHTHAT
+		potential = {
+			exists = yes
+		}
+		allow = {
+			NOT = { tag = AAA }
+			NOT = { FROM = { tag = AAA } }
+		}
+	}
+	condition = {
+		tooltip = WHITE_HORDE_BLOCKER
+		potential = {
+			tag = WHI
+			ai = yes
+			FROM = { culture_group = east_slavic }
+			NOT = { is_year = 1406 }
+		}
+		allow = {
+			always = no
+		}
+	}
+	condition = {
+		tooltip = WHITE_HORDE_BLOCKER
+		potential = {
+			tag = LIT
+			ai = yes
+			FROM = { tag = MOS ai = yes }
+			NOT = { is_year = 1406 }
+		}
+		allow = { always = no }
+	}
+	condition = {
+		tooltip = WHITE_HORDE_BLOCKER
+		potential = {
+			tag = LIT
+			ai = yes
+			NOT = { is_year = 1381 }
+			FROM = {
+				capital_scope = {
+					OR = {
+						region = north_russia_region
+						region = russia_region
+						region = east_russia_region
+					}
+				}
+				ai = yes
+			}
+		}
+		allow = { always = no }
+	}
+	condition = {
+		tooltip = WHITE_HORDE_BLOCKER
+		potential = {
+			tag = BOH
+			ai = yes
+			FROM = { tag = HAB ai = yes }
+			NOT = { is_year = 1456 }
+		}
+		allow = {
+			always = no
+		}
+	}
+	condition = {
+		tooltip = AI_COLONIAL_WARS_BLOCKER_UNFINISHED_COLONY
+		#Intended to stop the AI from declaring wars until their colonies actually finish
+		potential = {
+			FROM = {
+				any_owned_province = {
+					any_neighbor_province = {
+						owned_by = ROOT
+						is_colony = yes
+					}
+				}
+			}
+			ai = yes
+		}
+		allow = { always = no }
+	}
+	condition = {
+		tooltip = AI_COLONIAL_WARS_BLOCKER_INSUFFICIENT_STRENGTH
+		#Intended to stop the AI from declaring overseas wars if they aren't strong enough to win them (unfortunately army_strength, naval_strength and military_strength triggers don't work)
+		potential = {
+			capital_scope = { continent = europe }
+			ai = yes
+			OR = {
+				NOT = { army_size = FROM }
+				NOT = { navy_size = FROM }
+				NOT = { land_forcelimit = FROM }
+			}
+			FROM = {
+				NOT = {
+					capital_scope = {
+						OR = {
+							continent = europe
+							continent = mena
+							continent = central_asia
+							continent = north_asia
+						}
+					}
+				}
+			}
+			FROM = {
+				any_ally = {
+					OR = {
+						army_size = ROOT
+						navy_size = ROOT
+						land_forcelimit = ROOT
+					}
+				}
+			}
+		}
+		allow = { always = no }
+	}
+	#condition = {
+	#	tooltip = AI_COLONIAL_WARS_UNFINISHED_CORES
+	#	#Intended to stop the AI from declaring overseas wars if they haven't finished coring land they already took (also includes colonial nations)
+	#	potential = {
+	#		capital_scope = { continent = europe }
+	#		ai = yes
+	#		OR = {
+	#			any_owned_province = {
+	#				NOT = { is_core = ROOT }
+	#				is_core = FROM
+	#			}
+	#			any_subject_country = {
+	#				limit = { is_colonial_nation = yes }
+	#				any_owned_province = {
+	#					NOT = { is_core = PREV }
+	#					is_core = FROM
+	#				}
+	#			}
+	#		}
+	#		FROM = {
+	#			NOT = {
+	#				capital_scope = {
+	#					OR = {
+	#						continent = europe
+	#						continent = mena
+	#						continent = central_asia
+	#						continent = north_asia
+	#					}
+	#				}
+	#			}
+	#		}
+	#	}
+	#	allow = { always = no }
+	#}
+	condition = {
+		tooltip = AI_COLONIAL_WARS_NOT_ENOUGH_PROVINCES
+		#Intended to stop the AI from attacking Indians unless it has enough provinces in India to have a chance at landing troops (currently 7 provinces)
+		potential = {
+			capital_scope = { continent = europe }
+			FROM = { capital_scope = { continent = indian_continent } }
+			ai = yes
+			NOT = {
+				calc_true_if = {
+					all_owned_province = { continent = indian_continent }
+					amount = 8
+				}
+			}
+		}
+		allow = { always = no }
+	}
+	condition = {
+		tooltip = AI_COLONIAL_WARS_LOCKED_REGION
+		#Intended to stop the AI from declaring wars on native americans in regions they aren't allowed to colonise yet
+		potential = {
+			capital_scope = { continent = europe }
+			ai = yes
+			FROM = { religion = totemism NOT = { tag = HDH } }
+			NOT = {
+				any_subject_country = {
+					is_colonial_nation = yes
+					is_neighbor_of = FROM
+				}
+			}
+			NOT = { is_neighbor_of = FROM }
+		}
+		allow = { always = no }
+	}
+	#condition = {
+	#	tooltip = DUMBASS_OTTOMANS
+	#	potential = {
+	#		tag = OTT
+	#		ai = yes
+	#		FROM = { tag = BUL ai = yes }
+	#		NOT = { is_neighbor_of = BUL }
+	#	}
+	#	allow = {
+	#		always = no
+	#	}
+	#}
+	condition = {
+		tooltip = FRANCE_AI_BLOCKER
+		potential = {
+			tag = FRA
+			ai = yes
+			FROM = {
+				OR = {
+					tag = CAS
+					tag = SPA
+				}
+				ai = yes
+			}
+			NOT = { personality = ai_militarist }
+			is_revolution_target = no
+		}
+		allow = { always = no }
+	}
+	condition = {
+		tooltip = FRANCE_AI_BLOCKER
+		potential = {
+			OR = {
+				tag = POL
+				tag = LIT
+				tag = PLC
+			}
+			ai = yes
+			FROM = {
+				OR = {
+					tag = MOS
+					tag = RUS
+				}
+				ai = yes
+			}
+			AND = {
+				NOT = { personality = ai_militarist }
+				NOT = { is_year = 1556 }
+			}
+		}
+		allow = { always = no }
+	}
+	condition = {
+		tooltip = FRANCE_AI_BLOCKER
+		potential = {
+			tag = FRA
+			ai = yes
+			FROM = { is_part_of_hre = yes }
+			NOT = { personality = ai_militarist }
+		}
+		allow = { always = no }
+	}
+	
+	effect = {
+		country_event = {
+			id = privateers.15
+		}
+	}
+}
+
+threaten_war = {
+	# AI is focusing on internal development
+	condition = {
+		tooltip = AMALGAMATION
+		potential = {
+			OR = {
+				tag = AAA
+				FROM = { tag = AAA }
+			}
+		}
+		allow = {
+			always = no
+		}
+	}
+	#condition = {
+	#	tooltip = AMALGAMATION
+	#	potential = {
+	#		NOT = {
+	#			has_country_flag = aiHasAgendaMilitary
+	#		}
+	#		
+	#		has_country_flag = aiHasAgendaEconomy
+	#		has_country_flag = aiHasAgendaReform
+	#		has_country_flag = aiHasAgendaCE
+	#		
+	#		ai = yes
+	#	}
+	#	allow = {
+	#		always = no
+	#	}
+	#}
+	# AI declares war based on its expansion plan
+	#condition = {
+	#	tooltip = AMALGAMATION
+	#	potential = {
+	#		has_country_flag = aiHasAgendaInvasion
+	#		
+	#		ai = yes
+	#	}
+	#	allow = {
+	#		always = no
+	#	}
+	#}
+	condition = {
+		tooltip = AMALGAMATION
+		potential = {
+			tag = HUN
+			
+			NOT = { is_year = 1420 }
+			
+			ai = yes
+		}
+		allow = {
+			FROM = {
+				NOT = { tag = WHI }
+			}
+		}
+	}
+	
+	#condition = {
+	#	tooltip = AMALGAMATION
+	#	potential = {
+	#		OR = {
+	#			amalgamation_trigger = yes
+	#			FROM = { amalgamation_trigger = yes }
+	#		}
+	#		
+	#	}
+	#	allow = {
+	#		always = no
+	#	}
+	#}
+	condition = {
+		tooltip = TATARTREATY
+		potential = {
+			has_country_flag = tatar_treaty
+		}
+		allow = {
+			OR = {
+				NOT = { FROM = { has_country_flag = tatar_treaty } }
+				AND = {
+					is_nomad = yes
+					FROM = { is_nomad = yes }
+				}
+			}
+		}
+	}
+	#condition = {
+	#	tooltip = HUNDREDYEARSWAR_FRA
+	#	potential = {
+	#		tag = FRA
+	#		has_global_flag = hundred_years_war
+	#	}
+	#	allow = {
+	#		FROM = {
+	#			OR = {
+	#				tag = ENG
+	#				is_subject_of = ENG
+	#			}
+	#		}
+	#	}
+	#}
+	#condition = {
+	#	tooltip = HUNDREDYEARSWAR_ENG
+	#	potential = {
+	#		tag = ENG
+	#		has_global_flag = hundred_years_war
+	#	}
+	#	allow = {
+	#		FROM = {
+	#			OR = {
+	#				tag = FRA
+	#				is_subject_of = FRA
+	#				tag = SCO
+	#				is_subject_of = SCO
+	#				tag = TLI
+	#				is_subject_of = TLI
+	#			}
+	#		}
+	#	}
+	#}
+	#condition = {
+	#	potential = {
+	#		ai = yes
+	#	}
+	#	allow = {
+	#		has_country_flag = in_good_shape
+	#	}
+	#}
+	condition = {
+		tooltip = SHUGOCLAIM
+		potential = {
+			is_subject_of_type = daimyo_vassal
+			FROM = { is_subject_of_type = daimyo_vassal }
+		}
+		allow = {
+			OR = {
+				claim = FROM
+				core_claim = FROM
+				is_subject_of = FROM
+				is_rival = FROM
+				coalition_target = FROM
+				is_threat = FROM
+				FROM = {
+					overlord = {
+						NOT = { overlord_of = ROOT }
+					}
+				}
+			}
+		}
+	}
+	condition = {
+		tooltip = JAPANESEEMPIRE
+		potential = {
+			is_subject = no
+			NOT = { overlord_of = FROM }
+			FROM = { is_daimyo_vassal = yes }
+		}
+		allow = {
+			always = no
+		}
+	}
+	condition = {
+		potential = {
+			is_part_of_hre = no
+			FROM = { is_part_of_hre = yes }
+			ai = yes
+		}
+		allow = {
+			check_variable = { which = hre_war_strength_attacker_total which = hre_war_strength_support }
+		}
+	
+	}
+	condition = {
+		tooltip = CHINESEVASSAL
+		potential = {
+			FROM = {
+				is_subject_of_type = warlord
+				has_country_flag = imperial_appenage
+			}
+		}
+		allow = {
+			OR = {
+				is_subject_of_type = warlord
+				culture_group = chinese_group
+				has_country_flag = mandate_of_heaven_claimed
+				has_country_flag = barbarian_claimant_china
+			}
+		}
+	}
+	condition = {
+		tooltip = DONTTOUCHTHAT
+		potential = {
+			exists = yes
+		}
+		allow = {
+			NOT = { tag = AAA }
+			NOT = { FROM = { tag = AAA } }
+		}
+	}
+	condition = {
+		tooltip = WHITE_HORDE_BLOCKER
+		potential = {
+			tag = BOH
+			ai = yes
+			FROM = { tag = HAB ai = yes }
+			NOT = { is_year = 1456 }
+		}
+		allow = {
+			always = no
+		}
+	}
+	condition = {
+		tooltip = WHITE_HORDE_BLOCKER
+		potential = {
+			tag = LIT
+			ai = yes
+			FROM = { tag = MOS ai = yes }
+			NOT = { is_year = 1406 }
+		}
+		allow = { always = no }
+	}
+	condition = {
+		tooltip = WHITE_HORDE_BLOCKER
+		potential = {
+			tag = LIT
+			ai = yes
+			NOT = { is_year = 1381 }
+			FROM = {
+				capital_scope = {
+					OR = {
+						region = north_russia_region
+						region = russia_region
+						region = east_russia_region
+					}
+				}
+				ai = yes
+			}
+		}
+		allow = { always = no }
+	}
+	condition = {
+		tooltip = FRANCE_AI_BLOCKER
+		potential = {
+			tag = FRA
+			ai = yes
+			FROM = {
+				OR = {
+					tag = CAS
+					tag = SPA
+				}
+				ai = yes
+			}
+			NOT = { personality = ai_militarist }
+			is_revolution_target = no
+		}
+		allow = { always = no }
+	}
+	condition = {
+		tooltip = FRANCE_AI_BLOCKER
+		potential = {
+			OR = {
+				tag = POL
+				tag = LIT
+				tag = PLC
+			}
+			ai = yes
+			FROM = {
+				OR = {
+					tag = MOS
+					tag = RUS
+				}
+				ai = yes
+			}
+			AND = {
+				NOT = { personality = ai_militarist }
+				NOT = { is_year = 1556 }
+			}
+		}
+		allow = { always = no }
+	}
+	condition = {
+		tooltip = FRANCE_AI_BLOCKER
+		potential = {
+			tag = FRA
+			ai = yes
+			FROM = { is_part_of_hre = yes }
+			NOT = { personality = ai_militarist }
+		}
+		allow = { always = no }
+	}
+	#condition = {
+	#	tooltip = WHITE_HORDE_BLOCKER
+	#	potential = {
+	#		num_of_colonists = 2
+	#		ai = yes
+	#		NOT = {
+	#			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+	#				colonial_region = colonial_mexico
+	#				value = 8
+	#			}
+	#		}
+	#		FROM = {
+	#			capital_scope = { colonial_region = colonial_mexico }
+	#			ai = yes
+	#		}
+	#	}
+	#	allow = { always = no }
+	#}
+	#condition = {
+	#	tooltip = WHITE_HORDE_BLOCKER
+	#	potential = {
+	#		num_of_colonists = 2
+	#		ai = yes
+	#		NOT = {
+	#			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+	#				colonial_region = colonial_c_america
+	#				value = 6
+	#			}
+	#		}
+	#		FROM = {
+	#			capital_scope = { colonial_region = colonial_c_america }
+	#			ai = yes
+	#		}
+	#	}
+	#	allow = { always = no }
+	#}
+	
+	effect = {
+		country_event = {
+			id = privateers.15
+		}
+	}
+}

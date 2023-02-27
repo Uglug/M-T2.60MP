@@ -1,0 +1,726 @@
+########################################
+# Events for Tarascan
+#
+# written by Sara Wendel-Örtqvist
+####################################
+
+namespace = flavor_tar
+normal_or_historical_nations = yes
+
+# Tzintzuntzan - Capital of the Tarascan state
+country_event = {
+	id = flavor_tar.1
+	title = flavor_tar.1.t
+	desc = flavor_tar.1.d
+	picture = GREAT_BUILDING_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = TAR
+		num_of_cities = 4
+		1468 = {
+			owner = {
+				tag = ROOT
+			}
+		}
+	}
+	
+	mean_time_to_happen = { years = 5 }
+	
+	option = {
+		name = flavor_tar.1.a
+		ai_chance = { factor = 1 }
+		add_adm_power = -25
+		Effect_set_capital = { target=1468 }
+		add_authority = 10
+		1468 = {
+			rename_capital = Tzintzuntzan
+		}
+		add_country_modifier = {
+			name = tar_tzintzuntzan
+			duration = 3650
+		}
+	}
+	option = {
+		name = flavor_tar.1.b
+		ai_chance = { factor = 0 }
+		add_prestige = -5
+	}
+}
+
+########################################
+# Flavor Events for Aztecs
+#
+# written by Henrik Lohmander
+########################################
+
+namespace = flavor_azt
+
+# The Great Pyramid of Tenochtitlan
+country_event = {
+	id = flavor_azt.1
+	title = flavor_azt.1.t
+	desc = flavor_azt.1.d
+	picture = GREAT_BUILDING_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = AZT
+		owns = 1471 # Mexico
+		num_of_cities = 6
+		NOT = { is_year = 1460 }
+	}
+	
+	mean_time_to_happen = { months = 12 }
+	
+	option = {
+		name = flavor_azt.1.a #All our subjects must contribute to the Pyramid!
+		set_ruler_flag = temple_expansion
+		every_owned_province = {
+			limit = { is_capital = no }
+			custom_tooltip = flavor_azt.1.a.tt #Our provinces will pay for part of the cost of the Pyramid.
+			random_list = {
+				80 = {
+					add_province_modifier = {
+						name = azt_contribution_to_great_temple
+						duration = -1
+					}
+				}
+				20 = {
+					spawn_rebels = {
+						type = noble_rebels
+						size = 1
+						win = yes
+					}
+				}
+			}
+		}
+		country_event = { id = flavor_azt.2 days = 120 }
+	}
+	option = {
+		name = flavor_azt.1.b #Let us use our own resources for this project.
+		add_adm_power = -75
+		add_dip_power = -75
+		set_ruler_flag = temple_expansion
+		1471 = {
+			add_province_modifier = {
+				name = azt_templo_mayor
+				duration = -1
+			}
+		}
+	}
+}
+
+#Reaction to Pyramid Project
+country_event = {
+	id = flavor_azt.2
+	title = flavor_azt.2.t
+	desc = flavor_azt.2.d
+	picture = GREAT_BUILDING_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_azt.2.a #Ok.
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 2
+				has_province_modifier = azt_contribution_to_great_temple
+			}
+		}
+		custom_tooltip = flavor_azt.2.a.tt #The great contributions we have received have resulted in an impressive addition to the Pyramid.
+		every_owned_province = {
+			#limit = { has_province_modifier = azt_contribution_to_great_temple }
+			remove_province_modifier = azt_contribution_to_great_temple
+		}
+		add_adm_power = -25
+		add_dip_power = -25
+		add_prestige = 10
+		add_legitimacy = 5
+		1471 = {
+			add_province_modifier = {
+				name = azt_templo_mayor
+				duration = -1
+			}
+		}
+	}
+	option = {
+		name = flavor_azt.2.b #Ok.
+		trigger = {
+			NOT = {
+				num_of_owned_provinces_with = {
+					value = 2
+					has_province_modifier = azt_contribution_to_great_temple
+				}
+			}
+			any_owned_province = {
+				has_province_modifier = azt_contribution_to_great_temple
+			}
+		}
+		custom_tooltip = flavor_azt.2.b.tt #The contributions from our provinces has paid for part of the new Pyramid.
+		every_owned_province = {
+			#limit = { has_province_modifier = azt_contribution_to_great_temple }
+			remove_province_modifier = azt_contribution_to_great_temple
+		}
+		add_adm_power = -35
+		add_dip_power = -35
+		add_prestige = 5
+		add_legitimacy = 5
+		1471 = {
+			add_province_modifier = {
+				name = azt_templo_mayor
+				duration = -1
+			}
+		}
+	}
+	option = {
+		name = flavor_azt.2.c #Ok.
+		trigger = {
+			NOT = {
+				any_owned_province = {
+					has_province_modifier = azt_contribution_to_great_temple
+				}
+			}
+		}
+		custom_tooltip = flavor_azt.2.c.tt #The Pyramid is effectively paid for by only the central government and other city states in its immediate surroundings.
+		add_adm_power = -75
+		add_dip_power = -75
+		1471 = {
+			add_province_modifier = {
+				name = azt_templo_mayor
+				duration = -1
+			}
+		}
+	}
+}
+
+# Tlacaelel
+#country_event = {
+#	id = flavor_azt.3
+#	title = flavor_azt.3.t
+#	desc = flavor_azt.3.d
+#	picture = ADVISOR_eventPicture
+#	
+#	fire_only_once = yes
+#	
+#	trigger = {
+#		tag = AZT
+#		is_at_war = no
+#		NOT = { is_year = 1487 }
+#	}
+#	
+#	mean_time_to_happen = {
+#		months = 90
+#	}
+#	
+#	option = {
+#		name = flavor_azt.3.a
+#		add_prestige = 10
+#		add_adm_power = 75
+#		add_mil_power = 75
+#	}
+#}
+
+# Sumptuary Laws & Warrior Culture
+country_event = {
+	id = flavor_azt.4
+	title = flavor_azt.4.t
+	desc = flavor_azt.4.d
+	picture = MILITARY_CAMP_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = AZT
+		num_of_cities = 8
+		NOT = { is_year = 1500 }
+	}
+	
+	mean_time_to_happen = { months = 48 }
+	
+	option = {
+		name = flavor_azt.4.a #Implement the Sumptuary Laws.
+		add_adm_power = -100
+		add_authority = 10
+		add_country_modifier = {
+			name = azt_sumptuary_laws
+			duration = -1
+		}
+	}
+	option = {
+		name = flavor_azt.4.b #We do not need such laws, tradition will remain our guideline.
+		add_stability_1 = yes
+		add_legitimacy = 15
+	}
+}
+
+# The Famine Year of the One Rabbit (1454)
+#country_event = {
+#	id = flavor_azt.5
+#	title = flavor_azt.5.t
+#	desc = flavor_azt.5.d
+#	picture = FAMINE_eventPicture
+#	
+#	fire_only_once = yes
+#	
+#	trigger = {
+#		tag = AZT
+#		is_year = 1450
+#		NOT = { is_year = 1460 }
+#	}
+#	
+#	mean_time_to_happen = {
+#		months = 30
+#	}
+#	
+#	option = {
+#		name = flavor_azt.5.a #Allow People to Resettle
+#		subtract_stability_1 = yes
+##		add_country_modifier = {
+#		name = azt_one_rabit
+#			duration = 365
+#		}
+#		set_country_flag = azt_had_year_of_famine
+#	}
+#	option = {
+#		name = flavor_azt.5.b #Hold them against their will
+#		subtract_stability_1 = yes
+#		capital_scope = {
+#			hidden_effect = {
+#				set_variable = { which = added_unrest value = 10 }
+#				add_base_unrest = yes
+#			}
+#			custom_tooltip = added_unrest_10
+#		}
+#		add_country_modifier = {
+#			name = azt_one_rabit
+#			duration = 365
+#		}
+#		set_country_flag = azt_had_year_of_famine
+#	}
+#}
+
+# Begining of a new Cycle.
+#country_event = {
+#	id = flavor_azt.6
+#	title = flavor_azt.6.t
+#	desc = flavor_azt.6.d
+#	picture = COMET_SIGHTED_eventPicture
+#	
+#	fire_only_once = yes
+#	
+#	trigger = {
+#		tag = AZT
+#		has_country_flag = azt_had_year_of_famine
+#		NOT = { has_country_modifier = azt_one_rabit }
+#	}
+#	
+#	mean_time_to_happen = {
+#		months = 1
+#	}
+#	
+##	option = {
+#	name = flavor_azt.6.a #For thus it is ended; thus sickness and famine have left us (in the words of the Florentine Codex)
+#		add_stability_1 = yes
+#		if = {
+#			limit = {
+#				has_dlc = "El Dorado"
+#			}
+#			add_doom = -5
+#		}
+#		add_country_modifier = {
+#			name = azt_recovery
+#			duration = 365
+#		}
+#	}
+#}
+
+# The Power Balance of the Triple Alliance
+#country_event = {
+#	id = flavor_azt.7
+#	title = flavor_azt.7.t
+##	desc = flavor_azt.7.d
+#	picture = REFORM_eventPicture
+#	
+#	fire_only_once = yes
+#	
+#	trigger = {
+#		tag = AZT
+#		num_of_cities = 10
+#		is_year = 1470
+###		NOT = { is_year = 1500 }
+#	}
+#	
+#	mean_time_to_happen = {
+#		months = 90
+#	}
+#	
+#	option = {
+#		name = flavor_azt.7.a #Continue to centralize power in Tenochtitlan.
+#		add_stability_1 = yes
+#		add_prestige = 5
+#	}
+#	option = {
+#		name = flavor_azt.7.b #Attempt to empower Texcoco to a greater degree.
+#		subtract_stability_1 = yes
+#		add_country_modifier = {
+#			name = azt_texcoco_rising
+#			duration = -1
+#		}
+#	}
+#}
+
+# Legal Reform of Nezahualcoyotl
+country_event = {
+	id = flavor_azt.8
+	title = flavor_azt.8.t
+	desc = flavor_azt.8.d
+	picture = REFORM_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = AZT
+		num_of_cities = 10
+		NOT = { is_year = 1500 }
+	}
+	
+	mean_time_to_happen = { years = 7 }
+	
+	option = {
+		name = flavor_azt.8.a #Let us implement these laws immediately!
+		add_adm_power = -100
+		add_authority = 10
+		add_country_modifier = {
+			name = nezahualcoyotls_laws
+			duration = -1
+		}
+	}
+	option = {
+		name = flavor_azt.8.b #Why meddle with that which has worked for generations?
+		add_stability_1 = yes
+		add_legitimacy = 15
+	}
+}
+
+# Altepetl Revolt (repeating)
+# City states tended to avoid when the central power showed weakness
+country_event = {
+	id = flavor_azt.9
+	title = flavor_azt.9.t
+	desc = flavor_azt.9.d
+	picture = ANGRY_MOB_eventPicture
+	
+	trigger = {
+		tag = AZT
+		num_of_cities = 10
+		NOT = { adm_tech = 5 }
+		OR = {
+			NOT = { stability = 1 }
+			war_exhaustion = 10
+			NOT = { legitimacy = 50 }
+		}
+		any_owned_province = {
+			can_spawn_rebels = nationalist_rebels
+		}
+	}
+	
+	mean_time_to_happen = { years = 10 }
+	
+	#Choices loosely based upon Nezahualcoyotl's laws
+	option = {
+		name = flavor_azt.9.a #Attempt to conspire with the elders of the city to stop this
+		random_list = {
+			50 = {
+				country_event = { id = flavor_azt.10 days = 60 }
+			}
+			50 = {
+				country_event = { id = flavor_azt.11 days = 60 }
+			}
+		}
+	}
+	option = {
+		name = flavor_azt.9.b #Prepare a military expedition to depose the leader of the city.
+		random_owned_province = {
+			limit = {
+				is_capital = no
+				controlled_by = ROOT
+				can_spawn_rebels = nationalist_rebels
+			}
+			spawn_rebels = {
+				type = nationalist_rebels
+				size = 1
+				win = yes
+			}
+		}
+	}
+}
+
+# Rebellion Averted
+country_event = {
+	id = flavor_azt.10
+	title = flavor_azt.10.t
+	desc = flavor_azt.10.d
+	picture = MILITARY_CAMP_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_azt.10.a #
+		add_prestige = 5
+	}
+}
+
+# Rebellion Grows
+country_event = {
+	id = flavor_azt.11
+	title = flavor_azt.11.t
+	desc = flavor_azt.11.d
+	picture = ANGRY_MOB_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_azt.11.a
+		random_owned_province = {
+			limit = {
+				is_capital = no
+				controlled_by = ROOT
+			}
+			spawn_rebels = {
+				type = nationalist_rebels
+				size = 1
+			}
+		}
+		random_owned_province = {
+			limit = {
+				is_capital = no
+				controlled_by = ROOT
+				can_spawn_rebels = nationalist_rebels
+			}
+			spawn_rebels = {
+				type = nationalist_rebels
+				size = 1
+				win = yes
+			}
+		}
+	}
+}
+
+# Aztec Merchants Harassed.
+country_event = {
+	id = flavor_azt.12
+	title = flavor_azt.12.t
+	desc = flavor_azt.12.d
+	picture = MERCHANTS_TALKING_eventPicture
+	
+	trigger = {
+		tag = AZT
+		is_neighbor_of = TOT
+		NOT = { alliance_with = TOT }
+		NOT = { is_subject_of = TOT }
+		NOT = { TOT = { is_subject_of = AZT } }
+		#is_year = 1420
+		NOT = { is_year = 1500 }
+		NOT = {
+			has_casus_belli = {
+				type = cb_trade_war_triggered
+				target = TOT
+			}
+		}
+	}
+	
+	mean_time_to_happen = { years = 5 }
+	
+	option = {
+		name = flavor_azt.12.a #They will regret this.
+		add_casus_belli = {
+			target = TOT
+			type = cb_trade_war_triggered
+			months = 60
+		}
+	}
+}
+
+#Disloyal Altepetls - Invading Europeans
+country_event = {
+	id = flavor_azt.16
+	title = flavor_azt.16.t
+	desc = flavor_azt.16.d
+	picture = ANGRY_MOB_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = AZT
+		OR = {
+			AND = {
+				religion = nahuatl
+				has_dlc = "El Dorado"
+				is_religion_reformed = no
+			}
+			technology_group = mesoamerican
+		}
+		any_known_country = {
+			capital_scope = { continent = europe }
+			war_with = AZT
+			OR = {
+				war_score_against = {
+					who = AZT
+					value = 50
+				}
+				AZT = {
+					capital_scope = { controlled_by = PREV }
+				}
+			}
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					is_capital = no
+					controlled_by = ROOT
+					can_spawn_rebels = nationalist_rebels
+				}
+				set_province_flag = altepl_joins_invader
+			}
+			random_owned_province = {
+				limit = {
+					is_capital = no
+					NOT = { has_province_flag = altepl_joins_invader }
+					can_spawn_rebels = nationalist_rebels
+					controlled_by = ROOT
+				}
+				set_province_flag = altepl_joins_invader
+			}
+			random_owned_province = {
+				limit = {
+					is_capital = no
+					NOT = { has_province_flag = altepl_joins_invader }
+					can_spawn_rebels = nationalist_rebels
+					controlled_by = ROOT
+				}
+				set_province_flag = altepl_joins_invader
+			}
+			random_owned_province = {
+				limit = {
+					is_capital = no
+					NOT = { has_province_flag = altepl_joins_invader }
+					can_spawn_rebels = nationalist_rebels
+					controlled_by = ROOT
+				}
+				set_province_flag = altepl_joins_invader
+			}
+		}
+	}
+	
+	mean_time_to_happen = { months = 2 }
+	
+	option = { #Rebel Scum
+		name = flavor_azt.16.a
+		random_known_country = {
+			limit = {
+				capital_scope = { continent = europe }
+				war_with = AZT
+				OR = {
+					war_score_against = {
+						who = AZT
+						value = 50
+					}
+					AZT = {
+						capital_scope = { controlled_by = PREV }
+					}
+				}
+			}
+			country_event = { id = flavor_azt.17 }
+		}
+		tooltip = {
+			every_owned_province = {
+				limit = { has_province_flag = altepl_joins_invader }
+				create_revolt = 1
+			}
+		}
+	}
+}
+
+#Disloyal Altepetls
+country_event = {
+	id = flavor_azt.17
+	title = flavor_azt.17.t
+	desc = flavor_azt.17.d
+	picture = ANGRY_MOB_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Great
+		name = flavor_azt.17.a
+		
+		every_province = {
+			limit = {
+				has_province_flag = altepl_joins_invader
+				can_spawn_rebels = nationalist_rebels
+				is_city = yes
+			}
+			spawn_rebels = {
+				type = nationalist_rebels
+				size = 1
+				win = yes
+				friend = PREV
+			}
+			clr_province_flag = altepl_joins_invader
+		}
+		every_province = {
+			limit = {
+				has_province_flag = altepl_joins_invader
+				is_city = yes
+				NOT = { can_spawn_rebels = nationalist_rebels }
+			}
+			spawn_rebels = {
+				type = nationalist_rebels
+				size = 1
+				win = yes
+				friend = PREV
+			}
+			clr_province_flag = altepl_joins_invader
+		}
+	}
+}
+
+# country_event = { #TRIPLE ALLIANCE HARD PUSHED FOR AI
+# Duplicate of aztec_empire decision
+
+country_event = { #TRIPLE ALLIANCE HARD PUSHED FOR AI
+	id = flavor_azt.21
+	title = flavor_azt.21.t
+	desc = flavor_azt.21.d
+	picture = ANGRY_MOB_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_azt.21.a
+		FROM = {
+			inherit = ROOT
+			country_event = { id = flavor_azt.22 }
+		}
+	}
+}
+
+country_event = { #TRIPLE ALLIANCE HARD PUSHED FOR AI
+	id = flavor_azt.22
+	title = flavor_azt.22.t
+	desc = flavor_azt.22.d
+	picture = ANGRY_MOB_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_azt.22.a
+		Effect_set_capital = { target=1471 }
+	}
+}

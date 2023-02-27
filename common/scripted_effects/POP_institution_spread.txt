@@ -1,0 +1,185 @@
+institution_spread_init = {
+	set_province_flag = institution_spread_inited
+	
+	clr_province_flag = institution_meritocracy_spread_1
+	clr_province_flag = institution_meritocracy_spread_2
+	clr_province_flag = institution_meritocracy_spread_3
+	clr_province_flag = institution_meritocracy_spread_4
+	clr_province_flag = institution_meritocracy_spread_5
+	
+	clr_province_flag = institution_banking_spread_1
+	clr_province_flag = institution_banking_spread_2
+	clr_province_flag = institution_banking_spread_3
+	clr_province_flag = institution_banking_spread_4
+	clr_province_flag = institution_banking_spread_5
+	
+	clr_province_flag = institution_legalism_spread_1
+	clr_province_flag = institution_legalism_spread_2
+	clr_province_flag = institution_legalism_spread_3
+	clr_province_flag = institution_legalism_spread_4
+	clr_province_flag = institution_legalism_spread_5
+	
+	clr_province_flag = institution_renaissance_spread_1
+	clr_province_flag = institution_renaissance_spread_2
+	clr_province_flag = institution_renaissance_spread_3
+	clr_province_flag = institution_renaissance_spread_4
+	clr_province_flag = institution_renaissance_spread_5
+	
+	clr_province_flag = institution_casual_literacy_spread_1
+	clr_province_flag = institution_casual_literacy_spread_2
+	clr_province_flag = institution_casual_literacy_spread_3
+	clr_province_flag = institution_casual_literacy_spread_4
+	clr_province_flag = institution_casual_literacy_spread_5
+	
+	clr_province_flag = institution_global_trade_spread_1
+	clr_province_flag = institution_global_trade_spread_2
+	clr_province_flag = institution_global_trade_spread_3
+	clr_province_flag = institution_global_trade_spread_4
+	clr_province_flag = institution_global_trade_spread_5
+	
+	clr_province_flag = institution_manufactories_spread_1
+	clr_province_flag = institution_manufactories_spread_2
+	clr_province_flag = institution_manufactories_spread_3
+	clr_province_flag = institution_manufactories_spread_4
+	clr_province_flag = institution_manufactories_spread_5
+	
+	clr_province_flag = institution_enlightenment_spread_1
+	clr_province_flag = institution_enlightenment_spread_2
+	clr_province_flag = institution_enlightenment_spread_3
+	clr_province_flag = institution_enlightenment_spread_4
+	clr_province_flag = institution_enlightenment_spread_5
+	
+	set_variable = { which = art_center_dist_min_meritocracy value = 500 }
+	set_variable = { which = art_center_dist_min_legalism value = 500 }
+	set_variable = { which = art_center_dist_min_banking value = 500 }
+	set_variable = { which = art_center_dist_min_renaissance value = 500 }
+	set_variable = { which = art_center_dist_min_casual_literacy value = 500 }
+	set_variable = { which = art_center_dist_min_global_trade value = 500 }
+	set_variable = { which = art_center_dist_min_manufactories value = 500 }
+	set_variable = { which = art_center_dist_min_enlightenment value = 500 }
+}
+
+institution_spread_distmodify = {
+	set_variable = { which = art_center_multiplier value = 1 }
+	
+	if = {
+		limit = {
+			PREV = { has_province_modifier = important_center_of_art }
+		}
+		divide_variable = { which = art_center_multiplier value = 1.5 }
+	}
+	if = {
+		limit = {
+			has_province_modifier = median_center_of_art
+		}
+		divide_variable = { which = art_center_multiplier value = 1.5 }
+	}
+	if = {
+		limit = {
+			has_province_modifier = important_center_of_art
+		}
+		multiply_variable = { which = art_center_multiplier value = 0.5 }
+	}
+	
+	if = {
+		limit = {
+			NOT = { has_province_flag = part_cont_of_@event_target:cont_food_center }
+		}
+		multiply_variable = { which = art_center_multiplier value = 10 }
+	}
+	if = {
+		limit = {
+			has_province_flag = part_cont_of_@event_target:cont_food_center
+			
+			NOT = { has_province_flag = part_of_@event_target:sc_food_center }
+		}
+		multiply_variable = { which = art_center_multiplier value = 4 }
+	}
+	if = {
+		limit = {
+			has_province_flag = part_cont_of_@event_target:cont_food_center
+			has_province_flag = part_of_@event_target:sc_food_center
+			
+			NOT = { region = PREV }
+		}
+		multiply_variable = { which = art_center_multiplier value = 2 }
+	}
+	
+	owner = { save_event_target_as = owner_targ }
+	
+	if = {
+		limit = {
+			event_target:owner_targ = { always = yes }
+		}
+		if = {
+			limit = {
+				OR = {
+					owned_by = PREV
+					
+					owner = { is_subject_of = ROOT }
+					
+					owner = { is_subject_of = event_target:owner_targ }
+				}
+			}
+			divide_variable = { which = art_center_multiplier value = 3 }
+		}
+	}
+	else = {
+		set_variable = { which = tvet1 value = 1 }
+	}
+	
+	
+	if = {
+		limit = {
+			NOT = { religion_group = PREV }
+		}
+		multiply_variable = { which = art_center_multiplier value = 4 }
+	}
+	if = {
+		limit = {
+			NOT = { culture_group = PREV }
+		}
+		multiply_variable = { which = art_center_multiplier value = 1.5 }
+	}
+	
+	
+	set_variable = { which = art_power_capped which = art_power }
+	
+	if = {
+		limit = {
+			check_variable = { which = art_power_capped value = 12 }
+		}
+		set_variable = { which = art_power_capped value = 12 }
+	}
+	
+	divide_variable = { which = art_power_capped value = 12 }
+	
+	multiply_variable = { which = art_power_capped which = art_power_capped }
+	
+	if = {
+		limit = {
+			NOT = { check_variable = { which = art_power_capped value = 0.001 } }
+		}
+		set_variable = { which = art_power_capped value = 0.001 }
+	}
+	
+	multiply_variable = { which = art_power_capped value = 1.2 }
+	
+	divide_variable = { which = art_center_multiplier which = art_power_capped }
+	
+	set_variable = { which = assess_overflow value = 500 }
+	divide_variable = { which = assess_overflow which = art_center_multiplier }
+	
+	if = {
+		limit = {
+			check_variable = { which = art_center_dist which = assess_overflow }
+		}
+		set_variable = { which = art_center_dist value = 500 }
+	}
+	else = {
+		multiply_variable = { which = art_center_dist which = art_center_multiplier }
+	}
+	
+	set_variable = { which = art_center_multiplier value = 0 }
+	set_variable = { which = assess_overflow value = 0 }
+}

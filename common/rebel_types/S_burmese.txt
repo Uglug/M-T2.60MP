@@ -1,0 +1,181 @@
+burmese_patriots = { #Burmese were hostile to the Shan and rallied to Taugoo
+	
+	color = { 25 180 25 }
+	area = nation
+	government = any
+	defection = none
+	independence = none
+	defect_delay = 24
+	gfx_type = culture_province
+	
+	resilient = yes
+	reinforcing = yes
+	general = yes
+	smart = yes
+	unit_transfer = yes				# Units remain after enforcing demands
+	will_relocate = yes				# Units will relocate if they have sieged all provinces nearby and has to move over sea.
+	
+	artillery = 0.0
+	infantry = 0.6
+	cavalry = 0.4
+	morale = 1.00
+	
+	# Possible handle actions
+	handle_action_negotiate = no
+	handle_action_stability = no
+	handle_action_build_core = no
+	handle_action_send_missionary = no
+	
+	# The rebel type with the highest modifier for this province gets picked
+	spawn_chance = {
+		factor = 1
+		modifier = {
+			OR = {
+				is_core = TAU
+				is_core = BRM
+			}
+			factor = 3
+		}
+		modifier = {
+			OR = {
+				culture = burmese
+				culture = monic
+				culture = karen
+				culture = chin
+				culture = kachin
+			}
+			factor = 2
+		}
+		modifier = {
+			region = inland_burma_region
+			factor = 2
+		}
+		modifier = {
+			region = coastal_burma_region
+			factor = 2
+		}
+		modifier = {
+			has_province_modifier = nobles_organizing
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { any_neighbor_province = { owned_by = TAU } }
+			NOT = { any_neighbor_province = { owned_by = BRM } }
+			factor = 0
+		}
+		modifier = {
+			owner = { OR = { tag = TAU tag = BRM } }
+			factor = 0
+		}
+		modifier = {
+			OR = {
+				TAU = { num_of_cities = 50 }
+				BRM = { num_of_cities = 50 }
+			}
+			factor = 0
+		}
+		modifier = {
+			NOT = { is_year = 1500 }
+			factor = 0
+		}
+		modifier = {
+			is_year = 1600
+			factor = 0
+		}
+		modifier = {
+			has_province_flag = burmese_patriots_rallied
+			factor = 0
+		}
+	}
+	
+	# This is checked for EACH province in the Area of Operations
+	movement_evaluation = {
+		factor = 1
+		modifier = {
+			factor = 2
+			is_capital = yes
+		}
+		modifier = {
+			factor = 0.1
+			units_in_province = 1
+		}
+		modifier = {
+			factor = 0.001
+			controlled_by = REB
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 2
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 4
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 6
+		}
+	}
+	
+	# Province Scope
+	siege_won_trigger = {
+		any_neighbor_province = { OR = { owned_by = TAU owned_by = BRM } }
+	}
+	siege_won_effect = {
+		if = {
+			limit = { NOT = { has_province_flag = burmese_patriots_rallied } }
+			if = {
+				limit = { exists = TAU }
+				TAU = { add_treasury = 10 }
+			}
+			if = {
+				limit = {
+					NOT = { exists = TAU }
+					exists = BRM
+				}
+				BRM = { add_treasury = 10 }
+			}
+		}
+		set_province_flag = burmese_patriots_rallied
+	}
+	
+	# Country scope
+	can_negotiate_trigger = {
+		any_owned_province = { controlled_by = burmese_patriots }
+	}
+	
+	# Country scope
+	can_enforce_trigger = {
+		always = yes
+	}
+	
+	# Localisation for their demands
+	demands_description = "burmese_patriots_demand"
+	
+	# Country scope
+	demands_enforced_effect = {
+		if = {
+			limit = {
+				exists = TAU
+				NOT = { tag = TAU }
+			}
+			every_owned_province = {
+				limit = { controlled_by = burmese_patriots }
+				cede_province = TAU
+				hidden_effect = { TAU = { add_manpower = 1 add_treasury = 25 } }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { exists = TAU }
+				exists = BRM
+				NOT = { tag = BRM }
+			}
+			every_owned_province = {
+				limit = { controlled_by = burmese_patriots }
+				cede_province = BRM
+				hidden_effect = { BRM = { add_manpower = 1 add_treasury = 25 } }
+			}
+		}
+	}
+}

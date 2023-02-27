@@ -1,0 +1,548 @@
+#HelperDevPoint = {
+#	if = {
+#		limit = {
+#			NOT = { is_variable_equal = { which = devPoint$type$Avg value = 0 } }
+#		}
+#		subtract_variable = { which = devPoint$type$Avg which = devPoint$type$5 }
+#		
+#		set_variable = { which = devPoint$type$5 which = devPoint$type$4 }
+#		set_variable = { which = devPoint$type$4 which = devPoint$type$3 }
+#		set_variable = { which = devPoint$type$3 which = devPoint$type$2 }
+#		set_variable = { which = devPoint$type$2 which = devPoint$type$1 }
+#		set_variable = { which = devPoint$type$1 which = devPoint$type$Cur }
+#		
+#		change_variable = { which = devPoint$type$Avg which = devPoint$type$1 }
+#	}
+#	else = {
+#		set_variable = { which = devPoint$type$Avg which = devPoint$type$Cur }
+#		multiply_variable = { which = devPoint$type$Avg value = 5 }
+#		
+#		set_variable = { which = devPoint$type$5 which = devPoint$type$Cur }
+#		set_variable = { which = devPoint$type$4 which = devPoint$type$Cur }
+#		set_variable = { which = devPoint$type$3 which = devPoint$type$Cur }
+#		set_variable = { which = devPoint$type$2 which = devPoint$type$Cur }
+#		set_variable = { which = devPoint$type$1 which = devPoint$type$Cur }
+#	}
+#	
+#	set_variable = { which = devPoint$type$Cur value = 0 }
+#}
+
+DevUpdateRural = {
+	set_variable = { which = devDiffRural which = devPointRuralCur }
+	export_to_variable = { which = devCurRural value = base_tax }
+	subtract_variable = { which = devDiffRural which = devCurRural }
+	if = {
+		limit = {
+			#if devDiffRural is >=1 or <=1
+			OR = {
+				check_variable = { which = devDiffRural value = 1 }
+				NOT = { check_variable = { which = devDiffRural value = -0.999 } }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { check_variable = { which = devPointRuralCur value = 1 } }
+				NOT = { base_tax = 2 }
+			}
+			#stop province history from being spammed given that you can't set development to 0
+		}
+		else = {
+			multiply_variable = { which = devDiffRural value = 0.001 }
+			multiply_variable = { which = devDiffRural value = 1000 }
+			update_base_dev = {
+				dev_type = tax
+				dev_diff_var = devDiffRural
+			}
+		}
+	}
+	set_variable = { which = devCurRural value = 0 }
+	set_variable = { which = devDiffRural value = 0 }
+}
+
+DevUpdateUrban = {
+	set_variable = { which = devDiffUrban which = devPointUrbanCur }
+	export_to_variable = { which = devCurUrban value = base_production }
+	subtract_variable = { which = devDiffUrban which = devCurUrban }
+	if = {
+		limit = {
+			#if devDiffUrban is >=1 or <=1
+			OR = {
+				check_variable = { which = devDiffUrban value = 1 }
+				NOT = { check_variable = { which = devDiffUrban value = -0.999 } }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { check_variable = { which = devPointUrbanCur value = 1 } }
+				NOT = { base_production = 2 }
+			}
+			#stop province history from being spammed given that you can't set development to 0
+		}
+		else = {
+			multiply_variable = { which = devDiffUrban value = 0.001 }
+			multiply_variable = { which = devDiffUrban value = 1000 }
+			update_base_dev = {
+				dev_type = production
+				dev_diff_var = devDiffUrban
+			}
+		}
+	}
+	set_variable = { which = devCurUrban value = 0 }
+	set_variable = { which = devDiffUrban value = 0 }
+}
+
+DevUpdateUpper = {
+	set_variable = { which = devDiffUpper which = devPointUpperCur }
+	export_to_variable = { which = devCurUpper value = base_manpower }
+	subtract_variable = { which = devDiffUpper which = devCurUpper }
+	if = {
+		limit = {
+			#if devDiffUpper is >=1 or <=1
+			OR = {
+				check_variable = { which = devDiffUpper value = 1 }
+				NOT = { check_variable = { which = devDiffUpper value = -0.999 } }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { check_variable = { which = devPointUpperCur value = 1 } }
+				NOT = { base_manpower = 2 }
+			}
+			#stop province history from being spammed given that you can't set development to 0
+		}
+		else = {
+			multiply_variable = { which = devDiffUpper value = 0.001 }
+			multiply_variable = { which = devDiffUpper value = 1000 }
+			update_base_dev = {
+				dev_type = manpower
+				dev_diff_var = devDiffUpper
+			}
+		}
+	}
+	set_variable = { which = devCurUpper value = 0 }
+	set_variable = { which = devDiffUpper value = 0 }
+}
+
+DevSet = {
+	export_to_variable = {
+		which = Dev_TradePower
+		value = province_trade_power
+	}
+	if = {
+		limit = {
+			check_variable = { which = Dev_TradePower value = 15 }
+		}
+		multiply_variable = { which = Dev_TradePower value = 0.15 }
+		change_variable = { which = Dev_TradePower	value = 2.25 }
+	}
+	else = {
+		multiply_variable = { which = Dev_TradePower value = 0.30 }
+	}
+	
+	#set_variable = { which = devRuralFromTrade	value = 0 }
+	set_variable = { which = devRuralFromTrade	which = Dev_TradePower }
+	multiply_variable = { which = devRuralFromTrade which = TradeRuralContrib }
+	
+	#set_variable = { which = devUrbanFromTrade	value = 0 }
+	set_variable = { which = devUrbanFromTrade	which = Dev_TradePower }
+	multiply_variable = { which = devUrbanFromTrade which = TradeUrbanContrib }
+	
+	#set_variable = { which = devUpperFromTrade	value = 0 }
+	#set_variable = { which = devUpperFromTrade	which = Dev_TradePower }
+	#multiply_variable = { which = devUpperFromTrade which = TradeUpperContrib }
+	
+	set_variable = { which = devFromMine which = statProdMine }
+	multiply_variable = { which = devFromMine value = 2.5 }
+	change_variable = { which = devFromMine which = statTaxMine }
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		fur_low = {
+			change_variable = { which = devFromMine value = 1.5 }
+		}
+		fur_medium = {
+			change_variable = { which = devFromMine value = 3 }
+		}
+		fur_large = {
+			change_variable = { which = devFromMine value = 5.25 }
+		}
+	}
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		pearls_low = {
+			change_variable = { which = devFromMine value = 2.5 }
+		}
+		pearls_medium = {
+			change_variable = { which = devFromMine value = 5.5 }
+		}
+		pearls_large = {
+			change_variable = { which = devFromMine value = 9.5 }
+		}
+	}
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		herring_province_small = {
+			change_variable = { which = devFromMine value = 0.375 }
+		}
+		herring_province_medium = {
+			change_variable = { which = devFromMine value = 0.75 }
+		}
+		herring_province_big = {
+			change_variable = { which = devFromMine value = 1.5 }
+		}
+	}
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		cod_province_small = {
+			change_variable = { which = devFromMine value = 0.375 }
+		}
+		cod_province_medium = {
+			change_variable = { which = devFromMine value = 0.75 }
+		}
+		cod_province_big = {
+			change_variable = { which = devFromMine value = 1.5 }
+		}
+	}
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		ivory_low = {
+			change_variable = { which = devFromMine value = 1.875 }
+		}
+		ivory_medium = {
+			change_variable = { which = devFromMine value = 3.75 }
+		}
+		ivory_large = {
+			change_variable = { which = devFromMine value = 6 }
+		}
+	}
+	if = {
+		limit = {
+			has_province_flag = silk_road_town
+		}
+		change_variable = { which = devFromMine value = 0.75 }
+	}
+	
+	change_variable = { which = devRuralFromIncome which = devFromMine }
+	change_variable = { which = devRuralFromIncome which = statTaxPopRural }
+	
+	#set_variable = { which = devRuralFromProd value = 0 }
+	set_variable = { which = devRuralFromProd which = statTradeValueRural }
+	#change_variable = { which = devRuralFromProd which = timber_province_production }
+	multiply_variable = { which = devRuralFromProd value = 2.5 }
+	change_variable = { which = devRuralFromProd which = food_sale_local }
+	change_variable = { which = devRuralFromProd which = food_sale_region }
+	change_variable = { which = devRuralFromProd which = food_sale_cont }
+	
+	set_variable = { which = devUrbanFromIncome which = statTaxPopUrban }
+	
+	set_variable = { which = devUrbanFromProd which = statTradeValueUrban }
+	change_variable = { which = devUrbanFromProd which = statProdUrban }
+	multiply_variable = { which = devUrbanFromProd value = 2.5 }
+	
+	trigger_switch = {
+		on_trigger = has_building
+		marketplace = { change_variable = { which = devUrbanFromProd value = 0.15 } }
+		merchant_guild = { change_variable = { which = devUrbanFromProd value = 0.375 } }
+		trade_depot = { change_variable = { which = devUrbanFromProd value = 0.75 } }
+		customs_house = { change_variable = { which = devUrbanFromProd value = 1.5 } }
+	}
+	
+	#set_variable = { which = devUpperFromIncome which = statTaxPopUpper }
+	#change_variable = { which = devUpperFromIncome which = university_foreign_students }
+	
+	if = {
+		limit = {
+			check_variable = { which = art_power value = 0.1 }
+		}
+		set_variable = { which = devUpperFromArt which = art_power }
+		multiply_variable = { which = devUpperFromArt value = 0.25 } # 0.25 effect
+	}
+	
+	#set_variable = { which = devRuralFromManpower which = statManpowerRural }
+	#multiply_variable = { which = devRuralFromManpower value = 0.25 } # Conversion rate of 0.25
+	
+	#set_variable = { which = devRuralFromNavLimit which = statNavLimitRural }
+	#multiply_variable = { which = devRuralFromNavLimit value = 0.35 } # conversion rate of 0.35
+	
+	#set_variable = { which = devUrbanFromManpower which = statManpowerUrban }
+	#multiply_variable = { which = devUrbanFromManpower value = 0.25 } # Conversion rate of 0.25
+	
+	#set_variable = { which = devUrbanFromNavLimit which = statNavLimitUrban }
+	#multiply_variable = { which = devUrbanFromNavLimit value = 0.35 } # conversion rate of 0.35
+	
+	#set_variable = { which = devRuralFromFE which = farm_efficiency }
+	#multiply_variable = { which = devRuralFromFE value = 10 } # conversion rate of 10
+	
+	#set_variable = { which = devPointRuralCur value = 0 }
+	#set_variable = { which = devPointUrbanCur value = 0 }
+	#set_variable = { which = devPointUpperCur value = 0 }
+	
+	set_variable = { which = devPointRuralCur which = devRuralFromIncome }
+	change_variable = { which = devPointRuralCur which = devRuralFromTrade }
+	change_variable = { which = devPointRuralCur which = devRuralFromProd }
+	
+	#change_variable = { which = devPointRuralCur which = devRuralFromManpower }
+	#change_variable = { which = devPointRuralCur which = devRuralFromNavLimit }
+	#multiply_variable = { which = devPointRuralCur value = 0.65 } # Tuning
+	
+	if = {
+		limit = {
+			OR = {
+				has_province_flag = good_natural_place
+				has_province_flag = great_natural_place
+				has_province_flag = awesome_natural_place
+			}
+		}
+		change_variable = { which = devPointRuralCur value = 1 }
+	}
+	
+	change_variable = { which = devPointRuralCur value = 1 } # Always at least 1 base tax
+	
+	#multiply_variable = { which = devPointRuralCur value = 0.2 } # Average
+	
+	set_variable = { which = devPointUrbanCur which = devUrbanFromIncome }
+	change_variable = { which = devPointUrbanCur which = devUrbanFromTrade }
+	change_variable = { which = devPointUrbanCur which = devUrbanFromProd }
+	
+	#change_variable = { which = devPointUrbanCur which = devUrbanFromManpower }
+	#change_variable = { which = devPointUrbanCur which = devUrbanFromNavLimit }
+	#multiply_variable = { which = devPointUrbanCur value = 0.65 } # Tuning
+	if = {
+		limit = {
+			OR = {
+				has_province_flag = good_natural_place
+				has_province_flag = great_natural_place
+				has_province_flag = awesome_natural_place
+			}
+		}
+		change_variable = { which = devPointUrbanCur value = 1 }
+	}
+	if = {
+		limit = {
+			has_province_modifier = oasis_route
+		}
+		change_variable = { which = devPointUrbanCur value = 0.25 }
+	}
+	trigger_switch = {
+		on_trigger = has_building
+		trading_post = {
+			change_variable = { which = devPointUrbanCur value = 1 }
+		}
+		trading_company = {
+			change_variable = { which = devPointUrbanCur value = 2 }
+		}
+	}
+	
+	#multiply_variable = { which = devPointUrbanCur value = 0.2 } # Average
+	
+	#set_variable = { which = devPointUpperCur which = devUpperFromIncome }
+	#change_variable = { which = devPointUpperCur which = devUpperFromTrade }
+	set_variable = { which = devPointUpperCur value = 0 }
+	if = {
+		limit = {
+			check_variable = { which = devUpperFromArt value = 0.1 }
+		}
+		change_variable = { which = devPointUpperCur which = devUpperFromArt }
+	}
+	#multiply_variable = { which = devPointUpperCur value = 0.65 } # Tuning
+	if = {
+		limit = {
+			has_building = great_temple
+		}
+		change_variable = { which = devPointUpperCur value = 1 }
+	}
+	if = {
+		limit = {
+			has_province_modifier = has_regional_capital
+		}
+		change_variable = { which = devPointUpperCur value = 1 }
+	}
+	#multiply_variable = { which = devPointUpperCur value = 0.2 } # Average
+	
+	#HelperDevPoint = { type=Rural }
+	#HelperDevPoint = { type=Urban }
+	#HelperDevPoint = { type=Upper }
+	
+	# Tuning					#old dev calc // Rosth
+	#multiply_variable = {
+	#	which = devPointRuralCur
+	#	value = 0.85
+	#}
+	#multiply_variable = {
+	#	which = devPointUrbanCur
+	#	value = 0.85
+	#}
+	
+	# Tuning
+	#New calc which scales down development values with time by -0.1% per year, from -0% at 1356 to -50% at 1856 // Rosth
+    export_to_variable = { which = current_year_calc value = trigger_value:is_year }	#Get the value for the in-game year
+    subtract_variable = { which = current_year_calc value = 1356 } 						#Get the value for the number of years that have passed
+    multiply_variable = { which = current_year_calc value = 0.001 } 					#Multiply the resulting value by 0.001
+    set_variable = { which = dev_scaling_multiplier value = 1 }
+    subtract_variable = { which = dev_scaling_multiplier which = current_year_calc }	#Get the multiplier
+    multiply_variable = {
+        which = devPointRuralCur
+        value = 0.85
+    }
+    multiply_variable = {															#Multiply rural dev with dev_scaling_multiplier.
+        which = devPointRuralCur
+        which = dev_scaling_multiplier
+    }
+    multiply_variable = {
+        which = devPointUrbanCur
+        value = 0.85
+    }
+    multiply_variable = {															#Multiply urban dev with dev_scaling_multiplier.
+        which = devPointUrbanCur
+        which = dev_scaling_multiplier
+    }
+	
+	set_variable = { which = devPointTotal which = devPointRuralCur }
+	change_variable = { which = devPointTotal which = devPointUrbanCur }
+	if = {
+		limit = {
+			check_variable = { which = devPointUpperCur which = devPointTotal }
+		}
+		set_variable = { which = devPointUpperCur which = devPointTotal }
+		subtract_variable = { which = devPointUpperCur value = 1 }
+		if = {
+			limit = {
+				NOT = { check_variable = { which = devPointUpperCur value = 0 } }
+			}
+			set_variable = { which = devPointUpperCur value = 0 }
+		}
+	}
+	
+	multiply_variable = {
+		which = devPointUpperCur
+		value = 0.85
+	}
+    multiply_variable = {															#Multiply upper dev with dev_scaling_multiplier.
+        which = devPointUpperCur
+        which = dev_scaling_multiplier
+    }
+	
+	change_variable = { which = devPointTotal which = devPointUpperCur }
+	
+	# Cleanup
+	set_variable = { which = current_year_calc value = 0 }
+	set_variable = { which = dev_scaling_multiplier value = 0 }
+	set_variable = { which = Dev_TradePower value = 0 }
+	set_variable = { which = devFromMine value = 0 }
+	set_variable = { which = devRuralFromIncome value = 0 }
+	#set_variable = { which = devUpperFromIncome value = 0 }
+	set_variable = { which = devUrbanFromIncome value = 0 }
+	set_variable = { which = devRuralFromTrade value = 0 }
+	set_variable = { which = devUrbanFromTrade value = 0 }
+	#set_variable = { which = devUpperFromTrade value = 0 }
+	set_variable = { which = devUrbanFromProd value = 0 }
+	set_variable = { which = devRuralFromProd value = 0 }
+	#set_variable = { which = devUrbanFromNavLimit value = 0 }
+	#set_variable = { which = devRuralFromNavLimit value = 0 }
+	#set_variable = { which = devRuralFromManpower value = 0 }
+	#set_variable = { which = devUrbanFromManpower value = 0 }
+	#set_variable = { which = devUpperFromManpower value = 0 }
+	set_variable = { which = devUpperFromArt value = 0 }
+	#set_variable = { which = devUpperFromNavLimit value = 0 }
+}
+
+DevEmptySet = {
+	set_variable = { which = devPointRuralCur value = 0 }
+	set_variable = { which = devPointUrbanCur value = 0 }
+	set_variable = { which = devPointUpperCur value = 0 }
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		fur_low = {
+			change_variable = { which = devPointRuralCur value = 0.75 }
+		}
+		fur_medium = {
+			change_variable = { which = devPointRuralCur value = 1.125 }
+		}
+		fur_large = {
+			change_variable = { which = devPointRuralCur value = 1.875 }
+		}
+	}
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		pearls_low = {
+			change_variable = { which = devPointRuralCur value = 1.75 }
+		}
+		pearls_medium = {
+			change_variable = { which = devPointRuralCur value = 4 }
+		}
+		pearls_large = {
+			change_variable = { which = devPointRuralCur value = 7.625 }
+		}
+	}
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		herring_province_small = {
+			change_variable = { which = devPointRuralCur value = 0.375 }
+		}
+		herring_province_medium = {
+			change_variable = { which = devPointRuralCur value = 0.75 }
+		}
+		herring_province_big = {
+			change_variable = { which = devPointRuralCur value = 1.5 }
+		}
+	}
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		cod_province_small = {
+			change_variable = { which = devPointRuralCur value = 0.375 }
+		}
+		cod_province_medium = {
+			change_variable = { which = devPointRuralCur value = 0.75 }
+		}
+		cod_province_big = {
+			change_variable = { which = devPointRuralCur value = 1.5 }
+		}
+	}
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		ivory_low = {
+			change_variable = { which = devPointRuralCur value = 0.75 }
+		}
+		ivory_medium = {
+			change_variable = { which = devPointRuralCur value = 1.125 }
+		}
+		ivory_large = {
+			change_variable = { which = devPointRuralCur value = 1.5 }
+		}
+	}
+	multiply_variable = { which = devPointRuralCur value = 0.5 }
+	
+	set_variable = { which = devPointRuralPOP which = rural_pop }
+	multiply_variable = { which = devPointRuralPOP value = 0.2 }
+	change_variable = { which = devPointRuralCur which = devPointRuralPOP } # Always at least 1 base tax
+	set_variable = { which = devPointRuralPOP value = 0 }
+	
+	if = {
+		limit = {
+			OR = {
+				has_province_flag = good_natural_place
+				has_province_flag = great_natural_place
+				has_province_flag = awesome_natural_place
+			}
+		}
+		change_variable = { which = devPointRuralCur value = 0.5 }
+	}
+	
+	change_variable = { which = devPointRuralCur value = 1 } # Always at least 1 base tax
+		
+	set_variable = { which = devPointTotal which = devPointRuralCur }
+	change_variable = { which = devPointTotal which = devPointUrbanCur }
+	if = {
+		limit = {
+			check_variable = { which = devPointUpperCur which = devPointTotal }
+		}
+		set_variable = { which = devPointUpperCur which = devPointTotal }
+		subtract_variable = { which = devPointUpperCur value = 1 }
+		if = {
+			limit = {
+				NOT = { check_variable = { which = devPointUpperCur value = 0 } }
+			}
+			set_variable = { which = devPointUpperCur value = 0 }
+		}
+	}
+	change_variable = { which = devPointTotal which = devPointUpperCur }
+}

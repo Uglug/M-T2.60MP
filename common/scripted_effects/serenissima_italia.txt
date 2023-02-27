@@ -1,0 +1,2353 @@
+disable_italian_powers = {
+	custom_tooltip = disable_italian_powers_tt
+	hidden_effect = {
+		set_global_flag = italian_powers_disabled
+		AAA = {
+			clr_country_flag = italian_powers_enabled
+		}
+		clr_country_flag = italian_power
+		clr_country_flag = insignificant_italian_power
+		clr_country_flag = local_italian_power
+		clr_country_flag = regional_italian_power
+		clr_country_flag = major_italian_power
+		clr_country_flag = dominant_italian_power
+		clr_country_flag = menacing_italian_power
+		remove_country_modifier = insignificant_italian_power
+		remove_country_modifier = local_italian_power
+		remove_country_modifier = regional_italian_power
+		remove_country_modifier = major_italian_power
+		remove_country_modifier = dominant_italian_power
+		remove_country_modifier = menacing_italian_power
+		every_country = {
+			limit = {
+				has_country_flag = italian_power
+			}
+			clr_country_flag = italian_power
+			country_event = { id = italian_power.5 }
+		}
+	}
+}
+assign_italian_power = { #40% #20% #10% #5% #2%
+#Country dev outside of Italy reduces power by half of its dev
+#Up to country dev outside of Italy won't reduce power
+	multiply_variable = { which = temp value = 2 }
+	if = {
+		limit = {
+			NOT = {
+				check_variable = { which = temp value = 1 }
+			}
+		}
+		multiply_variable = { which = italian_power which = temp }
+	}
+	if = {
+		limit = {
+			check_variable = { which = italian_power value = 0.1 }
+		}
+		if = {
+			limit = {
+				check_variable = { which = italian_power value = 0.2 }
+			}
+			if = {
+				limit = {
+					check_variable = { which = italian_power value = 0.4 }
+				}
+				assign_italian_power_helper = { power=menacing }
+			}
+			else = {
+				assign_italian_power_helper = { power=dominant }
+			}
+		}
+		else = {
+			assign_italian_power_helper = { power=major }
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = italian_power value = 0.02 }
+		}
+		if = {
+			limit = {
+				check_variable = { which = italian_power value = 0.05 }
+			}
+			assign_italian_power_helper = { power=regional }
+		}
+		else = {
+			assign_italian_power_helper = { power=local }
+		}
+	}
+	else = {
+		assign_italian_power_helper = { power=insignificant }
+	}
+	multiply_variable = { which = italian_power value = 100 } #display
+}
+assign_italian_power_helper = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = italian_power }
+		}
+		set_country_flag = italian_power
+		add_country_modifier = { name = $power$_italian_power duration = -1 }
+		country_event = { id = italian_power.3 }
+	}
+	else_if = {
+		limit = {
+			NOT = {
+				has_country_modifier = $power$_italian_power
+			}
+		}
+		remove_country_modifier = insignificant_italian_power
+		remove_country_modifier = local_italian_power
+		remove_country_modifier = regional_italian_power
+		remove_country_modifier = major_italian_power
+		remove_country_modifier = dominant_italian_power
+		remove_country_modifier = menacing_italian_power
+		add_country_modifier = { name = $power$_italian_power duration = -1 }
+		country_event = { id = italian_power.2 }
+	}
+}
+
+consiglio_x_power_big_add_effect = {
+	change_variable = {
+		which = "consiglio_x_power"
+		value = 9
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_x_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "strong_consiglio_dieci"
+		remove_country_modifier = "considerable_consiglio_dieci"
+		remove_country_modifier = "weak_consiglio_dieci"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_x_power" value = 30 }
+			NOT = { check_variable = { which = "consiglio_x_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_dieci"
+		remove_country_modifier = "considerable_consiglio_dieci"
+		remove_country_modifier = "weak_consiglio_dieci"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_x_power" value = 15 }
+			NOT = { check_variable = { which = "consiglio_x_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_dieci"
+		remove_country_modifier = "strong_consiglio_dieci"
+		remove_country_modifier = "weak_consiglio_dieci"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "consiglio_x_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_dieci"
+		remove_country_modifier = "strong_consiglio_dieci"
+		remove_country_modifier = "considerable_consiglio_dieci"
+	}
+}
+
+consiglio_x_power_medium_add_effect = {
+	change_variable = {
+		which = "consiglio_x_power"
+		value = 6
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_x_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "strong_consiglio_dieci"
+		remove_country_modifier = "considerable_consiglio_dieci"
+		remove_country_modifier = "weak_consiglio_dieci"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_x_power" value = 30 }
+			NOT = { check_variable = { which = "consiglio_x_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_dieci"
+		remove_country_modifier = "considerable_consiglio_dieci"
+		remove_country_modifier = "weak_consiglio_dieci"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_x_power" value = 15 }
+			NOT = { check_variable = { which = "consiglio_x_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_dieci"
+		remove_country_modifier = "strong_consiglio_dieci"
+		remove_country_modifier = "weak_consiglio_dieci"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "consiglio_x_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_dieci"
+		remove_country_modifier = "strong_consiglio_dieci"
+		remove_country_modifier = "considerable_consiglio_dieci"
+	}
+}
+
+consiglio_x_power_add_effect = {
+	change_variable = {
+		which = "consiglio_x_power"
+		value = 3
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_x_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "strong_consiglio_dieci"
+		remove_country_modifier = "considerable_consiglio_dieci"
+		remove_country_modifier = "weak_consiglio_dieci"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_x_power" value = 30 }
+			NOT = { check_variable = { which = "consiglio_x_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_dieci"
+		remove_country_modifier = "considerable_consiglio_dieci"
+		remove_country_modifier = "weak_consiglio_dieci"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_x_power" value = 15 }
+			NOT = { check_variable = { which = "consiglio_x_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_dieci"
+		remove_country_modifier = "strong_consiglio_dieci"
+		remove_country_modifier = "weak_consiglio_dieci"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "consiglio_x_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_dieci"
+		remove_country_modifier = "strong_consiglio_dieci"
+		remove_country_modifier = "considerable_consiglio_dieci"
+	}
+}
+
+consiglio_x_power_sub_effect = {
+	change_variable = {
+		which = "consiglio_x_power"
+		value = -3
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_x_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "strong_consiglio_dieci"
+		remove_country_modifier = "considerable_consiglio_dieci"
+		remove_country_modifier = "weak_consiglio_dieci"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_x_power" value = 30 }
+			NOT = { check_variable = { which = "consiglio_x_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_dieci"
+		remove_country_modifier = "considerable_consiglio_dieci"
+		remove_country_modifier = "weak_consiglio_dieci"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_x_power" value = 15 }
+			NOT = { check_variable = { which = "consiglio_x_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_dieci"
+		remove_country_modifier = "strong_consiglio_dieci"
+		remove_country_modifier = "weak_consiglio_dieci"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "consiglio_x_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_dieci"
+		remove_country_modifier = "strong_consiglio_dieci"
+		remove_country_modifier = "considerable_consiglio_dieci"
+	}
+}
+
+consiglio_x_power_medium_sub_effect = {
+	change_variable = {
+		which = "consiglio_x_power"
+		value = -6
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_x_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "strong_consiglio_dieci"
+		remove_country_modifier = "considerable_consiglio_dieci"
+		remove_country_modifier = "weak_consiglio_dieci"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_x_power" value = 30 }
+			NOT = { check_variable = { which = "consiglio_x_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_dieci"
+		remove_country_modifier = "considerable_consiglio_dieci"
+		remove_country_modifier = "weak_consiglio_dieci"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_x_power" value = 15 }
+			NOT = { check_variable = { which = "consiglio_x_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_dieci"
+		remove_country_modifier = "strong_consiglio_dieci"
+		remove_country_modifier = "weak_consiglio_dieci"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "consiglio_x_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_dieci"
+		remove_country_modifier = "strong_consiglio_dieci"
+		remove_country_modifier = "considerable_consiglio_dieci"
+	}
+}
+
+consiglio_x_power_big_sub_effect = {
+	change_variable = {
+		which = "consiglio_x_power"
+		value = -9
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_x_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "strong_consiglio_dieci"
+		remove_country_modifier = "considerable_consiglio_dieci"
+		remove_country_modifier = "weak_consiglio_dieci"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_x_power" value = 30 }
+			NOT = { check_variable = { which = "consiglio_x_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_dieci"
+		remove_country_modifier = "considerable_consiglio_dieci"
+		remove_country_modifier = "weak_consiglio_dieci"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_x_power" value = 15 }
+			NOT = { check_variable = { which = "consiglio_x_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_dieci"
+		remove_country_modifier = "strong_consiglio_dieci"
+		remove_country_modifier = "weak_consiglio_dieci"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "consiglio_x_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_dieci"
+		remove_country_modifier = "strong_consiglio_dieci"
+		remove_country_modifier = "considerable_consiglio_dieci"
+	}
+}
+
+consiglio_p_power_big_add_effect = {
+	change_variable = {
+		which = "consiglio_p_power"
+		value = 9
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_p_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "strong_consiglio_pregadi"
+		remove_country_modifier = "considerable_consiglio_pregadi"
+		remove_country_modifier = "weak_consiglio_pregadi"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_p_power" value = 30 }
+			NOT = { check_variable = { which = "consiglio_p_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_pregadi"
+		remove_country_modifier = "considerable_consiglio_pregadi"
+		remove_country_modifier = "weak_consiglio_pregadi"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_p_power" value = 15 }
+			NOT = { check_variable = { which = "consiglio_p_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_pregadi"
+		remove_country_modifier = "strong_consiglio_pregadi"
+		remove_country_modifier = "weak_consiglio_pregadi"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "consiglio_p_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_pregadi"
+		remove_country_modifier = "strong_consiglio_pregadi"
+		remove_country_modifier = "considerable_consiglio_pregadi"
+	}
+}
+
+consiglio_p_power_medium_add_effect = {
+	change_variable = {
+		which = "consiglio_p_power"
+		value = 6
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_p_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "strong_consiglio_pregadi"
+		remove_country_modifier = "considerable_consiglio_pregadi"
+		remove_country_modifier = "weak_consiglio_pregadi"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_p_power" value = 30 }
+			NOT = { check_variable = { which = "consiglio_p_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_pregadi"
+		remove_country_modifier = "considerable_consiglio_pregadi"
+		remove_country_modifier = "weak_consiglio_pregadi"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_p_power" value = 15 }
+			NOT = { check_variable = { which = "consiglio_p_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_pregadi"
+		remove_country_modifier = "strong_consiglio_pregadi"
+		remove_country_modifier = "weak_consiglio_pregadi"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "consiglio_p_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_pregadi"
+		remove_country_modifier = "strong_consiglio_pregadi"
+		remove_country_modifier = "considerable_consiglio_pregadi"
+	}
+}
+
+consiglio_p_power_add_effect = {
+	change_variable = {
+		which = "consiglio_p_power"
+		value = 3
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_p_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "strong_consiglio_pregadi"
+		remove_country_modifier = "considerable_consiglio_pregadi"
+		remove_country_modifier = "weak_consiglio_pregadi"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_p_power" value = 30 }
+			NOT = { check_variable = { which = "consiglio_p_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_pregadi"
+		remove_country_modifier = "considerable_consiglio_pregadi"
+		remove_country_modifier = "weak_consiglio_pregadi"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_p_power" value = 15 }
+			NOT = { check_variable = { which = "consiglio_p_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_pregadi"
+		remove_country_modifier = "strong_consiglio_pregadi"
+		remove_country_modifier = "weak_consiglio_pregadi"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "consiglio_p_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_pregadi"
+		remove_country_modifier = "strong_consiglio_pregadi"
+		remove_country_modifier = "considerable_consiglio_pregadi"
+	}
+}
+
+consiglio_p_power_sub_effect = {
+	change_variable = {
+		which = "consiglio_p_power"
+		value = -3
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_p_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "strong_consiglio_pregadi"
+		remove_country_modifier = "considerable_consiglio_pregadi"
+		remove_country_modifier = "weak_consiglio_pregadi"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_p_power" value = 30 }
+			NOT = { check_variable = { which = "consiglio_p_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_pregadi"
+		remove_country_modifier = "considerable_consiglio_pregadi"
+		remove_country_modifier = "weak_consiglio_pregadi"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_p_power" value = 15 }
+			NOT = { check_variable = { which = "consiglio_p_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_pregadi"
+		remove_country_modifier = "strong_consiglio_pregadi"
+		remove_country_modifier = "weak_consiglio_pregadi"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "consiglio_p_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_pregadi"
+		remove_country_modifier = "strong_consiglio_pregadi"
+		remove_country_modifier = "considerable_consiglio_pregadi"
+	}
+}
+
+consiglio_p_power_medium_sub_effect = {
+	change_variable = {
+		which = "consiglio_p_power"
+		value = -6
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_p_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "strong_consiglio_pregadi"
+		remove_country_modifier = "considerable_consiglio_pregadi"
+		remove_country_modifier = "weak_consiglio_pregadi"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_p_power" value = 30 }
+			NOT = { check_variable = { which = "consiglio_p_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_pregadi"
+		remove_country_modifier = "considerable_consiglio_pregadi"
+		remove_country_modifier = "weak_consiglio_pregadi"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_p_power" value = 15 }
+			NOT = { check_variable = { which = "consiglio_p_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_pregadi"
+		remove_country_modifier = "strong_consiglio_pregadi"
+		remove_country_modifier = "weak_consiglio_pregadi"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "consiglio_p_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_pregadi"
+		remove_country_modifier = "strong_consiglio_pregadi"
+		remove_country_modifier = "considerable_consiglio_pregadi"
+	}
+}
+
+consiglio_p_power_big_sub_effect = {
+	change_variable = {
+		which = "consiglio_p_power"
+		value = -9
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_p_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "strong_consiglio_pregadi"
+		remove_country_modifier = "considerable_consiglio_pregadi"
+		remove_country_modifier = "weak_consiglio_pregadi"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_p_power" value = 30 }
+			NOT = { check_variable = { which = "consiglio_p_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_pregadi"
+		remove_country_modifier = "considerable_consiglio_pregadi"
+		remove_country_modifier = "weak_consiglio_pregadi"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_p_power" value = 15 }
+			NOT = { check_variable = { which = "consiglio_p_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_pregadi"
+		remove_country_modifier = "strong_consiglio_pregadi"
+		remove_country_modifier = "weak_consiglio_pregadi"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "consiglio_p_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_pregadi"
+		remove_country_modifier = "strong_consiglio_pregadi"
+		remove_country_modifier = "considerable_consiglio_pregadi"
+	}
+}
+
+consiglio_m_power_big_add_effect = {
+	change_variable = {
+		which = "consiglio_m_power"
+		value = 9
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_m_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "strong_maggior_consiglio"
+		remove_country_modifier = "considerable_maggior_consiglio"
+		remove_country_modifier = "weak_maggior_consiglio"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_m_power" value = 30 }
+			NOT = { check_variable = { which = "consiglio_m_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "dominant_maggior_consiglio"
+		remove_country_modifier = "considerable_maggior_consiglio"
+		remove_country_modifier = "weak_maggior_consiglio"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_m_power" value = 15 }
+			NOT = { check_variable = { which = "consiglio_m_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "dominant_maggior_consiglio"
+		remove_country_modifier = "strong_maggior_consiglio"
+		remove_country_modifier = "weak_maggior_consiglio"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "consiglio_m_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "dominant_maggior_consiglio"
+		remove_country_modifier = "strong_maggior_consiglio"
+		remove_country_modifier = "considerable_maggior_consiglio"
+	}
+}
+
+consiglio_m_power_medium_add_effect = {
+	change_variable = {
+		which = "consiglio_m_power"
+		value = 6
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_m_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "strong_maggior_consiglio"
+		remove_country_modifier = "considerable_maggior_consiglio"
+		remove_country_modifier = "weak_maggior_consiglio"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_m_power" value = 30 }
+			NOT = { check_variable = { which = "consiglio_m_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "dominant_maggior_consiglio"
+		remove_country_modifier = "considerable_maggior_consiglio"
+		remove_country_modifier = "weak_maggior_consiglio"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_m_power" value = 15 }
+			NOT = { check_variable = { which = "consiglio_m_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "dominant_maggior_consiglio"
+		remove_country_modifier = "strong_maggior_consiglio"
+		remove_country_modifier = "weak_maggior_consiglio"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "consiglio_m_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "dominant_maggior_consiglio"
+		remove_country_modifier = "strong_maggior_consiglio"
+		remove_country_modifier = "considerable_maggior_consiglio"
+	}
+}
+
+consiglio_m_power_add_effect = {
+	change_variable = {
+		which = "consiglio_m_power"
+		value = 3
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_m_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "strong_maggior_consiglio"
+		remove_country_modifier = "considerable_maggior_consiglio"
+		remove_country_modifier = "weak_maggior_consiglio"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_m_power" value = 30 }
+			NOT = { check_variable = { which = "consiglio_m_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "dominant_maggior_consiglio"
+		remove_country_modifier = "considerable_maggior_consiglio"
+		remove_country_modifier = "weak_maggior_consiglio"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_m_power" value = 15 }
+			NOT = { check_variable = { which = "consiglio_m_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "dominant_maggior_consiglio"
+		remove_country_modifier = "strong_maggior_consiglio"
+		remove_country_modifier = "weak_maggior_consiglio"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "consiglio_m_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "dominant_maggior_consiglio"
+		remove_country_modifier = "strong_maggior_consiglio"
+		remove_country_modifier = "considerable_maggior_consiglio"
+	}
+}
+
+consiglio_m_power_sub_effect = {
+	change_variable = {
+		which = "consiglio_m_power"
+		value = -3
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_m_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "strong_maggior_consiglio"
+		remove_country_modifier = "considerable_maggior_consiglio"
+		remove_country_modifier = "weak_maggior_consiglio"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_m_power" value = 30 }
+			NOT = { check_variable = { which = "consiglio_m_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "dominant_maggior_consiglio"
+		remove_country_modifier = "considerable_maggior_consiglio"
+		remove_country_modifier = "weak_maggior_consiglio"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_m_power" value = 15 }
+			NOT = { check_variable = { which = "consiglio_m_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "dominant_maggior_consiglio"
+		remove_country_modifier = "strong_maggior_consiglio"
+		remove_country_modifier = "weak_maggior_consiglio"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "consiglio_m_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "dominant_maggior_consiglio"
+		remove_country_modifier = "strong_maggior_consiglio"
+		remove_country_modifier = "considerable_maggior_consiglio"
+	}
+}
+
+consiglio_m_power_medium_sub_effect = {
+	change_variable = {
+		which = "consiglio_m_power"
+		value = -6
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_m_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "strong_maggior_consiglio"
+		remove_country_modifier = "considerable_maggior_consiglio"
+		remove_country_modifier = "weak_maggior_consiglio"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_m_power" value = 30 }
+			NOT = { check_variable = { which = "consiglio_m_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "dominant_maggior_consiglio"
+		remove_country_modifier = "considerable_maggior_consiglio"
+		remove_country_modifier = "weak_maggior_consiglio"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_m_power" value = 15 }
+			NOT = { check_variable = { which = "consiglio_m_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "dominant_maggior_consiglio"
+		remove_country_modifier = "strong_maggior_consiglio"
+		remove_country_modifier = "weak_maggior_consiglio"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "consiglio_m_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "dominant_maggior_consiglio"
+		remove_country_modifier = "strong_maggior_consiglio"
+		remove_country_modifier = "considerable_maggior_consiglio"
+	}
+}
+
+consiglio_m_power_big_sub_effect = {
+	change_variable = {
+		which = "consiglio_m_power"
+		value = -9
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_m_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "strong_maggior_consiglio"
+		remove_country_modifier = "considerable_maggior_consiglio"
+		remove_country_modifier = "weak_maggior_consiglio"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_m_power" value = 30 }
+			NOT = { check_variable = { which = "consiglio_m_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "dominant_maggior_consiglio"
+		remove_country_modifier = "considerable_maggior_consiglio"
+		remove_country_modifier = "weak_maggior_consiglio"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_m_power" value = 15 }
+			NOT = { check_variable = { which = "consiglio_m_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "dominant_maggior_consiglio"
+		remove_country_modifier = "strong_maggior_consiglio"
+		remove_country_modifier = "weak_maggior_consiglio"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "consiglio_m_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "dominant_maggior_consiglio"
+		remove_country_modifier = "strong_maggior_consiglio"
+		remove_country_modifier = "considerable_maggior_consiglio"
+	}
+}
+
+doge_power_big_add_effect = {
+	change_variable = {
+		which = "doge_power"
+		value = 9
+	}
+	if = {
+		limit = {
+			check_variable = { which = "doge_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_doge" duration = -1 }
+		remove_country_modifier = "strong_doge"
+		remove_country_modifier = "considerable_doge"
+		remove_country_modifier = "weak_doge"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "doge_power" value = 30 }
+			NOT = { check_variable = { which = "doge_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_doge" duration = -1 }
+		remove_country_modifier = "dominant_doge"
+		remove_country_modifier = "considerable_doge"
+		remove_country_modifier = "weak_doge"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "doge_power" value = 15 }
+			NOT = { check_variable = { which = "doge_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_doge" duration = -1 }
+		remove_country_modifier = "dominant_doge"
+		remove_country_modifier = "strong_doge"
+		remove_country_modifier = "weak_doge"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "doge_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_doge" duration = -1 }
+		remove_country_modifier = "dominant_doge"
+		remove_country_modifier = "strong_doge"
+		remove_country_modifier = "considerable_doge"
+	}
+}
+
+doge_power_medium_add_effect = {
+	change_variable = {
+		which = "doge_power"
+		value = 6
+	}
+	if = {
+		limit = {
+			check_variable = { which = "doge_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_doge" duration = -1 }
+		remove_country_modifier = "strong_doge"
+		remove_country_modifier = "considerable_doge"
+		remove_country_modifier = "weak_doge"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "doge_power" value = 30 }
+			NOT = { check_variable = { which = "doge_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_doge" duration = -1 }
+		remove_country_modifier = "dominant_doge"
+		remove_country_modifier = "considerable_doge"
+		remove_country_modifier = "weak_doge"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "doge_power" value = 15 }
+			NOT = { check_variable = { which = "doge_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_doge" duration = -1 }
+		remove_country_modifier = "dominant_doge"
+		remove_country_modifier = "strong_doge"
+		remove_country_modifier = "weak_doge"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "doge_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_doge" duration = -1 }
+		remove_country_modifier = "dominant_doge"
+		remove_country_modifier = "strong_doge"
+		remove_country_modifier = "considerable_doge"
+	}
+}
+
+doge_power_add_effect = {
+	change_variable = {
+		which = "doge_power"
+		value = 3
+	}
+	if = {
+		limit = {
+			check_variable = { which = "doge_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_doge" duration = -1 }
+		remove_country_modifier = "strong_doge"
+		remove_country_modifier = "considerable_doge"
+		remove_country_modifier = "weak_doge"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "doge_power" value = 30 }
+			NOT = { check_variable = { which = "doge_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_doge" duration = -1 }
+		remove_country_modifier = "dominant_doge"
+		remove_country_modifier = "considerable_doge"
+		remove_country_modifier = "weak_doge"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "doge_power" value = 15 }
+			NOT = { check_variable = { which = "doge_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_doge" duration = -1 }
+		remove_country_modifier = "dominant_doge"
+		remove_country_modifier = "strong_doge"
+		remove_country_modifier = "weak_doge"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "doge_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_doge" duration = -1 }
+		remove_country_modifier = "dominant_doge"
+		remove_country_modifier = "strong_doge"
+		remove_country_modifier = "considerable_doge"
+	}
+}
+
+doge_power_sub_effect = {
+	change_variable = {
+		which = "doge_power"
+		value = -3
+	}
+	if = {
+		limit = {
+			check_variable = { which = "doge_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_doge" duration = -1 }
+		remove_country_modifier = "strong_doge"
+		remove_country_modifier = "considerable_doge"
+		remove_country_modifier = "weak_doge"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "doge_power" value = 30 }
+			NOT = { check_variable = { which = "doge_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_doge" duration = -1 }
+		remove_country_modifier = "dominant_doge"
+		remove_country_modifier = "considerable_doge"
+		remove_country_modifier = "weak_doge"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "doge_power" value = 15 }
+			NOT = { check_variable = { which = "doge_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_doge" duration = -1 }
+		remove_country_modifier = "dominant_doge"
+		remove_country_modifier = "strong_doge"
+		remove_country_modifier = "weak_doge"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "doge_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_doge" duration = -1 }
+		remove_country_modifier = "dominant_doge"
+		remove_country_modifier = "strong_doge"
+		remove_country_modifier = "considerable_doge"
+	}
+}
+
+doge_power_medium_sub_effect = {
+	change_variable = {
+		which = "doge_power"
+		value = -6
+	}
+	if = {
+		limit = {
+			check_variable = { which = "doge_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_doge" duration = -1 }
+		remove_country_modifier = "strong_doge"
+		remove_country_modifier = "considerable_doge"
+		remove_country_modifier = "weak_doge"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "doge_power" value = 30 }
+			NOT = { check_variable = { which = "doge_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_doge" duration = -1 }
+		remove_country_modifier = "dominant_doge"
+		remove_country_modifier = "considerable_doge"
+		remove_country_modifier = "weak_doge"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "doge_power" value = 15 }
+			NOT = { check_variable = { which = "doge_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_doge" duration = -1 }
+		remove_country_modifier = "dominant_doge"
+		remove_country_modifier = "strong_doge"
+		remove_country_modifier = "weak_doge"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "doge_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_doge" duration = -1 }
+		remove_country_modifier = "dominant_doge"
+		remove_country_modifier = "strong_doge"
+		remove_country_modifier = "considerable_doge"
+	}
+}
+
+doge_power_big_sub_effect = {
+	change_variable = {
+		which = "doge_power"
+		value = -9
+	}
+	if = {
+		limit = {
+			check_variable = { which = "doge_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_doge" duration = -1 }
+		remove_country_modifier = "strong_doge"
+		remove_country_modifier = "considerable_doge"
+		remove_country_modifier = "weak_doge"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "doge_power" value = 30 }
+			NOT = { check_variable = { which = "doge_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_doge" duration = -1 }
+		remove_country_modifier = "dominant_doge"
+		remove_country_modifier = "considerable_doge"
+		remove_country_modifier = "weak_doge"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "doge_power" value = 15 }
+			NOT = { check_variable = { which = "doge_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_doge" duration = -1 }
+		remove_country_modifier = "dominant_doge"
+		remove_country_modifier = "strong_doge"
+		remove_country_modifier = "weak_doge"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "doge_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_doge" duration = -1 }
+		remove_country_modifier = "dominant_doge"
+		remove_country_modifier = "strong_doge"
+		remove_country_modifier = "considerable_doge"
+	}
+}
+
+venetia_power_set_effect = {
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_x_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "strong_consiglio_dieci"
+		remove_country_modifier = "considerable_consiglio_dieci"
+		remove_country_modifier = "weak_consiglio_dieci"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_x_power" value = 30 }
+			NOT = { check_variable = { which = "consiglio_x_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_dieci"
+		remove_country_modifier = "considerable_consiglio_dieci"
+		remove_country_modifier = "weak_consiglio_dieci"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_x_power" value = 15 }
+			NOT = { check_variable = { which = "consiglio_x_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_dieci"
+		remove_country_modifier = "strong_consiglio_dieci"
+		remove_country_modifier = "weak_consiglio_dieci"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "consiglio_x_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_consiglio_dieci" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_dieci"
+		remove_country_modifier = "strong_consiglio_dieci"
+		remove_country_modifier = "considerable_consiglio_dieci"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_p_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "strong_consiglio_pregadi"
+		remove_country_modifier = "considerable_consiglio_pregadi"
+		remove_country_modifier = "weak_consiglio_pregadi"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_p_power" value = 30 }
+			NOT = { check_variable = { which = "consiglio_p_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_pregadi"
+		remove_country_modifier = "considerable_consiglio_pregadi"
+		remove_country_modifier = "weak_consiglio_pregadi"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_p_power" value = 15 }
+			NOT = { check_variable = { which = "consiglio_p_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_pregadi"
+		remove_country_modifier = "strong_consiglio_pregadi"
+		remove_country_modifier = "weak_consiglio_pregadi"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "consiglio_p_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_consiglio_pregadi" duration = -1 }
+		remove_country_modifier = "dominant_consiglio_pregadi"
+		remove_country_modifier = "strong_consiglio_pregadi"
+		remove_country_modifier = "considerable_consiglio_pregadi"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_m_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "strong_maggior_consiglio"
+		remove_country_modifier = "considerable_maggior_consiglio"
+		remove_country_modifier = "weak_maggior_consiglio"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_m_power" value = 30 }
+			NOT = { check_variable = { which = "consiglio_m_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "dominant_maggior_consiglio"
+		remove_country_modifier = "considerable_maggior_consiglio"
+		remove_country_modifier = "weak_maggior_consiglio"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "consiglio_m_power" value = 15 }
+			NOT = { check_variable = { which = "consiglio_m_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "dominant_maggior_consiglio"
+		remove_country_modifier = "strong_maggior_consiglio"
+		remove_country_modifier = "weak_maggior_consiglio"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "consiglio_m_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_maggior_consiglio" duration = -1 }
+		remove_country_modifier = "dominant_maggior_consiglio"
+		remove_country_modifier = "strong_maggior_consiglio"
+		remove_country_modifier = "considerable_maggior_consiglio"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "doge_power" value = 45 }
+		}
+		add_country_modifier = { name = "dominant_doge" duration = -1 }
+		remove_country_modifier = "strong_doge"
+		remove_country_modifier = "considerable_doge"
+		remove_country_modifier = "weak_doge"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "doge_power" value = 30 }
+			NOT = { check_variable = { which = "doge_power" value = 45 } }
+		}
+		add_country_modifier = { name = "strong_doge" duration = -1 }
+		remove_country_modifier = "dominant_doge"
+		remove_country_modifier = "considerable_doge"
+		remove_country_modifier = "weak_doge"
+	}
+	if = {
+		limit = {
+			check_variable = { which = "doge_power" value = 15 }
+			NOT = { check_variable = { which = "doge_power" value = 30 } }
+		}
+		add_country_modifier = { name = "considerable_doge" duration = -1 }
+		remove_country_modifier = "dominant_doge"
+		remove_country_modifier = "strong_doge"
+		remove_country_modifier = "weak_doge"
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = "doge_power" value = 15 } }
+		}
+		add_country_modifier = { name = "weak_doge" duration = -1 }
+		remove_country_modifier = "dominant_doge"
+		remove_country_modifier = "strong_doge"
+		remove_country_modifier = "considerable_doge"
+	}
+}
+
+popolo_favor_big_add_effect = {
+	change_variable = {
+		which = "popolo_favor"
+		value = 3
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "popolo_favor" value = 9 }
+		}
+		add_country_modifier = { name = "loved_popolo" duration = -1 }
+		remove_country_modifier = "esteemed_popolo"
+		remove_country_modifier = "known_popolo"
+		remove_country_modifier = "ignored_popolo"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "popolo_favor" value = 7 }
+			NOT = { check_variable = { which = "popolo_favor" value = 9 } }
+		}
+		add_country_modifier = { name = "esteemed_popolo" duration = -1 }
+		remove_country_modifier = "loved_popolo"
+		remove_country_modifier = "known_popolo"
+		remove_country_modifier = "ignored_popolo"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "popolo_favor" value = 4 }
+			NOT = { check_variable = { which = "popolo_favor" value = 7 } }
+		}
+		add_country_modifier = { name = "known_popolo" duration = -1 }
+		remove_country_modifier = "loved_popolo"
+		remove_country_modifier = "esteemed_popolo"
+		remove_country_modifier = "ignored_popolo"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			NOT = { check_variable = { which = "popolo_favor" value = 4 } }
+		}
+		add_country_modifier = { name = "ignored_popolo" duration = -1 }
+		remove_country_modifier = "loved_popolo"
+		remove_country_modifier = "esteemed_popolo"
+		remove_country_modifier = "known_popolo"
+	}
+}
+
+popolo_favor_medium_add_effect = {
+	change_variable = {
+		which = "popolo_favor"
+		value = 2
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "popolo_favor" value = 9 }
+		}
+		add_country_modifier = { name = "loved_popolo" duration = -1 }
+		remove_country_modifier = "esteemed_popolo"
+		remove_country_modifier = "known_popolo"
+		remove_country_modifier = "ignored_popolo"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "popolo_favor" value = 7 }
+			NOT = { check_variable = { which = "popolo_favor" value = 9 } }
+		}
+		add_country_modifier = { name = "esteemed_popolo" duration = -1 }
+		remove_country_modifier = "loved_popolo"
+		remove_country_modifier = "known_popolo"
+		remove_country_modifier = "ignored_popolo"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "popolo_favor" value = 4 }
+			NOT = { check_variable = { which = "popolo_favor" value = 7 } }
+		}
+		add_country_modifier = { name = "known_popolo" duration = -1 }
+		remove_country_modifier = "loved_popolo"
+		remove_country_modifier = "esteemed_popolo"
+		remove_country_modifier = "ignored_popolo"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			NOT = { check_variable = { which = "popolo_favor" value = 4 } }
+		}
+		add_country_modifier = { name = "ignored_popolo" duration = -1 }
+		remove_country_modifier = "loved_popolo"
+		remove_country_modifier = "esteemed_popolo"
+		remove_country_modifier = "known_popolo"
+	}
+}
+
+popolo_favor_add_effect = {
+	change_variable = {
+		which = "popolo_favor"
+		value = 1
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "popolo_favor" value = 9 }
+		}
+		add_country_modifier = { name = "loved_popolo" duration = -1 }
+		remove_country_modifier = "esteemed_popolo"
+		remove_country_modifier = "known_popolo"
+		remove_country_modifier = "ignored_popolo"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "popolo_favor" value = 7 }
+			NOT = { check_variable = { which = "popolo_favor" value = 9 } }
+		}
+		add_country_modifier = { name = "esteemed_popolo" duration = -1 }
+		remove_country_modifier = "loved_popolo"
+		remove_country_modifier = "known_popolo"
+		remove_country_modifier = "ignored_popolo"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "popolo_favor" value = 4 }
+			NOT = { check_variable = { which = "popolo_favor" value = 7 } }
+		}
+		add_country_modifier = { name = "known_popolo" duration = -1 }
+		remove_country_modifier = "loved_popolo"
+		remove_country_modifier = "esteemed_popolo"
+		remove_country_modifier = "ignored_popolo"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			NOT = { check_variable = { which = "popolo_favor" value = 4 } }
+		}
+		add_country_modifier = { name = "ignored_popolo" duration = -1 }
+		remove_country_modifier = "loved_popolo"
+		remove_country_modifier = "esteemed_popolo"
+		remove_country_modifier = "known_popolo"
+	}
+}
+
+popolo_favor_sub_effect = {
+	change_variable = {
+		which = "popolo_favor"
+		value = -1
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "popolo_favor" value = 9 }
+		}
+		add_country_modifier = { name = "loved_popolo" duration = -1 }
+		remove_country_modifier = "esteemed_popolo"
+		remove_country_modifier = "known_popolo"
+		remove_country_modifier = "ignored_popolo"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "popolo_favor" value = 7 }
+			NOT = { check_variable = { which = "popolo_favor" value = 9 } }
+		}
+		add_country_modifier = { name = "esteemed_popolo" duration = -1 }
+		remove_country_modifier = "loved_popolo"
+		remove_country_modifier = "known_popolo"
+		remove_country_modifier = "ignored_popolo"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "popolo_favor" value = 4 }
+			NOT = { check_variable = { which = "popolo_favor" value = 7 } }
+		}
+		add_country_modifier = { name = "known_popolo" duration = -1 }
+		remove_country_modifier = "loved_popolo"
+		remove_country_modifier = "esteemed_popolo"
+		remove_country_modifier = "ignored_popolo"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			NOT = { check_variable = { which = "popolo_favor" value = 4 } }
+		}
+		add_country_modifier = { name = "ignored_popolo" duration = -1 }
+		remove_country_modifier = "loved_popolo"
+		remove_country_modifier = "esteemed_popolo"
+		remove_country_modifier = "known_popolo"
+	}
+}
+
+popolo_favor_medium_sub_effect = {
+	change_variable = {
+		which = "popolo_favor"
+		value = -2
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "popolo_favor" value = 9 }
+		}
+		add_country_modifier = { name = "loved_popolo" duration = -1 }
+		remove_country_modifier = "esteemed_popolo"
+		remove_country_modifier = "known_popolo"
+		remove_country_modifier = "ignored_popolo"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "popolo_favor" value = 7 }
+			NOT = { check_variable = { which = "popolo_favor" value = 9 } }
+		}
+		add_country_modifier = { name = "esteemed_popolo" duration = -1 }
+		remove_country_modifier = "loved_popolo"
+		remove_country_modifier = "known_popolo"
+		remove_country_modifier = "ignored_popolo"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "popolo_favor" value = 4 }
+			NOT = { check_variable = { which = "popolo_favor" value = 7 } }
+		}
+		add_country_modifier = { name = "known_popolo" duration = -1 }
+		remove_country_modifier = "loved_popolo"
+		remove_country_modifier = "esteemed_popolo"
+		remove_country_modifier = "ignored_popolo"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			NOT = { check_variable = { which = "popolo_favor" value = 4 } }
+		}
+		add_country_modifier = { name = "ignored_popolo" duration = -1 }
+		remove_country_modifier = "loved_popolo"
+		remove_country_modifier = "esteemed_popolo"
+		remove_country_modifier = "known_popolo"
+	}
+}
+
+popolo_favor_big_sub_effect = {
+	change_variable = {
+		which = "popolo_favor"
+		value = -3
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "popolo_favor" value = 9 }
+		}
+		add_country_modifier = { name = "loved_popolo" duration = -1 }
+		remove_country_modifier = "esteemed_popolo"
+		remove_country_modifier = "known_popolo"
+		remove_country_modifier = "ignored_popolo"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "popolo_favor" value = 7 }
+			NOT = { check_variable = { which = "popolo_favor" value = 9 } }
+		}
+		add_country_modifier = { name = "esteemed_popolo" duration = -1 }
+		remove_country_modifier = "loved_popolo"
+		remove_country_modifier = "known_popolo"
+		remove_country_modifier = "ignored_popolo"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "popolo_favor" value = 4 }
+			NOT = { check_variable = { which = "popolo_favor" value = 7 } }
+		}
+		add_country_modifier = { name = "known_popolo" duration = -1 }
+		remove_country_modifier = "loved_popolo"
+		remove_country_modifier = "esteemed_popolo"
+		remove_country_modifier = "ignored_popolo"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			NOT = { check_variable = { which = "popolo_favor" value = 4 } }
+		}
+		add_country_modifier = { name = "ignored_popolo" duration = -1 }
+		remove_country_modifier = "loved_popolo"
+		remove_country_modifier = "esteemed_popolo"
+		remove_country_modifier = "known_popolo"
+	}
+}
+
+artigiani_favor_big_add_effect = {
+	change_variable = {
+		which = "artigiani_favor"
+		value = 3
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "artigiani_favor" value = 9 }
+		}
+		add_country_modifier = { name = "loved_artigiani" duration = -1 }
+		remove_country_modifier = "esteemed_artigiani"
+		remove_country_modifier = "known_artigiani"
+		remove_country_modifier = "ignored_artigiani"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "artigiani_favor" value = 7 }
+			NOT = { check_variable = { which = "artigiani_favor" value = 9 } }
+		}
+		add_country_modifier = { name = "esteemed_artigiani" duration = -1 }
+		remove_country_modifier = "loved_artigiani"
+		remove_country_modifier = "known_artigiani"
+		remove_country_modifier = "ignored_artigiani"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "artigiani_favor" value = 4 }
+			NOT = { check_variable = { which = "artigiani_favor" value = 7 } }
+		}
+		add_country_modifier = { name = "known_artigiani" duration = -1 }
+		remove_country_modifier = "loved_artigiani"
+		remove_country_modifier = "esteemed_artigiani"
+		remove_country_modifier = "ignored_artigiani"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			NOT = { check_variable = { which = "artigiani_favor" value = 4 } }
+		}
+		add_country_modifier = { name = "ignored_artigiani" duration = -1 }
+		remove_country_modifier = "loved_artigiani"
+		remove_country_modifier = "esteemed_artigiani"
+		remove_country_modifier = "known_artigiani"
+	}
+}
+
+artigiani_favor_medium_add_effect = {
+	change_variable = {
+		which = "artigiani_favor"
+		value = 2
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "artigiani_favor" value = 9 }
+		}
+		add_country_modifier = { name = "loved_artigiani" duration = -1 }
+		remove_country_modifier = "esteemed_artigiani"
+		remove_country_modifier = "known_artigiani"
+		remove_country_modifier = "ignored_artigiani"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "artigiani_favor" value = 7 }
+			NOT = { check_variable = { which = "artigiani_favor" value = 9 } }
+		}
+		add_country_modifier = { name = "esteemed_artigiani" duration = -1 }
+		remove_country_modifier = "loved_artigiani"
+		remove_country_modifier = "known_artigiani"
+		remove_country_modifier = "ignored_artigiani"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "artigiani_favor" value = 4 }
+			NOT = { check_variable = { which = "artigiani_favor" value = 7 } }
+		}
+		add_country_modifier = { name = "known_artigiani" duration = -1 }
+		remove_country_modifier = "loved_artigiani"
+		remove_country_modifier = "esteemed_artigiani"
+		remove_country_modifier = "ignored_artigiani"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			NOT = { check_variable = { which = "artigiani_favor" value = 4 } }
+		}
+		add_country_modifier = { name = "ignored_artigiani" duration = -1 }
+		remove_country_modifier = "loved_artigiani"
+		remove_country_modifier = "esteemed_artigiani"
+		remove_country_modifier = "known_artigiani"
+	}
+}
+
+artigiani_favor_add_effect = {
+	change_variable = {
+		which = "artigiani_favor"
+		value = 1
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "artigiani_favor" value = 9 }
+		}
+		add_country_modifier = { name = "loved_artigiani" duration = -1 }
+		remove_country_modifier = "esteemed_artigiani"
+		remove_country_modifier = "known_artigiani"
+		remove_country_modifier = "ignored_artigiani"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "artigiani_favor" value = 7 }
+			NOT = { check_variable = { which = "artigiani_favor" value = 9 } }
+		}
+		add_country_modifier = { name = "esteemed_artigiani" duration = -1 }
+		remove_country_modifier = "loved_artigiani"
+		remove_country_modifier = "known_artigiani"
+		remove_country_modifier = "ignored_artigiani"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "artigiani_favor" value = 4 }
+			NOT = { check_variable = { which = "artigiani_favor" value = 7 } }
+		}
+		add_country_modifier = { name = "known_artigiani" duration = -1 }
+		remove_country_modifier = "loved_artigiani"
+		remove_country_modifier = "esteemed_artigiani"
+		remove_country_modifier = "ignored_artigiani"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			NOT = { check_variable = { which = "artigiani_favor" value = 4 } }
+		}
+		add_country_modifier = { name = "ignored_artigiani" duration = -1 }
+		remove_country_modifier = "loved_artigiani"
+		remove_country_modifier = "esteemed_artigiani"
+		remove_country_modifier = "known_artigiani"
+	}
+}
+
+artigiani_favor_sub_effect = {
+	change_variable = {
+		which = "artigiani_favor"
+		value = -1
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "artigiani_favor" value = 9 }
+		}
+		add_country_modifier = { name = "loved_artigiani" duration = -1 }
+		remove_country_modifier = "esteemed_artigiani"
+		remove_country_modifier = "known_artigiani"
+		remove_country_modifier = "ignored_artigiani"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "artigiani_favor" value = 7 }
+			NOT = { check_variable = { which = "artigiani_favor" value = 9 } }
+		}
+		add_country_modifier = { name = "esteemed_artigiani" duration = -1 }
+		remove_country_modifier = "loved_artigiani"
+		remove_country_modifier = "known_artigiani"
+		remove_country_modifier = "ignored_artigiani"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "artigiani_favor" value = 4 }
+			NOT = { check_variable = { which = "artigiani_favor" value = 7 } }
+		}
+		add_country_modifier = { name = "known_artigiani" duration = -1 }
+		remove_country_modifier = "loved_artigiani"
+		remove_country_modifier = "esteemed_artigiani"
+		remove_country_modifier = "ignored_artigiani"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			NOT = { check_variable = { which = "artigiani_favor" value = 4 } }
+		}
+		add_country_modifier = { name = "ignored_artigiani" duration = -1 }
+		remove_country_modifier = "loved_artigiani"
+		remove_country_modifier = "esteemed_artigiani"
+		remove_country_modifier = "known_artigiani"
+	}
+}
+
+artigiani_favor_medium_sub_effect = {
+	change_variable = {
+		which = "artigiani_favor"
+		value = -2
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "artigiani_favor" value = 9 }
+		}
+		add_country_modifier = { name = "loved_artigiani" duration = -1 }
+		remove_country_modifier = "esteemed_artigiani"
+		remove_country_modifier = "known_artigiani"
+		remove_country_modifier = "ignored_artigiani"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "artigiani_favor" value = 7 }
+			NOT = { check_variable = { which = "artigiani_favor" value = 9 } }
+		}
+		add_country_modifier = { name = "esteemed_artigiani" duration = -1 }
+		remove_country_modifier = "loved_artigiani"
+		remove_country_modifier = "known_artigiani"
+		remove_country_modifier = "ignored_artigiani"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "artigiani_favor" value = 4 }
+			NOT = { check_variable = { which = "artigiani_favor" value = 7 } }
+		}
+		add_country_modifier = { name = "known_artigiani" duration = -1 }
+		remove_country_modifier = "loved_artigiani"
+		remove_country_modifier = "esteemed_artigiani"
+		remove_country_modifier = "ignored_artigiani"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			NOT = { check_variable = { which = "artigiani_favor" value = 4 } }
+		}
+		add_country_modifier = { name = "ignored_artigiani" duration = -1 }
+		remove_country_modifier = "loved_artigiani"
+		remove_country_modifier = "esteemed_artigiani"
+		remove_country_modifier = "known_artigiani"
+	}
+}
+
+artigiani_favor_big_sub_effect = {
+	change_variable = {
+		which = "artigiani_favor"
+		value = -3
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "artigiani_favor" value = 9 }
+		}
+		add_country_modifier = { name = "loved_artigiani" duration = -1 }
+		remove_country_modifier = "esteemed_artigiani"
+		remove_country_modifier = "known_artigiani"
+		remove_country_modifier = "ignored_artigiani"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "artigiani_favor" value = 7 }
+			NOT = { check_variable = { which = "artigiani_favor" value = 9 } }
+		}
+		add_country_modifier = { name = "esteemed_artigiani" duration = -1 }
+		remove_country_modifier = "loved_artigiani"
+		remove_country_modifier = "known_artigiani"
+		remove_country_modifier = "ignored_artigiani"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "artigiani_favor" value = 4 }
+			NOT = { check_variable = { which = "artigiani_favor" value = 7 } }
+		}
+		add_country_modifier = { name = "known_artigiani" duration = -1 }
+		remove_country_modifier = "loved_artigiani"
+		remove_country_modifier = "esteemed_artigiani"
+		remove_country_modifier = "ignored_artigiani"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			NOT = { check_variable = { which = "artigiani_favor" value = 4 } }
+		}
+		add_country_modifier = { name = "ignored_artigiani" duration = -1 }
+		remove_country_modifier = "loved_artigiani"
+		remove_country_modifier = "esteemed_artigiani"
+		remove_country_modifier = "known_artigiani"
+	}
+}
+
+mercanti_favor_big_add_effect = {
+	change_variable = {
+		which = "mercanti_favor"
+		value = 3
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "mercanti_favor" value = 9 }
+		}
+		add_country_modifier = { name = "loved_mercanti" duration = -1 }
+		remove_country_modifier = "esteemed_mercanti"
+		remove_country_modifier = "known_mercanti"
+		remove_country_modifier = "ignored_mercanti"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "mercanti_favor" value = 7 }
+			NOT = { check_variable = { which = "mercanti_favor" value = 9 } }
+		}
+		add_country_modifier = { name = "esteemed_mercanti" duration = -1 }
+		remove_country_modifier = "loved_mercanti"
+		remove_country_modifier = "known_mercanti"
+		remove_country_modifier = "ignored_mercanti"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "mercanti_favor" value = 4 }
+			NOT = { check_variable = { which = "mercanti_favor" value = 7 } }
+		}
+		add_country_modifier = { name = "known_mercanti" duration = -1 }
+		remove_country_modifier = "loved_mercanti"
+		remove_country_modifier = "esteemed_mercanti"
+		remove_country_modifier = "ignored_mercanti"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			NOT = { check_variable = { which = "mercanti_favor" value = 4 } }
+		}
+		add_country_modifier = { name = "ignored_mercanti" duration = -1 }
+		remove_country_modifier = "loved_mercanti"
+		remove_country_modifier = "esteemed_mercanti"
+		remove_country_modifier = "known_mercanti"
+	}
+}
+
+mercanti_favor_medium_add_effect = {
+	change_variable = {
+		which = "mercanti_favor"
+		value = 2
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "mercanti_favor" value = 9 }
+		}
+		add_country_modifier = { name = "loved_mercanti" duration = -1 }
+		remove_country_modifier = "esteemed_mercanti"
+		remove_country_modifier = "known_mercanti"
+		remove_country_modifier = "ignored_mercanti"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "mercanti_favor" value = 7 }
+			NOT = { check_variable = { which = "mercanti_favor" value = 9 } }
+		}
+		add_country_modifier = { name = "esteemed_mercanti" duration = -1 }
+		remove_country_modifier = "loved_mercanti"
+		remove_country_modifier = "known_mercanti"
+		remove_country_modifier = "ignored_mercanti"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "mercanti_favor" value = 4 }
+			NOT = { check_variable = { which = "mercanti_favor" value = 7 } }
+		}
+		add_country_modifier = { name = "known_mercanti" duration = -1 }
+		remove_country_modifier = "loved_mercanti"
+		remove_country_modifier = "esteemed_mercanti"
+		remove_country_modifier = "ignored_mercanti"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			NOT = { check_variable = { which = "mercanti_favor" value = 4 } }
+		}
+		add_country_modifier = { name = "ignored_mercanti" duration = -1 }
+		remove_country_modifier = "loved_mercanti"
+		remove_country_modifier = "esteemed_mercanti"
+		remove_country_modifier = "known_mercanti"
+	}
+}
+
+mercanti_favor_add_effect = {
+	change_variable = {
+		which = "mercanti_favor"
+		value = 1
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "mercanti_favor" value = 9 }
+		}
+		add_country_modifier = { name = "loved_mercanti" duration = -1 }
+		remove_country_modifier = "esteemed_mercanti"
+		remove_country_modifier = "known_mercanti"
+		remove_country_modifier = "ignored_mercanti"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "mercanti_favor" value = 7 }
+			NOT = { check_variable = { which = "mercanti_favor" value = 9 } }
+		}
+		add_country_modifier = { name = "esteemed_mercanti" duration = -1 }
+		remove_country_modifier = "loved_mercanti"
+		remove_country_modifier = "known_mercanti"
+		remove_country_modifier = "ignored_mercanti"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "mercanti_favor" value = 4 }
+			NOT = { check_variable = { which = "mercanti_favor" value = 7 } }
+		}
+		add_country_modifier = { name = "known_mercanti" duration = -1 }
+		remove_country_modifier = "loved_mercanti"
+		remove_country_modifier = "esteemed_mercanti"
+		remove_country_modifier = "ignored_mercanti"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			NOT = { check_variable = { which = "mercanti_favor" value = 4 } }
+		}
+		add_country_modifier = { name = "ignored_mercanti" duration = -1 }
+		remove_country_modifier = "loved_mercanti"
+		remove_country_modifier = "esteemed_mercanti"
+		remove_country_modifier = "known_mercanti"
+	}
+}
+
+mercanti_favor_sub_effect = {
+	change_variable = {
+		which = "mercanti_favor"
+		value = -1
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "mercanti_favor" value = 9 }
+		}
+		add_country_modifier = { name = "loved_mercanti" duration = -1 }
+		remove_country_modifier = "esteemed_mercanti"
+		remove_country_modifier = "known_mercanti"
+		remove_country_modifier = "ignored_mercanti"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "mercanti_favor" value = 7 }
+			NOT = { check_variable = { which = "mercanti_favor" value = 9 } }
+		}
+		add_country_modifier = { name = "esteemed_mercanti" duration = -1 }
+		remove_country_modifier = "loved_mercanti"
+		remove_country_modifier = "known_mercanti"
+		remove_country_modifier = "ignored_mercanti"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "mercanti_favor" value = 4 }
+			NOT = { check_variable = { which = "mercanti_favor" value = 7 } }
+		}
+		add_country_modifier = { name = "known_mercanti" duration = -1 }
+		remove_country_modifier = "loved_mercanti"
+		remove_country_modifier = "esteemed_mercanti"
+		remove_country_modifier = "ignored_mercanti"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			NOT = { check_variable = { which = "mercanti_favor" value = 4 } }
+		}
+		add_country_modifier = { name = "ignored_mercanti" duration = -1 }
+		remove_country_modifier = "loved_mercanti"
+		remove_country_modifier = "esteemed_mercanti"
+		remove_country_modifier = "known_mercanti"
+	}
+}
+
+mercanti_favor_medium_sub_effect = {
+	change_variable = {
+		which = "mercanti_favor"
+		value = -2
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "mercanti_favor" value = 9 }
+		}
+		add_country_modifier = { name = "loved_mercanti" duration = -1 }
+		remove_country_modifier = "esteemed_mercanti"
+		remove_country_modifier = "known_mercanti"
+		remove_country_modifier = "ignored_mercanti"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "mercanti_favor" value = 7 }
+			NOT = { check_variable = { which = "mercanti_favor" value = 9 } }
+		}
+		add_country_modifier = { name = "esteemed_mercanti" duration = -1 }
+		remove_country_modifier = "loved_mercanti"
+		remove_country_modifier = "known_mercanti"
+		remove_country_modifier = "ignored_mercanti"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "mercanti_favor" value = 4 }
+			NOT = { check_variable = { which = "mercanti_favor" value = 7 } }
+		}
+		add_country_modifier = { name = "known_mercanti" duration = -1 }
+		remove_country_modifier = "loved_mercanti"
+		remove_country_modifier = "esteemed_mercanti"
+		remove_country_modifier = "ignored_mercanti"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			NOT = { check_variable = { which = "mercanti_favor" value = 4 } }
+		}
+		add_country_modifier = { name = "ignored_mercanti" duration = -1 }
+		remove_country_modifier = "loved_mercanti"
+		remove_country_modifier = "esteemed_mercanti"
+		remove_country_modifier = "known_mercanti"
+	}
+}
+
+mercanti_favor_big_sub_effect = {
+	change_variable = {
+		which = "mercanti_favor"
+		value = -3
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "mercanti_favor" value = 9 }
+		}
+		add_country_modifier = { name = "loved_mercanti" duration = -1 }
+		remove_country_modifier = "esteemed_mercanti"
+		remove_country_modifier = "known_mercanti"
+		remove_country_modifier = "ignored_mercanti"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "mercanti_favor" value = 7 }
+			NOT = { check_variable = { which = "mercanti_favor" value = 9 } }
+		}
+		add_country_modifier = { name = "esteemed_mercanti" duration = -1 }
+		remove_country_modifier = "loved_mercanti"
+		remove_country_modifier = "known_mercanti"
+		remove_country_modifier = "ignored_mercanti"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "mercanti_favor" value = 4 }
+			NOT = { check_variable = { which = "mercanti_favor" value = 7 } }
+		}
+		add_country_modifier = { name = "known_mercanti" duration = -1 }
+		remove_country_modifier = "loved_mercanti"
+		remove_country_modifier = "esteemed_mercanti"
+		remove_country_modifier = "ignored_mercanti"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			NOT = { check_variable = { which = "mercanti_favor" value = 4 } }
+		}
+		add_country_modifier = { name = "ignored_mercanti" duration = -1 }
+		remove_country_modifier = "loved_mercanti"
+		remove_country_modifier = "esteemed_mercanti"
+		remove_country_modifier = "known_mercanti"
+	}
+}
+
+medici_favor_set_effect = {
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "popolo_favor" value = 9 }
+		}
+		add_country_modifier = { name = "loved_popolo" duration = -1 }
+		remove_country_modifier = "esteemed_popolo"
+		remove_country_modifier = "known_popolo"
+		remove_country_modifier = "ignored_popolo"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "popolo_favor" value = 7 }
+			NOT = { check_variable = { which = "popolo_favor" value = 9 } }
+		}
+		add_country_modifier = { name = "esteemed_popolo" duration = -1 }
+		remove_country_modifier = "loved_popolo"
+		remove_country_modifier = "known_popolo"
+		remove_country_modifier = "ignored_popolo"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "popolo_favor" value = 4 }
+			NOT = { check_variable = { which = "popolo_favor" value = 7 } }
+		}
+		add_country_modifier = { name = "known_popolo" duration = -1 }
+		remove_country_modifier = "loved_popolo"
+		remove_country_modifier = "esteemed_popolo"
+		remove_country_modifier = "ignored_popolo"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			NOT = { check_variable = { which = "popolo_favor" value = 4 } }
+		}
+		add_country_modifier = { name = "ignored_popolo" duration = -1 }
+		remove_country_modifier = "loved_popolo"
+		remove_country_modifier = "esteemed_popolo"
+		remove_country_modifier = "known_popolo"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "artigiani_favor" value = 9 }
+		}
+		add_country_modifier = { name = "loved_artigiani" duration = -1 }
+		remove_country_modifier = "esteemed_artigiani"
+		remove_country_modifier = "known_artigiani"
+		remove_country_modifier = "ignored_artigiani"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "artigiani_favor" value = 7 }
+			NOT = { check_variable = { which = "artigiani_favor" value = 9 } }
+		}
+		add_country_modifier = { name = "esteemed_artigiani" duration = -1 }
+		remove_country_modifier = "loved_artigiani"
+		remove_country_modifier = "known_artigiani"
+		remove_country_modifier = "ignored_artigiani"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "artigiani_favor" value = 4 }
+			NOT = { check_variable = { which = "artigiani_favor" value = 7 } }
+		}
+		add_country_modifier = { name = "known_artigiani" duration = -1 }
+		remove_country_modifier = "loved_artigiani"
+		remove_country_modifier = "esteemed_artigiani"
+		remove_country_modifier = "ignored_artigiani"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			NOT = { check_variable = { which = "artigiani_favor" value = 4 } }
+		}
+		add_country_modifier = { name = "ignored_artigiani" duration = -1 }
+		remove_country_modifier = "loved_artigiani"
+		remove_country_modifier = "esteemed_artigiani"
+		remove_country_modifier = "known_artigiani"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "mercanti_favor" value = 9 }
+		}
+		add_country_modifier = { name = "loved_mercanti" duration = -1 }
+		remove_country_modifier = "esteemed_mercanti"
+		remove_country_modifier = "known_mercanti"
+		remove_country_modifier = "ignored_mercanti"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "mercanti_favor" value = 7 }
+			NOT = { check_variable = { which = "mercanti_favor" value = 9 } }
+		}
+		add_country_modifier = { name = "esteemed_mercanti" duration = -1 }
+		remove_country_modifier = "loved_mercanti"
+		remove_country_modifier = "known_mercanti"
+		remove_country_modifier = "ignored_mercanti"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			check_variable = { which = "mercanti_favor" value = 4 }
+			NOT = { check_variable = { which = "mercanti_favor" value = 7 } }
+		}
+		add_country_modifier = { name = "known_mercanti" duration = -1 }
+		remove_country_modifier = "loved_mercanti"
+		remove_country_modifier = "esteemed_mercanti"
+		remove_country_modifier = "ignored_mercanti"
+	}
+	if = {
+		limit = {
+			has_country_flag = medici_system_triggers_active
+			NOT = { check_variable = { which = "mercanti_favor" value = 4 } }
+		}
+		add_country_modifier = { name = "ignored_mercanti" duration = -1 }
+		remove_country_modifier = "loved_mercanti"
+		remove_country_modifier = "esteemed_mercanti"
+		remove_country_modifier = "known_mercanti"
+	}
+}

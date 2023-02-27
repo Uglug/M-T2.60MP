@@ -1,0 +1,1514 @@
+namespace = POP_population_growth
+
+### By Demian, Significant revision and work by KJ
+
+### Misc Expense system by Cool Squid
+
+### These events primarily relate to the growth of populations, and the variables that influence it ###
+
+
+country_event = {  ### Pulse POP Growth event
+	id = POP_population_growth.111
+	title = POP_population_growth.111.t
+	desc = POP_population_growth.111.d
+	picture = FAMINE_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	trigger = { is_year = 1358 }
+	
+	immediate = {
+		regiongroup = {
+			region = {
+				limit = { is_wasteland = no }
+				update_population_pulse = yes
+				
+				if = {
+					limit = { is_city = yes }
+					StatSetCore = yes
+					DevSet = yes
+				}
+				else = { DevEmptySet = yes }
+				
+				DevUpdateRural = yes
+				DevUpdateUrban = yes
+				DevUpdateUpper = yes
+				
+				if = {
+					limit = { is_city = yes }
+					update_misc_expenses_if_capital = yes
+					StatCleanup = yes
+					DiploAnnex_Dev = yes
+				}
+			}
+		}
+	}
+	
+	option = { name = "POP_population_growth.111.a" }
+}
+
+country_event = {  ### Pulse POP Growth event
+	id = POP_population_growth.112
+	title = POP_population_growth.112.t
+	desc = POP_population_growth.112.d
+	picture = FAMINE_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	trigger = { is_year = 1358 }
+	
+	immediate = {
+		every_country = {
+			limit = { has_country_flag = stuffs_set }
+			IncomeSetPre = yes
+		}
+		regiongroup = {
+			region = {
+				limit = { is_wasteland = no }
+				update_population_pulse = yes
+					
+				if = {
+					limit = { is_city = yes }
+					StatSetCore = yes
+					IncomeSet = yes
+					DevSet = yes
+				}
+				else = { DevEmptySet = yes }
+					
+				DevUpdateRural = yes
+				DevUpdateUrban = yes
+				DevUpdateUpper = yes
+					
+				if = {
+					limit = { is_city = yes }
+					update_misc_expenses_if_capital = yes
+					StatCleanup = yes
+				}
+			}
+		}
+		every_country = {
+			limit = { has_country_flag = stuffs_set }
+			get_estate_income = yes
+			IncomeSetPost = yes
+		}
+	}
+	
+	option = { name = "POP_population_growth.112.a" }
+}
+
+country_event = {
+	id = POP_population_growth.001
+	title = POP_population_growth.001.t
+	desc = POP_population_growth.001.d
+	picture = REFORM_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		regiongroup = {
+			region = {
+				limit = { is_wasteland = no }
+				set_variable = { which = national_multiplier_war_exhaustion 	value = 1 }
+				set_variable = { which = national_multiplier_stability 			value = 1 }
+			}
+		}
+		every_country = {
+			export_to_variable = { which = army_size value = army_size }
+			
+			if = {
+				limit = { is_nomad = yes }
+				set_variable = { which = horde_unity value = 1 }
+				set_horde_unity_var = yes
+			}
+			
+			check_ruler_stats = yes
+			
+			### Revising Tech Variables ###
+			export_to_variable = { which = tech_admin_level value = adm_tech }
+			export_to_variable = { which = tech_diplo_level value = dip_tech }
+			export_to_variable = { which = tech_milit_level value = mil_tech }
+			
+			set_variable = { which = innate_rural_pop_tech		which = tech_admin_level }
+			change_variable = { which = innate_rural_pop_tech	which = tech_diplo_level }
+			multiply_variable = { which = innate_rural_pop_tech	value = 0.002 }
+			change_variable = { which = innate_rural_pop_tech	value = 1 }
+
+			set_variable = { which = country_famine_destructiveness_gross value = 0 }
+			
+			every_owned_province = {
+				limit = { is_city = yes }
+				set_variable = { which = tech_admin_level which = PREV }
+			}
+		}
+		
+		every_country = {
+			### Revising War Exhaustion Variables ###
+			get_multiplier_we = yes
+			
+			### Revising stability variable ###
+			### Add Stability Points ###
+			if = {
+				limit = { NOT = { check_variable = { which = stability_points value = 0 } } }
+				set_variable = { which = stability_points value = 0.01 }
+			}
+			check_stability_modifier = yes
+			
+			set_variable = { which = stability_points_added			value = 10 }
+			multiply_variable = { which = stability_points_added 	which = stability_cost_modifier }
+			change_variable = { which = stability_points			which = stability_points_added }
+			check_stability_gain_full = yes
+			
+			every_owned_province = {
+				limit = { is_city = yes }
+				set_variable = { which = national_multiplier_war_exhaustion		which = PREV }
+				set_variable = { which = national_multiplier_stability			which = PREV }
+			}
+			
+			clr_country_flag = has_been_guaranteed
+			
+			if = {
+				limit = { any_country = { has_guaranteed = PREV } }
+				set_country_flag = has_been_guaranteed
+			}
+		}
+
+		# Pop growth
+		country_event = { id = POP_population_growth.0012 }
+	}
+	
+	option = { name = no_localisation }
+}
+
+country_event = {
+	id = POP_population_growth.0012
+	title = no_localisation
+	desc = no_localisation
+	picture = CITY_DEVELOPMENT_eventPicture
+	hidden = yes
+	is_triggered_only = yes
+	
+	immediate = {
+		# Update variables that are used in rural growth rate calculation
+		regiongroup = {
+			region = {
+				limit = { is_wasteland = no }
+				### Heals province Trauma
+				if = {
+					limit = { check_variable = { which = province_trauma value = 0.001 } }
+					set_variable = { which = province_trauma_reduction 			value = 0.008 }
+					multiply_variable = { which = province_trauma_reduction 	which = province_trauma }
+					change_variable = { which = province_trauma_reduction    	 value = 0.33 }
+					subtract_variable = { which = province_trauma 				which = province_trauma_reduction }
+					if = {
+						limit = { NOT = { check_variable = { which = province_trauma value = 0.001 } } }
+						set_variable = { which = province_trauma value = 0 }
+						add_devastation = -100
+						remove_trauma = yes
+					}
+				}
+				else = { set_variable = { which = province_trauma value = 0 } }
+				
+				if = { limit = { check_variable = { which = province_trauma value = 6 } }
+					if = { limit = { check_variable = { which = province_trauma value = 8 } }
+						if = { limit = { check_variable = { which = province_trauma value = 10 } }
+							if = {
+								limit = { NOT = { has_province_modifier = trauma_devastating } }
+								remove_trauma = yes
+								add_permanent_province_modifier = { name = trauma_devastating duration = -1 }
+								add_devastation = 100
+							}
+						}
+						else = {
+							if = {
+								limit = { NOT = { has_province_modifier = trauma_terrible } }
+								remove_trauma = yes
+								add_permanent_province_modifier = { name = trauma_terrible duration = -1 }
+								add_devastation = -100
+								add_devastation = 80
+							}
+						}
+					}
+					else = {
+						if = {
+							limit = { NOT = { has_province_modifier = trauma_harsh } }
+							remove_trauma = yes
+							add_permanent_province_modifier = { name = trauma_harsh duration = -1 }
+							add_devastation = -100
+							add_devastation = 60
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = province_trauma value = 2 } }
+						if = { limit = { check_variable = { which = province_trauma value = 4 } }
+							if = {
+								limit = { NOT = { has_province_modifier = trauma_limited } }
+								remove_trauma = yes
+								add_permanent_province_modifier = { name = trauma_limited duration = -1 }
+								add_devastation = -100
+								add_devastation = 40
+							}
+						}
+						else = {
+							if = {
+								limit = { NOT = { has_province_modifier = trauma_mild } }
+								remove_trauma = yes
+								add_permanent_province_modifier = { name = trauma_mild duration = -1 }
+								add_devastation = -100
+								add_devastation = 20
+							}
+						}
+					}
+				}
+				
+				### Loot fatigue helps to prevent too much infrastructure damage after repeat looting
+				if = {
+					limit = { check_variable = { which = wealth_urban_looted_fatigue value = 0.01 } }
+					subtract_variable = { which = wealth_urban_looted_fatigue value = 0.01 }
+					if = {
+						limit = { NOT = { check_variable = { which = wealth_urban_looted_fatigue value = 0.01 } } }
+						set_variable = { which = wealth_urban_looted_fatigue value = 0 }
+					}
+				}
+				if = {
+					limit = { check_variable = { which = wealth_rural_looted_fatigue value = 0.01 } }
+					subtract_variable = { which = wealth_rural_looted_fatigue value = 0.01 }
+					if = {
+						limit = { NOT = { check_variable = { which = wealth_rural_looted_fatigue value = 0.01 } } }
+						set_variable = { which = wealth_rural_looted_fatigue value = 0 }
+					}
+				}
+				
+				set_variable = { which = food_per_capita_quality 	value = 1.15 }
+				set_variable = { which = food_quality_trauma		value = 1 }
+				
+				### Province trauma reduces food quality per capita, resulting in higher risk of famine and slower growth
+				if = {
+					limit = { check_variable = { which = province_trauma value = 0.001 } }
+					set_variable = { 	   which = food_quality_trauma 		which = province_trauma }
+					change_variable = {    which = food_quality_trauma 		value = 7.5 }
+					divide_variable = {    which = food_quality_trauma 		value = 7.5 }
+				}
+				
+				divide_variable = { which = food_per_capita_quality which = food_quality_trauma }
+				
+				set_variable = { which = food_quality_trauma value = 0 }
+				
+				multiply_variable = {	   which = food_per_capita_quality		which = national_multiplier_war_exhaustion }
+				multiply_variable = {	   which = food_per_capita_quality		which = national_multiplier_stability }
+				multiply_variable = {	   which = food_per_capita_quality      which = local_weather_factor }
+				
+				set_variable = { which = rural_density_s which = rural_density }
+				
+				# Speed up growth if rural density is under 100% and slow it down if over 100%
+				if = {
+					limit = { NOT = { check_variable = { which = rural_density_s value = 1 } } }
+					change_variable = { which = rural_density_s value = 1 }
+					multiply_variable = { which = rural_density_s value = 0.5 }
+				}
+				
+				divide_variable = { which = food_per_capita_quality which = rural_density_s }
+				divide_variable = { which = food_per_capita_quality which = rural_density_s }
+				
+				# Assign this modifier for further use
+				set_variable = { which = food_per_capita_quality_popgrowth which = food_per_capita_quality }
+				set_variable = { which = rural_density_s value = 0 }
+				
+				
+				# Calculate rural yearly growth
+				if = {
+					limit = {
+						check_variable = { which = rural_density value = 1.001 } # Cap is at 1.35, but prevent calc from 1.345
+						#changed to 1.001 to stop growth when rural pop > ideal pop
+					}
+					set_variable = { which = rural_population_growth_pulse value = 0 }
+				}
+				else = {
+					set_variable = { which = modified_growth_rate value = 1 }
+					
+					Pop_InvRatioToVal = {
+						PopTotal=total_pop_r
+						PopRatio=urban_ratio
+						output=rural_pop_t
+					}
+					
+					if = {
+						limit = { NOT = { check_variable = { which = rural_pop_t value = 0.001 } } }
+						set_variable = { which = rural_pop_t value = 0.001 }
+					}
+					
+					random_list = {
+						10 = { set_variable = { which = random_growth_factor 	value = 1.25 } }
+						20 = { set_variable = { which = random_growth_factor 	value = 1.2 } }
+						40 = { set_variable = { which = random_growth_factor 	value = 1 } }
+						20 = { set_variable = { which = random_growth_factor 	value = 0.909 } }
+						10 = { set_variable = { which = random_growth_factor 	value = 0.8 } }
+					}
+					if = {
+						limit = { is_city = no }
+						multiply_variable = {   which = random_growth_factor   	value = 0.5 }
+					}
+					if = {
+						limit = {
+							NOT = { check_variable = { which = rural_pop_t 		value = 10 } }
+							is_city = yes
+						}
+						multiply_variable = {   which = random_growth_factor    value = 5 }
+					}
+					
+					multiply_variable = {   which = modified_growth_rate    	which = random_growth_factor }
+					multiply_variable = { 	which = modified_growth_rate 		which = food_per_capita_quality_popgrowth }
+					
+					set_variable = { which = random_growth_factor value = 0 }
+					set_variable = { which = food_per_capita_quality_popgrowth value = 0 }
+					
+					if = {
+						limit = {
+							check_variable = { which = jizya_tax_percent 		value = 0.01 }
+							is_city = yes
+						}
+						set_variable = { 	  which = jizya_pop_modification 	which = jizya_tax_percent }
+						divide_variable = {   which = jizya_pop_modification	value = 3 }
+						change_variable = {   which = jizya_pop_modification 	value = 1 }
+						divide_variable = {   which = modified_growth_rate 		which = jizya_pop_modification }
+					}
+					if = {
+						limit = {
+							owner = { has_country_modifier = already_relieved_serfs }
+							is_city = yes
+						}
+						owner = {
+							trigger_switch = {
+								on_trigger = has_country_modifier
+								improve_serf_conditions_1 = {
+									PREV = { multiply_variable = { 	which = modified_growth_rate 	value = 1.03 } }
+								}
+								improve_serf_conditions_2 = {
+									PREV = { multiply_variable = { 	which = modified_growth_rate 	value = 1.06 } }
+								}
+								improve_serf_conditions_3 = {
+									PREV = { multiply_variable = { 	which = modified_growth_rate 	value = 1.09 } }
+								}
+								improve_serf_conditions_4 = {
+									PREV = { multiply_variable = { 	which = modified_growth_rate 	value = 1.12 } }
+								}
+								improve_serf_conditions_5 = {
+									PREV = { multiply_variable = { 	which = modified_growth_rate 	value = 1.15 } }
+								}
+							}
+						}
+					}
+					
+					if = {
+						limit = { check_variable = { which = province_trauma value = 0.001 } }
+						set_variable = {		which = growth_rate_trauma_reduced	which = rural_pop }
+						multiply_variable = {	which = growth_rate_trauma_reduced  which = province_trauma }
+						divide_variable = { 	which = growth_rate_trauma_reduced  value = 15 }
+						multiply_variable = { 	which = growth_rate_trauma_reduced  which = rural_density }
+					}
+					
+					subtract_variable = { 	which = modified_growth_rate 			which = growth_rate_trauma_reduced }
+					
+					if = {
+						limit = { NOT = { check_variable = { which = modified_growth_rate value = 0.001 } } }
+						set_variable = { which = modified_growth_rate value = 0.001 }
+					}
+				
+					PopGrowthTick = {
+						type1=which type2=which type3=value type4=which
+						popVal=rural_pop_t popMax=ideal_rural_pop timeToMax=450 scale=modified_growth_rate
+						return=rural_population_growth_pulse
+					}
+					
+					# Temporary (ha!) solution to help low-pop provinces with high innate rural caps reach reasonable pop levels
+					# 1) divides innate rural cap by the current pop level
+					# 2) divides the resulting value by 2
+					# 3) multiplies the rural growth pulse by it
+					# The further the current pop is from the innate rural cap - the faster it grows
+					# Only applies to provinces that are not in India or China
+					if = {
+						limit = {
+							NOT = {
+								continent = indian_continent
+								continent = east_asia
+							}
+						}
+						set_variable = { which = rural_pop_compare which = innate_rural_pop }
+						if = { limit = { is_variable_equal = { which = rural_pop_display value = 0 } } }
+						else = {
+							divide_variable = { which = rural_pop_compare which = rural_pop_display }
+							multiply_variable = { which = rural_pop_compare value = 0.5 }
+							if = {
+								limit = { check_variable = { which = rural_pop_compare value = 1 } }
+								multiply_variable = { which = rural_population_growth_pulse which = rural_pop_compare }
+							}
+						}
+						set_variable = { which = rural_pop_compare value = 0 }
+					}
+					
+					if = {
+						limit = {
+							owner = {
+								is_subject_of_type = colony
+								overlord = { full_idea_group = exploration_ideas }
+							}
+						}
+						multiply_variable = { which = rural_population_growth_pulse value = 1.05 }
+					}
+					
+					set_variable = { which = rural_pop_t value = 0 }
+					
+					# BonusRP
+					# Added to speed up growth in later eras
+					# Not as much as the ideal rural cap growth since there is a modifier above which will bring it close together anyway
+					trigger_switch = {
+							on_trigger = is_year
+							1900 = { multiply_variable = { which = rural_population_growth_pulse value = 1.40 } }
+							1800 = { multiply_variable = { which = rural_population_growth_pulse value = 1.20 } }
+							1700 = { multiply_variable = { which = rural_population_growth_pulse value = 1.12 } }
+							1600 = { multiply_variable = { which = rural_population_growth_pulse value = 1.06 } }
+							1358 = { multiply_variable = { which = rural_population_growth_pulse value = 1.03 } }
+					}
+					
+					# Set rural pop growth to 0 if not over 3 men per year
+					if = {
+						limit = { NOT = { check_variable = { which = rural_population_growth_pulse value = 0.003 } } }
+						set_variable = { which = rural_population_growth_pulse value = 0.001 }
+					}
+					else = {
+						# Pulse fires 3 times per year
+						divide_variable = { which = rural_population_growth_pulse			value = 3 }
+					}
+					
+					set_variable = { which = modified_growth_rate value = 0 }
+					set_variable = { which = growth_rate_trauma_reduced value = 0 }
+				}
+			}
+		}
+	}
+	
+	option = { name = no_localisation }
+}
+
+country_event = { ### This event tabulates food in every province
+	id = POP_population_growth.002
+	title = "POP_population_growth.002.title"
+	desc = "POP_population_growth.002.desc"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	hidden = yes
+	is_triggered_only = yes
+	
+	immediate = {
+		# Update food production in all provinces
+		regiongroup = {
+			region = {
+				limit = { is_wasteland = no }
+				set_variable = { which = surplus_food value = 0.15 }
+				change_variable = { which = surplus_food which = farm_efficiency }
+				
+				# Decentralized states will suffer corruption, inefficiency and a less stable food supply
+				if = {
+					limit = { has_province_flag = greater_nobles_control_province }
+					if = {
+						limit = {
+							owner = { has_country_modifier = already_relieved_serfs }
+							is_city = yes
+						}
+						owner = {
+							trigger_switch = {
+								on_trigger = has_country_modifier
+								improve_serf_conditions_1 = {
+									PREV = { multiply_variable = { 	which = surplus_food 	value = 0.8 } }
+								}
+								improve_serf_conditions_2 = {
+									PREV = { multiply_variable = { 	which = surplus_food 	value = 0.8 } }
+								}
+								improve_serf_conditions_3 = {
+									PREV = { multiply_variable = { 	which = surplus_food 	value = 0.85 } }
+								}
+								improve_serf_conditions_4 = {
+									PREV = { multiply_variable = { 	which = surplus_food 	value = 0.9 } }
+								}
+								improve_serf_conditions_5 = {
+									PREV = { multiply_variable = { 	which = surplus_food 	value = 0.95 } }
+								}
+							}
+						}
+					}
+					else = { multiply_variable = { which = surplus_food value = 0.75 } }
+				}
+				
+				set_variable = { which = base_food which = surplus_food }
+				change_variable = { which = base_food value = 1 } # Rural pops always grow what they eat
+				
+				multiply_by_nontribal_pop = { var=surplus_food }
+				multiply_by_nontribal_pop = { var=base_food }
+				
+				# Always produce (0.15 + FE) / 2 surplus food as a base unit
+				set_variable = { which = food_floor value = 0.15 }
+				change_variable = { which = food_floor which = farm_efficiency }
+				multiply_variable = { which = food_floor value = 0.5 }
+				
+				change_variable = { which = surplus_food which = food_floor }
+				change_variable = { which = base_food which = food_floor }
+				change_variable = { which = base_food value = 0.5 }
+				
+				set_variable = { which = regional_food_before_consumption which = surplus_food }
+				set_variable = { which = total_surplus_output which = surplus_food }
+				
+				change_variable = { which = surplus_food which = eats_continent_food } # Urban food import
+				subtract_variable = { which = surplus_food which = rural_production_power_save } # Continental food export
+				subtract_variable = { which = surplus_food which = urban_pop }
+				
+				set_variable = { which = surplus_food_save which = surplus_food }
+				
+				set_variable = { which = food_floor value = 0 }
+			}
+		}
+		
+		# Use updated food vars to calculate food factor and food price
+		regiongroup = {
+			if = {
+				limit = { NOT = { check_variable = { which = surplus_food value = 0.001 } } }
+				set_variable = { which = surplus_food value = 0.001 }
+			}
+			if = {
+				limit = { NOT = { check_variable = { which = regional_food_before_consumption value = 0.001 } } }
+				set_variable = { which = regional_food_before_consumption value = 0.001 }
+			}
+			
+			region_popgrowth_1 = yes
+			
+			set_variable = { which = regional_food_factor which = surplus_food }
+			divide_variable = { which = regional_food_factor which = regional_food_before_consumption }
+			
+			set_variable = { which = food_price_local_divisor which = regional_food_factor }
+			multiply_variable = { which = food_price_local_divisor value = 2 }
+			
+			if = {
+				limit = { NOT = { check_variable = { which = food_price_local_divisor value = 0.1 } } }
+				set_variable = { which = food_price_local_divisor value = 0.1 }
+			}
+			
+			set_variable = { which = food_price_local value = 0.45 }
+			divide_variable = { which = food_price_local which = food_price_local_divisor }
+			if = {
+				limit = { NOT = { check_variable = { which = food_price_local value = 0.01 } } }
+				set_variable = { which = food_price_local value = 0.01 }
+			}
+			
+			multiply_variable = { which = regional_food_factor value = 1.25 } # Tuning
+			
+			# Cap food factor
+			if = {
+				limit = { NOT = { check_variable = { which = regional_food_factor value = 0.01 } } }
+				set_variable = { which = regional_food_factor value = 0.01 }
+			}
+			else_if = {
+				limit = { check_variable = { which = regional_food_factor value = 1 } }
+				set_variable = { which = regional_food_factor value = 1 }
+			}
+			
+			region_popgrowth_2 = yes
+			
+			set_variable = { which = regional_food_before_consumption value = 0 }
+			set_variable = { which = food_price_local_divisor value = 0 }
+		}
+	}
+	
+	option = {
+		name = "POP_population_growth.002.a"
+		ai_chance = { factor = 100 }
+	}
+}
+
+country_event = {
+	id = POP_population_growth.004
+	title = "POP_population_growth.004.title"
+	desc = "POP_population_growth.004.desc"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	hidden = yes
+	is_triggered_only = yes
+	
+	immediate = {
+		contgroup = {
+			# Food exported to continental market
+			every_province = {
+				limit = {
+					has_province_flag = part_cont_of_@PREV
+					is_wasteland = no
+					check_variable = { which = rural_production_power_save value = 0.1 }
+				}
+				set_export_food_transfer_value = yes
+				
+				set_variable = { which = export_food_transfer which = rural_production_power_save }
+				multiply_variable = { which = export_food_transfer which = export_food_transfer_value }
+				
+				PREV = { change_variable = { which = export_food_transfer which = PREV } }
+				
+				set_variable = { which = export_food_transfer value = 0 }
+				set_variable = { which = export_food_transfer_value value = 0 }
+			}
+			
+			set_variable = { which = continent_food 			   which = export_food_transfer }
+			multiply_variable = { which = continent_food		   value = 0.75 } ### Spoilage
+			set_variable = { which = continent_food_before_nomnom  which = continent_food } ### Food before any is consumed
+			
+			# Famine relief eats continental food
+			every_province = {
+				limit = {
+					has_province_flag = famine_measures_taken
+					has_province_flag = part_cont_of_@PREV
+					is_city = yes
+				}
+				set_to_nontribal_pop = { var=continent_food_famine }
+				
+				if = {
+					limit = { has_province_flag = famine_relief_10_percent }
+					multiply_variable = { which = continent_food_famine value = 0.1 }
+				}
+				else_if = {
+					limit = { has_province_flag = famine_relief_20_percent }
+					multiply_variable = { which = continent_food_famine value = 0.2 }
+				}
+				else = { set_variable = { which = continent_food_famine value = 0 } }
+				
+				PREV = { change_variable = { which = continent_food_famine which = PREV } }
+				
+				set_variable = { which = continent_food_famine value = 0 }
+			}
+			
+			subtract_variable = { which = continent_food 	which = continent_food_famine }
+			
+			# Food import by cities
+			set_variable = { which = eats_continent_food value = 0 }
+			
+			every_province = {
+				limit = {
+					has_province_flag = part_cont_of_@PREV
+					is_wasteland = no
+					check_variable = { which = eats_continent_food   value = 0.01 }
+				}
+				PREV = { change_variable = { which = eats_continent_food	which = PREV } }
+			}
+			
+			subtract_variable = { which = continent_food which = eats_continent_food }
+			
+			if = {
+				limit = { NOT = { check_variable = { which = continent_food value = 0.001 } } }
+				set_variable = { which = continent_food value = 0.001 }
+			}
+			if = {
+				limit = { NOT = { check_variable = { which = continent_food_before_nomnom value = 0.01 } } }
+				set_variable = { which = continent_food_before_nomnom value = 0.01 }
+			}
+			
+			set_variable = { which = continent_food_factor which = continent_food }
+			divide_variable = { which = continent_food_factor which = continent_food_before_nomnom }
+			
+			set_variable = { which = continent_food_percent_uneaten 	which = continent_food_factor }
+			
+			multiply_variable = { which = continent_food_factor     	value = 0.50 } # Tuning
+			
+			if = {
+				limit = { NOT = { check_variable = { which = continent_food_factor value = 0.1 } } }
+				set_variable = { which = continent_food_factor value = 0.1 }
+			}
+			if = {
+				limit = { NOT = { check_variable = { which = continent_food_percent_uneaten value = 0.05 } } }
+				set_variable = { which = continent_food_percent_uneaten value = 0.05 }
+			}
+			
+			set_variable = { which = food_price_cont_divisor which = continent_food_percent_uneaten }
+			multiply_variable = { which = food_price_cont_divisor value = 2 }
+			
+			set_variable = { which = food_price_cont value = 1 }
+			divide_variable = { which = food_price_cont which = food_price_cont_divisor }
+			
+			every_province = {
+				limit = {
+					has_province_flag = part_cont_of_@PREV
+					is_wasteland = no
+				}
+				set_variable = { which = continent_food_percent_uneaten 	which = PREV }
+				set_variable = { which = continent_food  					which = PREV }
+				set_variable = { which = continent_food_factor  			which = PREV }
+				set_variable = { which = food_price_cont 					which = PREV }
+				
+				# Calculate the effect of warehouses
+				if = {
+					limit = { has_building = warehouse }
+					multiply_variable = { which = continent_food_factor value = 1.15 }
+					divide_variable = { which = food_price_cont value = 1.05 }
+				}
+				else_if = {
+					limit = { has_building = warehouse_district }
+					multiply_variable = { which = continent_food_factor value = 1.5 }
+					divide_variable = { which = food_price_cont value = 1.15 }
+				}
+			}
+			
+			set_variable = { which = export_food_transfer value = 0 }
+			set_variable = { which = continent_food_before_nomnom value = 0 }
+			set_variable = { which = eats_continent_food value = 0 }
+			set_variable = { which = food_price_cont_divisor value = 0 }
+		}
+	}
+	option = {
+		name = "POP_population_growth.004.a"
+		ai_chance = { factor = 100 }
+	}
+}
+
+country_event = {  ### This event adds urban population to a province
+	id = POP_population_growth.006
+	title = POP_population_growth.006.t
+	desc = POP_population_growth.006.d
+	picture = REFORM_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		regiongroup = {
+			region = {
+				limit = { is_wasteland = no }
+				if = {
+					limit = {
+						OR = {
+							NOT = { check_variable = { which = urban_gravity_total value = 0.1 } }
+							check_variable = { which = urban_density value = 1.345 } # Cap is at 1.35, but prevent calc from 1.345
+						}
+					}
+					set_variable = { which = urban_population_growth_pulse value = 0 }
+				}
+				else = {
+					# urban pop growth
+					set_variable = { which = modified_urban_growth_rate value = 1 }
+					
+					Pop_RatioToVal = {
+						PopTotal=total_pop_r
+						PopRatio=urban_ratio
+						output=urban_pop_t
+					}
+					
+					if = {
+						limit = { NOT = { check_variable = { which = urban_pop_t value = 0.001 } } }
+						set_variable = { which = urban_pop_t value = 0.001 }
+					}
+					
+					random_list = {
+						20 = { set_variable = { which = urban_random_growth_factor value = 1.2 } }
+						20 = { set_variable = { which = urban_random_growth_factor value = 1.1 } }
+						20 = { set_variable = { which = urban_random_growth_factor value = 1 } }
+						20 = { set_variable = { which = urban_random_growth_factor value = 0.909 } }
+						20 = { set_variable = { which = urban_random_growth_factor value = 0.8 } }
+					}
+					if = {
+						limit = { is_city = no }
+						multiply_variable = {   which = urban_random_growth_factor value = 0.5 }
+					}
+					if = {
+						limit = {
+							NOT = { check_variable = { which = urban_pop_t 	value = 10 } }
+							is_city = yes
+						}
+						multiply_variable = {   which = urban_random_growth_factor  value = 4 }
+					}
+					
+					multiply_variable = {   which = modified_urban_growth_rate		which = urban_random_growth_factor }
+					multiply_variable = { 	which = modified_urban_growth_rate		which = national_multiplier_war_exhaustion }
+					multiply_variable = { 	which = modified_urban_growth_rate		which = national_multiplier_stability }
+					
+					if = {
+						limit = { check_variable = { which = jizya_tax_percent 	value = 0.01 } }
+						set_variable = { 	  which = jizya_pop_modification 		which = jizya_tax_percent }
+						divide_variable = {   which = jizya_pop_modification		value = 3 }
+						change_variable = {   which = jizya_pop_modification 		value = 1 }
+						multiply_variable = { which = modified_urban_growth_rate 	which = jizya_pop_modification }
+					}
+					
+					set_variable = { which = local_regional_food_factor which = regional_food_factor }
+					set_variable = { which = local_continent_food_factor which = continent_food_factor }
+					
+					if = {
+						limit = { check_variable = { which = urban_pop value = 0.1 } }
+						set_variable = { which = multiplier which = urban_pop }
+						subtract_variable = { which = multiplier which = eats_continent_food }
+						
+						multiply_variable = { which = local_regional_food_factor which = multiplier }
+						multiply_variable = { which = local_continent_food_factor which = eats_continent_food }
+						
+						divide_variable = { which = local_regional_food_factor which = urban_pop }
+						divide_variable = { which = local_continent_food_factor which = urban_pop }
+					}
+					else = { set_variable = { which = local_continent_food_factor value = 0 } }
+					
+					set_variable = { which = local_c_and_r_growth which = local_regional_food_factor }
+					change_variable = { which = local_c_and_r_growth which = local_continent_food_factor }
+					multiply_variable = { which = local_c_and_r_growth which = modified_urban_growth_rate }
+					multiply_variable = { which = local_c_and_r_growth value = 2 }
+					set_variable = { which = modified_urban_growth_rate which = local_c_and_r_growth }
+					
+					if = {
+						limit = { NOT = { check_variable = { which = modified_urban_growth_rate value = 0.001 } } }
+						set_variable = { which = modified_urban_growth_rate value = 0.001 }
+					}
+				
+					PopGrowthTick = {
+						type1=which type2=which type3=value type4=which
+						popVal=urban_pop_t popMax=urban_gravity_total timeToMax=150 scale=modified_urban_growth_rate
+						return=urban_population_growth_pulse
+					}
+					
+					if = {
+						limit = {
+							owner = {
+								is_subject_of_type = colony
+								overlord = { full_idea_group = exploration_ideas }
+							}
+						}
+						multiply_variable = { which = urban_population_growth_pulse value = 1.05 }
+					}
+					
+					set_variable = { which = urban_pop_t value = 0 }
+					
+					# Temporary (ha!) solution to help provinces with low urban population relative to urban gravity to grow faster
+					# Boosts urban growth as long as gravity/population ratio is more than 1.5 (urban gravity is 50% higher that urban pop)
+					# 1) divides urban gravity by the current urban pop level
+					# 2) substitutes 0.5 from the resulting value
+					# 3) multiplies the urban growth pulse by it
+					# The further the current pop is from the innate rural cap - the faster it grows
+					if = {
+						limit = {
+							is_city = yes
+							check_variable = { which = urban_gravity_total which = urban_pop_display }
+						}
+						set_variable = { which = urban_pop_compare which = urban_pop_display }
+						set_variable = { which = urban_gravity_compare which = urban_gravity_total }
+						divide_variable = { which = urban_gravity_compare which = urban_pop_compare }
+					}
+					
+					if = {
+						limit = { check_variable = { which = urban_gravity_compare value = 1.5 } }
+						subtract_variable = { which = urban_gravity_compare value = 0.5 }
+						multiply_variable = { which = urban_population_growth_pulse which = urban_gravity_compare }
+					}
+					
+					set_variable = { which = urban_pop_compare value = 0 }
+					set_variable = { which = urban_gravity_compare value = 0 }
+					
+					multiply_variable = { which = urban_population_growth_pulse which = regional_food_factor }
+
+					# Set urban pop growth to 1 if not over 3 men per year
+					if = {
+						limit = { NOT = { check_variable = { which = urban_population_growth_pulse value = 0.003 } } }
+						set_variable = { which = urban_population_growth_pulse value = 0.001 }
+					}
+					else = {
+						# Pulse fires 3 times per year
+						divide_variable = { which = urban_population_growth_pulse value = 3 }
+					}
+					
+					#Calculate the ideal proportion of continental consumption
+					if = {
+						limit = { check_variable = { which = urban_pop value = 0.1 } }
+						compare_price = yes
+						
+						set_variable = { which = eats_continent_food_change which = exam_close }
+						subtract_variable = { which = eats_continent_food_change which = exam_far }
+						
+						logistic_funct = {
+							type1=which type2=value type3=value type4=value
+							inp=eats_continent_food_change midpnt=0 steepns=1 maxval=0.15
+						}
+						
+						subtract_variable = { which = logistic_val value = 0.075 }
+						
+						# If eats_continent_food_change is positive, its value is decreased as eats_continent_food increases
+						# If eats_continent_food is equal to urban_pop, then eat_continent_food_change = 0
+						# If eats_continent_food_change is negative, its value increases as eats_continent_food decreases
+						# If eats_continent_food is 0, then eat_continent_food_change = 0
+						
+						if = {
+							limit = { NOT = { check_variable = { which = urban_pop value = 0.001 } } }
+							set_variable = { which = urban_pop value = 0.001 }
+						}
+						if = {
+							limit = { check_variable = { which = eats_continent_food_change value = 0 } }
+							set_variable = { which = multiplier value = 1 }
+							
+							set_variable = { which = subtractor which = eats_continent_food }
+							divide_variable = { which = subtractor which = urban_pop }
+							
+							subtract_variable = { which = multiplier which = subtractor }
+							
+							set_variable = { which = subtractor value = 0 }
+						}
+						else = {
+							set_variable = { which = multiplier which = eats_continent_food }
+							divide_variable = { which = multiplier which = urban_pop }
+						}
+						
+						set_variable = { which = eats_continent_food_change which = logistic_val }
+						
+						# Tuning
+						multiply_variable = { which = eats_continent_food_change value = 2 }
+						
+						multiply_variable = { which = eats_continent_food_change which = urban_pop }
+						multiply_variable = { which = eats_continent_food_change which = multiplier }
+						
+						change_variable = { which = eats_continent_food which = eats_continent_food_change }
+						
+						if = {
+							limit = { NOT = { check_variable = { which = eats_continent_food value = 0.001 } } }
+							set_variable = { which = eats_continent_food value = 0.001 }
+						}
+					}
+					
+					set_variable = { which = multiplier value = 0 }
+					set_variable = { which = subtractor value = 0 }
+					set_variable = { which = urban_random_growth_factor value = 0 }
+					set_variable = { which = eats_continent_food_change value = 0 }
+					set_variable = { which = exam_far	value = 0 }
+					set_variable = { which = exam_close	value = 0 }
+					set_variable = { which = logistic_val	value = 0 }
+					set_variable = { which = local_c_and_r_growth	value = 0 }
+					set_variable = { which = modified_urban_growth_rate	value = 0 }
+				}
+			}
+		}
+	}
+	
+	### Every province is checked every event pulse to see if its time to add a population
+	option = { name = "POP_population_growth.006.a" }
+}
+
+country_event = {  ### This event calculated regional and country demographic data
+	id = POP_population_growth.008
+	title = POP_population_growth.008.t
+	desc = POP_population_growth.008.d
+	picture = REFORM_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		every_country = {
+			get_country_total = yes
+			set_variable = { which = country_CE_average value = 0 }	### Average CE of population
+			every_owned_province = {
+				limit = { is_city = yes }
+				set_variable = {   which = country_CE_average					which = devPointTotal }
+				set_variable = {   which = runner_final_time_adjusted			which = runner_final_time }
+				if = {
+					limit = { check_variable = { which = runner_final_time_adjusted	value = 300 } }
+					set_variable = { which = runner_final_time_adjusted	value = 300 }
+				}
+				multiply_variable = { which = country_CE_average				which = runner_final_time_adjusted }
+				set_variable = {      which = runner_final_time_adjusted        value = 0 }
+			
+				owner = { change_variable = { which = country_CE_average		which = PREV } }
+			}
+			
+			######################################################
+			### Calculating percent urbanization and composite ###
+			######################################################
+			export_to_variable = { which = country_total_dev value = total_development }
+			if = {
+				limit = { NOT = { check_variable = { which = country_total_dev value = 0.001 } } }
+				set_variable = { which = country_total_dev value = 0.001 }
+			}
+			divide_variable = { which = country_CE_average which = country_total_dev }
+			
+			set_variable = { which = country_total_dev value = 0 }
+			
+			### Calculations for Tribal Unity vs pop
+			
+			if = {
+				limit = { is_nomad = yes }
+				if = {
+					limit = { ADM = 6 }
+					if = { limit = { NOT = { has_country_modifier = horde_adm_6 } }
+						remove_horde_adm = yes
+						add_country_modifier = { name = horde_adm_6 duration = -1 hidden = yes }
+					}
+				}
+				else_if = {
+					limit = { ADM = 5 }
+					if = { limit = { NOT = { has_country_modifier = horde_adm_5 } }
+						remove_horde_adm = yes
+						add_country_modifier = { name = horde_adm_5 duration = -1 hidden = yes }
+					}
+				}
+				else_if = {
+					limit = { ADM = 4 }
+					if = { limit = { NOT = { has_country_modifier = horde_adm_4 } }
+						remove_horde_adm = yes
+						add_country_modifier = { name = horde_adm_4 duration = -1 hidden = yes }
+					}
+				}
+				else_if = {
+					limit = { ADM = 3 }
+					if = { limit = { NOT = { has_country_modifier = horde_adm_3 } }
+						remove_horde_adm = yes
+						add_country_modifier = { name = horde_adm_3 duration = -1 hidden = yes }
+					}
+				}
+				else_if = {
+					limit = { ADM = 2 }
+					if = { limit = { NOT = { has_country_modifier = horde_adm_2 } }
+						remove_horde_adm = yes
+						add_country_modifier = { name = horde_adm_2 duration = -1 hidden = yes }
+					}
+				}
+				else_if = {
+					limit = { ADM = 1 }
+					if = { limit = { NOT = { has_country_modifier = horde_adm_1 } }
+						remove_horde_adm = yes
+						add_country_modifier = { name = horde_adm_1 duration = -1 hidden = yes }
+					}
+				}
+				else_if = { limit = { NOT = { has_country_modifier = horde_adm_0 } }
+					remove_horde_adm = yes
+					add_country_modifier = { name = horde_adm_0 duration = -1 hidden = yes }
+				}
+				if = { limit = { check_variable = { which = country_total_pop value = 450 } }
+					if = { limit = { check_variable = { which = country_total_pop value = 2500 } }
+						if = { limit = { check_variable = { which = country_total_pop value = 5000 } }
+							if = { limit = { check_variable = { which = country_total_pop value = 7000 } }
+								if = { limit = { check_variable = { which = country_total_pop value = 10000 } }
+									if = { limit = { NOT = { has_country_modifier = horde_pop_16 } }
+										remove_horde_pop = yes
+										add_country_modifier = { name = horde_pop_16 duration = -1 hidden = yes }
+									}
+								}
+								else = {
+									if = { limit = { NOT = { has_country_modifier = horde_pop_15 } }
+										remove_horde_pop = yes
+										add_country_modifier = { name = horde_pop_15 duration = -1 hidden = yes }
+									}
+								}
+							}
+							else = {
+								if = { limit = { NOT = { has_country_modifier = horde_pop_14 } }
+									remove_horde_pop = yes
+									add_country_modifier = { name = horde_pop_14 duration = -1 hidden = yes }
+								}
+							}
+						}
+						else = {
+							if = { limit = { check_variable = { which = country_total_pop value = 3500 } }
+								if = { limit = { NOT = { has_country_modifier = horde_pop_13 } }
+									remove_horde_pop = yes
+									add_country_modifier = { name = horde_pop_13 duration = -1 hidden = yes }
+								}
+							}
+							else = {
+								if = { limit = { NOT = { has_country_modifier = horde_pop_12 } }
+									remove_horde_pop = yes
+									add_country_modifier = { name = horde_pop_12 duration = -1 hidden = yes }
+								}
+							}
+						}
+					}
+					else = {
+						if = { limit = { check_variable = { which = country_total_pop value = 1100 } }
+							if = { limit = { check_variable = { which = country_total_pop value = 1600 } }
+								if = { limit = { NOT = { has_country_modifier = horde_pop_11 } }
+									remove_horde_pop = yes
+									add_country_modifier = { name = horde_pop_11 duration = -1 hidden = yes }
+								}
+							}
+							else = {
+								if = { limit = { NOT = { has_country_modifier = horde_pop_10 } }
+									remove_horde_pop = yes
+									add_country_modifier = { name = horde_pop_10 duration = -1 hidden = yes }
+								}
+							}
+						}
+						else = {
+							if = { limit = { check_variable = { which = country_total_pop value = 700 } }
+								if = { limit = { NOT = { has_country_modifier = horde_pop_9 } }
+									remove_horde_pop = yes
+									add_country_modifier = { name = horde_pop_9 duration = -1 hidden = yes }
+								}
+							}
+							else = {
+								if = { limit = { NOT = { has_country_modifier = horde_pop_8 } }
+									remove_horde_pop = yes
+									add_country_modifier = { name = horde_pop_8 duration = -1 hidden = yes }
+								}
+							}
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = country_total_pop value = 115 } }
+						if = { limit = { check_variable = { which = country_total_pop value = 225 } }
+							if = { limit = { check_variable = { which = country_total_pop value = 300 } }
+								if = { limit = { NOT = { has_country_modifier = horde_pop_7 } }
+									remove_horde_pop = yes
+									add_country_modifier = { name = horde_pop_7 duration = -1 hidden = yes }
+								}
+							}
+							else = {
+								if = { limit = { NOT = { has_country_modifier = horde_pop_6 } }
+									remove_horde_pop = yes
+									add_country_modifier = { name = horde_pop_6 duration = -1 hidden = yes }
+								}
+							}
+						}
+						else = {
+							if = { limit = { check_variable = { which = country_total_pop value = 165 } }
+								if = { limit = { NOT = { has_country_modifier = horde_pop_5 } }
+									remove_horde_pop = yes
+									add_country_modifier = { name = horde_pop_5 duration = -1 hidden = yes }
+								}
+							}
+							else = {
+								if = { limit = { NOT = { has_country_modifier = horde_pop_4 } }
+									remove_horde_pop = yes
+									add_country_modifier = { name = horde_pop_4 duration = -1 hidden = yes }
+								}
+							}
+						}
+					}
+					else = {
+						if = { limit = { check_variable = { which = country_total_pop value = 50 } }
+							if = { limit = { check_variable = { which = country_total_pop value = 75 } }
+								if = { limit = { NOT = { has_country_modifier = horde_pop_3 } }
+									remove_horde_pop = yes
+									add_country_modifier = { name = horde_pop_3 duration = -1 hidden = yes }
+								}
+							}
+							else = {
+								if = { limit = { NOT = { has_country_modifier = horde_pop_2 } }
+									remove_horde_pop = yes
+									add_country_modifier = { name = horde_pop_2 duration = -1 hidden = yes }
+								}
+							}
+						}
+						else = {
+							if = { limit = { check_variable = { which = country_total_pop value = 1 } }
+								if = { limit = { NOT = { has_country_modifier = horde_pop_1 } }
+									remove_horde_pop = yes
+									add_country_modifier = { name = horde_pop_1 duration = -1 hidden = yes }
+								}
+							}
+							else = {
+								remove_horde_pop = yes
+							}
+						}
+					}
+				}
+			}
+			else = {
+				remove_horde_adm = yes
+				remove_horde_pop = yes
+			}
+			
+			if = {
+				limit = {
+					OR = {
+						culture_group = japanese
+						tag = HUN
+						tag = GEO
+					}
+				}
+				set_variable = { which = country_total_ideal            	value = 0 }  ### Total Ideal Population
+				set_variable = { which = country_total_gravity          	value = 0 }  ### Total Urban Gravity
+				set_variable = { which = country_trauma_rural_reduction 	value = 0 }  ### Used to reduce wellbeing index due to trauma
+				set_variable = { which = country_trauma_urban_reduction 	value = 0 }
+				
+				every_owned_province = {
+					limit = { is_city = yes }
+					set_variable = {      which = country_total_ideal         		which = ideal_rural_pop }
+					set_variable = {      which = country_total_gravity       		which = urban_gravity_total }
+					multiply_variable = { which = country_total_gravity value = 0.1 }
+					multiply_variable = { which = country_total_ideal value = 0.1 }
+					set_variable = { 	  which = country_trauma_rural_reduction 	value = 0 } ### Used to reduce wellbeing index due to trauma
+					set_variable = { 	  which = country_trauma_urban_reduction 	value = 0 }
+					
+					if = { ### Must be a core to hurt wellbeing (because newly conquered provinces generally have high trauma)
+						limit = { is_core = owner }
+						set_variable = {   which = country_trauma_rural_reduction 		which = province_trauma }
+						set_variable = {   which = country_trauma_urban_reduction 		which = province_trauma }
+						multiply_variable = { which = country_trauma_rural_reduction	which = country_total_ideal }
+						multiply_variable = { which = country_trauma_urban_reduction	which = country_total_gravity }
+						multiply_variable = { which = country_trauma_urban_reduction	value = 3 }
+						divide_variable = {	  which = country_trauma_rural_reduction 	value = 7.5 }
+						divide_variable = {	  which = country_trauma_urban_reduction 	value = 7.5 }
+					}
+					owner = {
+						change_variable = {   which = country_total_ideal				which = PREV }
+						change_variable = {   which = country_total_gravity				which = PREV }
+						change_variable = {   which = country_trauma_rural_reduction	which = PREV }
+						change_variable = {   which = country_trauma_urban_reduction	which = PREV }
+					}
+				}
+				
+				set_variable = { 	  which = positive_score					 which = country_total_gravity }
+				multiply_variable = { which = positive_score					 value = 3 }
+				change_variable = {   which = positive_score					 which = country_total_ideal }
+				
+				set_variable = { 	  which = negative_score					 which = country_total_gravity }
+				multiply_variable = { which = negative_score					 value = 3 }
+				subtract_variable = { which = negative_score					 which = country_trauma_urban_reduction }
+				change_variable = {   which = negative_score					 which = country_total_ideal }
+				subtract_variable = { which = negative_score					 which = country_trauma_rural_reduction }
+				
+				set_variable = { 	  which = wellbeing_composite 				 which = negative_score }
+				divide_variable = {	  which = wellbeing_composite 				 which = positive_score }
+				change_variable = {   which = wellbeing_composite 				 value = 0.15 } ### Global Tuning score
+				multiply_variable = { which = wellbeing_composite				 which = national_multiplier_stability }
+				multiply_variable = { which = wellbeing_composite				 which = national_multiplier_war_exhaustion }
+				
+				set_variable = { 	  which = country_total_ideal 				 value = 0 }
+				set_variable = { 	  which = country_total_gravity 			 value = 0 }
+				set_variable = { 	  which = negative_score 					 value = 0 }
+				set_variable = { 	  which = positive_score 					 value = 0 }
+				set_variable = { 	  which = country_trauma_rural_reduction 	 value = 0 }
+				set_variable = { 	  which = country_trauma_urban_reduction 	 value = 0 }
+			}
+		}
+		
+		regiongroup = { ### Regional urbanization is calculated
+			set_variable = { which = regional_urban_pop which = urban_pop }
+			
+			region_popgrowth_4 = yes
+			
+			if = {
+				limit = { NOT = { check_variable = { which = regional_urban_pop value = 0.001 } } }
+				set_variable = { which = regional_urban_pop value = 0.001 }
+			}
+		}
+		
+		regiongroup = {
+			region = {
+				limit = { is_wasteland = no }
+				set_variable = { which = country_CE_average 				value = 0 }
+				set_variable = { which = country_total_ideal         		value = 0 }
+				set_variable = { which = country_total_gravity         		value = 0 }
+				set_variable = { which = country_trauma_rural_reduction    	value = 0 }
+				set_variable = { which = country_trauma_urban_reduction    	value = 0 }
+				set_variable = { which = regional_urban_pop					value = 0 }
+			}
+		}
+	}
+
+	option = { name = "POP_population_growth.008.a" }
+}
+
+country_event = { ### Adjusts Ideal Population
+	id = POP_population_growth.010
+	title = "POP_population_growth.010.title"
+	desc = "POP_population_growth.010.desc"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	hidden = yes
+	is_triggered_only = yes
+	
+	immediate = {
+		regiongroup = {
+			region = {
+				limit = { is_wasteland = no }
+				# ideal population level is always at least 0.001
+				if = {
+					limit = { NOT = { check_variable = { which = ideal_rural_pop value = 0.001 } } }
+					set_variable = { which = ideal_rural_pop value = 0.001 }
+				}
+				
+				if = {
+					limit = {
+						check_variable = { which = rural_density value = 1 }
+						NOT = { check_variable = { which = province_trauma value = 10 } } ### Province trauma 10 excludes improvement in ideal pop
+					}
+					set_variable = { which = innate_rural_pop which = innate_rural_pop_base }
+					if = {
+						limit = { is_city = yes }
+						trigger_switch = {
+							on_trigger = has_building
+							canal_level_1 = {
+								change_variable = { which = innate_rural_pop	value = 30 }
+								multiply_variable = { which = innate_rural_pop	value = 1.15 }
+							}
+							canal_level_2 = {
+								change_variable = { which = innate_rural_pop	value = 60 }
+								multiply_variable = { which = innate_rural_pop	value = 1.25 }
+							}
+							canal_level_3 = {
+								change_variable = { which = innate_rural_pop	value = 80 }
+								multiply_variable = { which = innate_rural_pop	value = 1.35 }
+							}
+						}
+						set_variable = { which = innate_rural_pop_tech 			which = owner }
+						if = {
+							limit = { check_variable = { which = innate_rural_pop_tech value = 0.01 } }
+							multiply_variable = { which = innate_rural_pop			which = innate_rural_pop_tech }
+							set_variable = { which = innate_rural_pop_tech 			value = 0 }
+						}
+					}
+					
+					set_variable = { which = ideal_rural_pop_land which = innate_rural_pop }
+					subtract_variable = { which = ideal_rural_pop_land which = ideal_rural_pop }
+					
+					if = {
+						limit = { check_variable = { which = ideal_rural_pop_land value = 0.1 } }
+						Pop_InvRatioToVal = {
+							PopTotal=total_pop_r
+							PopRatio=urban_ratio
+							output=ideal_rural_pop_growth
+						}
+						
+						subtract_variable = { which = ideal_rural_pop_growth which = ideal_rural_pop }
+						
+						divide_variable = { which = ideal_rural_pop_growth which = ideal_rural_pop_land }
+						
+						logistic_funct = {
+							type1=which type2=value type3=value type4=which
+							inp=ideal_rural_pop_growth midpnt=0 steepns=2 maxval=ideal_rural_pop_land
+						}
+						
+						set_variable = { which = ideal_rural_pop_growth which = logistic_val }
+						
+						if = {
+							limit = { NOT = { has_province_flag = tribals_control_province } }
+							divide_variable = { which = ideal_rural_pop_growth value = 60 }
+						}
+						else = { multiply_variable = { which = ideal_rural_pop_growth value = 0.01 } }
+						
+						if = {
+							limit = { is_city = yes }
+							trigger_switch = {
+								on_trigger = has_building
+								canal_level_1 = { multiply_variable = { which = ideal_rural_pop_growth	value = 1.1 } }
+								canal_level_2 = { multiply_variable = { which = ideal_rural_pop_growth	value = 1.2 } }
+								canal_level_3 = { multiply_variable = { which = ideal_rural_pop_growth	value = 1.3 } }
+							}
+						}
+						
+						# Temporary (ha!) solution to help low-pop provinces with high innate rural caps reach reasonable pop levels
+						# Same thing as for rural growth but this time for the ideal rural cap
+						# 1) divides innate rural cap by the ideal rural cap
+						# 2) divides the resulting value by 1.5
+						# 3) multiplies the ideal rural cap growth pulse by it
+						# The further the ideal rural cap is from the innate rural cap - the faster it grows
+						# Only applies to provinces that are not in India or China
+						if = {
+							limit = {
+								NOT = {
+									continent = indian_continent
+									continent = east_asia
+								}
+							}
+							set_variable = { which = innate_rural_pop_compare which = innate_rural_pop }
+							divide_variable = { which = innate_rural_pop_compare which = ideal_rural_pop }
+							multiply_variable = { which = innate_rural_pop_compare value = 0.5 }
+							if = {
+								limit = { check_variable = { which = innate_rural_pop_compare value = 1 } }
+								multiply_variable = { which = ideal_rural_pop_growth which = innate_rural_pop_compare }
+							}
+							set_variable = { which = innate_rural_pop_compare value = 0 }
+						}
+						multiply_variable = { which = ideal_rural_pop_growth value = 1.15 }
+						
+						# change in ideal population level also effects FE
+						if = {
+							limit = { check_variable = { which = farm_efficiency_ducats_invested value = 0.001 } }
+							set_variable = { which = farm_efficiency_ducats_growth which = farm_efficiency_ducats_invested }
+							divide_variable = { which = farm_efficiency_ducats_growth which = ideal_rural_pop }
+							multiply_variable = { which = farm_efficiency_ducats_growth which = ideal_rural_pop_growth }
+							multiply_variable = { which = farm_efficiency_ducats_growth value = 0.5 } # 50%
+							
+							change_variable = { which = farm_efficiency_ducats_invested which = farm_efficiency_ducats_growth }
+							
+							set_variable = { which = farm_efficiency_ducats_growth value = 0 }
+						}
+						
+						change_variable = { which = ideal_rural_pop which = ideal_rural_pop_growth }
+						
+						update_rural_density = yes
+						
+						set_variable = { which = logistic_val value = 0 }
+						set_variable = { which = ideal_rural_pop_growth value = 0 }
+					}
+					
+					set_variable = { which = ideal_rural_pop_land value = 0 }
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "POP_population_growth.010.a"
+		ai_chance = { factor = 100 }
+		country_event = { id = POP_famine.001 days = 10 }
+	}
+}
+
+country_event = {  ### Clean up event which removes all non-essential variables
+	id = POP_population_growth.099
+	title = POP_population_growth.099.t
+	desc = POP_population_growth.099.d
+	picture = REFORM_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		regiongroup = {
+			region = {
+				limit = { is_wasteland = no }
+				set_variable = { which = province_trauma_reduction    		value = 0 }
+				set_variable = { which = random_growth_factor    			value = 0 }
+				set_variable = { which = modified_growth_rate    			value = 0 }
+				set_variable = { which = growth_rate_trauma_reduced    		value = 0 }
+				set_variable = { which = base_food_trauma   				value = 0 }
+				set_variable = { which = continent_food_percent_uneaten    	value = 0 }
+				set_variable = { which = urban_random_growth_factor    		value = 0 }
+				set_variable = { which = urban_growth_rate_trauma_reduced   value = 0 }
+				set_variable = { which = local_c_and_r_growth  				value = 0 }
+				set_variable = { which = local_continent_food_factor  		value = 0 }
+				set_variable = { which = local_regional_food_factor  		value = 0 }
+			}
+		}
+	}
+	
+	option = { name = "POP_population_growth.099.a" }
+}
+
+country_event = {  ### Clean up event which removes all non-essential variables
+	id = POP_population_growth.100
+	title = POP_population_growth.100.t
+	desc = POP_population_growth.100.d
+	picture = REFORM_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		if = {
+			limit = { NOT = { has_global_flag = plague_begun } }
+			regiongroup = {
+				region = {
+					limit = { is_wasteland = no }
+					set_variable = { which = population_bloodied				value = 0 }
+					set_variable = { which = rural_pop_subtract					value = 0 }
+					set_variable = { which = urban_pop_subtract					value = 0 }
+					set_variable = { which = eats_continent_food_adjust			value = 0 }
+					set_variable = { which = province_trauma_added				value = 0 }
+					set_variable = { which = province_trauma_scaling			value = 0 }
+					set_variable = { which = plague_time_diminish				value = 0 }
+					set_variable = { which = plague_vulnerability				value = 0 }
+					set_variable = { which = plague_population					value = 0 }
+					set_variable = { which = plague_rural						value = 0 }
+					set_variable = { which = plague_strength					value = 0 }
+					set_variable = { which = plague_random_spread_multiplier	value = 0 }
+					set_variable = { which = plague_strength_dormant			value = 0 }
+					set_variable = { which = plague_province_trauma				value = 0 }
+					set_variable = { which = plague_urban_density				value = 0 }
+					set_variable = { which = plague_death_to_living_ratio		value = 0 }
+					set_variable = { which = plague_continent_food_loss			value = 0 }
+				}
+			}
+		}
+	}
+	
+	option = { name = "POP_population_growth.100.a" }
+}

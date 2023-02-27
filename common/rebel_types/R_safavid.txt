@@ -1,0 +1,215 @@
+safavid_sufis = { #Safavids in Persia
+	
+	color = { 25 180 25 }
+	area = nation
+	government = theocracy
+	religion = shiite
+	defection = religion				# Defects to countries of their religion
+	defect_delay = 120				# Held provinces will auto-defect after 18 months, regardless of accept/enforce demands.
+	independence = religion
+	gfx_type = culture_province
+	
+	resilient = yes
+	reinforcing = yes
+	general = yes
+	smart = yes
+	unit_transfer = yes				# Units remain after enforcing demands
+	will_relocate = yes				# Units will relocate if they have sieged all provinces nearby and has to move over sea.
+	
+	artillery = 0.0
+	infantry = 0.3
+	cavalry = 0.7 #Qizilbash turks
+	morale = 1.25 #Fanatics
+	
+	# Possible handle actions
+	handle_action_negotiate = no
+	handle_action_stability = no
+	handle_action_build_core = no
+	handle_action_send_missionary = no
+	
+	# The rebel type with the highest modifier for this province gets picked
+	spawn_chance = {
+		factor = 1
+		modifier = {
+			exists = PER
+			had_global_flag = { flag = safaviyya_dynasty days = 100 }
+			factor = 0
+		}
+		modifier = {
+			owner = { tag = PER }
+			factor = 0
+		}
+		modifier = {
+			NOT = { has_global_flag = safaviyya_founded }
+			factor = 0
+		}
+		modifier = {
+			persia_region_trigger = no
+			factor = 0
+		}
+		modifier = {
+			factor = 2
+			has_province_flag = safavid_origins
+			NOT = { owner = { has_country_flag = safavid_next_generation } }
+		}
+		modifier = {
+			factor = 2
+			owner = { has_country_flag = safavid_refuge }
+			NOT = { owner = { has_country_flag = safavid_next_generation } }
+		}
+		modifier = {
+			owner = { has_spawned_rebels = safavid_sufis }
+			factor = 2
+		}
+		modifier = {
+			religion = shiite
+			has_owner_religion = no
+			factor = 1.4
+		}
+		modifier = {
+			owner = { has_country_flag = safavid_murder }
+			NOT = { owner = { has_country_flag = safavid_next_generation } }
+			factor = 5
+		}
+		modifier = {
+			has_province_modifier = sufi_shrine
+			factor = 1.4
+		}
+		modifier = {
+			has_province_modifier = madrassa
+			factor = 1.4
+		}
+		modifier = {
+			has_owner_culture = no
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { is_core = owner }
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { culture_group = owner }
+			factor = 1.4
+		}
+		modifier = {
+			has_province_modifier = fanatics_organizing
+			factor = 1.4
+		}
+	}
+	
+	# This is checked for EACH province in the Area of Operations
+	movement_evaluation = {
+		factor = 1
+		modifier = {
+			factor = 2
+			is_capital = yes
+		}
+		modifier = {
+			factor = 0.1
+			units_in_province = 1
+		}
+		modifier = {
+			factor = 0.001
+			controlled_by = REB
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 2
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 4
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 6
+		}
+	}
+	
+	# Province Scope
+	siege_won_trigger = {
+		culture_group = persian_group
+	}
+	siege_won_effect = {
+		add_core = PER
+		set_province_flag = sufi_nation
+		if = {
+			limit = { religion_group = muslim }
+			change_variable = { which = province_religion value = -8 }
+			change_variable = { which = shiite value = 8 }
+		}
+		if = {
+			limit = {
+				exists = PER
+				PER = {
+					religion = shiite
+					has_country_modifier = sword_of_faith
+				}
+			}
+			PER = { add_treasury = 10 }
+		}
+		add_nationalism = 10 # Add ten extra years of nationalism
+	}
+	
+	# Country scope
+	can_negotiate_trigger = {
+		num_of_owned_provinces_with = {
+			controlled_by = REB
+			value = 3
+		}
+	}
+	
+	# Country scope
+	can_enforce_trigger = {
+		always = yes
+	}
+	
+	# Localisation for their demands
+	demands_description = "charismatic_shiite_sufis_demand"
+	
+	# Country scope
+	demands_enforced_effect = {
+		if = {
+			limit = {
+				exists = PER
+				NOT = { tag = PER }
+			}
+			every_owned_province = {
+				limit = { is_core = PER }
+				hidden_effect = { add_local_autonomy = -50 }
+				cede_province = PER
+			}
+			hidden_effect = { PER = { add_manpower = 1 add_treasury = 25 infantry = capital cavalry = capital } }
+		}
+		if = {
+			limit = {
+				NOT = { exists = PER }
+				OR = {
+					religion = sunni
+					religion = shiite
+					religion = ibadi
+					religion = wahhabi
+				}
+				capital_scope = { persia_region_trigger = yes }
+			}
+			change_tag = PER
+			change_primary_culture = persian
+			change_religion = shiite
+			define_ruler = { dynasty = "Safavid" }
+			kill_heir = yes
+		}
+		if = {
+			limit = {
+				NOT = { exists = PER }
+				OR = {
+					NOT = { religion = sunni religion = shiite religion = ibadi religion = wahhabi }
+					capital_scope = { persia_region_trigger = no }
+				}
+			}
+			every_owned_province = {
+				limit = { is_core = PER }
+				add_local_autonomy = 50
+			}
+		}
+	}
+}

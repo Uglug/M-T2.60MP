@@ -1,0 +1,4359 @@
+### POP Estate Scaling effects ###
+
+EstateProv_SetUnrestMain = {
+	hidden_effect = {
+		set_variable = { which = estate_$estate$_loyalty which = owner }
+		set_variable = { which = EstateProv_UnrestSave which = EstateProv_Unrest }
+		set_variable = { which = EstateProv_Unrest which = estate_$estate$_loyalty }
+		set_variable = { which = estate_$estate$_loyalty value = 0 }
+		
+		if = {
+			limit = { check_variable = { which = EstateProv_Unrest value = 0.6 } }
+			set_province_flag = loss
+			subtract_variable = { which = EstateProv_Unrest value = 0.6 }
+		}
+		else_if = {
+			limit = { NOT = { check_variable = { which = EstateProv_Unrest value = 0.401 } } }
+			set_province_flag = gain
+			subtract_variable = { which = EstateProv_Unrest value = 0.4 }
+			multiply_variable = { which = EstateProv_Unrest value = -1 }
+		}
+		else = { set_variable = { which = EstateProv_Unrest value = 0 } }
+		
+		# Effect of local autonomy
+		export_to_variable = { which = EstateProv_LA value = local_autonomy }
+		multiply_variable = { which = EstateProv_LA value = 0.008 }
+		change_variable = { which = EstateProv_LA value = 0.2 }
+		
+		if = {
+			limit = { has_province_flag = loss }
+			clr_province_flag = loss
+			
+			multiply_variable = { which = EstateProv_Unrest value = 17.25 } # (4 * 1.725)^1.55 ~ 20
+			exp_funct = {
+				type1=which type2=value
+				inp=EstateProv_Unrest exp=1.55 #1.7
+			}
+			set_variable = { which = EstateProv_Unrest which = exp_val }
+			set_variable = { which = exp_val value = 0 }
+			
+			multiply_variable = { which = EstateProv_Unrest which = EstateProv_LA }
+			
+			set_variable = { which = EstateProv_Unrest_Inp which = EstateProv_Unrest }
+			
+			multiply_variable = { which = EstateProv_Unrest 		value = -1 }
+			multiply_variable = { which = EstateProv_Unrest			value = 0.1 }
+			multiply_variable = { which = EstateProv_Unrest			value = 10 }
+			
+			#reset_income_modifier = { varname=EstateProv_Unrest_Inp modname=EstateProv_UnrestLoss value=25.6 type=province }
+			reset_income_modifier = { varname=EstateProv_Unrest_Inp modname=EstateProv_UnrestLoss value=12.8 type=province }
+			reset_income_modifier = { varname=EstateProv_Unrest_Inp modname=EstateProv_UnrestLoss value=6.4 type=province }
+			reset_income_modifier = { varname=EstateProv_Unrest_Inp modname=EstateProv_UnrestLoss value=3.2 type=province }
+			reset_income_modifier = { varname=EstateProv_Unrest_Inp modname=EstateProv_UnrestLoss value=1.6 type=province }
+			reset_income_modifier = { varname=EstateProv_Unrest_Inp modname=EstateProv_UnrestLoss value=0.8 type=province }
+			reset_income_modifier = { varname=EstateProv_Unrest_Inp modname=EstateProv_UnrestLoss value=0.4 type=province }
+			reset_income_modifier = { varname=EstateProv_Unrest_Inp modname=EstateProv_UnrestLoss value=0.2 type=province }
+			reset_income_modifier = { varname=EstateProv_Unrest_Inp modname=EstateProv_UnrestLoss value=0.1 type=province }
+		}
+		else_if = {
+			limit = { has_province_flag = gain }
+			clr_province_flag = gain
+			
+			multiply_variable = { which = EstateProv_Unrest value = 16.62 } # (4 * 1.662)^1.7 ~ 25
+			exp_funct = {
+				type1=which type2=value
+				inp=EstateProv_Unrest exp=1.7
+			}
+			set_variable = { which = EstateProv_Unrest which = exp_val }
+			set_variable = { which = exp_val value = 0 }
+			
+			multiply_variable = { which = EstateProv_Unrest which = EstateProv_LA }
+			
+			set_variable = { which = EstateProv_Unrest_Inp which = EstateProv_Unrest }
+			
+			#multiply_variable = { which = EstateProv_Unrest 		value = 1 }
+			multiply_variable = { which = EstateProv_Unrest			value = 0.1 }
+			multiply_variable = { which = EstateProv_Unrest			value = 10 }
+			
+			#reset_income_modifier = { varname=EstateProv_Unrest_Inp modname=EstateProv_UnrestGain value=25.6 type=province }
+			reset_income_modifier = { varname=EstateProv_Unrest_Inp modname=EstateProv_UnrestGain value=12.8 type=province }
+			reset_income_modifier = { varname=EstateProv_Unrest_Inp modname=EstateProv_UnrestGain value=6.4 type=province }
+			reset_income_modifier = { varname=EstateProv_Unrest_Inp modname=EstateProv_UnrestGain value=3.2 type=province }
+			reset_income_modifier = { varname=EstateProv_Unrest_Inp modname=EstateProv_UnrestGain value=1.6 type=province }
+			reset_income_modifier = { varname=EstateProv_Unrest_Inp modname=EstateProv_UnrestGain value=0.8 type=province }
+			reset_income_modifier = { varname=EstateProv_Unrest_Inp modname=EstateProv_UnrestGain value=0.4 type=province }
+			reset_income_modifier = { varname=EstateProv_Unrest_Inp modname=EstateProv_UnrestGain value=0.2 type=province }
+			reset_income_modifier = { varname=EstateProv_Unrest_Inp modname=EstateProv_UnrestGain value=0.1 type=province }
+		}
+		
+		if = {
+			limit = { check_variable = { which = EstateProv_UnrestSave value = 0.001 } }
+			if = {
+				limit = { NOT = { check_variable = { which = EstateProv_Unrest value = 0.001 } } }
+				#clear_income_modifier = { modname=EstateProv_UnrestGain value=25.6 type=province }
+				clear_income_modifier = { modname=EstateProv_UnrestGain value=12.8 type=province }
+				clear_income_modifier = { modname=EstateProv_UnrestGain value=6.4 type=province }
+				clear_income_modifier = { modname=EstateProv_UnrestGain value=3.2 type=province }
+				clear_income_modifier = { modname=EstateProv_UnrestGain value=1.6 type=province }
+				clear_income_modifier = { modname=EstateProv_UnrestGain value=0.8 type=province }
+				clear_income_modifier = { modname=EstateProv_UnrestGain value=0.4 type=province }
+				clear_income_modifier = { modname=EstateProv_UnrestGain value=0.2 type=province }
+				clear_income_modifier = { modname=EstateProv_UnrestGain value=0.1 type=province }
+			}
+		}
+		else_if = {
+			limit = {
+				NOT = { check_variable = { which = EstateProv_UnrestSave value = 0 } }
+				check_variable = { which = EstateProv_Unrest value = 0 }
+			}
+			#clear_income_modifier = { modname=EstateProv_UnrestLoss value=25.6 type=province }
+			clear_income_modifier = { modname=EstateProv_UnrestLoss value=12.8 type=province }
+			clear_income_modifier = { modname=EstateProv_UnrestLoss value=6.4 type=province }
+			clear_income_modifier = { modname=EstateProv_UnrestLoss value=3.2 type=province }
+			clear_income_modifier = { modname=EstateProv_UnrestLoss value=1.6 type=province }
+			clear_income_modifier = { modname=EstateProv_UnrestLoss value=0.8 type=province }
+			clear_income_modifier = { modname=EstateProv_UnrestLoss value=0.4 type=province }
+			clear_income_modifier = { modname=EstateProv_UnrestLoss value=0.2 type=province }
+			clear_income_modifier = { modname=EstateProv_UnrestLoss value=0.1 type=province }
+		}
+		
+		init_as_zero = { variable=EstateProv_Unrest }
+		
+		set_variable = { which = EstateProv_UnrestSave value = 0 }
+		set_variable = { which = EstateProv_LA value = 0 }
+		set_variable = { which = EstateProv_Unrest_Inp value = 0 }
+	}
+}
+
+EstateProv_SetUnrest = {
+	every_owned_province = {
+		limit = {
+			has_province_flag = $estate$_control_province
+		}
+		EstateProv_SetUnrestMain = { estate=$estate$ }
+	}
+}
+
+admin_estate_cost_a = {
+	custom_tooltip = scaled_adm_cost_tooltip_a
+	
+	hidden_effect = {
+		while = {
+			limit = { check_variable = { which = admin_cost_a value = 128 } }
+			subtract_variable = { which = admin_cost_a value = 128 }
+			add_adm_power = -128
+		}
+		if = { limit = { check_variable = { which = admin_cost_a value = 64 } }
+			subtract_variable = { which = admin_cost_a value = 64 }
+			add_adm_power = -64
+		}
+		if = { limit = { check_variable = { which = admin_cost_a value = 32 } }
+			subtract_variable = { which = admin_cost_a value = 32 }
+			add_adm_power = -32
+		}
+		if = { limit = { check_variable = { which = admin_cost_a value = 16 } }
+			subtract_variable = { which = admin_cost_a value = 16 }
+			add_adm_power = -16
+		}
+		if = { limit = { check_variable = { which = admin_cost_a value = 8 } }
+			subtract_variable = { which = admin_cost_a value = 8 }
+			add_adm_power = -8
+		}
+		if = { limit = { check_variable = { which = admin_cost_a value = 4 } }
+			subtract_variable = { which = admin_cost_a value = 4 }
+			add_adm_power = -4
+		}
+		if = { limit = { check_variable = { which = admin_cost_a value = 2 } }
+			subtract_variable = { which = admin_cost_a value = 2 }
+			add_adm_power = -2
+		}
+		if = { limit = { check_variable = { which = admin_cost_a value = 1 } }
+			subtract_variable = { which = admin_cost_a value = 1 }
+			add_adm_power = -1
+		}
+	}
+}
+
+admin_estate_cost_b = {
+	custom_tooltip = scaled_adm_cost_tooltip_b
+	
+	hidden_effect = {
+		while = {
+			limit = { check_variable = { which = admin_cost_b value = 128 } }
+			subtract_variable = { which = admin_cost_b value = 128 }
+			add_adm_power = -128
+		}
+		if = { limit = { check_variable = { which = admin_cost_b value = 64 } }
+			subtract_variable = { which = admin_cost_b value = 64 }
+			add_adm_power = -64
+		}
+		if = { limit = { check_variable = { which = admin_cost_b value = 32 } }
+			subtract_variable = { which = admin_cost_b value = 32 }
+			add_adm_power = -32
+		}
+		if = { limit = { check_variable = { which = admin_cost_b value = 16 } }
+			subtract_variable = { which = admin_cost_b value = 16 }
+			add_adm_power = -16
+		}
+		if = { limit = { check_variable = { which = admin_cost_b value = 8 } }
+			subtract_variable = { which = admin_cost_b value = 8 }
+			add_adm_power = -8
+		}
+		if = { limit = { check_variable = { which = admin_cost_b value = 4 } }
+			subtract_variable = { which = admin_cost_b value = 4 }
+			add_adm_power = -4
+		}
+		if = { limit = { check_variable = { which = admin_cost_b value = 2 } }
+			subtract_variable = { which = admin_cost_b value = 2 }
+			add_adm_power = -2
+		}
+		if = { limit = { check_variable = { which = admin_cost_b value = 1 } }
+			subtract_variable = { which = admin_cost_b value = 1 }
+			add_adm_power = -1
+		}
+	}
+}
+
+admin_estate_cost_c = {
+	custom_tooltip = scaled_adm_cost_tooltip_c
+	
+	hidden_effect = {
+		while = {
+			limit = { check_variable = { which = admin_cost_c value = 128 } }
+			subtract_variable = { which = admin_cost_c value = 128 }
+			add_adm_power = -128
+		}
+		if = { limit = { check_variable = { which = admin_cost_c value = 64 } }
+			subtract_variable = { which = admin_cost_c value = 64 }
+			add_adm_power = -64
+		}
+		if = { limit = { check_variable = { which = admin_cost_c value = 32 } }
+			subtract_variable = { which = admin_cost_c value = 32 }
+			add_adm_power = -32
+		}
+		if = { limit = { check_variable = { which = admin_cost_c value = 16 } }
+			subtract_variable = { which = admin_cost_c value = 16 }
+			add_adm_power = -16
+		}
+		if = { limit = { check_variable = { which = admin_cost_c value = 8 } }
+			subtract_variable = { which = admin_cost_c value = 8 }
+			add_adm_power = -8
+		}
+		if = { limit = { check_variable = { which = admin_cost_c value = 4 } }
+			subtract_variable = { which = admin_cost_c value = 4 }
+			add_adm_power = -4
+		}
+		if = { limit = { check_variable = { which = admin_cost_c value = 2 } }
+			subtract_variable = { which = admin_cost_c value = 2 }
+			add_adm_power = -2
+		}
+		if = { limit = { check_variable = { which = admin_cost_c value = 1 } }
+			subtract_variable = { which = admin_cost_c value = 1 }
+			add_adm_power = -1
+		}
+	}
+}
+
+admin_estate_cost_d = {
+	custom_tooltip = scaled_adm_cost_tooltip_d
+	
+	hidden_effect = {
+		while = {
+			limit = { check_variable = { which = admin_cost_d value = 128 } }
+			subtract_variable = { which = admin_cost_d value = 128 }
+			add_adm_power = -128
+		}
+		if = { limit = { check_variable = { which = admin_cost_d value = 64 } }
+			subtract_variable = { which = admin_cost_d value = 64 }
+			add_adm_power = -64
+		}
+		if = { limit = { check_variable = { which = admin_cost_d value = 32 } }
+			subtract_variable = { which = admin_cost_d value = 32 }
+			add_adm_power = -32
+		}
+		if = { limit = { check_variable = { which = admin_cost_d value = 16 } }
+			subtract_variable = { which = admin_cost_d value = 16 }
+			add_adm_power = -16
+		}
+		if = { limit = { check_variable = { which = admin_cost_d value = 8 } }
+			subtract_variable = { which = admin_cost_d value = 8 }
+			add_adm_power = -8
+		}
+		if = { limit = { check_variable = { which = admin_cost_d value = 4 } }
+			subtract_variable = { which = admin_cost_d value = 4 }
+			add_adm_power = -4
+		}
+		if = { limit = { check_variable = { which = admin_cost_d value = 2 } }
+			subtract_variable = { which = admin_cost_d value = 2 }
+			add_adm_power = -2
+		}
+		if = { limit = { check_variable = { which = admin_cost_d value = 1 } }
+			subtract_variable = { which = admin_cost_d value = 1 }
+			add_adm_power = -1
+		}
+	}
+}
+
+diplo_estate_cost_a = {
+	custom_tooltip = scaled_dip_cost_tooltip_a
+	
+	hidden_effect = {
+		while = {
+			limit = { check_variable = { which = diplo_cost_a value = 128 } }
+			subtract_variable = { which = diplo_cost_a value = 128 }
+			add_dip_power = -128
+		}
+		if = { limit = { check_variable = { which = diplo_cost_a value = 64 } }
+			subtract_variable = { which = diplo_cost_a value = 64 }
+			add_dip_power = -64
+		}
+		if = { limit = { check_variable = { which = diplo_cost_a value = 32 } }
+			subtract_variable = { which = diplo_cost_a value = 32 }
+			add_dip_power = -32
+		}
+		if = { limit = { check_variable = { which = diplo_cost_a value = 16 } }
+			subtract_variable = { which = diplo_cost_a value = 16 }
+			add_dip_power = -16
+		}
+		if = { limit = { check_variable = { which = diplo_cost_a value = 8 } }
+			subtract_variable = { which = diplo_cost_a value = 8 }
+			add_dip_power = -8
+		}
+		if = { limit = { check_variable = { which = diplo_cost_a value = 4 } }
+			subtract_variable = { which = diplo_cost_a value = 4 }
+			add_dip_power = -4
+		}
+		if = { limit = { check_variable = { which = diplo_cost_a value = 2 } }
+			subtract_variable = { which = diplo_cost_a value = 2 }
+			add_dip_power = -2
+		}
+		if = { limit = { check_variable = { which = diplo_cost_a value = 1 } }
+			subtract_variable = { which = diplo_cost_a value = 1 }
+			add_dip_power = -1
+		}
+	}
+}
+
+diplo_estate_cost_b = {
+	custom_tooltip = scaled_dip_cost_tooltip_b
+	
+	hidden_effect = {
+		while = {
+			limit = { check_variable = { which = diplo_cost_b value = 128 } }
+			subtract_variable = { which = diplo_cost_b value = 128 }
+			add_dip_power = -128
+		}
+		if = { limit = { check_variable = { which = diplo_cost_b value = 64 } }
+			subtract_variable = { which = diplo_cost_b value = 64 }
+			add_dip_power = -64
+		}
+		if = { limit = { check_variable = { which = diplo_cost_b value = 32 } }
+			subtract_variable = { which = diplo_cost_b value = 32 }
+			add_dip_power = -32
+		}
+		if = { limit = { check_variable = { which = diplo_cost_b value = 16 } }
+			subtract_variable = { which = diplo_cost_b value = 16 }
+			add_dip_power = -16
+		}
+		if = { limit = { check_variable = { which = diplo_cost_b value = 8 } }
+			subtract_variable = { which = diplo_cost_b value = 8 }
+			add_dip_power = -8
+		}
+		if = { limit = { check_variable = { which = diplo_cost_b value = 4 } }
+			subtract_variable = { which = diplo_cost_b value = 4 }
+			add_dip_power = -4
+		}
+		if = { limit = { check_variable = { which = diplo_cost_b value = 2 } }
+			subtract_variable = { which = diplo_cost_b value = 2 }
+			add_dip_power = -2
+		}
+		if = { limit = { check_variable = { which = diplo_cost_b value = 1 } }
+			subtract_variable = { which = diplo_cost_b value = 1 }
+			add_dip_power = -1
+		}
+	}
+}
+
+diplo_estate_cost_c = {
+	custom_tooltip = scaled_dip_cost_tooltip_c
+	
+	hidden_effect = {
+		while = {
+			limit = { check_variable = { which = diplo_cost_c value = 128 } }
+			subtract_variable = { which = diplo_cost_c value = 128 }
+			add_dip_power = -128
+		}
+		if = { limit = { check_variable = { which = diplo_cost_c value = 64 } }
+			subtract_variable = { which = diplo_cost_c value = 64 }
+			add_dip_power = -64
+		}
+		if = { limit = { check_variable = { which = diplo_cost_c value = 32 } }
+			subtract_variable = { which = diplo_cost_c value = 32 }
+			add_dip_power = -32
+		}
+		if = { limit = { check_variable = { which = diplo_cost_c value = 16 } }
+			subtract_variable = { which = diplo_cost_c value = 16 }
+			add_dip_power = -16
+		}
+		if = { limit = { check_variable = { which = diplo_cost_c value = 8 } }
+			subtract_variable = { which = diplo_cost_c value = 8 }
+			add_dip_power = -8
+		}
+		if = { limit = { check_variable = { which = diplo_cost_c value = 4 } }
+			subtract_variable = { which = diplo_cost_c value = 4 }
+			add_dip_power = -4
+		}
+		if = { limit = { check_variable = { which = diplo_cost_c value = 2 } }
+			subtract_variable = { which = diplo_cost_c value = 2 }
+			add_dip_power = -2
+		}
+		if = { limit = { check_variable = { which = diplo_cost_c value = 1 } }
+			subtract_variable = { which = diplo_cost_c value = 1 }
+			add_dip_power = -1
+		}
+	}
+}
+
+diplo_estate_cost_d = {
+	custom_tooltip = scaled_dip_cost_tooltip_d
+	
+	hidden_effect = {
+		while = {
+			limit = { check_variable = { which = diplo_cost_d value = 128 } }
+			subtract_variable = { which = diplo_cost_d value = 128 }
+			add_dip_power = -128
+		}
+		if = { limit = { check_variable = { which = diplo_cost_d value = 64 } }
+			subtract_variable = { which = diplo_cost_d value = 64 }
+			add_dip_power = -64
+		}
+		if = { limit = { check_variable = { which = diplo_cost_d value = 32 } }
+			subtract_variable = { which = diplo_cost_d value = 32 }
+			add_dip_power = -32
+		}
+		if = { limit = { check_variable = { which = diplo_cost_d value = 16 } }
+			subtract_variable = { which = diplo_cost_d value = 16 }
+			add_dip_power = -16
+		}
+		if = { limit = { check_variable = { which = diplo_cost_d value = 8 } }
+			subtract_variable = { which = diplo_cost_d value = 8 }
+			add_dip_power = -8
+		}
+		if = { limit = { check_variable = { which = diplo_cost_d value = 4 } }
+			subtract_variable = { which = diplo_cost_d value = 4 }
+			add_dip_power = -4
+		}
+		if = { limit = { check_variable = { which = diplo_cost_d value = 2 } }
+			subtract_variable = { which = diplo_cost_d value = 2 }
+			add_dip_power = -2
+		}
+		if = { limit = { check_variable = { which = diplo_cost_d value = 1 } }
+			subtract_variable = { which = diplo_cost_d value = 1 }
+			add_dip_power = -1
+		}
+	}
+}
+
+mil_estate_cost_a = {
+	custom_tooltip = scaled_mil_cost_tooltip_a
+	
+	hidden_effect = {
+		while = {
+			limit = { check_variable = { which = mil_cost_a value = 128 } }
+			subtract_variable = { which = mil_cost_a value = 128 }
+			add_mil_power = -128
+		}
+		if = { limit = { check_variable = { which = mil_cost_a value = 64 } }
+			subtract_variable = { which = mil_cost_a value = 64 }
+			add_mil_power = -64
+		}
+		if = { limit = { check_variable = { which = mil_cost_a value = 32 } }
+			subtract_variable = { which = mil_cost_a value = 32 }
+			add_mil_power = -32
+		}
+		if = { limit = { check_variable = { which = mil_cost_a value = 16 } }
+			subtract_variable = { which = mil_cost_a value = 16 }
+			add_mil_power = -16
+		}
+		if = { limit = { check_variable = { which = mil_cost_a value = 8 } }
+			subtract_variable = { which = mil_cost_a value = 8 }
+			add_mil_power = -8
+		}
+		if = { limit = { check_variable = { which = mil_cost_a value = 4 } }
+			subtract_variable = { which = mil_cost_a value = 4 }
+			add_mil_power = -4
+		}
+		if = { limit = { check_variable = { which = mil_cost_a value = 2 } }
+			subtract_variable = { which = mil_cost_a value = 2 }
+			add_mil_power = -2
+		}
+		if = { limit = { check_variable = { which = mil_cost_a value = 1 } }
+			subtract_variable = { which = mil_cost_a value = 1 }
+			add_mil_power = -1
+		}
+	}
+}
+
+mil_estate_cost_b = {
+	custom_tooltip = scaled_mil_cost_tooltip_b
+	
+	hidden_effect = {
+		while = {
+			limit = { check_variable = { which = mil_cost_b value = 128 } }
+			subtract_variable = { which = mil_cost_b value = 128 }
+			add_mil_power = -128
+		}
+		if = { limit = { check_variable = { which = mil_cost_b value = 64 } }
+			subtract_variable = { which = mil_cost_b value = 64 }
+			add_mil_power = -64
+		}
+		if = { limit = { check_variable = { which = mil_cost_b value = 32 } }
+			subtract_variable = { which = mil_cost_b value = 32 }
+			add_mil_power = -32
+		}
+		if = { limit = { check_variable = { which = mil_cost_b value = 16 } }
+			subtract_variable = { which = mil_cost_b value = 16 }
+			add_mil_power = -16
+		}
+		if = { limit = { check_variable = { which = mil_cost_b value = 8 } }
+			subtract_variable = { which = mil_cost_b value = 8 }
+			add_mil_power = -8
+		}
+		if = { limit = { check_variable = { which = mil_cost_b value = 4 } }
+			subtract_variable = { which = mil_cost_b value = 4 }
+			add_mil_power = -4
+		}
+		if = { limit = { check_variable = { which = mil_cost_b value = 2 } }
+			subtract_variable = { which = mil_cost_b value = 2 }
+			add_mil_power = -2
+		}
+		if = { limit = { check_variable = { which = mil_cost_b value = 1 } }
+			subtract_variable = { which = mil_cost_b value = 1 }
+			add_mil_power = -1
+		}
+	}
+}
+
+mil_estate_cost_c = {
+	custom_tooltip = scaled_mil_cost_tooltip_c
+	
+	hidden_effect = {
+		while = {
+			limit = { check_variable = { which = mil_cost_c value = 128 } }
+			subtract_variable = { which = mil_cost_c value = 128 }
+			add_mil_power = -128
+		}
+		if = { limit = { check_variable = { which = mil_cost_c value = 64 } }
+			subtract_variable = { which = mil_cost_c value = 64 }
+			add_mil_power = -64
+		}
+		if = { limit = { check_variable = { which = mil_cost_c value = 32 } }
+			subtract_variable = { which = mil_cost_c value = 32 }
+			add_mil_power = -32
+		}
+		if = { limit = { check_variable = { which = mil_cost_c value = 16 } }
+			subtract_variable = { which = mil_cost_c value = 16 }
+			add_mil_power = -16
+		}
+		if = { limit = { check_variable = { which = mil_cost_c value = 8 } }
+			subtract_variable = { which = mil_cost_c value = 8 }
+			add_mil_power = -8
+		}
+		if = { limit = { check_variable = { which = mil_cost_c value = 4 } }
+			subtract_variable = { which = mil_cost_c value = 4 }
+			add_mil_power = -4
+		}
+		if = { limit = { check_variable = { which = mil_cost_c value = 2 } }
+			subtract_variable = { which = mil_cost_c value = 2 }
+			add_mil_power = -2
+		}
+		if = { limit = { check_variable = { which = mil_cost_c value = 1 } }
+			subtract_variable = { which = mil_cost_c value = 1 }
+			add_mil_power = -1
+		}
+	}
+}
+
+mil_estate_cost_d = {
+	custom_tooltip = scaled_mil_cost_tooltip_d
+	
+	hidden_effect = {
+		while = {
+			limit = { check_variable = { which = mil_cost_d value = 128 } }
+			subtract_variable = { which = mil_cost_d value = 128 }
+			add_mil_power = -128
+		}
+		if = { limit = { check_variable = { which = mil_cost_d value = 64 } }
+			subtract_variable = { which = mil_cost_d value = 64 }
+			add_mil_power = -64
+		}
+		if = { limit = { check_variable = { which = mil_cost_d value = 32 } }
+			subtract_variable = { which = mil_cost_d value = 32 }
+			add_mil_power = -32
+		}
+		if = { limit = { check_variable = { which = mil_cost_d value = 16 } }
+			subtract_variable = { which = mil_cost_d value = 16 }
+			add_mil_power = -16
+		}
+		if = { limit = { check_variable = { which = mil_cost_d value = 8 } }
+			subtract_variable = { which = mil_cost_d value = 8 }
+			add_mil_power = -8
+		}
+		if = { limit = { check_variable = { which = mil_cost_d value = 4 } }
+			subtract_variable = { which = mil_cost_d value = 4 }
+			add_mil_power = -4
+		}
+		if = { limit = { check_variable = { which = mil_cost_d value = 2 } }
+			subtract_variable = { which = mil_cost_d value = 2 }
+			add_mil_power = -2
+		}
+		if = { limit = { check_variable = { which = mil_cost_d value = 1 } }
+			subtract_variable = { which = mil_cost_d value = 1 }
+			add_mil_power = -1
+		}
+	}
+}
+
+crisis_potential_a_effect = {
+	if = { limit = { check_variable = { which = crisis_potential_a value = 16.000 } }
+		if = { limit = { check_variable = { which = crisis_potential_a value = 40.000 } }
+			if = { limit = { check_variable = { which = crisis_potential_a value = 60.000 } }
+				if = { limit = { check_variable = { which = crisis_potential_a value = 80.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_a value = 90.000 } }
+						random_list = {
+							1 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							99 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							10 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							90 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = crisis_potential_a value = 70.000 } }
+						random_list = {
+							20 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							80 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							30 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							70 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = crisis_potential_a value = 45.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_a value = 50.000 } }
+						random_list = {
+							40 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							60 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							50 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							50 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						55 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+						45 = { country_event = { id = POP_Estates_Events.901 } }
+					}
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = crisis_potential_a value = 25.000 } }
+				if = { limit = { check_variable = { which = crisis_potential_a value = 30.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_a value = 35.000 } }
+						random_list = {
+							60 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							40 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							65 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							35 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						70 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+						30 = { country_event = { id = POP_Estates_Events.901 } }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = crisis_potential_a value = 18.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_a value = 20.000 } }
+						random_list = {
+							75 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							25 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							80 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							20 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						82 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+						18 = { country_event = { id = POP_Estates_Events.901 } }
+					}
+				}
+			}
+		}
+	}
+	else = {
+		if = { limit = { check_variable = { which = crisis_potential_a value = 6.000 } }
+			if = { limit = { check_variable = { which = crisis_potential_a value = 9.000 } }
+				if = { limit = { check_variable = { which = crisis_potential_a value = 12.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_a value = 14.000 } }
+						random_list = {
+							84 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							16 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							86 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							14 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = crisis_potential_a value = 10.000 } }
+						random_list = {
+							88 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							12 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							90 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							10 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = crisis_potential_a value = 7.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_a value = 8.000 } }
+						random_list = {
+							91 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							9 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							92 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							8 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						93 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+						7 = { country_event = { id = POP_Estates_Events.901 } }
+					}
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = crisis_potential_a value = 3.000 } }
+				if = { limit = { check_variable = { which = crisis_potential_a value = 4.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_a value = 5.000 } }
+						random_list = {
+							94 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							6 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							95 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							5 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						96 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+						4 = { country_event = { id = POP_Estates_Events.901 } }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = crisis_potential_a value = 1.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_a value = 2.000 } }
+						random_list = {
+							97 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							3 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							98 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							2 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = crisis_potential_a value = 0.001 } }
+						random_list = {
+							99 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							1 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+crisis_potential_b_effect = {
+	if = { limit = { check_variable = { which = crisis_potential_b value = 16.000 } }
+		if = { limit = { check_variable = { which = crisis_potential_b value = 40.000 } }
+			if = { limit = { check_variable = { which = crisis_potential_b value = 60.000 } }
+				if = { limit = { check_variable = { which = crisis_potential_b value = 80.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_b value = 90.000 } }
+						random_list = {
+							1 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							99 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							10 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							90 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = crisis_potential_b value = 70.000 } }
+						random_list = {
+							20 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							80 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							30 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							70 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = crisis_potential_b value = 45.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_b value = 50.000 } }
+						random_list = {
+							40 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							60 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							50 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							50 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						55 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+						45 = { country_event = { id = POP_Estates_Events.901 } }
+					}
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = crisis_potential_b value = 25.000 } }
+				if = { limit = { check_variable = { which = crisis_potential_b value = 30.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_b value = 35.000 } }
+						random_list = {
+							60 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							40 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							65 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							35 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						70 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+						30 = { country_event = { id = POP_Estates_Events.901 } }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = crisis_potential_b value = 18.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_b value = 20.000 } }
+						random_list = {
+							75 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							25 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							80 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							20 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						82 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+						18 = { country_event = { id = POP_Estates_Events.901 } }
+					}
+				}
+			}
+		}
+	}
+	else = {
+		if = { limit = { check_variable = { which = crisis_potential_b value = 6.000 } }
+			if = { limit = { check_variable = { which = crisis_potential_b value = 9.000 } }
+				if = { limit = { check_variable = { which = crisis_potential_b value = 12.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_b value = 14.000 } }
+						random_list = {
+							84 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							16 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							86 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							14 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = crisis_potential_b value = 10.000 } }
+						random_list = {
+							88 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							12 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							90 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							10 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = crisis_potential_b value = 7.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_b value = 8.000 } }
+						random_list = {
+							91 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							9 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							92 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							8 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						93 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+						7 = { country_event = { id = POP_Estates_Events.901 } }
+					}
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = crisis_potential_b value = 3.000 } }
+				if = { limit = { check_variable = { which = crisis_potential_b value = 4.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_b value = 5.000 } }
+						random_list = {
+							94 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							6 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							95 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							5 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						96 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+						4 = { country_event = { id = POP_Estates_Events.901 } }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = crisis_potential_b value = 1.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_b value = 2.000 } }
+						random_list = {
+							97 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							3 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							98 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							2 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = crisis_potential_b value = 0.001 } }
+						random_list = {
+							99 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							1 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+crisis_potential_c_effect = {
+	if = { limit = { check_variable = { which = crisis_potential_c value = 16.000 } }
+		if = { limit = { check_variable = { which = crisis_potential_c value = 40.000 } }
+			if = { limit = { check_variable = { which = crisis_potential_c value = 60.000 } }
+				if = { limit = { check_variable = { which = crisis_potential_c value = 80.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_c value = 90.000 } }
+						random_list = {
+							1 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							99 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							10 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							90 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = crisis_potential_c value = 70.000 } }
+						random_list = {
+							20 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							80 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							30 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							70 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = crisis_potential_c value = 45.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_c value = 50.000 } }
+						random_list = {
+							40 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							60 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							50 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							50 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						55 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+						45 = { country_event = { id = POP_Estates_Events.901 } }
+					}
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = crisis_potential_c value = 25.000 } }
+				if = { limit = { check_variable = { which = crisis_potential_c value = 30.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_c value = 35.000 } }
+						random_list = {
+							60 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							40 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							65 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							35 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						70 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+						30 = { country_event = { id = POP_Estates_Events.901 } }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = crisis_potential_c value = 18.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_c value = 20.000 } }
+						random_list = {
+							75 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							25 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							80 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							20 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						82 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+						18 = { country_event = { id = POP_Estates_Events.901 } }
+					}
+				}
+			}
+		}
+	}
+	else = {
+		if = { limit = { check_variable = { which = crisis_potential_c value = 6.000 } }
+			if = { limit = { check_variable = { which = crisis_potential_c value = 9.000 } }
+				if = { limit = { check_variable = { which = crisis_potential_c value = 12.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_c value = 14.000 } }
+						random_list = {
+							84 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							16 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							86 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							14 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = crisis_potential_c value = 10.000 } }
+						random_list = {
+							88 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							12 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							90 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							10 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = crisis_potential_c value = 7.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_c value = 8.000 } }
+						random_list = {
+							91 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							9 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							92 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							8 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						93 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+						7 = { country_event = { id = POP_Estates_Events.901 } }
+					}
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = crisis_potential_c value = 3.000 } }
+				if = { limit = { check_variable = { which = crisis_potential_c value = 4.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_c value = 5.000 } }
+						random_list = {
+							94 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							6 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							95 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							5 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						96 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+						4 = { country_event = { id = POP_Estates_Events.901 } }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = crisis_potential_c value = 1.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_c value = 2.000 } }
+						random_list = {
+							97 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							3 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							98 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							2 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = crisis_potential_c value = 0.001 } }
+						random_list = {
+							99 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							1 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+crisis_potential_d_effect = {
+	if = { limit = { check_variable = { which = crisis_potential_d value = 16.000 } }
+		if = { limit = { check_variable = { which = crisis_potential_d value = 40.000 } }
+			if = { limit = { check_variable = { which = crisis_potential_d value = 60.000 } }
+				if = { limit = { check_variable = { which = crisis_potential_d value = 80.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_d value = 90.000 } }
+						random_list = {
+							1 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							99 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							10 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							90 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = crisis_potential_d value = 70.000 } }
+						random_list = {
+							20 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							80 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							30 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							70 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = crisis_potential_d value = 45.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_d value = 50.000 } }
+						random_list = {
+							40 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							60 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							50 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							50 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						55 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+						45 = { country_event = { id = POP_Estates_Events.901 } }
+					}
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = crisis_potential_d value = 25.000 } }
+				if = { limit = { check_variable = { which = crisis_potential_d value = 30.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_d value = 35.000 } }
+						random_list = {
+							60 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							40 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							65 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							35 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						70 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+						30 = { country_event = { id = POP_Estates_Events.901 } }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = crisis_potential_d value = 18.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_d value = 20.000 } }
+						random_list = {
+							75 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							25 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							80 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							20 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						82 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+						18 = { country_event = { id = POP_Estates_Events.901 } }
+					}
+				}
+			}
+		}
+	}
+	else = {
+		if = { limit = { check_variable = { which = crisis_potential_d value = 6.000 } }
+			if = { limit = { check_variable = { which = crisis_potential_d value = 9.000 } }
+				if = { limit = { check_variable = { which = crisis_potential_d value = 12.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_d value = 14.000 } }
+						random_list = {
+							84 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							16 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							86 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							14 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = crisis_potential_d value = 10.000 } }
+						random_list = {
+							88 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							12 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							90 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							10 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = crisis_potential_d value = 7.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_d value = 8.000 } }
+						random_list = {
+							91 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							9 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							92 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							8 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						93 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+						7 = { country_event = { id = POP_Estates_Events.901 } }
+					}
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = crisis_potential_d value = 3.000 } }
+				if = { limit = { check_variable = { which = crisis_potential_d value = 4.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_d value = 5.000 } }
+						random_list = {
+							94 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							6 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							95 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							5 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						96 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+						4 = { country_event = { id = POP_Estates_Events.901 } }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = crisis_potential_d value = 1.000 } }
+					if = { limit = { check_variable = { which = crisis_potential_d value = 2.000 } }
+						random_list = {
+							97 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							3 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+					else = {
+						random_list = {
+							98 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							2 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = crisis_potential_d value = 0.001 } }
+						random_list = {
+							99 = { clr_country_flag = greater_nobles_crisis clr_country_flag = lesser_nobles_crisis clr_country_flag = burghers_crisis }
+							1 = { country_event = { id = POP_Estates_Events.901 } }
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+greater_nobles_loss_on_privilege_revoke = {
+	if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 216 }
+		}
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 25		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 192 }
+		}
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 75		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 168 }
+		}
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 50		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 144 }
+		}
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 50		subtract_stability_1 = yes }
+		random = {	chance = 50		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 120 }
+		}
+		random = {	chance = 50		subtract_stability_1 = yes }
+		random = {	chance = 50		subtract_stability_1 = yes }
+		random = {	chance = 50		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 96 }
+		}
+		random = {	chance = 50		subtract_stability_1 = yes }
+		random = {	chance = 50		subtract_stability_1 = yes }
+		random = {	chance = 25		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 72 }
+		}
+		random = {	chance = 50		subtract_stability_1 = yes }
+		random = {	chance = 25		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 48 }
+		}
+		random = {	chance = 25		subtract_stability_1 = yes }
+		random = {	chance = 25		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 24 }
+		}
+		random = {	chance = 25		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 0.01 }
+		}
+		random = {	chance = 10		subtract_stability_1 = yes }
+	}
+}
+
+greater_nobles_privilege_revoke_stab_modifier = {
+	if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 216 }
+		}
+		add_country_modifier = {
+			name = greater_nobles_privileges_revoked_10
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 192 }
+		}
+		add_country_modifier = {
+			name = greater_nobles_privileges_revoked_9
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 168 }
+		}
+		add_country_modifier = {
+			name = greater_nobles_privileges_revoked_8
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 144 }
+		}
+		add_country_modifier = {
+			name = greater_nobles_privileges_revoked_7
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 120 }
+		}
+		add_country_modifier = {
+			name = greater_nobles_privileges_revoked_6
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 96 }
+		}
+		add_country_modifier = {
+			name = greater_nobles_privileges_revoked_5
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 72 }
+		}
+		add_country_modifier = {
+			name = greater_nobles_privileges_revoked_4
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 48 }
+		}
+		add_country_modifier = {
+			name = greater_nobles_privileges_revoked_3
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 24 }
+		}
+		add_country_modifier = {
+			name = greater_nobles_privileges_revoked_2
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 0.01 }
+		}
+		add_country_modifier = {
+			name = greater_nobles_privileges_revoked_1
+			duration = 3650
+		}
+	}
+}
+
+lesser_nobles_loss_on_privilege_revoke = {
+	if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 216 }
+		}
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 25		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 192 }
+		}
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 75		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 168 }
+		}
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 50		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 144 }
+		}
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 50		subtract_stability_1 = yes }
+		random = {	chance = 50		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 120 }
+		}
+		random = {	chance = 50		subtract_stability_1 = yes }
+		random = {	chance = 50		subtract_stability_1 = yes }
+		random = {	chance = 50		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 96 }
+		}
+		random = {	chance = 50		subtract_stability_1 = yes }
+		random = {	chance = 50		subtract_stability_1 = yes }
+		random = {	chance = 25		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 72 }
+		}
+		random = {	chance = 50		subtract_stability_1 = yes }
+		random = {	chance = 25		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 48 }
+		}
+		random = {	chance = 25		subtract_stability_1 = yes }
+		random = {	chance = 25		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 24 }
+		}
+		random = {	chance = 25		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 0.01 }
+		}
+		random = {	chance = 10		subtract_stability_1 = yes }
+	}
+}
+
+lesser_nobles_privilege_revoke_stab_modifier = {
+	if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 216 }
+		}
+		add_country_modifier = {
+			name = lesser_nobles_privileges_revoked_10
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 192 }
+		}
+		add_country_modifier = {
+			name = lesser_nobles_privileges_revoked_9
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 168 }
+		}
+		add_country_modifier = {
+			name = lesser_nobles_privileges_revoked_8
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 144 }
+		}
+		add_country_modifier = {
+			name = lesser_nobles_privileges_revoked_7
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 120 }
+		}
+		add_country_modifier = {
+			name = lesser_nobles_privileges_revoked_6
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 96 }
+		}
+		add_country_modifier = {
+			name = lesser_nobles_privileges_revoked_5
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 72 }
+		}
+		add_country_modifier = {
+			name = lesser_nobles_privileges_revoked_4
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 48 }
+		}
+		add_country_modifier = {
+			name = lesser_nobles_privileges_revoked_3
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 24 }
+		}
+		add_country_modifier = {
+			name = lesser_nobles_privileges_revoked_2
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 0.01 }
+		}
+		add_country_modifier = {
+			name = lesser_nobles_privileges_revoked_1
+			duration = 3650
+		}
+	}
+}
+
+burghers_loss_on_privilege_revoke = {
+	if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 216 }
+		}
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 25		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 192 }
+		}
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 75		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 168 }
+		}
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 50		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 144 }
+		}
+		random = {	chance = 75		subtract_stability_1 = yes }
+		random = {	chance = 50		subtract_stability_1 = yes }
+		random = {	chance = 50		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 120 }
+		}
+		random = {	chance = 50		subtract_stability_1 = yes }
+		random = {	chance = 50		subtract_stability_1 = yes }
+		random = {	chance = 50		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 96 }
+		}
+		random = {	chance = 50		subtract_stability_1 = yes }
+		random = {	chance = 50		subtract_stability_1 = yes }
+		random = {	chance = 25		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 72 }
+		}
+		random = {	chance = 50		subtract_stability_1 = yes }
+		random = {	chance = 25		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 48 }
+		}
+		random = {	chance = 25		subtract_stability_1 = yes }
+		random = {	chance = 25		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 24 }
+		}
+		random = {	chance = 25		subtract_stability_1 = yes }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 0.01 }
+		}
+		random = {	chance = 10		subtract_stability_1 = yes }
+	}
+}
+
+burghers_privilege_revoke_stab_modifier = {
+	if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 216 }
+		}
+		add_country_modifier = {
+			name = burghers_privileges_revoked_10
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 192 }
+		}
+		add_country_modifier = {
+			name = burghers_privileges_revoked_9
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 168 }
+		}
+		add_country_modifier = {
+			name = burghers_privileges_revoked_8
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 144 }
+		}
+		add_country_modifier = {
+			name = burghers_privileges_revoked_7
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 120 }
+		}
+		add_country_modifier = {
+			name = burghers_privileges_revoked_6
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 96 }
+		}
+		add_country_modifier = {
+			name = burghers_privileges_revoked_5
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 72 }
+		}
+		add_country_modifier = {
+			name = burghers_privileges_revoked_4
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 48 }
+		}
+		add_country_modifier = {
+			name = burghers_privileges_revoked_3
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 24 }
+		}
+		add_country_modifier = {
+			name = burghers_privileges_revoked_2
+			duration = 3650
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = stability_loss_on_privilege_revoke 			value = 0.01 }
+		}
+		add_country_modifier = {
+			name = burghers_privileges_revoked_1
+			duration = 3650
+		}
+	}
+}
+
+
+stability_scaling_estates_a = {	if = { limit = { check_variable = { which = stability_hit_estate_a value = 16.000 } }
+		if = { limit = { check_variable = { which = stability_hit_estate_a value = 40.000 } }
+			if = { limit = { check_variable = { which = stability_hit_estate_a value = 60.000 } }
+				if = { limit = { check_variable = { which = stability_hit_estate_a value = 80.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_a value = 90.000 } }
+						random_list = {
+							1 = { }
+							99 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							10 = { }
+							90 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = stability_hit_estate_a value = 70.000 } }
+						random_list = {
+							20 = { }
+							80 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							30 = { }
+							70 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = stability_hit_estate_a value = 45.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_a value = 50.000 } }
+						random_list = {
+							40 = { }
+							60 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							50 = { }
+							50 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						55 = { }
+						45 = { subtract_stability_1 = yes }
+					}
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = stability_hit_estate_a value = 25.000 } }
+				if = { limit = { check_variable = { which = stability_hit_estate_a value = 30.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_a value = 35.000 } }
+						random_list = {
+							60 = { }
+							40 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							65 = { }
+							35 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						70 = { }
+						30 = { subtract_stability_1 = yes }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = stability_hit_estate_a value = 18.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_a value = 20.000 } }
+						random_list = {
+							75 = { }
+							25 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							80 = { }
+							20 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						82 = { }
+						18 = { subtract_stability_1 = yes }
+					}
+				}
+			}
+		}
+	}
+	else = {
+		if = { limit = { check_variable = { which = stability_hit_estate_a value = 6.000 } }
+			if = { limit = { check_variable = { which = stability_hit_estate_a value = 9.000 } }
+				if = { limit = { check_variable = { which = stability_hit_estate_a value = 12.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_a value = 14.000 } }
+						random_list = {
+							84 = { }
+							16 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							86 = { }
+							14 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = stability_hit_estate_a value = 10.000 } }
+						random_list = {
+							88 = { }
+							12 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							90 = { }
+							10 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = stability_hit_estate_a value = 7.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_a value = 8.000 } }
+						random_list = {
+							91 = { }
+							9 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							92 = { }
+							8 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						93 = { }
+						7 = { subtract_stability_1 = yes }
+					}
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = stability_hit_estate_a value = 3.000 } }
+				if = { limit = { check_variable = { which = stability_hit_estate_a value = 4.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_a value = 5.000 } }
+						random_list = {
+							94 = { }
+							6 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							95 = { }
+							5 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						96 = { }
+						4 = { subtract_stability_1 = yes }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = stability_hit_estate_a value = 1.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_a value = 2.000 } }
+						random_list = {
+							97 = { }
+							3 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							98 = { }
+							2 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = stability_hit_estate_a value = 0.001 } }
+						random_list = {
+							99 = { }
+							1 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+stability_scaling_estates_b = {	if = { limit = { check_variable = { which = stability_hit_estate_b value = 16.000 } }
+		if = { limit = { check_variable = { which = stability_hit_estate_b value = 40.000 } }
+			if = { limit = { check_variable = { which = stability_hit_estate_b value = 60.000 } }
+				if = { limit = { check_variable = { which = stability_hit_estate_b value = 80.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_b value = 90.000 } }
+						random_list = {
+							1 = { }
+							99 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							10 = { }
+							90 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = stability_hit_estate_b value = 70.000 } }
+						random_list = {
+							20 = { }
+							80 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							30 = { }
+							70 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = stability_hit_estate_b value = 45.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_b value = 50.000 } }
+						random_list = {
+							40 = { }
+							60 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							50 = { }
+							50 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						55 = { }
+						45 = { subtract_stability_1 = yes }
+					}
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = stability_hit_estate_b value = 25.000 } }
+				if = { limit = { check_variable = { which = stability_hit_estate_b value = 30.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_b value = 35.000 } }
+						random_list = {
+							60 = { }
+							40 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							65 = { }
+							35 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						70 = { }
+						30 = { subtract_stability_1 = yes }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = stability_hit_estate_b value = 18.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_b value = 20.000 } }
+						random_list = {
+							75 = { }
+							25 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							80 = { }
+							20 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						82 = { }
+						18 = { subtract_stability_1 = yes }
+					}
+				}
+			}
+		}
+	}
+	else = {
+		if = { limit = { check_variable = { which = stability_hit_estate_b value = 6.000 } }
+			if = { limit = { check_variable = { which = stability_hit_estate_b value = 9.000 } }
+				if = { limit = { check_variable = { which = stability_hit_estate_b value = 12.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_b value = 14.000 } }
+						random_list = {
+							84 = { }
+							16 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							86 = { }
+							14 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = stability_hit_estate_b value = 10.000 } }
+						random_list = {
+							88 = { }
+							12 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							90 = { }
+							10 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = stability_hit_estate_b value = 7.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_b value = 8.000 } }
+						random_list = {
+							91 = { }
+							9 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							92 = { }
+							8 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						93 = { }
+						7 = { subtract_stability_1 = yes }
+					}
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = stability_hit_estate_b value = 3.000 } }
+				if = { limit = { check_variable = { which = stability_hit_estate_b value = 4.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_b value = 5.000 } }
+						random_list = {
+							94 = { }
+							6 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							95 = { }
+							5 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						96 = { }
+						4 = { subtract_stability_1 = yes }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = stability_hit_estate_b value = 1.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_b value = 2.000 } }
+						random_list = {
+							97 = { }
+							3 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							98 = { }
+							2 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = stability_hit_estate_b value = 0.001 } }
+						random_list = {
+							99 = { }
+							1 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+stability_scaling_estates_c = {	if = { limit = { check_variable = { which = stability_hit_estate_c value = 16.000 } }
+		if = { limit = { check_variable = { which = stability_hit_estate_c value = 40.000 } }
+			if = { limit = { check_variable = { which = stability_hit_estate_c value = 60.000 } }
+				if = { limit = { check_variable = { which = stability_hit_estate_c value = 80.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_c value = 90.000 } }
+						random_list = {
+							1 = { }
+							99 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							10 = { }
+							90 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = stability_hit_estate_c value = 70.000 } }
+						random_list = {
+							20 = { }
+							80 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							30 = { }
+							70 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = stability_hit_estate_c value = 45.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_c value = 50.000 } }
+						random_list = {
+							40 = { }
+							60 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							50 = { }
+							50 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						55 = { }
+						45 = { subtract_stability_1 = yes }
+					}
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = stability_hit_estate_c value = 25.000 } }
+				if = { limit = { check_variable = { which = stability_hit_estate_c value = 30.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_c value = 35.000 } }
+						random_list = {
+							60 = { }
+							40 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							65 = { }
+							35 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						70 = { }
+						30 = { subtract_stability_1 = yes }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = stability_hit_estate_c value = 18.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_c value = 20.000 } }
+						random_list = {
+							75 = { }
+							25 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							80 = { }
+							20 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						82 = { }
+						18 = { subtract_stability_1 = yes }
+					}
+				}
+			}
+		}
+	}
+	else = {
+		if = { limit = { check_variable = { which = stability_hit_estate_c value = 6.000 } }
+			if = { limit = { check_variable = { which = stability_hit_estate_c value = 9.000 } }
+				if = { limit = { check_variable = { which = stability_hit_estate_c value = 12.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_c value = 14.000 } }
+						random_list = {
+							84 = { }
+							16 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							86 = { }
+							14 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = stability_hit_estate_c value = 10.000 } }
+						random_list = {
+							88 = { }
+							12 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							90 = { }
+							10 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = stability_hit_estate_c value = 7.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_c value = 8.000 } }
+						random_list = {
+							91 = { }
+							9 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							92 = { }
+							8 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						93 = { }
+						7 = { subtract_stability_1 = yes }
+					}
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = stability_hit_estate_c value = 3.000 } }
+				if = { limit = { check_variable = { which = stability_hit_estate_c value = 4.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_c value = 5.000 } }
+						random_list = {
+							94 = { }
+							6 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							95 = { }
+							5 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						96 = { }
+						4 = { subtract_stability_1 = yes }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = stability_hit_estate_c value = 1.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_c value = 2.000 } }
+						random_list = {
+							97 = { }
+							3 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							98 = { }
+							2 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = stability_hit_estate_c value = 0.001 } }
+						random_list = {
+							99 = { }
+							1 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+stability_scaling_estates_d = {	if = { limit = { check_variable = { which = stability_hit_estate_d value = 16.000 } }
+		if = { limit = { check_variable = { which = stability_hit_estate_d value = 40.000 } }
+			if = { limit = { check_variable = { which = stability_hit_estate_d value = 60.000 } }
+				if = { limit = { check_variable = { which = stability_hit_estate_d value = 80.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_d value = 90.000 } }
+						random_list = {
+							1 = { }
+							99 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							10 = { }
+							90 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = stability_hit_estate_d value = 70.000 } }
+						random_list = {
+							20 = { }
+							80 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							30 = { }
+							70 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = stability_hit_estate_d value = 45.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_d value = 50.000 } }
+						random_list = {
+							40 = { }
+							60 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							50 = { }
+							50 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						55 = { }
+						45 = { subtract_stability_1 = yes }
+					}
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = stability_hit_estate_d value = 25.000 } }
+				if = { limit = { check_variable = { which = stability_hit_estate_d value = 30.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_d value = 35.000 } }
+						random_list = {
+							60 = { }
+							40 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							65 = { }
+							35 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						70 = { }
+						30 = { subtract_stability_1 = yes }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = stability_hit_estate_d value = 18.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_d value = 20.000 } }
+						random_list = {
+							75 = { }
+							25 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							80 = { }
+							20 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						82 = { }
+						18 = { subtract_stability_1 = yes }
+					}
+				}
+			}
+		}
+	}
+	else = {
+		if = { limit = { check_variable = { which = stability_hit_estate_d value = 6.000 } }
+			if = { limit = { check_variable = { which = stability_hit_estate_d value = 9.000 } }
+				if = { limit = { check_variable = { which = stability_hit_estate_d value = 12.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_d value = 14.000 } }
+						random_list = {
+							84 = { }
+							16 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							86 = { }
+							14 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = stability_hit_estate_d value = 10.000 } }
+						random_list = {
+							88 = { }
+							12 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							90 = { }
+							10 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = stability_hit_estate_d value = 7.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_d value = 8.000 } }
+						random_list = {
+							91 = { }
+							9 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							92 = { }
+							8 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						93 = { }
+						7 = { subtract_stability_1 = yes }
+					}
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = stability_hit_estate_d value = 3.000 } }
+				if = { limit = { check_variable = { which = stability_hit_estate_d value = 4.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_d value = 5.000 } }
+						random_list = {
+							94 = { }
+							6 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							95 = { }
+							5 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else = {
+					random_list = {
+						96 = { }
+						4 = { subtract_stability_1 = yes }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = stability_hit_estate_d value = 1.000 } }
+					if = { limit = { check_variable = { which = stability_hit_estate_d value = 2.000 } }
+						random_list = {
+							97 = { }
+							3 = { subtract_stability_1 = yes }
+						}
+					}
+					else = {
+						random_list = {
+							98 = { }
+							2 = { subtract_stability_1 = yes }
+						}
+					}
+				}
+				else_if = { limit = { check_variable = { which = stability_hit_estate_d value = 0.001 } }
+					random_list = {
+						99 = { }
+						1 = { subtract_stability_1 = yes }
+					}
+				}
+			}
+		}
+	}
+}
+
+#twenty_loot = {
+#	if = {
+#		limit = {
+#			check_variable = { which = loot_estate_twenty_percent 			value = 1 }
+#			NOT = { check_variable = { which = loot_estate_twenty_percent 	value = 2 } }
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = greater_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_greater_nobles_loyalty 	value = 0.01 } }
+#			add_estate_loyalty = {
+#				estate = estate_greater_nobles
+#				loyalty = -1
+#			}
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = lesser_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_lesser_nobles_loyalty 	value = 0.01 } }
+#			add_estate_loyalty = {
+#				estate = estate_lesser_nobles
+#				loyalty = -1
+#			}
+#		}
+#		random_list = {
+#			5 = { subtract_stability_1 = yes }
+#			95 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = loot_estate_twenty_percent 			value = 2 }
+#			NOT = { check_variable = { which = loot_estate_twenty_percent 	value = 4 } }
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = greater_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_greater_nobles_loyalty 	value = 0.02 } }
+#			add_estate_loyalty = {
+#				estate = estate_greater_nobles
+#				loyalty = -2
+#			}
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = lesser_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_lesser_nobles_loyalty 	value = 0.02 } }
+#			add_estate_loyalty = {
+#				estate = estate_lesser_nobles
+#				loyalty = -2
+#			}
+#		}
+#		random_list = {
+#			10 = { subtract_stability_1 = yes }
+#			90 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = loot_estate_twenty_percent 			value = 4 }
+#			NOT = { check_variable = { which = loot_estate_twenty_percent 	value = 7 } }
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = greater_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_greater_nobles_loyalty 	value = 0.03 } }
+#			add_estate_loyalty = {
+#				estate = estate_greater_nobles
+#				loyalty = -3
+#			}
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = lesser_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_lesser_nobles_loyalty 	value = 0.03 } }
+#			add_estate_loyalty = {
+#				estate = estate_lesser_nobles
+#				loyalty = -3
+#			}
+#		}
+#		random_list = {
+#			15 = { subtract_stability_1 = yes }
+#			85 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = loot_estate_twenty_percent 			value = 7 }
+#			NOT = { check_variable = { which = loot_estate_twenty_percent 	value = 11 } }
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = greater_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_greater_nobles_loyalty 	value = 0.04 } }
+#			add_estate_loyalty = {
+#				estate = estate_greater_nobles
+#				loyalty = -4
+#			}
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = lesser_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_lesser_nobles_loyalty 	value = 0.04 } }
+#			add_estate_loyalty = {
+#				estate = estate_lesser_nobles
+#				loyalty = -4
+#			}
+#		}
+#		random_list = {
+#			20 = { subtract_stability_1 = yes }
+#			80 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = loot_estate_twenty_percent 			value = 11 }
+#			NOT = { check_variable = { which = loot_estate_twenty_percent 	value = 16 } }
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = greater_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_greater_nobles_loyalty 	value = 0.05 } }
+#			add_estate_loyalty = {
+#				estate = estate_greater_nobles
+#				loyalty = -5
+#			}
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = lesser_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_lesser_nobles_loyalty 	value = 0.05 } }
+#			add_estate_loyalty = {
+#				estate = estate_lesser_nobles
+#				loyalty = -5
+#			}
+#		}
+#		random_list = {
+#			25 = { subtract_stability_1 = yes }
+#			75 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = loot_estate_twenty_percent 			value = 16 }
+#			NOT = { check_variable = { which = loot_estate_twenty_percent 	value = 22 } }
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = greater_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_greater_nobles_loyalty 	value = 0.06 } }
+#			add_estate_loyalty = {
+#				estate = estate_greater_nobles
+#				loyalty = -6
+#			}
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = lesser_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_lesser_nobles_loyalty 	value = 0.06 } }
+#			add_estate_loyalty = {
+#				estate = estate_lesser_nobles
+#				loyalty = -6
+#			}
+#		}
+#		random_list = {
+#			30 = { subtract_stability_1 = yes }
+#			70 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = loot_estate_twenty_percent 			value = 22 }
+#			NOT = { check_variable = { which = loot_estate_twenty_percent 	value = 29 } }
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = greater_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_greater_nobles_loyalty 	value = 0.07 } }
+#			add_estate_loyalty = {
+#				estate = estate_greater_nobles
+#				loyalty = -7
+#			}
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = lesser_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_lesser_nobles_loyalty 	value = 0.07 } }
+#			add_estate_loyalty = {
+#				estate = estate_lesser_nobles
+#				loyalty = -7
+#			}
+#		}
+#		random_list = {
+#			35 = { subtract_stability_1 = yes }
+#			65 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = loot_estate_twenty_percent 			value = 29 }
+#			NOT = { check_variable = { which = loot_estate_twenty_percent 	value = 37 } }
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = greater_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_greater_nobles_loyalty 	value = 0.08 } }
+#			add_estate_loyalty = {
+#				estate = estate_greater_nobles
+#				loyalty = -8
+#			}
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = lesser_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_lesser_nobles_loyalty 	value = 0.08 } }
+#			add_estate_loyalty = {
+#				estate = estate_lesser_nobles
+#				loyalty = -8
+#			}
+#		}
+#		random_list = {
+#			40 = { subtract_stability_1 = yes }
+#			60 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = loot_estate_twenty_percent 			value = 37 }
+#			NOT = { check_variable = { which = loot_estate_twenty_percent 	value = 46 } }
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = greater_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_greater_nobles_loyalty 	value = 0.09 } }
+#			add_estate_loyalty = {
+#				estate = estate_greater_nobles
+#				loyalty = -9
+#			}
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = lesser_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_lesser_nobles_loyalty 	value = 0.09 } }
+#			add_estate_loyalty = {
+#				estate = estate_lesser_nobles
+#				loyalty = -9
+#			}
+#		}
+#		random_list = {
+#			45 = { subtract_stability_1 = yes }
+#			55 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = loot_estate_twenty_percent 	value = 46 }
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = greater_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_greater_nobles_loyalty 	value = 0.10 } }
+#			add_estate_loyalty = {
+#				estate = estate_greater_nobles
+#				loyalty = -10
+#			}
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = lesser_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_lesser_nobles_loyalty 	value = 0.10 } }
+#			add_estate_loyalty = {
+#				estate = estate_lesser_nobles
+#				loyalty = -10
+#			}
+#		}
+#		random_list = {
+#			50 = { subtract_stability_1 = yes }
+#			50 = { }
+#		}
+#	}
+#}
+#
+#forty_loot = {
+#	if = {
+#		limit = {
+#			check_variable = { which = loot_estate_forty_percent 			value = 1 }
+#			NOT = { check_variable = { which = loot_estate_forty_percent 	value = 2 } }
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = greater_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_greater_nobles_loyalty 	value = 0.01 } }
+#			add_estate_loyalty = {
+#				estate = estate_greater_nobles
+#				loyalty = -1
+#			}
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = lesser_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_lesser_nobles_loyalty 	value = 0.01 } }
+#			add_estate_loyalty = {
+#				estate = estate_lesser_nobles
+#				loyalty = -1
+#			}
+#		}
+#		random_list = {
+#			5 = { subtract_stability_1 = yes }
+#			95 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = loot_estate_forty_percent 			value = 2 }
+#			NOT = { check_variable = { which = loot_estate_forty_percent 	value = 4 } }
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = greater_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_greater_nobles_loyalty 	value = 0.02 } }
+#			add_estate_loyalty = {
+#				estate = estate_greater_nobles
+#				loyalty = -2
+#			}
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = lesser_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_lesser_nobles_loyalty 	value = 0.02 } }
+#			add_estate_loyalty = {
+#				estate = estate_lesser_nobles
+#				loyalty = -2
+#			}
+#		}
+#		random_list = {
+#			10 = { subtract_stability_1 = yes }
+#			90 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = loot_estate_forty_percent 			value = 4 }
+#			NOT = { check_variable = { which = loot_estate_forty_percent 	value = 7 } }
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = greater_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_greater_nobles_loyalty 	value = 0.03 } }
+#			add_estate_loyalty = {
+#				estate = estate_greater_nobles
+#				loyalty = -3
+#			}
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = lesser_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_lesser_nobles_loyalty 	value = 0.03 } }
+#			add_estate_loyalty = {
+#				estate = estate_lesser_nobles
+#				loyalty = -3
+#			}
+#		}
+#		random_list = {
+#			15 = { subtract_stability_1 = yes }
+#			85 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = loot_estate_forty_percent 			value = 7 }
+#			NOT = { check_variable = { which = loot_estate_forty_percent 	value = 11 } }
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = greater_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_greater_nobles_loyalty 	value = 0.04 } }
+#			add_estate_loyalty = {
+#				estate = estate_greater_nobles
+#				loyalty = -4
+#			}
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = lesser_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_lesser_nobles_loyalty 	value = 0.04 } }
+#			add_estate_loyalty = {
+#				estate = estate_lesser_nobles
+#				loyalty = -4
+#			}
+#		}
+#		random_list = {
+#			20 = { subtract_stability_1 = yes }
+#			80 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = loot_estate_forty_percent 			value = 11 }
+#			NOT = { check_variable = { which = loot_estate_forty_percent 	value = 16 } }
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = greater_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_greater_nobles_loyalty 	value = 0.05 } }
+#			add_estate_loyalty = {
+#				estate = estate_greater_nobles
+#				loyalty = -5
+#			}
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = lesser_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_lesser_nobles_loyalty 	value = 0.05 } }
+#			add_estate_loyalty = {
+#				estate = estate_lesser_nobles
+#				loyalty = -5
+#			}
+#		}
+#		random_list = {
+#			25 = { subtract_stability_1 = yes }
+#			75 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = loot_estate_forty_percent 			value = 16 }
+#			NOT = { check_variable = { which = loot_estate_forty_percent 	value = 22 } }
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = greater_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_greater_nobles_loyalty 	value = 0.06 } }
+#			add_estate_loyalty = {
+#				estate = estate_greater_nobles
+#				loyalty = -6
+#			}
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = lesser_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_lesser_nobles_loyalty 	value = 0.06 } }
+#			add_estate_loyalty = {
+#				estate = estate_lesser_nobles
+#				loyalty = -6
+#			}
+#		}
+#		random_list = {
+#			30 = { subtract_stability_1 = yes }
+#			70 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = loot_estate_forty_percent 			value = 22 }
+#			NOT = { check_variable = { which = loot_estate_forty_percent 	value = 29 } }
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = greater_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_greater_nobles_loyalty 	value = 0.07 } }
+#			add_estate_loyalty = {
+#				estate = estate_greater_nobles
+#				loyalty = -7
+#			}
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = lesser_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_lesser_nobles_loyalty 	value = 0.08 } }
+#			add_estate_loyalty = {
+#				estate = estate_lesser_nobles
+#				loyalty = -7
+#			}
+#		}
+#		random_list = {
+#			35 = { subtract_stability_1 = yes }
+#			65 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = loot_estate_forty_percent 			value = 29 }
+#			NOT = { check_variable = { which = loot_estate_forty_percent 	value = 37 } }
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = greater_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_greater_nobles_loyalty 	value = 0.08 } }
+#			add_estate_loyalty = {
+#				estate = estate_greater_nobles
+#				loyalty = -8
+#			}
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = lesser_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_lesser_nobles_loyalty 	value = 0.08 } }
+#			add_estate_loyalty = {
+#				estate = estate_lesser_nobles
+#				loyalty = -8
+#			}
+#		}
+#		random_list = {
+#			40 = { subtract_stability_1 = yes }
+#			60 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = loot_estate_forty_percent 			value = 37 }
+#			NOT = { check_variable = { which = loot_estate_forty_percent 	value = 46 } }
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = greater_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_greater_nobles_loyalty 	value = 0.09 } }
+#			add_estate_loyalty = {
+#				estate = estate_greater_nobles
+#				loyalty = -9
+#			}
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = lesser_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_lesser_nobles_loyalty 	value = 0.09 } }
+#			add_estate_loyalty = {
+#				estate = estate_lesser_nobles
+#				loyalty = -9
+#			}
+#		}
+#		random_list = {
+#			45 = { subtract_stability_1 = yes }
+#			55 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = loot_estate_forty_percent 	value = 46 }
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = greater_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_greater_nobles_loyalty 	value = 0.10 } }
+#			add_estate_loyalty = {
+#				estate = estate_greater_nobles
+#				loyalty = -10
+#			}
+#		}
+#		if = {
+#			limit = {
+#				has_country_flag = lesser_nobles_exist_in_country
+#			}
+#			hidden_effect = { subtract_variable = { which = estate_lesser_nobles_loyalty 	value = 0.10 } }
+#			add_estate_loyalty = {
+#				estate = estate_lesser_nobles
+#				loyalty = -10
+#			}
+#		}
+#		random_list = {
+#			50 = { subtract_stability_1 = yes }
+#			50 = { }
+#		}
+#	}
+#}
+
+twenty_angry_soldiers = {
+	if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_20 	value = 46 }
+		}
+		add_country_modifier = { name = "denied_soldiers_loot_bad" duration = 7290 }
+		
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					is_core = owner
+				}
+				add_province_modifier = { name = denied_soldiers_loot_prov_bad duration = 7290 hidden = yes }
+			}
+		}
+		
+		random_list = {
+			50 = { subtract_stability_1 = yes }
+			50 = { }
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_20 			value = 37 }
+		}
+		add_country_modifier = { name = "denied_soldiers_loot_bad" duration = 6560 }
+		
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					is_core = owner
+				}
+				add_province_modifier = { name = denied_soldiers_loot_prov_bad duration = 6560 hidden = yes }
+			}
+		}
+		
+		random_list = {
+			45 = { subtract_stability_1 = yes }
+			55 = { }
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_20 			value = 29 }
+		}
+		add_country_modifier = { name = "denied_soldiers_loot_bad" duration = 5830 }
+		
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					is_core = owner
+				}
+				add_province_modifier = { name = denied_soldiers_loot_prov_bad duration = 5830 hidden = yes }
+			}
+		}
+		
+		random_list = {
+			40 = { subtract_stability_1 = yes }
+			60 = { }
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_20 			value = 22 }
+		}
+		add_country_modifier = { name = "denied_soldiers_loot_bad" duration = 5100 }
+		
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					is_core = owner
+				}
+				add_province_modifier = { name = denied_soldiers_loot_prov_bad duration = 5100 hidden = yes }
+			}
+		}
+		
+		random_list = {
+			35 = { subtract_stability_1 = yes }
+			65 = { }
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_20 			value = 16 }
+		}
+		add_country_modifier = { name = "denied_soldiers_loot_bad" duration = 4370 }
+		
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					is_core = owner
+				}
+				add_province_modifier = { name = denied_soldiers_loot_prov_bad duration = 4370 hidden = yes }
+			}
+		}
+		
+		random_list = {
+			30 = { subtract_stability_1 = yes }
+			70 = { }
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_20 			value = 11 }
+		}
+		add_country_modifier = { name = "denied_soldiers_loot_bad" duration = 3650 }
+		
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					is_core = owner
+				}
+				add_province_modifier = { name = denied_soldiers_loot_prov_bad duration = 3650 hidden = yes }
+			}
+		}
+		
+		random_list = {
+			25 = { subtract_stability_1 = yes }
+			75 = { }
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_20 			value = 7 }
+		}
+		add_country_modifier = { name = "denied_soldiers_loot_bad" duration = 2920 }
+		
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					is_core = owner
+				}
+				add_province_modifier = { name = denied_soldiers_loot_prov_bad duration = 2920 hidden = yes }
+			}
+		}
+		random_list = {
+			20 = { subtract_stability_1 = yes }
+			80 = { }
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_20 			value = 4 }
+		}
+		add_country_modifier = { name = "denied_soldiers_loot_bad" duration = 2190 }
+		
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					is_core = owner
+				}
+				add_province_modifier = { name = denied_soldiers_loot_prov_bad duration = 2190 hidden = yes }
+			}
+		}
+		
+		random_list = {
+			15 = { subtract_stability_1 = yes }
+			85 = { }
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_20 			value = 2 }
+		}
+		add_country_modifier = { name = "denied_soldiers_loot_bad" duration = 1460 }
+		
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					is_core = owner
+				}
+				add_province_modifier = { name = denied_soldiers_loot_prov_bad duration = 1460 hidden = yes }
+			}
+		}
+		
+		random_list = {
+			10 = { subtract_stability_1 = yes }
+			90 = { }
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_20 			value = 1 }
+		}
+		add_country_modifier = { name = "denied_soldiers_loot_bad" duration = 730 }
+		
+		hidden_effect = {
+			
+			every_owned_province = {
+				limit = {
+					is_core = owner
+				}
+				add_province_modifier = { name = denied_soldiers_loot_prov_bad duration = 730 hidden = yes }
+			}
+		}
+		
+		random_list = {
+			5 = { subtract_stability_1 = yes }
+			95 = { }
+		}
+	}
+}
+
+twenty_angry_soldiers_express = {
+	set_variable = { which = years_of_anger_20		value = 0 }
+	if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_20 	value = 46 }
+		}
+		set_variable = { which = years_of_anger_20 	value = 20 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_20 			value = 37 }
+		}
+		set_variable = { which = years_of_anger_20 	value = 18 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_20 			value = 29 }
+		}
+		set_variable = { which = years_of_anger_20 	value = 16 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_20 			value = 22 }
+		}
+		set_variable = { which = years_of_anger_20 	value = 14 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_20 			value = 16 }
+		}
+		set_variable = { which = years_of_anger_20 	value = 12 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_20 			value = 11 }
+		}
+		set_variable = { which = years_of_anger_20 	value = 10 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_20 			value = 7 }
+		}
+		set_variable = { which = years_of_anger_20 	value = 8 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_20 			value = 4 }
+		}
+		set_variable = { which = years_of_anger_20 	value = 6 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_20 			value = 2 }
+		}
+		set_variable = { which = years_of_anger_20 	value = 4 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_20 			value = 1 }
+		}
+		set_variable = { which = years_of_anger_20 	value = 2 }
+	}
+}
+
+forty_angry_soldiers = {
+	if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_40 	value = 46 }
+		}
+		add_country_modifier = { name = "denied_soldiers_loot_worse" duration = 7290 }
+		
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					is_core = owner
+				}
+				add_province_modifier = { name = denied_soldiers_loot_prov_worse duration = 7290 hidden = yes }
+			}
+		}
+		
+		subtract_stability_1 = yes
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_40 			value = 37 }
+		}
+		add_country_modifier = { name = "denied_soldiers_loot_worse" duration = 6560 }
+		
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					is_core = owner
+				}
+				add_province_modifier = { name = denied_soldiers_loot_prov_worse duration = 6560 hidden = yes }
+			}
+		}
+		
+		random_list = {
+			90 = { subtract_stability_1 = yes }
+			10 = { }
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_40 			value = 29 }
+		}
+		add_country_modifier = { name = "denied_soldiers_loot_worse" duration = 5830 }
+		
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					is_core = owner
+				}
+				add_province_modifier = { name = denied_soldiers_loot_prov_worse duration = 5830 hidden = yes }
+			}
+		}
+		
+		random_list = {
+			80 = { subtract_stability_1 = yes }
+			20 = { }
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_40 			value = 22 }
+		}
+		add_country_modifier = { name = "denied_soldiers_loot_worse" duration = 5100 }
+		
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					is_core = owner
+				}
+				add_province_modifier = { name = denied_soldiers_loot_prov_worse duration = 5100 hidden = yes }
+			}
+		}
+		
+		random_list = {
+			70 = { subtract_stability_1 = yes }
+			30 = { }
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_40 			value = 16 }
+		}
+		add_country_modifier = { name = "denied_soldiers_loot_worse" duration = 4370 }
+		
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					is_core = owner
+				}
+				add_province_modifier = { name = denied_soldiers_loot_prov_worse duration = 4370 hidden = yes }
+			}
+		}
+		
+		random_list = {
+			60 = { subtract_stability_1 = yes }
+			40 = { }
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_40 			value = 11 }
+		}
+		add_country_modifier = { name = "denied_soldiers_loot_worse" duration = 3650 }
+		
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					is_core = owner
+				}
+				add_province_modifier = { name = denied_soldiers_loot_prov_worse duration = 3650 hidden = yes }
+			}
+		}
+		
+		random_list = {
+			50 = { subtract_stability_1 = yes }
+			50 = { }
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_40 			value = 7 }
+		}
+		add_country_modifier = { name = "denied_soldiers_loot_worse" duration = 2920 }
+		
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					is_core = owner
+				}
+				add_province_modifier = { name = denied_soldiers_loot_prov_worse duration = 2920 hidden = yes }
+			}
+		}
+		
+		random_list = {
+			40 = { subtract_stability_1 = yes }
+			60 = { }
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_40 			value = 4 }
+		}
+		add_country_modifier = { name = "denied_soldiers_loot_worse" duration = 2190 }
+		
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					is_core = owner
+				}
+				add_province_modifier = { name = denied_soldiers_loot_prov_worse duration = 2190 hidden = yes }
+			}
+		}
+		
+		random_list = {
+			30 = { subtract_stability_1 = yes }
+			70 = { }
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_40 			value = 2 }
+		}
+		add_country_modifier = { name = "denied_soldiers_loot_worse" duration = 1460 }
+		
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					is_core = owner
+				}
+				add_province_modifier = { name = denied_soldiers_loot_prov_worse duration = 1460 hidden = yes }
+			}
+		}
+		
+		random_list = {
+			20 = { subtract_stability_1 = yes }
+			80 = { }
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_40 			value = 1 }
+		}
+		add_country_modifier = { name = "denied_soldiers_loot_worse" duration = 730 }
+		
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					is_core = owner
+				}
+				add_province_modifier = { name = denied_soldiers_loot_prov_worse duration = 730 hidden = yes }
+			}
+		}
+		
+		random_list = {
+			10 = { subtract_stability_1 = yes }
+			90 = { }
+		}
+	}
+}
+
+forty_angry_soldiers_express = {
+	set_variable = { which = years_of_anger_40	value = 0 }
+	if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_40 	value = 46 }
+		}
+		set_variable = { which = years_of_anger_40 	value = 20 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_40 			value = 37 }
+		}
+		set_variable = { which = years_of_anger_40 	value = 18 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_40 			value = 29 }
+		}
+		set_variable = { which = years_of_anger_40 	value = 16 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_40 			value = 22 }
+		}
+		set_variable = { which = years_of_anger_40 	value = 14 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_40 			value = 16 }
+		}
+		set_variable = { which = years_of_anger_40 	value = 12 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_40 			value = 11 }
+		}
+		set_variable = { which = years_of_anger_40 	value = 10 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_40 			value = 7 }
+		}
+		set_variable = { which = years_of_anger_40 	value = 8 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_40 			value = 4 }
+		}
+		set_variable = { which = years_of_anger_40 	value = 6 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_40 			value = 2 }
+		}
+		set_variable = { which = years_of_anger_40 	value = 4 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = loot_soldiers_angry_40 			value = 1 }
+		}
+		set_variable = { which = years_of_anger_40 	value = 2 }
+	}
+}
+
+estate_greater_nobles_loyalty_added = {
+	if = { limit = { check_variable = { which = greater_nobles_loyalty_added value = 64 } } 		add_estate_loyalty = { estate = estate_greater_nobles	loyalty = 64 } change_variable = { which = estate_greater_nobles_loyalty value = 0.64 }	subtract_variable = { which = greater_nobles_loyalty_added value = 64 } }
+	if = { limit = { check_variable = { which = greater_nobles_loyalty_added value = 32 } } 		add_estate_loyalty = { estate = estate_greater_nobles	loyalty = 32 } change_variable = { which = estate_greater_nobles_loyalty value = 0.32 }	subtract_variable = { which = greater_nobles_loyalty_added value = 32 } }
+	if = { limit = { check_variable = { which = greater_nobles_loyalty_added value = 16 } } 		add_estate_loyalty = { estate = estate_greater_nobles	loyalty = 16 } change_variable = { which = estate_greater_nobles_loyalty value = 0.16 }	subtract_variable = { which = greater_nobles_loyalty_added value = 16 } }
+	if = { limit = { check_variable = { which = greater_nobles_loyalty_added value = 8 } } 		add_estate_loyalty = { estate = estate_greater_nobles	loyalty = 8	 } change_variable = { which = estate_greater_nobles_loyalty value = 0.08 }	subtract_variable = { which = greater_nobles_loyalty_added value = 8 } }
+	if = { limit = { check_variable = { which = greater_nobles_loyalty_added value = 4 } } 		add_estate_loyalty = { estate = estate_greater_nobles	loyalty = 4	 } change_variable = { which = estate_greater_nobles_loyalty value = 0.04 }	subtract_variable = { which = greater_nobles_loyalty_added value = 4 } }
+	if = { limit = { check_variable = { which = greater_nobles_loyalty_added value = 2 } } 		add_estate_loyalty = { estate = estate_greater_nobles	loyalty = 2	 } change_variable = { which = estate_greater_nobles_loyalty value = 0.02 }	subtract_variable = { which = greater_nobles_loyalty_added value = 2 } }
+	if = { limit = { check_variable = { which = greater_nobles_loyalty_added value = 1 } } 		add_estate_loyalty = { estate = estate_greater_nobles	loyalty = 1	 } change_variable = { which = estate_greater_nobles_loyalty value = 0.01 }	subtract_variable = { which = greater_nobles_loyalty_added value = 1 } }
+	
+	if = {
+		limit = {
+			check_variable = { which = estate_greater_nobles_loyalty value = 1 }
+		}
+		set_variable = { which = estate_greater_nobles_loyalty value = 1 }
+	}
+	
+	EstateProv_SetUnrest = { estate=greater_nobles }
+}
+
+estate_greater_nobles_loyalty_removed = {
+	if = { limit = { check_variable = { which = greater_nobles_loyalty_removed value = 64 } } 		add_estate_loyalty = { estate = estate_greater_nobles	loyalty = -64 } change_variable = { which = estate_greater_nobles_loyalty value = -0.64 }	subtract_variable = { which = greater_nobles_loyalty_removed value = 64 } }
+	if = { limit = { check_variable = { which = greater_nobles_loyalty_removed value = 32 } } 		add_estate_loyalty = { estate = estate_greater_nobles	loyalty = -32 } change_variable = { which = estate_greater_nobles_loyalty value = -0.32 }	subtract_variable = { which = greater_nobles_loyalty_removed value = 32 } }
+	if = { limit = { check_variable = { which = greater_nobles_loyalty_removed value = 16 } } 		add_estate_loyalty = { estate = estate_greater_nobles	loyalty = -16 } change_variable = { which = estate_greater_nobles_loyalty value = -0.16 }	subtract_variable = { which = greater_nobles_loyalty_removed value = 16 } }
+	if = { limit = { check_variable = { which = greater_nobles_loyalty_removed value = 8 } } 		add_estate_loyalty = { estate = estate_greater_nobles	loyalty = -8	 } change_variable = { which = estate_greater_nobles_loyalty value = -0.08 }	subtract_variable = { which = greater_nobles_loyalty_removed value = 8 } }
+	if = { limit = { check_variable = { which = greater_nobles_loyalty_removed value = 4 } } 		add_estate_loyalty = { estate = estate_greater_nobles	loyalty = -4	 } change_variable = { which = estate_greater_nobles_loyalty value = -0.04 }	subtract_variable = { which = greater_nobles_loyalty_removed value = 4 } }
+	if = { limit = { check_variable = { which = greater_nobles_loyalty_removed value = 2 } } 		add_estate_loyalty = { estate = estate_greater_nobles	loyalty = -2	 } change_variable = { which = estate_greater_nobles_loyalty value = -0.02 }	subtract_variable = { which = greater_nobles_loyalty_removed value = 2 } }
+	if = { limit = { check_variable = { which = greater_nobles_loyalty_removed value = 1 } } 		add_estate_loyalty = { estate = estate_greater_nobles	loyalty = -1	 } change_variable = { which = estate_greater_nobles_loyalty value = -0.01 }	subtract_variable = { which = greater_nobles_loyalty_removed value = 1 } }
+	
+	if = {
+		limit = {
+			NOT = { check_variable = { which = estate_greater_nobles_loyalty value = 0.01 } }
+		}
+		set_variable = { which = estate_greater_nobles_loyalty value = 0.01 }
+	}
+	
+	EstateProv_SetUnrest = { estate=greater_nobles }
+}
+
+estate_lesser_nobles_loyalty_added = {
+	if = { limit = { check_variable = { which = lesser_nobles_loyalty_added value = 64 } } 		add_estate_loyalty = { estate = estate_lesser_nobles	loyalty = 64 } change_variable = { which = estate_lesser_nobles_loyalty value = 0.64 }	subtract_variable = { which = lesser_nobles_loyalty_added value = 64 } }
+	if = { limit = { check_variable = { which = lesser_nobles_loyalty_added value = 32 } } 		add_estate_loyalty = { estate = estate_lesser_nobles	loyalty = 32 } change_variable = { which = estate_lesser_nobles_loyalty value = 0.32 }	subtract_variable = { which = lesser_nobles_loyalty_added value = 32 } }
+	if = { limit = { check_variable = { which = lesser_nobles_loyalty_added value = 16 } } 		add_estate_loyalty = { estate = estate_lesser_nobles	loyalty = 16 } change_variable = { which = estate_lesser_nobles_loyalty value = 0.16 }	subtract_variable = { which = lesser_nobles_loyalty_added value = 16 } }
+	if = { limit = { check_variable = { which = lesser_nobles_loyalty_added value = 8 } } 		add_estate_loyalty = { estate = estate_lesser_nobles	loyalty = 8	 } change_variable = { which = estate_lesser_nobles_loyalty value = 0.08 }	subtract_variable = { which = lesser_nobles_loyalty_added value = 8 } }
+	if = { limit = { check_variable = { which = lesser_nobles_loyalty_added value = 4 } } 		add_estate_loyalty = { estate = estate_lesser_nobles	loyalty = 4	 } change_variable = { which = estate_lesser_nobles_loyalty value = 0.04 }	subtract_variable = { which = lesser_nobles_loyalty_added value = 4 } }
+	if = { limit = { check_variable = { which = lesser_nobles_loyalty_added value = 2 } } 		add_estate_loyalty = { estate = estate_lesser_nobles	loyalty = 2	 } change_variable = { which = estate_lesser_nobles_loyalty value = 0.02 }	subtract_variable = { which = lesser_nobles_loyalty_added value = 2 } }
+	if = { limit = { check_variable = { which = lesser_nobles_loyalty_added value = 1 } } 		add_estate_loyalty = { estate = estate_lesser_nobles	loyalty = 1	 } change_variable = { which = estate_lesser_nobles_loyalty value = 0.01 }	subtract_variable = { which = lesser_nobles_loyalty_added value = 1 } }
+	
+	if = {
+		limit = {
+			check_variable = { which = estate_lesser_nobles_loyalty value = 1 }
+		}
+		set_variable = { which = estate_lesser_nobles_loyalty value = 1 }
+	}
+	
+	EstateProv_SetUnrest = { estate=lesser_nobles }
+}
+
+estate_lesser_nobles_loyalty_removed = {
+	if = { limit = { check_variable = { which = lesser_nobles_loyalty_removed value = 64 } } 		add_estate_loyalty = { estate = estate_lesser_nobles	loyalty = -64 } change_variable = { which = estate_lesser_nobles_loyalty value = -0.64 }	subtract_variable = { which = lesser_nobles_loyalty_removed value = 64 } }
+	if = { limit = { check_variable = { which = lesser_nobles_loyalty_removed value = 32 } } 		add_estate_loyalty = { estate = estate_lesser_nobles	loyalty = -32 } change_variable = { which = estate_lesser_nobles_loyalty value = -0.32 }	subtract_variable = { which = lesser_nobles_loyalty_removed value = 32 } }
+	if = { limit = { check_variable = { which = lesser_nobles_loyalty_removed value = 16 } } 		add_estate_loyalty = { estate = estate_lesser_nobles	loyalty = -16 } change_variable = { which = estate_lesser_nobles_loyalty value = -0.16 }	subtract_variable = { which = lesser_nobles_loyalty_removed value = 16 } }
+	if = { limit = { check_variable = { which = lesser_nobles_loyalty_removed value = 8 } } 		add_estate_loyalty = { estate = estate_lesser_nobles	loyalty = -8	 } change_variable = { which = estate_lesser_nobles_loyalty value = -0.08 }	subtract_variable = { which = lesser_nobles_loyalty_removed value = 8 } }
+	if = { limit = { check_variable = { which = lesser_nobles_loyalty_removed value = 4 } } 		add_estate_loyalty = { estate = estate_lesser_nobles	loyalty = -4	 } change_variable = { which = estate_lesser_nobles_loyalty value = -0.04 }	subtract_variable = { which = lesser_nobles_loyalty_removed value = 4 } }
+	if = { limit = { check_variable = { which = lesser_nobles_loyalty_removed value = 2 } } 		add_estate_loyalty = { estate = estate_lesser_nobles	loyalty = -2	 } change_variable = { which = estate_lesser_nobles_loyalty value = -0.02 }	subtract_variable = { which = lesser_nobles_loyalty_removed value = 2 } }
+	if = { limit = { check_variable = { which = lesser_nobles_loyalty_removed value = 1 } } 		add_estate_loyalty = { estate = estate_lesser_nobles	loyalty = -1	 } change_variable = { which = estate_lesser_nobles_loyalty value = -0.01 }	subtract_variable = { which = lesser_nobles_loyalty_removed value = 1 } }
+	
+	if = {
+		limit = {
+			NOT = { check_variable = { which = estate_lesser_nobles_loyalty value = 0.01 } }
+		}
+		set_variable = { which = estate_lesser_nobles_loyalty value = 0.01 }
+	}
+	
+	EstateProv_SetUnrest = { estate=lesser_nobles }
+}
+
+estate_burghers_loyalty_added = {
+	if = { limit = { check_variable = { which = burghers_loyalty_added value = 64 } } 		add_estate_loyalty = { estate = estate_city_burghers	loyalty = 64 } change_variable = { which = estate_burghers_loyalty value = 0.64 }	subtract_variable = { which = burghers_loyalty_added value = 64 } }
+	if = { limit = { check_variable = { which = burghers_loyalty_added value = 32 } } 		add_estate_loyalty = { estate = estate_city_burghers	loyalty = 32 } change_variable = { which = estate_burghers_loyalty value = 0.32 }	subtract_variable = { which = burghers_loyalty_added value = 32 } }
+	if = { limit = { check_variable = { which = burghers_loyalty_added value = 16 } } 		add_estate_loyalty = { estate = estate_city_burghers	loyalty = 16 } change_variable = { which = estate_burghers_loyalty value = 0.16 }	subtract_variable = { which = burghers_loyalty_added value = 16 } }
+	if = { limit = { check_variable = { which = burghers_loyalty_added value = 8 } } 		add_estate_loyalty = { estate = estate_city_burghers	loyalty = 8	 } change_variable = { which = estate_burghers_loyalty value = 0.08 }	subtract_variable = { which = burghers_loyalty_added value = 8 } }
+	if = { limit = { check_variable = { which = burghers_loyalty_added value = 4 } } 		add_estate_loyalty = { estate = estate_city_burghers	loyalty = 4	 } change_variable = { which = estate_burghers_loyalty value = 0.04 }	subtract_variable = { which = burghers_loyalty_added value = 4 } }
+	if = { limit = { check_variable = { which = burghers_loyalty_added value = 2 } } 		add_estate_loyalty = { estate = estate_city_burghers	loyalty = 2	 } change_variable = { which = estate_burghers_loyalty value = 0.02 }	subtract_variable = { which = burghers_loyalty_added value = 2 } }
+	if = { limit = { check_variable = { which = burghers_loyalty_added value = 1 } } 		add_estate_loyalty = { estate = estate_city_burghers	loyalty = 1	 } change_variable = { which = estate_burghers_loyalty value = 0.01 }	subtract_variable = { which = burghers_loyalty_added value = 1 } }
+	
+	if = {
+		limit = {
+			check_variable = { which = estate_burghers_loyalty value = 1 }
+		}
+		set_variable = { which = estate_burghers_loyalty value = 1 }
+	}
+	
+	EstateProv_SetUnrest = { estate=burghers }
+}
+
+estate_burghers_loyalty_removed = {
+	if = { limit = { check_variable = { which = burghers_loyalty_removed value = 64 } } 	add_estate_loyalty = { estate = estate_city_burghers	loyalty = -64 } 	change_variable = { which = estate_burghers_loyalty value = -0.64 }	subtract_variable = { which = burghers_loyalty_removed value = 64 } }
+	if = { limit = { check_variable = { which = burghers_loyalty_removed value = 32 } } 	add_estate_loyalty = { estate = estate_city_burghers	loyalty = -32 } 	change_variable = { which = estate_burghers_loyalty value = -0.32 }	subtract_variable = { which = burghers_loyalty_removed value = 32 } }
+	if = { limit = { check_variable = { which = burghers_loyalty_removed value = 16 } } 	add_estate_loyalty = { estate = estate_city_burghers	loyalty = -16 } 	change_variable = { which = estate_burghers_loyalty value = -0.16 }	subtract_variable = { which = burghers_loyalty_removed value = 16 } }
+	if = { limit = { check_variable = { which = burghers_loyalty_removed value = 8 } } 		add_estate_loyalty = { estate = estate_city_burghers	loyalty = -8	 } change_variable = { which = estate_burghers_loyalty value = -0.08 }	subtract_variable = { which = burghers_loyalty_removed value = 8 } }
+	if = { limit = { check_variable = { which = burghers_loyalty_removed value = 4 } } 		add_estate_loyalty = { estate = estate_city_burghers	loyalty = -4	 } change_variable = { which = estate_burghers_loyalty value = -0.04 }	subtract_variable = { which = burghers_loyalty_removed value = 4 } }
+	if = { limit = { check_variable = { which = burghers_loyalty_removed value = 2 } } 		add_estate_loyalty = { estate = estate_city_burghers	loyalty = -2	 } change_variable = { which = estate_burghers_loyalty value = -0.02 }	subtract_variable = { which = burghers_loyalty_removed value = 2 } }
+	if = { limit = { check_variable = { which = burghers_loyalty_removed value = 1 } } 		add_estate_loyalty = { estate = estate_city_burghers	loyalty = -1	 } change_variable = { which = estate_burghers_loyalty value = -0.01 }	subtract_variable = { which = burghers_loyalty_removed value = 1 } }
+	
+	if = {
+		limit = {
+			NOT = { check_variable = { which = estate_burghers_loyalty value = 0.01 } }
+		}
+		set_variable = { which = estate_burghers_loyalty value = 0.01 }
+	}
+	
+	EstateProv_SetUnrest = { estate=burghers }
+}
+
+estate_tribes_loyalty_added = {
+	if = { limit = { check_variable = { which = tribes_loyalty_added value = 64 } } 	add_estate_loyalty = { estate = estate_tribes	loyalty = 64 } change_variable = { which = estate_tribals_loyalty value = 0.64 }	subtract_variable = { which = tribes_loyalty_added value = 64 } }
+	if = { limit = { check_variable = { which = tribes_loyalty_added value = 32 } } 	add_estate_loyalty = { estate = estate_tribes	loyalty = 32 } change_variable = { which = estate_tribals_loyalty value = 0.32 }	subtract_variable = { which = tribes_loyalty_added value = 32 } }
+	if = { limit = { check_variable = { which = tribes_loyalty_added value = 16 } } 	add_estate_loyalty = { estate = estate_tribes	loyalty = 16 } change_variable = { which = estate_tribals_loyalty value = 0.16 }	subtract_variable = { which = tribes_loyalty_added value = 16 } }
+	if = { limit = { check_variable = { which = tribes_loyalty_added value = 8 } } 		add_estate_loyalty = { estate = estate_tribes	loyalty = 8	 } change_variable = { which = estate_tribals_loyalty value = 0.08 }	subtract_variable = { which = tribes_loyalty_added value = 8 } }
+	if = { limit = { check_variable = { which = tribes_loyalty_added value = 4 } } 		add_estate_loyalty = { estate = estate_tribes	loyalty = 4	 } change_variable = { which = estate_tribals_loyalty value = 0.04 }	subtract_variable = { which = tribes_loyalty_added value = 4 } }
+	if = { limit = { check_variable = { which = tribes_loyalty_added value = 2 } } 		add_estate_loyalty = { estate = estate_tribes	loyalty = 2	 } change_variable = { which = estate_tribals_loyalty value = 0.02 }	subtract_variable = { which = tribes_loyalty_added value = 2 } }
+	if = { limit = { check_variable = { which = tribes_loyalty_added value = 1 } } 		add_estate_loyalty = { estate = estate_tribes	loyalty = 1	 } change_variable = { which = estate_tribals_loyalty value = 0.01 }	subtract_variable = { which = tribes_loyalty_added value = 1 } }
+	if = {
+		limit = {
+			check_variable = { which = estate_tribals_loyalty value = 1 }
+		}
+		set_variable = { which = estate_tribals_loyalty value = 1 }
+	}
+	
+	EstateProv_SetUnrest = { estate=tribals }
+}
+
+estate_tribes_loyalty_removed = {
+	if = { limit = { check_variable = { which = tribes_loyalty_removed value = 64 } } 		add_estate_loyalty = { estate = estate_tribes	loyalty = -64 }    change_variable = { which = estate_tribals_loyalty value = -0.64 }	subtract_variable = { which = tribes_loyalty_removed value = 64 } }
+	if = { limit = { check_variable = { which = tribes_loyalty_removed value = 32 } } 		add_estate_loyalty = { estate = estate_tribes	loyalty = -32 }    change_variable = { which = estate_tribals_loyalty value = -0.32 }	subtract_variable = { which = tribes_loyalty_removed value = 32 } }
+	if = { limit = { check_variable = { which = tribes_loyalty_removed value = 16 } } 		add_estate_loyalty = { estate = estate_tribes	loyalty = -16 }    change_variable = { which = estate_tribals_loyalty value = -0.16 }	subtract_variable = { which = tribes_loyalty_removed value = 16 } }
+	if = { limit = { check_variable = { which = tribes_loyalty_removed value = 8 } } 		add_estate_loyalty = { estate = estate_tribes	loyalty = -8  }    change_variable = { which = estate_tribals_loyalty value = -0.08 }	subtract_variable = { which = tribes_loyalty_removed value = 8 } }
+	if = { limit = { check_variable = { which = tribes_loyalty_removed value = 4 } } 		add_estate_loyalty = { estate = estate_tribes	loyalty = -4  }    change_variable = { which = estate_tribals_loyalty value = -0.04 }	subtract_variable = { which = tribes_loyalty_removed value = 4 } }
+	if = { limit = { check_variable = { which = tribes_loyalty_removed value = 2 } } 		add_estate_loyalty = { estate = estate_tribes	loyalty = -2  }    change_variable = { which = estate_tribals_loyalty value = -0.02 }	subtract_variable = { which = tribes_loyalty_removed value = 2 } }
+	if = { limit = { check_variable = { which = tribes_loyalty_removed value = 1 } } 		add_estate_loyalty = { estate = estate_tribes	loyalty = -1  }    change_variable = { which = estate_tribals_loyalty value = -0.01 }	subtract_variable = { which = tribes_loyalty_removed value = 1 } }
+	
+	if = {
+		limit = {
+			NOT = { check_variable = { which = estate_tribals_loyalty value = 0.01 } }
+		}
+		set_variable = { which = estate_tribals_loyalty value = 0.01 }
+	}
+	
+	EstateProv_SetUnrest = { estate=tribals }
+}
+
+
+estate_tribals_loyalty_added = {
+	if = { limit = { check_variable = { which = tribals_loyalty_added value = 64 } } 	add_estate_loyalty = { estate = estate_tribes	loyalty = 64 } change_variable = { which = estate_tribals_loyalty value = 0.64 }	subtract_variable = { which = tribals_loyalty_added value = 64 } }
+	if = { limit = { check_variable = { which = tribals_loyalty_added value = 32 } } 	add_estate_loyalty = { estate = estate_tribes	loyalty = 32 } change_variable = { which = estate_tribals_loyalty value = 0.32 }	subtract_variable = { which = tribals_loyalty_added value = 32 } }
+	if = { limit = { check_variable = { which = tribals_loyalty_added value = 16 } } 	add_estate_loyalty = { estate = estate_tribes	loyalty = 16 } change_variable = { which = estate_tribals_loyalty value = 0.16 }	subtract_variable = { which = tribals_loyalty_added value = 16 } }
+	if = { limit = { check_variable = { which = tribals_loyalty_added value = 8 } } 		add_estate_loyalty = { estate = estate_tribes	loyalty = 8	 } change_variable = { which = estate_tribals_loyalty value = 0.08 }	subtract_variable = { which = tribals_loyalty_added value = 8 } }
+	if = { limit = { check_variable = { which = tribals_loyalty_added value = 4 } } 		add_estate_loyalty = { estate = estate_tribes	loyalty = 4	 } change_variable = { which = estate_tribals_loyalty value = 0.04 }	subtract_variable = { which = tribals_loyalty_added value = 4 } }
+	if = { limit = { check_variable = { which = tribals_loyalty_added value = 2 } } 		add_estate_loyalty = { estate = estate_tribes	loyalty = 2	 } change_variable = { which = estate_tribals_loyalty value = 0.02 }	subtract_variable = { which = tribals_loyalty_added value = 2 } }
+	if = { limit = { check_variable = { which = tribals_loyalty_added value = 1 } } 		add_estate_loyalty = { estate = estate_tribes	loyalty = 1	 } change_variable = { which = estate_tribals_loyalty value = 0.01 }	subtract_variable = { which = tribals_loyalty_added value = 1 } }
+	if = {
+		limit = {
+			check_variable = { which = estate_tribals_loyalty value = 1 }
+		}
+		set_variable = { which = estate_tribals_loyalty value = 1 }
+	}
+	
+	EstateProv_SetUnrest = { estate=tribals }
+}
+
+estate_tribals_loyalty_removed = {
+	if = { limit = { check_variable = { which = tribals_loyalty_removed value = 64 } } 		add_estate_loyalty = { estate = estate_tribes	loyalty = -64 }    change_variable = { which = estate_tribals_loyalty value = -0.64 }	subtract_variable = { which = tribals_loyalty_removed value = 64 } }
+	if = { limit = { check_variable = { which = tribals_loyalty_removed value = 32 } } 		add_estate_loyalty = { estate = estate_tribes	loyalty = -32 }    change_variable = { which = estate_tribals_loyalty value = -0.32 }	subtract_variable = { which = tribals_loyalty_removed value = 32 } }
+	if = { limit = { check_variable = { which = tribals_loyalty_removed value = 16 } } 		add_estate_loyalty = { estate = estate_tribes	loyalty = -16 }    change_variable = { which = estate_tribals_loyalty value = -0.16 }	subtract_variable = { which = tribals_loyalty_removed value = 16 } }
+	if = { limit = { check_variable = { which = tribals_loyalty_removed value = 8 } } 		add_estate_loyalty = { estate = estate_tribes	loyalty = -8  }    change_variable = { which = estate_tribals_loyalty value = -0.08 }	subtract_variable = { which = tribals_loyalty_removed value = 8 } }
+	if = { limit = { check_variable = { which = tribals_loyalty_removed value = 4 } } 		add_estate_loyalty = { estate = estate_tribes	loyalty = -4  }    change_variable = { which = estate_tribals_loyalty value = -0.04 }	subtract_variable = { which = tribals_loyalty_removed value = 4 } }
+	if = { limit = { check_variable = { which = tribals_loyalty_removed value = 2 } } 		add_estate_loyalty = { estate = estate_tribes	loyalty = -2  }    change_variable = { which = estate_tribals_loyalty value = -0.02 }	subtract_variable = { which = tribals_loyalty_removed value = 2 } }
+	if = { limit = { check_variable = { which = tribals_loyalty_removed value = 1 } } 		add_estate_loyalty = { estate = estate_tribes	loyalty = -1  }    change_variable = { which = estate_tribals_loyalty value = -0.01 }	subtract_variable = { which = tribals_loyalty_removed value = 1 } }
+	
+	if = {
+		limit = {
+			NOT = { check_variable = { which = estate_tribals_loyalty value = 0.01 } }
+		}
+		set_variable = { which = estate_tribals_loyalty value = 0.01 }
+	}
+	
+	EstateProv_SetUnrest = { estate=tribals }
+}
+
+GN_cost_treasury = {
+	if = {
+		limit = {
+			ai = no
+		}
+		if = {
+			limit = {
+				check_variable = { which = GN_privilege_pain_modifier 			value = 0.99 }
+			}
+			custom_tooltip = estate_demand_costs_money_1
+			hidden_effect = {
+				#set_variable = { 	  which = GN_estate_cost					value = 0 }
+				set_variable = { 	  which = GN_estate_cost					which = estate_greater_nobles_treasury_annual }
+				#multiply_variable = { which = GN_estate_cost					value = 1 }
+				subtract_variable = { which = estate_greater_nobles_treasury	which = GN_estate_cost }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = GN_privilege_pain_modifier			value = 0.9 }
+			}
+			custom_tooltip = estate_demand_costs_money_1.5
+			hidden_effect = {
+				#set_variable = { 	  which = GN_estate_cost					value = 0 }
+				set_variable = { 	  which = GN_estate_cost					which = estate_greater_nobles_treasury_annual }
+				multiply_variable = { which = GN_estate_cost					value = 1.5 }
+				subtract_variable = { which = estate_greater_nobles_treasury	which = GN_estate_cost }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = GN_privilege_pain_modifier 			value = 0.72 }
+			}
+			custom_tooltip = estate_demand_costs_money_2
+			hidden_effect = {
+				#set_variable = { 	  which = GN_estate_cost					value = 0 }
+				set_variable = { 	  which = GN_estate_cost					which = estate_greater_nobles_treasury_annual }
+				multiply_variable = { which = GN_estate_cost					value = 2 }
+				subtract_variable = { which = estate_greater_nobles_treasury	which = GN_estate_cost }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = GN_privilege_pain_modifier			value = 0.65 }
+			}
+			custom_tooltip = estate_demand_costs_money_2.5
+			hidden_effect = {
+				#set_variable = { 	  which = GN_estate_cost					value = 0 }
+				set_variable = { 	  which = GN_estate_cost					which = estate_greater_nobles_treasury_annual }
+				multiply_variable = { which = GN_estate_cost					value = 2.5 }
+				subtract_variable = { which = estate_greater_nobles_treasury	which = GN_estate_cost }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = GN_privilege_pain_modifier			value = 0.58 }
+			}
+			custom_tooltip = estate_demand_costs_money_3
+			hidden_effect = {
+				#set_variable = { 	  which = GN_estate_cost					value = 0 }
+				set_variable = { 	  which = GN_estate_cost					which = estate_greater_nobles_treasury_annual }
+				multiply_variable = { which = GN_estate_cost					value = 3 }
+				subtract_variable = { which = estate_greater_nobles_treasury	which = GN_estate_cost }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = GN_privilege_pain_modifier 			value = 0.51 }
+			}
+			custom_tooltip = estate_demand_costs_money_3.5
+			hidden_effect = {
+				#set_variable = { 	  which = GN_estate_cost					value = 0 }
+				set_variable = { 	  which = GN_estate_cost					which = estate_greater_nobles_treasury_annual }
+				multiply_variable = { which = GN_estate_cost					value = 3.5 }
+				subtract_variable = { which = estate_greater_nobles_treasury	which = GN_estate_cost }
+			}
+		}
+	}
+}
+
+LN_cost_treasury = {
+	if = {
+		limit = {
+			ai = no
+		}
+		if = {
+			limit = {
+				check_variable = { which = LN_privilege_pain_modifier 			value = 0.99 }
+			}
+			custom_tooltip = estate_demand_costs_money_1
+			hidden_effect = {
+				#set_variable = { 	  which = LN_estate_cost					value = 0 }
+				set_variable = { 	  which = LN_estate_cost					which = estate_lesser_nobles_treasury_annual }
+				#multiply_variable = { which = LN_estate_cost					value = 1 }
+				subtract_variable = { which = estate_lesser_nobles_treasury		which = LN_estate_cost }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = LN_privilege_pain_modifier 			value = 0.9 }
+			}
+			custom_tooltip = estate_demand_costs_money_1.5
+			hidden_effect = {
+				#set_variable = { 	  which = LN_estate_cost					value = 0 }
+				set_variable = { 	  which = LN_estate_cost					which = estate_lesser_nobles_treasury_annual }
+				multiply_variable = { which = LN_estate_cost					value = 1.5 }
+				subtract_variable = { which = estate_lesser_nobles_treasury		which = LN_estate_cost }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = LN_privilege_pain_modifier 			value = 0.72 }
+			}
+			custom_tooltip = estate_demand_costs_money_2
+			hidden_effect = {
+				#set_variable = { 	  which = LN_estate_cost					value = 0 }
+				set_variable = { 	  which = LN_estate_cost					which = estate_lesser_nobles_treasury_annual }
+				multiply_variable = { which = LN_estate_cost					value = 2 }
+				subtract_variable = { which = estate_lesser_nobles_treasury		which = LN_estate_cost }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = LN_privilege_pain_modifier 			value = 0.65 }
+			}
+			custom_tooltip = estate_demand_costs_money_2.5
+			hidden_effect = {
+				#set_variable = { 	  which = LN_estate_cost					value = 0 }
+				set_variable = { 	  which = LN_estate_cost					which = estate_lesser_nobles_treasury_annual }
+				multiply_variable = { which = LN_estate_cost					value = 2.5 }
+				subtract_variable = { which = estate_lesser_nobles_treasury		which = LN_estate_cost }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = LN_privilege_pain_modifier 			value = 0.58 }
+			}
+			custom_tooltip = estate_demand_costs_money_3
+			hidden_effect = {
+				#set_variable = { 	  which = LN_estate_cost					value = 0 }
+				set_variable = { 	  which = LN_estate_cost					which = estate_lesser_nobles_treasury_annual }
+				multiply_variable = { which = LN_estate_cost					value = 3 }
+				subtract_variable = { which = estate_lesser_nobles_treasury		which = LN_estate_cost }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = LN_privilege_pain_modifier 			value = 0.51 }
+			}
+			custom_tooltip = estate_demand_costs_money_3.5
+			hidden_effect = {
+				#set_variable = { 	  which = LN_estate_cost					value = 0 }
+				set_variable = { 	  which = LN_estate_cost					which = estate_lesser_nobles_treasury_annual }
+				multiply_variable = { which = LN_estate_cost					value = 3.5 }
+				subtract_variable = { which = estate_lesser_nobles_treasury		which = LN_estate_cost }
+			}
+		}
+	}
+}
+
+BG_cost_treasury = {
+	if = {
+		limit = {
+			ai = no
+		}
+		if = {
+			limit = {
+				check_variable = { which = BG_privilege_pain_modifier 			value = 0.99 }
+			}
+			custom_tooltip = estate_demand_costs_money_1
+			hidden_effect = {
+				#set_variable = { 	  which = BG_estate_cost					value = 0 }
+				set_variable = { 	  which = BG_estate_cost					which = estate_burghers_treasury_annual }
+				#multiply_variable = { which = BG_estate_cost					value = 1 }
+				subtract_variable = { which = estate_burghers_treasury			which = BG_estate_cost }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = BG_privilege_pain_modifier 			value = 0.9 }
+			}
+			custom_tooltip = estate_demand_costs_money_1.5
+			hidden_effect = {
+				#set_variable = { 	  which = BG_estate_cost					value = 0 }
+				set_variable = { 	  which = BG_estate_cost					which = estate_burghers_treasury_annual }
+				multiply_variable = { which = BG_estate_cost					value = 1.5 }
+				subtract_variable = { which = estate_burghers_treasury			which = BG_estate_cost }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = BG_privilege_pain_modifier 			value = 0.72 }
+			}
+			custom_tooltip = estate_demand_costs_money_2
+			hidden_effect = {
+				#set_variable = { 	  which = BG_estate_cost					value = 0 }
+				set_variable = { 	  which = BG_estate_cost					which = estate_burghers_treasury_annual }
+				multiply_variable = { which = BG_estate_cost					value = 2 }
+				subtract_variable = { which = estate_burghers_treasury			which = BG_estate_cost }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = BG_privilege_pain_modifier 			value = 0.65 }
+			}
+			custom_tooltip = estate_demand_costs_money_2.5
+			hidden_effect = {
+				#set_variable = { 	  which = BG_estate_cost					value = 0 }
+				set_variable = { 	  which = BG_estate_cost					which = estate_burghers_treasury_annual }
+				multiply_variable = { which = BG_estate_cost					value = 2.5 }
+				subtract_variable = { which = estate_burghers_treasury			which = BG_estate_cost }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = BG_privilege_pain_modifier 			value = 0.58 }
+			}
+			custom_tooltip = estate_demand_costs_money_3
+			hidden_effect = {
+				#set_variable = { 	  which = BG_estate_cost					value = 0 }
+				set_variable = { 	  which = BG_estate_cost					which = estate_burghers_treasury_annual }
+				multiply_variable = { which = BG_estate_cost					value = 3 }
+				subtract_variable = { which = estate_burghers_treasury			which = BG_estate_cost }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = BG_privilege_pain_modifier 			value = 0.51 }
+			}
+			custom_tooltip = estate_demand_costs_money_3.5
+			hidden_effect = {
+				#set_variable = { 	  which = BG_estate_cost					value = 0 }
+				set_variable = { 	  which = BG_estate_cost					which = estate_burghers_treasury_annual }
+				multiply_variable = { which = BG_estate_cost					value = 3.5 }
+				subtract_variable = { which = estate_burghers_treasury			which = BG_estate_cost }
+			}
+		}
+	}
+}

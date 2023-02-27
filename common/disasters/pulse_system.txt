@@ -1,0 +1,120 @@
+# Author: Phlopsi
+
+pulse_system = {
+	potential = { tag = AAA }
+	can_start = { always = yes }
+	can_stop = { always = no }
+	progress = { modifier = { factor = 100 always = yes } }
+	can_end = { always = no }
+	
+	on_monthly = {
+		events = {
+			cb_types.1
+			stacking_unrest.001
+			POP_AI.102
+		}
+		
+		trigger_switch = {
+			on_trigger = is_month
+			11 = {
+				country_event = { id = pop_pulse.004 days = 30 }
+				country_event = { id = dg_conversion.100 days = 22 }
+			}
+			10 = {
+				country_event = { id = pop_pulse.004 days = 29 }
+				country_event = { id = dg_holylands.013 days = 26 }
+				country_event = { id = rebellions.002 days = 15 }
+			}
+			09 = {
+				country_event = { id = pop_pulse.004 days = 30 }
+				country_event = { id = cb_types.2 days = 1 }
+				country_event = { id = POP_Census.901 days = 2 }
+			}
+			08 = {
+				country_event = { id = pop_pulse.004 days = 29 }
+				country_event = { id = rank_change.1 days = 1 }
+				country_event = { id = POP_population_growth.111 days = 29 }
+			}
+			07 = {
+				country_event = { id = pop_pulse.004 days = 30 }
+				if = {
+					limit = { has_country_flag = MAPMODE_refresh }
+					country_event = { id = POP_special_MAPMODE.050 days = 12 }
+				}
+			}
+			06 = {
+				country_event = { id = pop_pulse.004 days = 30 }
+				country_event = { id = POP_Census.901 days = 2 }
+				country_event = { id = POP_AI.111 days = 2 }
+			}
+			05 = {
+				country_event = { id = pop_pulse.004 days = 29 }
+				country_event = { id = dg_conversion.100 days = 26 }
+				country_event = { id = POP_Estates.001 days = 5 }
+			}
+			04 = {
+				country_event = { id = pop_pulse.004 days = 30 }
+				country_event = { id = POP_population_growth.112 days = 30 }
+				KOR = { country_event = { id = fall_of_goryeo.1 days = 2 } }
+			}
+			03 = {
+				country_event = { id = pop_pulse.004 days = 29 }
+				country_event = { id = POP_Census.901 days = 2 }
+				every_country = { country_event = { id = POP_AI.002 random = 180 } }
+			}
+			02 = {
+				country_event = { id = pop_pulse.004 days = 30 }
+			}
+			01 = {
+				country_event = { id = pop_pulse.004 days = 27 }
+				if = {
+					limit = { is_year = 1358 }
+					country_event = { id = POP_Census.001 days = 1 }
+				}
+			}
+			00 = {
+				5154 = {
+					export_to_variable = { which = current_year value = trigger_value:is_year }
+					subtract_variable = { which = current_year value = 1 }
+					set_variable = { which = year_ticker which = current_year }
+					change_variable = { which = year_ticker which = ticker_offset }
+					every_country = {
+						set_variable = { which = year_ticker which = PREV }
+						set_variable = { which = current_year which = PREV }
+					}
+					every_province = { set_variable = { which = year_ticker which = PREV } }
+				}
+				change_variable = { which = v_two_year_pulse_counter value = 1 }
+				if = {
+					limit = { check_variable = { which = v_two_year_pulse_counter value = 3 } }
+					country_event = { id = POP_Great_Minds.104 days = 20 }
+					country_event = { id = calcul_byoa.1 days = 1 }
+					country_event = { id = calcul_byoa.2 days = 10 }
+					country_event = { id = dg_conversion.102 days = 1 }
+					country_event = { id = dg_conversion.104 days = 5 }
+				}
+				country_event = { id = pop_pulse.004 days = 30 }
+				if = {
+					limit = { has_global_flag = first_estate_fired }
+					country_event = { id = POP_Census.901 days = 2 }
+					if = {
+						limit = { is_year = 1358 }
+						country_event = { id = POP_population_growth.001 days = 14 }
+						country_event = { id = POP_population_growth.002 days = 16 }
+						country_event = { id = POP_population_growth.004 days = 18 }
+						country_event = { id = POP_population_growth.006 days = 20 }
+						country_event = { id = POP_population_growth.008 days = 22 }
+						country_event = { id = POP_population_growth.010 days = 24 }
+						country_event = { id = POP_population_growth.099 days = 26 }
+					}
+				}
+				country_event = { id = POP_population_growth.111 days = 30 }
+			}
+		}
+		# Reset `v_two_year_pulse_counter` after the 2-year pulse events have fired.
+		if = {
+			limit = { check_variable = { which = v_two_year_pulse_counter value = 3 } }
+			set_variable = { which = v_two_year_pulse_counter value = 1 }
+		}
+	}
+}

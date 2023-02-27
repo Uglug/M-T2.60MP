@@ -1,0 +1,189 @@
+# Horde mechanics
+
+# This is for invisible horde-specific events. For events visible to the player, use E - Hordes
+
+namespace = horde_mechanic_events
+
+
+# Set up the Khanate and Puppet Khanate modifiers
+country_event = {
+	id = horde_mechanic_events.1
+	title = horde_mechanic_events.1.t
+	desc = horde_mechanic_events.1.d
+	picture = PALAIS_MAZARIN_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			has_country_modifier = genghis_khanate
+			has_country_modifier = puppet_khanate
+		}
+		NOT = { has_disaster = white_horde_collapse }
+		NOT = { has_country_flag = white_horde_collapse_ongoing }
+	}
+	
+	hidden = yes
+	
+	option = {
+		name = horde_mechanic_events.1.a
+		if = {
+			limit = {
+				NOT = { has_country_modifier = genghis_khanate }
+				NOT = { has_country_modifier = puppet_khanate }
+				borjigin_trigger = yes
+			}
+			add_country_modifier = {
+				name = genghis_khanate
+				duration = -1
+			}
+		}
+		if = {
+			limit = {
+				has_country_modifier = genghis_khanate
+				borjigin_trigger = no
+			}
+			remove_country_modifier = genghis_khanate
+			add_country_modifier = {
+				name = puppet_khanate
+				duration = -1
+			}
+		}
+		if = {
+			limit = {
+				has_country_modifier = puppet_khanate
+				borjigin_trigger = yes
+			}
+			remove_country_modifier = puppet_khanate
+			add_country_modifier = {
+				name = genghis_khanate
+				duration = -1
+			}
+		}
+	}
+}
+
+# Give modifiers to hordes that have their forcelimit scale directly with military prowress
+country_event = {
+	id = horde_mechanic_events.2
+	title = horde_mechanic_events.2.t
+	desc = horde_mechanic_events.2.d
+	picture = PALAIS_MAZARIN_eventPicture
+	
+	is_triggered_only = yes
+	
+	hidden = yes
+	
+	trigger = {
+		OR = {
+			steppe_trigger = yes
+			native_trigger = yes
+		}
+	}
+	
+	option = {
+		name = horde_mechanic_events.2.a
+		if = {
+			limit = {
+				NOT = {
+					MIL = 1
+				}
+			}
+			add_ruler_modifier = {
+				name = horde_ruler_military_0
+			}
+		}
+		if = {
+			limit = {
+				MIL = 1
+				NOT = {
+					MIL = 2
+				}
+			}
+			add_ruler_modifier = {
+				name = horde_ruler_military_1
+			}
+		}
+		if = {
+			limit = {
+				MIL = 2
+				NOT = {
+					MIL = 3
+				}
+			}
+			add_ruler_modifier = {
+				name = horde_ruler_military_2
+			}
+		}
+		if = {
+			limit = {
+				MIL = 3
+				NOT = {
+					MIL = 4
+				}
+			}
+			add_ruler_modifier = {
+				name = horde_ruler_military_3
+			}
+		}
+		if = {
+			limit = {
+				MIL = 4
+				NOT = {
+					MIL = 5
+				}
+			}
+			add_ruler_modifier = {
+				name = horde_ruler_military_4
+			}
+		}
+		if = {
+			limit = {
+				MIL = 5
+				NOT = {
+					MIL = 6
+				}
+			}
+			add_ruler_modifier = {
+				name = horde_ruler_military_5
+			}
+		}
+		if = {
+			limit = {
+				MIL = 6
+			}
+			add_ruler_modifier = {
+				name = horde_ruler_military_6
+			}
+		}
+	}
+}
+
+# Event to clean stray country flags and modifiers on new successors for hordes. Feel free to make similar events for other government types, if applicable.
+
+country_event = {
+	id = horde_mechanic_events.3
+	title = horde_mechanic_events.3.t
+	desc = horde_mechanic_events.3.d
+	picture = PALAIS_MAZARIN_eventPicture
+	
+	is_triggered_only = yes
+	
+	hidden = yes
+	
+	option = {
+		name = horde_mechanic_events.3.a
+		if = {
+			limit = {
+				has_country_flag = abdullah_not_in_samarqand
+				NOT = { has_ruler = "Abdullah" }
+			}
+			clr_country_flag = abdullah_not_in_samarqand
+		}
+	}
+	trigger = {
+		OR = {
+			has_country_flag = abdullah_not_in_samarqand
+		}
+	}
+}

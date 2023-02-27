@@ -1,0 +1,430 @@
+namespace = POP_Colonial
+
+#country_event = {
+#	id = POP_Colonial.001
+#	title = "POP_Colonial.001.t"
+#	desc = "POP_Colonial.001.d"
+#	picture = CITY_DEVELOPMENT_AU_eventPicture
+#	
+#	is_triggered_only = yes
+#	hidden = yes
+#	
+#	trigger = {
+#		has_global_flag = first_estate_fired
+#	}
+#	
+#	immediate = {
+#		every_country = {
+#			if = {
+#				limit = {
+#					exists = yes
+#				}
+#				if = {
+#					limit = {
+#						check_variable = { which = subsidy_income value = 0.001 }
+#					}
+#					set_variable = { which = subsidy_income_save which = subsidy_income } # Used to ensure there isnt exponential growth in income
+#					divide_variable = { which = subsidy_income_save value = 12 } # Used in monthly form
+#				}
+#				set_variable = { which = subsidy_income value = 0 } # Wipe out any old income
+#				if = {
+#					limit = {
+#						check_variable = { which = colonial_subsidy value = 0.001 }
+#					}
+#					set_variable = { which = colonial_subsidy_save which = colonial_subsidy } # Used to ensure there isnt exponential growth in income
+#				}
+#			}
+#			else = {
+#				set_variable = { which = colonial_subsidy_multiplier value = 0 }
+#				set_variable = { which = colonial_subsidy value = 0 }
+#				set_variable = { which = subsidy_income value = 0 }
+#				clr_country_flag = dont_subsidise_colonies
+#			}
+#		}
+#		every_country = {
+#			limit = {
+#				exists = yes
+#			}
+#			# Only distribute income if theres subjects to send it to.
+#			if = {
+#				limit = {
+#					any_subject_country = {
+#						is_colonial_nation = yes
+#					}
+#					monthly_income = 5
+#				}
+#				if = { # If there is an existing subsidy to distribute, then its time to send it to the colonies
+#					limit = {
+#						check_variable = { which = colonial_subsidy value = 0.001 }
+#					}
+#					set_variable = { which = subsidy_output which = colonial_subsidy }
+#					set_variable = { which = colonial_subsidy value = 0 }
+#						
+#					set_variable = { which = current_weight value = 0 }
+#					every_subject_country = {
+#						limit = {
+#							is_colonial_nation = yes
+#						}
+#						
+#						export_to_variable = {
+#							which = current_weight
+#							value = monthly_income
+#						}
+#						set_variable = { which = trade_estate_subtract which = EstateIncome_Trade }
+#						change_variable = { which = trade_estate_subtract which = wealth_all_from_trade }
+#						divide_variable = { which = trade_estate_subtract value = 12 }
+#						
+#						subtract_variable = { which = current_weight which = trade_estate_subtract }
+#				
+#						set_variable = { which = trade_estate_subtract value = 0 }
+#						if = {
+#							limit = {
+#								check_variable = { which = subsidy_income_save value = 0.001 }
+#							}
+#							subtract_variable = { which = current_weight which = subsidy_income_save } # Used to ensure there isnt exponential growth in income
+#							set_variable = { which = subsidy_income_save value = 0 } # Used to ensure there isnt exponential growth in income
+#						}
+#						if = {
+#							limit = {
+#								NOT = { check_variable = { which = current_weight value = 0.1 } }
+#							}
+#							set_variable = { which = current_weight value = 0.1 } # Prevent negaitve incomes from contributing
+#						}
+#						PREV = { change_variable = { which = current_weight which = PREV } }
+#					}
+#					
+#					# Inversely weigh each province income, using total_weight / current_weight. More of a contribution means less weight
+#					# for example, (250 / 33 = 15), while (250 / 2 = 250 )
+#					set_variable = { which = total_weight which = current_weight } # Use the tally as a total income to distribute
+#					set_variable = { which = current_weight value = 0 }
+#					set_variable = { which = highest_weight value = 0 }
+#					
+#					every_subject_country = {
+#						limit = {
+#							is_colonial_nation = yes
+#						}
+#						# Grab country level vars
+#						set_variable = { which = total_weight which = PREV }
+#						set_variable = { which = highest_weight which = PREV }
+#						
+#						divide_variable = { which = total_weight which = current_weight }
+#						
+#						set_variable = { which = current_weight which = total_weight }
+#						set_variable = { which = total_weight value = 0 }
+#						
+#						if = { # Store the highest income for the next step
+#							limit = {
+#								check_variable = { which = current_weight which = highest_weight }
+#							}
+#							set_variable = { which = highest_weight which = current_weight }
+#							PREV = { set_variable = { which = highest_weight which = PREV } }
+#						}
+#						set_variable = { which = highest_weight value = 0 }
+#						
+#						PREV = { change_variable = { which = current_weight which = PREV } }
+#					}
+#					
+#					set_variable = { which = total_weight which = current_weight } # Use the tally as a total weight to distribute
+#					set_variable = { which = current_weight value = 0 }
+#					
+#					# Run another pass, and ensure no nation is weighed higher than 12x the highest nation
+#					every_subject_country = {
+#						limit = {
+#							is_colonial_nation = yes
+#						}
+#						# Grab country level vars
+#						set_variable = { which = highest_weight which = PREV }
+#						
+#						multiply_variable = { which = highest_weight value = 0.083 }
+#						
+#						if = {
+#							limit = {
+#								check_variable = { which = highest_weight which = current_weight }
+#							}
+#							set_variable = { which = current_weight which = highest_weight }
+#						}
+#						set_variable = { which = highest_weight value = 0 }
+#						
+#						PREV = { change_variable = { which = current_weight which = PREV } }
+#					}
+#					
+#					set_variable = { which = total_weight which = current_weight } # Use the tally as a total weight to distribute
+#					set_variable = { which = current_weight value = 0 }
+#					set_variable = { which = highest_weight value = 0 }
+#					
+#					if = {
+#						limit = {
+#							check_variable = { which = total_weight value = 0.001 }
+#						}
+#						every_subject_country = {
+#							limit = {
+#								is_colonial_nation = yes
+#							}
+#							# Grab country level vars
+#							set_variable = { which = total_weight which = PREV }
+#							set_variable = { which = subsidy_output which = PREV }
+#							set_variable = { which = subsidy_income which = subsidy_output } # subsidy_income is the final variable
+#							
+#							# Use a 100% scale instead of a 0-1% scale, less chance of overflow or DBZ
+#							multiply_variable = { which = current_weight value = 100 }
+#							divide_variable = { which = current_weight which = total_weight }
+#							
+#							# Take the countries share of the total subsidies
+#							multiply_variable = { which = subsidy_income which = current_weight }
+#							multiply_variable = { which = subsidy_income value = 0.01 } # Rescale subsidy income back down from the 100% scale.
+#							
+#							multiply_variable = { which = subsidy_income value = 0.5 }
+#							set_variable = { which = estates_share which = subsidy_income }
+#						
+#							if = {
+#								limit = {
+#									check_variable = { which = estate_burghers_weight_share value = 0.001 }
+#								}
+#								set_variable = { which = estate_ind_share which = estates_share }
+#								multiply_variable = { which = estate_ind_share which = estate_burghers_weight_share }
+#								change_variable = { which = estate_burghers_treasury which = estate_ind_share }
+#								set_variable = { which = estate_ind_share value = 0 }
+#							}
+#							if = {
+#								limit = {
+#									check_variable = { which = estate_greater_nobles_weight_share value = 0.001 }
+#								}
+#								set_variable = { which = estate_ind_share which = estates_share }
+#								multiply_variable = { which = estate_ind_share which = estate_greater_nobles_weight_share }
+#								change_variable = { which = estate_greater_nobles_treasury which = estate_ind_share }
+#								set_variable = { which = estate_ind_share value = 0 }
+#							}
+#							if = {
+#								limit = {
+#									check_variable = { which = estate_lesser_nobles_weight_share value = 0.001 }
+#								}
+#								set_variable = { which = estate_ind_share which = estates_share }
+#								multiply_variable = { which = estate_ind_share which = estate_lesser_nobles_weight_share }
+#								change_variable = { which = estate_lesser_nobles_treasury which = estate_ind_share }
+#								set_variable = { which = estate_ind_share value = 0 }
+#							}
+#							if = {
+#								limit = {
+#									OR = {
+#										check_variable = { which = estate_tribals_weight_share value = 0.001 }
+#										check_variable = { which = estate_bureaucracy_weight_share value = 0.001 }
+#									}
+#								}
+#								set_variable = { which = composite_influence value = 0 }
+#								change_variable = { which = composite_influence which = estate_tribals_weight_share }
+#								change_variable = { which = composite_influence which = estate_bureaucracy_weight_share }
+#								
+#								set_variable = { which = estate_ind_share which = estates_share }
+#								multiply_variable = { which = estate_ind_share which = composite_influence }
+#								change_variable = { which = subsidy_income which = estate_ind_share }
+#								set_variable = { which = estate_ind_share value = 0 }
+#								set_variable = { which = composite_influence value = 0 }
+#							}
+#							
+#							# Cleanup
+#							set_variable = { which = current_weight value = 0 }
+#							set_variable = { which = subsidy_output value = 0 }
+#							set_variable = { which = total_weight value = 0 }
+#							set_variable = { which = income_share value = 0 }
+#							set_variable = { which = estates_share value = 0 }
+#						}
+#						set_variable = { which = total_weight value = 0 }
+#					}
+#					else = {
+#						every_subject_country = {
+#							limit = {
+#								is_colonial_nation = yes
+#							}
+#							set_variable = { which = current_weight value = 0 }
+#						}
+#					}
+#					set_variable = { which = subsidy_output value = 0 }
+#				}
+#				set_variable = { which = colonial_subsidy value = 0 }
+#				set_variable = { which = colonial_subsidy_modifier value = 0 }
+#
+#				export_to_variable = {
+#					which = colonial_subsidy
+#					value = monthly_income
+#				}
+#				
+#				# Effect country expenditure based on country's treasury
+#				multiply_variable = { which = colonial_subsidy value = 12 } # 1 year of income
+#				
+#				set_variable = { which = trade_estate_subtract which = EstateIncome_Trade }
+#				change_variable = { which = trade_estate_subtract which = wealth_all_from_trade }
+#				
+#				subtract_variable = { which = colonial_subsidy which = trade_estate_subtract }
+#				
+#				set_variable = { which = trade_estate_subtract value = 0 }
+#				
+#				if = {
+#					limit = {
+#						check_variable = { which = colonial_subsidy_save value = 0.001 }
+#					}
+#					change_variable = { which = colonial_subsidy which = colonial_subsidy_save } # Used to ensure there isnt exponential growth in income
+#					set_variable = { which = colonial_subsidy_save value = 0 } # Used to ensure there isnt exponential growth in income
+#				}
+#				
+#				if = {
+#					limit = {
+#						check_variable = { which = colonial_subsidy_multiplier value = 0.001 }
+#					}
+#					multiply_variable = { which = colonial_subsidy which = colonial_subsidy_multiplier }
+#				
+#					set_variable = { which = colonial_subsidy_modifier which = colonial_subsidy }
+#					if = {
+#						limit = {
+#							check_variable = { 	which = estate_burghers_treasury_annual value = 1 }
+#							check_variable = { 	which = estate_burghers_treasury which = estate_burghers_treasury_annual }
+#						}
+#						set_variable = { which = colonial_estate_contrib which = estate_burghers_treasury_annual }
+#						multiply_variable = { which = colonial_estate_contrib which = colonial_subsidy_multiplier }
+#						change_variable = { which = colonial_subsidy which = colonial_estate_contrib }
+#						set_variable = { which = colonial_estate_contrib value = 0 }
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { 	which = estate_greater_nobles_treasury_annual value = 1 }
+#							check_variable = { 	which = estate_greater_nobles_treasury which = estate_greater_nobles_treasury_annual }
+#						}
+#						set_variable = { which = colonial_estate_contrib which = estate_greater_nobles_treasury_annual }
+#						multiply_variable = { which = colonial_estate_contrib which = colonial_subsidy_multiplier }
+#						change_variable = { which = colonial_subsidy which = colonial_estate_contrib }
+#						set_variable = { which = colonial_estate_contrib value = 0 }
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { 	which = estate_lesser_nobles_treasury_annual value = 1 }
+#							check_variable = { 	which = estate_lesser_nobles_treasury which = estate_lesser_nobles_treasury_annual }
+#						}
+#						set_variable = { which = colonial_estate_contrib which = estate_lesser_nobles_treasury_annual }
+#						multiply_variable = { which = colonial_estate_contrib which = colonial_subsidy_multiplier }
+#						change_variable = { which = colonial_subsidy which = colonial_estate_contrib }
+#						set_variable = { which = colonial_estate_contrib value = 0 }
+#					}
+#				}
+#				else_if = {
+#					limit = {
+#						has_country_flag = dont_subsidise_colonies
+#					}
+#					set_variable = { which = colonial_subsidy value = 0 }
+#					set_variable = { which = colonial_subsidy_modifier value = 0 }
+#				}
+#				else = {
+#					set_variable = { which = colonial_subsidy value = 0 }
+#					set_variable = { which = colonial_subsidy_modifier value = 0 }
+#					country_event = {
+#						id = POP_Colonial.002
+#						days = 10
+#						random = 5
+#					}
+#				}
+#			}
+#			# Otherwise, dump any subsidy back into the treasury
+#			else = {
+#				set_variable = { which = colonial_subsidy_multiplier value = 0 }
+#				if = {
+#					limit = {
+#						check_variable = { 	which = colonial_subsidy value = 0.001 }
+#					}
+#					set_variable = { which = ducat_gain which = colonial_subsidy }
+#					scaled_ducat_gained_country = yes
+#					set_variable = { which = colonial_subsidy value = 0 }
+#					set_variable = { which = colonial_subsidy_modifier value = 0 }
+#				}
+#				clr_country_flag = dont_subsidise_colonies
+#			}
+#		}
+#		every_country = {
+#			limit = {
+#				exists = yes
+#			}
+#			set_variable = { which = subsidy_income_modifier which = subsidy_income }
+#			set_income_modifier_country = {
+#				varname=subsidy_income_modifier modname=ColonialIncome type=country
+#			}
+#			set_variable = { which = colonial_subsidy_save value = 0 }
+#			set_variable = { which = subsidy_income_save value = 0 }
+#			set_variable = { which = subsidy_income_modifier value = 0 }
+#				
+#			set_misc_expenses = yes
+#		}
+#	}
+#	
+#	option = {
+#		name = POP_Colonial.001.a
+#	}
+#}
+#country_event = {
+#	id = POP_Colonial.002
+#	title = "POP_Colonial.002.t"
+#	desc = "POP_Colonial.002.d"
+#	picture = TRADEGOODS_eventPicture
+#	
+#	is_triggered_only = yes
+#	
+#	immediate = {
+#		hidden_effect = {
+#			set_variable = { which = colonial_subsidy_multiplier value = 0.1 }
+#		}
+#	}
+#	
+#	option = {
+#		name = POP_Colonial.002.a
+#		ai_chance = {
+#			factor = 100
+#		}
+#	}
+#	
+#	option = {
+#		name = POP_Colonial.002.b
+#		hidden_effect = {
+#			set_variable = { which = colonial_subsidy_multiplier value = 0 }
+#			set_country_flag = dont_subsidise_colonies
+#		}
+#	}
+#}
+
+province_event = {
+	id = POP_Colonial.003
+	title = "POP_Colonial.003.t"
+	desc = "POP_Colonial.003.d"
+	picture = TRADEGOODS_eventPicture
+	
+	hidden = yes
+	
+	trigger = {
+		has_province_flag = uncolonised_province
+		is_city = yes
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	immediate = {
+		clr_province_flag = uncolonised_province
+		set_variable = { which = rural_base_pop_added value = 0.1 }
+		change_variable = { which = ideal_rural_pop value = 2 }
+		add_rural_population_DEVS = yes
+		if = {
+			limit = {
+				NOT = { check_variable = { 	which = wealth_rural_fluid value = 0.001 } }
+			}
+			set_variable = { which = wealth_rural_fluid	value = 0.001 }
+		}
+		change_variable = { which = wealth_rural_fluid	value = 10 }
+		if = {
+			limit = {
+				NOT = { check_variable = { 	which = wealth_urban_fluid value = 0.001 } }
+			}
+			set_variable = { which = wealth_urban_fluid	value = 0.001 }
+		}
+		change_variable = { which = wealth_urban_fluid	value = 1 }
+	}
+	
+	option = {
+		name = POP_Colonial.003.a
+	}
+}

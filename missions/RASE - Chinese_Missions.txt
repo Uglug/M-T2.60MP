@@ -1,0 +1,519 @@
+china_unification = {
+	slot = 6
+	generic = no
+	ai = yes
+	potential = {
+		culture_group = chinese_group
+	}
+	has_country_shield = yes
+	
+	unite_china_region_mission = {
+		icon = mission_japanese_fort
+		required_missions = { }
+		trigger = {
+			capital_scope = {
+				region_for_scope_province = {
+					type = all
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+			}
+		}
+		effect = {
+			add_adm_power = 100
+			add_dip_power = 100
+			add_mil_power = 100
+			add_country_modifier = {
+				name = "military_victory"
+				duration = 3650
+			}
+		}
+	}
+	unite_china_superregion_mission = {
+		icon = mission_japanese_fort
+		required_missions = { unite_china_region_mission }
+		provinces_to_highlight = {
+			OR = {
+				superregion = southwest_china_superregion
+				superregion = east_china_superregion
+				superregion = north_china_superregion
+			}
+			is_city = yes
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			check_variable = { which = "Demesne_in_the_Mandate_of_Heaven" value = 90 }
+		}
+		effect = {
+			add_adm_power = 500
+			add_dip_power = 500
+			add_mil_power = 500
+			add_country_modifier = {
+				name = "military_victory"
+				duration = 3650
+			}
+		}
+	}
+	mandate_of_heaven_mission = {
+		icon = mission_japanese_fort
+		required_missions = { unite_china_superregion_mission  }
+		provinces_to_highlight = {
+			OR = {
+				superregion = southwest_china_superregion
+				superregion = east_china_superregion
+				superregion = north_china_superregion
+			}
+			is_city = yes
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			check_variable = { which = "Demesne_in_the_Mandate_of_Heaven" value = 253 } #With Taiwan this Value would be 255
+		}
+		effect = {
+			add_adm_power = 500
+			add_dip_power = 500
+			add_mil_power = 500
+			add_country_modifier = {
+				name = "military_victory"
+				duration = 3650
+			}
+		}
+	}
+}
+
+china_tributary_north = {
+	slot = 6
+	generic = no
+	ai = yes
+	potential = {
+		culture_group = chinese_group
+	}
+	has_country_shield = yes
+	
+	defend_korea = {
+		icon = mission_great_wall
+		required_missions = { mandate_of_heaven_mission }
+		position = 4
+		provinces_to_highlight = {
+			region = korea_region
+			NOT = {
+				country_or_vassal_holds = ROOT
+			}
+		}
+		trigger = {
+			korea_region = {
+				type = all
+				country_or_vassal_holds = ROOT
+			}
+		}
+		effect = {
+			add_prestige = 5
+			add_adm_power = 100
+		}
+	}
+	subjugate_tarim = {
+		icon = mission_chinese_general_riding
+		required_missions = { mandate_of_heaven_mission }
+		provinces_to_highlight = {
+			OR = {
+				area = tarim_basin_area
+				area = yarkand_area
+				province_id = 2743 #Kumul
+				province_id = 3213 #Turfan
+			}
+			NOT = { country_or_vassal_holds = ROOT }
+		}
+		trigger = {
+			tarim_basin_area = {
+				type = all
+				country_or_vassal_holds = ROOT
+			}
+			yarkand_area = {
+				type = all
+				country_or_vassal_holds = ROOT
+			}
+			country_or_vassal_holds = 2743
+			country_or_vassal_holds = 3213
+		}
+		effect = {
+			add_prestige = 5
+			add_adm_power = 100
+		}
+	}
+	subjugate_inner_mongolia = {
+		icon = mission_chinese_general_riding
+		required_missions = { subjugate_tarim }
+		provinces_to_highlight = {
+			OR = {
+				region = inner_mongolia_region
+				AND = {
+					region = west_manchuria_region
+					owner = { culture_group = altaic }
+				}
+			}
+			NOT = { country_or_vassal_holds = ROOT }
+		}
+		trigger = {
+			inner_mongolia_region = {
+				type = all
+				country_or_vassal_holds = ROOT
+			}
+			west_manchuria_region = {
+				type = all
+				OR = {
+					country_or_vassal_holds = ROOT
+					owner = { NOT = { culture_group = altaic } }
+				}
+			}
+		}
+		effect = {
+			add_prestige = 5
+			add_adm_power = 100
+		}
+	}
+	subjugate_manchuria = {
+		icon = mission_chinese_general_riding
+		required_missions = { subjugate_inner_mongolia }
+		provinces_to_highlight = {
+			OR = {
+				region = west_manchuria_region
+				region = east_manchuria_region
+			}
+			NOT = { country_or_vassal_holds = ROOT }
+		}
+		trigger = {
+			west_manchuria_region = {
+				type = all
+				OR = {
+					country_or_vassal_holds = ROOT
+					is_city = no
+				}
+			}
+			east_manchuria_region = {
+				type = all
+				OR = {
+					country_or_vassal_holds = ROOT
+					is_city = no
+				}
+			}
+		}
+		effect = {
+			add_prestige = 5
+			add_adm_power = 100
+		}
+	}
+}
+
+china_tributary_southwest = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		culture_group = chinese_group
+	}
+	has_country_shield = yes
+	tributary_tibet = {
+		icon = mission_chinese_general_riding
+		required_missions = { mandate_of_heaven_mission }
+		position = 4
+		provinces_to_highlight = {
+			region = tibet_region
+			NOT = { country_or_vassal_holds = ROOT }
+		}
+		trigger = {
+			tibet_region = {
+				type = all
+				country_or_vassal_holds = ROOT
+			}
+		}
+		effect = {
+			add_prestige = 5
+			add_adm_power = 100
+		}
+	}
+	annex_dai_viet = {
+		icon = mission_chinese_general_riding
+		required_missions = { tributary_tibet }
+		position = 5
+		provinces_to_highlight = {
+			region = vietnam_region
+			NOT = { country_or_vassal_holds = ROOT }
+		}
+		trigger = {
+			vietnam_region = {
+				type = all
+				country_or_vassal_holds = ROOT
+			}
+		}
+		effect = {
+			add_prestige = 5
+			add_adm_power = 100
+		}
+	}
+	tributary_champa = {
+		icon = mission_chinese_general_riding
+		required_missions = { annex_dai_viet }
+		position = 6
+		provinces_to_highlight = {
+			owned_by = CHA
+		}
+		trigger = {
+			overlord_of = CHA
+		}
+		effect = {
+			add_prestige = 5
+			add_adm_power = 100
+		}
+	}
+	tributary_burma = {
+		icon = mission_chinese_general_riding
+		required_missions = { tributary_champa }
+		position = 7
+		provinces_to_highlight = {
+			OR = {
+				region = inland_burma_region
+				region = coastal_burma_region
+			}
+			NOT = { country_or_vassal_holds = ROOT }
+		}
+		trigger = {
+			inland_burma_region = {
+				type = all
+				country_or_vassal_holds = ROOT
+			}
+			coastal_burma_region = {
+				type = all
+				country_or_vassal_holds = ROOT
+			}
+		}
+		effect = {
+			add_prestige = 5
+			add_adm_power = 100
+		}
+	}
+	tributary_laos = {
+		icon = mission_chinese_general_riding
+		required_missions = { tributary_burma }
+		position = 8
+		provinces_to_highlight = {
+			OR = {
+				region = lan_xang_region
+				region = cochinchina_region
+			}
+			NOT = { country_or_vassal_holds = ROOT }
+		}
+		trigger = {
+			lan_xang_region = {
+				type = all
+				country_or_vassal_holds = ROOT
+			}
+			cochinchina_region = {
+				type = all
+				country_or_vassal_holds = ROOT
+			}
+		}
+		effect = {
+			add_prestige = 5
+			add_adm_power = 100
+		}
+	}
+	tributary_siam = {
+		icon = mission_chinese_general_riding
+		required_missions = { tributary_laos }
+		position = 9
+		provinces_to_highlight = {
+			OR = {
+				region = inland_siam_region
+				region = coastal_siam_region
+			}
+			NOT = { country_or_vassal_holds = ROOT }
+		}
+		trigger = {
+			inland_siam_region = {
+				type = all
+				country_or_vassal_holds = ROOT
+			}
+			coastal_siam_region = {
+				type = all
+				country_or_vassal_holds = ROOT
+			}
+		}
+		effect = {
+			add_prestige = 5
+			add_adm_power = 100
+		}
+	}
+}
+
+china_tributary_southeast = {
+	slot = 7
+	generic = no
+	ai = yes
+	potential = {
+		culture_group = chinese_group
+	}
+	has_country_shield = yes
+	tributary_luzon = {
+		icon = mission_chinese_general_riding
+		required_missions = { mandate_of_heaven_mission }
+		position = 4
+		provinces_to_highlight = {
+			region = philippines_region
+			is_city = yes
+			NOT = { country_or_vassal_holds = ROOT }
+		}
+		trigger = {
+			philippines_region = {
+				type = all
+				OR = {
+					country_or_vassal_holds = ROOT
+					is_city = no
+				}
+			}
+		}
+		effect = {
+			add_prestige = 5
+			add_adm_power = 100
+		}
+	}
+	tributary_ryukyu = {
+		icon = mission_chinese_general_riding
+		required_missions = { tributary_luzon }
+		position = 5
+		provinces_to_highlight = {
+			owned_by = RYU
+			NOT = { country_or_vassal_holds = ROOT }
+		}
+		trigger = {
+			ryukyu_area = {
+				type = all
+				OR = {
+					country_or_vassal_holds = ROOT
+					is_city = no
+				}
+			}
+		}
+		effect = {
+			add_prestige = 5
+			add_adm_power = 100
+		}
+	}
+	tributary_brunei = {
+		icon = mission_chinese_general_riding
+		required_missions = { tributary_ryukyu }
+		position = 6
+		provinces_to_highlight = {
+			region = borneo_region
+			is_city = yes
+			NOT = { country_or_vassal_holds = ROOT }
+		}
+		trigger = {
+			borneo_region = {
+				type = all
+				OR = {
+					country_or_vassal_holds = ROOT
+					is_city = no
+				}
+			}
+		}
+		effect = {
+			add_prestige = 5
+			add_adm_power = 100
+		}
+	}
+	tributary_malaya = {
+		icon = mission_chinese_general_riding
+		required_missions = { tributary_brunei }
+		position = 7
+		provinces_to_highlight = {
+			region = malaya_region
+			is_city = yes
+			NOT = { country_or_vassal_holds = ROOT }
+		}
+		trigger = {
+			malaya_region = {
+				type = all
+				OR = {
+					country_or_vassal_holds = ROOT
+					is_city = no
+				}
+			}
+		}
+		effect = {
+			add_prestige = 5
+			add_adm_power = 100
+		}
+	}
+	tributary_sumatra = {
+		icon = mission_chinese_general_riding
+		required_missions = { tributary_malaya }
+		position = 8
+		provinces_to_highlight = {
+			region = sumatra_region
+			is_city = yes
+			NOT = { country_or_vassal_holds = ROOT }
+		}
+		trigger = {
+			sumatra_region = {
+				type = all
+				OR = {
+					country_or_vassal_holds = ROOT
+					is_city = no
+				}
+			}
+		}
+		effect = {
+			add_prestige = 5
+			add_adm_power = 100
+		}
+	}
+	tributary_java = {
+		icon = mission_chinese_general_riding
+		required_missions = { tributary_sumatra }
+		position = 9
+		provinces_to_highlight = {
+			region = java_region
+			is_city = yes
+			NOT = { country_or_vassal_holds = ROOT }
+		}
+		trigger = {
+			java_region = {
+				type = all
+				OR = {
+					country_or_vassal_holds = ROOT
+					is_city = no
+				}
+			}
+		}
+		effect = {
+			add_prestige = 5
+			add_adm_power = 100
+		}
+	}
+	colonize_taiwan = {
+		icon = mission_invade_island
+		required_missions = { tributary_java }
+		position = 10
+		provinces_to_highlight = {
+			area = taiwan_area
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			taiwan_area = {
+				type = all
+				owned_by = ROOT
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = "colonial_enthusiasm"
+				duration = 7300
+			}
+		}
+	}
+}

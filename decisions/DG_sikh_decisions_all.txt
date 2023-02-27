@@ -1,0 +1,86 @@
+country_decisions = {
+	khalsa_order = { #The Khalsa Order
+		potential = {
+			religion = sikhism
+			NOT = { has_country_modifier = khalsa_order }
+			PUN = { has_country_flag = sikhism_militancy }
+			NOT = { government = theocracy }
+			piety = -0.60
+		}
+		allow = {
+			MIL = 3
+			piety = -0.20
+		}
+		effect = {
+			add_country_modifier = { name = "khalsa_order" duration = -1 }
+		}
+		ai_will_do = { factor = 1 }
+	}
+	
+	eternal_throne = { #The Eternal Throne
+		potential = {
+			religion = sikhism
+			any_owned_province = {
+				has_province_flag = amritsar
+				is_capital = no
+				controlled_by = ROOT
+				indian_region_trigger = yes
+			}
+		}
+		allow = {
+			ADM = 1
+			is_at_war = no
+		}
+		effect = {
+			random_owned_province = {
+				limit = { has_province_flag = amritsar }
+				owner = { Effect_set_capital = { target=PREV } }
+			}
+			if = {
+				limit = { piety = 0.60 }
+				add_legitimacy = 12
+			}
+			else_if = {
+				limit = { piety = 0.20 }
+				add_legitimacy = 9
+			}
+			else_if = {
+				limit = { piety = -0.20 }
+				add_legitimacy = 6
+			}
+			else_if = {
+				limit = { piety = -0.60 }
+				add_legitimacy = 3
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				NOT = { piety = -0.20 }
+				factor = 0
+			}
+			modifier = {
+				any_owned_province = {
+					has_province_flag = amritsar
+					NOT = { is_core = ROOT }
+				}
+				factor = 0
+			}
+			modifier = {
+				any_owned_province = {
+					has_province_flag = amritsar
+					NOT = { culture_group = owner }
+				}
+				factor = 0
+			}
+			modifier = {
+				any_owned_province = {
+					has_province_flag = amritsar
+					unrest = 1
+				}
+				factor = 0
+			}
+		}
+	}
+} #End sikhism decisions
+

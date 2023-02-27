@@ -1,0 +1,337 @@
+namespace = POP_Estates_KJH
+
+### By KJ
+
+country_event = {
+	id = POP_Estates_KJH.001
+	title = no_localisation
+	desc = no_localisation
+	picture = CITY_DEVELOPMENT_eventPicture
+	
+	is_triggered_only = yes
+	
+	hidden = yes
+	
+	immediate = {
+		if = {
+			limit = {
+				check_variable = {
+					which = estate_greater_nobles_weight_share
+					value = 0.05
+				}
+			}
+			set_variable = {
+				which = estateBuildAssessGN
+				which = estate_greater_nobles_treasury
+			}
+			divide_variable = {
+				which = estateBuildAssessGN
+				which = estate_greater_nobles_treasury_annual
+			}
+			
+			if = {
+				limit = {
+					check_variable = {
+						which = estateBuildAssessGN
+						value = 15
+					}
+					
+					check_variable = {
+						which = estate_greater_nobles_treasury
+						value = 500
+					}
+				}
+				set_variable = {
+					which = estate_greater_nobles_treasury_half
+					which = estate_greater_nobles_treasury
+				}
+				multiply_variable = {
+					which = estate_greater_nobles_treasury_half
+					value = 0.5
+				}
+				
+				DoEstateConstruction = {
+					type = GN
+					urban = no
+					rural = yes
+					treasury = estate_greater_nobles_treasury
+					stop = estate_greater_nobles_treasury_half
+				}
+				
+				set_variable = {
+					which = estate_greater_nobles_treasury_half
+					value = 0
+				}
+			}
+			
+			set_variable = {
+				which = estateBuildAssessGN
+				value = 0
+			}
+		}
+		
+		if = {
+			limit = {
+				check_variable = {
+					which = estate_lesser_nobles_weight_share
+					value = 0.05
+				}
+			}
+			set_variable = {
+				which = estateBuildAssessLN
+				which = estate_lesser_nobles_treasury
+			}
+			divide_variable = {
+				which = estateBuildAssessLN
+				which = estate_lesser_nobles_treasury_annual
+			}
+			
+			if = {
+				limit = {
+					check_variable = {
+						which = estateBuildAssessLN
+						value = 15
+					}
+					
+					check_variable = {
+						which = estate_lesser_nobles_treasury
+						value = 500
+					}
+				}
+				set_variable = {
+					which = estate_lesser_nobles_treasury_half
+					which = estate_lesser_nobles_treasury
+				}
+				multiply_variable = {
+					which = estate_lesser_nobles_treasury_half
+					value = 0.5
+				}
+				
+				DoEstateConstruction = {
+					type = LN
+					urban = no
+					rural = yes
+					treasury = estate_lesser_nobles_treasury
+					stop = estate_lesser_nobles_treasury_half
+				}
+				
+				set_variable = {
+					which = estate_lesser_nobles_treasury_half
+					value = 0
+				}
+			}
+			
+			set_variable = {
+				which = estateBuildAssessLN
+				value = 0
+			}
+		}
+		
+		if = {
+			limit = {
+				check_variable = {
+					which = estate_burghers_weight_share
+					value = 0.05
+				}
+			}
+			set_variable = {
+				which = estateBuildAssessBG
+				which = estate_burghers_treasury
+			}
+			divide_variable = {
+				which = estateBuildAssessBG
+				which = estate_burghers_treasury_annual
+			}
+			
+			if = {
+				limit = {
+					check_variable = {
+						which = estateBuildAssessBG
+						value = 15
+					}
+					
+					check_variable = {
+						which = estate_burghers_treasury
+						value = 500
+					}
+				}
+				set_variable = {
+					which = estate_burghers_treasury_half
+					which = estate_burghers_treasury
+				}
+				multiply_variable = {
+					which = estate_burghers_treasury_half
+					value = 0.5
+				}
+				
+				DoEstateConstruction = {
+					type = BG
+					urban = yes
+					rural = yes
+					treasury = estate_burghers_treasury
+					stop = estate_burghers_treasury_half
+				}
+				
+				set_variable = {
+					which = estate_burghers_treasury_half
+					value = 0
+				}
+			}
+			
+			set_variable = {
+				which = estateBuildAssessBG
+				value = 0
+			}
+		}
+	}
+	
+	option = {
+		name = no_localisation
+	}
+}
+
+# Estate fort deconstruction - no thanks, keep 'em
+# actually, only keep level 1s
+country_event = {
+	id = POP_Estates_KJH.002
+	title = no_localisation
+	desc = no_localisation
+	picture = CITY_DEVELOPMENT_eventPicture
+	
+	#is_triggered_only = no
+	
+	hidden = yes
+	
+	trigger = {
+		#exists = yes
+		
+		is_year = 1358
+	}
+	
+	mean_time_to_happen = {
+		years = 5
+	}
+	
+	immediate = {
+		GetFortCandLocal = {
+			type = All
+			return = estateBuildFortCand
+		}
+		
+		every_owned_province = {
+			if = {
+				limit = {
+					has_province_flag = estateBuildFortCand
+				}
+				clr_province_flag = estateBuildFortCand
+			}
+			else = {
+				trigger_switch = {
+					on_trigger = has_building
+					
+					#local_fortification_1 = {
+					#	remove_building = local_fortification_1
+					#}
+					#local_fortification_1_off = {
+					#	remove_building = local_fortification_1_off
+					#}
+					local_fortification_2 = {
+						remove_building = local_fortification_2
+						add_building = local_fortification_1
+					}
+					local_fortification_2_off = {
+						remove_building = local_fortification_2_off
+						add_building = local_fortification_1_off
+					}
+					local_fortification_3 = {
+						remove_building = local_fortification_3
+						add_building = local_fortification_1
+					}
+					local_fortification_3_off = {
+						remove_building = local_fortification_3_off
+						add_building = local_fortification_1_off
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = no_localisation
+	}
+}
+
+country_event = { ###
+	id = POP_Estates_KJH.999
+	title = no_localization
+	desc = no_localization
+	picture = COURT_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		every_country = {
+			limit = {
+				#exists = yes
+				has_country_flag = stuffs_set
+			}
+			every_owned_province = {
+				limit = {
+					is_city = yes
+				}
+				if = {
+					limit = {
+						OR = {
+							has_building = fort_14th
+							has_building = fort_15th
+							has_building = fort_16th
+							has_building = fort_17th
+							has_building = fort_18th
+						}
+					}
+					trigger_switch = {
+						on_trigger = has_building
+						local_fortification_1 = {
+							remove_building = local_fortification_1
+							add_building = local_fortification_1_off
+						}
+						local_fortification_2 = {
+							remove_building = local_fortification_2
+							add_building = local_fortification_2_off
+						}
+						local_fortification_3 = {
+							remove_building = local_fortification_3
+							add_building = local_fortification_3_off
+						}
+					}
+				}
+				else = {
+					trigger_switch = {
+						on_trigger = has_building
+						local_fortification_1_off = {
+							remove_building = local_fortification_1_off
+							add_building = local_fortification_1
+						}
+						local_fortification_2_off = {
+							remove_building = local_fortification_2_off
+							add_building = local_fortification_2
+						}
+						local_fortification_3_off = {
+							remove_building = local_fortification_3_off
+							add_building = local_fortification_3
+						}
+					}
+				}
+			}
+			
+			country_event = {
+				id = POP_Estates_KJH.001
+			}
+		}
+	}
+	
+	option = {
+		name = no_localization
+		ai_chance = { factor = 100 }
+	}
+}

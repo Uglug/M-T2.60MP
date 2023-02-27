@@ -1,0 +1,171 @@
+#MEIOU Elective Monarchy events
+
+# Influence boost for Magnates on new monarch
+country_event = {
+	id = meiouelective_monarchy.001
+	title = meiouelective_monarchy.001.t
+	desc = meiouelective_monarchy.001.d
+	picture = LIBERUM_VETO_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_dlc = "Res Publica"
+		has_dlc = "The Cossacks"
+		electivisation_trigger = yes
+	}
+	
+	option = {
+		name = meiouelective_monarchy.001.a
+		add_country_modifier = {
+			name = elective_succession
+			duration = 120
+		}
+	}
+}
+# low ADM and DIP, petition of rights
+#country_event = {
+#	id = meiouelective_monarchy.002
+#	title = meiouelective_monarchy.002.t
+#	desc = meiouelective_monarchy.002.d
+#	picture = LIBERUM_VETO_eventPicture
+#	
+#	is_triggered_only = yes
+#	
+#	trigger = {
+#		has_dlc = "Res Publica"
+#		has_dlc = "The Cossacks"
+#		electivisation_trigger = yes
+#		NOT = { ADM = 4 }
+#		NOT = { DIP = 4 }
+#	}
+#	
+#	mean_time_to_happen = {
+#		days = 1
+#	}
+#
+#	option = {
+#		name = meiouelective_monarchy.002.a
+#		add_country_modifier = {
+#			name = petition_of_rights
+#			duration = 60
+#		}
+#		ai_chance = {
+#			factor = 75
+#		}
+#	}
+#
+#	option = {
+#		name = meiouelective_monarchy.002.b
+#		add_estate_loyalty = {
+#			estate = estate_magnates
+#			loyalty = -15
+#		}
+#		random_owned_province = {
+#			limit = {
+#				has_estate = estate_magnates
+#			}
+#			spawn_rebels = {
+#				type = noble_rebels
+#				size = 2
+#			}
+#		}
+#		ai_chance = {
+#			factor = 25
+#		}
+#	}
+#}
+
+
+# Event to start the crises
+country_event = {
+	id = meiouelective_monarchy.003
+	title = meiouelective_monarchy.003.t
+	desc = meiouelective_monarchy.003.d
+	picture = LIBERUM_VETO_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_dlc = "Res Publica"
+		has_dlc = "The Cossacks"
+		electivisation_trigger = yes
+		OR = {
+			has_new_dynasty = yes
+			NOT = { legitimacy = 66 }
+			AND = {
+				NOT = { ADM = 3 }
+				NOT = { DIP = 3 }
+				NOT = { MIL = 3 }
+			}
+			AND = {
+				is_female = yes
+				has_consort_regency = no
+			}
+			AND = {
+				has_regency = yes
+				has_female_heir = yes
+			}
+			is_lesser_in_union = yes
+		}
+	}
+	
+	option = {
+		name = meiouelective_monarchy.001.a
+		set_country_flag = elective_crises_start
+		every_country = {
+			limit = {
+				junior_union_with = ROOT
+			}
+			break_union = ROOT
+		}
+	}
+}
+
+# For overlords of elective monarchies who have a bad heir
+country_event = {
+	id = meiouelective_monarchy.004
+	title = meiouelective_monarchy.003.t
+	desc = meiouelective_monarchy.004.d
+	picture = LIBERUM_VETO_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		ai = no #disabled for AIs as they will not disinherit bad heirs like a player would
+		OR = {
+			has_new_dynasty = yes
+			NOT = { legitimacy = 66 }
+			AND = {
+				NOT = { ADM = 2 }
+				NOT = { DIP = 2 }
+				NOT = { MIL = 2 }
+			}
+			AND = {
+				is_female = yes
+				has_consort_regency = no
+			}
+			AND = {
+				has_regency = yes
+				has_female_heir = yes
+			}
+			is_lesser_in_union = yes
+		}
+		electivisation_trigger = no
+		any_known_country = {
+			electivisation_trigger = yes
+			junior_union_with = ROOT
+		}
+	}
+	
+	option = {
+		name = meiouelective_monarchy.003.a
+		every_country = {
+			limit = {
+				electivisation_trigger = yes
+				junior_union_with = ROOT
+			}
+			break_union = ROOT
+		}
+	}
+}

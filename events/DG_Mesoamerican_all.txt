@@ -1,0 +1,498 @@
+namespace = dg_mesoamerican
+
+###############
+# Flower Wars # 00s
+###############
+
+#01 - Captured Icon
+#02 - Lost Icon
+#03 - Human Sacrifice
+#04 - The gods demand a sacrifice
+#05* - The Elevation of Huitzilopochtli
+#06* - Patron God of the [Aztec]s
+
+#################
+# Other Rituals # 10s
+#################
+
+#11 - New Fire Ceremony
+
+###################
+# Plague and Doom # 20s
+###################
+
+#21* - The End of the World
+#22* - Shaken Faith (defeated by non-pagans)
+#23* - Nagual Attack
+
+###############
+# Flower Wars #
+###############
+
+country_event = { #Captured Icon
+	
+	id = dg_mesoamerican.001
+	title = dg_mesoamerican.001.t
+	desc = dg_mesoamerican.001.d
+	picture = all_procession
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			religion = nahuatl
+			religion = inti
+		}
+	}
+	
+	option = {
+		name = dg_mesoamerican.001.a #Take it back to $CAPITAL_CITY$
+		hidden_effect = { change_variable = { which = captured_icons value = 1 } }
+	}
+}
+
+country_event = { #Icon lost
+	
+	id = dg_mesoamerican.002
+	title = dg_mesoamerican.002.t
+	desc = dg_mesoamerican.002.d
+	picture = aztec_sun_disk
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			religion = nahuatl
+			religion = inti
+		}
+	}
+	
+	option = {
+		name = dg_mesoamerican.002.a #Vow to recover it
+		hidden_effect = { change_variable = { which = captured_icons value = -1 } }
+		add_casus_belli = { type = cb_lost_icon months = 60 target = FROM }
+	}
+}
+
+country_event = { #Human sacrifice
+	
+	id = dg_mesoamerican.003
+	title = dg_mesoamerican.003.t
+	desc = dg_mesoamerican.003.d
+	picture = aztec_sacrifice
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		religion = nahuatl
+		check_variable = { which = captured_prisoners value = 1 }
+	}
+	
+	immediate = {
+		if = {
+			limit = { advisor = inquisitor }
+			custom_tooltip = inquisitor_sacrifice
+		}
+		hidden_effect = {
+			change_variable = { which = sacrificed_prisoners which = captured_prisoners }
+			if = {
+				limit = { inquisitor = 3 }
+				multiply_variable = { which = sacrificed_prisoners value = 1.6 }
+			}
+			else_if = {
+				limit = { inquisitor = 2 }
+				multiply_variable = { which = sacrificed_prisoners value = 1.4 }
+			}
+			else_if = {
+				limit = { inquisitor = 1 }
+				multiply_variable = { which = sacrificed_prisoners value = 1.2 }
+			}
+			if = {
+				limit = { piety = 0.60 }
+				#multiply_variable = { which = sacrificed_prisoners value = 1 }
+			}
+			else_if = {
+				limit = { piety = 0.20 }
+				multiply_variable = { which = sacrificed_prisoners value = 0.8 }
+			}
+			else_if = {
+				limit = { piety = -0.20 }
+				multiply_variable = { which = sacrificed_prisoners value = 0.6 }
+			}
+			else_if = {
+				limit = { piety = -0.60 }
+				multiply_variable = { which = sacrificed_prisoners value = 0.4 }
+			}
+			else = {
+				multiply_variable = { which = sacrificed_prisoners value = 0.2 }
+			}
+			set_variable = { which = captured_prisoners value = 0 }
+		}
+	}
+	
+	option = {
+		name = dg_mesoamerican.003.a #May the gods be pleased
+		if = {
+			limit = { check_variable = { which = sacrificed_prisoners value = 9 } }
+			add_prestige = 5
+			add_war_exhaustion = -1
+			if = {
+				limit = { NOT = { stability = 1 } }
+				random = { chance = 50 add_stability_1 = yes }
+			}
+		}
+		else_if = {
+			limit = { check_variable = { which = sacrificed_prisoners value = 8 } }
+			add_prestige = 5
+			random = { chance = 80 add_war_exhaustion = -1 }
+			if = {
+				limit = { NOT = { stability = 1 } }
+				random = { chance = 45 add_stability_1 = yes }
+			}
+		}
+		else_if = {
+			limit = { check_variable = { which = sacrificed_prisoners value = 7 } }
+			add_prestige = 4
+			random = { chance = 60 add_war_exhaustion = -1 }
+			if = {
+				limit = { NOT = { stability = 1 } }
+				random = { chance = 40 add_stability_1 = yes }
+			}
+		}
+		else_if = {
+			limit = { check_variable = { which = sacrificed_prisoners value = 6 } }
+			add_prestige = 4
+			random = { chance = 40 add_war_exhaustion = -1 }
+			if = {
+				limit = { NOT = { stability = 1 } }
+				random = { chance = 35 add_stability_1 = yes }
+			}
+		}
+		else_if = {
+			limit = { check_variable = { which = sacrificed_prisoners value = 5 } }
+			add_prestige = 3
+			random = { chance = 20 add_war_exhaustion = -1 }
+			if = {
+				limit = { NOT = { stability = 1 } }
+				random = { chance = 30 add_stability_1 = yes }
+			}
+		}
+		else_if = {
+			limit = { check_variable = { which = sacrificed_prisoners value = 4 } }
+			add_prestige = 3
+			if = {
+				limit = { NOT = { stability = 1 } }
+				random = { chance = 25 add_stability_1 = yes }
+			}
+		}
+		else_if = {
+			limit = { check_variable = { which = sacrificed_prisoners value = 3 } }
+			add_prestige = 2
+			if = {
+				limit = { NOT = { stability = 1 } }
+				random = { chance = 20 add_stability_1 = yes }
+			}
+		}
+		else_if = {
+			limit = { check_variable = { which = sacrificed_prisoners value = 2 } }
+			add_prestige = 2
+			if = {
+				limit = { NOT = { stability = 1 } }
+				random = { chance = 15 add_stability_1 = yes }
+			}
+		}
+		else_if = {
+			limit = { check_variable = { which = sacrificed_prisoners value = 1 } }
+			add_prestige = 1
+			if = {
+				limit = { NOT = { stability = 1 } }
+				random = { chance = 10 add_stability_1 = yes }
+			}
+		}
+		else = {
+			add_prestige = 1
+			if = {
+				limit = { NOT = { stability = 1 } }
+				random = { chance = 5 add_stability_1 = yes }
+			}
+		}
+		hidden_effect = {
+			set_variable = { which = sacrificed_prisoners value = 0 }
+		}
+		if = {
+			limit = { check_variable = { which = sacrificed_prisoners value = 5 } }
+			clr_country_flag = promised_sacrifice
+			every_subject_country = {
+				add_opinion = { who = ROOT modifier = human_sacrifice_vassal }
+			}
+			every_neighbor_country = {
+				limit = {
+					NOT = { is_subject_of = ROOT }
+					truce_with = ROOT
+				}
+				add_opinion = { who = ROOT modifier = human_sacrifice_enemy }
+			}
+			every_neighbor_country = {
+				limit = {
+					NOT = { is_subject_of = ROOT }
+					NOT = { truce_with = ROOT }
+				}
+				add_opinion = { who = ROOT modifier = human_sacrifice_neighbor }
+			}
+		}
+	}
+}
+
+country_event = { #04 - The gods demand a sacrifice
+	
+	id = dg_mesoamerican.004
+	title = dg_mesoamerican.004.t
+	desc = dg_mesoamerican.004.d
+	picture = aztec_sacrifice
+	
+	trigger = {
+		religion = nahuatl
+		is_at_war = no
+		NOT = {
+			OR = {
+				has_country_modifier = religious_scandal_country_strong
+				has_country_modifier = religious_scandal_country
+				has_country_modifier = religious_scandal_country_weak
+			}
+		}
+		NOT = { any_known_country = { has_opinion_modifier = { who = ROOT modifier = human_sacrifice_enemy } } }
+		NOT = { any_known_country = { has_opinion_modifier = { who = ROOT modifier = human_sacrifice_neighbor } } }
+		NOT = { any_known_country = { has_opinion_modifier = { who = ROOT modifier = human_sacrifice_vassal } } }
+		NOT = { check_variable = { which = captured_prisoners value = 1 } }
+		NOT = {
+			has_country_flag = sacrifices_stopped
+			NOT = { piety = -0.60 }
+		}
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 12
+		
+		modifier = {
+			has_country_flag = promised_sacrifice
+			factor = 0.5
+		}
+		modifier = {
+			war_exhaustion = 5
+			factor = 1.4
+		}
+		modifier = {
+			war_exhaustion = 10
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { manpower_percentage = 0.50 }
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { manpower_percentage = 0.25 }
+			factor = 1.4
+		}
+		modifier = {
+			manpower_percentage = 0.75
+			factor = 0.7
+		}
+		modifier = {
+			has_country_flag = sacrifices_stopped
+			factor = 2
+		}
+		modifier = {
+			piety = 0.60
+			factor = 0.7
+		}
+		modifier = {
+			piety = 0.20
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { piety = -0.20 }
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { piety = -0.60 }
+			factor = 1.4
+		}
+		modifier = {
+			patriarch_authority = 0.60
+			factor = 0.7
+		}
+		modifier = {
+			patriarch_authority = 0.80
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { patriarch_authority = 0.40 }
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { patriarch_authority = 0.20 }
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { stability = 1 }
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { stability = -1 }
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { legitimacy = 100 }
+			government = monarchy
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { legitimacy = 80 }
+			government = monarchy
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { prestige = 0 }
+			factor = 0.7
+		}
+	}
+	
+	option = {
+		name = dg_mesoamerican.004.a #Vow to feed the gods captured enemies
+		trigger = { NOT = { has_country_flag = promised_sacrifice } }
+		ai_chance = { factor = 75 }
+		set_country_flag = promised_sacrifice
+	}
+	option = {
+		name = dg_mesoamerican.004.b #Raid our own territory for sacrifices
+		trigger = { NOT = { has_country_flag = promised_sacrifice } }
+		ai_chance = { factor = 25 }
+		if = {
+			limit = { any_owned_province = { is_in_capital_area = yes has_owner_culture = no is_city = yes } }
+			random_owned_province = {
+				limit = {
+					is_in_capital_area = yes
+					has_owner_culture = no
+					is_city = yes
+				}
+				hidden_effect = {
+					set_variable = { which = added_unrest value = 10 }
+					add_base_unrest = yes
+				}
+				custom_tooltip = added_unrest_10
+			}
+		}
+		else = {
+			random_owned_province = {
+				limit = { is_in_capital_area = yes is_city = yes }
+				hidden_effect = {
+					set_variable = { which = added_unrest value = 10 }
+					add_base_unrest = yes
+				}
+				custom_tooltip = added_unrest_10
+			}
+		}
+	}
+	option = {
+		name = dg_mesoamerican.004.c #The gods are angry we broke our vow!
+		trigger = { has_country_flag = promised_sacrifice }
+		if = {
+			limit = { piety = 0.60 }
+			add_country_modifier = { name = religious_scandal_country_strong duration = 2000 }
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_country_modifier = { name = religious_scandal_country_strong duration = 1000 }
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_country_modifier = { name = religious_scandal_country duration = 2000 }
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_country_modifier = { name = religious_scandal_country_weak duration = 2000 }
+		}
+		else = {
+			add_country_modifier = { name = religious_scandal_country_weak duration = 1000 }
+		}
+		clr_country_flag = promised_sacrifice
+	}
+	option = {
+		name = dg_mesoamerican.004.e #Let the gods starve
+		trigger = {
+			NOT = { piety = -0.20 }
+			NOT = { has_country_flag = promised_sacrifice }
+		}
+		set_country_flag = sacrifices_stopped
+		if = {
+			limit = { patriarch_authority = 0.80 }
+			add_country_modifier = { name = unhappy_church_powerful duration = 2000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.60 }
+			add_country_modifier = { name = unhappy_church_strong duration = 2000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.40 }
+			add_country_modifier = { name = unhappy_church_moderate duration = 2000 }
+		}
+		else_if = {
+			limit = { patriarch_authority = 0.20 }
+			add_country_modifier = { name = unhappy_church_weak duration = 2000 }
+		}
+		else = {
+			add_country_modifier = { name = unhappy_church_impotent duration = 2000 }
+		}
+	}
+}
+
+#################
+# Other Rituals # 10s
+#################
+
+country_event = { #11 - New Fire Ceremony
+	
+	id = dg_mesoamerican.011
+	title = dg_mesoamerican.011.t
+	desc = dg_mesoamerican.011.d
+	picture = aztec_fire
+	
+	trigger = {
+		religion = nahuatl
+		check_variable = { which = aztec_calendar value = 52 }
+		is_at_war = no
+		OR = {
+			ai = yes
+			has_country_flag = religious_news_major
+		}
+	}
+	
+	mean_time_to_happen = { months = 3 }
+	
+	immediate = { hidden_effect = { set_variable = { which = aztec_calendar value = 0 } } }
+	
+	option = {
+		name = dg_mesoamerican.011.a #Spread the flame throughout our empire
+		if = {
+			limit = { piety = 0.60 }
+			add_adm_power = 20
+		}
+		else_if = {
+			limit = { piety = 0.20 }
+			add_adm_power = 16
+		}
+		else_if = {
+			limit = { piety = -0.20 }
+			add_adm_power = 12
+		}
+		else_if = {
+			limit = { piety = -0.60 }
+			add_adm_power = 8
+		}
+		else = {
+			add_adm_power = 4
+		}
+	}
+}
+

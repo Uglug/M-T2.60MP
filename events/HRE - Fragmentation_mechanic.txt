@@ -1,0 +1,567 @@
+#########################################
+### HRE Fragmentation Mechanic Events ###
+#########################################
+
+### Fragmentation event on monarch death for monarchies
+country_event = {
+	id = hre_fragmentation.001
+	title = hre_fragmentation.001.t
+	desc = hre_fragmentation.001.desc
+	picture = HRE_eventPicture
+	
+	## from hre_fragmentation.003
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { 	which = greater_nobles_loyalty_removed_a 	value = 10 }
+			set_variable = { 	which = nobles_loyalty_removed_b 	value = 15 }
+		}
+	}
+		
+	option = {
+		name = "hre_fragmentation.001.a"
+		trigger = {
+			any_owned_province = {
+				any_core_country = { exists = no }
+			}
+		}
+		ai_chance = {
+			factor = 50
+			modifier = {
+				NOT = { check_variable = { 	which = estate_greater_nobles_loyalty 	value = 0.4 } }
+				factor = 1.2
+			}
+			modifier = {
+				NOT = { check_variable = { 	which = estate_greater_nobles_loyalty 	value = 0.3 } }
+				factor = 1.6
+			}
+			modifier = {
+				NOT = { check_variable = { 	which = estate_greater_nobles_loyalty 	value = 0.2 } }
+				factor = 2
+			}
+			modifier = {
+				NOT = { stability = 1 }
+				factor = 1.2
+			}
+			modifier = {
+				NOT = { stability = 0 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { stability = -1 }
+				factor = 1.6
+			}
+			modifier = {
+				NOT = { legitimacy = 70 }
+				factor = 1.05
+			}
+			modifier = {
+				NOT = { legitimacy = 60 }
+				factor = 1.1
+			}
+			modifier = {
+				NOT = { legitimacy = 50 }
+				factor = 1.15
+			}
+			modifier = {
+				NOT = { legitimacy = 40 }
+				factor = 1.2
+			}
+			modifier = {
+				NOT = { legitimacy = 30 }
+				factor = 1.2
+			}
+			modifier = {
+				NOT = { legitimacy = 20 }
+				factor = 1.2
+			}
+		}
+		
+		random_owned_province = {
+			limit = {
+				any_core_country = { exists = no }
+			}
+			random_core_country = {
+				limit = { exists = no }
+				
+				ROOT = { release = PREV }
+				
+				set_country_flag = fragmentation_released_tag
+				
+				if = {
+					limit = { ROOT = { is_female = no } }
+					define_ruler = {
+						dynasty = ROOT
+						male = yes
+					}
+				}
+				else = {
+					define_ruler = {
+						dynasty = ROOT
+						female = yes
+					}
+				}
+				
+				hidden_effect = {
+					country_event = { id = hre_fragmentation.002 }
+				}
+			}
+		}
+
+		add_legitimacy = 15
+		add_stability_1 = yes
+	}
+	
+	option = {
+		name = "hre_fragmentation.001.b"
+		trigger = {
+			absolutism = 5
+		}
+		ai_chance = {
+			factor = 35
+			modifier = {
+				NOT = { check_variable = { 	which = estate_greater_nobles_loyalty 	value = 0.4 } }
+				factor = 1.2
+			}
+			modifier = {
+				NOT = { check_variable = { 	which = estate_greater_nobles_loyalty 	value = 0.3 } }
+				factor = 1.6
+			}
+			modifier = {
+				NOT = { check_variable = { 	which = estate_greater_nobles_loyalty 	value = 0.2 } }
+				factor = 2
+			}
+			modifier = {
+				absolutism = 20
+				factor = 1.2
+			}
+			modifier = {
+				absolutism = 25
+				factor = 1.2
+			}
+			modifier = {
+				absolutism = 30
+				factor = 1.4
+			}
+			modifier = {
+				absolutism = 35
+				factor = 1.4
+			}
+			modifier = {
+				absolutism = 40
+				factor = 1.4
+			}
+			modifier = {
+				absolutism = 45
+				factor = 1.4
+			}
+		}
+		
+		add_absolutism = -4
+		reduce_estate_greater_nobles_loyalty_effect = { id=a }
+	}
+	
+	option = {
+		name = "hre_fragmentation.001.c"
+		trigger = {
+			any_subject_country = {
+				junior_union_with = ROOT
+			}
+		}
+		
+		ai_chance = {
+			factor = 50
+			modifier = {
+				NOT = { check_variable = { 	which = estate_greater_nobles_loyalty 	value = 0.4 } }
+				factor = 1.2
+			}
+			modifier = {
+				NOT = { check_variable = { 	which = estate_greater_nobles_loyalty 	value = 0.3 } }
+				factor = 1.6
+			}
+			modifier = {
+				NOT = { check_variable = { 	which = estate_greater_nobles_loyalty 	value = 0.2 } }
+				factor = 2
+			}
+			modifier = {
+				NOT = { stability = 1 }
+				factor = 1.2
+			}
+			modifier = {
+				NOT = { stability = 0 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { stability = -1 }
+				factor = 1.6
+			}
+			modifier = {
+				NOT = { legitimacy = 70 }
+				factor = 1.05
+			}
+			modifier = {
+				NOT = { legitimacy = 60 }
+				factor = 1.1
+			}
+			modifier = {
+				NOT = { legitimacy = 50 }
+				factor = 1.15
+			}
+			modifier = {
+				NOT = { legitimacy = 40 }
+				factor = 1.2
+			}
+			modifier = {
+				NOT = { legitimacy = 30 }
+				factor = 1.2
+			}
+			modifier = {
+				NOT = { legitimacy = 20 }
+				factor = 1.2
+			}
+		}
+		
+		random_subject_country = {
+			limit = { junior_union_with = ROOT }
+			
+			ROOT = { break_union = PREV }
+			
+			set_country_flag = fragmentation_released_union
+			
+			if = {
+				limit = { ROOT = { is_female = no } }
+				define_ruler = {
+					dynasty = ROOT
+					male = yes
+				}
+			}
+			else = {
+				define_ruler = {
+					dynasty = ROOT
+					female = yes
+				}
+			}
+			
+			hidden_effect = {
+				country_event = { id = hre_fragmentation.002 }
+			}
+		}
+		
+		
+	}
+	
+	option = {
+		name = "hre_fragmentation.001.d"
+		trigger = {
+		}
+		
+		ai_chance = {
+			factor = 25
+			modifier = {
+				check_variable = { 	which = estate_greater_nobles_loyalty 	value = 0.5 }
+				factor = 1.2
+			}
+			modifier = {
+				check_variable = { 	which = estate_greater_nobles_loyalty 	value = 0.55 }
+				factor = 1.2
+			}
+			modifier = {
+				check_variable = { 	which = estate_greater_nobles_loyalty 	value = 0.6 }
+				factor = 1.2
+			}
+		}
+		
+		reduce_estate_all_nobles_loyalty_effect = { id=b }
+		add_legitimacy = -20
+		
+	}
+}
+
+### event that clears cores and adds cb for the former country to reunify
+country_event = {
+	id = hre_fragmentation.002
+	title = hre_fragmentation.002.t
+	desc = hre_fragmentation.002.d
+	picture = HRE_eventPicture
+	hidden = yes
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		regiongroup = {
+			region = {
+				limit = { owned_by = ROOT }
+				remove_core = FROM
+			}
+		}
+		if = {
+			limit = { has_country_flag = fragmentation_released_tag }
+			FROM = {
+				add_casus_belli = {
+					target = ROOT
+					type = cb_reunify_country
+					months = 240
+				}
+			}
+			add_casus_belli = {
+				target = FROM
+				type = cb_reunify_country
+				months = 240
+			}
+		}
+		else_if = {
+			limit = { has_country_flag = fragmentation_released_union }
+			FROM = {
+				add_casus_belli = {
+					target = ROOT
+					type = cb_restore_personal_union
+					months = 240
+				}
+			}
+			add_casus_belli = {
+				target = FROM
+				type = cb_restore_personal_union
+				months = 240
+			}
+		}
+	}
+	option = {
+		name = "hre_fragmentation.002.a"
+	}
+	
+}
+
+### Fragmentation event on new monarch for monarchies
+country_event = {
+	id = hre_fragmentation.003
+	title = hre_fragmentation.003.t
+	desc = hre_fragmentation.003.desc
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+
+	trigger = {
+		government = monarchy
+		is_part_of_hre = yes
+		is_elector = no
+		is_free_or_tributary_trigger = yes
+		NOT = { has_country_flag = hre_introduced_primogeniture }
+		num_of_cities = 2
+		any_country = {
+			exists = no
+			any_core_province = {
+				owned_by = ROOT
+			}
+		}
+		capital_scope = {
+			OR = {
+				superregion = germany_superregion
+				superregion = greater_austrian_circle_superregion
+			}
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					legitimacy = 95
+				}
+				random_list = {
+					80 = {
+						set_country_flag = fragmentation_active
+					}
+					20 = {
+						set_country_flag = fragmentation_unactive
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					legitimacy = 90
+				}
+				random_list = {
+					85 = {
+						set_country_flag = fragmentation_active
+					}
+					15 = {
+						set_country_flag = fragmentation_unactive
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					legitimacy = 85
+				}
+				random_list = {
+					88 = {
+						set_country_flag = fragmentation_active
+					}
+					12 = {
+						set_country_flag = fragmentation_unactive
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					legitimacy = 80
+				}
+				random_list = {
+					90 = {
+						set_country_flag = fragmentation_active
+					}
+					10 = {
+						set_country_flag = fragmentation_unactive
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					legitimacy = 75
+				}
+				random_list = {
+					92 = {
+						set_country_flag = fragmentation_active
+					}
+					8 = {
+						set_country_flag = fragmentation_unactive
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					legitimacy = 70
+				}
+				random_list = {
+					94 = {
+						set_country_flag = fragmentation_active
+					}
+					6 = {
+						set_country_flag = fragmentation_unactive
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					legitimacy = 65
+				}
+				random_list = {
+					96 = {
+						set_country_flag = fragmentation_active
+					}
+					4 = {
+						set_country_flag = fragmentation_unactive
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					legitimacy = 60
+				}
+				random_list = {
+					98 = {
+						set_country_flag = fragmentation_active
+					}
+					2 = {
+						set_country_flag = fragmentation_unactive
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					NOT = { legitimacy = 60 }
+				}
+				set_country_flag = fragmentation_active
+
+			}
+			
+			if = {
+				limit = {
+					OR = {
+						AND = {
+							ADM = 5
+							DIP = 5
+						}
+						ADM = 6
+						DIP = 6
+					}
+				}
+				random_list = {
+					80 = {
+						
+					}
+					20 = {
+						set_country_flag = fragmentation_unactive
+						#if = {
+						#	limit = { has_country_flag = fragmentation_active }
+							clr_country_flag = fragmentation_active
+						#}
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						AND = {
+							ADM = 4
+							DIP = 4
+						}
+						ADM = 5
+						DIP = 5
+					}
+				}
+				random_list = {
+					90 = {
+						
+					}
+					10 = {
+						set_country_flag = fragmentation_unactive
+						#if = {
+						#	limit = { has_country_flag = fragmentation_active }
+							clr_country_flag = fragmentation_active
+						#}
+					}
+				}
+			}
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = fragmentation_active
+			}
+			custom_tooltip = hre_fragmentation.003.active
+		}
+		if = {
+			limit = {
+				has_country_flag = fragmentation_unactive
+			}
+			custom_tooltip = hre_fragmentation.003.notactive
+		}
+	}
+
+	option = {
+		name = "hre_fragmentation.003.a"
+		trigger = {
+			has_country_flag = fragmentation_active
+			NOT = { has_country_flag = fragmentation_unactive }
+		}
+		clr_country_flag = fragmentation_active
+		clr_country_flag = fragmentation_unactive
+		country_event = { id = hre_fragmentation.001 }
+		add_legitimacy = -20
+		add_prestige = -10
+	}
+	option = {
+		name = "hre_fragmentation.003.b"
+		trigger = {
+			has_country_flag = fragmentation_unactive
+			NOT = { has_country_flag = fragmentation_active }
+		}
+		clr_country_flag = fragmentation_active
+		clr_country_flag = fragmentation_unactive
+		
+		add_legitimacy = 10
+		add_prestige = 10
+	}
+}

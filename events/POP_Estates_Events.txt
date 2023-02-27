@@ -1,0 +1,3482 @@
+namespace = POP_Estates_Events
+
+### By Demian
+
+country_event = { ### Event Index for all estates
+	id = POP_Estates_Events.001
+	title = "POP_Estates_Events.001.t"
+	desc = "POP_Estates_Events.001.d"
+	picture = COURT_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		every_country = {
+			limit = {
+				exists = yes
+				has_country_flag = stuffs_set
+			}
+			set_variable = { 	  which = privilege_demand_modifier 		value = 1 } ### Modifies rate that privileges are demanded and state corruption events fire
+			set_variable = { 	  which = privilege_admin_modifier			value = 0 } ### This will modify the rate at which privilege and corruption events fly at you based on admin tech
+			set_variable = { 	  which = privilege_admin_modifier			value = 40 }
+			set_variable = { 	  which = privilege_admin_modifier_den		value = 40 }
+			change_variable = {   which = privilege_admin_modifier_den		which = tech_admin_level }
+			if = {
+				limit = {
+					is_variable_equal = {
+						which = privilege_admin_modifier_den
+						value = 0
+					}
+				}
+				
+				# log = "<ERROR><45ED42D0><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+				
+			}
+			else = {
+				divide_variable = {
+					which = privilege_admin_modifier
+					which = privilege_admin_modifier_den
+				}
+			}
+			
+			multiply_variable = { which = privilege_demand_modifier			which = privilege_admin_modifier }
+			
+			if = {
+				limit = {
+					check_variable = { which = country_total_pop value = 100 }
+				}
+				if = {
+					limit = {
+						check_variable = { which = country_total_pop value = 50000 }
+					}
+					set_variable = { which = multiplier value = 5 }
+				}
+				else = {
+					set_variable = { which = logistic_input which = country_total_pop }
+					multiply_variable = { which = logistic_input value = 0.01 }
+					
+					logistic_funct = {
+						type1=which type2=value type3=value type4=value
+						inp=logistic_input midpnt=0 steepns=0.01 maxval=8
+					}
+					set_variable = { which = multiplier which = logistic_val }
+					
+					subtract_variable = { which = multiplier value = 3 }
+				}
+				
+				multiply_variable = { which = privilege_demand_modifier which = multiplier }
+				
+				set_variable = { which = multiplier value = 0 }
+			}
+			
+			get_privilege_var = yes
+			
+			if = { ### Ticker gain for Greater Nobles
+				limit = {
+					check_variable = { which = estate_greater_nobles_weight_share 	value = 0.05 }
+				}
+				set_variable = { 	which = privilege_GN_counter_inertia			value = 1.45 }
+				set_variable = { 	which = privilege_GN_counter_inertia_adjust		which = privilege_GN_base }
+				multiply_variable = { which = privilege_GN_counter_inertia_adjust	value = 0.01 }
+				subtract_variable = { which = privilege_GN_counter_inertia			which = privilege_GN_counter_inertia_adjust }
+				set_variable = { 	which = privilege_GN_weight_malus		which = estate_greater_nobles_weight_share }
+				divide_variable = { 	which = privilege_GN_weight_malus		value = 2 }
+				change_variable = { 	which = privilege_GN_weight_malus		value = 0.9 }
+				if = { # If value doesn't exist, set value to 0
+					limit = {
+						NOT = { check_variable = { which = privilege_demand_ticker_greater_nobles 	value = 0.01 } }
+					}
+					set_variable = { which = privilege_demand_ticker_greater_nobles		value = 0 }
+				}
+				set_variable = { which = privilege_demand_greater_nobles_yearly		value = 0 }
+				random_list = {
+					10 = { set_variable = { which = privilege_demand_greater_nobles_yearly	value = 0.5 } }
+					20 = { set_variable = { which = privilege_demand_greater_nobles_yearly	value = 0.75 } }
+					40 = { set_variable = { which = privilege_demand_greater_nobles_yearly	value = 1 } }
+					20 = { set_variable = { which = privilege_demand_greater_nobles_yearly	value = 1.25 } }
+					10 = { set_variable = { which = privilege_demand_greater_nobles_yearly	value = 1.5 } }
+				}
+				set_variable = { 	  which = privilege_GN_loyalty_malus					value = 0 }
+				set_variable = { 	  which = privilege_GN_loyalty_malus					which = estate_greater_nobles_loyalty }
+				
+				subtract_variable = { which = privilege_GN_loyalty_malus	value = 0.5 }
+				multiply_variable = {   which = privilege_GN_loyalty_malus	value = 0.25 }
+				change_variable = {   which = privilege_GN_loyalty_malus	value = 1 }
+				
+				multiply_variable = { which = privilege_demand_greater_nobles_yearly		which = privilege_GN_loyalty_malus }
+				multiply_variable = { which = privilege_demand_greater_nobles_yearly		which = privilege_GN_weight_malus }
+				multiply_variable = { which = privilege_demand_greater_nobles_yearly		which = privilege_demand_modifier }
+				multiply_variable = { which = privilege_demand_greater_nobles_yearly		which = privilege_GN_counter_inertia }
+				change_variable = {   which = privilege_demand_ticker_greater_nobles		which = privilege_demand_greater_nobles_yearly }
+				if = {
+					limit = {
+						check_variable = { which = privilege_demand_ticker_greater_nobles	value = 40 }
+						NOT = { is_at_war = yes }
+					}
+					subtract_variable = { which = privilege_demand_ticker_greater_nobles	value = 40 }
+					set_variable = { which = GN_privilege_pain_modifier 	value = 1.1 } ### The more cost categories are added, the less each category does in damage and the more it skews the AI's decisions toward accepting
+					random = {
+						chance = 60
+						set_country_flag = GN_hit_to_legitimacy
+						multiply_variable = { which = GN_privilege_pain_modifier	value = 0.9 } ### 0.99
+					}
+					random = {
+						chance = 40
+						set_country_flag = GN_hit_to_prestige
+						multiply_variable = { which = GN_privilege_pain_modifier	value = 0.9 } ### 0.891
+					}
+					random = {
+						chance = 40
+						set_country_flag = GN_hit_to_military
+						multiply_variable = { which = GN_privilege_pain_modifier	value = 0.9 } ### 0.8
+					}
+					random = {
+						chance = 80
+						set_country_flag = GN_hit_to_loyalty
+						multiply_variable = { which = GN_privilege_pain_modifier	value = 0.9 } ### 0.72
+					}
+					random = {
+						chance = 60
+						set_country_flag = GN_hit_to_stability
+						multiply_variable = { which = GN_privilege_pain_modifier	value = 0.9 } ### 0.65
+					}
+					random = {
+						chance = 50
+						set_country_flag = GN_hit_to_mil_points
+						multiply_variable = { which = GN_privilege_pain_modifier	value = 0.9 } ### 0.58
+					}
+#					random = {
+#						chance = 50
+#						set_country_flag = GN_autonomy_demands
+#						multiply_variable = { which = GN_privilege_pain_modifier	value = 0.9 } ### 0.52
+#					}
+					random = {
+						chance = 70
+						set_country_flag = GN_unrest
+						multiply_variable = { which = GN_privilege_pain_modifier	value = 0.9 } ### 0.52
+					}
+					random_list = {
+						20 = { country_event = { id = POP_Estates_Events.002 days = 2 } }
+						20 = { country_event = { id = POP_Estates_Events.002 days = 5 } }
+						20 = { country_event = { id = POP_Estates_Events.002 days = 10 } }
+						20 = { country_event = { id = POP_Estates_Events.002 days = 15 } }
+						20 = { country_event = { id = POP_Estates_Events.002 days = 20 } }
+					}
+				}
+			}
+			if = { ### Ticker gain for Lesser Nobles
+				limit = {
+					check_variable = { which = estate_lesser_nobles_weight_share	value = 0.05 }
+				}
+				set_variable = { 	which = privilege_LN_counter_inertia			value = 1.45 }
+				set_variable = { 	which = privilege_LN_counter_inertia_adjust		which = privilege_LN_base }
+				multiply_variable = { which = privilege_LN_counter_inertia_adjust	value = 0.01 }
+				subtract_variable = { which = privilege_LN_counter_inertia			which = privilege_LN_counter_inertia_adjust }
+				set_variable = { 	which = privilege_LN_weight_malus		which = estate_lesser_nobles_weight_share }
+				divide_variable = { 	which = privilege_LN_weight_malus		value = 2 }
+				change_variable = { 	which = privilege_LN_weight_malus		value = 0.9 }
+				if = { # If value doesn't exist, set value to 0
+					limit = {
+						NOT = { check_variable = { which = privilege_demand_ticker_lesser_nobles 	value = 0.01 } }
+					}
+					set_variable = { which = privilege_demand_ticker_lesser_nobles		value = 0 }
+				}
+				set_variable = { which = privilege_demand_lesser_nobles_yearly 	value = 0 }
+				random_list = {
+					10 = { set_variable = { which = privilege_demand_lesser_nobles_yearly 	value = 0.5 } }
+					20 = { set_variable = { which = privilege_demand_lesser_nobles_yearly 	value = 0.75 } }
+					40 = { set_variable = { which = privilege_demand_lesser_nobles_yearly 	value = 1 } }
+					20 = { set_variable = { which = privilege_demand_lesser_nobles_yearly 	value = 1.25 } }
+					10 = { set_variable = { which = privilege_demand_lesser_nobles_yearly 	value = 1.5 } }
+				}
+				set_variable = { 	  which = privilege_LN_loyalty_malus					value = 0 }
+				set_variable = { 	  which = privilege_LN_loyalty_malus					which = estate_lesser_nobles_loyalty }
+				
+				subtract_variable = { which = privilege_LN_loyalty_malus	value = 0.5 }
+				multiply_variable = {   which = privilege_LN_loyalty_malus	value = 0.25 }
+				change_variable = {   which = privilege_LN_loyalty_malus	value = 1 }
+				
+				multiply_variable = { which = privilege_demand_lesser_nobles_yearly		which = privilege_LN_loyalty_malus }
+				multiply_variable = { which = privilege_demand_lesser_nobles_yearly		which = privilege_LN_weight_malus }
+				multiply_variable = { which = privilege_demand_lesser_nobles_yearly		which = privilege_demand_modifier }
+				multiply_variable = { which = privilege_demand_lesser_nobles_yearly		which = privilege_LN_counter_inertia }
+				change_variable = {   which = privilege_demand_ticker_lesser_nobles		which = privilege_demand_lesser_nobles_yearly }
+				if = {
+					limit = {
+						check_variable = { which = privilege_demand_ticker_lesser_nobles	value = 40 }
+						NOT = { is_at_war = yes }
+					}
+					subtract_variable = { which = privilege_demand_ticker_lesser_nobles	value = 40 }
+					set_variable = { which = LN_privilege_pain_modifier 	value = 1.1 }
+					random = {
+						chance = 40
+						set_country_flag = LN_hit_to_legitimacy
+						multiply_variable = { which = LN_privilege_pain_modifier	value = 0.9 }
+					}
+					random = {
+						chance = 40
+						set_country_flag = LN_hit_to_prestige
+						multiply_variable = { which = LN_privilege_pain_modifier	value = 0.9 }
+					}
+					random = {
+						chance = 40
+						set_country_flag = LN_hit_to_military
+						multiply_variable = { which = LN_privilege_pain_modifier	value = 0.9 }
+					}
+					random = {
+						chance = 80
+						set_country_flag = LN_hit_to_loyalty
+						multiply_variable = { which = LN_privilege_pain_modifier	value = 0.9 }
+					}
+					random = {
+						chance = 60
+						set_country_flag = LN_hit_to_stability
+						multiply_variable = { which = LN_privilege_pain_modifier	value = 0.9 }
+					}
+#					random = {
+#						chance = 50
+#						set_country_flag = LN_autonomy_demands
+#						multiply_variable = { which = LN_privilege_pain_modifier	value = 0.9 }
+#					}
+					random = {
+						chance = 50
+						set_country_flag = LN_hit_to_adm_points
+						multiply_variable = { which = LN_privilege_pain_modifier	value = 0.9 }
+					}
+					random = {
+						chance = 70
+						set_country_flag = LN_unrest
+						multiply_variable = { which = LN_privilege_pain_modifier	value = 0.9 } ### 0.52
+					}
+					random_list = {
+						20 = { country_event = { id = POP_Estates_Events.003 days = 2 } }
+						20 = { country_event = { id = POP_Estates_Events.003 days = 5 } }
+						20 = { country_event = { id = POP_Estates_Events.003 days = 10 } }
+						20 = { country_event = { id = POP_Estates_Events.003 days = 15 } }
+						20 = { country_event = { id = POP_Estates_Events.003 days = 20 } }
+					}
+				}
+			}
+			if = { ### Ticker gain for Burghers
+				limit = {
+					check_variable = { which = estate_burghers_weight_share 	value = 0.05 }
+				}
+				set_variable = { 	which = privilege_BG_counter_inertia			value = 1.45 }
+				set_variable = { 	which = privilege_BG_counter_inertia_adjust		which = privilege_BG_base }
+				multiply_variable = { which = privilege_BG_counter_inertia_adjust	value = 0.01 }
+				subtract_variable = { which = privilege_BG_counter_inertia			which = privilege_BG_counter_inertia_adjust }
+				set_variable = { 	which = privilege_BG_weight_malus		which = estate_burghers_weight_share }
+				divide_variable = { 	which = privilege_BG_weight_malus		value = 2 }
+				change_variable = { 	which = privilege_BG_weight_malus		value = 0.9 }
+				if = { # If value doesn't exist, set value to 0
+					limit = {
+						NOT = { check_variable = { which = privilege_demand_ticker_burghers 	value = 0.01 } }
+					}
+					set_variable = { which = privilege_demand_ticker_burghers		value = 0 }
+				}
+				set_variable = { which = privilege_demand_burghers_yearly 	value = 0 }
+				random_list = {
+					10 = { set_variable = { which = privilege_demand_burghers_yearly 	value = 0.5 } }
+					20 = { set_variable = { which = privilege_demand_burghers_yearly 	value = 0.75 } }
+					40 = { set_variable = { which = privilege_demand_burghers_yearly 	value = 1 } }
+					20 = { set_variable = { which = privilege_demand_burghers_yearly 	value = 1.25 } }
+					10 = { set_variable = { which = privilege_demand_burghers_yearly 	value = 1.5 } }
+				}
+				set_variable = { 	  which = privilege_BG_loyalty_malus					value = 0 }
+				set_variable = { 	  which = privilege_BG_loyalty_malus					which = estate_burghers_loyalty }
+				
+				subtract_variable = { which = privilege_BG_loyalty_malus	value = 0.5 }
+				multiply_variable = {   which = privilege_BG_loyalty_malus	value = 0.25 }
+				change_variable = {   which = privilege_BG_loyalty_malus	value = 1 }
+				
+				multiply_variable = { which = privilege_demand_burghers_yearly		which = privilege_BG_loyalty_malus }
+				multiply_variable = { which = privilege_demand_burghers_yearly		which = privilege_BG_weight_malus }
+				multiply_variable = { which = privilege_demand_burghers_yearly		which = privilege_demand_modifier }
+				multiply_variable = { which = privilege_demand_burghers_yearly		which = privilege_BG_counter_inertia }
+				change_variable = {   which = privilege_demand_ticker_burghers 		which = privilege_demand_burghers_yearly }
+				if = {
+					limit = {
+						check_variable = { which = privilege_demand_ticker_burghers	value = 40 }
+						NOT = { is_at_war = yes }
+					}
+					subtract_variable = { which = privilege_demand_ticker_burghers	value = 40 }
+					set_variable = { which = BG_privilege_pain_modifier 	value = 1.1 }
+					random = {
+						chance = 40
+						set_country_flag = BG_hit_to_legitimacy
+						multiply_variable = { which = BG_privilege_pain_modifier 	value = 0.9 }
+					}
+					random = {
+						chance = 40
+						set_country_flag = BG_hit_to_prestige
+						multiply_variable = { which = BG_privilege_pain_modifier 	value = 0.9 }
+					}
+					random = {
+						chance = 60
+						set_country_flag = BG_commercial_havoc
+						multiply_variable = { which = BG_privilege_pain_modifier 	value = 0.9 }
+					}
+					random = {
+						chance = 80
+						set_country_flag = BG_hit_to_loyalty
+						multiply_variable = { which = BG_privilege_pain_modifier 	value = 0.9 }
+					}
+					random = {
+						chance = 60
+						set_country_flag = BG_hit_to_stability
+						multiply_variable = { which = BG_privilege_pain_modifier 	value = 0.9 }
+					}
+					random = {
+						chance = 70
+						set_country_flag = BG_hit_to_dip_points
+						multiply_variable = { which = BG_privilege_pain_modifier 	value = 0.9 }
+					}
+#					random = {
+#						chance = 50
+#						set_country_flag = BG_autonomy_demands
+#						multiply_variable = { which = BG_privilege_pain_modifier 	value = 0.9 }
+#					}
+					random = {
+						chance = 60
+						set_country_flag = BG_unrest
+						multiply_variable = { which = BG_privilege_pain_modifier 	value = 0.9 } ### 0.52
+					}
+					random_list = {
+						20 = { country_event = { id = POP_Estates_Events.004  days = 2 } }
+						20 = { country_event = { id = POP_Estates_Events.004  days = 5 } }
+						20 = { country_event = { id = POP_Estates_Events.004  days = 10 } }
+						20 = { country_event = { id = POP_Estates_Events.004  days = 15 } }
+						20 = { country_event = { id = POP_Estates_Events.004  days = 20 } }
+					}
+				}
+			}
+			if = { ### Ticker gain for The State
+				limit = {
+					always = no #No state corruption yet
+					check_variable = { which = estate_bureaucracy_weight_share 	value = 0.05 }
+				}
+				set_variable = { 	which = privilege_BU_counter_inertia 			value = 1.45 }
+				set_variable = { 	which = privilege_BU_counter_inertia_adjust		which = privilege_BU_base }
+				multiply_variable = { which = privilege_BU_counter_inertia_adjust	value = 0.01 }
+				subtract_variable = { which = privilege_BU_counter_inertia			which = privilege_BU_counter_inertia_adjust }
+				if = { # If value doesn't exist, set value to 0
+					limit = {
+						NOT = { check_variable = { which = privilege_demand_ticker_bureaucracy 	value = 0.01 } }
+					}
+					set_variable = { which = privilege_demand_ticker_bureaucracy		value = 0 }
+				}
+				set_variable = { which = privilege_demand_bureaucracy_yearly 	value = 0 }
+				set_variable = { which = privilege_demand_bureaucracy_yearly 	which = estate_bureaucracy_weight_share } ### State corruption event gain is multiplied by weight share.
+				random_list = {
+					10 = { multiply_variable = { which = privilege_demand_bureaucracy_yearly 	value = 0.5 } }
+					20 = { multiply_variable = { which = privilege_demand_bureaucracy_yearly 	value = 0.75 } }
+					40 = { multiply_variable = { which = privilege_demand_bureaucracy_yearly 	value = 1 } }
+					20 = { multiply_variable = { which = privilege_demand_bureaucracy_yearly 	value = 1.25 } }
+					10 = { multiply_variable = { which = privilege_demand_bureaucracy_yearly 	value = 1.5 } }
+				}
+				multiply_variable = { which = privilege_demand_bureaucracy_yearly		which = privilege_demand_modifier }
+				multiply_variable = { which = privilege_demand_bureaucracy_yearly		which = privilege_BU_counter_inertia }
+				change_variable = {   which = privilege_demand_bureaucracy_yearly		value = 1 }
+				change_variable = {   which = privilege_demand_ticker_bureaucracy 		which = privilege_demand_bureaucracy_yearly }
+				#	if = {
+				#		limit = {
+				#			check_variable = { which = privilege_demand_ticker_bureaucracy	value = 40 }
+				#			NOT = { is_at_war = yes }
+				#		}
+				#		subtract_variable = { which = privilege_demand_ticker_bureaucracy	value = 40 }
+				#		country_event = { id = POP_Estates_Events.005 }
+				#	}
+			}
+		}
+	}
+	
+	option = { ###
+		name = "POP_Estates_Events.001.a"
+		ai_chance = { factor = 100 }
+	}
+
+	after = {
+		every_country = {
+			limit = {
+				exists = yes
+			}
+			set_variable = { which = privilege_admin_modifier value = 0 }
+			set_variable = { which = privilege_admin_modifier_den value = 0 }
+			set_variable = { which = privilege_demand_greater_nobles_yearly value = 0 }
+			set_variable = { which = privilege_demand_lesser_nobles_yearly value = 0 }
+			set_variable = { which = privilege_demand_burghers_yearly value = 0 }
+			set_variable = { which = privilege_demand_bureaucracy_yearly value = 0 }
+			set_variable = { which = privilege_demand_modifier value = 0 }
+			set_variable = { which = privilege_GN_counter_inertia value = 0 }
+			set_variable = { which = privilege_GN_counter_inertia_adjust value = 0 }
+			set_variable = { which = privilege_LN_counter_inertia value = 0 }
+			set_variable = { which = privilege_LN_counter_inertia_adjust value = 0 }
+			set_variable = { which = privilege_BG_counter_inertia value = 0 }
+			set_variable = { which = privilege_BG_counter_inertia_adjust value = 0 }
+			set_variable = { which = privilege_BU_counter_inertia value = 0 }
+			set_variable = { which = privilege_BU_counter_inertia_adjust value = 0 }
+			set_variable = { which = privilege_GN_loyalty_malus value = 0 }
+			set_variable = { which = privilege_LN_loyalty_malus value = 0 }
+			set_variable = { which = privilege_BG_loyalty_malus value = 0 }
+			set_variable = { which = privilege_GN_weight_malus value = 0 }
+			set_variable = { which = privilege_LN_weight_malus value = 0 }
+			set_variable = { which = privilege_BG_weight_malus value = 0 }
+		}
+	}
+}
+
+country_event = { ### Privilege Gain Greater Nobles
+	id = POP_Estates_Events.002
+	title = "POP_Estates_Events.002.t"
+	desc = "POP_Estates_Events.002.d"
+	picture = { trigger = { technology_group = western } picture = WE_GN_eventPicture }
+	picture = { trigger = { OR = { technology_group = muslim technology_group = turkishtech technology_group = steppestech } } picture = ISL_GN_eventPicture }
+	picture = { trigger = { technology_group = eastern } picture = EE_GN_eventPicture }
+	picture = { trigger = { technology_group = indian } picture = IND_GN_eventPicture }
+	picture = { trigger = { technology_group = chinese } picture = EA_GN_eventPicture }
+	picture = { trigger = { OR = { technology_group = soudantech technology_group = sub_saharan technology_group = central_african technology_group = malagasy_tech technology_group = east_african } } picture = AFR_GN_eventPicture }
+	picture = { trigger = { OR = { technology_group = austranesian technology_group = hawaii_tech } } picture = SEA_GN_eventPicture }
+	picture = { trigger = { OR = { technology_group = mesoamerican technology_group = south_american } } picture = AMR_GN_eventPicture }
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			### Diplays corruption change in event
+			set_variable = { 	  which = GN_corruption_current 		value = 0 }
+			change_variable = {   which = GN_corruption_current 		which = privilege_corruption_GN }
+			multiply_variable = {   which = GN_corruption_current			value = 0.01 }
+			
+			set_variable = {      which = GN_corruption_cost_1 			value = 0 }
+			change_variable = {   which = GN_corruption_cost_1 			value = 5 }
+			multiply_variable = { which = GN_corruption_cost_1 			value = 2 }
+			multiply_variable = {   which = GN_corruption_cost_1			value = 0.01 }
+			multiply_variable = { which = GN_corruption_cost_1			which = estate_greater_nobles_weight_share }
+			
+			set_country_flag = freeze_all_privileges
+			
+			set_variable = { which = ai_corruption_choice 	value = -2 } ### Used to inform AI as to whether to take the privilege or not
+			if = { ### Calculates loyalty hit
+				limit = {
+					has_country_flag = GN_hit_to_loyalty
+				}
+				random_list = { ### loyalty hit
+					10 = { set_variable = { which = greater_nobles_loyalty_removed_a 	value = 2 } subtract_variable = { which = ai_corruption_choice		value = 4 } }
+					20 = { set_variable = { which = greater_nobles_loyalty_removed_a 	value = 5 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					40 = { set_variable = { which = greater_nobles_loyalty_removed_a 	value = 10 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+					20 = { set_variable = { which = greater_nobles_loyalty_removed_a 	value = 15 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+					10 = { set_variable = { which = greater_nobles_loyalty_removed_a 	value = 20 } change_variable = { which = ai_corruption_choice 		value = 6 } }
+				}
+				multiply_variable = { which = greater_nobles_loyalty_removed_a		which = GN_privilege_pain_modifier }
+				multiply_variable = {   which = greater_nobles_loyalty_removed_a		value = 0.001 }
+				multiply_variable = { which = greater_nobles_loyalty_removed_a 		value = 1000 }
+				if = {
+					limit = {
+						NOT = { check_variable = { which = estate_greater_nobles_loyalty	value = 0.40 } }
+					}
+					change_variable = { which = ai_corruption_choice		value = 2 }
+				}
+				if = {
+					limit = {
+						check_variable = { which = estate_greater_nobles_loyalty	value = 0.60 }
+					}
+					subtract_variable = { which = ai_corruption_choice		value = 2 }
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = GN_hit_to_legitimacy
+				}
+				random_list = { ### legitimacy hit
+					10 = { set_variable = { which = hit_to_legitimacy 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 3 } }
+					20 = { set_variable = { which = hit_to_legitimacy 	value = 25 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					40 = { set_variable = { which = hit_to_legitimacy 	value = 40 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+					20 = { set_variable = { which = hit_to_legitimacy 	value = 55 } change_variable = { which = ai_corruption_choice 		value = 2 } }
+					10 = { set_variable = { which = hit_to_legitimacy 	value = 75 } change_variable = { which = ai_corruption_choice 		value = 4 } }
+				}
+				multiply_variable = { which = hit_to_legitimacy		which = GN_privilege_pain_modifier }
+				multiply_variable = { which = hit_to_legitimacy		which = estate_greater_nobles_weight_share }
+				if = {
+					limit = {
+						NOT = { legitimacy = 50 }
+					}
+					change_variable = { which = ai_corruption_choice		value = 2 }
+				}
+				if = {
+					limit = {
+						legitimacy = 70
+					}
+					subtract_variable = { which = ai_corruption_choice		value = 1 }
+				}
+			}
+			if = {
+				limit = { ### prestige hit
+					has_country_flag = GN_hit_to_prestige
+				}
+				random_list = {
+					10 = { set_variable = { which = hit_to_prestige 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					20 = { set_variable = { which = hit_to_prestige 	value = 25 } subtract_variable = { which = ai_corruption_choice		value = 1 } }
+					40 = { set_variable = { which = hit_to_prestige 	value = 40 } change_variable = { which = ai_corruption_choice 		value = 0 } }
+					20 = { set_variable = { which = hit_to_prestige 	value = 55 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+					10 = { set_variable = { which = hit_to_prestige 	value = 75 } change_variable = { which = ai_corruption_choice 		value = 2 } }
+				}
+				multiply_variable = { which = hit_to_prestige		which = GN_privilege_pain_modifier }
+				multiply_variable = { which = hit_to_prestige		which = estate_greater_nobles_weight_share }
+			}
+			if = {
+				limit = {
+					has_country_flag = GN_hit_to_military
+				}
+				random_list = { ### military hit
+					10 = { set_variable = { which = GN_hit_to_military 	value = 30 } subtract_variable = { which = ai_corruption_choice		value = 3 } }
+					20 = { set_variable = { which = GN_hit_to_military 	value = 60 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					40 = { set_variable = { which = GN_hit_to_military 	value = 100 } change_variable = { which = ai_corruption_choice 		value = 0 } }
+					20 = { set_variable = { which = GN_hit_to_military 	value = 150 } change_variable = { which = ai_corruption_choice 		value = 2 } }
+					10 = { set_variable = { which = GN_hit_to_military 	value = 200 } change_variable = { which = ai_corruption_choice 		value = 4 } }
+				}
+				multiply_variable = { which = GN_hit_to_military		which = GN_privilege_pain_modifier }
+				multiply_variable = { which = GN_hit_to_military		which = estate_greater_nobles_weight_share }
+			}
+			if = {
+				limit = {
+					has_country_flag = GN_hit_to_stability
+				}
+				random_list = { ### stability hit
+					10 = { set_variable = { which = stability_hit 	value = 30 } subtract_variable = { which = ai_corruption_choice		value = 5 } }
+					20 = { set_variable = { which = stability_hit 	value = 50 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					40 = { set_variable = { which = stability_hit 	value = 75 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+					20 = { set_variable = { which = stability_hit 	value = 100 } change_variable = { which = ai_corruption_choice 		value = 4 } }
+					10 = { set_variable = { which = stability_hit 	value = 125 } change_variable = { which = ai_corruption_choice 		value = 6 } }
+				}
+				multiply_variable = { which = stability_hit				which = GN_privilege_pain_modifier }
+				multiply_variable = { which = stability_hit				which = estate_greater_nobles_weight_share }
+				if = {
+					limit = {
+						NOT = { stability = 1 }
+					}
+					change_variable = { which = ai_corruption_choice	value = 2 }
+				}
+				if = {
+					limit = {
+						stability = 2
+					}
+					subtract_variable = { which = ai_corruption_choice	value = 2 }
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = GN_hit_to_mil_points
+				}
+				random_list = { ### mil point hit
+					10 = { set_variable = { which = milit_cost_a 	value = 100 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					20 = { set_variable = { which = milit_cost_a 	value = 150 } subtract_variable = { which = ai_corruption_choice		value = 0 } }
+					40 = { set_variable = { which = milit_cost_a 	value = 200 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+					20 = { set_variable = { which = milit_cost_a 	value = 250 } change_variable = { which = ai_corruption_choice 		value = 2 } }
+					10 = { set_variable = { which = milit_cost_a 	value = 300 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				}
+				multiply_variable = { which = milit_cost_a			which = GN_privilege_pain_modifier }
+				multiply_variable = { which = milit_cost_a			which = estate_greater_nobles_weight_share }
+				multiply_variable = {   which = milit_cost_a			value = 0.001 }
+				multiply_variable = { which = milit_cost_a 			value = 1000 }
+			}
+			if = {
+				limit = {
+					has_country_flag = GN_autonomy_demands
+				}
+				random_list = { ### admin point hit
+					10 = { set_variable = { which = autonomy_added 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					20 = { set_variable = { which = autonomy_added 	value = 15 } subtract_variable = { which = ai_corruption_choice		value = 0 } }
+					40 = { set_variable = { which = autonomy_added 	value = 25 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+					20 = { set_variable = { which = autonomy_added 	value = 35 } change_variable = { which = ai_corruption_choice 		value = 2 } }
+					10 = { set_variable = { which = autonomy_added 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				}
+				multiply_variable = { which = autonomy_added			which = GN_privilege_pain_modifier }
+				multiply_variable = {   which = autonomy_added			value = 0.001 }
+				multiply_variable = { which = autonomy_added 			value = 1000 }
+			}
+			if = {
+				limit = {
+					has_country_flag = GN_unrest
+				}
+				random_list = {
+					10 = { set_country_flag = GN_unrest_1 		subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					20 = { set_country_flag = GN_unrest_2 		subtract_variable = { which = ai_corruption_choice		value = 0 } }
+					40 = { set_country_flag = GN_unrest_3 		change_variable = { which = ai_corruption_choice 		value = 1 } }
+					20 = { set_country_flag = GN_unrest_4 		change_variable = { which = ai_corruption_choice 		value = 2 } }
+					10 = { set_country_flag = GN_unrest_5		change_variable = { which = ai_corruption_choice 		value = 3 } }
+				}
+			}
+			
+			if = { ### If 0 costs selected, defaults to slight loyalty damage
+				limit = {
+					check_variable = { which = GN_privilege_pain_modifier 	value = 1.1 }
+				}
+				set_variable = { which = greater_nobles_loyalty_removed_a	value = 5 }
+				set_variable = { which = ai_corruption_choice				value = -5 }
+			}
+			change_variable = { which = ai_corruption_choice	value = 3 }
+			if = { ### Fewer cost categories selected = more likely for AI to resist the privilege
+				limit = {
+					check_variable = { which = GN_privilege_pain_modifier	value = 0.59 }
+				}
+				subtract_variable = { which = ai_corruption_choice	value = 1 }
+				if = {
+					limit = {
+						check_variable = { which = GN_privilege_pain_modifier	value = 0.66 }
+					}
+					subtract_variable = { which = ai_corruption_choice	value = 1 }
+					if = {
+						limit = {
+							check_variable = { which = GN_privilege_pain_modifier	value = 0.72 }
+						}
+						subtract_variable = { which = ai_corruption_choice	value = 1 }
+						if = {
+							limit = {
+								check_variable = { which = GN_privilege_pain_modifier	value = 0.82 }
+							}
+							subtract_variable = { which = ai_corruption_choice	value = 1 }
+							if = {
+								limit = {
+									check_variable = { which = GN_privilege_pain_modifier	value = 0.91 }
+								}
+								subtract_variable = { which = ai_corruption_choice	value = 1 }
+								if = {
+									limit = {
+										check_variable = { which = GN_privilege_pain_modifier	value = 1.01 }
+									}
+									subtract_variable = { which = ai_corruption_choice	value = 1 }
+								} } } } } }
+			# Prevent infinite loop
+			set_variable = { which = privilege_ticker value = 10 }
+		}
+		
+		# log = "BEGIN: POP_Estates_Events.002"
+		while = { ### Random means by which to select the privilege to be added
+			limit = {
+				check_variable = { which = privilege_ticker value = 1 }
+			}
+			subtract_variable = { which = privilege_ticker value = 1 }
+			
+			random_list = {
+				20 = {
+					if = {
+						limit = {
+							has_country_flag = GN_authority_to_govern_locally_3
+							NOT = { has_country_flag = GN_authority_to_govern_locally_4 }
+						}
+						set_country_flag = choose_GN_authority_to_govern_locally_4
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							has_country_flag = GN_authority_to_govern_locally_2
+							NOT = { has_country_flag = GN_authority_to_govern_locally_3 }
+						}
+						set_country_flag = choose_GN_authority_to_govern_locally_3
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							has_country_flag = GN_authority_to_govern_locally_1
+							NOT = { has_country_flag = GN_authority_to_govern_locally_2 }
+						}
+						set_country_flag = choose_GN_authority_to_govern_locally_2
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							NOT = { has_country_flag = GN_authority_to_govern_locally_1 }
+							NOT = { has_country_flag = GN_authority_to_govern_locally_2 }
+							NOT = { has_country_flag = GN_authority_to_govern_locally_3 }
+							NOT = { has_country_flag = GN_authority_to_govern_locally_4 }
+						}
+						set_country_flag = choose_GN_authority_to_govern_locally_1
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+				10 = {
+					if = {
+						limit = {
+							has_country_flag = ceremonial_generalships_1
+							NOT = { has_country_flag = ceremonial_generalships_2 }
+						}
+						set_country_flag = choose_ceremonial_generalships_2
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							NOT = { has_country_flag = ceremonial_generalships_1 }
+							NOT = { has_country_flag = ceremonial_generalships_2 }
+						}
+						set_country_flag = choose_ceremonial_generalships_1
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+				10 = {
+					if = {
+						limit = {
+							has_country_flag = GN_relaxed_levy_obligations_1
+							NOT = { has_country_flag = GN_relaxed_levy_obligations_2 }
+						}
+						set_country_flag = choose_GN_relaxed_levy_obligations_2
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							NOT = { has_country_flag = GN_relaxed_levy_obligations_1 }
+							NOT = { has_country_flag = GN_relaxed_levy_obligations_2 }
+						}
+						set_country_flag = choose_GN_relaxed_levy_obligations_1
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+				10 = {
+					if = {
+						limit = {
+							has_country_flag = GN_tax_exemptions_1
+						}
+						set_country_flag = choose_GN_tax_exemptions_2
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					else_if = {
+						limit = {
+							has_country_flag = GN_tax_exemptions_2
+						}
+						set_country_flag = choose_GN_tax_exemptions_3
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					else_if = {
+						limit = {
+							has_country_flag = GN_tax_exemptions_3
+						}
+						set_country_flag = choose_GN_tax_exemptions_4
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					else_if = {
+						limit = {
+							NOT = { has_country_flag = GN_tax_exemptions_4 }
+						}
+						set_country_flag = choose_GN_tax_exemptions_1
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+				10 = {
+					if = {
+						limit = {
+							has_country_flag = GN_exclude_commoners_cabinet_1
+							NOT = { has_country_flag = GN_exclude_commoners_cabinet_2 }
+						}
+						set_country_flag = choose_GN_exclude_commoners_cabinet_2
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							NOT = { has_country_flag = GN_exclude_commoners_cabinet_1 }
+							NOT = { has_country_flag = GN_exclude_commoners_cabinet_2 }
+						}
+						set_country_flag = choose_GN_exclude_commoners_cabinet_1
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+				10 = {
+					if = {
+						limit = {
+							has_country_flag = GN_high_court_titles_1
+							NOT = { has_country_flag = GN_high_court_titles_2 }
+						}
+						set_country_flag = choose_GN_high_court_titles_2
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							NOT = { has_country_flag = GN_high_court_titles_1 }
+							NOT = { has_country_flag = GN_high_court_titles_2 }
+						}
+						set_country_flag = choose_GN_high_court_titles_1
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+				10 = {
+					if = {
+						limit = {
+							has_country_flag = GN_high_nobles_court_1
+							NOT = { has_country_flag = GN_high_nobles_court_2 }
+						}
+						set_country_flag = choose_GN_high_nobles_court_2
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							NOT = { has_country_flag = GN_high_nobles_court_1 }
+							NOT = { has_country_flag = GN_high_nobles_court_2 }
+						}
+						set_country_flag = choose_GN_high_nobles_court_1
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+				10 = {
+					if = {
+						limit = {
+							has_country_flag = commoners_banned_from_officers_corps_1
+							NOT = { has_country_flag = commoners_banned_from_officers_corps_2 }
+						}
+						set_country_flag = choose_commoners_banned_from_officers_corps_2
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							NOT = { has_country_flag = commoners_banned_from_officers_corps_1 }
+							NOT = { has_country_flag = commoners_banned_from_officers_corps_2 }
+						}
+						set_country_flag = choose_commoners_banned_from_officers_corps_1
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+				10 = {
+					if = {
+						limit = {
+							culture_group = japanese
+							daimyo_trigger = yes
+							is_free_or_tributary_trigger = yes
+							num_of_cities = 2
+							NOT = {
+								calc_true_if = {
+									all_country = {
+										culture_group = japanese
+									}
+									amount = 52
+								}
+							}
+							any_owned_province = {
+								is_capital = no
+								has_province_flag = greater_nobles_control_province
+							}
+						}
+						random_owned_province = {
+							limit = {
+								is_capital = no
+								has_province_flag = greater_nobles_control_province
+							}
+							save_event_target_as = daimyo_province
+						}
+						set_country_flag = choose_release_daimyo
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+			}
+		}
+		# log = "END: POP_Estates_Events.002"
+	}
+	
+	option = { ### Concede
+		name = "POP_Estates_Events.002.a"
+		# ai_chance = { factor = 100 }
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1000
+				check_variable = { which = ai_corruption_choice 	value = 0 }
+			}
+		}
+		hidden_effect = {
+			clr_country_flag = GN_hit_to_loyalty
+			clr_country_flag = GN_hit_to_legitimacy
+			clr_country_flag = GN_hit_to_prestige
+			clr_country_flag = GN_hit_to_military
+			clr_country_flag = GN_hit_to_stability
+			clr_country_flag = GN_hit_to_mil_points
+			clr_country_flag = GN_autonomy_demands
+			clr_country_flag = GN_unrest
+			clr_country_flag = GN_unrest_1
+			clr_country_flag = GN_unrest_2
+			clr_country_flag = GN_unrest_3
+			clr_country_flag = GN_unrest_4
+			clr_country_flag = GN_unrest_5
+		}
+		trigger_switch = {
+			on_trigger = has_country_flag
+			### Govern Locally ###
+			choose_GN_authority_to_govern_locally_1 = {
+				custom_tooltip = GN_authority_to_govern_locally_1_privilege
+				GN_authority_to_govern_locally_1 = yes
+				clr_country_flag = choose_GN_authority_to_govern_locally_1
+				GN_corruption_added_1_tooltip_effect = yes
+			}
+			choose_GN_authority_to_govern_locally_2 = {
+				custom_tooltip = GN_authority_to_govern_locally_2_privilege
+				remove_GN_authority_to_govern_locally_1 = yes
+				GN_authority_to_govern_locally_2 = yes
+				
+				clr_country_flag = choose_GN_authority_to_govern_locally_2
+				GN_corruption_added_1_tooltip_effect = yes
+			}
+			choose_GN_authority_to_govern_locally_3 = {
+				custom_tooltip = GN_authority_to_govern_locally_3_privilege
+				remove_GN_authority_to_govern_locally_2 = yes
+				GN_authority_to_govern_locally_3 = yes
+				
+				clr_country_flag = choose_GN_authority_to_govern_locally_3
+				GN_corruption_added_1_tooltip_effect = yes
+			}
+			choose_GN_authority_to_govern_locally_4 = {
+				custom_tooltip = GN_authority_to_govern_locally_4_privilege
+				remove_GN_authority_to_govern_locally_3 = yes
+				GN_authority_to_govern_locally_4 = yes
+				
+				clr_country_flag = choose_GN_authority_to_govern_locally_4
+				GN_corruption_added_1_tooltip_effect = yes
+			}
+			
+			### Ceremonial Generalships ###
+			choose_ceremonial_generalships_1 = {
+				ceremonial_generalships_1 = yes
+				clr_country_flag = choose_ceremonial_generalships_1
+				GN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = ceremonial_generalships_1_privilege_desc
+			}
+			choose_ceremonial_generalships_2 = {
+				remove_ceremonial_generalships_1 = yes
+				ceremonial_generalships_2 = yes
+				clr_country_flag = choose_ceremonial_generalships_2
+				GN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = ceremonial_generalships_2_privilege_desc
+			}
+			
+			### Relaxed Levy Obligations ###
+			choose_GN_relaxed_levy_obligations_1 = {
+				custom_tooltip = GN_relaxed_levy_obligations_1_privilege
+				GN_relaxed_levy_obligations_1 = yes
+				clr_country_flag = choose_GN_relaxed_levy_obligations_1
+				GN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = GN_relaxed_levy_obligations_1_privilege_desc
+			}
+			choose_GN_relaxed_levy_obligations_2 = {
+				custom_tooltip = GN_relaxed_levy_obligations_2_privilege
+				remove_GN_relaxed_levy_obligations_1 = yes
+				GN_relaxed_levy_obligations_2 = yes
+				clr_country_flag = choose_GN_relaxed_levy_obligations_2
+				GN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = GN_relaxed_levy_obligations_1_privilege_desc
+			}
+			
+			### Tax Exemptions ###
+			choose_GN_tax_exemptions_1 = {
+				custom_tooltip = GN_tax_exemptions_1_privilege
+				GN_tax_exemptions_1 = yes
+				clr_country_flag = choose_GN_tax_exemptions_1
+				GN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = GN_tax_exemptions_1_privilege_desc
+			}
+			choose_GN_tax_exemptions_2 = {
+				custom_tooltip = GN_tax_exemptions_2_privilege
+				remove_GN_tax_exemptions_1 = yes
+				GN_tax_exemptions_2 = yes
+				clr_country_flag = choose_GN_tax_exemptions_2
+				GN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = GN_tax_exemptions_2_privilege_desc
+			}
+			choose_GN_tax_exemptions_3 = {
+				custom_tooltip = GN_tax_exemptions_3_privilege
+				remove_GN_tax_exemptions_2 = yes
+				GN_tax_exemptions_3 = yes
+				clr_country_flag = choose_GN_tax_exemptions_3
+				GN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = GN_tax_exemptions_3_privilege_desc
+			}
+			choose_GN_tax_exemptions_4 = {
+				custom_tooltip = GN_tax_exemptions_4_privilege
+				remove_GN_tax_exemptions_3 = yes
+				GN_tax_exemptions_4 = yes
+				clr_country_flag = choose_GN_tax_exemptions_4
+				GN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = GN_tax_exemptions_4_privilege_desc
+			}
+			
+			### Exclude Commoners from Cabinet ###
+			choose_GN_exclude_commoners_cabinet_1 = {
+				GN_exclude_commoners_cabinet_1 = yes
+				clr_country_flag = choose_GN_exclude_commoners_cabinet_1
+				GN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = GN_exclude_commoners_cabinet_1_privilege_desc
+			}
+			choose_GN_exclude_commoners_cabinet_2 = {
+				remove_GN_exclude_commoners_cabinet_1 = yes
+				GN_exclude_commoners_cabinet_2 = yes
+				clr_country_flag = choose_GN_exclude_commoners_cabinet_2
+				GN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = GN_exclude_commoners_cabinet_2_privilege_desc
+			}
+			
+			### High Court Titles ###
+			choose_GN_high_court_titles_1 = {
+				GN_high_court_titles_1 = yes
+				clr_country_flag = choose_GN_high_court_titles_1
+				GN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = GN_high_court_titles_1_privilege_desc
+			}
+			choose_GN_high_court_titles_2 = {
+				remove_GN_high_court_titles_1 = yes
+				GN_high_court_titles_2 = yes
+				clr_country_flag = choose_GN_high_court_titles_2
+				GN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = GN_high_court_titles_2_privilege_desc
+			}
+			
+			### Noble's Court ###
+			choose_GN_high_nobles_court_1 = {
+				custom_tooltip = GN_high_nobles_court_1_privilege
+				GN_high_nobles_court_1 = yes
+				clr_country_flag = choose_GN_high_nobles_court_1
+				GN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = GN_high_nobles_court_1_privilege_desc
+			}
+			choose_GN_high_nobles_court_2 = {
+				custom_tooltip = GN_high_nobles_court_2_privilege
+				remove_GN_high_nobles_court_1 = yes
+				GN_high_nobles_court_2 = yes
+				clr_country_flag = choose_GN_high_nobles_court_2
+				GN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = GN_high_nobles_court_2_privilege_desc
+			}
+			
+			### Commoners banned from officers corp ###
+			choose_commoners_banned_from_officers_corps_1 = {
+				commoners_banned_from_officers_corps_1 = yes
+				clr_country_flag = choose_commoners_banned_from_officers_corps_1
+				GN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = commoners_banned_from_officers_corps_1_privilege_desc
+			}
+			choose_commoners_banned_from_officers_corps_2 = {
+				remove_commoners_banned_from_officers_corps_1 = yes
+				commoners_banned_from_officers_corps_2 = yes
+				clr_country_flag = choose_commoners_banned_from_officers_corps_2
+				GN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = commoners_banned_from_officers_corps_2_privilege_desc
+			}
+			### Release Daimyo ###
+			choose_release_daimyo = {
+				choose_daimyo_target = yes
+				clr_country_flag = choose_release_daimyo
+			}
+		}
+		hidden_effect = {
+			add_country_modifier = { ### Prevent revokation of any privileges within 3 years
+				name = greater_nobles_offered_privilege
+				duration = 1065
+				hidden = yes
+			}
+			clr_country_flag = freeze_all_privileges
+			clr_country_flag = GN_unrest
+		}
+	}
+	
+	option = { ### Resist
+		name = "POP_Estates_Events.002.b"
+		ai_chance = { factor = 10 }
+		trigger = {
+			stability = 0
+			is_bankrupt = no
+		}
+		if = {
+			limit = {
+				has_country_flag = GN_hit_to_loyalty
+			}
+			custom_tooltip = estate_greater_nobles_loyalty_removed_a
+			hidden_effect = {
+				clr_country_flag = GN_hit_to_loyalty
+				set_variable = { 	which = greater_nobles_loyalty_removed		value = 0 }
+				set_variable = { 	which = greater_nobles_loyalty_removed		which = greater_nobles_loyalty_removed_a }
+				estate_greater_nobles_loyalty_removed = yes
+			}
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = GN_hit_to_legitimacy
+			}
+			hidden_effect = {
+				clr_country_flag = GN_hit_to_legitimacy
+			}
+			legitimacy_privilege_hit = yes
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = GN_hit_to_prestige
+			}
+			hidden_effect = {
+				clr_country_flag = GN_hit_to_prestige
+			}
+			prestige_privilege_hit = yes
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = GN_hit_to_stability
+			}
+			hidden_effect = {
+				clr_country_flag = GN_hit_to_stability
+			}
+			fight_corruption_stability = yes
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = GN_hit_to_mil_points
+			}
+			custom_tooltip = milit_cost_a
+			hidden_effect = {
+				clr_country_flag = GN_hit_to_mil_points
+				set_variable = { 	which = milit_cost 							value = 0 }
+				set_variable = { 	which = milit_cost							which = milit_cost_a }
+				scaled_milit_cost_country = yes
+			}
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = GN_autonomy_demands
+			}
+			custom_tooltip = GN_autonomy_added
+			hidden_effect = {
+				clr_country_flag = GN_autonomy_demands
+				every_owned_province = {
+					limit = {
+						has_province_flag = greater_nobles_control_province
+					}
+					set_variable = { which = autonomy_added 	value = 0 }
+					set_variable = { which = autonomy_added		which = PREV }
+					scaled_autonomy_added_province = yes
+				}
+			}
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = GN_hit_to_military
+			}
+			hidden_effect = {
+				clr_country_flag = GN_hit_to_military
+			}
+			GN_hit_to_military = yes
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = GN_unrest
+			}
+			hidden_effect = {
+				clr_country_flag = GN_unrest
+			}
+			if = {
+				limit = {
+					has_country_flag = GN_unrest_1
+				}
+				custom_tooltip = GN_unrest_1
+				hidden_effect = {
+					clr_country_flag = GN_unrest_1
+					every_owned_province = {
+						limit = {
+							has_province_flag = greater_nobles_control_province
+						}
+						random = {
+							chance = 15
+							add_province_modifier = {
+								name = GN_province_unrest
+								duration = 3650
+							}
+							add_unrest = 10
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = GN_unrest_2
+				}
+				custom_tooltip = GN_unrest_2
+				hidden_effect = {
+					clr_country_flag = GN_unrest_2
+					every_owned_province = {
+						limit = {
+							has_province_flag = greater_nobles_control_province
+						}
+						random = {
+							chance = 30
+							add_province_modifier = {
+								name = GN_province_unrest
+								duration = 3650
+							}
+							add_unrest = 10
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = GN_unrest_3
+				}
+				custom_tooltip = GN_unrest_3
+				hidden_effect = {
+					clr_country_flag = GN_unrest_3
+					every_owned_province = {
+						limit = {
+							has_province_flag = greater_nobles_control_province
+						}
+						random = {
+							chance = 45
+							add_province_modifier = {
+								name = GN_province_unrest
+								duration = 3650
+							}
+							add_unrest = 10
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = GN_unrest_4
+				}
+				custom_tooltip = GN_unrest_4
+				hidden_effect = {
+					clr_country_flag = GN_unrest_4
+					every_owned_province = {
+						limit = {
+							has_province_flag = greater_nobles_control_province
+						}
+						random = {
+							chance = 60
+							add_province_modifier = {
+								name = GN_province_unrest
+								duration = 3650
+							}
+							add_unrest = 10
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = GN_unrest_5
+				}
+				custom_tooltip = GN_unrest_5
+				hidden_effect = {
+					clr_country_flag = GN_unrest_5
+					every_owned_province = {
+						limit = {
+							has_province_flag = greater_nobles_control_province
+						}
+						random = {
+							chance = 75
+							add_province_modifier = {
+								name = GN_province_unrest
+								duration = 3650
+							}
+							add_unrest = 10
+						}
+					}
+				}
+			}
+		}
+		GN_cost_treasury = yes
+		hidden_effect = {
+			GN_clear_privilege_demand_flags = yes
+			clr_country_flag = freeze_all_privileges
+		}
+	}
+	
+	after = {
+		clear_priv_demand_variables = yes
+	}
+}
+
+country_event = { ### Privilege Gain Lesser Nobles
+	id = POP_Estates_Events.003
+	title = "POP_Estates_Events.003.t"
+	desc = "POP_Estates_Events.003.d"
+	picture = { trigger = { technology_group = western } picture = WE_LN_eventPicture }
+	picture = { trigger = { OR = { technology_group = muslim technology_group = turkishtech technology_group = steppestech } } picture = ISL_LN_eventPicture }
+	picture = { trigger = { technology_group = eastern } picture = EE_LN_eventPicture }
+	picture = { trigger = { technology_group = indian } picture = IND_LN_eventPicture }
+	picture = { trigger = { technology_group = chinese } picture = EA_LN_eventPicture }
+	picture = { trigger = { OR = { technology_group = soudantech technology_group = sub_saharan technology_group = central_african technology_group = malagasy_tech technology_group = east_african } } picture = AFR_LN_eventPicture }
+	picture = { trigger = { OR = { technology_group = austranesian technology_group = hawaii_tech } } picture = SEA_LN_eventPicture }
+	picture = { trigger = { OR = { technology_group = mesoamerican technology_group = south_american } } picture = AMR_LN_eventPicture }
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			### Diplays corruption change in event
+			set_variable = { 	  which = LN_corruption_current 		value = 0 }
+			change_variable = {   which = LN_corruption_current 		which = privilege_corruption_LN }
+			multiply_variable = {   which = LN_corruption_current			value = 0.01 }
+			
+			set_variable = {      which = LN_corruption_cost_1 			value = 0 }
+			change_variable = {   which = LN_corruption_cost_1 			value = 5 }
+			multiply_variable = { which = LN_corruption_cost_1 			value = 2 }
+			multiply_variable = {   which = LN_corruption_cost_1			value = 0.01 }
+			multiply_variable = { which = LN_corruption_cost_1			which = estate_lesser_nobles_weight_share }
+			
+			set_country_flag = freeze_all_privileges
+			
+			set_variable = { which = ai_corruption_choice 	value = -2 } ### Used to inform AI as to whether to take the privilege or not
+			if = { ### Calculates loyalty hit
+				limit = {
+					has_country_flag = LN_hit_to_loyalty
+				}
+				random_list = { ### loyalty hit
+					10 = { set_variable = { which = lesser_nobles_loyalty_removed_a 	value = 2 } subtract_variable = { which = ai_corruption_choice		value = 4 } }
+					20 = { set_variable = { which = lesser_nobles_loyalty_removed_a 	value = 5 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					40 = { set_variable = { which = lesser_nobles_loyalty_removed_a 	value = 10 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+					20 = { set_variable = { which = lesser_nobles_loyalty_removed_a 	value = 15 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+					10 = { set_variable = { which = lesser_nobles_loyalty_removed_a 	value = 20 } change_variable = { which = ai_corruption_choice 		value = 6 } }
+				}
+				multiply_variable = { which = lesser_nobles_loyalty_removed_a		which = LN_privilege_pain_modifier }
+				multiply_variable = {   which = lesser_nobles_loyalty_removed_a		value = 0.001 }
+				multiply_variable = { which = lesser_nobles_loyalty_removed_a 		value = 1000 }
+				if = {
+					limit = {
+						NOT = { check_variable = { which = estate_lesser_nobles_loyalty	value = 0.40 } }
+					}
+					change_variable = { which = ai_corruption_choice		value = 2 }
+				}
+				if = {
+					limit = {
+						check_variable = { which = estate_lesser_nobles_loyalty	value = 0.60 }
+					}
+					subtract_variable = { which = ai_corruption_choice		value = 2 }
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = LN_hit_to_legitimacy
+				}
+				random_list = { ### legitimacy hit
+					10 = { set_variable = { which = hit_to_legitimacy 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 3 } }
+					20 = { set_variable = { which = hit_to_legitimacy 	value = 25 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					40 = { set_variable = { which = hit_to_legitimacy 	value = 40 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+					20 = { set_variable = { which = hit_to_legitimacy 	value = 55 } change_variable = { which = ai_corruption_choice 		value = 2 } }
+					10 = { set_variable = { which = hit_to_legitimacy 	value = 75 } change_variable = { which = ai_corruption_choice 		value = 4 } }
+				}
+				multiply_variable = { which = hit_to_legitimacy		which = LN_privilege_pain_modifier }
+				multiply_variable = { which = hit_to_legitimacy		which = estate_lesser_nobles_weight_share }
+				if = {
+					limit = {
+						NOT = { legitimacy = 50 }
+					}
+					change_variable = { which = ai_corruption_choice		value = 2 }
+				}
+				if = {
+					limit = {
+						legitimacy = 70
+					}
+					subtract_variable = { which = ai_corruption_choice		value = 1 }
+				}
+			}
+			if = {
+				limit = { ### prestige hit
+					has_country_flag = LN_hit_to_prestige
+				}
+				random_list = {
+					10 = { set_variable = { which = hit_to_prestige 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					20 = { set_variable = { which = hit_to_prestige 	value = 25 } subtract_variable = { which = ai_corruption_choice		value = 1 } }
+					40 = { set_variable = { which = hit_to_prestige 	value = 40 } change_variable = { which = ai_corruption_choice 		value = 0 } }
+					20 = { set_variable = { which = hit_to_prestige 	value = 55 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+					10 = { set_variable = { which = hit_to_prestige 	value = 75 } change_variable = { which = ai_corruption_choice 		value = 2 } }
+				}
+				multiply_variable = { which = hit_to_prestige		which = LN_privilege_pain_modifier }
+				multiply_variable = { which = hit_to_prestige		which = estate_lesser_nobles_weight_share }
+			}
+			if = {
+				limit = {
+					has_country_flag = LN_hit_to_military
+				}
+				random_list = { ### military hit
+					10 = { set_variable = { which = LN_hit_to_military 	value = 30 } subtract_variable = { which = ai_corruption_choice		value = 3 } }
+					20 = { set_variable = { which = LN_hit_to_military 	value = 60 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					40 = { set_variable = { which = LN_hit_to_military 	value = 100 } change_variable = { which = ai_corruption_choice 		value = 0 } }
+					20 = { set_variable = { which = LN_hit_to_military 	value = 150 } change_variable = { which = ai_corruption_choice 		value = 2 } }
+					10 = { set_variable = { which = LN_hit_to_military 	value = 200 } change_variable = { which = ai_corruption_choice 		value = 4 } }
+				}
+				multiply_variable = { which = LN_hit_to_military		which = LN_privilege_pain_modifier }
+				multiply_variable = { which = LN_hit_to_military		which = estate_lesser_nobles_weight_share }
+			}
+			if = {
+				limit = {
+					has_country_flag = LN_hit_to_stability
+				}
+				random_list = { ### stability hit
+					10 = { set_variable = { which = stability_hit 	value = 30 } subtract_variable = { which = ai_corruption_choice		value = 5 } }
+					20 = { set_variable = { which = stability_hit 	value = 50 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					40 = { set_variable = { which = stability_hit 	value = 75 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+					20 = { set_variable = { which = stability_hit 	value = 100 } change_variable = { which = ai_corruption_choice 		value = 4 } }
+					10 = { set_variable = { which = stability_hit 	value = 125 } change_variable = { which = ai_corruption_choice 		value = 6 } }
+				}
+				multiply_variable = { which = stability_hit				which = LN_privilege_pain_modifier }
+				multiply_variable = { which = stability_hit				which = estate_lesser_nobles_weight_share }
+				if = {
+					limit = {
+						NOT = { stability = 1 }
+					}
+					change_variable = { which = ai_corruption_choice	value = 2 }
+				}
+				if = {
+					limit = {
+						stability = 2
+					}
+					subtract_variable = { which = ai_corruption_choice	value = 2 }
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = LN_autonomy_demands
+				}
+				random_list = { ### admin point hit
+					10 = { set_variable = { which = autonomy_added 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					20 = { set_variable = { which = autonomy_added 	value = 15 } subtract_variable = { which = ai_corruption_choice		value = 0 } }
+					40 = { set_variable = { which = autonomy_added 	value = 25 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+					20 = { set_variable = { which = autonomy_added 	value = 35 } change_variable = { which = ai_corruption_choice 		value = 2 } }
+					10 = { set_variable = { which = autonomy_added 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				}
+				multiply_variable = { which = autonomy_added			which = LN_privilege_pain_modifier }
+				multiply_variable = {   which = autonomy_added			value = 0.001 }
+				multiply_variable = { which = autonomy_added 			value = 1000 }
+			}
+			if = {
+				limit = {
+					has_country_flag = LN_hit_to_adm_points
+				}
+				random_list = { ### admin point hit
+					10 = { set_variable = { which = admin_cost_a 	value = 100 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					20 = { set_variable = { which = admin_cost_a 	value = 150 } subtract_variable = { which = ai_corruption_choice		value = 0 } }
+					40 = { set_variable = { which = admin_cost_a 	value = 200 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+					20 = { set_variable = { which = admin_cost_a 	value = 250 } change_variable = { which = ai_corruption_choice 		value = 2 } }
+					10 = { set_variable = { which = admin_cost_a 	value = 300 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				}
+				multiply_variable = { which = admin_cost_a			which = LN_privilege_pain_modifier }
+				multiply_variable = { which = admin_cost_a			which = estate_lesser_nobles_weight_share }
+				multiply_variable = {   which = admin_cost_a			value = 0.001 }
+				multiply_variable = { which = admin_cost_a 			value = 1000 }
+			}
+			if = {
+				limit = {
+					has_country_flag = LN_unrest
+				}
+				random_list = {
+					10 = { set_country_flag = LN_unrest_1 		subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					20 = { set_country_flag = LN_unrest_2 		subtract_variable = { which = ai_corruption_choice		value = 0 } }
+					40 = { set_country_flag = LN_unrest_3 		change_variable = { which = ai_corruption_choice 		value = 1 } }
+					20 = { set_country_flag = LN_unrest_4 		change_variable = { which = ai_corruption_choice 		value = 2 } }
+					10 = { set_country_flag = LN_unrest_5		change_variable = { which = ai_corruption_choice 		value = 3 } }
+				}
+			}
+			
+			if = { ### If 0 costs selected, defaults to slight loyalty damage
+				limit = {
+					check_variable = { which = LN_privilege_pain_modifier 	value = 1.1 }
+				}
+				set_variable = { which = lesser_nobles_loyalty_removed_a	value = 5 }
+				set_variable = { which = ai_corruption_choice				value = -5 }
+			}
+			change_variable = { which = ai_corruption_choice	value = 3 }
+			if = { ### Fewer cost categories selected = more likely for AI to resist the privilege
+				limit = {
+					check_variable = { which = LN_privilege_pain_modifier	value = 0.59 }
+				}
+				subtract_variable = { which = ai_corruption_choice	value = 1 }
+				if = {
+					limit = {
+						check_variable = { which = LN_privilege_pain_modifier	value = 0.66 }
+					}
+					subtract_variable = { which = ai_corruption_choice	value = 1 }
+					if = {
+						limit = {
+							check_variable = { which = LN_privilege_pain_modifier	value = 0.72 }
+						}
+						subtract_variable = { which = ai_corruption_choice	value = 1 }
+						if = {
+							limit = {
+								check_variable = { which = LN_privilege_pain_modifier	value = 0.82 }
+							}
+							subtract_variable = { which = ai_corruption_choice	value = 1 }
+							if = {
+								limit = {
+									check_variable = { which = LN_privilege_pain_modifier	value = 0.91 }
+								}
+								subtract_variable = { which = ai_corruption_choice	value = 1 }
+								if = {
+									limit = {
+										check_variable = { which = LN_privilege_pain_modifier	value = 1.01 }
+									}
+									subtract_variable = { which = ai_corruption_choice	value = 1 }
+								} } } } } }
+			# Prevent infinite loop
+			set_variable = { which = privilege_ticker value = 10 }
+		}
+		
+		# log = "BEGIN: POP_Estates_Events.003"
+		while = { ### Random means by which to select the privilege to be added
+			limit = {
+				check_variable = { which = privilege_ticker value = 1 }
+			}
+			subtract_variable = { which = privilege_ticker value = 1 }
+			
+			random_list = {
+				20 = {
+					if = {
+						limit = {
+							has_country_flag = LN_authority_to_govern_locally_3
+							NOT = { has_country_flag = LN_authority_to_govern_locally_4 }
+						}
+						set_country_flag = choose_LN_authority_to_govern_locally_4
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							has_country_flag = LN_authority_to_govern_locally_2
+							NOT = { has_country_flag = LN_authority_to_govern_locally_3 }
+						}
+						set_country_flag = choose_LN_authority_to_govern_locally_3
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							has_country_flag = LN_authority_to_govern_locally_1
+							NOT = { has_country_flag = LN_authority_to_govern_locally_2 }
+						}
+						set_country_flag = choose_LN_authority_to_govern_locally_2
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							NOT = { has_country_flag = LN_authority_to_govern_locally_1 }
+							NOT = { has_country_flag = LN_authority_to_govern_locally_2 }
+							NOT = { has_country_flag = LN_authority_to_govern_locally_3 }
+							NOT = { has_country_flag = LN_authority_to_govern_locally_4 }
+						}
+						set_country_flag = choose_LN_authority_to_govern_locally_1
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+				10 = {
+					if = {
+						limit = {
+							has_country_flag = LN_relaxed_levy_obligations_1
+							NOT = { has_country_flag = LN_relaxed_levy_obligations_2 }
+						}
+						set_country_flag = choose_LN_relaxed_levy_obligations_2
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							NOT = { has_country_flag = LN_relaxed_levy_obligations_1 }
+							NOT = { has_country_flag = LN_relaxed_levy_obligations_2 }
+						}
+						set_country_flag = choose_LN_relaxed_levy_obligations_1
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+				10 = {
+					if = {
+						limit = {
+							has_country_flag = LN_tax_exemptions_1
+						}
+						set_country_flag = choose_LN_tax_exemptions_2
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					else_if = {
+						limit = {
+							has_country_flag = LN_tax_exemptions_2
+						}
+						set_country_flag = choose_LN_tax_exemptions_3
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					else_if = {
+						limit = {
+							has_country_flag = LN_tax_exemptions_3
+						}
+						set_country_flag = choose_LN_tax_exemptions_4
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					else_if = {
+						limit = {
+							NOT = { has_country_flag = LN_tax_exemptions_4 }
+						}
+						set_country_flag = choose_LN_tax_exemptions_1
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+				10 = {
+					if = {
+						limit = {
+							has_country_flag = LN_high_court_titles_1
+							NOT = { has_country_flag = LN_high_court_titles_2 }
+						}
+						set_country_flag = choose_LN_high_court_titles_2
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							NOT = { has_country_flag = LN_high_court_titles_1 }
+							NOT = { has_country_flag = LN_high_court_titles_2 }
+						}
+						set_country_flag = choose_LN_high_court_titles_1
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+				30 = {
+					set_country_flag = choose_LN_promotion
+					set_variable = { which = privilege_ticker value = 0 }
+				}
+				10 = {
+					if = {
+						limit = {
+							culture_group = japanese
+							daimyo_trigger = yes
+							is_free_or_tributary_trigger = yes
+							num_of_cities = 2
+							NOT = {
+								calc_true_if = {
+									all_country = {
+										culture_group = japanese
+									}
+									amount = 52
+								}
+							}
+							any_owned_province = {
+								is_capital = no
+								has_province_flag = lesser_nobles_control_province
+							}
+						}
+						random_owned_province = {
+							limit = {
+								is_capital = no
+								has_province_flag = lesser_nobles_control_province
+							}
+							save_event_target_as = daimyo_province
+						}
+						set_country_flag = choose_release_daimyo
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+			}
+		}
+		# log = "END: POP_Estates_Events.003"
+	}
+	
+	option = { ### Concede
+		name = "POP_Estates_Events.003.a"
+		# ai_chance = { factor = 100 }
+		ai_chance = {
+			factor = 1
+		}
+		
+		hidden_effect = {
+			clr_country_flag = LN_hit_to_loyalty
+			clr_country_flag = LN_hit_to_legitimacy
+			clr_country_flag = LN_hit_to_prestige
+			clr_country_flag = LN_hit_to_military
+			clr_country_flag = LN_hit_to_stability
+			clr_country_flag = LN_autonomy_demands
+			clr_country_flag = LN_hit_to_adm_points
+			clr_country_flag = LN_unrest
+			clr_country_flag = LN_unrest_1
+			clr_country_flag = LN_unrest_2
+			clr_country_flag = LN_unrest_3
+			clr_country_flag = LN_unrest_4
+			clr_country_flag = LN_unrest_5
+		}
+		
+		
+		trigger_switch = {
+			on_trigger = has_country_flag
+			### Govern Locally ###
+			choose_LN_authority_to_govern_locally_1 = {
+				custom_tooltip = LN_authority_to_govern_locally_1_privilege
+				LN_authority_to_govern_locally_1 = yes
+				clr_country_flag = choose_LN_authority_to_govern_locally_1
+				LN_corruption_added_1_tooltip_effect = yes
+			}
+			choose_LN_authority_to_govern_locally_2 = {
+				custom_tooltip = LN_authority_to_govern_locally_2_privilege
+				remove_LN_authority_to_govern_locally_1 = yes
+				LN_authority_to_govern_locally_2 = yes
+				clr_country_flag = choose_LN_authority_to_govern_locally_2
+				LN_corruption_added_1_tooltip_effect = yes
+			}
+			choose_LN_authority_to_govern_locally_3 = {
+				custom_tooltip = LN_authority_to_govern_locally_3_privilege
+				remove_LN_authority_to_govern_locally_2 = yes
+				LN_authority_to_govern_locally_3 = yes
+				clr_country_flag = choose_LN_authority_to_govern_locally_3
+				LN_corruption_added_1_tooltip_effect = yes
+			}
+			choose_LN_authority_to_govern_locally_4 = {
+				custom_tooltip = LN_authority_to_govern_locally_4_privilege
+				remove_LN_authority_to_govern_locally_3 = yes
+				LN_authority_to_govern_locally_4 = yes
+				clr_country_flag = choose_LN_authority_to_govern_locally_4
+				LN_corruption_added_1_tooltip_effect = yes
+			}
+			
+			### Relaxed Levy Obligations ###
+			choose_LN_relaxed_levy_obligations_1 = {
+				custom_tooltip = LN_relaxed_levy_obligations_1_privilege
+				LN_relaxed_levy_obligations_1 = yes
+				clr_country_flag = choose_LN_relaxed_levy_obligations_1
+				LN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = LN_relaxed_levy_obligations_1_privilege_desc
+			}
+			choose_LN_relaxed_levy_obligations_2 = {
+				custom_tooltip = LN_relaxed_levy_obligations_2_privilege
+				remove_LN_relaxed_levy_obligations_1 = yes
+				LN_relaxed_levy_obligations_2 = yes
+				clr_country_flag = choose_LN_relaxed_levy_obligations_2
+				LN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = LN_relaxed_levy_obligations_2_privilege_desc
+			}
+			
+			### Tax Exemptions ###
+			choose_LN_tax_exemptions_1 = {
+				custom_tooltip = LN_tax_exemptions_1_privilege
+				LN_tax_exemptions_1 = yes
+				clr_country_flag = choose_LN_tax_exemptions_1
+				LN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = LN_tax_exemptions_1_privilege_desc
+			}
+			choose_LN_tax_exemptions_2 = {
+				custom_tooltip = LN_tax_exemptions_2_privilege
+				remove_LN_tax_exemptions_1 = yes
+				LN_tax_exemptions_2 = yes
+				clr_country_flag = choose_LN_tax_exemptions_2
+				LN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = LN_tax_exemptions_2_privilege_desc
+			}
+			choose_LN_tax_exemptions_3 = {
+				custom_tooltip = LN_tax_exemptions_3_privilege
+				remove_LN_tax_exemptions_2 = yes
+				LN_tax_exemptions_3 = yes
+				clr_country_flag = choose_LN_tax_exemptions_3
+				LN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = LN_tax_exemptions_3_privilege_desc
+			}
+			choose_LN_tax_exemptions_4 = {
+				custom_tooltip = LN_tax_exemptions_4_privilege
+				remove_LN_tax_exemptions_3 = yes
+				LN_tax_exemptions_4 = yes
+				clr_country_flag = choose_LN_tax_exemptions_4
+				LN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = LN_tax_exemptions_4_privilege_desc
+			}
+			
+			### High Court Titles ###
+			choose_LN_high_court_titles_1 = {
+				custom_tooltip = LN_high_court_titles_1_privilege
+				LN_high_court_titles_1 = yes
+				clr_country_flag = choose_LN_high_court_titles_1
+				LN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = LN_high_court_titles_1_privilege_desc
+			}
+			choose_LN_high_court_titles_2 = {
+				custom_tooltip = LN_high_court_titles_2_privilege
+				remove_LN_high_court_titles_1 = yes
+				LN_high_court_titles_2 = yes
+				clr_country_flag = choose_LN_high_court_titles_2
+				LN_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = LN_high_court_titles_2_privilege_desc
+			}
+			### Release Daimyo ###
+			choose_release_daimyo = {
+				choose_daimyo_target = yes
+				clr_country_flag = choose_release_daimyo
+			}
+		}
+		
+		### Lesser Nobles Promotion ###
+		if = {
+			limit = {
+				has_country_flag = choose_LN_promotion
+			}
+			clr_country_flag = choose_LN_promotion
+			custom_tooltip = LN_demand_promotion
+			hidden_effect = {
+				if = {
+					limit = {
+						NOT = { check_variable = { which = estate_lesser_nobles_promotion_weight 	value = 0.001 } }
+					}
+					set_variable = { which = estate_lesser_nobles_promotion_weight			value = 0 }
+				}
+				set_variable = { 	  which = estate_lesser_nobles_promotion_weight_added			value = 0 }
+				set_variable = { 	  which = estate_lesser_nobles_promotion_weight_added			value = 1 }
+				multiply_variable = { which = estate_lesser_nobles_promotion_weight_added			value = 0.2 }
+				multiply_variable = { which = estate_lesser_nobles_promotion_weight_added			which = estate_lesser_nobles_weight_country }
+				change_variable = {   which = estate_lesser_nobles_promotion_weight					which = estate_lesser_nobles_promotion_weight_added }
+				set_variable = { 	  which = estate_lesser_nobles_promotion_check 					value = 0 }
+				set_variable = {      which = estate_lesser_nobles_promotion_check					which = estate_lesser_nobles_promotion_weight }
+				multiply_variable = { which = estate_lesser_nobles_promotion_check					value = 5 }
+				if = { ### Check to see if there are any Lesser Noble Promotions
+					limit = {
+						check_variable = { which = estate_lesser_nobles_promotion_check		which = estate_lesser_nobles_weight_country }
+					}
+					# log = "BEGIN: POP_Estates_Events.003"
+					every_owned_province = {
+						limit = {
+							has_province_flag = lesser_nobles_control_province
+						}
+						set_variable = { which = estate_lesser_nobles_promotion_weight		value = 0 }
+						set_variable = { which = estate_lesser_nobles_promotion_weight 		which = PREV }
+					}
+					while = {
+						limit = {
+							any_owned_province = {
+								has_province_flag = lesser_nobles_control_province
+								NOT = { has_province_flag = time_to_promote }
+								check_variable = { which = estate_lesser_nobles_promotion_weight 	which = estate_weight }
+							}
+						}
+						random_owned_province = {
+							limit = {
+								check_variable = { which = estate_lesser_nobles_promotion_weight		which = estate_weight }
+								has_province_flag = lesser_nobles_control_province
+								NOT = { has_province_flag = time_to_promote }
+							}
+							set_variable = { which = estate_lesser_nobles_promotion_weight_subtract 	value = 0 }
+							set_variable = { which = estate_lesser_nobles_promotion_weight_subtract		which = estate_weight } ### set to weight in province
+							
+							PREV = { set_variable = { which = estate_lesser_nobles_promotion_weight_subtract		value = 0 } }
+							PREV = { set_variable = { which = estate_lesser_nobles_promotion_weight_subtract		which = PREV } }
+							PREV = { subtract_variable = { which = estate_lesser_nobles_promotion_weight			which = estate_lesser_nobles_promotion_weight_subtract } }
+							#	set_variable = { which = estate_lesser_nobles_promotion_weight_subtract				value = 0 }
+							set_province_flag = time_to_promote
+						}
+						every_owned_province = {
+							limit = {
+								has_province_flag = lesser_nobles_control_province
+							}
+							set_variable = { which = estate_lesser_nobles_promotion_weight		value = 0 }
+							set_variable = { which = estate_lesser_nobles_promotion_weight 		which = PREV }
+						}
+					}
+					country_event = {
+						id = POP_Estates.510
+					}
+					# log = "END: POP_Estates_Events.003"
+				}
+			}
+		}
+		
+		hidden_effect = {
+			add_country_modifier = { ### Prevent revokation of any privileges within 3 years
+				name = lesser_nobles_offered_privilege
+				duration = 1065
+				hidden = yes
+			}
+			clr_country_flag = freeze_all_privileges
+			clr_country_flag = lN_unrest
+		}
+	}
+	
+	option = { ### Resist
+		name = "POP_Estates_Events.003.b"
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 0.01
+				check_variable = { which = ai_corruption_choice 	value = 0 }
+			}
+		}
+		trigger = {
+			stability = 0
+			is_bankrupt = no
+		}
+		if = {
+			limit = {
+				has_country_flag = LN_hit_to_loyalty
+			}
+			custom_tooltip = estate_lesser_nobles_loyalty_removed_a
+			hidden_effect = {
+				clr_country_flag = LN_hit_to_loyalty
+				set_variable = { 	which = lesser_nobles_loyalty_removed		value = 0 }
+				set_variable = { 	which = lesser_nobles_loyalty_removed		which = lesser_nobles_loyalty_removed_a }
+				estate_lesser_nobles_loyalty_removed = yes
+			}
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = LN_hit_to_legitimacy
+			}
+			hidden_effect = {
+				clr_country_flag = LN_hit_to_legitimacy
+			}
+			legitimacy_privilege_hit = yes
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = LN_hit_to_prestige
+			}
+			hidden_effect = {
+				clr_country_flag = LN_hit_to_prestige
+			}
+			prestige_privilege_hit = yes
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = LN_hit_to_stability
+			}
+			hidden_effect = {
+				clr_country_flag = LN_hit_to_stability
+			}
+			fight_corruption_stability = yes
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = LN_autonomy_demands
+			}
+			custom_tooltip = LN_autonomy_added
+			hidden_effect = {
+				clr_country_flag = LN_autonomy_demands
+				every_owned_province = {
+					limit = {
+						has_province_flag = lesser_nobles_control_province
+					}
+					set_variable = { which = autonomy_added 	value = 0 }
+					set_variable = { which = autonomy_added		which = PREV }
+					scaled_autonomy_added_province = yes
+				}
+			}
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = LN_hit_to_adm_points
+			}
+			custom_tooltip = admin_cost_a
+			hidden_effect = {
+				clr_country_flag = LN_hit_to_adm_points
+				set_variable = { 	which = admin_cost 							value = 0 }
+				set_variable = { 	which = admin_cost							which = admin_cost_a }
+				scaled_admin_cost_country = yes
+			}
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = LN_hit_to_military
+			}
+			hidden_effect = {
+				clr_country_flag = LN_hit_to_military
+			}
+			LN_hit_to_military = yes
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = LN_unrest
+			}
+			if = {
+				limit = {
+					has_country_flag = LN_unrest_1
+				}
+				custom_tooltip = LN_unrest_1
+				hidden_effect = {
+					clr_country_flag = LN_unrest_1
+					every_owned_province = {
+						limit = {
+							has_province_flag = lesser_nobles_control_province
+						}
+						random = {
+							chance = 15
+							add_province_modifier = {
+								name = LN_province_unrest
+								duration = 3650
+							}
+							add_unrest = 10
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = LN_unrest_2
+				}
+				custom_tooltip = LN_unrest_2
+				hidden_effect = {
+					clr_country_flag = LN_unrest_2
+					every_owned_province = {
+						limit = {
+							has_province_flag = lesser_nobles_control_province
+						}
+						random = {
+							chance = 30
+							add_province_modifier = {
+								name = LN_province_unrest
+								duration = 3650
+							}
+							add_unrest = 10
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = LN_unrest_3
+				}
+				custom_tooltip = LN_unrest_3
+				hidden_effect = {
+					clr_country_flag = LN_unrest_3
+					every_owned_province = {
+						limit = {
+							has_province_flag = lesser_nobles_control_province
+						}
+						random = {
+							chance = 45
+							add_province_modifier = {
+								name = LN_province_unrest
+								duration = 3650
+							}
+							add_unrest = 10
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = LN_unrest_4
+				}
+				custom_tooltip = LN_unrest_4
+				hidden_effect = {
+					clr_country_flag = LN_unrest_4
+					every_owned_province = {
+						limit = {
+							has_province_flag = lesser_nobles_control_province
+						}
+						random = {
+							chance = 60
+							add_province_modifier = {
+								name = LN_province_unrest
+								duration = 3650
+							}
+							add_unrest = 10
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = LN_unrest_5
+				}
+				custom_tooltip = LN_unrest_5
+				hidden_effect = {
+					clr_country_flag = LN_unrest_5
+					every_owned_province = {
+						limit = {
+							has_province_flag = lesser_nobles_control_province
+						}
+						random = {
+							chance = 75
+							add_province_modifier = {
+								name = LN_province_unrest
+								duration = 3650
+							}
+							add_unrest = 10
+						}
+					}
+				}
+			}
+		}
+		
+		LN_cost_treasury = yes
+		hidden_effect = {
+			LN_clear_privilege_demand_flags = yes
+			clr_country_flag = freeze_all_privileges
+		}
+	}
+	
+	after = {
+		clear_priv_demand_variables = yes
+	}
+}
+
+country_event = { ### Privilege Gain Burghers
+	id = POP_Estates_Events.004
+	title = "POP_Estates_Events.004.t"
+	desc = "POP_Estates_Events.004.d"
+	picture = { trigger = { technology_group = western } picture = WE_BUR_eventPicture }
+	picture = { trigger = { OR = { technology_group = muslim technology_group = turkishtech technology_group = steppestech } } picture = ISL_BUR_eventPicture }
+	picture = { trigger = { technology_group = eastern } picture = EE_BUR_eventPicture }
+	picture = { trigger = { technology_group = indian } picture = IND_BUR_eventPicture }
+	picture = { trigger = { technology_group = chinese } picture = EA_BUR_eventPicture }
+	picture = { trigger = { OR = { technology_group = soudantech technology_group = sub_saharan technology_group = central_african technology_group = malagasy_tech technology_group = east_african } } picture = AFR_BUR_eventPicture }
+	picture = { trigger = { OR = { technology_group = austranesian technology_group = hawaii_tech } } picture = SEA_BUR_eventPicture }
+	picture = { trigger = { OR = { technology_group = mesoamerican technology_group = south_american } } picture = AMR_BUR_eventPicture }
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			### Diplays corruption change in event
+			set_variable = { 	  which = BG_corruption_current 		value = 0 }
+			change_variable = {   which = BG_corruption_current 		which = privilege_corruption_BG }
+			multiply_variable = {   which = BG_corruption_current			value = 0.01 }
+			
+			set_variable = {      which = BG_corruption_cost_1 			value = 0 }
+			change_variable = {   which = BG_corruption_cost_1 			value = 5 }
+			multiply_variable = { which = BG_corruption_cost_1 			value = 2 }
+			multiply_variable = {   which = BG_corruption_cost_1			value = 0.01 }
+			multiply_variable = { which = BG_corruption_cost_1			which = estate_burghers_weight_share }
+			
+			set_country_flag = freeze_all_privileges
+			
+			set_variable = { which = ai_corruption_choice 	value = -2 } ### Used to inform AI as to whether to take the privilege or not
+			if = { ### Calculates loyalty hit
+				limit = {
+					has_country_flag = BG_hit_to_loyalty
+				}
+				random_list = { ### loyalty hit
+					10 = { set_variable = { which = burghers_loyalty_removed_a 	value = 2 } subtract_variable = { which = ai_corruption_choice		value = 4 } }
+					20 = { set_variable = { which = burghers_loyalty_removed_a 	value = 5 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					40 = { set_variable = { which = burghers_loyalty_removed_a 	value = 10 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+					20 = { set_variable = { which = burghers_loyalty_removed_a 	value = 15 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+					10 = { set_variable = { which = burghers_loyalty_removed_a 	value = 20 } change_variable = { which = ai_corruption_choice 		value = 6 } }
+				}
+				multiply_variable = { which = burghers_loyalty_removed_a		which = BG_privilege_pain_modifier }
+				multiply_variable = {   which = burghers_loyalty_removed_a		value = 0.001 }
+				multiply_variable = { which = burghers_loyalty_removed_a 		value = 1000 }
+				if = {
+					limit = {
+						NOT = { check_variable = { which = estate_burghers_loyalty	value = 0.40 } }
+					}
+					change_variable = { which = ai_corruption_choice		value = 2 }
+				}
+				if = {
+					limit = {
+						check_variable = { which = estate_burghers_loyalty	value = 0.60 }
+					}
+					subtract_variable = { which = ai_corruption_choice		value = 2 }
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = BG_hit_to_legitimacy
+				}
+				random_list = { ### legitimacy hit
+					10 = { set_variable = { which = hit_to_legitimacy 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 3 } }
+					20 = { set_variable = { which = hit_to_legitimacy 	value = 25 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					40 = { set_variable = { which = hit_to_legitimacy 	value = 40 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+					20 = { set_variable = { which = hit_to_legitimacy 	value = 55 } change_variable = { which = ai_corruption_choice 		value = 2 } }
+					10 = { set_variable = { which = hit_to_legitimacy 	value = 75 } change_variable = { which = ai_corruption_choice 		value = 4 } }
+				}
+				multiply_variable = { which = hit_to_legitimacy		which = BG_privilege_pain_modifier }
+				multiply_variable = { which = hit_to_legitimacy		which = estate_burghers_weight_share }
+				if = {
+					limit = {
+						NOT = { legitimacy = 50 }
+					}
+					change_variable = { which = ai_corruption_choice		value = 2 }
+				}
+				if = {
+					limit = {
+						legitimacy = 70
+					}
+					subtract_variable = { which = ai_corruption_choice		value = 1 }
+				}
+			}
+			if = {
+				limit = { ### prestige hit
+					has_country_flag = BG_hit_to_prestige
+				}
+				random_list = {
+					10 = { set_variable = { which = hit_to_prestige 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					20 = { set_variable = { which = hit_to_prestige 	value = 25 } subtract_variable = { which = ai_corruption_choice		value = 1 } }
+					40 = { set_variable = { which = hit_to_prestige 	value = 40 } change_variable = { which = ai_corruption_choice 		value = 0 } }
+					20 = { set_variable = { which = hit_to_prestige 	value = 55 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+					10 = { set_variable = { which = hit_to_prestige 	value = 75 } change_variable = { which = ai_corruption_choice 		value = 2 } }
+				}
+				multiply_variable = { which = hit_to_prestige		which = BG_privilege_pain_modifier }
+				multiply_variable = { which = hit_to_prestige		which = estate_burghers_weight_share }
+			}
+			if = {
+				limit = {
+					has_country_flag = BG_commercial_havoc
+				}
+				random_list = { ### military hit
+					10 = { set_variable = { which = BG_commercial_havoc 	value = 30 } subtract_variable = { which = ai_corruption_choice		value = 3 } }
+					20 = { set_variable = { which = BG_commercial_havoc 	value = 60 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					40 = { set_variable = { which = BG_commercial_havoc 	value = 100 } change_variable = { which = ai_corruption_choice 		value = 0 } }
+					20 = { set_variable = { which = BG_commercial_havoc 	value = 150 } change_variable = { which = ai_corruption_choice 		value = 2 } }
+					10 = { set_variable = { which = BG_commercial_havoc 	value = 200 } change_variable = { which = ai_corruption_choice 		value = 4 } }
+				}
+				multiply_variable = { which = BG_commercial_havoc		which = BG_privilege_pain_modifier }
+				multiply_variable = { which = BG_commercial_havoc		which = estate_burghers_weight_share }
+			}
+			if = {
+				limit = {
+					has_country_flag = BG_hit_to_stability
+				}
+				random_list = { ### stability hit
+					10 = { set_variable = { which = stability_hit 	value = 30 } subtract_variable = { which = ai_corruption_choice		value = 5 } }
+					20 = { set_variable = { which = stability_hit 	value = 50 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					40 = { set_variable = { which = stability_hit 	value = 75 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+					20 = { set_variable = { which = stability_hit 	value = 100 } change_variable = { which = ai_corruption_choice 		value = 4 } }
+					10 = { set_variable = { which = stability_hit 	value = 125 } change_variable = { which = ai_corruption_choice 		value = 6 } }
+				}
+				multiply_variable = { which = stability_hit				which = BG_privilege_pain_modifier }
+				multiply_variable = { which = stability_hit				which = estate_burghers_weight_share }
+				if = {
+					limit = {
+						NOT = { stability = 1 }
+					}
+					change_variable = { which = ai_corruption_choice	value = 2 }
+				}
+				if = {
+					limit = {
+						stability = 2
+					}
+					subtract_variable = { which = ai_corruption_choice	value = 2 }
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = BG_hit_to_dip_points
+				}
+				random_list = { ### diplo point hit
+					10 = { set_variable = { which = diplo_cost_a 	value = 100 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					20 = { set_variable = { which = diplo_cost_a 	value = 150 } subtract_variable = { which = ai_corruption_choice		value = 0 } }
+					40 = { set_variable = { which = diplo_cost_a 	value = 200 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+					20 = { set_variable = { which = diplo_cost_a 	value = 250 } change_variable = { which = ai_corruption_choice 		value = 2 } }
+					10 = { set_variable = { which = diplo_cost_a 	value = 300 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				}
+				multiply_variable = { which = diplo_cost_a			which = BG_privilege_pain_modifier }
+				multiply_variable = { which = diplo_cost_a			which = estate_burghers_weight_share }
+				multiply_variable = {   which = diplo_cost_a			value = 0.001 }
+				multiply_variable = { which = diplo_cost_a 			value = 1000 }
+			}
+			if = {
+				limit = {
+					has_country_flag = BG_autonomy_demands
+				}
+				random_list = { ### autonomy hit
+					10 = { set_variable = { which = autonomy_added 	value = 10 } subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					20 = { set_variable = { which = autonomy_added 	value = 15 } subtract_variable = { which = ai_corruption_choice		value = 0 } }
+					40 = { set_variable = { which = autonomy_added 	value = 25 } change_variable = { which = ai_corruption_choice 		value = 1 } }
+					20 = { set_variable = { which = autonomy_added 	value = 35 } change_variable = { which = ai_corruption_choice 		value = 2 } }
+					10 = { set_variable = { which = autonomy_added 	value = 50 } change_variable = { which = ai_corruption_choice 		value = 3 } }
+				}
+				multiply_variable = { which = autonomy_added			which = BG_privilege_pain_modifier }
+				multiply_variable = {   which = autonomy_added			value = 0.001 }
+				multiply_variable = { which = autonomy_added 			value = 1000 }
+			}
+			if = {
+				limit = {
+					has_country_flag = BG_unrest
+				}
+				random_list = {
+					10 = { set_country_flag = BG_unrest_1 		subtract_variable = { which = ai_corruption_choice		value = 2 } }
+					20 = { set_country_flag = BG_unrest_2 		subtract_variable = { which = ai_corruption_choice		value = 0 } }
+					40 = { set_country_flag = BG_unrest_3 		change_variable = { which = ai_corruption_choice 		value = 1 } }
+					20 = { set_country_flag = BG_unrest_4 		change_variable = { which = ai_corruption_choice 		value = 2 } }
+					10 = { set_country_flag = BG_unrest_5		change_variable = { which = ai_corruption_choice 		value = 3 } }
+				}
+			}
+			
+			if = { ### If 0 costs selected, defaults to slight loyalty damage
+				limit = {
+					check_variable = { which = BG_privilege_pain_modifier 	value = 1.1 }
+				}
+				set_variable = { which = burghers_loyalty_removed_a	value = 5 }
+				set_variable = { which = ai_corruption_choice				value = -5 }
+			}
+			change_variable = { which = ai_corruption_choice	value = 3 }
+			if = { ### Fewer cost categories selected = more likely for AI to resist the privilege
+				limit = {
+					check_variable = { which = BG_privilege_pain_modifier	value = 0.59 }
+				}
+				subtract_variable = { which = ai_corruption_choice	value = 1 }
+				if = {
+					limit = {
+						check_variable = { which = BG_privilege_pain_modifier	value = 0.66 }
+					}
+					subtract_variable = { which = ai_corruption_choice	value = 1 }
+					if = {
+						limit = {
+							check_variable = { which = BG_privilege_pain_modifier	value = 0.72 }
+						}
+						subtract_variable = { which = ai_corruption_choice	value = 1 }
+						if = {
+							limit = {
+								check_variable = { which = BG_privilege_pain_modifier	value = 0.82 }
+							}
+							subtract_variable = { which = ai_corruption_choice	value = 1 }
+							if = {
+								limit = {
+									check_variable = { which = BG_privilege_pain_modifier	value = 0.91 }
+								}
+								subtract_variable = { which = ai_corruption_choice	value = 1 }
+								if = {
+									limit = {
+										check_variable = { which = BG_privilege_pain_modifier	value = 1.01 }
+									}
+									subtract_variable = { which = ai_corruption_choice	value = 1 }
+								} } } } } }
+			# Prevent infinite loop
+			set_variable = { which = privilege_ticker value = 10 }
+		}
+		
+		# log = "BEGIN: POP_Estates_Events.004"
+		while = { ### Random means by which to select the privilege to be added
+			limit = {
+				check_variable = { which = privilege_ticker value = 1 }
+			}
+			subtract_variable = { which = privilege_ticker value = 1 }
+			
+			random_list = {
+				30 = {
+					if = {
+						limit = {
+							has_country_flag = BG_authority_to_govern_locally_3
+							NOT = { has_country_flag = BG_authority_to_govern_locally_4 }
+						}
+						set_country_flag = choose_BG_authority_to_govern_locally_4
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							has_country_flag = BG_authority_to_govern_locally_2
+							NOT = { has_country_flag = BG_authority_to_govern_locally_3 }
+						}
+						set_country_flag = choose_BG_authority_to_govern_locally_3
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							has_country_flag = BG_authority_to_govern_locally_1
+							NOT = { has_country_flag = BG_authority_to_govern_locally_2 }
+						}
+						set_country_flag = choose_BG_authority_to_govern_locally_2
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							NOT = { has_country_flag = BG_authority_to_govern_locally_1 }
+							NOT = { has_country_flag = BG_authority_to_govern_locally_2 }
+							NOT = { has_country_flag = BG_authority_to_govern_locally_3 }
+							NOT = { has_country_flag = BG_authority_to_govern_locally_4 }
+						}
+						set_country_flag = choose_BG_authority_to_govern_locally_1
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+				10 = {
+					if = {
+						limit = {
+							has_country_flag = BG_right_of_commerce_1
+							NOT = { has_country_flag = BG_right_of_commerce_2 }
+						}
+						set_country_flag = choose_BG_right_of_commerce_2
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							NOT = { has_country_flag = BG_right_of_commerce_1 }
+							NOT = { has_country_flag = BG_right_of_commerce_2 }
+						}
+						set_country_flag = choose_BG_right_of_commerce_1
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+				10 = {
+					if = {
+						limit = {
+							has_country_flag = BG_resist_embargoes_1
+							NOT = { has_country_flag = BG_resist_embargoes_2 }
+						}
+						set_country_flag = choose_BG_resist_embargoes_2
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							NOT = { has_country_flag = BG_resist_embargoes_1 }
+							NOT = { has_country_flag = BG_resist_embargoes_2 }
+						}
+						set_country_flag = choose_BG_resist_embargoes_1
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+				10 = {
+					if = {
+						limit = {
+							has_country_flag = BG_exemption_from_military_services_1
+							NOT = { has_country_flag = BG_exemption_from_military_services_2 }
+						}
+						set_country_flag = choose_BG_exemption_from_military_services_2
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							NOT = { has_country_flag = BG_exemption_from_military_services_1 }
+							NOT = { has_country_flag = BG_exemption_from_military_services_2 }
+						}
+						set_country_flag = choose_BG_exemption_from_military_services_1
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+				10 = {
+					if = {
+						limit = {
+							has_country_flag = BG_expanded_ship_builders_privileges_1
+							NOT = { has_country_flag = BG_expanded_ship_builders_privileges_2 }
+						}
+						set_country_flag = choose_BG_expanded_ship_builders_privileges_2
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							NOT = { has_country_flag = BG_expanded_ship_builders_privileges_1 }
+							NOT = { has_country_flag = BG_expanded_ship_builders_privileges_2 }
+						}
+						set_country_flag = choose_BG_expanded_ship_builders_privileges_1
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+				10 = {
+					if = {
+						limit = {
+							has_country_flag = BG_appoint_as_court_suppliers_1
+							NOT = { has_country_flag = BG_appoint_as_court_suppliers_2 }
+						}
+						set_country_flag = choose_BG_appoint_as_court_suppliers_2
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							NOT = { has_country_flag = BG_appoint_as_court_suppliers_1 }
+							NOT = { has_country_flag = BG_appoint_as_court_suppliers_2 }
+						}
+						set_country_flag = choose_BG_appoint_as_court_suppliers_1
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+				10 = {
+					if = {
+						limit = {
+							has_country_flag = BG_monopoly_on_armaments_1
+							NOT = { has_country_flag = BG_monopoly_on_armaments_2 }
+						}
+						set_country_flag = choose_BG_monopoly_on_armaments_2
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							NOT = { has_country_flag = BG_monopoly_on_armaments_1 }
+							NOT = { has_country_flag = BG_monopoly_on_armaments_2 }
+						}
+						set_country_flag = choose_BG_monopoly_on_armaments_1
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+				10 = {
+					if = {
+						limit = {
+							has_country_flag = BG_tolerate_smuggling_1
+							NOT = { has_country_flag = BG_tolerate_smuggling_2 }
+						}
+						set_country_flag = choose_BG_tolerate_smuggling_2
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							NOT = { has_country_flag = BG_tolerate_smuggling_1 }
+							NOT = { has_country_flag = BG_tolerate_smuggling_2 }
+						}
+						set_country_flag = choose_BG_tolerate_smuggling_1
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+				10 = {
+					if = {
+						limit = {
+							has_country_flag = BG_honorary_noble_titles_1
+							NOT = { has_country_flag = BG_honorary_noble_titles_2 }
+						}
+						set_country_flag = choose_BG_honorary_noble_titles_2
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+					if = {
+						limit = {
+							NOT = { has_country_flag = BG_honorary_noble_titles_1 }
+							NOT = { has_country_flag = BG_honorary_noble_titles_2 }
+						}
+						set_country_flag = choose_BG_honorary_noble_titles_1
+						set_variable = { which = privilege_ticker value = 0 }
+					}
+				}
+			}
+		}
+		# log = "END: POP_Estates_Events.004"
+	}
+	
+	option = { ### Concede
+		name = "POP_Estates_Events.002.a"
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1000
+				check_variable = { which = ai_corruption_choice 	value = 0 }
+			}
+		}
+		
+		hidden_effect = {
+			clr_country_flag = BG_hit_to_loyalty
+			clr_country_flag = BG_hit_to_legitimacy
+			clr_country_flag = BG_hit_to_prestige
+			clr_country_flag = BG_commercial_havoc
+			clr_country_flag = BG_hit_to_stability
+			clr_country_flag = BG_hit_to_dip_points
+			clr_country_flag = BG_autonomy_demands
+			clr_country_flag = BG_unrest
+			clr_country_flag = BG_unrest_1
+			clr_country_flag = BG_unrest_2
+			clr_country_flag = BG_unrest_3
+			clr_country_flag = BG_unrest_4
+			clr_country_flag = BG_unrest_5
+		}
+		
+		trigger_switch = {
+			on_trigger = has_country_flag
+			### Govern Locally ###
+			choose_BG_authority_to_govern_locally_1 = {
+				custom_tooltip = BG_authority_to_govern_locally_1_privilege
+				BG_authority_to_govern_locally_1 = yes
+				clr_country_flag = choose_BG_authority_to_govern_locally_1
+				BG_corruption_added_1_tooltip_effect = yes
+			}
+			choose_BG_authority_to_govern_locally_2 = {
+				custom_tooltip = BG_authority_to_govern_locally_2_privilege
+				remove_BG_authority_to_govern_locally_1 = yes
+				BG_authority_to_govern_locally_2 = yes
+				clr_country_flag = choose_BG_authority_to_govern_locally_2
+				BG_corruption_added_1_tooltip_effect = yes
+			}
+			choose_BG_authority_to_govern_locally_3 = {
+				custom_tooltip = BG_authority_to_govern_locally_3_privilege
+				remove_BG_authority_to_govern_locally_2 = yes
+				BG_authority_to_govern_locally_3 = yes
+				clr_country_flag = choose_BG_authority_to_govern_locally_3
+				BG_corruption_added_1_tooltip_effect = yes
+			}
+			choose_BG_authority_to_govern_locally_4 = {
+				custom_tooltip = BG_authority_to_govern_locally_4_privilege
+				remove_BG_authority_to_govern_locally_3 = yes
+				BG_authority_to_govern_locally_4 = yes
+				clr_country_flag = choose_BG_authority_to_govern_locally_4
+				BG_corruption_added_1_tooltip_effect = yes
+			}
+			
+			### Rights of Commerce ###
+			choose_BG_right_of_commerce_1 = {
+				custom_tooltip = BG_right_of_commerce_1_privilege
+				BG_right_of_commerce_1 = yes
+				clr_country_flag = choose_BG_right_of_commerce_1
+				BG_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = BG_right_of_commerce_1_privilege_desc
+			}
+			choose_BG_right_of_commerce_2 = {
+				custom_tooltip = BG_right_of_commerce_2_privilege
+				remove_BG_right_of_commerce_1 = yes
+				BG_right_of_commerce_2 = yes
+				clr_country_flag = choose_BG_right_of_commerce_2
+				BG_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = BG_right_of_commerce_2_privilege_desc
+			}
+			
+			### Resist Embargoes ###
+			choose_BG_resist_embargoes_1 = {
+				BG_resist_embargoes_1 = yes
+				clr_country_flag = choose_BG_resist_embargoes_1
+				BG_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = BG_resist_embargoes_1_privilege_desc
+			}
+			choose_BG_resist_embargoes_2 = {
+				remove_BG_resist_embargoes_1 = yes
+				BG_resist_embargoes_2 = yes
+				clr_country_flag = choose_BG_resist_embargoes_2
+				BG_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = BG_resist_embargoes_2_privilege_desc
+			}
+			
+			### Exemption from Military Service ###
+			choose_BG_exemption_from_military_services_1 = {
+				custom_tooltip = BG_exemption_from_military_services_1_privilege
+				BG_exemption_from_military_services_1 = yes
+				clr_country_flag = choose_BG_exemption_from_military_services_1
+				BG_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = BG_exemption_from_military_services_1_privilege_desc
+			}
+			choose_BG_exemption_from_military_services_2 = {
+				custom_tooltip = BG_exemption_from_military_services_2_privilege
+				remove_BG_exemption_from_military_services_1 = yes
+				BG_exemption_from_military_services_2 = yes
+				clr_country_flag = choose_BG_exemption_from_military_services_2
+				BG_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = BG_exemption_from_military_services_2_privilege_desc
+			}
+			
+			### Ship Builders Rights ###
+			choose_BG_expanded_ship_builders_privileges_1 = {
+				BG_expanded_ship_builders_privileges_1 = yes
+				clr_country_flag = choose_BG_expanded_ship_builders_privileges_1
+				BG_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = BG_expanded_ship_builders_privileges_1_privilege_desc
+			}
+			choose_BG_expanded_ship_builders_privileges_2 = {
+				remove_BG_expanded_ship_builders_privileges_1 = yes
+				BG_expanded_ship_builders_privileges_2 = yes
+				clr_country_flag = choose_BG_expanded_ship_builders_privileges_2
+				BG_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = BG_expanded_ship_builders_privileges_2_privilege_desc
+			}
+			
+			### Appoint court Suppliers ###
+			choose_BG_appoint_as_court_suppliers_1 = {
+				custom_tooltip = BG_appoint_as_court_suppliers_1_privilege
+				BG_appoint_as_court_suppliers_1 = yes
+				clr_country_flag = choose_BG_appoint_as_court_suppliers_1
+				BG_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = BG_appoint_as_court_suppliers_1_privilege_desc
+			}
+			choose_BG_appoint_as_court_suppliers_2 = {
+				custom_tooltip = BG_appoint_as_court_suppliers_2_privilege
+				remove_BG_appoint_as_court_suppliers_1 = yes
+				BG_appoint_as_court_suppliers_2 = yes
+				clr_country_flag = choose_BG_appoint_as_court_suppliers_2
+				BG_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = BG_appoint_as_court_suppliers_2_privilege_desc
+			}
+			
+			### Monopoly on Armaments ###
+			choose_BG_monopoly_on_armaments_1 = {
+				BG_monopoly_on_armaments_1 = yes
+				clr_country_flag = choose_BG_monopoly_on_armaments_1
+				BG_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = BG_monopoly_on_armaments_1_privilege_desc
+			}
+			choose_BG_monopoly_on_armaments_2 = {
+				remove_BG_monopoly_on_armaments_1 = yes
+				BG_monopoly_on_armaments_2 = yes
+				clr_country_flag = choose_BG_monopoly_on_armaments_2
+				BG_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = BG_monopoly_on_armaments_2_privilege_desc
+			}
+			
+			### Tolerate Smuggling ###
+			choose_BG_tolerate_smuggling_1 = {
+				BG_tolerate_smuggling_1 = yes
+				clr_country_flag = choose_BG_tolerate_smuggling_1
+				BG_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = BG_tolerate_smuggling_1_privilege_desc
+			}
+			choose_BG_tolerate_smuggling_2 = {
+				remove_BG_tolerate_smuggling_1 = yes
+				BG_tolerate_smuggling_2 = yes
+				clr_country_flag = choose_BG_tolerate_smuggling_2
+				BG_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = BG_tolerate_smuggling_2_privilege_desc
+			}
+			
+			### Honorary Noble Court Titles ###
+			choose_BG_honorary_noble_titles_1 = {
+				custom_tooltip = BG_honorary_noble_titles_1_privilege
+				BG_honorary_noble_titles_1 = yes
+				clr_country_flag = choose_BG_honorary_noble_titles_1
+				BG_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = BG_honorary_noble_titles_1_privilege_desc
+			}
+			choose_BG_honorary_noble_titles_2 = {
+				custom_tooltip = BG_honorary_noble_titles_2_privilege
+				remove_BG_honorary_noble_titles_1 = yes
+				BG_honorary_noble_titles_2 = yes
+				clr_country_flag = choose_BG_honorary_noble_titles_2
+				BG_corruption_added_1_tooltip_effect = yes
+				custom_tooltip = BG_honorary_noble_titles_2_privilege_desc
+			}
+		}
+		
+		hidden_effect = {
+			add_country_modifier = { ### Prevent revokation of any privileges within 3 years
+				name = burghers_offered_privilege
+				duration = 1065
+				hidden = yes
+			}
+			clr_country_flag = freeze_all_privileges
+			clr_country_flag = BG_unrest
+		}
+	}
+	
+	option = { ### Resist
+		name = "POP_Estates_Events.002.b"
+		ai_chance = { factor = 10 }
+		trigger = {
+			stability = 0
+			is_bankrupt = no
+		}
+		if = {
+			limit = {
+				has_country_flag = BG_hit_to_loyalty
+			}
+			custom_tooltip = estate_burghers_loyalty_removed_a
+			hidden_effect = {
+				clr_country_flag = BG_hit_to_loyalty
+				set_variable = { 	which = burghers_loyalty_removed		value = 0 }
+				set_variable = { 	which = burghers_loyalty_removed		which = burghers_loyalty_removed_a }
+				estate_burghers_loyalty_removed = yes
+			}
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = BG_hit_to_legitimacy
+			}
+			hidden_effect = {
+				clr_country_flag = BG_hit_to_legitimacy
+			}
+			legitimacy_privilege_hit = yes
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = BG_hit_to_prestige
+			}
+			hidden_effect = {
+				clr_country_flag = BG_hit_to_prestige
+			}
+			prestige_privilege_hit = yes
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = BG_hit_to_stability
+			}
+			hidden_effect = {
+				clr_country_flag = BG_hit_to_stability
+			}
+			fight_corruption_stability = yes
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = BG_hit_to_dip_points
+			}
+			custom_tooltip = diplo_cost_a
+			hidden_effect = {
+				clr_country_flag = BG_hit_to_dip_points
+				set_variable = { 	which = diplo_cost 							value = 0 }
+				set_variable = { 	which = diplo_cost							which = diplo_cost_a }
+				scaled_diplo_cost_country = yes
+			}
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = BG_autonomy_demands
+			}
+			custom_tooltip = BG_autonomy_added
+			hidden_effect = {
+				clr_country_flag = BG_hit_to_adm_points
+				every_owned_province = {
+					limit = {
+						has_province_flag = burghers_control_province
+					}
+					set_variable = { which = autonomy_added 	value = 0 }
+					set_variable = { which = autonomy_added		which = PREV }
+					scaled_autonomy_added_province = yes
+				}
+			}
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = BG_commercial_havoc
+			}
+			hidden_effect = {
+				clr_country_flag = BG_commercial_havoc
+			}
+			BG_commercial_havoc = yes
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = BG_unrest
+			}
+			if = {
+				limit = {
+					has_country_flag = BG_unrest_1
+				}
+				custom_tooltip = BG_unrest_1
+				hidden_effect = {
+					clr_country_flag = BG_unrest_1
+					every_owned_province = {
+						limit = {
+							has_province_flag = burghers_control_province
+						}
+						random = {
+							chance = 15
+							add_province_modifier = {
+								name = BG_province_unrest
+								duration = 3650
+							}
+							add_unrest = 10
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = BG_unrest_2
+				}
+				custom_tooltip = BG_unrest_2
+				hidden_effect = {
+					clr_country_flag = BG_unrest_2
+					every_owned_province = {
+						limit = {
+							has_province_flag = burghers_control_province
+						}
+						random = {
+							chance = 30
+							add_province_modifier = {
+								name = BG_province_unrest
+								duration = 3650
+							}
+							add_unrest = 10
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = BG_unrest_3
+				}
+				custom_tooltip = BG_unrest_3
+				hidden_effect = {
+					clr_country_flag = BG_unrest_3
+					every_owned_province = {
+						limit = {
+							has_province_flag = burghers_control_province
+						}
+						random = {
+							chance = 45
+							add_province_modifier = {
+								name = BG_province_unrest
+								duration = 3650
+							}
+							add_unrest = 10
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = BG_unrest_4
+				}
+				custom_tooltip = BG_unrest_4
+				hidden_effect = {
+					clr_country_flag = BG_unrest_4
+					every_owned_province = {
+						limit = {
+							has_province_flag = burghers_control_province
+						}
+						random = {
+							chance = 60
+							add_province_modifier = {
+								name = BG_province_unrest
+								duration = 3650
+							}
+							add_unrest = 10
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = BG_unrest_5
+				}
+				custom_tooltip = BG_unrest_5
+				hidden_effect = {
+					clr_country_flag = BG_unrest_5
+					every_owned_province = {
+						limit = {
+							has_province_flag = burghers_control_province
+						}
+						random = {
+							chance = 75
+							add_province_modifier = {
+								name = BG_province_unrest
+								duration = 3650
+							}
+							add_unrest = 10
+						}
+					}
+				}
+			}
+		}
+		BG_cost_treasury = yes
+		hidden_effect = {
+			BG_clear_privilege_demand_flags = yes
+			clr_country_flag = freeze_all_privileges
+		}
+	}
+	
+	after = {
+		clear_priv_demand_variables = yes
+	}
+}
+
+#country_event = { ### State Corruption Index
+#    id = POP_Estates_Events.005
+#    title = "POP_Estates_Events.005.t"
+#    desc = "POP_Estates_Events.005.d"
+#    picture = COURT_eventPicture
+#	is_triggered_only = yes
+#    hidden = yes
+#    	
+#    immediate = {
+#		set_country_flag = privilege_not_selected
+#		while = { ### Random means by which to select the privilege to be added
+#			limit = {
+#				has_country_flag = privilege_not_selected
+#			}
+#			random_list = {
+#				15 = { ### Bribery
+#					if = {
+#						limit = {
+#							NOT = { has_country_modifier = BU_bribery_common_4 }
+#						}
+#						country_event = { id = POP_Corruption.001   days = 15 }
+#						clr_country_flag = privilege_not_selected
+#					}
+#				}
+#				7 = { ### Hereditary Positions
+#					if = {
+#						limit = {
+#							NOT = { has_country_modifier = BU_hereditary_admin_position_2 }
+#						}
+#						country_event = { id = POP_Corruption.002   days = 15 }
+#						clr_country_flag = privilege_not_selected
+#					}
+#				}
+#				4 = { ### Foreign Spies
+#					if = {
+#						limit = {
+#							NOT = { has_country_modifier = BU_vulnerable_to_foreign_spies_1 }
+#						}
+#						country_event = { id = POP_Corruption.003   days = 15 }
+#						clr_country_flag = privilege_not_selected
+#					}
+#				}
+#				12 = { ### Culture of Decadence
+#					if = {
+#						limit = {
+#							NOT = { has_country_modifier = BU_culture_of_decadence_and_lazyness_3 }
+#						}
+#						country_event = { id = POP_Corruption.004   days = 15 }
+#						clr_country_flag = privilege_not_selected
+#					}
+#				}
+#				7 = { ### Factionalism
+#					if = {
+#						limit = {
+#							NOT = { has_country_modifier = BU_factionalism_common_2 }
+#						}
+#						country_event = { id = POP_Corruption.005   days = 15 }
+#						clr_country_flag = privilege_not_selected
+#					}
+#				}
+#				7 = { ### Corrupted Judiciary
+#					if = {
+#						limit = {
+#							NOT = { has_country_modifier = BU_corrupted_judiciary_2 }
+#						}
+#						country_event = { id = POP_Corruption.006   days = 15 }
+#						clr_country_flag = privilege_not_selected
+#					}
+#				}
+#				7 = { ### Army
+#					if = {
+#						limit = {
+#							NOT = { has_country_modifier = BU_corrupted_army_2 }
+#						}
+#						country_event = { id = POP_Corruption.007   days = 15 }
+#						clr_country_flag = privilege_not_selected
+#					}
+#				}
+#				7 = { ### Navy
+#					if = {
+#						limit = {
+#							NOT = { has_country_modifier = BU_corrupted_navy_2 }
+#						}
+#						country_event = { id = POP_Corruption.008   days = 15 }
+#						clr_country_flag = privilege_not_selected
+#					}
+#				}
+#				15 = { ### Nepotism
+#					if = {
+#						limit = {
+#							NOT = { has_country_modifier = BU_rampant_nepotism_4 }
+#						}
+#						country_event = { id = POP_Corruption.009   days = 15 }
+#						clr_country_flag = privilege_not_selected
+#					}
+#				}
+#				4 = { ### Trivialized Service Honors
+#					if = {
+#						limit = {
+#							NOT = { has_country_modifier = BU_trivialized_service_honors_1 }
+#						}
+#						country_event = { id = POP_Corruption.010   days = 15 }
+#						clr_country_flag = privilege_not_selected
+#					}
+#				}
+#				8 = { ### Bloated Bureaucratic Salaries
+#					if = {
+#						limit = {
+#							NOT = { has_country_modifier = BU_bloated_bureaucratic_salaries_2 }
+#						}
+#						country_event = { id = POP_Corruption.011   days = 15 }
+#						clr_country_flag = privilege_not_selected
+#					}
+#				}
+#				7 = { ### Evasion of Military Service
+#					if = {
+#						limit = {
+#							NOT = { has_country_modifier = BU_evasion_of_military_service_2 }
+#						}
+#						country_event = { id = POP_Corruption.012   days = 15 }
+#						clr_country_flag = privilege_not_selected
+#					}
+#				}
+#			}
+#		}
+#	}
+#
+#	option = { ###
+#        name = "POP_Estates_Events.005.a"
+#        ai_chance = { factor = 100 }
+#		
+#	}
+#}
+
+country_event = { ### Greater Nobles Low Loyalty
+	id = POP_Estates_Events.121
+	title = "POP_Estates_Events.121.t"
+	desc = "POP_Estates_Events.121.d"
+	picture = { trigger = { technology_group = western } picture = WE_GN_eventPicture }
+	picture = { trigger = { OR = { technology_group = muslim technology_group = turkishtech technology_group = steppestech } } picture = ISL_GN_eventPicture }
+	picture = { trigger = { technology_group = eastern } picture = EE_GN_eventPicture }
+	picture = { trigger = { technology_group = indian } picture = IND_GN_eventPicture }
+	picture = { trigger = { technology_group = chinese } picture = EA_GN_eventPicture }
+	picture = { trigger = { OR = { technology_group = soudantech technology_group = sub_saharan technology_group = central_african technology_group = malagasy_tech technology_group = east_african } } picture = AFR_GN_eventPicture }
+	picture = { trigger = { OR = { technology_group = austranesian technology_group = hawaii_tech } } picture = SEA_GN_eventPicture }
+	picture = { trigger = { OR = { technology_group = mesoamerican technology_group = south_american } } picture = AMR_GN_eventPicture }
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			country_event = {
+				id = POP_Estates_Events.131
+				days = 1825
+			}
+		}
+	}
+	
+	option = { ###
+		name = "POP_Estates_Events.111.a"
+		ai_chance = { factor = 100 }
+	}
+}
+
+country_event = { ### Greater Nobles Low Loyalty end
+	id = POP_Estates_Events.131
+	title = "POP_Estates_Events.131.t"
+	desc = "POP_Estates_Events.131.d"
+	picture = { trigger = { technology_group = western } picture = WE_GN_eventPicture }
+	picture = { trigger = { OR = { technology_group = muslim technology_group = turkishtech technology_group = steppestech } } picture = ISL_GN_eventPicture }
+	picture = { trigger = { technology_group = eastern } picture = EE_GN_eventPicture }
+	picture = { trigger = { technology_group = indian } picture = IND_GN_eventPicture }
+	picture = { trigger = { technology_group = chinese } picture = EA_GN_eventPicture }
+	picture = { trigger = { OR = { technology_group = soudantech technology_group = sub_saharan technology_group = central_african technology_group = malagasy_tech technology_group = east_african } } picture = AFR_GN_eventPicture }
+	picture = { trigger = { OR = { technology_group = austranesian technology_group = hawaii_tech } } picture = SEA_GN_eventPicture }
+	picture = { trigger = { OR = { technology_group = mesoamerican technology_group = south_american } } picture = AMR_GN_eventPicture }
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = greater_nobles_loyalty_added_a 	value = 6 }
+		}
+	}
+	
+	option = { ###
+		name = "POP_Estates_Events.131.a"
+		ai_chance = { factor = 100 }
+		custom_tooltip = estate_greater_nobles_loyalty_added_a
+		hidden_effect = {
+			set_variable = { 	which = greater_nobles_loyalty_added		value = 0 }
+			set_variable = { 	which = greater_nobles_loyalty_added		which = greater_nobles_loyalty_added_a }
+			estate_greater_nobles_loyalty_added = yes
+		}
+	}
+}
+
+country_event = { ### Lesser Nobles Loyalty Shift Bad
+	id = POP_Estates_Events.122
+	title = "POP_Estates_Events.122.t"
+	desc = "POP_Estates_Events.122.d"
+	picture = { trigger = { technology_group = western } picture = WE_LN_eventPicture }
+	picture = { trigger = { OR = { technology_group = muslim technology_group = turkishtech technology_group = steppestech } } picture = ISL_LN_eventPicture }
+	picture = { trigger = { technology_group = eastern } picture = EE_LN_eventPicture }
+	picture = { trigger = { technology_group = indian } picture = IND_LN_eventPicture }
+	picture = { trigger = { technology_group = chinese } picture = EA_LN_eventPicture }
+	picture = { trigger = { OR = { technology_group = soudantech technology_group = sub_saharan technology_group = central_african technology_group = malagasy_tech technology_group = east_african } } picture = AFR_LN_eventPicture }
+	picture = { trigger = { OR = { technology_group = austranesian technology_group = hawaii_tech } } picture = SEA_LN_eventPicture }
+	picture = { trigger = { OR = { technology_group = mesoamerican technology_group = south_american } } picture = AMR_LN_eventPicture }
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			country_event = {
+				id = POP_Estates_Events.132
+				days = 1825
+			}
+		}
+	}
+	
+	option = { ###
+		name = "POP_Estates_Events.122.a"
+		ai_chance = { factor = 100 }
+	}
+}
+
+country_event = { ### Lesser Nobles Loyalty Shift Bad
+	id = POP_Estates_Events.132
+	title = "POP_Estates_Events.132.t"
+	desc = "POP_Estates_Events.132.d"
+	picture = { trigger = { technology_group = western } picture = WE_LN_eventPicture }
+	picture = { trigger = { OR = { technology_group = muslim technology_group = turkishtech technology_group = steppestech } } picture = ISL_LN_eventPicture }
+	picture = { trigger = { technology_group = eastern } picture = EE_LN_eventPicture }
+	picture = { trigger = { technology_group = indian } picture = IND_LN_eventPicture }
+	picture = { trigger = { technology_group = chinese } picture = EA_LN_eventPicture }
+	picture = { trigger = { OR = { technology_group = soudantech technology_group = sub_saharan technology_group = central_african technology_group = malagasy_tech technology_group = east_african } } picture = AFR_LN_eventPicture }
+	picture = { trigger = { OR = { technology_group = austranesian technology_group = hawaii_tech } } picture = SEA_LN_eventPicture }
+	picture = { trigger = { OR = { technology_group = mesoamerican technology_group = south_american } } picture = AMR_LN_eventPicture }
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = lesser_nobles_loyalty_added_a 		value = 6 }
+		}
+	}
+	
+	option = { ###
+		name = "POP_Estates_Events.132.a"
+		ai_chance = { factor = 100 }
+		
+		custom_tooltip = estate_lesser_nobles_loyalty_added_a
+		hidden_effect = {
+			clr_country_flag = already_hit_with_LN_loyalty
+			set_variable = { 	which = lesser_nobles_loyalty_added		value = 0 }
+			set_variable = { 	which = lesser_nobles_loyalty_added		which = lesser_nobles_loyalty_added_a }
+			estate_lesser_nobles_loyalty_added = yes
+		}
+	}
+}
+
+country_event = { ### Burghers disloyal notification
+	id = POP_Estates_Events.123
+	title = "POP_Estates_Events.123.t"
+	desc = "POP_Estates_Events.123.d"
+	picture = { trigger = { technology_group = western } picture = WE_BUR_eventPicture }
+	picture = { trigger = { OR = { technology_group = muslim technology_group = turkishtech technology_group = steppestech } } picture = ISL_BUR_eventPicture }
+	picture = { trigger = { technology_group = eastern } picture = EE_BUR_eventPicture }
+	picture = { trigger = { technology_group = indian } picture = IND_BUR_eventPicture }
+	picture = { trigger = { technology_group = chinese } picture = EA_BUR_eventPicture }
+	picture = { trigger = { OR = { technology_group = soudantech technology_group = sub_saharan technology_group = central_african technology_group = malagasy_tech technology_group = east_african } } picture = AFR_BUR_eventPicture }
+	picture = { trigger = { OR = { technology_group = austranesian technology_group = hawaii_tech } } picture = SEA_BUR_eventPicture }
+	picture = { trigger = { OR = { technology_group = mesoamerican technology_group = south_american } } picture = AMR_BUR_eventPicture }
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			country_event = {
+				id = POP_Estates_Events.133
+				days = 1825
+			}
+		}
+	}
+	
+	option = { ###
+		name = "POP_Estates_Events.123.a"
+		ai_chance = { factor = 100 }
+	}
+}
+
+country_event = { ### Burghers disloyal notification
+	id = POP_Estates_Events.133
+	title = "POP_Estates_Events.133.t"
+	desc = "POP_Estates_Events.133.d"
+	picture = { trigger = { technology_group = western } picture = WE_BUR_eventPicture }
+	picture = { trigger = { OR = { technology_group = muslim technology_group = turkishtech technology_group = steppestech } } picture = ISL_BUR_eventPicture }
+	picture = { trigger = { technology_group = eastern } picture = EE_BUR_eventPicture }
+	picture = { trigger = { technology_group = indian } picture = IND_BUR_eventPicture }
+	picture = { trigger = { technology_group = chinese } picture = EA_BUR_eventPicture }
+	picture = { trigger = { OR = { technology_group = soudantech technology_group = sub_saharan technology_group = central_african technology_group = malagasy_tech technology_group = east_african } } picture = AFR_BUR_eventPicture }
+	picture = { trigger = { OR = { technology_group = austranesian technology_group = hawaii_tech } } picture = SEA_BUR_eventPicture }
+	picture = { trigger = { OR = { technology_group = mesoamerican technology_group = south_american } } picture = AMR_BUR_eventPicture }
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = burghers_loyalty_added_a 		value = 6 }
+		}
+	}
+	
+	option = { ###
+		name = "POP_Estates_Events.133.a"
+		ai_chance = { factor = 100 }
+		
+		custom_tooltip = estate_burghers_loyalty_added_a
+		hidden_effect = {
+			clr_country_flag = already_hit_with_BG_loyalty
+			set_variable = { 	which = burghers_loyalty_added		value = 0 }
+			set_variable = { 	which = burghers_loyalty_added		which = burghers_loyalty_added_a }
+			estate_burghers_loyalty_added = yes
+		}
+	}
+}
+
+
+country_event = { ### War
+	id = POP_Estates_Events.501
+	title = "POP_Estates_Events.501.t"
+	desc = "POP_Estates_Events.501.d"
+	picture = COURT_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	trigger = {
+		is_at_war = yes
+	}
+	
+	immediate = {
+		#hidden_effect = {
+		#	add_country_modifier = {
+		#		name = estate_war_participation
+		#		duration 360
+		#	}
+		#	if = { ### War Start ###
+		#		limit = {
+		#			NOT = { has_country_flag = nobles_war_start_check }
+		#			any_country = { offensive_war_with = ROOT }
+		#		}
+		#		if = { ### Check Greater Nobles ###
+		#			limit = {
+		#				estate_loyalty = {
+		#					estate = estate_nobles
+		#					loyalty = 31
+		#				}
+		#			}
+		#		}
+		#	}
+		#}
+	}
+	
+	option = { ###
+		name = "POP_Estates_Events.501.a"
+		ai_chance = { factor = 100 }
+	}
+}
+
+
+
+
+
+country_event = { ### Crisis!
+	id = POP_Estates_Events.901
+	title = "POP_Estates_Events.901.t"
+	desc = "POP_Estates_Events.901.d"
+	picture = COURT_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		if = {
+			limit = {
+				has_country_flag = greater_nobles_crisis
+			}
+			country_event = {
+				id = POP_Estates_Events.911
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = lesser_nobles_crisis
+			}
+			country_event = {
+				id = POP_Estates_Events.921
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = burghers_crisis
+			}
+			country_event = {
+				id = POP_Estates_Events.931
+			}
+		}
+	}
+	
+	option = { ###
+		name = "POP_Estates_Events.901.a"
+		ai_chance = { factor = 100 }
+	}
+	
+	#option = { ###
+	#	name = "POP_Estates_Events.901.b"
+	#	ai_chance = { factor = 100 }
+	#}
+}
+
+country_event = { ### Greater Noble Crisis!
+	id = POP_Estates_Events.911
+	title = "POP_Estates_Events.911.t"
+	desc = "POP_Estates_Events.911.d"
+	picture = COURT_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+	}
+	
+	option = { ###
+		name = "POP_Estates_Events.911.a"
+		ai_chance = { factor = 100 }
+		hidden_effect = {
+			change_variable = { which = privilege_demand_ticker_greater_nobles 	value = 40 }
+		}
+	}
+	
+	option = { ###
+		name = "POP_Estates_Events.911.b"
+		ai_chance = { factor = 100 }
+		
+		every_owned_province = {
+			limit = {
+				has_province_flag = greater_nobles_control_province
+			}
+			random = {
+				chance = 75
+				add_province_modifier = {
+					name = GN_province_unrest
+					duration = 3650
+				}
+				add_unrest = 10
+			}
+		}
+	}
+}
+
+country_event = { ### Lesser Noble Crisis!
+	id = POP_Estates_Events.921
+	title = "POP_Estates_Events.921.t"
+	desc = "POP_Estates_Events.921.d"
+	picture = COURT_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		
+	}
+	
+	option = { ###
+		name = "POP_Estates_Events.921.a"
+		ai_chance = { factor = 100 }
+		hidden_effect = {
+			change_variable = { which = privilege_demand_ticker_lesser_nobles 	value = 40 }
+		}
+	}
+	
+	option = { ###
+		name = "POP_Estates_Events.921.b"
+		ai_chance = { factor = 100 }
+		
+		every_owned_province = {
+			limit = {
+				has_province_flag = lesser_nobles_control_province
+			}
+			random = {
+				chance = 75
+				add_province_modifier = {
+					name = LN_province_unrest
+					duration = 3650
+				}
+				add_unrest = 10
+			}
+		}
+	}
+}
+
+country_event = { ### Burgher Crisis!
+	id = POP_Estates_Events.931
+	title = "POP_Estates_Events.931.t"
+	desc = "POP_Estates_Events.931.d"
+	picture = COURT_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		
+	}
+	
+	option = { ###
+		name = "POP_Estates_Events.931.a"
+		ai_chance = { factor = 100 }
+		change_variable = { which = privilege_demand_ticker_burghers 	value = 40 }
+	}
+	
+	option = { ###
+		name = "POP_Estates_Events.931.b"
+		ai_chance = { factor = 100 }
+		
+		every_owned_province = {
+			limit = {
+				has_province_flag = burghers_control_province
+			}
+			random = {
+				chance = 75
+				add_province_modifier = {
+					name = BG_province_unrest
+					duration = 3650
+				}
+				add_unrest = 10
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+
+

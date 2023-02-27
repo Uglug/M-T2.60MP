@@ -1,0 +1,477 @@
+########################################################
+#        Centralisation-Decentralisation Slider        #
+########################################################
+
+
+# Greater Nobles object to centralization
+country_event = {
+	id = centralisation.1
+	title = "centralisation.1.name"
+	desc = "centralisation.1.desc"
+	picture = REFORM_eventPicture
+	
+	trigger = {
+		absolutism = 30
+		check_variable = { which = estate_greater_nobles_weight_share	value = 0.15 }
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = { which = greater_nobles_loyalty_removed_a value = 10 }
+			check_centralisation_absolutism = yes
+			#change_variable = { which = max_absolutism value = -10 }
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 50
+		
+		modifier = {
+			factor = 0.90
+			absolutism = 60
+		}
+		modifier = {
+			factor = 0.90
+			absolutism = 70
+		}
+		modifier = {
+			factor = 0.90
+			absolutism = 80
+		}
+		modifier = {
+			factor = 0.85
+			absolutism = 90
+		}
+		modifier = {
+			factor = 0.80
+			absolutism = 100
+		}
+		modifier = {
+			factor = 0.85
+			NOT = { ADM = 1 }
+		}
+		modifier = {
+			factor = 0.90
+			NOT = { ADM = 2 }
+		}
+		modifier = {
+			factor = 0.95
+			NOT = { ADM = 3 }
+		}
+		modifier = {
+			factor = 1.05
+			ADM = 4
+		}
+		modifier = {
+			factor = 1.05
+			ADM = 5
+			has_regency = no
+		}
+		modifier = {
+			factor = 1.10
+			ADM = 6
+			has_regency = no
+		}
+	}
+	
+	#Refuse to acknowledge their concerns.
+	option = {
+		name = "centralisation.1.opta"
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 4
+				check_variable = { which = estate_bureaucracy_weight_share   value = 0.6 }
+			}
+			modifier = {
+				factor = 0.01
+				OR = {
+					NOT = { check_variable = { which = estate_greater_nobles_weight_share	value = 0.41 } }
+				}
+			}
+		}
+		reduce_estate_greater_nobles_loyalty_effect = { id=a }
+		add_prestige = 15
+	}
+	
+	#Remind them of the many advantages that trusted partners and friends might have.
+	option = {
+		name = "centralisation.1.optb"
+		trigger = {
+			NOT = { corruption = 90 }
+		}
+		ai_chance = {
+			factor = 25
+		}
+		add_corruption = 5
+	}
+	
+	#Attempt to convince them that a strong state is necessary to defend their lands.
+	option = {
+		name = "centralisation.1.optc"
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 2
+				stability = 2
+			}
+			modifier = {
+				factor = 2
+				stability = 1
+			}
+			modifier = {
+				factor = 0.1
+				NOT = { stability = 0 }
+			}
+		}
+		if = {
+			limit = { stability = -2 }
+			random_list = {
+				30 = {}
+				40 = {
+					subtract_stability_points_50 = yes
+				}
+				30 = {
+					subtract_stability_1 = yes
+				}
+			}
+		}
+		else = {
+			add_adm_power = -100
+		}
+	}
+	#Decentralize slightly to reassure them.
+	option = {
+		name = "centralisation.1.optd"
+		ai_chance = {
+			factor = 25
+		}
+		add_absolutism = -5
+	}
+}
+
+#country_event = {
+#	id = centralisation.2
+#	title = "centralisation.2.name"
+#	desc = "centralisation.2.desc"
+#	picture = REFORM_eventPicture
+#	
+#	trigger = {
+#		has_country_modifier = "centralisation_efforts"
+#		absolutism = 60
+#	}
+#	
+#	mean_time_to_happen = {
+#		years = 50
+#		
+#		modifier = {
+#			factor = 0.95
+#			NOT = { stability = -2 }
+#		}
+#		modifier = {
+#			factor = 0.95
+#			NOT = { stability = -1 }
+#		}
+#		modifier = {
+#			factor = 0.95
+#			NOT = { stability = 0 }
+#		}
+#		modifier = {
+#			factor = 1.05
+#			stability = 1
+#		}
+#		modifier = {
+#			factor = 1.05
+#			stability = 2
+#		}
+#		modifier = {
+#			factor = 1.05
+#			stability = 3
+#		}
+#		modifier = {
+#			factor = 0.96
+#			NOT = { ADM = 1 }
+#			has_regency = no
+#		}
+#		modifier = {
+#			factor = 0.93
+#			NOT = { ADM = 2 }
+#			has_regency = no
+#		}
+#		modifier = {
+#			factor = 0.91
+#			NOT = { ADM = 3 }
+#			has_regency = no
+#		}
+#		modifier = {
+#			factor = 1.05
+#			ADM = 3
+#			has_regency = no
+#		}
+#		modifier = {
+#			factor = 1.05
+#			ADM = 4
+#			has_regency = no
+#		}
+#		modifier = {
+#			factor = 1.05
+#			ADM = 5
+#			has_regency = no
+#		}
+#		modifier = {
+#			factor = 1.05
+#			ADM = 6
+#			has_regency = no
+#		}
+#		modifier = {
+#			factor = 1.03
+#			has_ruler_modifier = "arbitrary"
+#		}
+#		modifier = {
+#			factor = 1.10
+#			has_ruler_modifier = "energetic"
+#		}
+#		modifier = {
+#			factor = 1.05
+#			has_ruler_modifier = "charismatic_negotiator"
+#		}
+#		modifier = {
+#			factor = 1.05
+#			has_ruler_modifier = "grey_eminence"
+#		}
+#		modifier = {
+#			factor = 1.10
+#			has_ruler_modifier = "silver_tongue"
+#		}
+#		modifier = {
+#			factor = 1.03
+#			has_ruler_modifier = "aggressive_monarch"
+#		}
+#		modifier = {
+#			factor = 1.03
+#			has_ruler_modifier = "flamboyant_schemer"
+#		}
+#		modifier = {
+#			factor = 1.01
+#			has_ruler_modifier = "gruff_diplomat"
+#		}
+#		modifier = {
+#			factor = 0.93
+#			has_ruler_modifier = "elusive_shadow"
+#		}
+#		modifier = {
+#			factor = 0.93
+#			has_ruler_modifier = "naive_puppet_master"
+#		}
+#		modifier = {
+#			factor = 1.10
+#			advisor = alderman
+#		}
+#		modifier = {
+#			factor = 1.05
+#			advisor = high_judge
+#		}
+#		modifier = {
+#			factor = 1.05
+#			advisor = acardinal
+#		}
+#		modifier = {
+#			factor = 1.10
+#			advisor = statesman
+#		}
+#		modifier = {
+#			factor = 1.03
+#			advisor = spymaster
+#		}
+#		modifier = {
+#			factor = 1.05
+#			advisor = diplomat
+#		}
+#		modifier = {
+#			factor = 0.75
+#			has_real_disaster_trigger = yes
+#		}
+#		modifier = {
+#			factor = 0.80
+#			has_regency = yes
+#		}
+#	}
+#	
+#	option = {
+#		name = "centralisation.2.opta"
+#		add_country_modifier = {
+#			name = "centralised_state"
+#			duration = 365
+#		}
+#	}
+#}
+#
+# Nationalists fight our centralisation
+#country_event = { ### Demian removed because it was broken and retarded and hurting the AI, srsly
+#
+#	id = centralisation.3
+#	title = "centralisation.3.name"
+#	desc = "centralisation.3.desc"
+#	picture = REFORM_eventPicture
+#
+#	trigger = {
+#		absolutism = 40
+#		any_owned_province = {
+#			has_owner_accepted_culture = no
+#		}
+#	}
+#
+#	mean_time_to_happen = {
+#		months = 360
+#		modifier = {
+#			factor = 0.90
+#			absolutism = 60
+#		}
+#		modifier = {
+#			factor = 0.90
+#			absolutism = 70
+#		}
+#		modifier = {
+#			factor = 0.90
+#			absolutism = 80
+#		}
+#		modifier = {
+#			factor = 0.90
+#			absolutism = 90
+#		}
+#		modifier = {
+#			factor = 0.90
+#			absolutism = 100
+#		}
+#		modifier = {
+#			factor = 1.05
+#			stability = 1
+#		}
+#		modifier = {
+#			factor = 1.05
+#			stability = 2
+#		}
+#		modifier = {
+#			factor = 1.05
+#			stability = 3
+#		}
+#		modifier = {
+#			factor = 0.96
+#			NOT = { ADM = 1 }
+#			has_regency = no
+#		}
+#		modifier = {
+#			factor = 0.93
+#			NOT = { ADM = 2 }
+#			has_regency = no
+#		}
+#		modifier = {
+#			factor = 0.91
+#			NOT = { ADM = 3 }
+#			has_regency = no
+#		}
+#		modifier = {
+#			factor = 1.05
+#			ADM = 3
+#			has_regency = no
+#		}
+#		modifier = {
+#			factor = 1.05
+#			ADM = 4
+#			has_regency = no
+#		}
+#		modifier = {
+#			factor = 1.05
+#			ADM = 5
+#			has_regency = no
+#		}
+#		modifier = {
+#			factor = 1.05
+#			ADM = 6
+#			has_regency = no
+#		}
+#	}
+#
+#	option = {
+#		name = "centralisation.3.opta"
+#		ai_chance = {
+#			factor = 50
+#			modifier = {
+#				factor = 2
+#				stability = 1
+#			}
+#			modifier = {
+#				factor = 0
+#				NOT = { stability = 0 }
+#			}
+#		}
+#		hidden_effect = {
+#			export_to_variable = {
+#				which = ProvinceCount
+#				value = num_of_cities
+#			}
+#		}
+#		random_owned_province = {
+#			limit = {
+#				has_owner_accepted_culture = no
+#				NOT = { has_province_modifier = nationalists_organizing }
+#			}
+#			add_province_modifier = {
+#				name = "nationalists_organizing"
+#				duration = 1825
+#			}
+#			hidden_effect = {
+#				set_variable = { which = added_unrest value = 5 }
+#				add_base_unrest = yes
+#			}
+#			custom_tooltip = added_unrest_5
+#		}
+#		while = {
+#			limit = {
+#				check_variable = { which = ProvinceCount value = 10 }
+#			}
+#			hidden_effect = {
+#				subtract_variable = { which = ProvinceCount value = 10 }
+#			}
+#			random_owned_province = {
+#				limit = {
+#					has_owner_accepted_culture = no
+#					NOT = { has_province_modifier = nationalists_organizing }
+#				}
+#				add_province_modifier = {
+#					name = "nationalists_organizing"
+#					duration = 1825
+#				}
+#				hidden_effect = {
+#					set_variable = { which = added_unrest value = 5 }
+#					add_base_unrest = yes
+#				}
+#				custom_tooltip = added_unrest_5
+#			}
+#		}
+#		hidden_effect = {
+#			set_variable = { which = ProvinceCount value = 0 }
+#		}
+#	}
+#
+#	option = {
+#		name = "centralisation.3.optb"
+#		ai_chance = {
+#			factor = 50
+#			modifier = {
+#				factor = 0
+#				stability = 1
+#			}
+#			modifier = {
+#				factor = 2
+#				NOT = { stability = 0 }
+#			}
+#		}
+#		every_owned_province = {
+#			limit = {
+#				has_owner_accepted_culture = no
+#			}
+#			add_local_autonomy = 40
+#		}
+#	}
+#}

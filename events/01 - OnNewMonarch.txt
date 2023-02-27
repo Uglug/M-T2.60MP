@@ -1,0 +1,2655 @@
+######################################
+#                                    #
+#       0800002 - Set-up event       #
+# by GG                              #
+#                                    #
+######################################
+# HISTORY
+#
+######################################
+
+
+#############################
+# MEIOU - Monarch Personality
+#############################
+country_event = {
+	id = on_new_monarch.1
+	title = "on_new_monarch.1.t"
+	picture = DEATH_OF_HEIR_eventPicture
+	
+	trigger = {
+		NOT = { has_country_flag = had_regency }
+		NOT = { has_country_flag = ruler_prisonner_of_war } # always = yes
+		NOT = { has_country_flag = influential_general_court }
+		NOT = { has_ruler_flag = ruler_prisoner_freed }
+	}
+	
+	desc = {
+		trigger = {
+			has_consort_regency = no
+			has_regency = no
+		}
+		desc = on_new_monarch.1.d
+	}
+	desc = {
+		trigger = {
+			has_consort_regency = yes
+			has_female_heir = no
+		}
+		desc = on_new_monarch.1.db
+	}
+	desc = {
+		trigger = {
+			has_consort_regency = no
+			has_regency = yes
+			has_female_heir = no
+		}
+		desc = on_new_monarch.1.dc
+	}
+	desc = {
+		trigger = {
+			has_consort_regency = yes
+			has_female_heir = yes
+		}
+		desc = on_new_monarch.1.dd
+	}
+	desc = {
+		trigger = {
+			has_consort_regency = no
+			has_regency = yes
+			has_female_heir = yes
+		}
+		desc = on_new_monarch.1.de
+	}
+	
+	is_triggered_only = yes
+	
+	#*** Determine monarch character
+	#factors to take into account:
+	# is_female or not
+	# monarchy-theocracy-other_gov
+	# devout or not
+	# general ability ADM/DIP - smart-OK-dumb
+	# military ability MIL - good_MIL-OK_MIL-bad_MIL
+	# random chance
+	immediate = {
+		if = {
+			limit = {
+				government = monarchy
+			}
+			add_country_modifier = {
+				name = mourning_of_monarch
+				duration = 182
+			}
+		}
+		if = {
+			limit = {
+				government = monarchy
+				NOT = { religion_group = christian }
+				NOT = { religion_group = muslim }
+				NOT = { adm = 3 }
+				capital_scope = { superregion = east_indies_superregion } #was southeast_asia_superregion, maybe a mistake?
+				check_variable = { which = "Demesne_in_Indonesia" value = 20 }
+			}
+			set_ruler_flag = weak_archipelagic_ruler
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					has_consort_regency = no
+					has_regency = no
+					NOT = { has_ruler_flag = personality_set }
+				}
+				country_event = {
+					id = on_new_monarch.2
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						has_consort_regency = yes
+						has_regency = yes
+					}
+				}
+				set_country_flag = had_regency
+			}
+			if = {
+				limit = {
+					has_country_flag = feudal_colonisation
+				}
+				every_subject_country = {
+					country_event = { id = elections.706 days = 15 }
+				}
+			}
+		}
+	}
+	option = {
+		trigger = {
+			NOT = { government = monarchy }
+		}
+		name = "OPT.VERYWELL"
+		#if = {
+		#	limit = {
+		#		has_country_flag = initialising
+		#	}
+			clr_country_flag = initialising
+		#}
+	}
+	option = {
+		trigger = {
+			government = monarchy
+		}
+		name = "on_new_monarch.1.a"		# A massive celebration
+		ai_chance = {
+			factor = 5
+			modifier = {
+				factor = 3
+				NOT = { stability = 1 }
+			}
+			modifier = {
+				factor = 5
+				NOT = { stability = -1 }
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					has_consort_regency = yes
+					has_regency = yes
+				}
+			}
+			add_heir_claim = 5
+		}
+		else = {
+			add_legitimacy = 5
+		}
+		add_prestige = 10
+		add_years_of_income = -0.35	#35% of annual income
+	}
+	option = {
+		trigger = {
+			government = monarchy
+		}
+		name = "on_new_monarch.1.b"		# A large celebration
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 5
+				NOT = { stability = 1 }
+			}
+		}
+		random = {
+			chance = 20
+			subtract_stability_1 = yes
+		}
+		add_years_of_income = -0.20	#20% of annual income
+	}
+	option = {
+		trigger = {
+			government = monarchy
+		}
+		name = "on_new_monarch.1.c"		# A small celebration
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 2
+				stability = 2
+			}
+		}
+		subtract_stability_1 = yes
+		add_years_of_income = -0.10	#10% of annual income
+	}
+	option = {
+		trigger = {
+			government = monarchy
+		}
+		name = "on_new_monarch.1.e"		# No celebration
+		ai_chance = {
+			factor = 5
+			modifier = {
+				factor = 2
+				stability = 3
+			}
+		}
+		random = {
+			chance = 30
+			subtract_stability_1 = yes
+		}
+		subtract_stability_1 = yes
+		if = {
+			limit = {
+				OR = {
+					has_consort_regency = yes
+					has_regency = yes
+				}
+			}
+			add_heir_claim = -5
+		}
+		else = {
+			add_legitimacy = -5
+		}
+		add_prestige = -10
+	}
+}
+
+country_event = {
+	id = on_new_monarch.2
+	title = "EVT_AI"
+	desc = "EVT_AI"
+	picture = DEATH_OF_HEIR_eventPicture
+	
+	trigger = {
+		NOT = { has_ruler_flag = personality_set }
+	}
+	
+	hidden = yes
+	is_triggered_only = yes
+	
+	# Determine monarch character. Factors to take into account:
+	#     * is_female or not
+	#     * monarchy-theocracy-other_gov
+	#     * devout or not
+	#     * general ability ADM/DIP - smart-OK-dumb
+	#     * military ability MIL - good_MIL-OK_MIL-bad_MIL
+	#     * random chance
+	
+	immediate = {
+		hidden_effect = {
+			set_ruler_flag = personality_set
+			if = {
+				limit = {
+					NOT = { has_dlc = "Rights of Man" }
+				}
+				# male-monarchy-devout-smart-good_MIL
+				if = {
+					limit = {
+						is_female = no
+						government = monarchy
+						piety = 0.20
+						OR = { ADM = 4 DIP = 4 }
+						MIL = 4
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						#7 = { country_event = { id = personality.11 } } #misguided_warrior
+						#7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-monarchy-devout-smart-OK_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = monarchy
+						piety = 0.20
+						OR = { ADM = 4 DIP = 4 }
+						MIL = 2
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						#7 = { country_event = { id = personality.11 } } #misguided_warrior
+						#7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						4 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-monarchy-devout-smart-bad_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = monarchy
+						piety = 0.20
+						OR = { ADM = 4 DIP = 4 }
+						NOT = { MIL = 2 }
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						3 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-monarchy-devout-OK-good_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = monarchy
+						piety = 0.20
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+						MIL = 4
+					}
+					random_list = {
+						3 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						3 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						#7 = { country_event = { id = personality.11 } } #misguided_warrior
+						3 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						3 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-monarchy-devout-OK-OK_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = monarchy
+						piety = 0.20
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+						NOT = { MIL = 4 }
+						MIL = 2
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						3 = { country_event = { id = personality.11 } } #misguided_warrior
+						3 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-monarchy-devout-OK-bad_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = monarchy
+						piety = 0.20
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+						NOT = { MIL = 2 }
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						3 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						3 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						3 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						3 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-monarchy-devout-dumb-good_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = monarchy
+						piety = 0.20
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						MIL = 4
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						3 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						#6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						#7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-monarchy-devout-dumb-OK_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = monarchy
+						piety = 0.20
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						NOT = { MIL = 4 }
+						MIL = 2
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						#6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-monarchy-devout-dumb-bad_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = monarchy
+						piety = 0.20
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						NOT = { MIL = 2 }
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						#6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						3 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-monarchy-not_devout-smart-good_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = monarchy
+						NOT = { piety = 0.20 }
+						OR = { ADM = 4 DIP = 4 }
+						MIL = 4
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						3 = { country_event = { id = personality.04 } } #elusive_shadow
+						3 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						3 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						#7 = { country_event = { id = personality.11 } } #misguided_warrior
+						#7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-monarchy-not_devout-smart-OK_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = monarchy
+						NOT = { piety = 0.20 }
+						OR = { ADM = 4 DIP = 4 }
+						NOT = { MIL = 4 }
+						MIL = 2
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						3 = { country_event = { id = personality.11 } } #misguided_warrior
+						#7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						3 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-monarchy-not_devout-smart-bad_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = monarchy
+						NOT = { piety = 0.20 }
+						OR = { ADM = 4 DIP = 4 }
+						NOT = { MIL = 2 }
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						3 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						3 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-monarchy-not_devout-OK-good_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = monarchy
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+						MIL = 4
+					}
+					random_list = {
+						3 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						3 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-monarchy-not_devout-OK-OK_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = monarchy
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+						NOT = { MIL = 4 }
+						MIL = 2
+					}
+					random_list = {
+						3 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						3 = { country_event = { id = personality.08 } } #intricate_webweaver
+						3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						3 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-monarchy-not_devout-OK-bad_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = monarchy
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+						NOT = { MIL = 2 }
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						3 = { country_event = { id = personality.14 } } #tough_soldier
+						3 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-monarchy-not_devout-dumb-good_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = monarchy
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						MIL = 4
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						3 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						3 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						3 = { country_event = { id = personality.08 } } #intricate_webweaver
+						3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-monarchy-not_devout-dumb-OK_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = monarchy
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						NOT = { MIL = 4 }
+						MIL = 2
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						3 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						#7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						#6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						3 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-monarchy-not_devout-dumb-bad_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = monarchy
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						NOT = { MIL = 2 }
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						#7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						#6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-theocracy-devout-smart-good_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = theocracy
+						piety = 0.20
+						OR = { ADM = 4 DIP = 4 }
+						MIL = 4
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						#7 = { country_event = { id = personality.11 } } #misguided_warrior
+						#7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.22 } } #fanatical_priest
+						7 = { country_event = { id = personality.23 } } #martial_cleric
+						7 = { country_event = { id = personality.24 } } #master_theologian
+						7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-theocracy-devout-smart-OK_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = theocracy
+						piety = 0.20
+						OR = { ADM = 4 DIP = 4 }
+						NOT = { MIL = 4 }
+						MIL = 2
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						#7 = { country_event = { id = personality.11 } } #misguided_warrior
+						#7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						4 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.22 } } #fanatical_priest
+						7 = { country_event = { id = personality.23 } } #martial_cleric
+						7 = { country_event = { id = personality.24 } } #master_theologian
+						7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-theocracy-devout-smart-bad_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = theocracy
+						piety = 0.20
+						OR = { ADM = 4 DIP = 4 }
+						NOT = { MIL = 2 }
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						3 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.22 } } #fanatical_priest
+						3 = { country_event = { id = personality.23 } } #martial_cleric
+						7 = { country_event = { id = personality.24 } } #master_theologian
+						7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-theocracy-devout-OK-good_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = theocracy
+						piety = 0.20
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+						MIL = 4
+					}
+					random_list = {
+						3 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						3 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						#7 = { country_event = { id = personality.11 } } #misguided_warrior
+						3 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						3 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.22 } } #fanatical_priest
+						7 = { country_event = { id = personality.23 } } #martial_cleric
+						3 = { country_event = { id = personality.24 } } #master_theologian
+					}
+				}
+				# male-theocracy-devout-OK-OK_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = theocracy
+						piety = 0.20
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+						NOT = { MIL = 4 }
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						3 = { country_event = { id = personality.11 } } #misguided_warrior
+						3 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.22 } } #fanatical_priest
+						7 = { country_event = { id = personality.23 } } #martial_cleric
+						3 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-theocracy-devout-OK-bad_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = theocracy
+						piety = 0.20
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						3 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						3 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						3 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						3 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.22 } } #fanatical_priest
+						3 = { country_event = { id = personality.23 } } #martial_cleric
+						3 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-theocracy-devout-dumb-good_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = theocracy
+						piety = 0.20
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						MIL = 4
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						3 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						#6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						#7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.22 } } #fanatical_priest
+						7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+					}
+				}
+				# male-theocracy-devout-dumb-OK_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = theocracy
+						piety = 0.20
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						NOT = { MIL = 4 }
+						MIL = 2
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						#6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.22 } } #fanatical_priest
+						7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+					}
+				}
+				# male-theocracy-devout-dumb-bad_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = theocracy
+						piety = 0.20
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						NOT = { MIL = 2 }
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						#6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						3 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.22 } } #fanatical_priest
+						3 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-theocracy-not_devout-smart-good_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = theocracy
+						NOT = { piety = 0.20 }
+						OR = { ADM = 4 DIP = 4 }
+						MIL = 4
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						3 = { country_event = { id = personality.04 } } #elusive_shadow
+						3 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						3 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						#7 = { country_event = { id = personality.11 } } #misguided_warrior
+						#7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						7 = { country_event = { id = personality.23 } } #martial_cleric
+						7 = { country_event = { id = personality.24 } } #master_theologian
+						7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-theocracy-not_devout-smart-OK_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = theocracy
+						NOT = { piety = 0.20 }
+						OR = { ADM = 4 DIP = 4 }
+						NOT = { MIL = 4 }
+						MIL = 2
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						3 = { country_event = { id = personality.11 } } #misguided_warrior
+						#7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						3 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						3 = { country_event = { id = personality.23 } } #martial_cleric
+						7 = { country_event = { id = personality.24 } } #master_theologian
+						7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-theocracy-not_devout-smart-bad_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = theocracy
+						NOT = { piety = 0.20 }
+						OR = { ADM = 4 DIP = 4 }
+						NOT = { MIL = 2 }
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						3 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						3 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						7 = { country_event = { id = personality.24 } } #master_theologian
+						7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-theocracy-not_devout-OK-good_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = theocracy
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+						MIL = 4
+					}
+					random_list = {
+						3 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						3 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						7 = { country_event = { id = personality.23 } } #martial_cleric
+						3 = { country_event = { id = personality.24 } } #master_theologian
+					}
+				}
+				# male-theocracy-not_devout-OK-OK_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = theocracy
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+						NOT = { MIL = 4 }
+					}
+					random_list = {
+						3 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						3 = { country_event = { id = personality.08 } } #intricate_webweaver
+						3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						3 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						7 = { country_event = { id = personality.23 } } #martial_cleric
+						7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-theocracy-not_devout-OK-bad_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = theocracy
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+						NOT = { MIL = 2 }
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						3 = { country_event = { id = personality.14 } } #tough_soldier
+						3 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						3 = { country_event = { id = personality.23 } } #martial_cleric
+						3 = { country_event = { id = personality.24 } } #master_theologian
+					}
+				}
+				# male-theocracy-not_devout-dumb-good_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = theocracy
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						MIL = 4
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						3 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						3 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						3 = { country_event = { id = personality.08 } } #intricate_webweaver
+						3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						3 = { country_event = { id = personality.22 } } #fanatical_priest
+						7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-theocracy-not_devout-dumb-OK_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = theocracy
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						NOT = { MIL = 4 }
+						MIL = 2
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						3 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						#7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						#6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						3 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						3 = { country_event = { id = personality.22 } } #fanatical_priest
+						7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+					}
+				}
+				# male-theocracy-not_devout-dumb-bad_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						government = theocracy
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						NOT = { MIL = 2 }
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						#7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						#6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						3 = { country_event = { id = personality.22 } } #fanatical_priest
+						7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-other_gov-devout-smart-good_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						NOT = { government = monarchy }
+						NOT = { government = theocracy }
+						piety = 0.20
+						OR = { ADM = 4 DIP = 4 }
+						MIL = 4
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						#7 = { country_event = { id = personality.11 } } #misguided_warrior
+						#7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.21 } } #Crafty Merchant
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+					}
+				}
+				# male-other_gov-devout-smart-OK_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						NOT = { government = monarchy }
+						NOT = { government = theocracy }
+						piety = 0.20
+						OR = { ADM = 4 DIP = 4 }
+						NOT = { MIL = 4 }
+						MIL = 2
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						#7 = { country_event = { id = personality.11 } } #misguided_warrior
+						#7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						4 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.21 } } #Crafty Merchant
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-other_gov-devout-smart-bad_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						NOT = { government = monarchy }
+						NOT = { government = theocracy }
+						piety = 0.20
+						OR = { ADM = 4 DIP = 4 }
+						NOT = { MIL = 2 }
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						3 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.21 } } #Crafty Merchant
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+					}
+				}
+				# male-other_gov-devout-OK-good_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						NOT = { government = monarchy }
+						NOT = { government = theocracy }
+						piety = 0.20
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+					}
+					random_list = {
+						3 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						3 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						#7 = { country_event = { id = personality.11 } } #misguided_warrior
+						3 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						3 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.21 } } #Crafty Merchant
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-other_gov-devout-OK-OK_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						NOT = { government = monarchy }
+						NOT = { government = theocracy }
+						piety = 0.20
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+						MIL = 2
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						3 = { country_event = { id = personality.11 } } #misguided_warrior
+						3 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.21 } } #Crafty Merchant
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-other_gov-devout-OK-bad_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						NOT = { government = monarchy }
+						NOT = { government = theocracy }
+						piety = 0.20
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						3 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						3 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						3 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						3 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.21 } } #Crafty Merchant
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-other_gov-devout-dumb-good_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						NOT = { government = monarchy }
+						NOT = { government = theocracy }
+						piety = 0.20
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						MIL = 4
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						3 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						#6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						#7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.21 } } #Crafty Merchant
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-other_gov-devout-dumb-OK_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						NOT = { government = monarchy }
+						NOT = { government = theocracy }
+						piety = 0.20
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						NOT = { MIL = 4 }
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						#6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.21 } } #Crafty Merchant
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-other_gov-devout-dumb-bad_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						NOT = { government = monarchy }
+						NOT = { government = theocracy }
+						piety = 0.20
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						NOT = { MIL = 2 }
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						#6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						3 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.21 } } #Crafty Merchant
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-other_gov-not_devout-smart-good_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						NOT = { government = monarchy }
+						NOT = { government = theocracy }
+						NOT = { piety = 0.20 }
+						OR = { ADM = 4 DIP = 4 }
+						MIL = 4
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						3 = { country_event = { id = personality.04 } } #elusive_shadow
+						3 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						3 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						#7 = { country_event = { id = personality.11 } } #misguided_warrior
+						#7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.21 } } #Crafty Merchant
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-other_gov-not_devout-smart-OK_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						NOT = { government = monarchy }
+						NOT = { government = theocracy }
+						NOT = { piety = 0.20 }
+						OR = { ADM = 4 DIP = 4 }
+						NOT = { MIL = 4 }
+						MIL = 2
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						3 = { country_event = { id = personality.11 } } #misguided_warrior
+						#7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						3 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.21 } } #Crafty Merchant
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-other_gov-not_devout-smart-bad_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						NOT = { government = monarchy }
+						NOT = { government = theocracy }
+						NOT = { piety = 0.20 }
+						OR = { ADM = 4 DIP = 4 }
+						NOT = { MIL = 2 }
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						3 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						3 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.21 } } #Crafty Merchant
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-other_gov-not_devout-OK-good_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						NOT = { government = monarchy }
+						NOT = { government = theocracy }
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+						MIL = 4
+					}
+					random_list = {
+						3 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						3 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.21 } } #Crafty Merchant
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-other_gov-not_devout-OK-OK_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						NOT = { government = monarchy }
+						NOT = { government = theocracy }
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+						NOT = { MIL = 4 }
+						MIL = 2
+					}
+					random_list = {
+						3 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						3 = { country_event = { id = personality.08 } } #intricate_webweaver
+						3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						3 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.21 } } #Crafty Merchant
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-other_gov-not_devout-OK-bad_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						NOT = { government = monarchy }
+						NOT = { government = theocracy }
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+						NOT = { MIL = 2 }
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						3 = { country_event = { id = personality.14 } } #tough_soldier
+						3 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.21 } } #Crafty Merchant
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-other_gov-not_devout-dumb-good_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						NOT = { government = monarchy }
+						NOT = { government = theocracy }
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						MIL = 4
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						3 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						3 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						3 = { country_event = { id = personality.08 } } #intricate_webweaver
+						3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.21 } } #Crafty Merchant
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-other_gov-not_devout-dumb-OK_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						NOT = { government = monarchy }
+						NOT = { government = theocracy }
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						NOT = { MIL = 4 }
+						MIL = 2
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						3 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						#7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						#6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						3 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.21 } } #Crafty Merchant
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# male-other_gov-not_devout-dumb-bad_MIL
+				else_if = {
+					limit = {
+						is_female = no
+						NOT = { government = monarchy }
+						NOT = { government = theocracy }
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						NOT = { MIL = 2 }
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						#7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						#6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						7 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						7 = { country_event = { id = personality.21 } } #Crafty Merchant
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# is_female-devout-smart-good_MIL
+				else_if = {
+					limit = {
+						is_female = yes
+						#NOT = { government = monarchy }
+						#NOT = { government = theocracy }
+						piety = 0.20
+						OR = { ADM = 4 DIP = 4 }
+						MIL = 4
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						#6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						#7 = { country_event = { id = personality.11 } } #misguided_warrior
+						#7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						#7 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# is_female-devout-smart-OK_MIL
+				else_if = {
+					limit = {
+						is_female = yes
+						#NOT = { government = monarchy }
+						#NOT = { government = theocracy }
+						piety = 0.20
+						OR = { ADM = 4 DIP = 4 }
+						NOT = { MIL = 4 }
+						MIL = 2
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						#6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						#7 = { country_event = { id = personality.11 } } #misguided_warrior
+						#7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						#4 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# is_female-devout-smart-bad_MIL
+				else_if = {
+					limit = {
+						is_female = yes
+						#NOT = { government = monarchy }
+						#NOT = { government = theocracy }
+						piety = 0.20
+						OR = { ADM = 4 DIP = 4 }
+						NOT = { MIL = 2 }
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						#6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						#3 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# is_female-devout-OK-good_MIL
+				else_if = {
+					limit = {
+						is_female = yes
+						#NOT = { government = monarchy }
+						#NOT = { government = theocracy }
+						piety = 0.20
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+						MIL = 4
+					}
+					random_list = {
+						3 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						3 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						#6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						#7 = { country_event = { id = personality.11 } } #misguided_warrior
+						3 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						#7 = { country_event = { id = personality.14 } } #tough_soldier
+						3 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# is_female-devout-OK-OK_MIL
+				else_if = {
+					limit = {
+						is_female = yes
+						#NOT = { government = monarchy }
+						#NOT = { government = theocracy }
+						piety = 0.20
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+						NOT = { MIL = 4 }
+						MIL = 2
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						#6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						3 = { country_event = { id = personality.11 } } #misguided_warrior
+						3 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						#7 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# is_female-devout-OK-bad_MIL
+				else_if = {
+					limit = {
+						is_female = yes
+						#NOT = { government = monarchy }
+						#NOT = { government = theocracy }
+						piety = 0.20
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+						NOT = { MIL = 2 }
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						3 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						3 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						#6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						3 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						#3 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# is_female-devout-dumb-good_MIL
+				else_if = {
+					limit = {
+						is_female = yes
+						#NOT = { government = monarchy }
+						#NOT = { government = theocracy }
+						piety = 0.20
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						MIL = 4
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						#3 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						#6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						#7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						#7 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# is_female-devout-dumb-OK_MIL
+				else_if = {
+					limit = {
+						is_female = yes
+						#NOT = { government = monarchy }
+						#NOT = { government = theocracy }
+						piety = 0.20
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						NOT = { MIL = 4 }
+						MIL = 2
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						#6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						#6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						#7 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# is_female-devout-dumb-bad_MIL
+				else_if = {
+					limit = {
+						is_female = yes
+						#NOT = { government = monarchy }
+						#NOT = { government = theocracy }
+						piety = 0.20
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						NOT = { MIL = 2 }
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						#6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						#6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						#3 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# is_female-not_devout-smart-good_MIL
+				else_if = {
+					limit = {
+						is_female = yes
+						#NOT = { government = monarchy }
+						#NOT = { government = theocracy }
+						NOT = { piety = 0.20 }
+						OR = { ADM = 4 DIP = 4 }
+						MIL = 4
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						3 = { country_event = { id = personality.04 } } #elusive_shadow
+						3 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						#3 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						#7 = { country_event = { id = personality.11 } } #misguided_warrior
+						#7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						#7 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# is_female-not_devout-smart-OK_MIL
+				else_if = {
+					limit = {
+						is_female = yes
+						#NOT = { government = monarchy }
+						#NOT = { government = theocracy }
+						NOT = { piety = 0.20 }
+						OR = { ADM = 4 DIP = 4 }
+						NOT = { MIL = 4 }
+						MIL = 2
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						#6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						3 = { country_event = { id = personality.11 } } #misguided_warrior
+						#7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						#3 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# is_female-not_devout-smart-bad_MIL
+				else_if = {
+					limit = {
+						is_female = yes
+						#NOT = { government = monarchy }
+						#NOT = { government = theocracy }
+						NOT = { piety = 0.20 }
+						OR = { ADM = 4 DIP = 4 }
+						NOT = { MIL = 2 }
+					}
+					random_list = {
+						#7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						#6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						#7 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						3 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						#3 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# is_female-not_devout-OK-good_MIL
+				else_if = {
+					limit = {
+						is_female = yes
+						#NOT = { government = monarchy }
+						#NOT = { government = theocracy }
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+						MIL = 4
+					}
+					random_list = {
+						3 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						#6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						3 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						#7 = { country_event = { id = personality.14 } } #tough_soldier
+						6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# is_female-not_devout-OK-OK_MIL
+				else_if = {
+					limit = {
+						is_female = yes
+						#NOT = { government = monarchy }
+						#NOT = { government = theocracy }
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+						NOT = { MIL = 4 }
+						MIL = 2
+					}
+					random_list = {
+						3 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						#6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						3 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						#7 = { country_event = { id = personality.14 } } #tough_soldier
+						3 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# is_female-not_devout-OK-bad_MIL
+				else_if = {
+					limit = {
+						is_female = yes
+						#NOT = { government = monarchy }
+						#NOT = { government = theocracy }
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 4 }
+						NOT = { DIP = 4 }
+						OR = { ADM = 2 DIP = 2 }
+						NOT = { MIL = 2 }
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						#6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						3 = { country_event = { id = personality.07 } } #hopeless_spender
+						6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						#3 = { country_event = { id = personality.14 } } #tough_soldier
+						3 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# is_female-not_devout-dumb-good_MIL
+				else_if = {
+					limit = {
+						is_female = yes
+						#NOT = { government = monarchy }
+						#NOT = { government = theocracy }
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						MIL = 4
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						3 = { country_event = { id = personality.02 } } #brilliant_strategist
+						3 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						3 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						#6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						3 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						#7 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# is_female-not_devout-dumb-OK_MIL
+				else_if = {
+					limit = {
+						is_female = yes
+						#NOT = { government = monarchy }
+						#NOT = { government = theocracy }
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						NOT = { MIL = 4 }
+						MIL = 2
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						3 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						#7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						#6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						#6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#3 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						3 = { country_event = { id = personality.13 } } #silver_tongue
+						#7 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+				# is_female-not_devout-dumb-bad_MIL
+				else_if = {
+					limit = {
+						is_female = yes
+						#NOT = { government = monarchy }
+						#NOT = { government = theocracy }
+						NOT = { piety = 0.20 }
+						NOT = { ADM = 2 }
+						NOT = { DIP = 2 }
+						NOT = { MIL = 2 }
+					}
+					random_list = {
+						7 = { country_event = { id = personality.01 } } #amateurish_pettifogger
+						#6 = { country_event = { id = personality.02 } } #brilliant_strategist
+						#7 = { country_event = { id = personality.03 } } #charismatic_negotiator
+						7 = { country_event = { id = personality.04 } } #elusive_shadow
+						7 = { country_event = { id = personality.05 } } #flamboyant_schemer
+						#6 = { country_event = { id = personality.06 } } #gruff_diplomat
+						7 = { country_event = { id = personality.07 } } #hopeless_spender
+						#6 = { country_event = { id = personality.08 } } #intricate_webweaver
+						#7 = { country_event = { id = personality.09 } } #knowledged_tactician
+						6 = { country_event = { id = personality.10 } } #midas_touched
+						7 = { country_event = { id = personality.11 } } #misguided_warrior
+						7 = { country_event = { id = personality.12 } } #naive_wirepuller
+						7 = { country_event = { id = personality.13 } } #silver_tongue
+						#7 = { country_event = { id = personality.14 } } #tough_soldier
+						#6 = { country_event = { id = personality.15 } } #grey_eminence
+						#7 = { country_event = { id = personality.22 } } #fanatical_priest
+						#7 = { country_event = { id = personality.23 } } #martial_cleric
+						#7 = { country_event = { id = personality.24 } } #master_theologian
+						#7 = { country_event = { id = personality.25 } } #scholarly_theologian
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = "OPT.VERYWELL"
+		#		if = {
+		#			limit = {
+		#				ai = no
+		#				NOT = { has_global_flag = courtsetup }
+		#			}
+		#			country_event = { id = court.001 days = 10 }
+		#		}
+		set_global_flag = courtsetup
+	}
+}
+
+country_event = {
+	id = on_new_monarch.3
+	title = EVT_AI
+	desc = EVT_AI
+	picture = DEATH_OF_HEIR_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	trigger = {
+		has_country_flag = had_regency
+		has_consort_regency = no
+		has_regency = no
+	}
+	
+	option = {
+		name = OPT.VERYWELL
+		clr_country_flag = had_regency
+	}
+}
+

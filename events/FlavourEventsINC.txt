@@ -1,0 +1,1226 @@
+########################################
+# Flavor Events for Incan
+#
+# Scripted by Sara Wendel-Örtqvist
+########################################
+
+namespace = flavor_inc
+normal_or_historical_nations = yes
+
+# The Incan Civil War
+#country_event = {
+#	id = flavor_inc.1
+#	title = "flavor_inc.EVTNAME1"
+#	desc = "flavor_inc.EVTDESC1"
+#	picture = CIVIL_WAR_eventPicture
+#	
+#	fire_only_once = yes
+#	
+#	trigger = {
+#		tag = INC
+#		#is_year = 1500
+#		NOT = { is_year = 1600 }
+#		has_regency = no
+#		OR = {
+#			NOT = {
+#				adm = 0
+#			}
+#			NOT = {
+#				mil = 0
+#			}
+#			NOT = {
+#				dip = 0
+#			}
+#		}
+#	}
+#	
+#	mean_time_to_happen = {
+#		months = 2000
+#	}
+#	
+#	option = {
+#		name = "flavor_inc.EVTOPTA1"
+#		random_owned_province = {
+#			limit = {
+#				is_core = ROOT
+#				NOT = { has_province_modifier = pretender_organizing }
+#			}
+#			add_province_modifier = {
+#				name = "pretender_organizing"
+#				duration = 1825
+#			}
+#			hidden_effect = {
+#				set_variable = { which = added_unrest value = 5 }
+#				add_base_unrest = yes
+#			}
+#			custom_tooltip = added_unrest_5
+#		}
+#		random_owned_province = {
+#			limit = {
+#				is_core = ROOT
+#				NOT = { has_province_modifier = pretender_organizing }
+#			}
+#			add_province_modifier = {
+#				name = "pretender_organizing"
+#				duration = 1825
+#			}
+#			hidden_effect = {
+#				set_variable = { which = added_unrest value = 5 }
+#				add_base_unrest = yes
+#			}
+#			custom_tooltip = added_unrest_5
+#		}
+#		random_owned_province = {
+#			limit = {
+#				is_core = ROOT
+##				NOT = { has_province_modifier = pretender_organizing }
+#		}
+#			add_province_modifier = {
+#				name = "pretender_organizing"
+#				duration = 1825
+#			}
+#			hidden_effect = {
+#				set_variable = { which = added_unrest value = 5 }
+#				add_base_unrest = yes
+#			}
+#			custom_tooltip = added_unrest_5
+#		}
+#		random_owned_province = {
+#			limit = {
+#				is_core = ROOT
+#				NOT = { has_province_modifier = pretender_organizing }
+#			}
+#			add_province_modifier = {
+#				name = "pretender_organizing"
+#				duration = 1825
+#			}
+#			hidden_effect = {
+#				set_variable = { which = added_unrest value = 5 }
+#				add_base_unrest = yes
+#			}
+#			custom_tooltip = added_unrest_5
+###		}
+#	random_owned_province = {
+#			limit = {
+#				is_core = ROOT
+#				NOT = { has_province_modifier = pretender_organizing }
+#			}
+#			add_province_modifier = {
+#				name = "pretender_organizing"
+#				duration = 1825
+#			}
+#			hidden_effect = {
+#				set_variable = { which = added_unrest value = 5 }
+#				add_base_unrest = yes
+#			}
+#			custom_tooltip = added_unrest_5
+#		}
+#	}
+#}
+
+# Fall of the Chanka & the Rise of Cusco
+country_event = {
+	id = flavor_inc.2
+	title = flavor_inc.2.t
+	desc = flavor_inc.2.d
+	picture = ADVISOR_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		owns = 2067 # Vilcashuaman
+		OR = {
+			tag = CZC
+			AND = {
+				tag = INC
+				capital = 2068
+			}
+		}
+		OR = {
+			adm = 3
+			dip = 3
+		}
+		NOT = { exists = AYA }
+		NOT = { is_year = 1450 }
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = { #Long live Pacachuti, he who makes the Earth Shake!
+		name = flavor_inc.2.a
+		hidden_effect = {
+			country_event = { id = flavor_inc.3 days = 185 }
+		}
+		add_years_of_income = 0.5
+		add_adm_power = 75
+		add_dip_power = 75
+		add_mil_power = 75
+	}
+}
+
+# Cusco - Navel of the World
+country_event = {
+	id = flavor_inc.3
+	title = flavor_inc.3.t
+	desc = flavor_inc.3.d
+	picture = CITY_VIEW_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		owns = 2068 #Though losing this is very unlikely.
+	}
+	
+	option = { #Let us create a worthy capital!
+		name = flavor_inc.3.a
+		ai_chance = { factor = 1 }
+		set_country_flag = inc_cusco_began
+		2068 = {
+			add_province_modifier = {
+				name = "inc_cusco_construction"
+				duration = 7300	#Illustrates the length of construction
+			}
+		}
+		add_prestige = 10
+		add_adm_power = -15
+		add_dip_power = -15
+	}
+	option = { #Our resources are better used for other things.
+		name = flavor_inc.3.b
+		ai_chance = { factor = 0 }
+		add_stability_1 = yes
+	}
+}
+
+# Reconstruction of Cusco Complete
+country_event = {
+	id = flavor_inc.4
+	title = flavor_inc.4.t
+	desc = flavor_inc.4.d
+	picture = CITY_VIEW_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		owns = 2068 # Cuzco
+		OR = {
+			tag = CZC
+			AND = {
+				tag = INC
+				capital = 2068
+			}
+		}
+		had_country_flag = { flag = inc_cusco_began days = 7300 }
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = { #Great!
+		name = flavor_inc.4.a
+		2068 = {
+			add_building = great_temple
+		}
+	}
+}
+
+#Machu Pichu
+country_event = {
+	id = flavor_inc.5
+	title = flavor_inc.5.t
+	desc = flavor_inc.5.d
+	picture = CITY_VIEW_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		OR = {
+			tag = CZC
+			tag = INC
+		}
+		owns = 2068 # Cuzco
+		is_year = 1400
+		NOT = { is_year = 1500 }
+	}
+	
+	mean_time_to_happen = { years = 6 }
+	
+	option = { #Make it great.
+		name = flavor_inc.5.a
+		add_adm_power = -50
+		add_years_of_income = -0.1
+		2068 = {
+			add_province_modifier = {
+				name = "inc_machu_pichu"
+				duration = -1
+			}
+		}
+	}
+	option = { #Let's not get carried away.
+		name = flavor_inc.5.b
+		add_stability_1 = yes
+	}
+}
+#The Oracle of Pachacamac
+country_event = {
+	id = flavor_inc.21
+	title = flavor_inc.21.t
+	desc = flavor_inc.21.d
+	picture = RELIGION_eventPicture
+	
+	trigger = {
+		NOT = { religion = inti }
+		owns = 816 # Pachacamac
+		816 = {
+			has_province_modifier = inti_pachamac_oracle
+		}
+	}
+	
+	mean_time_to_happen = { months = 12 }
+	
+	option = { #Destroy the Temple
+		name = flavor_inc.21.a
+		ai_chance = { factor = 1 }
+		add_years_of_income = 0.01
+		816 = {
+			remove_province_modifier = inti_pachamac_oracle
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+	}
+	
+	option = { #This is a fascinating religion, let us embrace it instead.
+		ai_chance = { factor = 1 }
+		name = flavor_inc.21.b
+		trigger = {
+			religion_group = pagan
+			is_colonial_nation = no
+			NOT = { religion = nahuatl }
+			NOT = { religion = mesoamerican_religion }
+		}
+		change_religion = inti
+		trib_king_effect = yes
+	}
+	option = { #Let them worship the idol.
+		name = flavor_inc.21.c
+		trigger = { full_idea_group = humanist_ideas }
+		ai_chance = { factor = 0 }
+		add_stability_1 = yes
+		816 = {
+			remove_province_modifier = inti_pachamac_oracle
+		}
+	}
+}
+
+country_event = {
+	id = flavor_inc.11
+	title = flavor_inc.11.t
+	desc = flavor_inc.11.d
+	picture = ADVISOR_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = INC
+		has_country_modifier = title_6
+		num_of_cities = 25
+		government = monarchy
+		any_known_country = { capital_scope = { continent = europe } }
+		has_regency = no
+	}
+	
+	mean_time_to_happen = { months = 24 }
+	
+	option = { #Support Atahualpa
+		name = flavor_inc.11.a
+		set_country_flag = inc_civil_war_support_atahualpa
+		subtract_stability_2 = yes #Unexpected death of king, civil war and epidemics
+		add_legitimacy = -40 #Not rightful heir
+		kill_heir = yes
+		define_ruler = {
+			name = "Atahualpa"
+			dynasty = ROOT
+			dip = 5
+		}
+		capital_scope = {
+			spawn_rebels = {
+				type = pretender_rebels
+				size = 3
+				leader = "Huascar Inca"
+			}
+			every_neighbor_province = {
+				limit = {
+					owned_by = ROOT
+				}
+				spawn_rebels = {
+					type = pretender_rebels
+					size = 1
+				}
+			}
+		}
+	}
+	option = { #Support Huascar
+		name = flavor_inc.11.b
+		set_country_flag = inc_civil_war_support_huascar
+		subtract_stability_2 = yes #Unexpected death of king, civil war and epidemics
+		add_legitimacy = -40 #Not a strong claim and most prefer Atahualpa.
+		kill_heir = yes
+		define_ruler = {
+			name = "Huascar"
+			dynasty = ROOT
+		}
+		random_owned_province = {
+			limit = { is_capital = no }
+			spawn_rebels = {
+				type = pretender_rebels
+				size = 3
+				leader = "Atahualpa Inca"
+			}
+			every_neighbor_province = {
+				limit = {
+					owned_by = ROOT
+				}
+				spawn_rebels = {
+					type = pretender_rebels
+					size = 1
+				}
+			}
+		}
+	}
+}
+
+#Policies of Huascar
+country_event = {
+	id = flavor_inc.12
+	title = flavor_inc.12.t
+	desc = flavor_inc.12.d
+	picture = COURT_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = INC
+		OR = {
+			has_country_flag = inc_civil_war_support_huascar
+			has_country_flag = inc_civil_war_support_atahualpa
+		}
+	}
+	
+	mean_time_to_happen = { months = 6 }
+	
+	option = { #We must keep our true friends close, traditions are made to be broken.
+		name = flavor_inc.12.a
+		trigger = { has_country_flag = inc_civil_war_support_huascar }
+		add_legitimacy = 20
+	}
+	option = { #Try to placate the traditional nobility.
+		name = flavor_inc.12.b
+		trigger = { has_country_flag = inc_civil_war_support_huascar }
+		add_stability_1 = yes
+	}
+	
+	option = { #We shall be everything Huascar is not.
+		name = flavor_inc.12.c
+		trigger = { has_country_flag = inc_civil_war_support_atahualpa }
+		add_legitimacy = 10
+	}
+}
+
+#End of the Civil War
+country_event = {
+	id = flavor_inc.13
+	title = flavor_inc.13.t
+	desc = flavor_inc.13.d
+	picture = CIVIL_WAR_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = INC
+		OR = {
+			has_country_flag = inc_civil_war_support_huascar
+			has_country_flag = inc_civil_war_support_atahualpa
+		}
+		NOT = { num_of_rebel_armies = 1 }
+		NOT = {
+			any_owned_province = {
+				controlled_by = REB
+			}
+		}
+	}
+	
+	mean_time_to_happen = { months = 6 }
+	
+	option = { #Let it be known what happens to those who would defy us.
+		name = flavor_inc.13.a
+		add_legitimacy = 25 #Those that did not support this candidate to start with are crushed.
+		subtract_stability_2 = yes #Unusually harsh response, burning of mummified ancestor.
+	}
+	option = { #Let us exact more moderate retribution.
+		name = flavor_inc.13.b
+		add_stability_1 = yes #End of a civil war.
+		add_legitimacy = -10 #Still doubt about the succession.
+	}
+}
+
+#Capture and Ransom of the Sapa Inca
+country_event = {
+	id = flavor_inc.14
+	title = flavor_inc.14.t
+	desc = flavor_inc.14.d
+	picture = EXPLORERS_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		capital_scope = { continent = europe }
+		war_with = INC
+		OR = {
+			war_score_against = {
+				who = INC
+				value = 75
+			}
+			INC = {
+				capital_scope = { controlled_by = ROOT }
+				has_regency = no
+			}
+		}
+	}
+	
+	mean_time_to_happen = { months = 6 }
+	
+	option = { #Execute the Sapa Inca.
+		name = flavor_inc.14.a
+		ai_chance = { factor = 1 }
+		add_legitimacy = -5 #An attack on the monarchy, see historical reaction of Spanish kings
+		add_years_of_income = 0.5
+		custom_tooltip = flavor_inc.14.a.tt
+		tooltip = {
+			INC = {
+				kill_ruler = yes
+				subtract_stability_3 = yes
+				add_years_of_income = -0.5
+			}
+		}
+		INC = {
+			every_owned_province = {
+				add_claim = ROOT
+			}
+			country_event = { id = flavor_inc.15 }	#Revolt of Incan subjects.
+		}
+	}
+	option = { #Keep him as a hostage.
+		name = flavor_inc.14.b
+		ai_chance = { factor = 0 }
+		add_years_of_income = 0.5
+		custom_tooltip = flavor_inc.14.b.tt
+		tooltip = {
+			INC = {
+				subtract_stability_3 = yes
+				add_years_of_income = -0.5
+				add_dip_power = -50
+				add_mil_power = -50
+				add_adm_power = -50
+			}
+		}
+		INC = {
+			every_owned_province = {
+				add_claim = ROOT
+			}
+			country_event = { id = flavor_inc.16 } #Incan subjects won't revolt,
+		}
+	}
+}
+
+#Capture and Ransom of the Sapa Inca
+country_event = {
+	id = flavor_inc.15
+	title = flavor_inc.15.t
+	desc = flavor_inc.15.d
+	picture = EXPLORERS_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = { #We will not bow!
+		name = flavor_inc.15.a
+		subtract_stability_3 = yes
+		add_years_of_income = -0.5
+		kill_ruler = yes
+		random_owned_province = {
+			limit = {
+				can_spawn_rebels = nationalist_rebels
+				controlled_by = ROOT
+			}
+			spawn_rebels = {
+				type = nationalist_rebels
+				size = 2
+				win = yes
+				friend = FROM
+			}
+		}
+		random_owned_province = {
+			limit = {
+				can_spawn_rebels = nationalist_rebels
+				controlled_by = ROOT
+			}
+			spawn_rebels = {
+				type = nationalist_rebels
+				size = 2
+				win = yes
+				friend = FROM
+			}
+		}
+		random_owned_province = {
+			limit = {
+				can_spawn_rebels = nationalist_rebels
+				controlled_by = ROOT
+			}
+			spawn_rebels = {
+				type = nationalist_rebels
+				size = 2
+				win = yes
+				friend = FROM
+			}
+		}
+		random_owned_province = {
+			limit = {
+				can_spawn_rebels = nationalist_rebels
+				controlled_by = ROOT
+			}
+			spawn_rebels = {
+				type = nationalist_rebels
+				size = 2
+				win = yes
+				friend = FROM
+			}
+		}
+		random_owned_province = {
+			limit = {
+				can_spawn_rebels = nationalist_rebels
+				controlled_by = ROOT
+			}
+			spawn_rebels = {
+				type = nationalist_rebels
+				size = 2
+				win = yes
+				friend = FROM
+			}
+		}
+	}
+}
+
+#Capture and Ransom of the Sapa Inca
+country_event = {
+	id = flavor_inc.16
+	title = flavor_inc.16.t
+	desc = flavor_inc.16.d
+	picture = EXPLORERS_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = { #His heir will take his place.
+		name = flavor_inc.16.a
+		trigger = { has_heir = yes }
+		kill_ruler = yes
+		subtract_stability_3 = yes
+		add_years_of_income = -0.5
+		add_dip_power = -50 #Up until this point the ruler is locked up and can't rule.
+		add_mil_power = -50 #Up until this point the ruler is locked up and can't rule.
+		add_adm_power = -50 #Up until this point the ruler is locked up and can't rule.
+		random_owned_province = {
+			limit = {
+				is_capital = no
+			}
+			spawn_rebels = {
+				type = pretender_rebels
+				size = 3
+				win = yes
+			}
+		}
+	}
+	
+	option = { #His brother will take his place.
+		name = flavor_inc.16.b
+		trigger = { has_heir = no }
+		define_ruler = {
+			dynasty = ROOT
+		}
+		subtract_stability_3 = yes
+		add_years_of_income = -0.5
+		add_dip_power = -50 #Up until this point the ruler is locked up and can't rule.
+		add_mil_power = -50 #Up until this point the ruler is locked up and can't rule.
+		add_adm_power = -50 #Up until this point the ruler is locked up and can't rule.
+		random_owned_province = {
+			limit = {
+				is_capital = no
+			}
+			spawn_rebels = {
+				type = pretender_rebels
+				size = 4
+				win = yes
+			}
+		}
+	}
+}
+
+#Seaborne Merchants
+country_event = {
+	id = flavor_inc.17
+	title = flavor_inc.17.t
+	desc = flavor_inc.17.d
+	picture = HARBOUR_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = INC
+		has_idea_group = naval_ideas
+		owns = 816 # Pachacamac
+		government = monarchy
+		has_heir = yes
+		has_regency = no
+		heir_age = 15
+	}
+	
+	mean_time_to_happen = { years = 8 }
+	
+	option = { #Mount an expedition into the Pacific to find these islands.
+		name = flavor_inc.17.a
+		add_dip_power = -5
+		set_heir_flag = inc_pacific_exploration
+		custom_tooltip = flavor_inc.17.a.tt
+	}
+	option = { #Let us focus on the here and now and not on distant dreams.
+		name = flavor_inc.17.b
+		add_stability_1 = yes
+	}
+}
+
+#The Pacific Expedition - Tupac Returns
+country_event = {
+	id = flavor_inc.18
+	title = flavor_inc.18.t
+	desc = flavor_inc.18.d
+	picture = SHIP_SAILING_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = INC
+		has_heir_flag = inc_pacific_exploration
+		had_heir_flag = { flag = inc_pacific_exploration days = 270 }
+	}
+	
+	immediate = {
+		hidden_effect = {
+			clr_heir_flag = inc_pacific_exploration
+		}
+	}
+	
+	mean_time_to_happen = { months = 3 }
+	
+	option = { #An interesting experience
+		name = flavor_inc.18.a
+		add_prestige = 10
+		add_dip_power = 50
+	}
+	option = { #Let us use what we have learnt to improve the seafaring skills of our people.
+		name = flavor_inc.18.b
+		add_ruler_modifier = {
+			name = "inc_pacific_expedition"
+			duration = -1
+		}
+	}
+}
+
+#The Pacific Expedition - Prince Lost at Sea
+country_event = {
+	id = flavor_inc.19
+	title = flavor_inc.19.t
+	desc = flavor_inc.19.d
+	picture = SHIP_SAILING_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = INC
+		has_heir_flag = inc_pacific_exploration
+		had_heir_flag = { flag = inc_pacific_exploration days = 270 }
+	}
+	
+	immediate = {
+		hidden_effect = {
+			clr_heir_flag = inc_pacific_exploration
+		}
+	}
+	
+	mean_time_to_happen = { months = 3 }
+	
+	option = { #Such a shame.
+		name = flavor_inc.19.a
+		kill_heir = yes
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+	}
+}
+########################################
+# Flavor Events for Incan Expansion
+#
+# Scripted by khardinal
+########################################
+
+country_event = {
+	id = flavor_inc.51
+	title = flavor_inc.51.t
+	desc = flavor_inc.51.d
+	picture = RELIGION_eventPicture
+	
+	is_triggered_only = yes
+	
+	
+	option = { #Dip Subjugation
+		name = flavor_inc.51.a
+		ai_chance = { factor = 50 }
+		add_mil_power = -25
+		add_treasury = -75
+		if = {
+			limit = { has_country_flag = expand_southward_inca }
+			random_list = {
+				60 = { country_event = { id = flavor_inc.52 days = 300 } }
+				40 = { country_event = { id = flavor_inc.59 days = 300 } }
+			}
+		}
+		if = {
+			limit = { has_country_flag = expand_coastward_inca }
+			random_list = {
+				60 = { country_event = { id = flavor_inc.53 days = 300 } }
+				40 = { country_event = { id = flavor_inc.59 days = 300 } }
+			}
+		}
+		if = {
+			limit = { has_country_flag = expand_arequipa_inca }
+			random_list = {
+				60 = { country_event = { id = flavor_inc.54 days = 300 } }
+				40 = { country_event = { id = flavor_inc.59 days = 300 } }
+			}
+		}
+		if = {
+			limit = { has_country_flag = expand_caruma_inca }
+			random_list = {
+				60 = { country_event = { id = flavor_inc.55 days = 300 } }
+				40 = { country_event = { id = flavor_inc.59 days = 300 } }
+			}
+		}
+		if = {
+			limit = { has_country_flag = expand_hatun_kanar_inca }
+			random_list = {
+				60 = { country_event = { id = flavor_inc.56 days = 300 } }
+				40 = { country_event = { id = flavor_inc.59 days = 300 } }
+			}
+		}
+		if = {
+			limit = { has_country_flag = expand_huancabamba_inca }
+			random_list = {
+				60 = { country_event = { id = flavor_inc.57 days = 300 } }
+				40 = { country_event = { id = flavor_inc.59 days = 300 } }
+			}
+		}
+	}
+	option = { #Mil Subjugation
+		name = flavor_inc.51.b
+		ai_chance = { factor = 50 }
+		add_dip_power = -25
+		add_treasury = -75
+		if = {
+			limit = { has_country_flag = expand_southward_inca }
+			random_list = {
+				60 = { country_event = { id = flavor_inc.52 days = 300 } }
+				40 = { country_event = { id = flavor_inc.59 days = 300 } }
+			}
+		}
+		if = {
+			limit = { has_country_flag = expand_coastward_inca }
+			random_list = {
+				60 = { country_event = { id = flavor_inc.53 days = 300 } }
+				40 = { country_event = { id = flavor_inc.59 days = 300 } }
+			}
+		}
+		if = {
+			limit = { has_country_flag = expand_arequipa_inca }
+			random_list = {
+				60 = { country_event = { id = flavor_inc.54 days = 300 } }
+				40 = { country_event = { id = flavor_inc.59 days = 300 } }
+			}
+		}
+		if = {
+			limit = { has_country_flag = expand_caruma_inca }
+			random_list = {
+				60 = { country_event = { id = flavor_inc.55 days = 300 } }
+				40 = { country_event = { id = flavor_inc.59 days = 300 } }
+			}
+		}
+		if = {
+			limit = { has_country_flag = expand_hatun_kanar_inca }
+			random_list = {
+				60 = { country_event = { id = flavor_inc.56 days = 300 } }
+				40 = { country_event = { id = flavor_inc.59 days = 300 } }
+			}
+		}
+		if = {
+			limit = { has_country_flag = expand_huancabamba_inca }
+			random_list = {
+				60 = { country_event = { id = flavor_inc.57 days = 300 } }
+				40 = { country_event = { id = flavor_inc.59 days = 300 } }
+			}
+		}
+	}
+}
+
+country_event = {   ### CONQUEST EVENTS CAUSING SEVERE PROBLEMS WITH POP
+	id = flavor_inc.52
+	title = flavor_inc.52.t
+	desc = flavor_inc.52.d
+	picture = RELIGION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #CONQUEST
+		name = flavor_inc.52.a
+		ai_chance = { factor = 100 }
+		add_prestige = 10
+		if = {
+			limit = {
+				3423 = { is_city = no }
+			}
+			3423 = { add_core = ROOT cede_province = ROOT }
+		}
+		if = {
+			limit = {
+				3428 = { is_city = no }
+			}
+			3428 = { add_core = ROOT cede_province = ROOT }
+		}
+		if = {
+			limit = {
+				3429 = { is_city = no }
+			}
+			3429 = { add_core = ROOT cede_province = ROOT }
+		}
+		clr_country_flag = expand_southward_inca
+	}
+}
+
+country_event = {
+	id = flavor_inc.53
+	title = flavor_inc.53.t
+	desc = flavor_inc.53.d
+	picture = RELIGION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #CONQUEST
+		name = flavor_inc.52.a
+		ai_chance = { factor = 100 }
+		add_prestige = 10
+		if = {
+			limit = {
+				3430 = { is_city = no }
+			}
+			3430 = { add_core = ROOT cede_province = ROOT }
+		}
+		if = {
+			limit = {
+				3431 = { is_city = no }
+			}
+			3431 = { add_core = ROOT cede_province = ROOT }
+		}
+		clr_country_flag = expand_coastward_inca
+	}
+}
+
+country_event = {
+	id = flavor_inc.54
+	title = flavor_inc.54.t
+	desc = flavor_inc.54.d
+	picture = RELIGION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #CONQUEST
+		name = flavor_inc.52.a
+		ai_chance = { factor = 100 }
+		add_prestige = 10
+		if = {
+			limit = {
+				2339 = { is_city = no }
+			}
+			2339 = { add_core = ROOT cede_province = ROOT }
+		}
+		if = {
+			limit = {
+				3432 = { is_city = no }
+			}
+			3432 = { add_core = ROOT cede_province = ROOT }
+		}
+		clr_country_flag = expand_arequipa_inca
+	}
+}
+
+country_event = {
+	id = flavor_inc.55
+	title = flavor_inc.55.t
+	desc = flavor_inc.55.d
+	picture = RELIGION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #CONQUEST
+		name = flavor_inc.52.a
+		ai_chance = { factor = 100 }
+		add_prestige = 10
+		if = {
+			limit = {
+				3433 = { is_city = no }
+			}
+			3433 = { add_core = ROOT cede_province = ROOT }
+		}
+		if = {
+			limit = {
+				3434 = { is_city = no }
+			}
+			3434 = { add_core = ROOT cede_province = ROOT }
+		}
+		clr_country_flag = expand_caruma_inca
+	}
+}
+
+country_event = {
+	id = flavor_inc.56
+	title = flavor_inc.56.t
+	desc = flavor_inc.56.d
+	picture = RELIGION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #CONQUEST
+		name = flavor_inc.52.a
+		ai_chance = { factor = 100 }
+		add_prestige = 10
+		if = {
+			limit = {
+				796 = { is_city = no }
+			}
+			796 = { add_core = ROOT cede_province = ROOT }
+		}
+		if = {
+			limit = {
+				798 = { is_city = no }
+			}
+			798 = { add_core = ROOT cede_province = ROOT }
+		}
+		clr_country_flag = expand_hatun_kanar_inca
+	}
+}
+
+country_event = {
+	id = flavor_inc.57
+	title = flavor_inc.57.t
+	desc = flavor_inc.57.d
+	picture = RELIGION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #CONQUEST
+		name = flavor_inc.52.a
+		ai_chance = { factor = 100 }
+		add_prestige = 10
+		if = {
+			limit = {
+				3410 = { is_city = no }
+			}
+			3410 = { add_core = ROOT cede_province = ROOT }
+		}
+		if = {
+			limit = {
+				3409 = { is_city = no }
+			}
+			3409 = { add_core = ROOT cede_province = ROOT }
+		}
+		clr_country_flag = expand_huancabamba_inca
+	}
+}
+
+country_event = {
+	id = flavor_inc.59
+	title = flavor_inc.59.t
+	desc = flavor_inc.59.d
+	picture = RELIGION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #MORE
+		name = flavor_inc.59.a
+		ai_chance = { factor = 90 }
+		add_prestige = -5
+		add_adm_power = -10
+		add_dip_power = -10
+		add_mil_power = -10
+		if = {
+			limit = { has_country_flag = expand_southward_inca }
+			random_list = {
+				80 = { country_event = { id = flavor_inc.52 days = 300 } }
+				20 = { country_event = { id = flavor_inc.59 days = 300 } }
+			}
+		}
+		if = {
+			limit = { has_country_flag = expand_coastward_inca }
+			random_list = {
+				80 = { country_event = { id = flavor_inc.53 days = 300 } }
+				20 = { country_event = { id = flavor_inc.59 days = 300 } }
+			}
+		}
+		if = {
+			limit = { has_country_flag = expand_arequipa_inca }
+			random_list = {
+				80 = { country_event = { id = flavor_inc.54 days = 300 } }
+				20 = { country_event = { id = flavor_inc.59 days = 300 } }
+			}
+		}
+		if = {
+			limit = { has_country_flag = expand_caruma_inca }
+			random_list = {
+				80 = { country_event = { id = flavor_inc.55 days = 300 } }
+				20 = { country_event = { id = flavor_inc.59 days = 300 } }
+			}
+		}
+		if = {
+			limit = { has_country_flag = expand_hatun_kanar_inca }
+			random_list = {
+				80 = { country_event = { id = flavor_inc.56 days = 300 } }
+				20 = { country_event = { id = flavor_inc.59 days = 300 } }
+			}
+		}
+		if = {
+			limit = { has_country_flag = expand_huancabamba_inca }
+			random_list = {
+				80 = { country_event = { id = flavor_inc.57 days = 300 } }
+				20 = { country_event = { id = flavor_inc.59 days = 300 } }
+			}
+		}
+	}
+	
+	option = { #ABANDON
+		name = flavor_inc.59.b
+		ai_chance = { factor = 10 }
+		add_prestige = -5
+		clr_country_flag = expand_southward_inca
+		clr_country_flag = expand_coastward_inca
+		clr_country_flag = expand_arequipa_inca
+		clr_country_flag = expand_caruma_inca
+		clr_country_flag = expand_hatun_kanar_inca
+	}
+}
+
+# Rebellion against Cuzco domination
+country_event = {
+	id = flavor_inc.60
+	title = "flavor_inc.60.t"
+	desc = "flavor_inc.60.d"
+	picture = RECONQUISTA_eventPicture
+	
+	trigger = {
+		tag = AYA
+		exists = CZC
+		vassal_of = CZC
+		ai = yes
+		is_at_war = no
+		CZC = {
+			is_at_war = no
+			NOT = { truce_with = ROOT }
+			#NOT = { has_opinion = { who = ROOT value = 150 } }
+		}
+		NOT = { exists = INC }
+	}
+	
+	mean_time_to_happen = {
+		years = 50
+		modifier = {
+			factor = 0.75
+			CZC = { NOT = { stability = 0 } }
+		}
+		modifier = {
+			factor = 0.75
+			CZC = { NOT = { legitimacy = 75 } }
+		}
+		modifier = {
+			factor = 0.9
+			NOT = { has_opinion = { who = ROOT value = 50 } }
+		}
+		modifier = {
+			factor = 0.9
+			NOT = { has_opinion = { who = ROOT value = 0 } }
+		}
+	}
+	
+	
+	option = {
+		name = "flavor_inc.60.a"
+		declare_war_with_cb = {
+			who = CZC
+			casus_belli = cb_independence_war
+		}
+		every_owned_province = {
+			add_core = CZC
+		}
+	}
+}
+
+########################################
+# Events for Mapuche
+#
+# written by Sara Wendel-Örtqvist
+########################################
+
+# State Organisation
+country_event = {
+	id = flavor_mpc.2
+	title = flavor_mpc.2.t
+	desc = flavor_mpc.2.d
+	picture = CONQUEST_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = MAP
+		OR = {
+			is_neighbor_of = INC
+			truce_with = INC
+			war_with = INC
+		}
+	}
+	
+	mean_time_to_happen = { months = 32 }
+	
+	option = {
+		name = flavor_mpc.2.a
+		add_stability_1 = yes
+		add_army_tradition = 15
+		add_prestige = 10
+	}
+	#option = {
+	#	name = flavor_mpc.2.b
+	#	add_army_tradition = 10
+	#}
+}

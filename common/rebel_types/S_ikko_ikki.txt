@@ -1,0 +1,143 @@
+ikko_ikki_rebels = {
+	
+	color = { 200 150 80 }
+	area = nation					# Stays within the nation
+	government = theocracy
+	defection = none				# Does not defect
+	independence = none				# Does not strive for independence
+	unit_transfer = yes
+	gfx_type = culture_province
+	
+	resilient = yes
+	reinforcing = no
+	general = yes
+	smart = no
+	
+	artillery = 0.0
+	infantry = 1.0
+	cavalry = 0.0
+	
+	morale = 1.0
+	
+	# Possible handle actions
+	handle_action_negotiate = no
+	handle_action_stability = no
+	handle_action_build_core = no
+	handle_action_send_missionary = yes
+	
+	# The rebel type with the highest modifier for this province gets picked
+	spawn_chance = {
+		factor = 1
+		modifier = {
+			factor = 0.1
+			NOT = { culture_group = japanese }
+		}
+		modifier = {
+			factor = 0.1
+			NOT = { religion = mahayana }
+		}
+		modifier = {
+			factor = 0.1
+			owner = { government = theocracy }
+		}
+		modifier = {
+			owner = { tag = IKK }
+			factor = 0.1
+		}
+		modifier = {
+			is_core = IKK
+			factor = 5
+		}
+		modifier = {
+			has_province_modifier = feuding_monks
+			factor = 5
+		}
+		modifier = {
+			has_province_modifier = temple_town_pure_land
+			factor = 5
+		}
+		modifier = {
+			has_province_modifier = ikki_league
+			factor = 10
+		}
+		modifier = {
+			factor = 2
+			has_global_flag = abbot_rennyo
+		}
+		modifier = {
+			factor = 0.5
+			has_global_flag = ikko_ikki
+		}
+		modifier = {
+			factor = 0.5
+			is_overseas = yes
+		}
+		modifier = {
+			factor = 0.5
+			owner = { government = republic }
+		}
+		modifier = {
+			has_province_modifier = ikko_ikki_organizing
+			factor = 2
+		}
+	}
+	
+	# This is checked for EACH province in the Area of Operations
+	movement_evaluation = {
+		factor = 1
+		modifier = {
+			factor = 0.1
+			units_in_province = 1
+		}
+		modifier = {
+			factor = 0.1
+			controlled_by = REB
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 2
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 4
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 6
+		}
+	}
+	
+	# Province Scope
+	siege_won_trigger = {
+		religion = mahayana
+	}
+	siege_won_effect = {
+		owner = { set_country_flag = ikko_ikki_rebels }
+		if = {
+			limit = { is_core = IKK }
+			cede_province = IKK
+		}
+		add_core = IKK
+	}
+	
+	# Country scope
+	can_negotiate_trigger = {
+		always = no
+	}
+	
+	# Country scope
+	can_enforce_trigger = {
+		always = yes
+	}
+	
+	# Localisation for their demands
+	demands_description = "ikko_ikki_rebels_demand"
+	
+	# Country Scope
+	demands_enforced_effect = {
+		every_owned_province = {
+			add_local_autonomy = 20
+		}
+		add_prestige = -50
+	}
+}

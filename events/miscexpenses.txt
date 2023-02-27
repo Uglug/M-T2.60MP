@@ -1,0 +1,120 @@
+namespace = miscexpenses
+
+# Used to move the capital modifiers if the capital changes.
+country_event = {
+	id = miscexpenses.001
+	title = miscexpenses.001.t
+	desc = miscexpenses.001.d
+	picture = REFORM_eventPicture
+	#is_triggered_only = no
+	hidden = yes
+	
+	trigger = {
+		capital_scope = {
+			is_state = yes
+			NOT = {
+				is_variable_equal = {
+					which = misc_expenses_cache
+					which = ROOT
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	immediate = {
+		if = {
+			limit = {
+				capital_scope = {
+					NOT = {
+						is_variable_equal = {
+							which = misc_expenses_cache
+							which = ROOT
+						}
+					}
+				}
+			}
+			every_owned_province = {
+				remove_misc_expense_modifiers = yes
+				set_variable = {
+					which = misc_expenses_cache
+					value = 0
+				}
+			}
+			calc_misc_expenses = yes
+		}
+	}
+	
+	option = {
+		name = miscexpenses.001.a
+	}
+}
+
+# Recalculates misc expenses.
+country_event = {
+	id = miscexpenses.002
+	title = miscexpenses.002.t
+	desc = miscexpenses.002.d
+	picture = REFORM_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		calc_misc_expenses = yes
+	}
+	
+	option = {
+		name = miscexpenses.002.a
+	}
+}
+
+# Does legacy misc expenses if capital is not a state
+country_event = {
+	id = miscexpenses.901
+	title = no_localisation
+	desc = no_localisation
+	picture = REFORM_eventPicture
+	hidden = yes
+	
+	trigger = {
+		capital_scope = { is_territory = yes }
+		NOT = { has_country_flag = legacy_misc_expenses }
+	}
+	mean_time_to_happen = { months = 1 }
+	
+	immediate = {
+		set_country_flag = legacy_misc_expenses
+		every_owned_province = {
+			remove_misc_expense_modifiers = yes
+			set_variable = {
+				which = misc_expenses_cache
+				value = 0
+			}
+		}
+		calc_misc_expenses = yes
+	}
+	option = { }
+}
+
+# Does proper misc expenses if capital is a state
+country_event = {
+	id = miscexpenses.902
+	title = no_localisation
+	desc = no_localisation
+	picture = REFORM_eventPicture
+	hidden = yes
+	
+	trigger = {
+		capital_scope = { is_state = yes }
+		has_country_flag = legacy_misc_expenses
+	}
+	mean_time_to_happen = { months = 1 }
+	
+	immediate = {
+		clr_country_flag = legacy_misc_expenses
+		remove_legacy_misc_expense_modifiers = yes
+		calc_misc_expenses = yes
+	}
+	option = { }
+}

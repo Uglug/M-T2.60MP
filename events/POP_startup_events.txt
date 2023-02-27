@@ -1,0 +1,5563 @@
+namespace = POP_startup_events
+########################################################
+### This event sets up the game for the POP Overhaul ###
+########################################################
+
+### By Demian
+### Rewritten by KJH
+
+### INDEX ###
+### ZERO-0 ----- : initialize pop variables and pop related stats
+### ONE-1 ------ : sets tech levels and sets food centers.  Food centers serve as de facto variable storage centers for regions, superregions, and continents.  Also assigns initial climate
+### TWO-2 ------ : tabulates rural and urban populations, then sets ideal population.  It also calculates initial rural growth rate and reference statistics.
+### THREE-3 ----- : sets farming efficiency in all provinces
+### FOUR-4 ------ : distributes starting game rural production power.  Countries which have lower urbanization start with higher rural production power.
+### FIVE-5 ---- : sets up rural goods and mines
+### SIX-6 -- : sets modifiers to give goods produced = to rural production power, alongside calculating food
+### SEVEN-7  : sets capital urban gravity bonuses.  The bigger the country, the bigger the urban gravity bonus in the country's capital
+### EIGHT-8  : recalculates starting autonomy using new POP data
+### NINE-9 - : assigns estates, sets up their starting wealth and power
+### TEN-10 - : sets up education, calculates university data and art power
+### ELEVEN-11 : Second half of educaiton/courts
+### TWELVE-12 : calculates the war chest of estates
+
+### ZERO-0 ###
+country_event = {
+	id = POP_startup_events.000
+	title = no_localisation
+	desc = no_localisation
+	picture = CITY_DEVELOPMENT_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	hidden = yes
+	
+	immediate = {
+		every_province = {
+			limit = {
+				is_wasteland = yes
+			}
+			#set_variable = { which = prov_id value = 0 }
+			set_variable = { which = prov_radius value = 0 }
+			set_variable = { which = prov_size value = 0 }
+			set_variable = { which = x_coord value = 0 }
+			set_variable = { which = y_coord value = 0 }
+		}
+		every_country = {
+			#limit = {
+			#	exists = yes
+			#}
+			add_treasury = 50
+			
+			### Revising Tech Variables ###
+			export_to_variable = {
+				which = tech_admin_level
+				value = adm_tech
+			}
+			export_to_variable = {
+				which = tech_diplo_level
+				value = dip_tech
+			}
+			export_to_variable = {
+				which = tech_milit_level
+				value = mil_tech
+			}
+			
+			set_variable = {    which = innate_rural_pop_tech	which = tech_admin_level }
+			change_variable = { which = innate_rural_pop_tech	which = tech_diplo_level }
+			divide_variable = { which = innate_rural_pop_tech	value = 150 }
+			change_variable = { which = innate_rural_pop_tech	value = 1 }
+		}
+		
+		POP_IF_distributions = yes
+		regiongroup = {
+			region = {
+				limit = {
+					is_wasteland = no
+					check_variable = { which = pop_share	value = 0.001 }
+				}
+				
+				set_variable = { which = innate_rural_pop_base	which = pop_share }
+				multiply_variable = { which = innate_rural_pop_base		value = 0.9 } # Allow tech to take partial ownership
+				
+				set_variable = { which = pop_share value = 0 }
+				
+				POP_IF_modifications = yes
+			}
+		}
+#		if = {
+#			limit = {
+#				is_year = 1850
+#			}
+#			POP_1850_distributions = yes
+#			regiongroup = {
+#				region = {
+#					limit = {
+#						is_wasteland = no
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = pop_share	value = 0.001 }
+#						}
+#						set_variable = { which = starting_rural_pop	which = pop_share }
+#						set_variable = { which = pop_share value = 0 }
+#						
+#						set_variable = { which = ideal_rural_pop	which = starting_rural_pop }
+#						if = {
+#							limit = {
+#								check_variable = { which = ideal_rural_pop	which = innate_rural_pop_base }
+#							}
+#							set_variable = { which = innate_rural_pop_base	which = ideal_rural_pop }
+#						}
+#					}
+#					### Setup historical plague immunity
+#					if = {
+#						limit = {
+#							OR = {
+#								continent = north_america
+#								continent = south_america
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 15 }
+#						if = {
+#							limit = {
+#								OR = {
+#									superregion = west_america_superregion
+#									superregion = east_america_superregion
+#									superregion = north_america_superregion
+#								}
+#							}
+#							set_variable = { which = province_plague_immunity value = 1 }
+#						}
+#					}
+#					else_if = {
+#						limit = {
+#							continent = oceania
+#						}
+#						set_variable = { which = province_plague_immunity value = 5 }
+#						if = {
+#							limit = {
+#								superregion = australia_superregion
+#							}
+#							set_variable = { which = province_plague_immunity value = -60 }
+#						}
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = europe
+#								continent = central_asia
+#								continent = mena
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 50 }
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = indian_continent
+#								continent = southeast_asia
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 50 }
+#					}
+#					else_if = {
+#						limit = {
+#							continent = north_asia
+#						}
+#						set_variable = { which = province_plague_immunity value = 15 }
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = east_asia
+#								continent = sub_sahara
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 50 }
+#						if = {
+#							limit = {
+#								area = hokkaido_area
+#							}
+#							set_variable = { which = province_plague_immunity value = 15 }
+#						}
+#					}
+#				}
+#			}
+#		}
+#		else_if = {
+#			limit = {
+#				is_year = 1800
+#			}
+#			POP_1800_distributions = yes
+#			regiongroup = {
+#				region = {
+#					limit = {
+#						is_wasteland = no
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = pop_share	value = 0.001 }
+#						}
+#						set_variable = { which = starting_rural_pop	which = pop_share }
+#						set_variable = { which = pop_share value = 0 }
+#						
+#						set_variable = { which = ideal_rural_pop	which = starting_rural_pop }
+#						if = {
+#							limit = {
+#								check_variable = { which = ideal_rural_pop	which = innate_rural_pop_base }
+#							}
+#							set_variable = { which = innate_rural_pop_base	which = ideal_rural_pop }
+#						}
+#					}
+#					### Setup historical plague immunity
+#					if = {
+#						limit = {
+#							OR = {
+#								continent = north_america
+#								continent = south_america
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 5 }
+#						if = {
+#							limit = {
+#								OR = {
+#									superregion = west_america_superregion
+#									superregion = east_america_superregion
+#									superregion = north_america_superregion
+#								}
+#							}
+#							set_variable = { which = province_plague_immunity value = -10 }
+#						}
+#					}
+#					else_if = {
+#						limit = {
+#							continent = oceania
+#						}
+#						set_variable = { which = province_plague_immunity value = 1 }
+#						if = {
+#							limit = {
+#								superregion = australia_superregion
+#							}
+#							set_variable = { which = province_plague_immunity value = -90 }
+#						}
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = europe
+#								continent = central_asia
+#								continent = mena
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 50 }
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = indian_continent
+#								continent = southeast_asia
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 50 }
+#					}
+#					else_if = {
+#						limit = {
+#							continent = north_asia
+#						}
+#						set_variable = { which = province_plague_immunity value = 10 }
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = east_asia
+#								continent = sub_sahara
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 50 }
+#						if = {
+#							limit = {
+#								area = hokkaido_area
+#							}
+#							set_variable = { which = province_plague_immunity value = 10 }
+#						}
+#					}
+#				}
+#			}
+#		}
+#		else_if = {
+#			limit = {
+#				is_year = 1750
+#			}
+#			POP_1750_distributions = yes
+#			regiongroup = {
+#				region = {
+#					limit = {
+#						is_wasteland = no
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = pop_share	value = 0.001 }
+#						}
+#						set_variable = { which = starting_rural_pop	which = pop_share }
+#						set_variable = { which = pop_share value = 0 }
+#						
+#						set_variable = { which = ideal_rural_pop	which = starting_rural_pop }
+#						if = {
+#							limit = {
+#								check_variable = { which = ideal_rural_pop	which = innate_rural_pop_base }
+#							}
+#							set_variable = { which = innate_rural_pop_base	which = ideal_rural_pop }
+#						}
+#					}
+#					### Setup historical plague immunity
+#					if = {
+#						limit = {
+#							OR = {
+#								continent = north_america
+#								continent = south_america
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 5 }
+#						if = {
+#							limit = {
+#								OR = {
+#									superregion = west_america_superregion
+#									superregion = east_america_superregion
+#									superregion = north_america_superregion
+#								}
+#							}
+#							set_variable = { which = province_plague_immunity value = -35 }
+#						}
+#					}
+#					else_if = {
+#						limit = {
+#							continent = oceania
+#						}
+#						set_variable = { which = province_plague_immunity value = -5 }
+#						if = {
+#							limit = {
+#								superregion = australia_superregion
+#							}
+#							set_variable = { which = province_plague_immunity value = -100 }
+#							set_province_flag = no_plagues
+#						}
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = europe
+#								continent = central_asia
+#								continent = mena
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 45 }
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = indian_continent
+#								continent = southeast_asia
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 45 }
+#					}
+#					else_if = {
+#						limit = {
+#							continent = north_asia
+#						}
+#						set_variable = { which = province_plague_immunity value = 5 }
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = east_asia
+#								continent = sub_sahara
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 45 }
+#						if = {
+#							limit = {
+#								area = hokkaido_area
+#							}
+#							set_variable = { which = province_plague_immunity value = 5 }
+#						}
+#					}
+#				}
+#			}
+#		}
+#		else_if = {
+#			limit = {
+#				is_year = 1700
+#			}
+#			POP_1700_distributions = yes
+#			regiongroup = {
+#				region = {
+#					limit = {
+#						is_wasteland = no
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = pop_share	value = 0.001 }
+#						}
+#						set_variable = { which = starting_rural_pop	which = pop_share }
+#						set_variable = { which = pop_share value = 0 }
+#						
+#						set_variable = { which = ideal_rural_pop	which = starting_rural_pop }
+#						if = {
+#							limit = {
+#								check_variable = { which = ideal_rural_pop	which = innate_rural_pop_base }
+#							}
+#							set_variable = { which = innate_rural_pop_base	which = ideal_rural_pop }
+#						}
+#					}
+#					### Setup historical plague immunity
+#					if = {
+#						limit = {
+#							OR = {
+#								continent = north_america
+#								continent = south_america
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = -5 }
+#						if = {
+#							limit = {
+#								OR = {
+#									superregion = west_america_superregion
+#									superregion = east_america_superregion
+#									superregion = north_america_superregion
+#								}
+#							}
+#							set_variable = { which = province_plague_immunity value = -50 }
+#						}
+#					}
+#					else_if = {
+#						limit = {
+#							continent = oceania
+#						}
+#						set_variable = { which = province_plague_immunity value = -10 }
+#						if = {
+#							limit = {
+#								superregion = australia_superregion
+#							}
+#							set_variable = { which = province_plague_immunity value = -100 }
+#							set_province_flag = no_plagues
+#						}
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = europe
+#								continent = central_asia
+#								continent = mena
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 40 }
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = indian_continent
+#								continent = southeast_asia
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 40 }
+#					}
+#					else_if = {
+#						limit = {
+#							continent = north_asia
+#						}
+#						set_variable = { which = province_plague_immunity value = 1 }
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = east_asia
+#								continent = sub_sahara
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 40 }
+#						if = {
+#							limit = {
+#								area = hokkaido_area
+#							}
+#							set_variable = { which = province_plague_immunity value = 1 }
+#						}
+#					}
+#				}
+#			}
+#		}
+#		else_if = {
+#			limit = {
+#				is_year = 1650
+#			}
+#			POP_1650_distributions = yes
+#			regiongroup = {
+#				region = {
+#					limit = {
+#						is_wasteland = no
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = pop_share	value = 0.001 }
+#						}
+#						set_variable = { which = starting_rural_pop	which = pop_share }
+#						set_variable = { which = pop_share value = 0 }
+#						
+#						set_variable = { which = ideal_rural_pop	which = starting_rural_pop }
+#						if = {
+#							limit = {
+#								check_variable = { which = ideal_rural_pop	which = innate_rural_pop_base }
+#							}
+#							set_variable = { which = innate_rural_pop_base	which = ideal_rural_pop }
+#						}
+#					}
+#					### Setup historical plague immunity
+#					if = {
+#						limit = {
+#							OR = {
+#								continent = north_america
+#								continent = south_america
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = -15 }
+#						if = {
+#							limit = {
+#								OR = {
+#									superregion = west_america_superregion
+#									superregion = east_america_superregion
+#									superregion = north_america_superregion
+#								}
+#							}
+#							set_province_flag = no_plagues
+#							set_variable = { which = province_plague_immunity value = -100 }
+#						}
+#					}
+#					else_if = {
+#						limit = {
+#							continent = oceania
+#						}
+#						set_variable = { which = province_plague_immunity value = -10 }
+#						if = {
+#							limit = {
+#								superregion = australia_superregion
+#							}
+#							set_variable = { which = province_plague_immunity value = -100 }
+#							set_province_flag = no_plagues
+#						}
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = europe
+#								continent = central_asia
+#								continent = mena
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 40 }
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = indian_continent
+#								continent = southeast_asia
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 40 }
+#					}
+#					else_if = {
+#						limit = {
+#							continent = north_asia
+#						}
+#						set_variable = { which = province_plague_immunity value = -15 }
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = east_asia
+#								continent = sub_sahara
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 40 }
+#						if = {
+#							limit = {
+#								area = hokkaido_area
+#							}
+#							set_variable = { which = province_plague_immunity value = -5 }
+#						}
+#					}
+#				}
+#			}
+#		}
+#		else_if = {
+#			limit = {
+#				is_year = 1600
+#			}
+#			POP_1600_distributions = yes
+#			regiongroup = {
+#				region = {
+#					limit = {
+#						is_wasteland = no
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = pop_share	value = 0.001 }
+#						}
+#						set_variable = { which = starting_rural_pop	which = pop_share }
+#						set_variable = { which = pop_share value = 0 }
+#						
+#						set_variable = { which = ideal_rural_pop	which = starting_rural_pop }
+#						if = {
+#							limit = {
+#								check_variable = { which = ideal_rural_pop	which = innate_rural_pop_base }
+#							}
+#							set_variable = { which = innate_rural_pop_base	which = ideal_rural_pop }
+#						}
+#					}
+#					### Setup historical plague immunity
+#					if = {
+#						limit = {
+#							OR = {
+#								continent = north_america
+#								continent = south_america
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = -25 }
+#						if = {
+#							limit = {
+#								OR = {
+#									mexico_distrib = no
+#									rio_grande_distrib = no
+#									carribean_distrib = no
+#									central_america_distrib = no
+#									greater_colombia_distrib = no
+#									central_andes_distrib = no
+#									brazil_distrib = no
+#									guyana_distrib = no
+#								}
+#							}
+#							set_province_flag = no_plagues
+#							set_variable = { which = province_plague_immunity value = -100 }
+#						}
+#					}
+#					else_if = {
+#						limit = {
+#							continent = oceania
+#						}
+#						set_variable = { which = province_plague_immunity value = -10 }
+#						if = {
+#							limit = {
+#								superregion = australia_superregion
+#							}
+#							set_variable = { which = province_plague_immunity value = -100 }
+#							set_province_flag = no_plagues
+#						}
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = europe
+#								continent = central_asia
+#								continent = mena
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 40 }
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = indian_continent
+#								continent = southeast_asia
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 40 }
+#					}
+#					else_if = {
+#						limit = {
+#							continent = north_asia
+#						}
+#						set_variable = { which = province_plague_immunity value = -20 }
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = east_asia
+#								continent = sub_sahara
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 40 }
+#						if = {
+#							limit = {
+#								area = hokkaido_area
+#							}
+#							set_variable = { which = province_plague_immunity value = -10 }
+#						}
+#					}
+#				}
+#			}
+#		}
+#		else_if = {
+#			limit = {
+#				is_year = 1550
+#			}
+#			POP_1550_distributions = yes
+#			regiongroup = {
+#				region = {
+#					limit = {
+#						is_wasteland = no
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = pop_share	value = 0.001 }
+#						}
+#						set_variable = { which = starting_rural_pop	which = pop_share }
+#						set_variable = { which = pop_share value = 0 }
+#						
+#						set_variable = { which = ideal_rural_pop	which = starting_rural_pop }
+#						if = {
+#							limit = {
+#								check_variable = { which = ideal_rural_pop	which = innate_rural_pop_base }
+#							}
+#							set_variable = { which = innate_rural_pop_base	which = ideal_rural_pop }
+#						}
+#					}
+#					### Setup historical plague immunity
+#					if = {
+#						limit = {
+#							OR = {
+#								continent = north_america
+#								continent = south_america
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = -60 }
+#						if = {
+#							limit = {
+#								OR = {
+#									mexico_distrib = no
+#									rio_grande_distrib = no
+#									carribean_distrib = no
+#									central_america_distrib = no
+#									greater_colombia_distrib = no
+#									central_andes_distrib = no
+#									brazil_distrib = no
+#								}
+#							}
+#							set_province_flag = no_plagues
+#							set_variable = { which = province_plague_immunity value = -100 }
+#						}
+#					}
+#					else_if = {
+#						limit = {
+#							continent = oceania
+#						}
+#						set_variable = { which = province_plague_immunity value = -10 }
+#						if = {
+#							limit = {
+#								superregion = australia_superregion
+#							}
+#							set_variable = { which = province_plague_immunity value = -100 }
+#							set_province_flag = no_plagues
+#						}
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = europe
+#								continent = central_asia
+#								continent = mena
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 40 }
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = indian_continent
+#								continent = southeast_asia
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 40 }
+#					}
+#					else_if = {
+#						limit = {
+#							continent = north_asia
+#						}
+#						set_variable = { which = province_plague_immunity value = -20 }
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = east_asia
+#								continent = sub_sahara
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 40 }
+#						if = {
+#							limit = {
+#								area = hokkaido_area
+#							}
+#							set_variable = { which = province_plague_immunity value = -15 }
+#						}
+#					}
+#				}
+#			}
+#		}
+#		else_if = {
+#			limit = {
+#				is_year = 1500
+#			}
+#			POP_1500_distributions = yes
+#			regiongroup = {
+#				region = {
+#					limit = {
+#						is_wasteland = no
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = pop_share	value = 0.001 }
+#						}
+#						set_variable = { which = starting_rural_pop	which = pop_share }
+#						set_variable = { which = pop_share value = 0 }
+#						
+#						set_variable = { which = ideal_rural_pop	which = starting_rural_pop }
+#						if = {
+#							limit = {
+#								check_variable = { which = ideal_rural_pop	which = innate_rural_pop_base }
+#							}
+#							set_variable = { which = innate_rural_pop_base	which = ideal_rural_pop }
+#						}
+#					}
+#					### Setup historical plague immunity
+#					if = {
+#						limit = {
+#							OR = {
+#								continent = north_america
+#								continent = south_america
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = -97 }
+#						if = {
+#							limit = {
+#								mexico_distrib = no
+#								rio_grande_distrib = no
+#								carribean_distrib = no
+#								central_america_distrib = no
+#							}
+#							set_province_flag = no_plagues
+#							set_variable = { which = province_plague_immunity value = -100 }
+#						}
+#					}
+#					else_if = {
+#						limit = {
+#							continent = oceania
+#						}
+#						set_variable = { which = province_plague_immunity value = -10 }
+#						if = {
+#							limit = {
+#								superregion = australia_superregion
+#							}
+#							set_variable = { which = province_plague_immunity value = -100 }
+#							set_province_flag = no_plagues
+#						}
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = europe
+#								continent = central_asia
+#								continent = mena
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 40 }
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = indian_continent
+#								continent = southeast_asia
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 35 }
+#					}
+#					else_if = {
+#						limit = {
+#							continent = north_asia
+#						}
+#						set_variable = { which = province_plague_immunity value = -25 }
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = east_asia
+#								continent = sub_sahara
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 35 }
+#						if = {
+#							limit = {
+#								area = hokkaido_area
+#							}
+#							set_variable = { which = province_plague_immunity value = -15 }
+#						}
+#					}
+#				}
+#			}
+#		}
+#		else_if = {
+#			limit = {
+#				is_year = 1450
+#			}
+#			POP_1450_distributions = yes
+#			regiongroup = {
+#				region = {
+#					limit = {
+#						is_wasteland = no
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = pop_share	value = 0.001 }
+#						}
+#						set_variable = { which = starting_rural_pop	which = pop_share }
+#						set_variable = { which = pop_share value = 0 }
+#						
+#						set_variable = { which = ideal_rural_pop	which = starting_rural_pop }
+#						if = {
+#							limit = {
+#								check_variable = { which = ideal_rural_pop	which = innate_rural_pop_base }
+#							}
+#							set_variable = { which = innate_rural_pop_base	which = ideal_rural_pop }
+#						}
+#					}
+#					### Setup historical plague immunity
+#					if = {
+#						limit = {
+#							OR = {
+#								continent = north_america
+#								continent = south_america
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = -100 }
+#						set_province_flag = no_plagues
+#					}
+#					else_if = {
+#						limit = {
+#							continent = oceania
+#						}
+#						set_variable = { which = province_plague_immunity value = -10 }
+#						if = {
+#							limit = {
+#								superregion = australia_superregion
+#							}
+#							set_variable = { which = province_plague_immunity value = -100 }
+#							set_province_flag = no_plagues
+#						}
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = europe
+#								continent = central_asia
+#								continent = mena
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 40 }
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = indian_continent
+#								continent = southeast_asia
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 35 }
+#					}
+#					else_if = {
+#						limit = {
+#							continent = north_asia
+#						}
+#						set_variable = { which = province_plague_immunity value = -25 }
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = east_asia
+#								continent = sub_sahara
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 35 }
+#						if = {
+#							limit = {
+#								area = hokkaido_area
+#							}
+#							set_variable = { which = province_plague_immunity value = -15 }
+#						}
+#					}
+#				}
+#			}
+#		}
+#		else_if = {
+#			limit = {
+#				is_year = 1400
+#			}
+#			POP_1400_distributions = yes
+#			regiongroup = {
+#				region = {
+#					limit = {
+#						is_wasteland = no
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = pop_share	value = 0.001 }
+#						}
+#						set_variable = { which = starting_rural_pop	which = pop_share }
+#						set_variable = { which = pop_share value = 0 }
+#						
+#						set_variable = { which = ideal_rural_pop	which = starting_rural_pop }
+#						if = {
+#							limit = {
+#								check_variable = { which = ideal_rural_pop	which = innate_rural_pop_base }
+#							}
+#							set_variable = { which = innate_rural_pop_base	which = ideal_rural_pop }
+#						}
+#					}
+#					# Europe
+#					if = {
+#						limit = {
+#							greece_distrib = yes
+#						}
+#						multiply_variable = { which = ideal_rural_pop		value = 1.05 }
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = ideal_rural_pop	which = innate_rural_pop_base }
+#						}
+#						set_variable = { which = innate_rural_pop_base	which = ideal_rural_pop }
+#					}
+#					### Setup historical plague immunity
+#					if = {
+#						limit = {
+#							OR = {
+#								continent = north_america
+#								continent = south_america
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = -100 }
+#						set_province_flag = no_plagues
+#					}
+#					else_if = {
+#						limit = {
+#							continent = oceania
+#						}
+#						set_variable = { which = province_plague_immunity value = -10 }
+#						if = {
+#							limit = {
+#								superregion = australia_superregion
+#							}
+#							set_variable = { which = province_plague_immunity value = -100 }
+#							set_province_flag = no_plagues
+#						}
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = europe
+#								continent = central_asia
+#								continent = mena
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 35 }
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = indian_continent
+#								continent = southeast_asia
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 35 }
+#					}
+#					else_if = {
+#						limit = {
+#							continent = north_asia
+#						}
+#						set_variable = { which = province_plague_immunity value = -25 }
+#					}
+#					else_if = {
+#						limit = {
+#							OR = {
+#								continent = east_asia
+#								continent = sub_sahara
+#							}
+#						}
+#						set_variable = { which = province_plague_immunity value = 35 }
+#						if = {
+#							limit = {
+#								area = hokkaido_area
+#							}
+#							set_variable = { which = province_plague_immunity value = -15 }
+#						}
+#					}
+#				}
+#			}
+#		}
+#		else = {
+			POP_1350_distributions = yes
+			regiongroup = {
+				region = {
+					limit = {
+						is_wasteland = no
+					}
+					if = {
+						limit = {
+							check_variable = { which = pop_share	value = 0.001 }
+						}
+						set_variable = { which = starting_rural_pop	which = pop_share }
+						set_variable = { which = pop_share value = 0 }
+						
+						set_variable = { which = ideal_rural_pop	which = starting_rural_pop }
+						if = {
+							limit = {
+								check_variable = { which = ideal_rural_pop	which = innate_rural_pop_base }
+							}
+							set_variable = { which = innate_rural_pop_base	which = ideal_rural_pop }
+						}
+					}
+					# Europe
+					if = {
+						limit = {
+							greece_distrib = yes
+						}
+						multiply_variable = { which = ideal_rural_pop		value = 1.1 }
+					}
+					if = {
+						limit = {
+							check_variable = { which = ideal_rural_pop	which = innate_rural_pop_base }
+						}
+						set_variable = { which = innate_rural_pop_base	which = ideal_rural_pop }
+					}
+					### Setup historical plague immunity
+					if = {
+						limit = {
+							OR = {
+								continent = north_america
+								continent = south_america
+							}
+						}
+						set_variable = { which = province_plague_immunity value = -100 }
+						set_province_flag = no_plagues
+					}
+					else_if = {
+						limit = {
+							continent = oceania
+						}
+						set_variable = { which = province_plague_immunity value = -10 }
+						if = {
+							limit = {
+								superregion = australia_superregion
+							}
+							set_variable = { which = province_plague_immunity value = -100 }
+							set_province_flag = no_plagues
+						}
+					}
+					else_if = {
+						limit = {
+							OR = {
+								continent = europe
+								continent = central_asia
+								continent = mena
+							}
+						}
+						set_variable = { which = province_plague_immunity value = 25 }
+					}
+					else_if = {
+						limit = {
+							OR = {
+								continent = indian_continent
+								continent = southeast_asia
+							}
+						}
+						set_variable = { which = province_plague_immunity value = 30 }
+					}
+					else_if = {
+						limit = {
+							continent = north_asia
+						}
+						set_variable = { which = province_plague_immunity value = -25 }
+					}
+					else_if = {
+						limit = {
+							OR = {
+								continent = east_asia
+								continent = sub_sahara
+							}
+						}
+						set_variable = { which = province_plague_immunity value = 35 }
+						if = {
+							limit = {
+								area = hokkaido_area
+							}
+							set_variable = { which = province_plague_immunity value = -15 }
+						}
+					}
+				}
+			}
+#		}
+		
+		regiongroup = {
+			region = {
+				limit = {
+					is_wasteland = no
+				}
+				set_variable = { which = total_pop					value = 0 }  ### Total Population of a province.
+				set_variable = { which = urban_ratio				value = 0 }	 ### Ratio of Urban to Total pop
+				set_variable = { which = ideal_rural_pop			value = 0 }  ### Used to determine rural growth rates.  If actual population is above ideal population, growth slows down.  If actual population is below ideal population, growth speeds up.
+				set_variable = { which = rural_density     			value = 0 }	 ### Rural Population divided by Ideal Population Level.  This is used to speed up or slow down growth in a province.
+				set_variable = { which = urban_density     			value = 0 }	 ### Urban Population divided by Urban Gravity.  This is used to speed up or slow down growth in a province.
+				set_variable = { which = rural_production_power 	value = 0 }  ### Determines how many goods are produced in rural areas.  Subtracts from food.
+				set_variable = { which = urban_production_power		value = 0 }  ### Determines how many goods are produced in cities.  Does NOT subtract from food.
+				
+#				if = {
+#					limit = {
+#						is_year = 1800
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = starting_rural_pop_1800	value = 0.001 }
+#						}
+#						set_variable = { which = starting_rural_pop	which = starting_rural_pop_1800 }
+#						set_province_flag = custom_urban
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = starting_urban_pop_1800	value = 0.001 }
+#						}
+#						set_variable = { which = starting_urban_pop	which = starting_urban_pop_1800 }
+#						set_province_flag = custom_urban
+#					}
+#				}
+#				else_if = {
+#					limit = {
+#						is_year = 1750
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = starting_rural_pop_1750	value = 0.001 }
+#						}
+#						set_variable = { which = starting_rural_pop	which = starting_rural_pop_1750 }
+#						set_province_flag = custom_urban
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = starting_urban_pop_1750	value = 0.001 }
+#						}
+#						set_variable = { which = starting_urban_pop	which = starting_urban_pop_1750 }
+#						set_province_flag = custom_urban
+#					}
+#				}
+#				else_if = {
+#					limit = {
+#						is_year = 1700
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = starting_rural_pop_1700	value = 0.001 }
+#						}
+#						set_variable = { which = starting_rural_pop	which = starting_rural_pop_1700 }
+#						set_province_flag = custom_urban
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = starting_urban_pop_1700	value = 0.001 }
+#						}
+#						set_variable = { which = starting_urban_pop	which = starting_urban_pop_1700 }
+#						set_province_flag = custom_urban
+#					}
+#				}
+#				else_if = {
+#					limit = {
+#						is_year = 1650
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = starting_rural_pop_1650	value = 0.001 }
+#						}
+#						set_variable = { which = starting_rural_pop	which = starting_rural_pop_1650 }
+#						set_province_flag = custom_urban
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = starting_urban_pop_1650	value = 0.001 }
+#						}
+#						set_variable = { which = starting_urban_pop	which = starting_urban_pop_1650 }
+#						set_province_flag = custom_urban
+#					}
+#				}
+#				else_if = {
+#					limit = {
+#						is_year = 1600
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = starting_rural_pop_1600	value = 0.001 }
+#						}
+#						set_variable = { which = starting_rural_pop	which = starting_rural_pop_1600 }
+#						set_province_flag = custom_urban
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = starting_urban_pop_1600	value = 0.001 }
+#						}
+#						set_variable = { which = starting_urban_pop	which = starting_urban_pop_1600 }
+#						set_province_flag = custom_urban
+#					}
+#				}
+#				else_if = {
+#					limit = {
+#						is_year = 1550
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = starting_rural_pop_1550	value = 0.001 }
+#						}
+#						set_variable = { which = starting_rural_pop	which = starting_rural_pop_1550 }
+#						set_province_flag = custom_urban
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = starting_urban_pop_1550	value = 0.001 }
+#						}
+#						set_variable = { which = starting_urban_pop	which = starting_urban_pop_1550 }
+#						set_province_flag = custom_urban
+#					}
+#				}
+#				else_if = {
+#					limit = {
+#						is_year = 1500
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = starting_rural_pop_1500	value = 0.001 }
+#						}
+#						set_variable = { which = starting_rural_pop	which = starting_rural_pop_1500 }
+#						set_province_flag = custom_urban
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = starting_urban_pop_1500	value = 0.001 }
+#						}
+#						set_variable = { which = starting_urban_pop	which = starting_urban_pop_1500 }
+#						set_province_flag = custom_urban
+#					}
+#				}
+#				else_if = {
+#					limit = {
+#						is_year = 1450
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = starting_rural_pop_1450	value = 0.001 }
+#						}
+#						set_variable = { which = starting_rural_pop	which = starting_rural_pop_1450 }
+#						set_province_flag = custom_urban
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = starting_urban_pop_1450	value = 0.001 }
+#						}
+#						set_variable = { which = starting_urban_pop	which = starting_urban_pop_1450 }
+#						set_province_flag = custom_urban
+#					}
+#				}
+#				else_if = {
+#					limit = {
+#						is_year = 1400
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = starting_rural_pop_1400	value = 0.001 }
+#						}
+#						set_variable = { which = starting_rural_pop	which = starting_rural_pop_1400 }
+#						if = {
+#							limit = {
+#								continent = europe
+#								check_variable = { which = starting_rural_pop_1450	value = 0.001 }
+#								check_variable = { which = starting_rural_pop_1450	which = starting_rural_pop_1400 }
+#							}
+#							set_variable = { which = ideal_rural_pop	which = starting_rural_pop_1450 }
+#						}
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = starting_urban_pop_1400	value = 0.001 }
+#						}
+#						set_variable = { which = starting_urban_pop	which = starting_urban_pop_1400 }
+#						set_province_flag = custom_urban
+#					}
+#				}
+#				else_if = {
+#					limit = {
+#						is_year = 1350
+#					}
+					if = {
+						limit = {
+							check_variable = { which = starting_rural_pop_1350	value = 0.001 }
+						}
+						set_variable = { which = starting_rural_pop	which = starting_rural_pop_1350 }
+						if = {
+							limit = {
+								continent = europe
+								check_variable = { which = starting_rural_pop_1450	value = 0.001 }
+								check_variable = { which = starting_rural_pop_1450	which = starting_rural_pop_1350 }
+							}
+							set_variable = { which = ideal_rural_pop	which = starting_rural_pop_1450 }
+						}
+						else_if = {
+							limit = {
+								continent = europe
+								check_variable = { which = starting_rural_pop_1400	value = 0.001 }
+								check_variable = { which = starting_rural_pop_1400	which = starting_rural_pop_1350 }
+							}
+							set_variable = { which = ideal_rural_pop	which = starting_rural_pop_1400 }
+						}
+						set_province_flag = custom_urban
+					}
+					if = {
+						limit = {
+							check_variable = { which = starting_urban_pop_1350	value = 0.001 }
+						}
+						set_variable = { which = starting_urban_pop	which = starting_urban_pop_1350 }
+						set_province_flag = custom_urban
+					}
+#				}
+#				else = {
+#					if = {
+#						limit = {
+#							check_variable = { which = starting_rural_pop_1300	value = 0.001 }
+#						}
+#						set_variable = { which = starting_rural_pop	which = starting_rural_pop_1300 }
+#						set_province_flag = custom_urban
+#					}
+#					if = {
+#						limit = {
+#							check_variable = { which = starting_urban_pop_1300	value = 0.001 }
+#						}
+#						set_variable = { which = starting_urban_pop	which = starting_urban_pop_1300 }
+#						set_province_flag = custom_urban
+#					}
+#				}
+					
+				if = { limit = { NOT = { check_variable = { which = starting_rural_pop value = 1 } } }
+					set_variable = { which = starting_rural_pop value = 1 }
+					set_variable = { which = ideal_rural_pop which = starting_rural_pop }
+				}
+				if = {
+					limit = {
+						check_variable = { which = starting_rural_pop	value = 0.001 }
+						check_variable = { which = starting_rural_pop_1850	which = starting_rural_pop }
+					}
+					set_variable = { which = innate_rural_pop_base	which = starting_rural_pop_1850 }
+					set_variable = { which = starting_rural_pop_1850 value = 0 }
+				}
+				else_if = {
+					limit = {
+						check_variable = { which = starting_rural_pop	value = 0.001 }
+						NOT = { check_variable = { which = innate_rural_pop_base	value = 0.001 } }
+					}
+					set_variable = { which = innate_rural_pop_base	which = starting_rural_pop }
+				}
+				#set_variable = { which = starting_rural_pop_1300 value = 0 }
+				#set_variable = { which = starting_urban_pop_1300 value = 0 }
+				set_variable = { which = starting_rural_pop_1350 value = 0 }
+				set_variable = { which = starting_urban_pop_1350 value = 0 }
+				set_variable = { which = starting_rural_pop_1400 value = 0 }
+				#set_variable = { which = starting_urban_pop_1400 value = 0 }
+				set_variable = { which = starting_rural_pop_1450 value = 0 }
+				#set_variable = { which = starting_urban_pop_1450 value = 0 }
+				#set_variable = { which = starting_rural_pop_1500 value = 0 }
+				#set_variable = { which = starting_urban_pop_1500 value = 0 }
+				#set_variable = { which = starting_rural_pop_1550 value = 0 }
+				#set_variable = { which = starting_urban_pop_1550 value = 0 }
+				#set_variable = { which = starting_rural_pop_1600 value = 0 }
+				#set_variable = { which = starting_urban_pop_1600 value = 0 }
+				#set_variable = { which = starting_rural_pop_1650 value = 0 }
+				#set_variable = { which = starting_urban_pop_1650 value = 0 }
+				#set_variable = { which = starting_rural_pop_1700 value = 0 }
+				#set_variable = { which = starting_urban_pop_1700 value = 0 }
+				#set_variable = { which = starting_rural_pop_1750 value = 0 }
+				#set_variable = { which = starting_urban_pop_1750 value = 0 }
+				#set_variable = { which = starting_rural_pop_1800 value = 0 }
+				#set_variable = { which = starting_urban_pop_1800 value = 0 }
+				set_variable = { which = starting_rural_pop_1850 value = 0 }
+				#set_variable = { which = starting_urban_pop_1850 value = 0 }
+				
+				####################################
+				### Determining Rural Population ###
+				####################################
+				# Moved pop size initialization to .000
+				
+				# Rural pop init
+				#set_variable = { which = rural_pop						value = 0 }
+				
+				set_variable = { which = rural_pop	which = starting_rural_pop }
+				multiply_variable = { which = rural_pop	value = 0.1 }
+				
+				### Initially, it is assumed that all province populations are at ideal.
+				if = {
+					limit = {
+						NOT = { check_variable = { which = ideal_rural_pop	value = 0.01 } }
+					}
+					set_variable = { which = ideal_rural_pop which = starting_rural_pop }
+				}
+				
+				set_variable = { which = innate_rural_pop				which = innate_rural_pop_base }
+				if = {
+					limit = {
+						is_city = yes
+					}
+					trigger_switch = {
+						on_trigger = has_building
+						canal_level_1 = {
+							change_variable = { which = innate_rural_pop		value = 30 }
+							multiply_variable = { which = innate_rural_pop		value = 1.15 }
+						}
+						canal_level_2 = {
+							change_variable = { which = innate_rural_pop		value = 60 }
+							multiply_variable = { which = innate_rural_pop		value = 1.25 }
+						}
+						canal_level_3 = {
+							change_variable = { which = innate_rural_pop		value = 80 }
+							multiply_variable = { which = innate_rural_pop		value = 1.35 }
+						}
+					}
+					set_variable = { which = innate_rural_pop_tech 			which = owner }
+					if = {
+						limit = {
+							check_variable = { which = innate_rural_pop_tech	value = 0.01 }
+						}
+						multiply_variable = { which = innate_rural_pop			which = innate_rural_pop_tech }
+						set_variable = { which = innate_rural_pop_tech 			value = 0 }
+					}
+				}
+				
+				###############################
+				### Population Calculations ###
+				###############################
+				# Urban pop init
+				set_variable = { which = urban_pop       				value = 0.001 }
+				
+				if = {
+					limit = {
+						check_variable = { which = starting_urban_pop	value = 0.01 }
+					}
+					set_variable = { which = urban_pop	which = starting_urban_pop }
+					multiply_variable = { which = urban_pop	value = 0.1 }
+					clr_province_flag = custom_urban
+				}
+				else_if = {
+					limit = {
+						check_variable = { which = starting_rural_pop	value = 0.01 }
+						OR = {
+							has_province_flag = custom_urban
+							AND = {
+								NOT = { check_variable = { which = starting_urban_pop	value = 0.01 } }
+								NOT = { check_variable = { which = pop_level	value = 0.01 } }
+								NOT = { base_production = 1 }
+							}
+						}
+					}
+					set_variable = { which = starting_urban_pop which = starting_rural_pop }
+					multiply_variable = { which = starting_urban_pop value = 0.01 }
+				
+					if = { limit = { NOT = { check_variable = { which = starting_urban_pop value = 0.01 } } }
+						set_variable = { which = starting_urban_pop value = 0.01 }
+					}
+					
+					set_variable = { which = urban_pop	which = starting_urban_pop }
+					multiply_variable = { which = urban_pop	value = 0.1 }
+					clr_province_flag = custom_urban
+				}
+				else = {
+					export_to_variable = {
+						which = urban_pop
+						value = base_production
+					}
+					if = {
+						limit = {
+							check_variable = { which = urban_pop	value = 1 }
+						}
+						modify_pop_urban = { urban_var=urban_pop }
+					}
+					else = {
+						set_variable = { which = urban_pop	which = rural_pop }
+						multiply_variable = { which = urban_pop	value = 0.01 }
+					}
+				}
+				
+				if = { limit = { NOT = { check_variable = { which = urban_pop value = 0.001 } } }
+					set_variable = { which = urban_pop value = 0.001 }
+				}
+				# Run a sub-1 urban pop script
+				if = {
+					limit = {
+						NOT = { check_variable = { which = urban_pop	value = 1 } }
+						NOT = { check_variable = { which = starting_urban_pop	value = 0.01 } }
+					}
+					set_variable = { which = urban_base	which = rural_pop }
+					multiply_variable = { which = urban_base	value = 0.01 }
+					
+					set_variable = { which = urban_multiplier	value = 1 }
+					trigger_switch = {
+						on_trigger = has_building
+						town_hall = {
+							change_variable = { which = urban_base	value = 0.35 }
+						}
+						urban_infrastructure_1 = {
+							change_variable = { which = urban_base	value = 0.65 }
+						}
+						urban_infrastructure_2 = {
+							change_variable = { which = urban_base	value = 0.65 }
+						}
+					}
+					if = {
+						limit = {
+							has_building = workshop
+						}
+						change_variable = { which = urban_base	value = 0.09 }
+						change_variable = { which = urban_multiplier	value = 0.12 }
+					}
+					trigger_switch = {
+						on_trigger = has_building
+						harbour_infrastructure_1 = {
+							change_variable = { which = urban_base	value = 0.06 }
+						}
+						harbour_infrastructure_2 = {
+							change_variable = { which = urban_base	value = 0.12 }
+							change_variable = { which = urban_multiplier	value = 0.12 }
+						}
+					}
+					trigger_switch = {
+						on_trigger = has_building
+						road_network = {
+							change_variable = { which = urban_multiplier	value = 0.1 }
+						}
+						paved_road_network = {
+							change_variable = { which = urban_base	value = 0.1 }
+							change_variable = { which = urban_multiplier	value = 0.17 }
+						}
+					}
+					if = {
+						limit = {
+							has_building = warehouse
+						}
+						change_variable = { which = urban_base	value = 0.1 }
+						change_variable = { which = urban_multiplier	value = 0.028 }
+					}
+					trigger_switch = {
+						on_trigger = has_building
+						fort_14th = {
+							change_variable = { which = urban_base	value = 0.06 }
+							change_variable = { which = urban_multiplier	value = 0.05 }
+						}
+						fort_15th = {
+							change_variable = { which = urban_base	value = 0.1 }
+							change_variable = { which = urban_multiplier	value = 0.05 }
+						}
+					}
+					trigger_switch = {
+						on_trigger = has_building
+						mines_1 = {
+							change_variable = { which = urban_base	value = 0.06 }
+						}
+						mines_2 = {
+							change_variable = { which = urban_base	value = 0.12 }
+						}
+						mines_3 = {
+							change_variable = { which = urban_base	value = 0.16 }
+						}
+						mines_4 = {
+							change_variable = { which = urban_base	value = 0.2 }
+						}
+						mines_5 = {
+							change_variable = { which = urban_base	value = 0.2 }
+						}
+					}
+					trigger_switch = {
+						on_trigger = has_building
+						marketplace = {
+							change_variable = { which = urban_multiplier	value = 0.15 }
+						}
+						merchant_guild = {
+							change_variable = { which = urban_base	value = 0.1 }
+							change_variable = { which = urban_multiplier	value = 0.2 }
+						}
+					}
+					if = {
+						limit = {
+							temple_trigger = yes
+						}
+						change_variable = { which = urban_multiplier	value = 0.06 }
+					}
+					
+					# Apply multiplier
+					multiply_variable = { which = urban_base	which = urban_multiplier }
+					
+					# Cap sub-1 pop at 8000
+					if = {
+						limit = {
+							check_variable = { which = urban_base	value = 0.8 }
+						}
+						set_variable = { 	which = urban_base	value = 0.8 }
+						modify_pop_urban = { urban_var=urban_base } # Add a bit more variation
+					}
+					
+					# Update reference var
+					set_variable = { which = urban_pop		which = urban_base }
+					
+					set_variable = { which = urban_base			value = 0 }
+					set_variable = { which = urban_multiplier	value = 0 }
+				}
+				
+				set_variable = { which = upper_pop 		value = 0.001 }
+				set_variable = { which = upper_pop_r 	value = 0.01 }
+				
+				if = {
+					limit = {
+						check_variable = { which = starting_rural_pop	value = 0.01 }
+						check_variable = { which = starting_urban_pop	value = 0.01 }
+					}
+					set_variable = { which = total_pop_r which = starting_rural_pop }
+					set_variable = { which = starting_rural_pop value = 0 }
+					change_variable = { which = total_pop_r which = starting_urban_pop }
+					set_variable = { which = total_pop which = total_pop_r }
+					multiply_variable = { which = total_pop value = 0.1 }
+				}
+				else = {
+					change_variable = { which = total_pop 					which = rural_pop }
+					change_variable = { which = total_pop 					which = urban_pop }
+					set_variable = { which = total_pop_r which = total_pop }
+					multiply_variable = { which = total_pop_r value = 10 }
+				}
+				
+				if = {
+					limit = {
+						check_variable = { which = starting_urban_pop			value = 0.001 }
+					}
+					set_variable = {  	  which = urban_ratio				which = starting_urban_pop } ### Reference variable for how much urban vs rural pop is in a province
+					multiply_variable = { which = urban_ratio				value = 100 }
+					divide_variable = { which = urban_ratio				which = total_pop_r }
+				}
+				else_if = {
+					limit = {
+						check_variable = { which = urban_pop			value = 0.001 }
+					}
+					set_variable = {  	  which = urban_ratio				which = urban_pop } ### Reference variable for how much urban vs rural pop is in a province
+					multiply_variable = { which = urban_ratio				value = 100 }
+					divide_variable = { which = urban_ratio				which = total_pop }
+				}
+				else = {
+					set_variable = { which = urban_ratio				value = 0.001 }
+				}
+				
+				if = { limit = { NOT = { check_variable = { which = urban_ratio value = 0.001 } } }
+					set_variable = { which = urban_ratio value = 0.001 }
+				}
+				
+				update_rural_density = yes
+				set_variable = { which = pop_level				value = 0 }
+				
+				if = {
+					limit = {
+						NOT = { check_variable = { which = ideal_rural_pop value = 1 } }
+					}
+					set_variable = { which = ideal_rural_pop value = 1 }
+				}
+				set_variable = { which = devPointUpperCur	which = upper_pop }
+				
+				#DevUpdate = {
+				#	type1=Upper type2=manpower
+				#}
+				DevUpdateUpper = yes
+				set_variable = { which = devPointUpperCur	value = 0 }
+				
+				if = {
+					limit = {
+						is_city = yes
+					}
+					set_variable = { which = devPointRuralCur	which = rural_pop }
+					set_variable = { which = devPointUrbanCur	which = urban_pop }
+					multiply_variable = { which = devPointUrbanCur	value = 0.5 }
+					
+					#DevUpdate = {
+					#	type1=Rural type2=tax
+					#}
+					#DevUpdate = {
+					#	type1=Urban type2=production
+					#}
+					DevUpdateRural = yes
+					DevUpdateUrban = yes
+					
+					set_variable = { which = devPointRuralCur	value = 0 }
+					set_variable = { which = devPointUrbanCur	value = 0 }
+					
+					urban_gravity_calc = yes
+					
+					# Init pop related stats
+					StatSetInnate = yes
+					
+					set_variable = { which = statTax which = statTaxPop }
+					
+					StatSetModifier = yes
+			
+					# Cleanup
+					StatCleanup = yes
+					
+					update_pop_display = yes
+					set_variable = { which = rural_change_display value = 0 }
+					set_variable = { which = urban_change_display value = 0 }
+					set_variable = { which = total_change_display value = 0 }
+					add_permanent_province_modifier = {
+						name = pop_display
+						duration = -1
+					}
+					#set_province_flag = is_colonised
+				}
+				else = {
+					set_province_flag = uncolonised_province
+					set_variable = { which = urban_gravity_total which = rural_pop_r }
+					multiply_variable = { which = urban_gravity_total value = 0.01 }
+					set_variable = { which = urban_pop which = urban_gravity_total }
+					multiply_variable = { which = urban_pop value = 0.1 }
+					set_variable = { which = urban_ratio value = 1 }
+					
+					if = { limit = { NOT = { check_variable = { which = urban_pop value = 0.001 } } }
+						set_variable = { which = urban_pop value = 0.001 }
+					}
+					update_urban_density = yes
+					
+					set_variable = { which = devPointRuralCur	which = rural_pop }
+					set_variable = { which = devPointUrbanCur	which = urban_pop }
+					
+					#DevUpdate = {
+					#	type1=Rural type2=tax
+					#}
+					#DevUpdate = {
+					#	type1=Urban type2=production
+					#}
+					DevUpdateRural = yes
+					DevUpdateUrban = yes
+					set_variable = { which = devPointRuralCur	value = 0 }
+					set_variable = { which = devPointUrbanCur	value = 0 }
+					
+					if = {
+						limit = {
+							OR = {
+								has_province_flag = tribals_control_province
+								check_variable = { which = tribals_ratio value = 1 }
+							}
+						}
+						add_permanent_province_modifier = {
+							name = estate_tribal_territory
+							duration = -1
+						}
+					}
+					update_pop_display = yes
+					add_permanent_province_modifier = {
+						name = pop_display
+						duration = -1
+					}
+				}
+			}
+		}
+		
+		every_country = {
+			#limit = {
+			#	exists = yes
+			#}
+			capital_scope = {
+				kill_units = { who = owner amount = 100 } # Refresh armies
+			}
+		}
+		
+		country_event = { id = POP_startup_events.001 } # Run on day 0, on load
+		country_event = { id = POP_startup_events.300 days = 2 }
+	}
+	
+	option = {
+		name = no_localisation
+	}
+}
+
+country_event = {
+	id = POP_startup_events.300
+	title = no_localisation
+	desc = no_localisation
+	picture = CITY_DEVELOPMENT_eventPicture
+	
+	is_triggered_only = yes
+	
+	hidden = yes
+	
+	immediate = {
+		every_country = {
+			limit = {
+				#exists = yes
+				OR = {
+					NOT = { has_global_flag = first_estate_fired }
+					is_at_war = no
+				}
+				NOT = { tag = CHU }
+			}
+			if = {
+				limit = {
+					NOT = { has_global_flag = first_estate_fired }
+					is_year = 1356
+					NOT = { is_year = 1360 }
+					tag = ENG
+				}
+				4008 = {
+					infantry = PREV
+					infantry = PREV
+					infantry = PREV
+					infantry = PREV
+					infantry = PREV
+					infantry = PREV
+					infantry = PREV
+					cavalry = PREV
+					cavalry = PREV
+					cavalry = PREV
+					cavalry = PREV
+				}
+			}
+			else_if = {
+				limit = {
+					NOT = { has_global_flag = first_estate_fired }
+					is_year = 1356
+					NOT = { is_year = 1360 }
+					tag = WHI
+				}
+				416 = {
+					infantry = PREV
+					infantry = PREV
+					infantry = PREV
+					cavalry = PREV
+					cavalry = PREV
+					cavalry = PREV
+					cavalry = PREV
+					cavalry = PREV
+					cavalry = PREV
+				}
+			}
+			else = {
+				#set_variable = { which = land_forcelimit_startup	value = 1 }
+				export_to_variable = {
+					which = land_forcelimit_startup
+					value = land_forcelimit
+				}
+				if = {
+					limit = {
+						is_at_war = no
+					}
+					multiply_variable = { which = land_forcelimit_startup	value = 0.75 }
+					multiply_variable = { which = land_forcelimit_startup	value = 0.001 }
+					multiply_variable = { which = land_forcelimit_startup	value = 1000 }
+					
+				}
+				if = {
+					limit = {
+						tag = FRA
+					}
+					multiply_variable = { which = land_forcelimit_startup	value = 0.3 }
+				}
+				if = {
+					limit = {
+						is_subject_of = FRA
+						NOT = { tag = BUR }
+					}
+					multiply_variable = { which = land_forcelimit_startup	value = 0.4 }
+				}
+				if = {
+					limit = {
+						NOT = { check_variable = { which = land_forcelimit_startup	value = 1 } }
+					}
+					set_variable = { which = land_forcelimit_startup	value = 1 }
+				}
+				#set_variable = { which = army_size_startup	value = 0 }
+				export_to_variable = {
+					which = army_size_startup
+					value = army_size
+				}
+				subtract_variable = { which = land_forcelimit_startup	which = army_size_startup }
+				while = {
+					limit = {
+						check_variable = { which = land_forcelimit_startup	value = 1 }
+					}
+					capital_scope = {
+						infantry = PREV
+					}
+					subtract_variable = { which = land_forcelimit_startup	value = 1 }
+					if = {
+						limit = {
+							check_variable = { which = land_forcelimit_startup	value = 1 }
+						}
+						if = {
+							limit = {
+								is_nomad = yes
+							}
+							capital_scope = {
+								cavalry = PREV
+							}
+							subtract_variable = { which = land_forcelimit_startup	value = 1 }
+						}
+						else = {
+							capital_scope = {
+								infantry = PREV
+							}
+							subtract_variable = { which = land_forcelimit_startup	value = 1 }
+						}
+					}
+					if = {
+						limit = {
+							check_variable = { which = land_forcelimit_startup	value = 1 }
+						}
+						capital_scope = {
+							cavalry = PREV
+						}
+						subtract_variable = { which = land_forcelimit_startup	value = 1 }
+					}
+				}
+			}
+			set_variable = { which = land_forcelimit_startup	value = 0 }
+			set_variable = { which = army_size_startup			value = 0 }
+			
+			if = {
+				limit = {
+					primitives = no
+					capital_scope = {
+						has_port = yes
+					}
+				}
+				capital_scope = {
+					save_event_target_as = navy_spawn_point
+				}
+			}
+			else_if = {
+				limit = {
+					primitives = no
+					any_owned_province = {
+						has_port = yes
+					}
+				}
+				random_owned_province = {
+					limit = {
+						has_port = yes
+					}
+					save_event_target_as = navy_spawn_point
+				}
+			}
+			else = {
+				set_variable = { which = ignore_navy	value = 1 }
+			}
+			if = {
+				limit = {
+					NOT = { is_variable_equal = { which = ignore_navy	value = 1 } }
+				}
+				#set_variable = { which = naval_forcelimit_startup	value = 1 }
+				export_to_variable = {
+					which = naval_forcelimit_startup
+					value = naval_forcelimit
+				}
+				if = {
+					limit = {
+						check_variable = { which = naval_forcelimit_startup	value = 2 }
+					}
+					multiply_variable = { which = naval_forcelimit_startup	value = 0.9 }
+					multiply_variable = { which = naval_forcelimit_startup	value = 0.001 }
+					multiply_variable = { which = naval_forcelimit_startup	value = 1000 }
+				}
+				
+				if = {
+					limit = {
+						OR = {
+							AND = {
+								culture_group = chinese_group
+								dip_tech = 8
+								NOT = { dip_tech = 13 } #50 years (expeditions were 1405-1433)
+							}
+							AND = {
+								dip_tech = 18
+								OR = {
+									technology_group = indian  # DLC use separate indian unit
+									technology_group = chinese # DLC use separate indian unit
+									technology_group = austranesian # DLC use separate indian unit
+									technology_group = hawaii_tech # DLC use separate indian unit
+									technology_group = mongol_tech  # DLC use separate indian unit
+									technology_group = south_american # DLC use separate indian unit
+									technology_group = mesoamerican # DLC use separate indian unit
+									technology_group = north_american  # DLC use separate indian unit
+									technology_group = high_american
+									technology_group = high_chinese
+									technology_group = high_indian
+								}
+								OR = {
+									technology_group = high_american
+									technology_group = high_chinese
+									technology_group = high_indian
+									has_idea_group = grand_fleet_ideas
+								}
+							}
+							AND = {
+								dip_tech = 18
+								OR = {
+									technology_group = western
+									technology_group = high_eastern
+									has_idea_group = grand_fleet_ideas
+									AND = {
+										technology_group = eastern
+										has_idea_group = naval_ideas
+									}
+								}
+							}
+							AND = {
+								dip_tech = 34
+								has_idea_group = grand_fleet_ideas
+							}
+						}
+					}
+					set_variable = { which = has_heavy_ships	value = 1 }
+				}
+				if = {
+					limit = {
+						OR = {
+							technology_group = mesoamerican
+							technology_group = south_american
+							
+							dip_tech = 4
+						}
+					}
+					set_variable = { which = has_transport_ships	value = 1 }
+				}
+				if = {
+					limit = {
+						OR = {
+							technology_group = western
+							technology_group = eastern
+							technology_group = muslim
+							technology_group = turkishtech
+							technology_group = high_turkishtech
+							technology_group = nomad_group
+							technology_group = steppestech
+							technology_group = soudantech
+							technology_group = sub_saharan
+							technology_group = indian
+							technology_group = chinese
+							technology_group = austranesian
+							technology_group = hawaii_tech
+							technology_group = mongol_tech
+							technology_group = south_american
+							technology_group = mesoamerican
+							technology_group = north_american
+							
+							dip_tech = 27
+						}
+					}
+					set_variable = { which = has_galley_ships	value = 1 }
+				}
+				if = {
+					limit = {
+						OR = {
+							AND = {
+								OR = {
+									technology_group = western
+									culture_group = turko_byzantine
+									culture_group = scandinavian
+									culture_group = baltic
+								}
+								NOT = { primary_culture = turkish }
+							}
+							dip_tech = 7
+						}
+					}
+					set_variable = { which = has_light_ships	value = 1 }
+				}
+				#set_variable = { which = navy_size_startup	value = 0 }
+				export_to_variable = {
+					which = navy_size_startup
+					value = navy_size
+				}
+				subtract_variable = { which = naval_forcelimit_startup	which = navy_size_startup }
+				# First priority, spawn a single light ship
+				if = {
+					limit = {
+						NOT = { has_global_flag = first_estate_fired }
+						check_variable = { which = naval_forcelimit_startup	value = 1 }
+						is_variable_equal = { which = has_light_ships	value = 1 }
+					}
+					event_target:navy_spawn_point = {
+						light_ship = PREV
+					}
+					subtract_variable = { which = naval_forcelimit_startup	value = 1 }
+				}
+				while = {
+					limit = {
+						check_variable = { which = naval_forcelimit_startup	value = 1 }
+						OR = {
+							is_variable_equal = { which = has_transport_ships	value = 1 }
+							is_variable_equal = { which = has_galley_ships	value = 1 }
+							is_variable_equal = { which = has_light_ships	value = 1 }
+							is_variable_equal = { which = has_heavy_ships	value = 1 }
+						}
+					}
+					if = {
+						limit = {
+							is_variable_equal = { which = has_transport_ships	value = 1 }
+						}
+						# A transport has first priority
+						event_target:navy_spawn_point = {
+							transport = PREV
+						}
+						subtract_variable = { which = naval_forcelimit_startup	value = 1 }
+					}
+					# Now try and spawn a galley
+					if = {
+						limit = {
+							check_variable = { which = naval_forcelimit_startup	value = 1 }
+							is_variable_equal = { which = has_galley_ships	value = 1 }
+						}
+						event_target:navy_spawn_point = {
+							galley = PREV
+						}
+						subtract_variable = { which = naval_forcelimit_startup	value = 1 }
+					}
+					# Now try and spawn two light ships
+					if = {
+						limit = {
+							check_variable = { which = naval_forcelimit_startup	value = 1 }
+							is_variable_equal = { which = has_light_ships	value = 1 }
+						}
+						event_target:navy_spawn_point = {
+							light_ship = PREV
+						}
+						subtract_variable = { which = naval_forcelimit_startup	value = 1 }
+					}
+					if = {
+						limit = {
+							check_variable = { which = naval_forcelimit_startup	value = 5 }
+							is_variable_equal = { which = has_light_ships	value = 1 }
+						}
+						event_target:navy_spawn_point = {
+							light_ship = PREV
+						}
+						subtract_variable = { which = naval_forcelimit_startup	value = 1 }
+					}
+					# Now try and spawn a heavy ship, if theres a large naval forcelimit
+					if = {
+						limit = {
+							check_variable = { which = naval_forcelimit_startup	value = 10 }
+							is_variable_equal = { which = has_heavy_ships	value = 1 }
+						}
+						event_target:navy_spawn_point = {
+							heavy_ship = PREV
+						}
+						subtract_variable = { which = naval_forcelimit_startup	value = 1 }
+					}
+					# Lastly, pad the fleet with transports
+					if = {
+						limit = {
+							check_variable = { which = naval_forcelimit_startup	value = 1 }
+							is_variable_equal = { which = has_transport_ships	value = 1 }
+						}
+						event_target:navy_spawn_point = {
+							transport = PREV
+						}
+						subtract_variable = { which = naval_forcelimit_startup	value = 1 }
+					}
+					if = {
+						limit = {
+							check_variable = { which = naval_forcelimit_startup	value = 1 }
+							is_variable_equal = { which = has_transport_ships	value = 1 }
+						}
+						event_target:navy_spawn_point = {
+							transport = PREV
+						}
+						subtract_variable = { which = naval_forcelimit_startup	value = 1 }
+					}
+					if = {
+						limit = {
+							tag = OTT
+							ai = yes
+						}
+						2552 = {
+							kill_units = {
+								who = owner
+								type = transport
+								amount = 5
+							}
+							light_ship = OTT
+							light_ship = OTT
+							light_ship = OTT
+							galley = OTT
+							galley = OTT
+						}
+					}
+					if = {
+						limit = {
+							tag = FRL
+							ai = yes
+						}
+						45 = {
+							kill_units = {
+								who = owner
+								type = transport
+								amount = 5
+							}
+							light_ship = FRL
+							light_ship = FRL
+							light_ship = FRL
+						}
+					}
+				}
+				set_variable = { which = naval_forcelimit_startup	value = 0 }
+				set_variable = { which = navy_size_startup			value = 0 }
+				set_variable = { which = has_heavy_ships			value = 0 }
+				set_variable = { which = has_galley_ships			value = 0 }
+				set_variable = { which = has_light_ships			value = 0 }
+				set_variable = { which = has_transport_ships		value = 0 }
+			}
+			set_variable = { which = ignore_navy			value = 0 }
+		}
+	}
+	
+	option = {
+		name = no_localisation
+	}
+}
+
+### ONE-1 ###
+country_event = { ### This event sets food centers.  Food centers serve as de facto variable storage centers for regions, superregions, and continents.  It also assigns the initial climate
+	id = POP_startup_events.001
+	title = "POP_startup_events.001.t"
+	desc = "POP_startup_events.001.d"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	hidden = yes
+	
+	trigger = {
+		owns = 5154 # Dummy
+	}
+	
+	immediate = {
+		set_country_flag = center_of_universe
+
+		every_country = {
+			#if = {
+			#	limit = {
+			#		OR = {
+			#			exists = no
+			#			
+			#			NOT = { has_country_flag = center_of_universe }
+			#		}
+			#	}
+			#	ROOT = { change_variable = { which = country_id value = 1 } }
+			#	
+			#	set_variable = { which = country_id which = ROOT }
+			#}
+			
+			if = {
+				limit = {
+					is_nomad = yes
+				}
+				set_variable = { which = tribal_dip_ticker value = 1 }
+			}
+			
+			#if = { ### Calculating innate fertility and tech levels
+				#limit = {
+				#	num_of_cities = 1
+				#}
+				#set_variable = { which = AI_savings_spent_on_loans					value = 1 }
+				#set_variable = { which = AI_savings_spent_on_buildings				value = 1 }
+				set_variable = { which = stability_points							value = 10 }
+				
+				set_variable = { which = stability_points_added						value = 10 }
+				check_stability_modifier = yes
+				multiply_variable = { which = stability_points_added 		which = stability_cost_modifier }
+				
+				get_multiplier_stability = yes
+				#get_multiplier_prestige = yes
+				get_multiplier_we = yes
+				
+				export_to_variable = {
+					which = tech_admin_level
+					value = adm_tech
+				}
+				export_to_variable = {
+					which = tech_diplo_level
+					value = dip_tech
+				}
+				export_to_variable = {
+					which = tech_milit_level
+					value = mil_tech
+				}
+				
+				set_variable = {    which = innate_rural_pop_tech		which = tech_admin_level }
+				change_variable = { which = innate_rural_pop_tech		which = tech_diplo_level }
+				multiply_variable = { which = innate_rural_pop_tech		value = 0.002 }
+				change_variable = { which = innate_rural_pop_tech		value = 1 }
+				
+				every_owned_province = {
+					limit = {
+						is_city = yes
+					}
+					set_variable = { which = national_multiplier_war_exhaustion 	which = PREV }
+					
+					set_variable = { which = national_multiplier_stability 			which = PREV }
+					#set_variable = { which = national_multiplier_prestige 			which = PREV }
+					set_variable = { which = tech_admin_level 						which = PREV }
+					
+					set_variable = {   which = wealth_trauma_reduction           value = 1 }
+					
+					#set_variable = { which = wartax_remain value = 1 }
+			
+					#if = {
+					#	limit = {
+					#		owner = { has_wartaxes = yes }
+					#	}
+					#	export_to_variable = {
+					#		which = la_wt
+					#		value = local_autonomy
+					#	}
+					#	multiply_variable = { which = la_wt value = 0.001 }
+					#	
+					#	set_variable = { which = wartax_lost value = 0.1 }
+					#	subtract_variable = { which = wartax_lost which = la_wt }
+					#	change_variable = { which = wartax_lost value = 0.1 }
+					#	
+					#	subtract_variable = { which = wartax_remain which = wartax_lost }
+					#	
+					#	set_variable = { which = la_wt value = 0 }
+					#	set_variable = { which = wartax_lost value = 0 }
+					#}
+				}
+			#}
+		}
+		
+		#change_variable = { which = country_id value = 1 }
+		
+		regiongroup = {
+			region = {
+				limit = {
+					is_wasteland = no
+				}
+				if = {
+					limit = {
+						continent = indian_continent
+					}
+					add_permanent_province_modifier = {
+						name = india_quarter_coring_cost
+						duration = -1
+						hidden = yes
+					}
+				}
+				
+				#if = { ### Must remove this later when Freeholders are properly operable
+				#	limit = {
+				#		has_province_flag = freeholders_control_province
+				#	}
+				#	clr_province_flag = freeholders_control_province
+				#}
+				
+				#Some MENA provinces are part of european food pool
+				#if = {
+				#	limit = {
+				#		OR = {
+				#			region = west_maghreb_region
+				#			region = west_sahara_region
+				#			region = central_maghreb_region
+				#			region = east_maghreb_region
+				#			region = egypt_region
+				#			region = south_anatolia_region
+				#			region = north_anatolia_region
+				#			region = al_sham_region
+				#			area = dulkadir_area
+				#			area = cilicia_area
+				#			area = erzurum_area
+				#		}
+				#	}
+				#	set_province_flag = part_europe_food
+				#}
+				
+				set_variable = { which = mine_new_reserves_threshold 	value = 6 } ### Every mines starts with a base of 10 in deposit, to be modified
+				
+				### Nationalism at game start ###
+				if = {
+					limit = {
+						is_city = yes
+						OR = {
+							province_id = 2866 # Ain Timouchent
+							province_id = 2865 # Mers el Kebir
+							province_id = 337 # Ouahran
+							province_id = 338 # Arzew
+							province_id = 350 # Al Djazair
+							province_id = 2864 # Tizi Ouzou
+							province_id = 2863 # Bejaia
+							province_id = 2861 # Tamurt n Leqbayel
+							province_id = 340 # Bejaia
+							province_id = 4072 # Azayi
+							province_id = 347 # Tachelhit
+							province_id = 346 # Warzazat
+							province_id = 349 # Sijilmassa
+							province_id = 1340 # Taroudant
+						}
+					}
+					hidden_effect = {
+						set_variable = { which = added_unrest value = 20 }
+						add_base_unrest = yes
+					}
+					custom_tooltip = added_unrest_20
+				}
+			}
+		}
+		
+		# Food Centers
+		set_variable = { which = region_id value = 0 }
+		set_variable = { which = sr_id value = 0 }
+		set_variable = { which = cont_id value = 0 }
+		
+		regiongroup = {
+			set_province_flag = regional_food_center
+			
+			PREV = { change_variable = { which = region_id value = 1 } }
+			
+			set_variable = { which = region_id which = PREV }
+		}
+		srgroup = {
+			set_province_flag = sub_continent_food_center
+			
+			PREV = { change_variable = { which = sr_id value = 1 } }
+			
+			set_variable = { which = sr_id which = PREV }
+			
+			sr_effect = { effect=sr_startup_1 }
+		}
+		srgroup = {
+			if = { limit = { is_variable_equal = { which = sr_id value = 39 } } }
+			clr_province_flag = part_of_AAA
+		}
+		contgroup = {
+			set_province_flag = continent_food_center
+			
+			PREV = { change_variable = { which = cont_id value = 1 } }
+			
+			set_variable = { which = cont_id which = PREV }
+			
+			cont_effect = { effect=cont_startup_1 }
+		}
+		
+		set_variable = { which = region_id value = 0 }
+		set_variable = { which = sr_id value = 0 }
+		set_variable = { which = cont_id value = 0 }
+		
+		# Flag adjacencies
+		set_adjacency = yes
+		
+		regiongroup = {
+			region = {
+				limit = {
+					is_wasteland = no
+				}
+				set_variable = { which = travel_time_terrain_base 		   value = 0 }
+				set_variable = { which = road_terrain_cost				   value = 0 }
+				
+				trigger_switch = {
+					on_trigger = has_terrain
+					
+					arctic = {
+						multiply_variable = { which = fort_price value = 3.50 }
+					}
+					forest_flats = {
+						set_variable = { which = travel_time_terrain_base 		value = 6 }
+						set_variable = { which = road_terrain_cost				value = 0.50 }
+						set_province_flag = rugged_terrain
+					}
+					forest_hills = {
+						set_variable = { which = travel_time_terrain_base 		value = 7.5 }
+						set_variable = { which = road_terrain_cost				value = 1.25 }
+						set_province_flag = rugged_terrain
+					}
+					forest_mountains = {
+						set_variable = { which = travel_time_terrain_base 		value = 9.5 }
+						set_variable = { which = road_terrain_cost				value = 2.00 }
+						set_province_flag = rugged_terrain
+					}
+					forest_highlands = {
+						set_variable = { which = travel_time_terrain_base 		value = 8.25 }
+						set_variable = { which = road_terrain_cost				value = 1.25 }
+						set_province_flag = rugged_terrain
+					}
+					wood_flats = {
+						set_variable = { which = travel_time_terrain_base 		value = 4 }
+						set_variable = { which = road_terrain_cost				value = 0.25 }
+						set_province_flag = challenging_terrain
+					}
+					wood_hills = {
+						set_variable = { which = travel_time_terrain_base 		value = 6 }
+						set_variable = { which = road_terrain_cost				value = 1.00 }
+						set_province_flag = challenging_terrain
+					}
+					wood_mountains = {
+						set_variable = { which = travel_time_terrain_base 		value = 8.25 }
+						set_variable = { which = road_terrain_cost				value = 1.75 }
+						set_province_flag = rugged_terrain
+					}
+					wood_highlands = {
+						set_variable = { which = travel_time_terrain_base 		value = 6.75 }
+						set_variable = { which = road_terrain_cost				value = 1.00 }
+						set_province_flag = rugged_terrain
+					}
+					shrub_flats = {
+						set_variable = { which = travel_time_terrain_base 		value = 3 }
+						set_variable = { which = road_terrain_cost				value = 0.25 }
+						set_province_flag = favorable_terrain
+					}
+					shrub_hills = {
+						set_variable = { which = travel_time_terrain_base 		value = 5 }
+						set_variable = { which = road_terrain_cost				value = 1.00 }
+						set_province_flag = challenging_terrain
+					}
+					shrub_mountains = {
+						set_variable = { which = travel_time_terrain_base 		value = 7.5 }
+						set_variable = { which = road_terrain_cost				value = 1.75 }
+						set_province_flag = rugged_terrain
+					}
+					shrub_highlands = {
+						set_variable = { which = travel_time_terrain_base 		value = 6 }
+						set_variable = { which = road_terrain_cost				value = 1.00 }
+						set_province_flag = challenging_terrain
+					}
+					grass_flats = {
+						set_variable = { which = travel_time_terrain_base 		value = 3 }
+						set_variable = { which = road_terrain_cost				value = 0 }
+						set_province_flag = favorable_terrain
+					}
+					grass_hills = {
+						set_variable = { which = travel_time_terrain_base 		value = 5 }
+						set_variable = { which = road_terrain_cost				value = 0.75 }
+						set_province_flag = challenging_terrain
+					}
+					grass_mountains = {
+						set_variable = { which = travel_time_terrain_base 		value = 7.5 }
+						set_variable = { which = road_terrain_cost				value = 1.5 }
+						set_province_flag = rugged_terrain
+					}
+					grass_highlands = {
+						set_variable = { which = travel_time_terrain_base 		value = 6 }
+						set_variable = { which = road_terrain_cost				value = 0.75 }
+						set_province_flag = rugged_terrain
+					}
+					desert_flats = {
+						set_variable = { which = travel_time_terrain_base 		value = 6 }
+						set_variable = { which = road_terrain_cost				value = 1.00 }
+						set_province_flag = rugged_terrain
+					}
+					desert_hills = {
+						set_variable = { which = travel_time_terrain_base 		value = 7.5 }
+						set_variable = { which = road_terrain_cost				value = 1.75 }
+						set_province_flag = rugged_terrain
+					}
+					desert_mountains = {
+						set_variable = { which = travel_time_terrain_base 		value = 9.5 }
+						set_variable = { which = road_terrain_cost				value = 2.50 }
+						set_province_flag = rugged_terrain
+					}
+					desert_highlands = {
+						set_variable = { which = travel_time_terrain_base 		value = 8.25 }
+						set_variable = { which = road_terrain_cost				value = 1.75 }
+						set_province_flag = rugged_terrain
+					}
+					jungle_flats = {
+						set_variable = { which = travel_time_terrain_base 		value = 6.75 }
+						set_variable = { which = road_terrain_cost				value = 1 }
+						set_province_flag = rugged_terrain
+					}
+					jungle_hills = {
+						set_variable = { which = travel_time_terrain_base 		value = 8.25 }
+						set_variable = { which = road_terrain_cost				value = 1.75 }
+						set_province_flag = rugged_terrain
+					}
+					floodplains = {
+						set_variable = { which = travel_time_terrain_base 	value = 6 }
+						set_variable = { which = road_terrain_cost			value = 0.5 }
+						set_province_flag = rugged_terrain
+					}
+					taiga = {
+						set_variable = { which = travel_time_terrain_base 		value = 6.75 }
+						set_variable = { which = road_terrain_cost				value = 1 }
+						set_province_flag = rugged_terrain
+					}
+					marsh = {
+						set_variable = { which = travel_time_terrain_base 	value = 6 }
+						set_variable = { which = road_terrain_cost			value = 0.5 }
+						set_province_flag = rugged_terrain
+					}
+					alpine_tundra = {
+						set_variable = { which = travel_time_terrain_base 		value = 9.5 }
+						set_variable = { which = road_terrain_cost				value = 2.50 }
+						set_province_flag = rugged_terrain
+					}
+					tundra = {
+						set_variable = { which = travel_time_terrain_base 		value = 8.25 }
+						set_variable = { which = road_terrain_cost				value = 1.50 }
+						set_province_flag = rugged_terrain
+					}
+					small_island = {
+						set_variable = { which = travel_time_terrain_base 		value = 4 }
+						set_variable = { which = road_terrain_cost				value = 0 }
+						set_province_flag = challenging_terrain
+					}
+				}
+				
+				if = {
+					limit = {
+						has_province_modifier = oasis_route
+					}
+					change_variable = { which = travel_time_terrain_base value = 6 }
+				}
+				
+				if = { # Allows CE to utilise ports at the start, reset later on in the urban_gravity script
+					limit = {
+						OR = {
+							has_building = harbour_infrastructure_2
+							has_building = harbour_infrastructure_3x
+							has_building = harbour_infrastructure_4
+							has_building = harbour_infrastructure_5
+						}
+					}
+					set_province_flag = large_port_present
+				}
+				
+				if = {
+					limit = {
+						NOT = { province_id = 3841 } # Jajrom
+						NOT = { province_id = 2907 } # Dogon
+						NOT = { province_id = 1222 } # Chari
+						OR = {
+							region = kazakh_region
+							area = iskier_area
+							area = ural_area
+							region = uzbek_region
+							region = zungaria_region
+							region = inner_mongolia_region
+							region = outer_mongolia_region
+							area = khorchin_area
+							province_id = 3256 # Sibe
+							province_id = 3258 # Kaiyuan
+							AND = {
+								region = crimea_region
+								NOT = { area = crimea_area }
+							}
+							province_id = 282 # Crimea
+							region = steppes_region
+							area = east_circassia_area
+							area = west_circassia_area
+							# North-west china
+							province_id = 2119 # Anxi
+							province_id = 2257 # Ganzhou
+							
+							area = east_najd_area
+							area = west_najd_area
+							province_id = 3072 # Hafar
+							province_id = 3070 # Li'wa
+							
+							region = east_sahara_region
+							area = western_sahara_area
+							area = arguin_area
+							province_id = 1548 # Gourara
+							
+							#Fulani
+							region = west_africa_region
+							area = manding_area
+							area = baghena_area
+							area = segu_area
+							region = mali_region
+							area = sokoto_area
+							area = east_hausa_area
+							province_id = 2960 # Illo
+							province_id = 2780 # Bussa
+							province_id = 2961 # Nikki
+							area = bornu_area
+							area = kanem_area
+							province_id = 2909 # Bambouk
+							province_id = 1498 # Kita
+							province_id = 1124 # Dinguiraye
+							culture = somali
+							culture = hawiya_c
+							area = ogaden_area
+						}
+						OR = {
+							grass_trigger = yes
+							has_terrain = floodplains
+							desert_trigger = yes
+							has_terrain = marsh
+							area = jetysuu_area # Mountain passes
+							area = manding_area # Fulani heartland
+						}
+					}
+					add_province_triggered_modifier = nomad_speed_boost
+					
+					set_province_flag = nomad_speed_boost
+				}
+			}
+		}
+		
+		# Startup code for adding city fortifications
+		regiongroup = {
+			region = {
+				limit = {
+					base_production = 3
+					is_city = yes
+				}
+				if = {
+					limit = {
+						OR = {
+							has_building = fort_14th
+							has_building = fort_15th
+							has_building = fort_16th
+							has_building = fort_17th
+							has_building = fort_18th
+						}
+					}
+					trigger_switch = {
+						on_trigger = base_production
+						27 = {
+							trigger_switch = {
+								on_trigger = has_building
+								local_fortification_1_off = {
+									remove_building = local_fortification_1_off
+								}
+								local_fortification_2_off = {
+									remove_building = local_fortification_2_off
+								}
+							}
+							trigger_switch = {
+								on_trigger = has_building
+								local_fortification_1 = {
+									remove_building = local_fortification_1
+								}
+								local_fortification_2 = {
+									remove_building = local_fortification_2
+								}
+								local_fortification_3 = {
+									remove_building = local_fortification_3
+								}
+							}
+							add_building = local_fortification_3_off
+						}
+						9 = {
+							if = {
+								limit = {
+									NOT = { has_building = local_fortification_3_off }
+									NOT = { has_building = local_fortification_3 }
+								}
+								if = {
+									limit = {
+										has_building = local_fortification_2_off
+									}
+									remove_building = local_fortification_2_off
+									add_building = local_fortification_3_off
+								}
+								else_if = {
+									limit = {
+										has_building = local_fortification_2
+									}
+									remove_building = local_fortification_2
+									add_building = local_fortification_3_off
+								}
+								else = {
+									if = {
+										limit = {
+											has_building = local_fortification_1_off
+										}
+										remove_building = local_fortification_1_off
+									}
+									else_if = {
+										limit = {
+											has_building = local_fortification_1
+										}
+										remove_building = local_fortification_1
+									}
+									add_building = local_fortification_2_off
+								}
+							}
+						}
+						3 = {
+							if = {
+								limit = {
+									NOT = {
+										has_building = local_fortification_2_off
+										has_building = local_fortification_3_off
+									}
+									NOT = {
+										has_building = local_fortification_2
+										has_building = local_fortification_3
+									}
+								}
+								if = {
+									limit = {
+										has_building = local_fortification_1_off
+									}
+									remove_building = local_fortification_1_off
+									add_building = local_fortification_2_off
+								}
+								else_if = {
+									limit = {
+										has_building = local_fortification_1
+									}
+									remove_building = local_fortification_1
+									add_building = local_fortification_2_off
+								}
+								else = {
+									add_building = local_fortification_1_off
+								}
+							}
+						}
+					}
+				}
+				else = {
+					trigger_switch = {
+						on_trigger = base_production
+						27 = {
+							trigger_switch = {
+								on_trigger = has_building
+								local_fortification_1 = {
+									remove_building = local_fortification_1
+								}
+								local_fortification_2 = {
+									remove_building = local_fortification_2
+								}
+							}
+							add_building = local_fortification_3
+						}
+						9 = {
+							if = {
+								limit = {
+									NOT = { has_building = local_fortification_3 }
+								}
+								if = {
+									limit = {
+										has_building = local_fortification_2
+									}
+									remove_building = local_fortification_2
+									add_building = local_fortification_3
+								}
+								else = {
+									if = {
+										limit = { has_building = local_fortification_1 }
+										remove_building = local_fortification_1
+									}
+									add_building = local_fortification_2
+								}
+							}
+						}
+						3 = {
+							if = {
+								limit = {
+									NOT = {
+										has_building = local_fortification_2
+										has_building = local_fortification_3
+									}
+								}
+								if = {
+									limit = {
+										has_building = local_fortification_1
+									}
+									remove_building = local_fortification_1
+									add_building = local_fortification_2
+								}
+								else = {
+									add_building = local_fortification_1
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		regiongroup = {
+			region = {
+				limit = {
+					is_city = yes
+					NOT = { is_year = 1500 }
+					superregion = france_superregion
+					OR = {
+						base_tax = 16
+						province_id = 1386 # Perche
+						owned_by = GUY
+						owned_by = DAL
+					}
+					NOT = { area = picardy_area }
+					NOT = { area = normandy_area }
+					# Brittany capitals
+					NOT = { province_id = 1388 } # Nantes
+					NOT = { province_id = 171 } # Bro Wened
+					NOT = { has_building = local_fortification_2 }
+					NOT = { has_building = local_fortification_3 }
+					NOT = { has_building = local_fortification_2_off }
+					NOT = { has_building = local_fortification_3_off }
+				}
+				
+				if = {
+					limit = {
+						has_building = local_fortification_1
+					}
+					remove_building = local_fortification_1
+					add_building = local_fortification_2
+				}
+				else_if = {
+					limit = {
+						has_building = local_fortification_1_off
+					}
+					remove_building = local_fortification_1_off
+					add_building = local_fortification_2_off
+				}
+				else = {
+					add_building = local_fortification_2
+				}
+			}
+		}
+		
+		# Cleanup forts, ensure no incorrect initial setup
+		regiongroup = {
+			region = {
+				limit = {
+					is_city = yes
+				}
+				if = {
+					limit = {
+						OR = {
+							has_building = fort_14th
+							has_building = fort_15th
+							has_building = fort_16th
+							has_building = fort_17th
+							has_building = fort_18th
+						}
+					}
+					trigger_switch = {
+						on_trigger = has_building
+						local_fortification_1 = {
+							remove_building = local_fortification_1
+							add_building = local_fortification_1_off
+						}
+						local_fortification_2 = {
+							remove_building = local_fortification_2
+							add_building = local_fortification_2_off
+						}
+						local_fortification_3 = {
+							remove_building = local_fortification_3
+							add_building = local_fortification_3_off
+						}
+					}
+				}
+				else = {
+					trigger_switch = {
+						on_trigger = has_building
+						local_fortification_1_off = {
+							remove_building = local_fortification_1_off
+							add_building = local_fortification_1
+						}
+						local_fortification_2_off = {
+							remove_building = local_fortification_2_off
+							add_building = local_fortification_2
+						}
+						local_fortification_3_off = {
+							remove_building = local_fortification_3_off
+							add_building = local_fortification_3
+						}
+					}
+				}
+			}
+		}
+		
+		# CE Initialization
+		country_event = {
+			id = POP_Travel_Time.001
+		}
+		
+		every_country = { ### Fixes manpower
+			#limit = {
+			#	exists = yes
+			#}
+			add_manpower = -1000
+			add_yearly_manpower = 12
+			add_sailors = -1000
+			add_yearly_sailors = 4
+			
+			if = {
+				limit = {
+					tag = FRA
+				}
+				add_yearly_manpower = -8
+			}
+			else_if = {
+				limit = {
+					tag = OTT
+				}
+				add_yearly_manpower = 12
+			}
+			
+			# Slight AI crutches
+			if = {
+				limit = {
+					tag = MOS
+					ai = yes
+				}
+				add_treasury = 350
+				add_manpower = 5
+				add_prestige = 10
+				ryazan_area = { add_claim = MOS }
+				tver_area = { add_claim = MOS }
+				1290 = { add_claim = MOS }
+				1292 = { add_claim = MOS }
+				3989 = { add_claim = MOS }
+				308 = { add_claim = MOS }
+				3991 = { add_claim = MOS }
+			}
+			if = {
+				limit = {
+					tag = OTT
+					ai = yes
+				}
+				add_sailors = 2500
+				add_prestige = 10
+				2552 = { galley = OTT }
+				north_anatolia_region = { remove_claim = OTT add_permanent_claim = OTT }
+				south_anatolia_region = { remove_claim = OTT add_permanent_claim = OTT }
+				1333 = { remove_claim = OTT add_permanent_claim = OTT }
+				3392 = { remove_claim = OTT add_permanent_claim = OTT }
+				3875 = { remove_claim = OTT add_permanent_claim = OTT }
+				1427 = { remove_claim = OTT add_permanent_claim = OTT }
+				1435 = { remove_claim = OTT add_permanent_claim = OTT }
+				2572 = { remove_claim = OTT add_permanent_claim = OTT }
+				320 = { remove_claim = OTT add_permanent_claim = OTT }
+				thrace_area = { remove_claim = OTT add_permanent_claim = OTT }
+			}
+		}
+		
+		country_event = {
+			id = POP_startup_events.002
+			days = 7
+		}
+	}
+	
+	option = {
+		name = "POP_startup_events.001.a"
+		ai_chance = { factor = 100 }
+	}
+}
+
+### TWO-2 ###
+country_event = { ### Counts Provinces per Sub-continent. This event sets innitial weather, tabulates rural and urban populations, then sets ideal population.  It also calculates initial rural growth rate and reference statistics.
+	id = POP_startup_events.002
+	title = "POP_startup_events.002.t"
+	desc = "POP_startup_events.002.d"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		### Starting Weather Conditions ###
+		contgroup = {
+			random_list = {
+				10 = { set_province_flag = good_climate }
+				20 = { set_province_flag = fair_climate }
+				40 = { set_province_flag = average_climate }
+				20 = { set_province_flag = poor_climate }
+				10 = { set_province_flag = bad_climate }
+			}
+		}
+		
+		country_event = { # Initialise POP Weather
+			id = POP_weather.001
+		}
+		
+		every_country = {
+			#limit = {
+			#	exists = yes
+			#}
+			get_country_total = yes
+		}
+	}
+	
+	option = {
+		name = "POP_startup_events.002.a"
+		ai_chance = { factor = 100 }
+		
+		
+		country_event = {
+			id = POP_startup_events.003
+			### days = 2
+		}
+	}
+}
+
+### THREE-3 ###
+country_event = { ### This event determines a region's urbanization percentage and also adds urban buildings to provinces with 1 urban pop but no gravity.
+	id = POP_startup_events.003
+	title = "POP_startup_events.003.title"
+	desc = "POP_startup_events.003.desc"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	hidden = yes
+	is_triggered_only = yes
+	
+	immediate = {
+		regiongroup = { ### Regional urbanization is calculated
+			region_startup_1 = yes
+			
+			if = {
+				limit = {
+					NOT = { check_variable = { which = regional_urban_pop value = 0.001 } }
+				}
+				set_variable = { which = regional_urban_pop value = 0.001 }
+			}
+			#if = {
+			#	limit = {
+			#		NOT = { check_variable = { which = regional_total_pop value = 0.001 } }
+			#	}
+			#	set_variable = { which = regional_total_pop value = 0.001 }
+			#}
+			#if = {
+			#	limit = {
+			#		NOT = { check_variable = { which = innate_rural_pop_region_total value = 0.001 } }
+			#	}
+			#	set_variable = { which = innate_rural_pop_region_total	value = 0.001 }
+			#}
+			
+			#region_startup_2 = yes
+			
+			#set_variable = { which = regional_urban_percentage   				which = regional_urban_pop }
+			#divide_variable = { which = regional_urban_percentage				which = regional_total_pop }
+			
+			#set_variable = { which = regional_total_pop							value = 0 }
+			#set_variable = { which = innate_rural_pop_region_total				value = 0 }
+		}
+	}
+	
+	option = {
+		name = "POP_startup_events.003.a"
+		ai_chance = { factor = 100 }
+		
+		country_event = {
+			id = POP_startup_events.004
+			### days = 2
+		}
+	}
+}
+
+### FOUR-4 ###
+country_event = { ### This event sets farming efficiency in all provinces
+	id = POP_startup_events.004
+	title = "POP_startup_events.004.t"
+	desc = "POP_startup_events.004.d"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		regiongroup = {
+			region = { # Set the Farm Ticker and Farm Efficiency variable in every province in the game
+				limit = {
+					is_wasteland = no
+				}
+				set_variable = { which = farm_ticker 					value = 0 } # In regional food centers, farm_ticker is the counter that determines how long the event adds farming efficiency
+				set_variable = { which = farm_efficiency 				value = 0 }
+				set_variable = { which = eats_continent_food			value = 0 }
+				#set_variable = { which = eats_continent_setup			value = 0 }
+				
+				# Initialize urban food import
+				if = {
+					limit = {
+						check_variable = { which = urban_pop			value = 0.1 }
+					}
+					# Modified tradepower per capita
+					set_import_bonus = yes
+					
+					set_variable = { which = eats_continent_food		which = import_bonus }
+					
+					# Small cities are more penalized
+					set_variable = { which = multiplier					which = urban_pop }
+					multiply_variable = { which = multiplier				value = 0.125 }
+					
+					if = {
+						limit = {
+							check_variable = { which = multiplier		value = 1 }
+						}
+						set_variable = { which = multiplier				value = 1 }
+					}
+					
+					multiply_variable = { which = eats_continent_food	which = multiplier }
+					
+					multiply_variable = { which = eats_continent_food		value = 0.25 }
+					
+					# Cities consume certain proportion of imported food depending on their size
+					if = {
+						limit = {
+							check_variable = { which = urban_pop		value = 40 }
+						}
+						set_variable = { which = logistic_val			value = 0.1 }
+					}
+					else = {
+						logistic_funct = {
+							type1=which type2=value type3=value type4=value
+							inp=urban_pop midpnt=15 steepns=0.2 maxval=0.1
+						}
+					}
+					
+					if = {
+						limit = {
+							NOT = { check_variable = { which = eats_continent_food which = logistic_val } }
+						}
+						set_variable = { which = eats_continent_food	which = logistic_val }
+					}
+					
+					multiply_variable = { which = eats_continent_food	which = urban_pop }
+					
+					#set_variable = { which = eats_continent_setup		which = eats_continent_food }
+					
+					set_variable = { which = import_bonus				value = 0 }
+					set_variable = { which = logistic_val				value = 0 }
+					set_variable = { which = multiplier					value = 0 }
+				}
+				set_fe_terrain = yes
+			}
+		}
+		
+		### Determines a region's total efficiency to be distributed ###		
+		regiongroup = {
+			set_variable = { 	which = farm_ticker				which = regional_urban_pop } # Efficiency is based on the total urban population
+			set_variable = {	which = regional_urban_pop		value = 0 }
+			change_variable = {	which = farm_ticker				value = 0.01 }
+			
+			#region_startup_3 = yes
+			
+			#subtract_variable = { which = farm_ticker which = eats_continent_setup }
+			
+			#multiply_variable = { which = farm_ticker value = 0.7 } # Tuning
+			
+			# This section will assign a variable farm_weight to all provinces
+			# Which will then be summed up in regional food center
+			# And each province will receive their share of FE depending on the weight
+			set_variable = { which = farm_weight_total value = 0 }
+			
+			region_startup_4 = yes
+			
+			set_variable = { which = divisor					which = farm_weight_total }
+			divide_variable = { which = divisor					which = farm_ticker }
+			
+			region_startup_5 = yes
+			
+			set_variable = { which = farm_ticker value = 0 }
+			set_variable = { which = farm_weight_total value = 0 }
+			set_variable = { which = divisor value = 0 }
+		}
+		
+		regiongroup = {
+			region = {
+				limit = {
+					is_wasteland = no
+				}
+				set_rural_infrastructure = yes
+				set_farming_efficiency = yes
+				
+				trigger_switch = {
+					on_trigger = has_building
+					canal_level_1 = {
+						change_variable = { which = farm_efficiency		value = 0.05 }
+					}
+					canal_level_2 = {
+						change_variable = { which = farm_efficiency		value = 0.15 }
+					}
+					canal_level_3 = {
+						change_variable = { which = farm_efficiency		value = 0.25 }
+					}
+				}
+				
+				set_variable = { which = farm_efficiency_display which = farm_efficiency }
+				multiply_variable = { which = farm_efficiency_display value = 100 }
+				change_variable = { which = farm_efficiency_display value = 15 }
+			}
+		}
+		
+		### Set FE modifier
+		country_event = {
+			id = POP_Census.0062
+		}
+		# Lets countries already at war chose a looting policy + also sets loot amount variable
+		every_country = {
+			#limit = {
+			#	exists = yes
+			#}
+			country_event = {
+				id = POP_looting.010
+			}
+		}
+	}
+	
+	option = {
+		name = "POP_startup_events.004.a"
+		ai_chance = { factor = 100 }
+		
+		country_event = {
+			id = POP_startup_events.005
+			### days = 2
+		}
+	}
+}
+
+### FIVE-5 ###
+country_event = { ### This event distributes starting game rural production power.  Countries which have lower urbanization start with higher rural production power.
+	id = POP_startup_events.005
+	title = "POP_startup_events.005.t"
+	desc = "POP_startup_events.005.d"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		### Determines a region's total efficiency to be distributed to rural production ###
+		regiongroup = {
+			region = { # Set the Rural Production Ticker
+				limit = {
+					is_wasteland = no
+				}
+				if = {
+					limit = {
+						is_city = yes
+					}
+					remove_building = rural_infrastructure_1
+					remove_building = mines_1
+					
+					trigger_switch = {
+						on_trigger = has_province_flag
+						
+						gems = {
+							set_province_flag = mined_goods
+						}
+						obsidian = {
+							set_province_flag = mined_goods
+						}
+						salt = {
+							set_province_flag = mined_goods
+						}
+						alum = {
+							set_province_flag = mined_goods
+						}
+						iron = {
+							set_province_flag = mined_goods
+						}
+						copper = {
+							set_province_flag = mined_goods
+						}
+						lead = {
+							set_province_flag = mined_goods
+						}
+						tin = {
+							set_province_flag = mined_goods
+						}
+						#sulphur = {
+						#	set_province_flag = mined_goods
+						#}
+						marble = {
+							set_province_flag = mined_goods
+						}
+						coal = {
+							set_province_flag = mined_goods
+						}
+						silver = {
+							set_province_flag = mined_goods
+						}
+						gold = {
+							set_province_flag = mined_goods
+						}
+					}
+					#
+					#if = {
+					#	limit = {
+					#		OR = {
+					#			AND = {
+					#				has_province_flag = mined_goods
+					#				
+					#				mining_province_trigger = yes
+					#			}
+					#			
+					#			trade_goods = fur
+					#			trade_goods = ivory
+					#		}
+					#	}
+					#	set_tradegoods = yes
+					#}
+					if = {
+						limit = {
+							has_province_flag = mined_goods
+						}
+						set_base_price_of_goods_metal = yes
+					}
+					
+					#set_rural_goods_stuff = yes
+					set_rural_infra_building = yes
+					
+					### Sets all prices for goods to be used as scripted variables ###
+					set_base_price_of_goods = yes
+				}
+				else = {
+					clr_province_flag = rural_infrastructure_0
+					clr_province_flag = rural_infrastructure_starting_2
+					clr_province_flag = rural_infrastructure_starting_3
+				}
+			}
+		}
+		
+		regiongroup = {
+			region = {
+				limit = {
+					is_wasteland = no
+					has_province_flag = mined_goods
+				}
+				set_variable = { 	  which = mine_deposit_starting 		value = 500 }
+				
+				random_list = {
+					10 = { set_variable = { which = mine_starting_multiplier value = 0.5 } }
+					10 = { set_variable = { which = mine_starting_multiplier value = 0.65 } }
+					15 = { set_variable = { which = mine_starting_multiplier value = 0.80 } }
+					30 = { set_variable = { which = mine_starting_multiplier value = 1 } }
+					15 = { set_variable = { which = mine_starting_multiplier value = 1.20 } }
+					10 = { set_variable = { which = mine_starting_multiplier value = 1.35 } }
+					10 = { set_variable = { which = mine_starting_multiplier value = 1.5 } }
+				}
+				
+				# Provinces with precious minerals start with less unless is special mine
+				if = {
+					limit = {
+						OR = {
+							has_province_flag = gold
+							has_province_flag = silver
+							has_province_flag = gems
+						}
+					}
+					multiply_variable = { which = mine_starting_multiplier value = 0.4 }
+				}
+				
+				# DEZU: Fixed all mines modifiers
+				set_special_mine = yes
+				
+				# Tuning
+				multiply_variable = { which = mine_starting_multiplier value = 0.6 }
+				
+				multiply_variable = { which = mine_deposit_starting 		which = mine_starting_multiplier }
+				set_variable = { 	  which = mine_deposit_current 			which = mine_deposit_starting }
+				
+				# Randomize starting deposit, for variety and to make it less obvious if a mine is good or bad from the get go
+				
+				if = {
+					limit = {
+						# Ugly hack to avoid multiplying special mines much since that would lead to weird results
+						NOT = { check_variable = { which = mine_starting_multiplier	value = 2 } }
+					}
+					random_list = {
+						10 = { multiply_variable = { which = mine_deposit_current value = 0.3 } }
+						20 = { multiply_variable = { which = mine_deposit_current value = 0.4 } }
+						40 = { multiply_variable = { which = mine_deposit_current value = 0.5 } }
+						20 = { multiply_variable = { which = mine_deposit_current value = 0.6 } }
+						10 = { multiply_variable = { which = mine_deposit_current value = 0.7 } }
+					}
+				}
+				
+				if = {
+					limit = {
+						# Ugly hack to avoid multiplying special mines much since that would lead to weird results
+						check_variable = { which = mine_starting_multiplier	value = 2 }
+					}
+					random_list = {
+						10 = { multiply_variable = { which = mine_deposit_current value = 0.40 } }
+						20 = { multiply_variable = { which = mine_deposit_current value = 0.45 } }
+						40 = { multiply_variable = { which = mine_deposit_current value = 0.50 } }
+						20 = { multiply_variable = { which = mine_deposit_current value = 0.55 } }
+						10 = { multiply_variable = { which = mine_deposit_current value = 0.60 } }
+					}
+				}
+				
+				add_building = mines_1
+				
+				if = {
+					limit = { has_province_flag = special_mine }
+					remove_building = mines_1
+					add_building = mines_2
+					clr_province_flag = special_mine
+				}
+				
+				#set_variable = { which = mine_productivity_modifier value = 0 }
+				
+				trigger_switch = {
+					on_trigger = has_building
+					mines_1 = {
+						set_variable = { which = mine_productivity_modifier value = 0.6 }
+					}
+					mines_2 = {
+						set_variable = { which = mine_productivity_modifier value = 1.2 }
+					}
+					mines_3 = {
+						set_variable = { which = mine_productivity_modifier value = 1.8 }
+					}
+					mines_4 = {
+						set_variable = { which = mine_productivity_modifier value = 2.4 }
+					}
+					mines_5 = {
+						set_variable = { which = mine_productivity_modifier value = 3 }
+					}
+				}
+				
+				
+				set_variable = {			which = mine_power					value = 1.50 }
+				multiply_variable = {		which = mine_power					which = mine_productivity_modifier }
+				set_variable = { 			which = mine_productivity_modifier	value = 0 }
+				#set_variable = {			which = mine_abundance_modifier		value = 0 }
+				set_variable = {			which = mine_abundance_modifier		which = mine_deposit_current }
+				multiply_variable = {			which = mine_abundance_modifier		value = 0.002 }
+				multiply_variable = {		which = mine_abundance_modifier		which = mine_power }
+				multiply_variable = {		which = mine_abundance_modifier		value = 2 }
+				
+				change_variable = {			which = mine_power					which = mine_abundance_modifier }
+				set_variable = { 			which = mine_abundance_modifier		value = 0 }
+			}
+		}
+	}
+	
+	option = {
+		name = "POP_startup_events.005.a"
+		ai_chance = { factor = 100 }
+		
+		country_event = {
+			id = POP_startup_events.006
+			### days = 2
+		}
+	}
+}
+
+### SIX-6 ###				
+country_event = { ### This event sets modifiers to give goods produced = to rural production power, alongside calculating food
+	id = POP_startup_events.006
+	title = "POP_startup_events.006.t"
+	desc = "POP_startup_events.006.d"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		### Calculating Rural Production Potential ###
+		regiongroup = {
+			region = {
+				limit = {
+					is_wasteland = no
+				}
+				set_variable = {        which = rural_production_potential_percent value = 0.025 }
+				
+				trigger_switch = {
+					on_trigger = has_building
+					
+					rural_infrastructure_1 = {
+						change_variable = { which = rural_production_potential_percent value = 0.025 }
+					}
+					rural_infrastructure_2 = {
+						change_variable = { which = rural_production_potential_percent value = 0.075 }
+					}
+					rural_infrastructure_3 = {
+						change_variable = { which = rural_production_potential_percent value = 0.125 }
+					}
+					rural_infrastructure_4 = {
+						change_variable = { which = rural_production_potential_percent value = 0.175 }
+					}
+				}
+				set_to_nontribal_pop = { var=pop_temp }
+				
+				if = {
+					limit = {
+						NOT = { check_variable = { which = pop_temp		value = 0.5 } }
+					}
+					multiply_variable = { which = rural_production_potential_percent    value = 0.5 }
+				}
+				else = {
+					multiply_variable = { which = rural_production_potential_percent    which = pop_temp }
+				}
+				
+				set_variable = { which = pop_temp value = 0 }
+				
+				set_variable = { which = rural_production_power	which = rural_production_potential_percent }
+				
+				set_variable = { which = rural_production_potential_percent value = 0 }
+				
+				if = {
+					limit = {
+						NOT = { check_variable = { which = rural_production_power		value = 0.1 } }
+					}
+					set_variable = { which = rural_production_power 	value = 0.1 }
+				}
+				
+				set_variable = { which = rural_production_power_save which = rural_production_power }
+				
+				if = {
+					limit = {
+						is_city = yes
+					}
+					# Set Display
+					set_variable = { which = rural_production_display which = rural_production_power }
+					multiply_variable = { which = rural_production_display which = price_of_rural_good }
+					
+					#HelperInfoDisplay = {
+					#	info=rural_production_display income=rural_production_display min=0.01
+					#}
+					if = {
+						limit = { NOT = { check_variable = { which = rural_production_display value = 0.01 } } }
+						set_variable = { which = rural_production_display value = 0.01 }
+					}
+					else = {
+						multiply_variable = { which = rural_production_display value = 0.1 }
+						multiply_variable = { which = rural_production_display value = 10 }
+					}
+				}
+				else = {
+					set_variable = { which = rural_production_display value = 0 }
+				}
+			}
+		}
+		
+		# Recalculates Mine Power
+		country_event = {
+			id = POP_Census.003
+		}
+		
+		# This event tabulates food in every province
+		country_event = {
+			id = POP_population_growth.002
+		}
+		
+		# Regional Food Calc
+		#country_event = {
+		#	id = POP_population_growth.003
+		#}
+		
+		# Continental Food Calc
+		country_event = {
+			id = POP_population_growth.004
+		}
+		
+		# Production Power
+		country_event = {
+			id = POP_Census.004
+		}
+		
+		# Shifting Modifiers
+		set_global_flag = modifier_initialized
+		
+		country_event = {
+			id = POP_shifting_trade.001
+			
+			days = 2
+		}
+	}
+	
+	option = {
+		name = "POP_startup_events.006.a"
+		ai_chance = { factor = 100 }
+		
+		country_event = {
+			id = POP_startup_events.007
+			days = 3
+		}
+	}
+}
+
+### SEVEN-7 ###
+country_event = { ### This event sets the variables for preeminent cities, urban gravity and city wealth
+	id = POP_startup_events.007
+	title = "POP_startup_events.007.t"
+	desc = "POP_startup_events.007.d"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		# Initialize urban goods
+		regiongroup = {
+			region = {
+				limit = {
+					check_variable = { which = urban_production_power value = 0.01 }
+					is_city = yes
+				}
+				if = {
+					limit = {
+						NOT = { check_variable = { which = urban_production_power value = 2.5 } }
+					}
+					if = {
+						limit = {
+							check_variable = { which = urban_production_power value = 0.04 }
+						}
+						POP_clear_production_all = yes
+						
+						set_province_flag = urban_goods_rank_1
+						set_province_flag = urban_goods_mundane
+					}
+				}
+				else = {
+					if = {
+						limit = {
+							OR = {
+								AND = {
+									has_province_modifier = minor_center_of_production
+									OR = {
+										has_building = corporation_guild
+										has_building = urban_manufactory
+										has_building = factory
+										has_building = steam_powered_factory
+									}
+								}
+								has_province_modifier = important_center_of_production
+								has_province_modifier = major_center_of_production
+								has_province_modifier = dominant_center_of_production
+								has_province_modifier = urban_goods_naval_supplies
+								has_province_modifier = urban_goods_glassware
+								has_province_modifier = urban_goods_steel
+								has_province_modifier = urban_goods_luxury_cloth
+								has_province_modifier = urban_goods_silk
+								has_province_modifier = urban_goods_chinaware
+								has_province_modifier = urban_goods_carpet
+								has_province_modifier = urban_goods_paper
+								has_province_modifier = urban_goods_leather
+								has_province_modifier = urban_goods_jewelry
+							}
+						}
+						set_province_flag = urban_goods_rank_3
+						
+						# Variable responsible for upgrading an urban industry
+						set_variable = { which = urban_production_skill   value = 75 }
+					}
+					else = {
+						set_province_flag = urban_goods_rank_2
+						
+						set_variable = { which = urban_production_skill value = 25 }
+					}
+				}
+				
+				set_urban_goods_flag = yes
+				
+				POP_update_production_all = yes
+			}
+		}
+		regiongroup = {
+			region = {
+				limit = {
+					is_wasteland = no
+				}
+				remove_urban_goods_flag = yes
+			}
+		}
+		# Calc of timber production
+		#regiongroup = {
+		#	region = {
+		#		limit = {
+		#			is_city = yes
+		#		}
+		#		set_timber_production = yes
+		#	}
+		#}
+		# Autonomy Initialization
+		country_event = {
+			id = POP_startup_events.008
+			days = 25
+		}
+		
+		every_country = {
+			#limit = {
+			#	exists = yes
+			#}
+			#set_variable = {      which = capital_relevance				which = country_total_pop }
+			#multiply_variable = { which = capital_relevance				value = 0.7 }
+			
+			check_centralisation_absolutism = yes
+		}
+		
+		### Setting up Preeminent Cities ###
+		set_global_flag = modifiers_initialized
+		
+		country_event = {
+			id = POP_shifting_modifiers.001
+		}
+		
+		every_country = {
+			#limit = {
+			#	exists = yes
+			#}
+			#set_variable = { which = bureaucracy_strength_country			value = 0 } ### How many bureaucratic maintenance you pay
+			set_variable = { which = capital_num							value = 0 } ### Num of capital rank
+			set_variable = { which = capital_maintenance					value = 0 }
+		}
+		
+		#Tribal settlement
+		init_settlement_score_progress = yes
+		regiongroup = {
+			region = {
+				limit = {
+					check_variable = { which = tribals_ratio					value = 0.001 }
+					is_wasteland = no
+				}
+				calc_settlement_score_gravity = yes
+				#export_to_variable = {
+				#	variable_name = tribal_culture
+				#	value = culture
+				#}
+			}
+		}
+		init_tribal_ratio = yes
+		
+		every_country = {
+			#limit = {
+			#	exists = yes
+			#}
+			IncomeSetPre = yes
+			
+			every_owned_province = {
+				limit = {
+					is_city = yes
+				}
+				StatSetCore = yes
+				IncomeSet = yes
+					
+				StatCleanup = yes
+			}
+			# Set provincial income and its taxation
+			IncomeSetPost = yes
+		}
+		
+		# Initialize Wealth
+		set_global_flag = wealth_initializing
+		
+		country_event = {
+			id = POP_Census.005
+			days = 1
+		}
+		
+		# Continue when census.005 is done calculating
+		# Calculates development level of the country and Assigns Urban Production Bonuses
+		country_event = {
+			id = POP_Census.007
+			days = 10
+		}
+		
+		# Upper Class Calcs
+		country_event = {
+			id = POP_Census.008
+			days = 11
+		}
+	}
+	option = {
+		name = "POP_startup_events.007.a"
+		ai_chance = { factor = 100 }
+		
+		country_event = {
+			id = POP_startup_events.009
+			days = 20
+		}
+		#country_event = {
+		#	id = ui_setter.001
+		#	days = 40
+		#}
+	}
+	
+	after = {
+		#if = {
+			#limit = {
+			#	NOT = { has_global_flag = show_for_developers }
+			#}
+			regiongroup = {
+				region = {
+					limit = {
+						is_wasteland = no
+					}
+					set_variable = { which = dominant_center_of_production		value = 0 }
+					set_variable = { which = dominant_center_of_trade			value = 0 }
+					#set_variable = { which = eats_continent_setup				value = 0 }
+					set_variable = { which = farm_ticker						value = 0 }
+					set_variable = { which = important_center_of_production		value = 0 }
+					set_variable = { which = important_center_of_trade			value = 0 }
+					set_variable = { which = major_center_of_production			value = 0 }
+					set_variable = { which = major_center_of_trade				value = 0 }
+					set_variable = { which = minor_center_of_production			value = 0 }
+					set_variable = { which = minor_center_of_trade				value = 0 }
+					set_variable = { which = rural_production_ticker			value = 0 }
+					set_variable = { which = trade_power_ticker					value = 0 }
+				}
+			}
+		#}
+	}
+}
+
+### EIGHT-8 ###
+country_event = { ### Sets autonomy
+	id = POP_startup_events.008
+	title = "POP_startup_events.008.t"
+	desc = "POP_startup_events.008.d"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+
+	immediate = {
+		regiongroup = {
+			region = {
+				limit = {
+					is_city = yes
+				}
+				export_to_variable = {
+					which = t1
+					value = modifier:local_autonomy
+				}
+				
+				export_to_variable = {
+					which = t2
+					value = modifier:global_autonomy
+					who = owner
+				}
+				
+				set_variable = { which = t3 which = t1 }
+				change_variable = { which = t3 which = t2 }
+				multiply_variable = { which = t3 value = 100 }
+				
+				setAutonomy = { type=which inp=t3 }
+				
+				
+				set_variable = { which = t1 value = 0 }
+				set_variable = { which = t2 value = 0 }
+				set_variable = { which = t3 value = 0 }
+			}
+		}
+		
+#		every_province = {
+#			limit = {
+#				is_city = yes
+#			}
+#					
+#			initial_autonomy_effect = yes
+#			base_autonomy_effect = yes
+#			centralisation_autonomy_effect = yes
+#			
+#			estate_autonomy_init_effect = yes
+#			POP_autonomy_effect = yes
+#			CE_autonomy_effect = yes
+#			
+#			sum_autonomy_effect = yes
+#			
+#			starting_autonomy_effect = yes
+#			
+#			final_autonomy_effect = yes
+#		}
+#		every_country = { ### Refix manpower
+#			limit = {
+#				exists = yes
+#			}
+#			add_manpower = -1000
+#			add_yearly_manpower = 20
+#			add_sailors = -100
+#			add_yearly_sailors = 10
+#			if = {
+#				limit = {
+#					tag = FRA
+#				}
+#				add_yearly_manpower = -5
+#			}
+#		}
+	}
+	
+	option = {
+		name = "POP_startup_events.008.a"
+		ai_chance = { factor = 100 }
+	}
+}
+
+### NINE-9 ###
+country_event = { ### Estates Assigned
+	id = POP_startup_events.009
+	title = "POP_startup_events.009.t"
+	desc = "POP_startup_events.009.d"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		#every_country = {
+		#	#limit = {
+		#	#	exists = yes
+		#	#}
+		#	if = {
+		#		limit = {
+		#			is_nomad = yes
+		#		}
+		#		set_variable = { which = tribal_horde_glory 	value = 5 }
+		#	}
+		#	set_variable = { which = TR_favor_time_left						value = 22 }
+		#	set_variable = { which = GN_privileges_time_left				value = 22 }
+		#	set_variable = { which = GN_favor_time_left						value = 22 }
+		#	set_variable = { which = GN_demand_support_time_left			value = 22 }
+		#	set_variable = { which = promote_demote_nobles_time_left		value = 22 }
+		#	set_variable = { which = LN_privileges_time_left				value = 22 }
+		#	set_variable = { which = LN_favor_time_left						value = 22 }
+		#	set_variable = { which = LN_demand_support_time_left			value = 22 }
+		#	set_variable = { which = BG_privileges_time_left				value = 22 }
+		#	set_variable = { which = BG_favor_time_left						value = 22 }
+		#	set_variable = { which = BG_demand_support_time_left			value = 22 }
+		#	set_variable = { which = BG_privileges_time_left				value = 22 }
+		#}
+		
+		every_country = {
+			#limit = {
+			#	exists = yes
+			#}
+			
+			if = {
+				limit = {
+					is_nomad = yes
+				}
+				set_variable = { which = tribal_horde_glory 	value = 5 }
+			}
+			set_variable = { which = TR_favor_time_left						value = 22 }
+			set_variable = { which = GN_privileges_time_left				value = 22 }
+			set_variable = { which = GN_favor_time_left						value = 22 }
+			set_variable = { which = GN_demand_support_time_left			value = 22 }
+			set_variable = { which = promote_demote_nobles_time_left		value = 22 }
+			set_variable = { which = LN_privileges_time_left				value = 22 }
+			set_variable = { which = LN_favor_time_left						value = 22 }
+			set_variable = { which = LN_demand_support_time_left			value = 22 }
+			set_variable = { which = BG_privileges_time_left				value = 22 }
+			set_variable = { which = BG_favor_time_left						value = 22 }
+			set_variable = { which = BG_demand_support_time_left			value = 22 }
+			set_variable = { which = BG_privileges_time_left				value = 22 }
+			
+			set_country_flag = stuffs_set
+			
+			set_variable = { which = estate_burghers_weight_country	value = 0 }
+			
+			every_owned_province = {
+				limit = {
+					is_city = yes
+				}
+				if = {
+					limit = {
+						check_variable = { which = tribals_ratio	value = 0.001 }
+						NOT = { check_variable = { which = tribals_ratio	value = 20 } }
+					}
+					tribes_majority_to_minority = yes
+				}
+				else_if = {
+					limit = {
+						check_variable = { which = tribals_ratio	value = 20 }
+					}
+					set_province_flag = tribals_control_province
+				}
+				set_variable = { 	  which = estate_rural_weight 		which = upper_rural_weight }
+				if = { # Burghers in Trade Companies
+					limit = {
+						is_owned_by_trade_company = yes
+					}
+					multiply_variable = { 	which = estate_rural_weight value = 0.35 }
+				}
+				set_variable = { 	  which = estate_city_weight  		which = upper_urban_weight }
+				multiply_variable = { which = estate_rural_weight		value = 1.5 }
+				if = {
+					limit = {
+						check_variable = { which = estate_city_weight which = estate_rural_weight }
+					}
+					hidden_effect = {
+						clr_province_flag = lesser_nobles_control_province
+						set_province_flag = burghers_control_province
+					}
+					if = {
+						limit = {
+							OR = {
+								has_province_flag = tribals_control_province
+								check_variable = { which = tribals_ratio	value = 0.001 }
+							}
+						}
+						clr_province_flag = tribals_control_province
+						set_province_flag = was_tribals
+						add_permanent_province_modifier = {
+							name = estate_tribal_minority
+							duration = -1
+						}
+					}
+					#else_if = {
+					#	limit = {
+					#		has_province_flag = freeholders_control_province
+					#	}
+					#	set_province_flag = was_freeholders
+					#}
+					else = {
+						set_province_flag = was_lesser_nobles
+					}
+				}
+				else_if = {
+					limit = {
+						check_variable = { which = estate_rural_weight		which = estate_city_weight }
+						NOT = { has_province_flag = tribals_control_province }
+						#NOT = { has_province_flag = freeholders_control_province }
+					}
+					set_province_flag = noble_chosen
+				}
+			}
+			
+			# Initialize the proportion of greater nobility
+			set_variable = { which = noble_weight_country 			value = 0 }
+			
+			if = {
+				limit = {
+					technology_group = indian
+				}
+				set_variable = { which = startup_nobility_strength  		value = 0.95 }
+			}
+			else_if = {
+				limit = {
+					OR = {
+						tag = NOR
+						tag = SWE
+						tag = RSW
+					}
+				}
+				set_variable = { which = startup_nobility_strength  		value = 0 }
+			}
+			else_if = {
+				limit = {
+					OR = {
+						tag = DEN
+						tag = DAN
+					}
+				}
+				set_variable = { which = startup_nobility_strength  		value = 0.3 }
+			}
+			else_if = {
+				limit = {
+					tag = BYZ
+				}
+				set_variable = { which = startup_nobility_strength  		value = 0.15 }
+			}
+			else_if = { # More Greater Nobles
+				limit = {
+					tag = POL
+				}
+				set_variable = { which = startup_nobility_strength  		value = 0.6 }
+			}
+			else_if = {
+				limit = {
+					tag = ENG
+				}
+				set_variable = { which = startup_nobility_strength  		value = 0.4 }
+			}
+			else_if = { # Feudalism
+				limit = {
+					OR = {
+						tag = FRA
+						tag = KNP
+					}
+				}
+				set_variable = { which = startup_nobility_strength  		value = 0.75 }
+			}
+			else_if = {
+				limit = {
+					tag = KOR
+				}
+				set_variable = { which = startup_nobility_strength  		value = 0.75 }
+			}
+			else_if = {
+				limit = { # Feudalism
+					OR = {
+						capital_scope = {
+							superregion = france_superregion
+						}
+						tag = BOS
+						AND = {
+							primary_culture = serbian
+							NOT = {
+								is_year = 1400
+								capital_scope = {
+									region = greece_region
+								}
+							}
+						}
+					}
+				}
+				set_variable = { which = startup_nobility_strength  		value = 0.7 }
+			}
+			else_if = { # Less powerful nobles
+				limit = {
+					tag = KNO
+				}
+				set_variable = { which = startup_nobility_strength  		value = 0.3 }
+			}
+			else_if = { # Less powerful nobles
+				limit = {
+					primary_culture = haussa
+				}
+				set_variable = { which = startup_nobility_strength  		value = 0 }
+			}
+			else_if = {
+				limit = {
+					primary_culture = yorumba
+				}
+				set_variable = { which = startup_nobility_strength  		value = 0.35 }
+			}
+			else_if = {
+				limit = {
+					tag = MAL
+				}
+				set_variable = { which = startup_nobility_strength  		value = 0.75 }
+			}
+			else_if = {
+				limit = {
+					tag = KBO
+				}
+				set_variable = { which = startup_nobility_strength  		value = 0.7 }
+			}
+			else_if = {
+				limit = {
+					tag = SON
+				}
+				set_variable = { which = startup_nobility_strength  		value = 0.7 }
+			}
+			else_if = {
+				limit = {
+					technology_group = sub_saharan
+				}
+				set_variable = { which = startup_nobility_strength  		value = 0.1 }
+			}
+			else_if = { limit = { absolutism = 80 }
+				set_variable = { which = startup_nobility_strength  		value = 0 }
+			}
+			else = {
+				set_variable = { which = absolutism_var						value = 1 }
+				
+				absolutism_lookup = {
+					variable = absolutism_var_ranged
+				}
+				multiply_variable = { which = absolutism_var_ranged			value = 0.01 } #0-1 scale
+				subtract_variable = { which = absolutism_var				which = absolutism_var_ranged } #1 - 0.2 range
+					
+				subtract_variable = { which = absolutism_var				value = 0.2 } #0.8-0 range
+				
+				multiply_variable = { which = absolutism_var				value = 0.1 } #and wipe out all sub 0.xx values
+				multiply_variable = { which = absolutism_var				value = 10 }#0.8-0 range
+				
+				set_variable = { which = startup_nobility_strength			which = absolutism_var } #Set variable
+				#cleanup
+				set_variable = { which = absolutism_var_ranged				value = 0 }
+				set_variable = { which = absolutism_var						value = 0 }
+				if = {
+					limit = {
+						check_variable = { which = startup_nobility_strength  		value = 0.95 }
+					}
+					set_variable = { which = startup_nobility_strength  		value = 0.95 }
+				}
+			}
+			
+			every_owned_province = {
+				limit = {
+					has_province_flag = noble_chosen
+				}
+				set_variable = { 	which = noble_weight 				which = upper_weight }
+				set_variable = { 	which = noble_weight_country 		which = noble_weight }
+				
+				PREV = { change_variable = { which = noble_weight_country 	which = PREV } }
+				set_variable = { 			 which = noble_weight_country 	value = 0 }
+			}
+			
+			# Assign GN status to provinces with highest noble weight
+			if = {
+				limit = {
+					check_variable = { which = startup_nobility_strength value = 0.1 }
+				}
+				if = {
+					limit = {
+						check_variable = { which = startup_nobility_strength value = 1 }
+					}
+					set_variable = { 		which = noble_weight_country 	value = 0 }
+					every_owned_province = {
+						limit = {
+							has_province_flag = noble_chosen
+						}
+						clr_province_flag = lesser_nobles_control_province
+						set_province_flag = greater_nobles_control_province
+					}
+				}
+				else = {
+					set_variable = { 		which = estate_greater_nobles_weight_country 			which = startup_nobility_strength }
+					multiply_variable = {   which = estate_greater_nobles_weight_country			which = noble_weight_country }
+					set_variable = { 		which = noble_weight_country 							value = 0 }
+					
+					every_owned_province = {
+						limit = {
+							has_province_flag = noble_chosen
+						}
+						set_variable = { which = noble_weight_check which = runner_final_time }
+						change_variable = { which = noble_weight_check value = 5 }
+						multiply_variable = { which = noble_weight_check value = 0.01 }
+						
+						multiply_variable = { which = noble_weight_check which = noble_weight }
+					}
+					
+					while = {
+						limit = {
+							check_variable = { which = estate_greater_nobles_weight_country value = 1 }
+						}
+						save_event_target_as = cur_max
+						
+						set_variable = { which = noble_weight_check value = -10 }
+						
+						every_owned_province = {
+							limit = {
+								has_province_flag = noble_chosen
+								
+								NOT = { has_province_flag = greater_nobles_control_province }
+								
+								check_variable = { which = noble_weight_check which = event_target:cur_max }
+								NOT = { province_id = 1402 } # Exempt Constantinople
+							}
+							save_event_target_as = cur_max
+						}
+						
+						event_target:cur_max = {
+							if = {
+								limit = {
+									check_variable = { which = noble_weight_check value = -9.999 }
+								}
+								clr_province_flag = lesser_nobles_control_province
+								set_province_flag = greater_nobles_control_province
+								
+								set_variable = { which = estate_greater_nobles_weight_country which = noble_weight }
+								
+								PREV = { subtract_variable = { which = estate_greater_nobles_weight_country which = PREV } }
+							}
+							else = {
+								PREV = { set_variable = { which = estate_greater_nobles_weight_country 	value = 0 } }
+							}
+						}
+					}
+					
+					set_variable = { which = noble_weight_check value = 0 }
+					
+					every_owned_province = {
+						limit = {
+							has_province_flag = noble_chosen
+						}
+						set_variable = { which = noble_weight_check value = 0 }
+						
+						if = {
+							limit = {
+								NOT = { has_province_flag = greater_nobles_control_province }
+							}
+							clr_province_flag = greater_nobles_control_province
+							set_province_flag = lesser_nobles_control_province
+						}
+					}
+				}
+			}
+			else = {
+				every_owned_province = {
+					limit = {
+						has_province_flag = noble_chosen
+					}
+					clr_province_flag = greater_nobles_control_province
+					set_province_flag = lesser_nobles_control_province
+				}
+			}
+			
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = startup_nobility_strength 		value = 0 }
+				every_owned_province = {
+					set_variable = { which = noble_weight				value = 0 }
+					clr_province_flag = noble_chosen
+				}
+			#}
+		}
+		
+		set_global_flag = initialising_estates
+		set_global_flag = first_estate_fired
+		
+		country_event = { id = POP_Estates.001 }
+		
+		country_event = { id = POP_startup_events.300	days = 3 }
+		
+		country_event = { id = POP_population_growth.001 days = 14 }
+		country_event = { id = POP_population_growth.002 days = 16 }
+		country_event = { id = POP_population_growth.004 days = 18 }
+		country_event = { id = POP_population_growth.006 days = 20 }
+		country_event = { id = POP_population_growth.008 days = 22 }
+		country_event = { id = POP_population_growth.010 days = 24 }
+		country_event = { id = POP_population_growth.099 days = 26 }
+		country_event = { id = POP_population_growth.011 days = 28 }
+	}
+	
+	option = {
+		name = "POP_startup_events.009.a"
+		ai_chance = { factor = 100 }
+		country_event = {
+			id = POP_startup_events.010
+			days = 1
+		}
+	}
+}
+
+### TEN-10 ###
+country_event = { ### Setting education
+	id = POP_startup_events.010
+	title = "POP_startup_events.010.title"
+	desc = "POP_startup_events.010.desc"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	hidden = yes
+	is_triggered_only = yes
+	
+	immediate = {
+		every_country = { ### Sets up country scope education variables
+			#limit = {
+			#	exists = yes
+			#}
+			#set_variable = { which = patriarch_authority    value = 0 }
+			export_to_variable = {
+				which = church_influence
+				value = patriarch_authority
+				#   who = THIS
+			}
+			set_variable = { 	  which = upper_pop_religious 		value = 0 }
+			every_owned_province = {
+				limit = {
+					has_owner_religion = yes
+					is_overseas = no
+				}
+				#set_variable = { which = upper_pop_religious 	value = 0 }
+				set_variable = { which = upper_pop_religious 	which = upper_pop }
+				PREV = { change_variable = { which = upper_pop_religious	which = PREV } }
+				#if = { ### Variables set to 0 after calculations are done
+					#limit = {
+					#	NOT = { has_global_flag = show_for_developers }
+					#}
+					set_variable = { which = upper_pop_religious 	value = 0 }
+				#}
+			}
+			#set_variable = { 	  which = education_money_endowed 			value = 0 }
+			#set_variable = { 	  which = education_level					value = 0 } ### Percentage of education achieved.  Changes slowly
+			#set_variable = { 	  which = education_church_contribute 		value = 0 }	### Contribution to education by the clergy
+			set_variable = {      which = education_church_contribute       which = church_influence }
+			multiply_variable = { which = education_church_contribute		which = upper_pop_religious }
+			multiply_variable = { which = education_church_contribute       value = 2 }
+			set_variable = {	  which = upper_pop_religious				value = 0 }
+			set_variable = { 	  which = education_money_endowed			value = 10 } ### Start up endowment
+			multiply_variable = { which = education_money_endowed			which = upper_pop_non_overseas }
+			#set_variable = { 	  which = education_startup_funding_level 	value = 0 }
+			set_variable = { 	  which = education_startup_funding_level	which = development_level }
+			divide_variable = {   which = education_startup_funding_level	value = 60 }
+			multiply_variable = { which = education_startup_funding_level 	which = upper_pop_non_overseas } ### Church donates based on how many upper classes you have
+			change_variable = {   which = education_startup_funding_level 	which = education_church_contribute }
+			if = {
+				limit = {
+					is_nomad = yes
+				}
+				multiply_variable = { which = education_startup_funding_level	value = 0.25 }
+			}
+			if = {
+				limit = {
+					tag = OTT
+				}
+				multiply_variable = { which = education_startup_funding_level	value = 2.5 }
+			}
+			set_variable = { 	  which = education_ticker 					value = 100 } ### Will run 100 iterations later to determine starting education
+			set_variable = { 	  which = education_level 					value = 10 } ### Set to ten to smooth end result
+			#set_variable = { 	  which = monthly_country_income 			value = 0 }
+			export_to_variable = {
+				which = monthly_country_income
+				value = monthly_income
+				#	who = THIS
+			}
+			
+			############################
+			### Initializing Courts  ###
+			############################
+			
+			#set_variable = { 	  which = court_money_endowed 			value = 0 }
+			#set_variable = { 	  which = court_level					value = 0 } ### Percentage of education achieved.  Changes slowly
+			set_variable = { 	  which = court_money_endowed			value = 10 } ### Start up endowment
+			#set_variable = { 	  which = court_clients					value = 0 } ### Represents all people attending the court, thus higher cost
+			set_variable = { 	  which = court_clients					which = upper_pop_non_overseas } ### Represents all people attending the court, thus higher cost
+			set_variable = { 	  which = court_clients_vassal			value = 0 }
+			#set_variable = { 	   which = court_capital_bonus 		value = 0 } ### Half the maintenance cost of your capital buildings is added to your court (glorious palaces help your court)
+			set_variable = { 	   which = court_capital_bonus 		which = capital_maintenance }
+			multiply_variable = {    which = court_capital_bonus		value = 0.5 }
+			every_subject_country = {
+				#limit = {
+				#	exists = yes
+				#}
+				#set_variable = { 	which = court_clients_vassal 				value = 0 }
+				set_variable = { 	which = court_clients_vassal 				which = upper_pop_non_overseas }
+				multiply_variable = { which = court_clients_vassal				value = 0.5 }
+				PREV = { change_variable = { which = court_clients_vassal		which = PREV } }
+			}
+			change_variable = {   which = court_clients					which = court_clients_vassal }
+			if = {
+				limit = {
+					NOT = { check_variable = { which = court_clients 	value = 1 } }
+				}
+				set_variable = { which = court_clients 	value = 1 }
+			}
+			multiply_variable = { which = court_money_endowed			which = court_clients }
+			trigger_switch = {
+				on_trigger = has_country_modifier
+				country_development_1 = {
+					set_variable = { which = court_startup_funding_level	value = 0.65 }
+				}
+				country_development_2 = {
+					set_variable = { which = court_startup_funding_level	value = 0.85 }
+				}
+				country_development_3 = {
+					set_variable = { which = court_startup_funding_level	value = 1 }
+				}
+				country_development_4 = {
+					set_variable = { which = court_startup_funding_level	value = 1.5 }
+				}
+				country_development_5 = {
+					set_variable = { which = court_startup_funding_level	value = 1.75 }
+				}
+				country_development_6 = {
+					set_variable = { which = court_startup_funding_level	value = 2 }
+				}
+				country_development_7 = {
+					set_variable = { which = court_startup_funding_level	value = 2.5 }
+				}
+				country_development_8 = {
+					set_variable = { which = court_startup_funding_level	value = 3.5 }
+				}
+				country_development_9 = {
+					set_variable = { which = court_startup_funding_level	value = 5.0 }
+				}
+			}
+			trigger_switch = {
+				on_trigger = has_country_modifier
+				title_6 = {
+					change_variable = { which = court_startup_funding_level	value = 0.5 }
+				}
+				title_5 = {
+					change_variable = { which = court_startup_funding_level	value = 0.3 }
+				}
+				title_4 = {
+					change_variable = { which = court_startup_funding_level	value = 0.2 }
+				}
+				title_3 = {
+					change_variable = { which = court_startup_funding_level	value = 0.1 }
+				}
+			}
+			multiply_variable = { which = court_startup_funding_level 	which = court_clients }
+			if = {
+				limit = {
+					vassal = 1
+				}
+				multiply_variable = { which = court_startup_funding_level	value = 1.15 }
+			}
+			if = {
+				limit = {
+					vassal = 3
+				}
+				multiply_variable = { which = court_startup_funding_level	value = 1.15 }
+			}
+			
+			set_variable = { 	  which = court_ticker 					value = 100 } ### Will run 100 iterations later to determine starting education
+			set_variable = { 	  which = court_level 					value = 10 } ### Set to ten to smooth end result
+			set_variable = { 	  which = monthly_country_income 		value = 0 }
+			
+			### Run 100 iterations to generate starting court level ###
+			while = {
+				limit = {
+					check_variable = { which = court_ticker 	value = 1 }
+				}
+				subtract_variable = {  which = court_ticker				value = 1 } ### terminating variable for loop
+				#set_variable = { 	   which = court_loss 				value = 0 } ### court that decays this year
+				set_variable = { 	   which = court_loss 				which = court_level } ### court that decays this year
+				multiply_variable = {  which = court_loss				value = 0.05 } ### 5 percent court decay rate
+				
+				#set_variable = { 	   which = court_endowed_new		value = 0 } ### Money going into the endowment pool this iteration
+				set_variable = {    which = court_endowed_new 		which = court_startup_funding_level } ### Determined in startup event by set variable
+				#set_variable = { 	   which = court_increase_cost 		value = 0 }
+				set_variable = { 	   which = court_increase_cost		value = 1 } ### Increases cost of court over time (need more court to keep pace)
+				set_variable = { 	   which = court_cost_ticker		which = court_level }
+				change_variable = {    which = court_money_endowed		which = court_endowed_new }
+				#set_variable = {       which = court_money_dispersed 	value = 0 }
+				set_variable = {       which = court_money_dispersed 	which = court_money_endowed }
+				multiply_variable = {  which = court_money_dispersed	value = 0.1 }
+				multiply_variable = {  which = court_money_endowed		value = 0.9 }
+				while = {
+					limit = {
+						check_variable = { which = court_cost_ticker 	value = 0.001 }
+					}
+					if = {
+						limit = {
+							NOT = { check_variable = { which = court_cost_ticker 	value = 40 } }
+						}
+						multiply_variable = { which = court_increase_cost	value = 1.05 }
+						subtract_variable = { which = court_cost_ticker		value = 5 }
+					}
+					else_if = {
+						limit = {
+							NOT = { check_variable = { which = court_cost_ticker 	value = 70 } }
+						}
+						multiply_variable = { which = court_increase_cost	value = 1.1 }
+						subtract_variable = { which = court_cost_ticker		value = 5 }
+					}
+					else = {
+						multiply_variable = { which = court_increase_cost	value = 1.15 }
+						subtract_variable = { which = court_cost_ticker		value = 5 }
+					}
+				}
+				#set_variable = { 	  which = court_yearly_gain			value = 0 }
+				set_variable = { 	  which = court_yearly_gain			which = court_money_dispersed }
+				change_variable = {   which = court_yearly_gain			which = court_capital_bonus } ### Money added from capital bonus
+				#set_variable = { 	  which = court_costlier_with_time 	value = 0 }
+				set_variable = { 	  which = court_costlier_with_time 	value = 1 }
+				#set_variable = { 	  which = court_costlier_time_modi  value = 0 }
+				set_variable = { 	  which = court_costlier_time_modi  which = year_ticker }
+				multiply_variable = {   which = court_costlier_time_modi  value = 0.004 }
+				change_variable = {   which = court_costlier_with_time  which = court_costlier_time_modi }
+				multiply_variable = { which = court_yearly_gain			which = court_costlier_with_time }
+				multiply_variable = { which = court_yearly_gain 		value = 2 } ### Variable to tune court gain
+				#if = {
+				#	limit = {
+				#		is_variable_equal = {
+				#			which = court_increase_cost
+				#			value = 0
+				#		}
+				#	}
+				#	
+				#	# log = "<ERROR><8C2DD310><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+				#		
+				#}
+				#else = {
+					divide_variable = {
+						which = court_yearly_gain
+						which = court_increase_cost
+					}
+				#}
+				if = { ### Only divide for countries with at least 1 upper class
+					limit = {
+						check_variable = { which = court_clients value = 0.1 }
+					}
+					#if = {
+					#	limit = {
+					#		is_variable_equal = {
+					#			which = court_clients
+					#			value = 0
+					#		}
+					#	}
+					#	
+					#	# log = "<ERROR><CA4FB490><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+					#	
+					#}
+					#else = {
+						divide_variable = {
+							which = court_yearly_gain
+							which = court_clients
+						}
+					#}
+				}
+				#set_variable = { 	  which = court_gross_gain 			value = 0 } ### Diagnostic variable for devs, disable when not testing
+				set_variable = { 	  which = court_gross_gain 			which = court_yearly_gain }
+				subtract_variable = { which = court_yearly_gain			which = court_loss }
+				change_variable = {   which = court_level				which = court_yearly_gain }
+			}
+			#	multiply_variable = {  which = court_money_endowed		value = 1.25 } ### Initial boost
+			court_recalculation = yes
+			#if = { ### Variables set to 0 after calculations are done
+				#limit = {
+				#	NOT = { has_global_flag = show_for_developers }
+				#}
+				set_variable = { which = court_loss					value = 0 }
+				set_variable = { which = court_money_dispersed		value = 0 }
+				set_variable = { which = court_spent_AI				value = 0 }
+				set_variable = { which = court_endowed_new			value = 0 }
+				set_variable = { which = court_cost_ticker			value = 0 }
+				set_variable = { which = court_clients				value = 0 }
+				set_variable = { which = court_clients_vassal		value = 0 }
+				set_variable = { which = court_increase_cost		value = 0 }
+				set_variable = { which = court_costlier_with_time	value = 0 }
+				set_variable = { which = court_costlier_time_modi	value = 0 }
+				set_variable = { which = court_gross_gain			value = 0 }
+			#}
+			calc_alliance_limit = yes
+			
+			set_variable = { which = court_startup_funding_level value = 0 }
+		}
+		
+		# Education
+		
+		# University Calculation
+		country_event = {
+			id = POP_Census.2022
+			days = 1
+		}
+		country_event = {
+			id = POP_startup_events.011
+			days = 2
+		}
+	}
+	
+	option = {
+		name = "POP_startup_events.010.a"
+		ai_chance = { factor = 100 }
+	}
+}
+
+### ELEVEN-11 ###
+country_event = { ### Second half of educaiton/courts
+	id = POP_startup_events.011
+	title = "POP_startup_events.011.title"
+	desc = "POP_startup_events.011.desc"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	hidden = yes
+	is_triggered_only = yes
+	
+	immediate = {
+		# Tabulate University Variables at country scope to inform education level
+		every_country = {
+			#limit = {
+			#	exists = yes
+			#}
+			set_variable = { which = university_education_multiplier	value = 0 }
+			#set_variable = { which = university_foreign_students 		value = 0 }
+			#set_variable = { which = university_student_sent_abroad 	value = 0 }
+			set_variable = { which = population_needing_education		value = 0 }
+			set_variable = { which = university_domestic_student		value = 0 }
+			set_variable = { which = university_available_contribution      value = 0 }
+			every_owned_province = {
+				limit = {
+					is_city = yes
+					is_owned_by_trade_company = no
+				}
+				PREV = {
+					change_variable = { which = university_education_multiplier  which = PREV }
+					#change_variable = { which = university_foreign_students          which = PREV }
+					#change_variable = { which = university_student_sent_abroad   which = PREV }
+					change_variable = { which = population_needing_education         which = PREV }
+					change_variable = { which = university_domestic_student          which = PREV }
+					change_variable = { which = university_available_contribution        which = PREV }
+				}
+			}
+			if = {
+				limit = { check_variable = {	which = population_needing_education		which = university_available_contribution } }
+				change_variable = {				which = university_domestic_student			which = university_available_contribution }
+				subtract_variable = {			which = population_needing_education		which = university_available_contribution }
+			}
+			else = {
+				change_variable = {				which = university_domestic_student			which = population_needing_education }
+				set_variable = {				which = population_needing_education		value = 0 }
+			}
+			if = {
+				limit = { check_variable = {	which = upper_pop_non_overseas				value = 0.1 } }
+				set_variable = {				which = university_education_multiplier		which = university_domestic_student }
+				set_variable = {				which = tmp									which = university_domestic_student }
+				change_variable = {				which = tmp									which = population_needing_education }
+				divide_variable = {				which = university_education_multiplier		which = tmp }
+				multiply_variable = {			which = university_education_multiplier		value = 1.5 }
+				set_variable = {				which = tmp									value = 0 }
+			}
+			#change_variable = {					which = university_education_multiplier 	value = 1 }
+
+			#reset_income_modifier = { varname=university_foreign_students modname=uni_foreign value=10485.76 type=country }
+			#reset_income_modifier = { varname=university_foreign_students modname=uni_foreign value=5242.88 type=country }
+			#reset_income_modifier = { varname=university_foreign_students modname=uni_foreign value=2621.44 type=country }
+			#reset_income_modifier = { varname=university_foreign_students modname=uni_foreign value=1310.72 type=country }
+			#reset_income_modifier = { varname=university_foreign_students modname=uni_foreign value=655.36 type=country }
+			#reset_income_modifier = { varname=university_foreign_students modname=uni_foreign value=327.68 type=country }
+			#reset_income_modifier = { varname=university_foreign_students modname=uni_foreign value=163.84 type=country }
+			#reset_income_modifier = { varname=university_foreign_students modname=uni_foreign value=81.92 type=country }
+			#reset_income_modifier = { varname=university_foreign_students modname=uni_foreign value=40.96 type=country }
+			#reset_income_modifier = { varname=university_foreign_students modname=uni_foreign value=20.48 type=country }
+			#reset_income_modifier = { varname=university_foreign_students modname=uni_foreign value=10.24 type=country }
+			#reset_income_modifier = { varname=university_foreign_students modname=uni_foreign value=5.12 type=country }
+			#reset_income_modifier = { varname=university_foreign_students modname=uni_foreign value=2.56 type=country }
+			#reset_income_modifier = { varname=university_foreign_students modname=uni_foreign value=1.28 type=country }
+			#reset_income_modifier = { varname=university_foreign_students modname=uni_foreign value=0.64 type=country }
+			#reset_income_modifier = { varname=university_foreign_students modname=uni_foreign value=0.32 type=country }
+			#reset_income_modifier = { varname=university_foreign_students modname=uni_foreign value=0.16 type=country }
+			#reset_income_modifier = { varname=university_foreign_students modname=uni_foreign value=0.08 type=country }
+			#reset_income_modifier = { varname=university_foreign_students modname=uni_foreign value=0.04 type=country }
+			#reset_income_modifier = { varname=university_foreign_students modname=uni_foreign value=0.02 type=country }
+			#reset_income_modifier = { varname=university_foreign_students modname=uni_foreign value=0.01 type=country }
+			
+			if = { ### Only divide for countries with at least 0.1 upper class
+				limit = {
+					check_variable = { which = upper_pop_non_overseas value = 0.1 }
+				}
+				divide_variable = {
+					which = university_education_multiplier
+					which = upper_pop_non_overseas
+				}
+			}
+			if = {
+				limit = {
+					NOT = { check_variable = { which = university_education_multiplier	value = 0 } }
+				}
+				set_variable = { which = university_education_multiplier 	value = 0 }
+			}
+			change_variable = { which = university_education_multiplier 	value = 1 }
+			
+			### Run 100 iterations to generate starting education level ###
+			while = {
+				limit = {
+					check_variable = { which = education_ticker 	value = 1 }
+				}
+				subtract_variable = {  which = education_ticker				value = 1 } ### terminating variable for loop
+				#set_variable = { 	   which = education_loss 				value = 0 } ### Education that decays this year
+				set_variable = { 	   which = education_loss 				which = education_level } ### Education that decays this year
+				multiply_variable = {  which = education_loss				value = 0.05 } ### 5 percent education decay rate
+				
+				
+				#set_variable = { 	   which = education_endowed_new		value = 0 } ### Money going into the endowment pool this iteration
+				set_variable = {    which = education_endowed_new 		which = education_startup_funding_level } ### Determined in startup event by set variable
+				#set_variable = { 	   which = education_increase_cost 		value = 0 }
+				set_variable = { 	   which = education_increase_cost		value = 1 } ### Increases cost of education over time (need more education to keep pace)
+				set_variable = { 	   which = education_cost_ticker		which = education_level }
+				change_variable = {    which = education_money_endowed		which = education_endowed_new }
+				set_variable = {	   which = education_endowed_new		value = 0 }
+				#set_variable = {       which = education_money_dispersed 	value = 0 }
+				set_variable = {       which = education_money_dispersed 	which = education_money_endowed }
+				multiply_variable = {  which = education_money_dispersed	value = 0.05 }
+				multiply_variable = {  which = education_money_dispersed	which = university_education_multiplier	} ### Money spent is multiplied by university multiplier to amplify effects
+				multiply_variable = {  which = education_money_endowed		value = 0.95 }
+				while = {
+					limit = {
+						check_variable = { which = education_cost_ticker 	value = 0.001 }
+					}
+					multiply_variable = { which = education_increase_cost	value = 1.125 }
+					subtract_variable = { which = education_cost_ticker		value = 5 }
+				}
+				#set_variable = { 	  which = education_yearly_gain			value = 0 }
+				set_variable = { 	  which = education_yearly_gain			which = education_money_dispersed }
+				#set_variable = { 	  which = education_costlier_with_time 	value = 0 }
+				set_variable = { 	  which = education_costlier_with_time 	value = 1 }
+				#set_variable = { 	  which = education_costlier_time_modi  value = 0 }
+				set_variable = { 	  which = education_costlier_time_modi  which = year_ticker }
+				multiply_variable = {   which = education_costlier_time_modi  value = 0.004 }
+				change_variable = {   which = education_costlier_with_time  which = education_costlier_time_modi }
+				multiply_variable = { which = education_yearly_gain			which = education_costlier_with_time }
+				multiply_variable = { which = education_yearly_gain 		value = 1.3 } ### Variable to tune education gain
+				#if = {
+				#	limit = {
+				#		is_variable_equal = {
+				#			which = education_increase_cost
+				#			value = 0
+				#		}
+				#	}
+				#	
+				#	# log = "<ERROR><57212FA0><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+				#	
+				#}
+				#else = {
+					divide_variable = {
+						which = education_yearly_gain
+						which = education_increase_cost
+					}
+				#}
+				
+				if = { ### Only divide for countries with at least 0.1 upper class
+					limit = {
+						check_variable = { which = upper_pop_non_overseas value = 0.1 }
+					}
+					divide_variable = {
+						which = education_yearly_gain
+						which = upper_pop_non_overseas
+					}
+				}
+				subtract_variable = { which = education_yearly_gain			which = education_loss }
+				
+				change_variable = {   which = education_level				which = education_yearly_gain }
+			}
+			multiply_variable = { which = education_money_endowed			value = 1.75 }
+			
+			### Remove all education before re-assigning
+			remove_education = yes
+			
+			### ASSIGN EDUCATION MODIFIERS
+			# Originally written by Imincus
+			if = { limit = { check_variable = { which = education_level value = 40 } }
+				if = { limit = { check_variable = { which = education_level value = 65 } }
+					if = { limit = { check_variable = { which = education_level value = 80 } }
+						if = { limit = { check_variable = { which = education_level value = 100 } }
+							add_disp_modifier = { mod=education_level_enlightened }
+						}
+						else = {
+							add_disp_modifier = { mod=education_level_exceptional }
+						}
+					}
+					else = {
+						add_disp_modifier = { mod=education_level_high }
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = education_level value = 50 } }
+						add_disp_modifier = { mod=education_level_good }
+					}
+					else = {
+						add_disp_modifier = { mod=education_level_fair }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = education_level value = 20 } }
+					if = { limit = { check_variable = { which = education_level value = 30 } }
+						add_disp_modifier = { mod=education_level_average }
+					}
+					else = {
+						add_disp_modifier = { mod=education_level_poor }
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = education_level value = 10 } }
+						add_disp_modifier = { mod=education_level_mediocre }
+					}
+					else = {
+						add_disp_modifier = { mod=education_level_illiterate }
+					}
+				}
+			}
+			
+			
+			set_variable = { which = education_startup_funding_level value = 0 }
+			set_variable = { which = education_cost_ticker value = 0 }
+			set_variable = { which = education_money_dispersed value = 0 }
+			set_variable = { which = education_costlier_time_modi value = 0 }
+			set_variable = { which = education_costlier_with_time value = 0 }
+			set_variable = { which = education_increase_cost value = 0 }
+			set_variable = { which = education_loss value = 0 }
+		}
+		#regiongroup = {
+		#	region = {
+		#		limit = {
+		#			is_city = yes
+		#		}
+		#		if = {
+		#			limit = {
+		#				check_variable = { which = university_foreign_students  value = 0.1 }
+		#			}
+		#			set_province_flag = university_has_foreign_students
+		#			set_variable = { which = uni_foreign  which = university_foreign_students }
+		#			multiply_variable = { which = uni_foreign  value = 0.1 }
+		#			multiply_variable = { which = uni_foreign  value = 10 }
+		#			set_variable = { which = uni_foreign_disp  which = university_foreign_students }
+		#			multiply_variable = { which = uni_foreign_disp  value = 100 }
+		#			multiply_variable = { which = uni_foreign_disp  value = 0.001 }
+		#			multiply_variable = { which = uni_foreign_disp  value = 1000 }
+		#			if = { limit = { check_variable = { which = university_foreign_students value = 5 } }
+		#				if = { limit = { check_variable = { which = university_foreign_students value = 7 } }
+		#					if = { limit = { check_variable = { which = university_foreign_students value = 8 } }
+		#						if = { limit = { check_variable = { which = university_foreign_students value = 9 } }
+		#							if = { limit = { NOT = { has_province_modifier = foreign_students_educated_9 } }
+		#								remove_foreign_students_educated = yes
+		#								add_province_modifier = { name = foreign_students_educated_9	 duration = -1 }
+		#							}
+		#						}
+		#						else = {
+		#							if = { limit = { NOT = { has_province_modifier = foreign_students_educated_8 } }
+		#								remove_foreign_students_educated = yes
+		#								add_province_modifier = { name = foreign_students_educated_8	 duration = -1 }
+		#							}
+		#						}
+		#					}
+		#					else = {
+		#						if = { limit = { NOT = { has_province_modifier = foreign_students_educated_7 } }
+		#							remove_foreign_students_educated = yes
+		#							add_province_modifier = { name = foreign_students_educated_7	 duration = -1 }
+		#						}
+		#					}
+		#				}
+		#				else = {
+		#					if = { limit = { check_variable = { which = university_foreign_students value = 6 } }
+		#						if = { limit = { NOT = { has_province_modifier = foreign_students_educated_6 } }
+		#							remove_foreign_students_educated = yes
+		#							add_province_modifier = { name = foreign_students_educated_6	 duration = -1 }
+		#						}
+		#					}
+		#					else = {
+		#						if = { limit = { NOT = { has_province_modifier = foreign_students_educated_5 } }
+		#							remove_foreign_students_educated = yes
+		#							add_province_modifier = { name = foreign_students_educated_5	 duration = -1 }
+		#						}
+		#					}
+		#				}
+		#			}
+		#			else = {
+		#				if = { limit = { check_variable = { which = university_foreign_students value = 3 } }
+		#					if = { limit = { check_variable = { which = university_foreign_students value = 4 } }
+		#						if = { limit = { NOT = { has_province_modifier = foreign_students_educated_4 } }
+		#							remove_foreign_students_educated = yes
+		#							add_province_modifier = { name = foreign_students_educated_4	 duration = -1 }
+		#						}
+		#					}
+		#					else = {
+		#						if = { limit = { NOT = { has_province_modifier = foreign_students_educated_3 } }
+		#							remove_foreign_students_educated = yes
+		#							add_province_modifier = { name = foreign_students_educated_3	 duration = -1 }
+		#						}
+		#					}
+		#				}
+		#				else = {
+		#					if = { limit = { check_variable = { which = university_foreign_students value = 2 } }
+		#						if = { limit = { NOT = { has_province_modifier = foreign_students_educated_2 } }
+		#							remove_foreign_students_educated = yes
+		#							add_province_modifier = { name = foreign_students_educated_2	 duration = -1 }
+		#						}
+		#					}
+		#					else = {
+		#						if = { limit = { NOT = { has_province_modifier = foreign_students_educated_1 } }
+		#							remove_foreign_students_educated = yes
+		#							add_province_modifier = { name = foreign_students_educated_1	 duration = -1 }
+		#						}
+		#					}
+		#				}
+		#			}
+		#		}
+		#		else_if = {
+		#			limit = {
+		#				has_province_flag = university_has_foreign_students
+		#			}
+		#			set_variable = { which = uni_foreign  value = 0 }
+		#			set_variable = { which = uni_foreign_disp  value = 0 }
+		#			clr_province_flag = university_has_foreign_students
+		#			remove_foreign_students_educated = yes
+		#		}
+		#	}
+		#}
+		#regiongroup = {
+		#	region = {
+		#		limit = {
+		#			is_city = yes
+		#		}
+		#		if = {
+		#			limit = {
+		#				check_variable = { which = university_student_sent_abroad  value = 0.1 }
+		#			}
+		#			set_province_flag = sent_students_abroad
+		#			set_variable = { which = uni_abroad  which = university_student_sent_abroad }
+		#			multiply_variable = { which = uni_abroad  value = 0.1 }
+		#			multiply_variable = { which = uni_abroad  value = 10 }
+		#			set_variable = { which = uni_abroad_disp  which = university_student_sent_abroad }
+		#			multiply_variable = { which = uni_abroad_disp  value = 100 }
+		#			multiply_variable = { which = uni_abroad_disp  value = 0.001 }
+		#			multiply_variable = { which = uni_abroad_disp  value = 1000 }
+		#			if = { limit = { check_variable = { which = university_student_sent_abroad value = 5 } }
+		#				if = { limit = { check_variable = { which = university_student_sent_abroad value = 7 } }
+		#					if = { limit = { check_variable = { which = university_student_sent_abroad value = 8 } }
+		#						if = { limit = { check_variable = { which = university_student_sent_abroad value = 9 } }
+		#							if = { limit = { NOT = { has_province_modifier = sent_students_abroad_9 } }
+		#								remove_sent_students_abroad = yes
+		#								add_province_modifier = { name = sent_students_abroad_9	 duration = -1 }
+		#							}
+		#						}
+		#						else = {
+		#							if = { limit = { NOT = { has_province_modifier = sent_students_abroad_8 } }
+		#								remove_sent_students_abroad = yes
+		#								add_province_modifier = { name = sent_students_abroad_8	 duration = -1 }
+		#							}
+		#						}
+		#					}
+		#					else = {
+		#						if = { limit = { NOT = { has_province_modifier = sent_students_abroad_7 } }
+		#							remove_sent_students_abroad = yes
+		#							add_province_modifier = { name = sent_students_abroad_7	 duration = -1 }
+		#						}
+		#					}
+		#				}
+		#				else = {
+		#					if = { limit = { check_variable = { which = university_student_sent_abroad value = 6 } }
+		#						if = { limit = { NOT = { has_province_modifier = sent_students_abroad_6 } }
+		#							remove_sent_students_abroad = yes
+		#							add_province_modifier = { name = sent_students_abroad_6	 duration = -1 }
+		#						}
+		#					}
+		#					else = {
+		#						if = { limit = { NOT = { has_province_modifier = sent_students_abroad_5 } }
+		#							remove_sent_students_abroad = yes
+		#							add_province_modifier = { name = sent_students_abroad_5	 duration = -1 }
+		#						}
+		#					}
+		#				}
+		#			}
+		#			else = {
+		#				if = { limit = { check_variable = { which = university_student_sent_abroad value = 3 } }
+		#					if = { limit = { check_variable = { which = university_student_sent_abroad value = 4 } }
+		#						if = { limit = { NOT = { has_province_modifier = sent_students_abroad_4 } }
+		#							remove_sent_students_abroad = yes
+		#							add_province_modifier = { name = sent_students_abroad_4	 duration = -1 }
+		#						}
+		#					}
+		#					else = {
+		#						if = { limit = { NOT = { has_province_modifier = sent_students_abroad_3 } }
+		#							remove_sent_students_abroad = yes
+		#							add_province_modifier = { name = sent_students_abroad_3	 duration = -1 }
+		#						}
+		#					}
+		#				}
+		#				else = {
+		#					if = { limit = { check_variable = { which = university_student_sent_abroad value = 2 } }
+		#						if = { limit = { NOT = { has_province_modifier = sent_students_abroad_2 } }
+		#							remove_sent_students_abroad = yes
+		#							add_province_modifier = { name = sent_students_abroad_2	 duration = -1 }
+		#						}
+		#					}
+		#					else = {
+		#						if = { limit = { NOT = { has_province_modifier = sent_students_abroad_1 } }
+		#							remove_sent_students_abroad = yes
+		#							add_province_modifier = { name = sent_students_abroad_1	 duration = -1 }
+		#						}
+		#					}
+		#				}
+		#			}
+		#		}
+		#		else_if = {
+		#			limit = {
+		#				has_province_flag = sent_students_abroad
+		#			}
+		#			set_variable = { which = uni_abroad  value = 0 }
+		#			set_variable = { which = uni_abroad_disp  value = 0 }
+		#			clr_province_flag = sent_students_abroad
+		#			remove_sent_students_abroad = yes
+		#		}
+		#	}
+		#}
+		#regiongroup = {
+		#	region = {
+		#		limit = {
+		#			is_city = yes
+		#		}
+		#		if = {
+		#			limit = {
+		#				has_province_flag = university_has_foreign_students
+		#			}
+		#			set_variable = { which = uni_foreign  value = 0 }
+		#			set_variable = { which = uni_foreign_disp  value = 0 }
+		#			clr_province_flag = university_has_foreign_students
+		#			remove_foreign_students_educated = yes
+		#		}
+		#		if = {
+		#			limit = {
+		#				has_province_flag = sent_students_abroad
+		#			}
+		#			set_variable = { which = uni_abroad  value = 0 }
+		#			set_variable = { which = uni_abroad_disp  value = 0 }
+		#			clr_province_flag = sent_students_abroad
+		#			remove_sent_students_abroad = yes
+		#		}
+		#	}
+		#}
+		# Art and Universities maintenance, for misc expenses
+		#every_country = {
+			#limit = {
+			#	exists = yes
+			#}
+			#set_variable = { which = art_and_uni_expenses	value = 0 }
+			#every_owned_province = {
+			#	limit = {
+			#		is_city = yes
+			#	}
+			#	trigger_switch = {
+			#		on_trigger = has_building
+			#		small_university = {
+			#			PREV = { change_variable = { which = art_and_uni_expenses	value = 1.5 } }
+			#		}
+			#		medium_university = {
+			#			PREV = { change_variable = { which = art_and_uni_expenses	value = 3 } }
+			#		}
+			#		big_university = {
+			#			PREV = { change_variable = { which = art_and_uni_expenses	value = 10 } }
+			#		}
+			#	}
+			#	if = {
+			#		limit = {
+			#			check_variable = { which = university_student_sent_abroad   value = 0.1 }
+			#		}
+			#		set_variable = { which = art_and_uni_expenses	which = university_student_sent_abroad }
+			#		PREV = { change_variable = { which = art_and_uni_expenses	which = PREV } }
+			#	}
+			#	#trigger_switch = {
+			#	#	on_trigger = has_building
+			#	#	art_corporation = {
+			#	#		PREV = { change_variable = { which = art_and_uni_expenses	value = 2.5 } }
+			#	#	}
+			#	#	fine_arts_academy = {
+			#	#		PREV = { change_variable = { which = art_and_uni_expenses	value = 5 } }
+			#	#	}
+			#	#	opera = {
+			#	#		PREV = { change_variable = { which = art_and_uni_expenses	value = 10 } }
+			#	#	}
+			#	#}
+			#}
+		#}
+		country_event = { id = POP_Census.901 days = 7 }
+		country_event = { ### Set war chest
+			id = POP_startup_events.012
+			days = 8
+		}
+	}
+	
+	option = {
+		name = "POP_startup_events.011.a"
+		ai_chance = { factor = 100 }
+	}
+}
+
+### TWELVE-12 ###
+country_event = { ### Setting war chest ### Also removes unused variables from wastelands
+	id = POP_startup_events.012
+	title = "POP_startup_events.012.title"
+	desc = "POP_startup_events.012.desc"
+	picture = CITY_DEVELOPMENT_AU_eventPicture
+	hidden = yes
+	is_triggered_only = yes
+	
+	immediate = {
+		every_country = {
+			limit = {
+				#exists = yes
+				ai = yes
+			}
+			if = {
+				limit = {
+					tag = BYZ
+				}
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = {
+					tag = OTT
+				}
+				add_stability_3 = yes
+			}
+			
+			# AI crutch
+			if = {
+				limit = {
+					tag = MOS
+					ai = yes
+				}
+				add_stability_3 = yes
+			}
+			
+			export_to_variable = {
+				which = monthly_country_income
+				value = monthly_income
+			}
+			
+			set_variable = {
+				which = aiTreasuryGeneral
+				value = 6
+			}
+			
+			if = {
+				limit = {
+					check_variable = { which = upper_pop			value = 30 }
+				}
+				change_variable = {
+					which = aiTreasuryGeneral
+					value = 30
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = upper_pop			value = 20 }
+				}
+				change_variable = {
+					which = aiTreasuryGeneral
+					value = 25
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = upper_pop			value = 10 }
+				}
+				change_variable = {
+					which = aiTreasuryGeneral
+					value = 20
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = upper_pop			value = 5 }
+				}
+				change_variable = {
+					which = aiTreasuryGeneral
+					value = 15
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { which = upper_pop			value = 1 }
+				}
+				change_variable = {
+					which = aiTreasuryGeneral
+					value = 10
+				}
+			}
+			
+			multiply_variable = {
+				which = aiTreasuryGeneral
+				which = monthly_country_income
+			}
+			
+			set_variable = {
+				which = ducat_gain
+				value = 18
+			}
+			multiply_variable = {
+				which = ducat_gain
+				which = monthly_country_income
+			}
+			
+			if = {
+				limit = {
+					tag = OTT
+				}
+				multiply_variable = { which = ducat_gain value = 2 }
+				multiply_variable = { which = aiTreasuryGeneral value = 2 }
+			}
+			if = {
+				limit = {
+					tag = BYZ
+				}
+				set_variable = { 	  which = ducat_gain						value = 0 }
+				set_variable = { 	  which = aiTreasuryGeneral					value = 0 }
+			}
+			
+			scaled_ducat_gained_country = yes
+		}
+		
+		every_country = {
+			#limit = {
+			#	exists = yes
+			#}
+			IncomeSetPre = yes
+			
+			every_owned_province = {
+				limit = {
+					is_city = yes
+				}
+				StatSetCore = yes
+				IncomeSet = yes
+				
+				DevSet = yes
+				
+				#DevUpdate = {
+				#	type1=Rural type2=tax
+				#}
+				#DevUpdate = {
+				#	type1=Urban type2=production
+				#}
+				#DevUpdate = {
+				#	type1=Upper type2=manpower
+				#}
+				DevUpdateRural = yes
+				DevUpdateUrban = yes
+				DevUpdateUpper = yes
+				update_misc_expenses_if_capital = yes
+				#clr_province_flag = update_capital
+					
+				StatCleanup = yes
+			}
+			# Set provincial income and its taxation
+			get_estate_income = yes
+			
+			IncomeSetPost = yes
+		}
+		
+		regiongroup = {
+			region = {
+				limit = {
+					is_city = no
+					is_wasteland = no
+				}
+				DevEmptySet = yes
+				
+				#DevUpdate = {
+				#	type1=Rural type2=tax
+				#}
+				#DevUpdate = {
+				#	type1=Urban type2=production
+				#}
+				#DevUpdate = {
+				#	type1=Upper type2=manpower
+				#}
+				DevUpdateRural = yes
+				DevUpdateUrban = yes
+				DevUpdateUpper = yes
+			}
+		}
+		
+		#set_global_flag = AI_warchest_init
+		
+		country_event = {
+			id = POP_shifting_trade.001
+			days = 1
+		}
+		
+		country_event = {
+			id = POP_Estates.002
+			days = 2
+		}
+	}
+	
+	
+	option = {
+		name = "POP_startup_events.012.a"
+		ai_chance = { factor = 100 }
+	}
+}
+
+#country_event = { # Enables full dev tracking, no variable cleanup
+#	id = POP_startup_events.100
+#	title = "POP_startup_events.100.t"
+#	desc = "POP_startup_events.100.d"
+#	picture = CITY_DEVELOPMENT_AU_eventPicture
+#	
+#	fire_only_once = yes
+#	is_triggered_only = yes
+#	hidden = yes
+#	
+#	immediate = {
+#		set_global_flag = show_for_developers
+#	}
+#	
+#	option = {
+#		name = "POP_startup_events.100.a"
+#		ai_chance = { factor = 100 }
+#	}
+#}
+
+#country_event = { ### Makes all maintenance events instant
+#	id = POP_startup_events.200
+#	title = "POP_startup_events.200.t"
+#	desc = "POP_startup_events.200.d"
+#	picture = CITY_DEVELOPMENT_AU_eventPicture
+#	
+#	fire_only_once = yes
+#	is_triggered_only = yes
+#	hidden = yes
+#	
+#	immediate = {
+#		set_global_flag = dev_events_instant
+#	}
+#	
+#	option = {
+#		name = "POP_startup_events.200.a"
+#		ai_chance = { factor = 100 }
+#	}
+#}

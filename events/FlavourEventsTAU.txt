@@ -1,0 +1,264 @@
+########################################
+# Flavor Events for Taugoo/Burma
+#
+# Scripted by impspy
+########################################
+province_event = {
+	id = flavor_tau.1000
+	title = flavor_tau.1000.t
+	desc = flavor_tau.1000.d
+	picture = SIEGE_eventPicture
+	
+	trigger = {
+		OR = {
+			area = central_thai_area
+			area = northern_thai_area
+			region = inland_burma_region
+			region = coastal_burma_region
+		}
+		any_neighbor_province = {
+			OR = {
+				owned_by = TAU
+				owned_by = BRM
+			}
+		}
+		OR = {
+			NOT = { units_in_province = 1 }
+			owner = { NOT = { num_of_cities = 2 } }
+		}
+		NOT = { is_year = 1600 }
+		NOT = { has_province_flag = burmese_patriots_rallied }
+		NOT = { owned_by = TAU }
+		NOT = { owned_by = BRM }
+		NOT = { owner = { is_subject_of = TAU } }
+		NOT = { owner = { is_subject_of = BRM } }
+		NOT = { owner = { alliance_with = TAU } }
+		NOT = { owner = { alliance_with = BRM } }
+		NOT = { has_building = fort_16th }
+		NOT = { has_building = fort_17th }
+		OR = {
+			TAU = {
+				num_of_cities = 1
+				NOT = { num_of_cities = 50 }
+				is_free_or_tributary_trigger = yes
+				is_at_war = no
+				ai = yes
+				religion = buddhism
+			}
+			BRM = {
+				num_of_cities = 1
+				NOT = { num_of_cities = 50 }
+				is_free_or_tributary_trigger = yes
+				is_at_war = no
+				ai = yes
+				religion = buddhism
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 250
+		
+		modifier = {
+			OR = {
+				is_core = TAU
+				is_core = BRM
+				is_claim = TAU
+				is_claim = BRM
+			}
+			factor = 0.4
+		}
+		modifier = {
+			NOT = { any_neighbor_province = { owned_by = ROOT } }
+			factor = 0.4
+		}
+		modifier = {
+			any_neighbor_province = { owned_by = ROOT NOT = { controlled_by = owner } }
+			factor = 0.4
+		}
+		modifier = {
+			any_neighbor_province = { owned_by = ROOT has_siege = yes }
+			factor = 0.4
+		}
+		modifier = {
+			NOT = { is_core = owner }
+			factor = 0.4
+		}
+		modifier = {
+			owner = { has_real_disaster_trigger = yes }
+			factor = 0.4
+		}
+		modifier = {
+			controlled_by = owner
+			owner = { is_at_war = yes }
+			factor = 0.4
+		}
+		modifier = {
+			OR = {
+				region = north_anatolia_region
+				region = south_anatolia_region
+				province_id = 1333
+			}
+			factor = 0.4
+		}
+		modifier = {
+			owner = { NOT = { num_of_cities = 5 } }
+			factor = 0.4
+		}
+		modifier = {
+			owner = { NOT = { num_of_cities = 3 } }
+			factor = 0.4
+		}
+		modifier = {
+			controlled_by = owner
+			owner = { is_at_war = yes NOT = { war_score = 0 } }
+			factor = 0.4
+		}
+		modifier = {
+			controlled_by = owner
+			owner = { is_at_war = yes NOT = { war_score = -50 } }
+			factor = 0.4
+		}
+		modifier = {
+			NOT = { controlled_by = owner }
+			factor = 0.4
+		}
+		modifier = {
+			owner = { war_exhaustion = 3 }
+			factor = 0.4
+		}
+		modifier = {
+			owner = { war_exhaustion = 6 }
+			factor = 0.4
+		}
+		modifier = {
+			owner = { war_exhaustion = 9 }
+			factor = 0.4
+		}
+		modifier = {
+			owner = { NOT = { manpower_percentage = 0.40 } }
+			factor = 0.4
+		}
+		modifier = {
+			owner = { NOT = { manpower_percentage = 0.20 } }
+			factor = 0.4
+		}
+		modifier = {
+			local_autonomy = 25
+			factor = 0.4
+		}
+		modifier = {
+			local_autonomy = 50
+			factor = 0.4
+		}
+		modifier = {
+			local_autonomy = 100
+			factor = 0.4
+		}
+		modifier = {
+			owner = { has_regency = yes }
+			factor = 0.4
+		}
+		modifier = {
+			owner = { NOT = { army_size_percentage = 0.2 } }
+			factor = 0.4
+		}
+		modifier = {
+			owner = { NOT = { army_size_percentage = 0.1 } }
+			factor = 0.4
+		}
+		modifier = {
+			owner = { has_spawned_rebels = burmese_patriots }
+			factor = 6.25
+		}
+		modifier = {
+			has_province_flag = burmese_patriots_rallied
+			factor = 6.25
+		}
+	}
+	
+	option = {
+		name = flavor_tau.1000.a
+		set_province_flag = burmese_patriots_rallied
+		if = {
+			limit = { exists = TAU }
+			spawn_rebels = { type = burmese_patriots size = 1 friend = TAU }
+		}
+		if = {
+			limit = { NOT = { exists = TAU } }
+			spawn_rebels = { type = burmese_patriots size = 1 friend = BRM }
+		}
+	}
+}
+
+province_event = { #Loss of $PROVINCENAME$
+	
+	id = flavor_tau.1001
+	title = flavor_tau.1001.t
+	desc = flavor_tau.1001.d
+	picture = SIEGE_eventPicture
+	
+	trigger = {
+		controlled_by = burmese_patriots
+		had_province_flag = { flag = burmese_patriots_rallied days = 180 }
+		has_siege = no
+		NOT = { owner = { war_with = TAU } }
+		NOT = { owner = { war_with = BRM } }
+		NOT = { owned_by = TAU }
+		NOT = { owned_by = BRM }
+	}
+	
+	mean_time_to_happen = { months = 3 }
+	
+	option = {
+		name = flavor_tau.1001.a #Cede the province
+		ai_chance = { factor = 100 }
+		owner = { disband_rebels = burmese_patriots }
+		if = {
+			limit = {
+				exists = TAU
+				NOT = { owner = { tag = TAU } }
+			}
+			cede_province = TAU
+			hidden_effect = { TAU = { add_manpower = 1 add_treasury = 10 } }
+		}
+		if = {
+			limit = {
+				NOT = { exists = TAU }
+				exists = BRM
+				NOT = { owner = { tag = BRM } }
+			}
+			cede_province = BRM
+			hidden_effect = { BRM = { add_manpower = 1 add_treasury = 10 } }
+		}
+	}
+	option = {
+		name = flavor_tau.1001.b #Fight the Turks for it
+		ai_chance = { factor = 0 }
+		if = {
+			limit = {
+				OR = {
+					owner = { truce_with = TAU }
+					owner = { truce_with = BRM }
+				}
+			}
+			owner = { subtract_stability_2 = yes }
+		}
+		if = {
+			limit = {
+				exists = TAU
+				NOT = { owner = { tag = TAU } }
+			}
+			owner = { declare_war = TAU }
+		}
+		if = {
+			limit = {
+				NOT = { exists = TAU }
+				exists = BRM
+				NOT = { owner = { tag = BRM } }
+			}
+			owner = { declare_war = BRM }
+		}
+	}
+}

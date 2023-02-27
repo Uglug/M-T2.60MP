@@ -1,0 +1,613 @@
+manchu_missions_internal = {
+	slot = 6
+	generic = no
+	ai = yes
+	potential = {
+		culture_group = tungusic
+	}
+	has_country_shield = yes
+	
+	dominate_jurchens_mission = {
+		icon = mission_non-western_cavalry_raid
+		required_missions = {  }
+		completed_by = 1616.1.1
+		provinces_to_highlight = {
+			OR = {
+				culture = jurchen
+				owner = { primary_culture = jurchen }
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				OR = {
+					tag = MHX
+					NOT = {
+						exists = MHX
+					}
+					MHX = {
+						is_subject_of = ROOT
+						is_subject_other_than_tributary_trigger = yes
+					}
+				}
+				OR = {
+					tag = MJZ
+					NOT = {
+						exists = MJZ
+					}
+					MJZ = {
+						is_subject_of = ROOT
+						is_subject_other_than_tributary_trigger = yes
+					}
+				}
+				OR = {
+					tag = MHR
+					NOT = {
+						exists = MHR
+					}
+					MHR = {
+						is_subject_of = ROOT
+						is_subject_other_than_tributary_trigger = yes
+					}
+				}
+				OR = {
+					tag = MWK
+					NOT = {
+						exists = MWK
+					}
+					MWK = {
+						is_subject_of = ROOT
+						is_subject_other_than_tributary_trigger = yes
+					}
+				}
+				OR = {
+					tag = MUD
+					NOT = {
+						exists = MUD
+					}
+					MUD = {
+						is_subject_of = ROOT
+						is_subject_other_than_tributary_trigger = yes
+					}
+				}
+				OR = {
+					tag = MNA
+					NOT = {
+						exists = MNA
+					}
+					MNA = {
+						is_subject_of = ROOT
+						is_subject_other_than_tributary_trigger = yes
+					}
+				}
+				tooltip = jurchen_nations
+			}
+		}
+		effect = {
+			east_manchuria_region = {
+				limit = {
+					NOT = {
+						is_core = ROOT
+						owned_by = ROOT
+					}
+				}
+				add_permanent_claim = ROOT
+			}
+			west_manchuria_region = {
+				limit = {
+					NOT = {
+						is_core = ROOT
+						owned_by = ROOT
+					}
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	unite_manchu = {
+		icon = mission_chinese_general_riding
+		required_missions = { dominate_jurchens_mission }
+		completed_by = 1616.1.1
+		provinces_to_highlight = {
+			OR = {
+				culture = jurchen
+				culture = manchu
+				owner = { primary_culture = manchu }
+				owner = { primary_culture = jurchen }
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				num_of_owned_provinces_with = {
+					value = 14
+					OR = {
+						culture = jurchen
+						culture = manchu
+					}
+				}
+				tooltip = jurchen_nation_claim
+			}
+			tag = MCH
+		}
+		effect = {
+			add_ruler_modifier = {
+				name = "uniter_of_the_manchus"
+			}
+			liaoning_area = {
+				limit = {
+					NOT = {
+						is_core = ROOT
+						owned_by = ROOT
+					}
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	subjugate_korea = {
+		icon = mission_great_wall
+		required_missions = { unite_manchu }
+		provinces_to_highlight = {
+			owner = { primary_culture = korean }
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			KOR = {
+				OR = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+			JOS = {
+				OR = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+			TMN = {
+				if = {
+					limit = {
+						any_owned_province = {
+							region = korea_region
+							NOT = { province_id = 2276 }
+						}
+					}
+					OR = {
+						exists = no
+						is_subject_of = ROOT
+					}
+				}
+			}
+			GGR = {
+				OR = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+			CSE = {
+				if = {
+					limit = {
+						primary_culture = korean
+					}
+					OR = {
+						exists = no
+						is_subject_of = ROOT
+					}
+				}
+			}
+		}
+		effect = {
+			add_mil_power = 100
+			add_country_modifier = {
+				name = "military_victory"
+				duration = 7300
+			}
+		}
+	}
+	unite_manchuria = {
+		icon = mission_chinese_general_riding
+		required_missions = { subjugate_korea }
+		provinces_to_highlight = {
+			OR = { region = east_manchuria_region region = west_manchuria_region }
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			east_manchuria_region = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		effect = {
+			east_manchuria_region = {
+				add_territorial_core_effect = yes
+			}
+		}
+	}
+	manchu_colonize_siberia = {
+		icon = mission_chinese_general_riding
+		required_missions = { unite_manchuria }
+		provinces_to_highlight = {
+			OR = {
+				area = yakutia_area
+				area = magadan_area
+				area = kamchatka_area
+				area = hokkaido_area
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			num_of_owned_provinces_with = {
+				OR = {
+					area = yakutia_area
+					area = magadan_area
+					area = kamchatka_area
+					area = hokkaido_area
+				}
+				value = 3
+			}
+		}
+		effect = {
+			hokkaido_area = {
+				add_claim = ROOT
+			}
+			yakutia_area = {
+				add_claim = ROOT
+			}
+			magadan_area = {
+				add_claim = ROOT
+			}
+			kamchatka_area = {
+				add_claim = ROOT
+			}
+		}
+	}
+}
+manchu_missions_china = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		culture_group = tungusic
+	}
+	has_country_shield = yes
+	
+	recover_liaodong = {
+		icon = mission_great_wall
+		required_missions = { unite_manchu }
+		position = 3
+		
+		provinces_to_highlight = {
+			area = liaoning_area
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			liaoning_area = {
+				type = all
+				owned_by = ROOT
+			}
+		}
+		effect = {
+			add_mil_power = 100
+			add_country_modifier = {
+				name = "military_victory"
+				duration = 7300
+			}
+		}
+	}
+	
+	start_the_conquest_of_ming_china = {
+		icon = mission_great_wall
+		required_missions = { recover_liaodong }
+		position = 4
+		
+		provinces_to_highlight = {
+			OR = {
+				area = yanshan_area
+				area = yanyun_area
+				area = jizhou_area
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			yanshan_area = {
+				type = all
+				owned_by = ROOT
+			}
+			yanyun_area = {
+				type = all
+				owned_by = ROOT
+			}
+			jizhou_area = {
+				type = all
+				owned_by = ROOT
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = "conquest_of_beijing"
+				duration = 7300
+			}
+		}
+	}
+	recover_jin = {
+		icon = mission_great_wall
+		required_missions = { start_the_conquest_of_ming_china }
+		position = 5
+		
+		provinces_to_highlight = {
+			OR = {
+				region = hebei_region
+				region = jiaoliao_region
+				region = zhongyuan_region
+				region = shanxi_region
+				region = shaangan_region
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			hebei_region = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			jiaoliao_region = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			zhongyuan_region = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			shanxi_region = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			shaangan_region = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		effect = {
+			add_adm_power = 500
+			add_dip_power = 500
+			add_mil_power = 500
+			add_country_modifier = {
+				name = "military_victory"
+				duration = 7300
+			}
+		}
+	}
+	manchu_unite_china = {
+		icon = mission_great_wall
+		required_missions = { recover_jin }
+		position = 6
+		
+		provinces_to_highlight = {
+			chinese_region_trigger = yes
+			NOT = {
+				country_or_vassal_holds = ROOT
+			}
+		}
+		trigger = {
+			north_china_superregion = {
+				type = all
+				OR = {
+					country_or_vassal_holds = ROOT
+					is_city = no
+				}
+			}
+			east_china_superregion = {
+				type = all
+				OR = {
+					country_or_vassal_holds = ROOT
+					is_city = no
+				}
+			}
+			southwest_china_superregion = {
+				type = all
+				OR = {
+					country_or_vassal_holds = ROOT
+					is_city = no
+				}
+			}
+		}
+		effect = {
+			add_adm_power = 1000
+			add_dip_power = 1000
+			add_mil_power = 1000
+			add_country_modifier = {
+				name = "military_victory"
+				duration = 7300
+			}
+		}
+	}
+}
+
+manchu_missions_mongols = {
+	slot = 7
+	generic = no
+	ai = yes
+	potential = {
+		culture_group = tungusic
+	}
+	has_country_shield = yes
+	
+	conquer_khorchin = {
+		icon = mission_non-western_cavalry_raid
+		required_missions = { unite_manchu }
+		position = 3
+		completed_by = 1636.1.1
+		
+		provinces_to_highlight = {
+			OR = {
+				culture = khorchin
+				culture = uriankhai
+				owner = { primary_culture = khorchin }
+				owner = { primary_culture = uriankhai }
+			}
+		}
+		trigger = {
+			khorchin_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			kaicheng_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			KHR = {
+				OR = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+			MXI = {
+				OR = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+		}
+		effect = {
+			add_mil_power = 100
+			add_country_modifier = {
+				name = "military_victory"
+				duration = 7300
+			}
+		}
+	}
+	conquer_tumed = {
+		icon = mission_non-western_cavalry_raid
+		required_missions = { conquer_khorchin }
+		position = 4
+		completed_by = 1636.1.1
+		
+		provinces_to_highlight = {
+			OR = {
+				culture = tumed
+				owner = { primary_culture = tumed }
+			}
+		}
+		trigger = {
+			ordos_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			TMD = {
+				OR = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+		}
+		effect = {
+			add_mil_power = 100
+			add_country_modifier = {
+				name = "military_victory"
+				duration = 7300
+			}
+		}
+	}
+	conquer_chakhar = {
+		icon = mission_non-western_cavalry_raid
+		required_missions = { conquer_tumed }
+		completed_by = 1636.1.1
+		position = 5
+		
+		provinces_to_highlight = {
+			OR = {
+				culture = chahar
+				owner = { primary_culture = chahar }
+			}
+		}
+		trigger = {
+			inner_mongolia_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			govi_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			CHH = {
+				OR = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+		}
+		effect = {
+			add_mil_power = 100
+			add_country_modifier = {
+				name = "military_victory"
+				duration = 7300
+			}
+		}
+	}
+	conquer_outer_mongolia = {
+		icon = mission_non-western_cavalry_raid
+		required_missions = { conquer_chakhar }
+		position = 6
+		completed_by = 1636.1.1
+		
+		provinces_to_highlight = {
+			OR = {
+				culture = khalkas
+				culture = buryat
+				culture = khamnigan
+				culture = oirats
+				owner = { primary_culture = khalkas }
+				owner = { primary_culture = buryat }
+				owner = { primary_culture = khamnigan }
+				owner = { primary_culture = oirats }
+			}
+		}
+		trigger = {
+			outer_mongolia_region = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			KHA = {
+				OR = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+			OIR = {
+				OR = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+			BRT = {
+				OR = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+		}
+		effect = {
+			add_mil_power = 100
+			add_country_modifier = {
+				name = "military_victory"
+				duration = 7300
+			}
+		}
+	}
+}

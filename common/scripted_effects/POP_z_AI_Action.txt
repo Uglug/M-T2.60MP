@@ -1,0 +1,116 @@
+# Call eval script with parameters that corresponds to action evaluation
+AIEvalAction = {
+	AIEval = {
+		type = Action
+		name = $name$
+		tuning = 1.001
+	}
+}
+
+# A scripted effect with no parameter, when called manage list of actions
+# By evaluating all actions and adding or removing the appropriate ones
+# Interacts with Eval, Agenda and Do
+AIAction = {
+	# Set a list of candidate actions
+	set_country_flag = aiEvalActionSaveTreasury
+	set_country_flag = aiEvalActionImpStab
+	set_country_flag = aiEvalActionEstFavor
+	
+	if = {
+		limit = { has_country_flag = aiHasAgendaMilitary }
+		set_country_flag = aiEvalActionBuildShipyards
+		if = {
+			limit = { has_country_flag = aiHasAgendaDefense }
+			set_country_flag = aiEvalActionBuildForts
+		}
+		else = { clr_country_flag = aiHasActionBuildForts }
+	}
+	else = {
+		clr_country_flag = aiHasActionBuildShipyards
+		clr_country_flag = aiHasActionBuildForts
+	}
+	
+	if = {
+		limit = { has_country_flag = aiHasAgendaEconomy }
+		set_country_flag = aiEvalActionBuildCity
+	}
+	else = { clr_country_flag = aiEvalActionBuildCity }
+	
+	if = {
+		limit = { has_country_flag = aiHasAgendaGovernance }
+		set_country_flag = aiEvalActionEstDemand
+		set_country_flag = aiEvalActionEstGrant
+		
+		if = {
+			limit = { has_country_flag = aiHasAgendaTech }
+			set_country_flag = aiEvalActionEduArt
+		}
+		else = { clr_country_flag = aiHasActionEduArt }
+		
+		if = {
+			limit = { has_country_flag = aiHasAgendaReform }
+			set_country_flag = aiEvalActionEstDemote
+			set_country_flag = aiEvalActionEstRevoke
+		}
+		else = {
+			clr_country_flag = aiHasActionEstDemote
+			clr_country_flag = aiHasActionEstRevoke
+		}
+		
+		if = {
+			limit = { has_country_flag = aiHasAgendaCE }
+			if = {
+				limit = { check_variable = { which = fixed_cap value = 1 } }
+				set_variable = { which = prov_id which = fixed_cap }
+				if = {
+					limit = { NOT = { capital_scope = { is_variable_equal = { which = prov_id which = PREV } } } }
+					set_country_flag = aiEvalActionMoveCapital
+				}
+				set_variable = { which = prov_id value = 0 }
+			}
+			else = { set_country_flag = aiEvalActionMoveCapital }
+			set_country_flag = aiEvalActionBuildBureau
+			set_country_flag = aiEvalActionBuildPort
+			set_country_flag = aiEvalActionBuildRoad
+		}
+		else = {
+			clr_country_flag = aiHasActionMoveCapital
+			clr_country_flag = aiHasActionBuildBureau
+			clr_country_flag = aiHasActionBuildPort
+			clr_country_flag = aiHasActionBuildRoad
+		}
+	}
+	else = {
+		clr_country_flag = aiHasActionEstDemand
+		clr_country_flag = aiHasActionEstGrant
+		clr_country_flag = aiHasActionEduArt
+		clr_country_flag = aiHasActionEstDemote
+		clr_country_flag = aiHasActionEstRevoke
+		clr_country_flag = aiHasActionMoveCapital
+		clr_country_flag = aiHasActionBuildBureau
+		clr_country_flag = aiHasActionBuildPort
+		clr_country_flag = aiHasActionBuildRoad
+	}
+	
+	# Evaluate a list of candidate actions
+	# Military
+	AIEvalAction = { name = BuildShipyards }
+	AIEvalAction = { name = BuildForts }
+	
+	# Economy
+	AIEvalAction = { name = BuildCity }
+	
+	# Governance
+	AIEvalAction = { name = EstFavor }
+	AIEvalAction = { name = EstDemand }
+	AIEvalAction = { name = EstDemote }
+	AIEvalAction = { name = EstGrant }
+	AIEvalAction = { name = EstRevoke }
+	AIEvalAction = { name = ImpStab }
+	AIEvalAction = { name = MoveCapital }
+	AIEvalAction = { name = EduArt }
+	AIEvalAction = { name = BuildBureau }
+	AIEvalAction = { name = BuildRoad }
+	AIEvalAction = { name = BuildPort }
+	AIEvalAction = { name = SaveTreasury }
+}

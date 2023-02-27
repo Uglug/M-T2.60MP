@@ -1,0 +1,429 @@
+########################################
+# Major Flavor Events                  #
+########################################
+
+
+# Turko-Persian Conflicts: Shiite rebels
+country_event = {
+	id = flavor_per.3560
+	title = "flavor_per.EVTNAME3560"
+	desc = "flavor_per.EVTDESC3560"
+	picture = ANGRY_MOB_eventPicture
+	
+	trigger = {
+		tag = PER
+		religion = shiite
+		NOT = { has_country_flag = PER_had_event_3560 }
+		is_year = 1450
+		NOT = { is_year = 1550 }
+		any_neighbor_country = {
+			tag = TUR
+			religion = sunni
+			any_owned_province = {
+				religion = shiite
+			}
+		}
+		TUR = { is_free_or_tributary_trigger = yes }
+		NOT = { alliance_with = TUR }
+		NOT = { war_with = TUR }
+	}
+	
+	mean_time_to_happen = { years = 166 }
+	
+	immediate = {
+		set_country_flag = PER_had_event_3560
+	}
+	
+	option = { # Support the Turkish Shiites
+		name = "flavor_per.EVTOPTA3560"
+		add_stability_1 = yes
+		add_years_of_income = -0.2
+		TUR = {
+			add_opinion = {
+				who = ROOT
+				modifier = supported_rebels
+			}
+			country_event = { id = flavor_tur.3360 days = 10 tooltip = "flavor_per.EVTTOOLTIP3560" }
+		}
+	}
+	option = { # Leave them to their fate
+		name = "flavor_per.EVTOPTB3560"
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+	}
+	option = {		# Betray the Turkish rebels
+		name = "flavor_per.EVTOPTC3560"
+		subtract_stability_2 = yes
+		add_opinion = {
+			who = ROOT
+			modifier = did_not_support_rebels
+		}
+	}
+}
+
+# Murad III's campaigns against Persia
+country_event = {
+	id = flavor_per.3562
+	title = "flavor_per.EVTNAME3562"
+	desc = "flavor_per.EVTDESC3562"
+	picture = BATTLE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { # Teach the Turks a lesson!
+		name = "flavor_per.EVTOPTA3562"
+		add_stability_1 = yes
+		TUR = {
+			random_owned_province = {
+				limit = {
+					NOT = { is_core = PER }
+					NOT = { is_claim = PER }
+					any_neighbor_province = {
+						owned_by = PER
+					}
+				}
+				add_claim = PER
+			}
+			add_opinion = {
+				who = ROOT
+				modifier = border_aggression
+			}
+		}
+	}
+	option = {		# Ignore the Turkish threats
+		name = "flavor_per.EVTOPTB3562"
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+	}
+	option = {		# Seek a diplomatic solution
+		name = "flavor_per.EVTOPTC3562"
+		TUR = {
+			add_opinion = {
+				who = ROOT
+				modifier = successful_diplomacy
+			}
+		}
+	}
+}
+
+# Turko-Persian Tension
+country_event = {
+	id = flavor_per.3563
+	title = "flavor_per.EVTNAME3563"
+	desc = "flavor_per.EVTDESC3563"
+	picture = LAND_MILITARY_eventPicture
+	
+	trigger = {
+		tag = PER
+		NOT = { has_country_flag = PER_had_event_3563 }
+		is_year = 1600
+		NOT = { is_year = 1650 }
+		any_neighbor_country = {
+			tag = TUR
+			any_owned_province = {
+				controlled_by = REB
+			}
+		}
+		TUR = { is_free_or_tributary_trigger = yes }
+		NOT = { alliance_with = TUR }
+		NOT = { war_with = TUR }
+	}
+	
+	mean_time_to_happen = { years = 83 }
+	
+	immediate = {
+		set_country_flag = PER_had_event_3563
+	}
+	
+	option = {		# Support the Turkish rebels and prepare for war
+		name = "flavor_per.EVTOPTA3563"
+		add_years_of_income = -0.2
+		TUR = {
+			add_opinion = {
+				who = ROOT
+				modifier = supported_rebels
+			}
+			country_event = { id = flavor_tur.3363 days = 10 tooltip = "flavor_per.EVTTOOLTIP3560" }
+		}
+	}
+	option = {		# Concentrate on internal issues
+		name = "flavor_per.EVTOPTB3563"
+		add_adm_power = 25
+	}
+}
+
+
+########################################
+# Flavor Events for Persia
+#
+# written by Sara Wendel-Örtqvist
+########################################
+
+#The Reforms of Ismail
+country_event = {
+	id = flavor_per.1
+	title = "flavor_per.EVTNAME1"
+	desc = "flavor_per.EVTDESC1"
+	picture = REFORM_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = PER
+		is_year = 1510
+		NOT = {
+			is_year = 1560
+		}
+	}
+	
+	mean_time_to_happen = { years = 25 }
+	
+	option = { #Reform
+		name = "flavor_per.EVTOPTA1"
+		add_adm_power = 50
+	}
+	option = { #Reform
+		name = "flavor_per.EVTOPTB1"
+		add_dip_power = 50
+	}
+	option = { #Reform
+		name = "flavor_per.EVTOPTC1"
+		add_mil_power = 50
+	}
+}
+
+#The Reforms of Abbas the Great
+country_event = {
+	id = flavor_per.2
+	title = "flavor_per.EVTNAME2"
+	desc = "flavor_per.EVTDESC2"
+	picture = REFORM_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = PER
+		owns = 414 # Isfahan
+		is_year = 1590
+		NOT = {
+			is_year = 1640
+		}
+	}
+	
+	mean_time_to_happen = { years = 25 }
+	
+	option = { #Reform
+		name = "flavor_per.EVTOPTA1"
+		add_adm_power = 50
+	}
+	option = { #Reform
+		name = "flavor_per.EVTOPTB1"
+		add_dip_power = 50
+	}
+	option = { #Reform
+		name = "flavor_per.EVTOPTC1"
+		add_mil_power = 50
+	}
+}
+
+# The Advisors of Abbas the Great
+country_event = {
+	id = flavor_per.3
+	title = "flavor_per.EVTNAME3"
+	desc = "flavor_per.EVTDESC3"
+	picture = ADVISOR_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = PER
+		is_year = 1590
+		owns = 414 # Isfahan
+		NOT = {
+			is_year = 1640
+		}
+	}
+	
+	mean_time_to_happen = { years = 25 }
+	
+	option = { # Hire the English advisors
+		name = "flavor_per.EVTOPTA3"
+		add_ruler_modifier = { name = per_abbas_advisors }
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+	}
+	option = { # Rely on ones
+		name = "flavor_per.EVTOPTB3"
+		add_stability_1 = yes
+	}
+}
+
+# Political Turmoil
+country_event = {
+	id = flavor_per.4
+	title = "flavor_per.EVTNAME4"
+	desc = "flavor_per.EVTDESC4"
+	picture = LIBERUM_VETO_eventPicture
+	
+	trigger = {
+		tag = PER
+		is_year = 1580
+		NOT = {
+			has_country_modifier = per_political_turmoil_timer
+		}
+		NOT = {
+			mil = 4
+		}
+		NOT = {
+			dip = 4
+		}
+		NOT = {
+			adm = 4
+		}
+		has_regency = no
+	}
+	
+	mean_time_to_happen = { years = 41 }
+	
+	option = { #Let the Clans fight
+		name = "flavor_per.EVTOPTA4"
+		hidden_effect = {
+			add_country_modifier = {
+				name = per_political_turmoil_timer
+				duration = 365
+				hidden = yes
+			}
+		}
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+	}
+	option = { #Buy the loyalty of the Clans
+		name = "flavor_per.EVTOPTB4"
+		hidden_effect = {
+			add_country_modifier = {
+				name = per_political_turmoil_timer
+				duration = 365
+				hidden = yes
+			}
+		}
+		add_years_of_income = -1
+	}
+}
+
+# Political Fragmentation
+country_event = {
+	id = flavor_per.5
+	title = "flavor_per.EVTNAME5"
+	desc = "flavor_per.EVTDESC5"
+	picture = LIBERUM_VETO_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = PER
+		is_year = 1635
+		NOT = {
+			has_country_modifier = per_political_fragmentation_timer
+		}
+	}
+	
+	mean_time_to_happen = { years = 41 }
+	
+	option = { # Let the factions conspire
+		name = "flavor_per.EVTOPTA5"
+		hidden_effect = {
+			add_country_modifier = {
+				name = per_political_fragmentation_timer
+				duration = 365
+				hidden = yes
+			}
+		}
+		add_stability_1 = yes
+	}
+	option = { # Tighten state control
+		name = "flavor_per.EVTOPTB5"
+		hidden_effect = {
+			add_country_modifier = {
+				name = per_political_fragmentation_timer
+				duration = 365
+				hidden = yes
+			}
+		}
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+		random_owned_province = {
+			limit = {
+				is_core = PER
+			}
+			# add_base_tax = 1
+			# add_base_production = 1
+			# add_base_manpower = 1
+		}
+	}
+}
+
+#The Afghan Rebellions
+country_event = {
+	id = flavor_per.6
+	title = "flavor_per.EVTNAME6"
+	desc = "flavor_per.EVTDESC6"
+	picture = ANGRY_MOB_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = PER
+		is_year = 1700
+		NOT = { exists = DUR }
+		any_owned_province = { culture = pashtun }
+	}
+	
+	mean_time_to_happen = { years = 166 }
+	
+	option = { #Curses!
+		name = "flavor_per.EVTOPTA6"
+		every_owned_province = {
+			limit = { culture = pashtun }
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 10 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_10
+		}
+	}
+}

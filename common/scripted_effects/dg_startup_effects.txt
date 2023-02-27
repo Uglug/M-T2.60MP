@@ -1,0 +1,231 @@
+dg_remove_non_meiou = {
+	trigger_switch = {
+		on_trigger = religion
+		animism = {
+			if = {
+				limit = {
+					OR = {
+						culture_group = east_slavic
+						culture_group = west_slavic
+						culture_group = balkan_slavic
+					}
+				}
+				change_religion = slavic_pagan_reformed
+			}
+			else_if = {
+				limit = {
+					OR = {
+						culture_group = low_germanic
+						culture_group = high_germanic
+						culture_group = low_frankish
+						culture_group = scandinavian
+						primary_culture = swedish
+						culture_group = british
+					}
+				}
+				change_religion = norse_pagan_reformed
+			}
+			else_if = {
+				limit = {
+					culture_group = finnic
+					NOT = { primary_culture = swedish }
+				}
+				change_religion = finnish_pagan_reformed
+			}
+			else_if = {
+				limit = { culture_group = baltic }
+				change_religion = baltic_pagan_reformed
+			}
+			else_if = {
+				limit = { culture_group = turko_byzantine }
+				change_religion = hellenic_pagan
+			}
+		}
+		inca_reformed = {
+			change_religion = inti
+		}
+		aztec_reformed = {
+			change_religion = nahuatl
+		}
+		waldensian = {
+			change_religion = catholic
+		}
+		fraticelli = {
+			change_religion = catholic
+		}
+		lollard = {
+			change_religion = hussite
+		}
+		cathar = {
+			change_religion = gnostic
+		}
+		bogomilist = {
+			change_religion = gnostic
+		}
+		#arianism = {
+		#	change_religion = gnostic
+		#}
+		paulician = {
+			change_religion = orthodox
+		}
+		monothelite = {
+			change_religion = orthodox
+		}
+		iconoclast = {
+			change_religion = orthodox
+		}
+		#chalcedonism = {
+		#	if = {
+		#		limit = {
+		#			OR = {
+		#				capital_scope = { western_europe_trigger = yes }
+		#				technology_group = western
+		#			}
+		#		}
+		#		change_religion = catholic
+		#	}
+		#	else = {
+		#		change_religion = orthodox
+		#	}
+		#}
+		#nestorian = {
+		#	change_religion = chaldean
+		#}
+		messalian = {
+			change_religion = chaldean
+		}
+		monophysite = {
+			change_religion = coptic
+		}
+		zikri = {
+			change_religion = sunni
+		}
+		yazidi = {
+			change_religion = sunni
+		}
+		kharijite = {
+			change_religion = ibadi
+		}
+		hurufi = {
+			change_religion = shiite
+		}
+		mazdaki = {
+			change_religion = zoroastrian
+		}
+		manichean = {
+			change_religion = zoroastrian
+		}
+		samaritan = {
+			change_religion = jewish
+		}
+		karaite = {
+			change_religion = jewish
+		}
+		jainism = {
+			change_religion = jain
+		}
+		#jainism = {
+		#	change_religion = jain
+		#}
+		celtic_pagan_reformed = {
+			change_religion = norse_pagan_reformed
+		}
+		german_pagan_reformed = {
+			change_religion = norse_pagan_reformed
+		}
+		egyptian_pagan = {
+			change_religion = animism
+		}
+		zun_pagan_reformed = {
+			change_religion = animism
+		}
+		zunism = {
+			change_religion = animism
+		}
+		muism = {
+			change_religion = tengri_pagan_reformed
+		}
+		tibetan_bon = {
+			change_religion = tengri_pagan_reformed
+		}
+	}
+}
+
+dg_add_minorities = {
+	if = { #This line adds minorities to provinces adjacent to provinces of a different faith
+		limit = {
+			religion = $religion$
+			any_neighbor_province = { NOT = { religion = $religion$ } }
+		}
+		every_neighbor_province = {
+			limit = { NOT = { religion = $religion$ } }
+			change_variable = { which = province_religion value = -1 } #Always add an opposite variable for every minority added!
+			change_variable = { which = $religion$ value = 1 }
+		}
+		if = {
+			limit = { is_city = yes }
+			every_neighbor_province = {
+				limit = { culture_group = PREV NOT = { religion = $religion$ } }
+				change_variable = { which = province_religion value = -1 }
+				change_variable = { which = $religion$ value = 1 }
+			}
+		}
+	}
+	else_if = { #This line adds minorities to provinces owned by countries of a different faith
+		limit = {
+			owner = { religion = $religion$ }
+		}
+		change_variable = { which = province_religion value = -3 }
+		change_variable = { which = $religion$ value = 3 }
+	}
+	else_if = { #This line adds minorities to capitals owned by countries of a different faith
+		limit = {
+			is_capital = yes
+			owner = { religion = $religion$ }
+		}
+		change_variable = { which = province_religion value = -2 }
+		change_variable = { which = $religion$ value = 2 }
+	}
+}
+
+dg_add_minorities_colonial = { # Adds extra minorities for colonial nations
+	if = {
+		limit = {
+			religion = $religion$
+			any_neighbor_province = { NOT = { religion = $religion$ } }
+		}
+		every_neighbor_province = {
+			limit = { NOT = { religion = $religion$ } }
+			change_variable = { which = province_religion value = -1 }
+			change_variable = { which = $religion$ value = 1 }
+		}
+		if = {
+			limit = { is_city = yes }
+			every_neighbor_province = {
+				limit = { culture_group = PREV NOT = { religion = $religion$ } }
+				change_variable = { which = province_religion value = -1 }
+				change_variable = { which = $religion$ value = 1 }
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			owner = { religion = $religion$ }
+		}
+		change_variable = { which = province_religion value = -3 }
+		change_variable = { which = $religion$ value = 3 }
+		if = {
+			limit = { owner = { is_colonial_nation = yes } }
+			change_variable = { which = province_religion value = -3 }
+			change_variable = { which = $religion$ value = 3 }
+		}
+	}
+	else_if = {
+		limit = {
+			is_capital = yes
+			owner = { religion = $religion$ }
+		}
+		change_variable = { which = province_religion value = -2 }
+		change_variable = { which = $religion$ value = 2 }
+	}
+}

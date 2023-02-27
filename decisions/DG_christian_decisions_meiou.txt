@@ -1,0 +1,504 @@
+country_decisions = {
+	
+	edict_of_tolerance = {
+		potential = {
+			religion_group = christian
+			NOT = { religious_unity = 0.90 }
+			NOT = { has_country_flag = edict_of_tolerance }
+			NOT = { has_country_modifier = edict_of_tolerance }
+			NOT = { piety = 0.60 }
+			NOT = { has_country_flag = religious_civil_war }
+			NOT = { has_country_flag = religious_turmoil_catholic }
+			NOT = { has_country_flag = religious_turmoil_protestant }
+			NOT = { has_country_flag = religious_turmoil_reformed }
+			NOT = { has_country_flag = religious_turmoil_orthodox }
+			NOT = { has_country_flag = religious_turmoil_coptic }
+			NOT = { has_country_flag = religious_turmoil_chaldean }
+			NOT = { has_country_flag = religious_turmoil_gnostic }
+			NOT = { has_country_flag = religious_turmoil_hussite }
+			OR = { #Checks to see if any Christian heresy is not tolerated (since all use the same and only one can be state)
+				NOT = { catholic = 1 }
+				NOT = { protestant = 1 }
+			}
+			OR = {
+				AND = {
+					NOT = { religion = catholic }
+					check_variable = { which = catholic_population value = 20 }
+				}
+				AND = {
+					NOT = { religion = orthodox }
+					check_variable = { which = orthodox_population value = 20 }
+				}
+				AND = {
+					NOT = { religion = protestant }
+					check_variable = { which = protestant_population value = 20 }
+				}
+				AND = {
+					NOT = { religion = reformed }
+					check_variable = { which = reformed_population value = 20 }
+				}
+				AND = {
+					NOT = { religion = coptic }
+					check_variable = { which = coptic_population value = 20 }
+				}
+				AND = {
+					NOT = { religion = chaldean }
+					check_variable = { which = chaldean_population value = 20 }
+				}
+				AND = {
+					NOT = { religion = gnostic }
+					check_variable = { which = gnostic_population value = 20 }
+				}
+				AND = {
+					NOT = { religion = hussite }
+					check_variable = { which = hussite_population value = 20 }
+				}
+			}
+		}
+		allow = {
+			is_at_war = no
+			is_force_converted = no
+			OR = {
+				ADM = 4
+				advisor = theologian
+				NOT = { piety = -0.20 }
+				NOT = { religious_unity = 0.75 }
+			}
+			adm_power = 100
+		}
+		effect = {
+			add_country_modifier = { name = edict_of_tolerance duration = -1 }
+			hidden_effect = { set_country_flag = edict_of_tolerance }
+			add_adm_power = -100
+			if = {
+				limit = { NOT = { stability = 0 } }
+				add_stability_1 = yes
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				has_country_flag = toleration_policy_failed
+				factor = 0
+			}
+			modifier = {
+				NOT = { adm_power = 100 }
+				factor = 0
+			}
+			modifier = {
+				stability = 2
+				factor = 0
+			}
+			modifier = {
+				factor = 0
+				is_religion_enabled = protestant
+				NOT = { has_global_flag = counter_reformation }
+			}
+		}
+	}
+	
+	revoke_edict_of_tolerance = {
+		potential = {
+			has_country_modifier = edict_of_tolerance
+			piety = -0.20
+			NOT = { has_country_flag = religious_civil_war }
+			NOT = { has_country_flag = religious_turmoil_catholic }
+			NOT = { has_country_flag = religious_turmoil_protestant }
+			NOT = { has_country_flag = religious_turmoil_reformed }
+			NOT = { has_country_flag = religious_turmoil_orthodox }
+			NOT = { has_country_flag = religious_turmoil_coptic }
+			NOT = { has_country_flag = religious_turmoil_chaldean }
+			NOT = { has_country_flag = religious_turmoil_gnostic }
+			NOT = { has_country_flag = religious_turmoil_hussite }
+		}
+		allow = {
+			is_at_war = no
+			OR = {
+				MIL = 4
+				advisor = inquisitor
+				piety = 0.20
+			}
+		}
+		effect = {
+			if = {
+				limit = { NOT = { religious_unity = 0.75 } }
+				subtract_stability_1 = yes
+			}
+			remove_country_modifier = edict_of_tolerance
+			hidden_effect = { clr_country_flag = edict_of_tolerance }
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				NOT = { had_country_flag = { flag = edict_of_tolerance days = 3650 } }
+			}
+			modifier = {
+				NOT = { religious_unity = 0.75 }
+				factor = 0
+			}
+			modifier = {
+				NOT = { stability = 0 }
+				factor = 0
+			}
+			modifier = {
+				war_exhaustion = 4
+				factor = 0
+			}
+			modifier = {
+				NOT = { manpower_percentage = 0.50 }
+				factor = 0
+			}
+		}
+	}
+	convert_to_chaldean = {
+		potential = {
+			OR = { #A Christian religion that has an official head of the church
+				religion = catholic
+				religion = orthodox
+				religion = coptic
+			}
+			NOT = { capital_scope = { continent = europe } }
+			OR = { #Having your ruler be head of the church
+				has_country_flag = national_church
+				has_country_flag = catholic_pragmatic_sanction
+				has_country_flag = excommunicated
+				NOT = { religion = catholic }
+			}
+			ctesiphon_patriarch_area = {
+				has_province_flag = chaldean_catholicos_of_ctesiphon
+				OR = { owned_by = ROOT owner = { is_subject_of = ROOT } }
+			}
+		}
+		allow = {
+			OR = {
+				is_free_or_tributary_trigger = yes
+				overlord = { religion = chaldean }
+			}
+			is_papal_controller = no
+			NOT = { num_of_cardinals = 1 }
+			NOT = { any_owned_province = { has_province_modifier = orthodox_patriarchate } }
+			NOT = { any_owned_province = { has_province_modifier = catholic_archbishopric } }
+			ctesiphon_patriarch_area = {
+				has_province_flag = chaldean_catholicos_of_ctesiphon
+				OR = { owned_by = ROOT owner = { is_subject_of = ROOT } }
+			}
+		}
+		effect = {
+			set_country_flag = voluntary_conversion
+			if = {
+				limit = { NOT = { is_religion_enabled = chaldean } }
+				custom_tooltip = convert_dangerous_religion
+				subtract_stability_1 = yes
+			}
+			if = {
+				limit = { check_variable = { which = chaldean_population value = 75 } }
+				custom_tooltip = convert_population_75
+				add_stability_1 = yes
+			}
+			else_if = {
+				limit = { check_variable = { which = chaldean_population value = 50 } }
+				custom_tooltip = convert_population_50
+			}
+			else_if = {
+				limit = { check_variable = { which = chaldean_population value = 25 } }
+				custom_tooltip = convert_population_25
+				subtract_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_population_0
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = { patriarch_authority = 0.75 }
+				custom_tooltip = convert_church_strong
+				subtract_stability_2 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.50 }
+				custom_tooltip = convert_piety_moderate
+				subtract_stability_1 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.25 }
+				custom_tooltip = convert_church_weak
+			}
+			else = {
+				custom_tooltip = convert_church_insignificant
+			}
+			if = {
+				limit = { ADM = 5 }
+				if = {
+					limit = {
+						capital_scope = { religion = chaldean }
+					}
+					custom_tooltip = convert_ruler_strong
+					add_stability_3 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+			}
+			else_if = {
+				limit = { ADM = 3 }
+				if = {
+					limit = {
+						capital_scope = { religion = chaldean }
+					}
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						capital_scope = { religion = chaldean }
+					}
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_incompetent
+				}
+			}
+			if = {
+				limit = { advisor = theologian }
+				custom_tooltip = convert_theologian
+				add_stability_1 = yes
+			}
+			if = {
+				limit = {
+					has_country_flag = was_chaldean
+				}
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_previous_recent
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_previous_old
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_recent
+					add_stability_1 = yes
+				}
+			}
+			change_religion = chaldean
+			if = {
+				limit = {
+					NOT = { capital = 410 }
+					owns = 410 # Baghdad
+				}
+				Effect_set_capital = { target=410 }
+				add_core = 410
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				NOT = { check_variable = { which = chaldean_population value = 25 } }
+				factor = 0
+			}
+		}
+	}
+	convert_to_miaphysite = {
+		potential = {
+			OR = { #A Christian religion that has an official head of the church
+				religion = catholic
+				religion = orthodox
+				religion = chaldean
+			}
+			NOT = { capital_scope = { continent = europe } }
+			OR = { #Having your ruler be head of the church
+				has_country_flag = national_church
+				has_country_flag = catholic_pragmatic_sanction
+				has_country_flag = excommunicated
+				NOT = { religion = catholic }
+			}
+			OR = {
+				antioch_patriarch_area = {
+					has_province_flag = miaphysite_catholicos_of_antioch
+					OR = { owned_by = ROOT owner = { is_subject_of = ROOT } }
+				}
+				alexandria_patriarch_area = {
+					has_province_flag = miaphysite_catholicos_of_alexandria
+					OR = { owned_by = ROOT owner = { is_subject_of = ROOT } }
+				}
+			}
+		}
+		allow = {
+			OR = {
+				is_free_or_tributary_trigger = yes
+				overlord = { religion = coptic }
+			}
+			is_papal_controller = no
+			NOT = { num_of_cardinals = 1 }
+			NOT = { any_owned_province = { has_province_modifier = orthodox_patriarchate } }
+			NOT = { any_owned_province = { has_province_modifier = catholic_archbishopric } }
+			OR = {
+				antioch_patriarch_area = {
+					has_province_flag = miaphysite_catholicos_of_antioch
+					OR = { owned_by = ROOT owner = { is_subject_of = ROOT } }
+				}
+				alexandria_patriarch_area = {
+					has_province_flag = miaphysite_catholicos_of_alexandria
+					OR = { owned_by = ROOT owner = { is_subject_of = ROOT } }
+				}
+			}
+		}
+		effect = {
+			set_country_flag = voluntary_conversion
+			if = {
+				limit = { NOT = { is_religion_enabled = coptic } }
+				custom_tooltip = convert_dangerous_religion
+				subtract_stability_1 = yes
+			}
+			if = {
+				limit = { check_variable = { which = coptic_population value = 75 } }
+				custom_tooltip = convert_population_75
+				add_stability_1 = yes
+			}
+			else_if = {
+				limit = { check_variable = { which = coptic_population value = 50 } }
+				custom_tooltip = convert_population_50
+			}
+			else_if = {
+				limit = { check_variable = { which = coptic_population value = 25 } }
+				custom_tooltip = convert_population_25
+				subtract_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_population_0
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = { patriarch_authority = 0.75 }
+				custom_tooltip = convert_church_strong
+				subtract_stability_2 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.50 }
+				custom_tooltip = convert_piety_moderate
+				subtract_stability_1 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.25 }
+				custom_tooltip = convert_church_weak
+			}
+			else = {
+				custom_tooltip = convert_church_insignificant
+			}
+			if = {
+				limit = { ADM = 5 }
+				if = {
+					limit = {
+						capital_scope = { religion = coptic }
+					}
+					custom_tooltip = convert_ruler_strong
+					add_stability_3 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+			}
+			else_if = {
+				limit = { ADM = 3 }
+				if = {
+					limit = {
+						capital_scope = { religion = coptic }
+					}
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						capital_scope = { religion = coptic }
+					}
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_incompetent
+				}
+			}
+			if = {
+				limit = { advisor = theologian }
+				custom_tooltip = convert_theologian
+				add_stability_1 = yes
+			}
+			if = {
+				limit = {
+					has_country_flag = was_coptic
+				}
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_previous_recent
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_previous_old
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_recent
+					add_stability_1 = yes
+				}
+			}
+			change_religion = coptic
+			if = {
+				limit = {
+					NOT = { capital = 358 } # Al Iskandariyya
+					NOT = { capital = 382 } # Dimashq
+					owns = 358 # Al Iskandariyya
+				}
+				Effect_set_capital = { target=358 }
+				add_core = 358
+			}
+			if = {
+				limit = {
+					NOT = { capital = 358 } # Al Iskandariyya
+					NOT = { capital = 382 } # Dimashq
+					NOT = { owns = 358 } # Al Iskandariyya
+					owns = 382 # Dimashq
+				}
+				Effect_set_capital = { target=382 }
+				add_core = 382
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				NOT = { check_variable = { which = coptic_population value = 25 } }
+				factor = 0
+			}
+		}
+	}
+} #End of decisions
+

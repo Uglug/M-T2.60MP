@@ -1,0 +1,2616 @@
+# Summary of the code
+# The code can be divided into 3 parts
+# 1. A part where runners are sent,
+# 2. A part where regional capital again sends the runners
+# 3. A part where runners are prepared and finished
+# Runners move around the country in 2 different ways, by land and by sea
+# By land, A runner starts the iteration by entering a province
+# Then, from that province, runner searches through all neighboring provinces and see if any of them can have their travel time decreased by this runner entering that new province
+# If it can, then it enters the province and start the same iteration from that province
+# If it can't, then it doesn't enter it
+# By sea, a runner start the iteration by entering a province with a good enough port
+# Then, a sea zone distances from that province to surrounding sea zones are calculated
+# Then, by using a capital distance trick, a runner calculates its distance to all other harbours
+# Then, the distance is multiplied by arithmetic mean of departing province's and arriving province's harbour discount value
+# Then, the distance is multiplied by 1 + ((sea zone distance^2)/10). It heavily penalizes long distance travel, and encourage short distance travel from one harbour to another.
+# Then, a variable with a value of runner_final_time of departing province added by distance multiplied with multipliers is calculated
+# If this variable has a lesser value than the runner_final_time of the arriving province, then a runner travels to that port
+# When all the runners are done running around, regional capitals receive a special discount in their runner_final_time, and again send out runners carrying that discounted value
+
+# Difficult to travel through occupied lands
+occupied_penalty = {
+	if = {
+		limit = {
+			NOT = { controlled_by = owner }
+		}
+		change_variable = { which = $varname$ value = 2 }
+		multiply_variable = { which = $varname$ value = 3 }
+	}
+}
+
+calc_dist_init = {
+	$targ$ = {
+		set_variable = { which = Xdiff which = $x_coord$ }
+		set_variable = { which = Ydiff which = $y_coord$ }
+	}
+
+	set_variable = { which = Xdiff which = $x_coord$ }
+	set_variable = { which = Ydiff which = $y_coord$ }
+
+	subtract_variable = { which = Xdiff which = $targ$ }
+	subtract_variable = { which = Ydiff which = $targ$ }
+
+	if = {
+		limit = { NOT = { check_variable = { which = Xdiff value = 0 } } }
+		multiply_variable = { which = Xdiff value = -1 }
+	}
+	if = {
+		limit = { NOT = { check_variable = { which = Ydiff value = 0 } } }
+		multiply_variable = { which = Ydiff value = -1 }
+	}
+
+	$targ$ = {
+		set_variable = { which = Xdiff value = 0 }
+		set_variable = { which = Ydiff value = 0 }
+	}
+}
+
+# For pelpel
+calc_ce_hinder = {
+	trigger_switch = {
+		on_trigger = has_country_modifier
+		CE_hindered_1 = {
+			change_variable = { which = runner_multiplier_bureaucracy value = 0.1 }
+		}
+		CE_hindered_2 = {
+			change_variable = { which = runner_multiplier_bureaucracy value = 0.2 }
+		}
+		CE_hindered_3 = {
+			change_variable = { which = runner_multiplier_bureaucracy value = 0.3 }
+		}
+		CE_hindered_4 = {
+			change_variable = { which = runner_multiplier_bureaucracy value = 0.4 }
+		}
+		CE_hindered_5 = {
+			change_variable = { which = runner_multiplier_bureaucracy value = 0.5 }
+		}
+	}
+}
+
+set_ce_mod_actual = {
+	# Apply a soft cap
+	logistic_funct = {
+		type1=which type2=value type3=value type4=value
+		inp=runner_final_time midpnt=0 steepns=0.018 maxval=240
+	}
+	set_variable = { which = runner_final_time_inp which = logistic_val }
+	set_variable = { which = logistic_val value = 0 }
+	
+	subtract_variable = { which = runner_final_time_inp value = 120 }
+	
+	# Under the effect of overlord limiting the power of shugo
+	if = {
+		limit = {
+			has_province_modifier = has_shugo_ce
+		}
+		change_variable = {
+			which = runner_final_time_inp
+			value = 20
+		}
+		subtract_variable = {
+			which = runner_final_time_inp
+			which = runner_final_time_shugo
+		}
+	}
+	
+	if = {
+		limit = {
+			OR = {
+				AND = {
+					OR = {
+						continent = north_america
+						continent = south_america
+					}
+					owner = {
+						capital_scope = {
+							NOT = {
+								continent = north_america
+								continent = south_america
+							}
+						}
+					}
+				}
+			}
+		}
+		multiply_variable = { which = runner_final_time_inp value = 0.5 }
+	}
+	
+	set_variable = { which = CE_UnrestDisp which = runner_final_time_inp }
+	set_variable = { which = CE_AutonomyDisp which = runner_final_time_inp }
+	
+	multiply_variable = { which = CE_UnrestDisp value = 0.35 }
+	multiply_variable = { which = CE_AutonomyDisp value = 0.016 }
+	
+	# Round to 2 decimal places
+	multiply_variable = { which = CE_UnrestDisp value = 0.1 }
+	multiply_variable = { which = CE_UnrestDisp value = 10 }
+	#multiply_variable = { which = CE_AutonomyDisp value = 0.1 }
+	#multiply_variable = { which = CE_AutonomyDisp value = 10 }
+	
+	set_variable = { which = CE_TimeDisp which = runner_final_time }
+	multiply_variable = { which = CE_TimeDisp value = 0.001 }
+	multiply_variable = { which = CE_TimeDisp value = 1000 }
+	
+	#set_variable = { which = CE_OriginDisp which = runner_prev }
+	
+	reset_income_modifier = { varname=runner_final_time_inp modname=CE_Mod value=128 type=province }
+	reset_income_modifier = { varname=runner_final_time_inp modname=CE_Mod value=64 type=province }
+	reset_income_modifier = { varname=runner_final_time_inp modname=CE_Mod value=32 type=province }
+	reset_income_modifier = { varname=runner_final_time_inp modname=CE_Mod value=16 type=province }
+	reset_income_modifier = { varname=runner_final_time_inp modname=CE_Mod value=8 type=province }
+	reset_income_modifier = { varname=runner_final_time_inp modname=CE_Mod value=4 type=province }
+	reset_income_modifier = { varname=runner_final_time_inp modname=CE_Mod value=2 type=province }
+	reset_income_modifier = { varname=runner_final_time_inp modname=CE_Mod value=1 type=province }
+	
+	set_variable = { which = runner_final_time_inp value = 0 }
+}
+
+set_ce_mod_both = {
+	if = {
+		limit = {
+			is_capital = yes
+			NOT = { check_variable = { which = runner_final_time	value = 4 } }
+		}
+		add_province_modifier = { name = instant_communication	duration = -1 }
+		add_province_modifier = { name = instant_communication_mapmode	duration = 30 }
+	}
+	else = {
+		if = { limit = { check_variable = { which = runner_final_time value = 39 } }
+			if = { limit = { check_variable = { which = runner_final_time value = 59 } }
+				if = { limit = { check_variable = { which = runner_final_time value = 69 } }
+					if = { limit = { check_variable = { which = runner_final_time value = 95 } }
+						add_province_modifier = { name = nightmarish_communication	duration = -1 }
+						add_province_modifier = { name = nightmarish_communication_mapmode	duration = 30 }
+					}
+					else = {
+						add_province_modifier = { name = terrible_communication	duration = -1 }
+						add_province_modifier = { name = terrible_communication_mapmode	duration = 30 }
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = runner_final_time value = 64 } }
+						add_province_modifier = { name = very_poor_communication	duration = -1 }
+						add_province_modifier = { name = very_poor_communication_mapmode	duration = 30 }
+					}
+					else = {
+						add_province_modifier = { name = poor_communication	duration = -1 }
+						add_province_modifier = { name = poor_communication_mapmode	duration = 30 }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = runner_final_time value = 49 } }
+					if = { limit = { check_variable = { which = runner_final_time value = 54 } }
+						add_province_modifier = { name = very_difficult_communication	duration = -1 }
+						add_province_modifier = { name = very_difficult_communication_mapmode	duration = 30 }
+					}
+					else = {
+						add_province_modifier = { name = difficult_communication	duration = -1 }
+						add_province_modifier = { name = difficult_communication_mapmode	duration = 30 }
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = runner_final_time value = 44 } }
+						add_province_modifier = { name = mediocre_communication	duration = -1 }
+						add_province_modifier = { name = mediocre_communication_mapmode	duration = 30 }
+					}
+					else = {
+						add_province_modifier = { name = moderate_communication	duration = -1 }
+						add_province_modifier = { name = moderate_communication_mapmode	duration = 30 }
+					}
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = runner_final_time value = 19 } }
+				if = { limit = { check_variable = { which = runner_final_time value = 29 } }
+					if = { limit = { check_variable = { which = runner_final_time value = 34 } }
+						add_province_modifier = { name = average_communication	duration = -1 }
+						add_province_modifier = { name = average_communication_mapmode	duration = 30 }
+					}
+					else = {
+						add_province_modifier = { name = decent_communication	duration = -1 }
+						add_province_modifier = { name = decent_communication_mapmode	duration = 30 }
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = runner_final_time value = 24 } }
+						add_province_modifier = { name = fairly_quick_communication	duration = -1 }
+						add_province_modifier = { name = fairly_quick_communication_mapmode	duration = 30 }
+					}
+					else = {
+						add_province_modifier = { name = quick_communication	duration = -1 }
+						add_province_modifier = { name = quick_communication_mapmode	duration = 30 }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = runner_final_time value = 9 } }
+					if = { limit = { check_variable = { which = runner_final_time value = 14 } }
+						add_province_modifier = { name = rapid_communication	duration = -1 }
+						add_province_modifier = { name = rapid_communication_mapmode	duration = 30 }
+					}
+					else = {
+						add_province_modifier = { name = excellent_communication	duration = -1 }
+						add_province_modifier = { name = excellent_communication_mapmode	duration = 30 }
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = runner_final_time value = 4 } }
+						add_province_modifier = { name = superb_communication	duration = -1 }
+						add_province_modifier = { name = superb_communication_mapmode	duration = 30 }
+					}
+					else = {
+						add_province_modifier = { name = perfect_communication	duration = -1 }
+						add_province_modifier = { name = perfect_communication_mapmode	duration = 30 }
+					}
+				}
+			}
+		}
+	}
+	
+	set_ce_mod_actual = yes
+}
+
+set_ce_mod_real = {
+	if = {
+		limit = {
+			is_capital = yes
+			NOT = { check_variable = { which = runner_final_time	value = 4 } }
+		}
+		if = { limit = { NOT = { has_province_modifier = instant_communication } }
+			remove_ce_mod_real = yes
+			add_province_modifier = { name = instant_communication	 duration = -1 }
+		}
+		add_province_modifier = { name = instant_communication	duration = -1 }
+	}
+	else = {
+		if = { limit = { check_variable = { which = runner_final_time value = 39 } }
+			if = { limit = { check_variable = { which = runner_final_time value = 59 } }
+				if = { limit = { check_variable = { which = runner_final_time value = 69 } }
+					if = { limit = { check_variable = { which = runner_final_time value = 95 } }
+						if = { limit = { NOT = { has_province_modifier = nightmarish_communication } }
+							remove_ce_mod_real = yes
+							add_province_modifier = { name = nightmarish_communication	 duration = -1 }
+						}
+					}
+					else = {
+						if = { limit = { NOT = { has_province_modifier = terrible_communication } }
+							remove_ce_mod_real = yes
+							add_province_modifier = { name = terrible_communication	 duration = -1 }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = runner_final_time value = 64 } }
+						if = { limit = { NOT = { has_province_modifier = very_poor_communication } }
+							remove_ce_mod_real = yes
+							add_province_modifier = { name = very_poor_communication	 duration = -1 }
+						}
+					}
+					else = {
+						if = { limit = { NOT = { has_province_modifier = poor_communication } }
+							remove_ce_mod_real = yes
+							add_province_modifier = { name = poor_communication	 duration = -1 }
+						}
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = runner_final_time value = 49 } }
+					if = { limit = { check_variable = { which = runner_final_time value = 54 } }
+						if = { limit = { NOT = { has_province_modifier = very_difficult_communication } }
+							remove_ce_mod_real = yes
+							add_province_modifier = { name = very_difficult_communication	 duration = -1 }
+						}
+					}
+					else = {
+						if = { limit = { NOT = { has_province_modifier = difficult_communication } }
+							remove_ce_mod_real = yes
+							add_province_modifier = { name = difficult_communication	 duration = -1 }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = runner_final_time value = 44 } }
+						if = { limit = { NOT = { has_province_modifier = mediocre_communication } }
+							remove_ce_mod_real = yes
+							add_province_modifier = { name = mediocre_communication	 duration = -1 }
+						}
+					}
+					else = {
+						if = { limit = { NOT = { has_province_modifier = moderate_communication } }
+							remove_ce_mod_real = yes
+							add_province_modifier = { name = moderate_communication	 duration = -1 }
+						}
+					}
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = runner_final_time value = 19 } }
+				if = { limit = { check_variable = { which = runner_final_time value = 29 } }
+					if = { limit = { check_variable = { which = runner_final_time value = 34 } }
+						if = { limit = { NOT = { has_province_modifier = average_communication } }
+							remove_ce_mod_real = yes
+							add_province_modifier = { name = average_communication	 duration = -1 }
+						}
+					}
+					else = {
+						if = { limit = { NOT = { has_province_modifier = decent_communication } }
+							remove_ce_mod_real = yes
+							add_province_modifier = { name = decent_communication	 duration = -1 }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = runner_final_time value = 24 } }
+						if = { limit = { NOT = { has_province_modifier = fairly_quick_communication } }
+							remove_ce_mod_real = yes
+							add_province_modifier = { name = fairly_quick_communication	 duration = -1 }
+						}
+					}
+					else = {
+						if = { limit = { NOT = { has_province_modifier = quick_communication } }
+							remove_ce_mod_real = yes
+							add_province_modifier = { name = quick_communication	 duration = -1 }
+						}
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = runner_final_time value = 9 } }
+					if = { limit = { check_variable = { which = runner_final_time value = 14 } }
+						if = { limit = { NOT = { has_province_modifier = rapid_communication } }
+							remove_ce_mod_real = yes
+							add_province_modifier = { name = rapid_communication	 duration = -1 }
+						}
+					}
+					else = {
+						if = { limit = { NOT = { has_province_modifier = excellent_communication } }
+							remove_ce_mod_real = yes
+							add_province_modifier = { name = excellent_communication	 duration = -1 }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = runner_final_time value = 4 } }
+						if = { limit = { NOT = { has_province_modifier = superb_communication } }
+							remove_ce_mod_real = yes
+							add_province_modifier = { name = superb_communication	 duration = -1 }
+						}
+					}
+					else = {
+						if = { limit = { NOT = { has_province_modifier = perfect_communication } }
+							remove_ce_mod_real = yes
+							add_province_modifier = { name = perfect_communication	 duration = -1 }
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	set_ce_mod_actual = yes
+}
+
+set_ce_mod_mapmode = {
+	if = {
+		limit = {
+			is_capital = yes
+			NOT = { check_variable = { which = runner_final_time	value = 4 } }
+		}
+		add_province_modifier = { name = instant_communication_mapmode	duration = 30 }
+	}
+	else = {
+		if = { limit = { check_variable = { which = runner_final_time value = 39 } }
+			if = { limit = { check_variable = { which = runner_final_time value = 59 } }
+				if = { limit = { check_variable = { which = runner_final_time value = 69 } }
+					if = { limit = { check_variable = { which = runner_final_time value = 95 } }
+						add_province_modifier = { name = nightmarish_communication_mapmode	duration = 30 }
+					}
+					else = {
+						add_province_modifier = { name = terrible_communication_mapmode	duration = 30 }
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = runner_final_time value = 64 } }
+						add_province_modifier = { name = very_poor_communication_mapmode	duration = 30 }
+					}
+					else = {
+						add_province_modifier = { name = poor_communication_mapmode	duration = 30 }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = runner_final_time value = 49 } }
+					if = { limit = { check_variable = { which = runner_final_time value = 54 } }
+						add_province_modifier = { name = very_difficult_communication_mapmode	duration = 30 }
+					}
+					else = {
+						add_province_modifier = { name = difficult_communication_mapmode	duration = 30 }
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = runner_final_time value = 44 } }
+						add_province_modifier = { name = mediocre_communication_mapmode	duration = 30 }
+					}
+					else = {
+						add_province_modifier = { name = moderate_communication_mapmode	duration = 30 }
+					}
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = runner_final_time value = 19 } }
+				if = { limit = { check_variable = { which = runner_final_time value = 29 } }
+					if = { limit = { check_variable = { which = runner_final_time value = 34 } }
+						add_province_modifier = { name = average_communication_mapmode	duration = 30 }
+					}
+					else = {
+						add_province_modifier = { name = decent_communication_mapmode	duration = 30 }
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = runner_final_time value = 24 } }
+						add_province_modifier = { name = fairly_quick_communication_mapmode	duration = 30 }
+					}
+					else = {
+						add_province_modifier = { name = quick_communication_mapmode	duration = 30 }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = runner_final_time value = 9 } }
+					if = { limit = { check_variable = { which = runner_final_time value = 14 } }
+						add_province_modifier = { name = rapid_communication_mapmode	duration = 30 }
+					}
+					else = {
+						add_province_modifier = { name = excellent_communication_mapmode	duration = 30 }
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = runner_final_time value = 4 } }
+						add_province_modifier = { name = superb_communication_mapmode	duration = 30 }
+					}
+					else = {
+						add_province_modifier = { name = perfect_communication_mapmode	duration = 30 }
+					}
+				}
+			}
+		}
+	}
+}
+
+remove_ce_mod_mapmode = {
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		instant_communication_mapmode = {
+			remove_province_modifier = instant_communication_mapmode
+		}
+		perfect_communication_mapmode = {
+			remove_province_modifier = perfect_communication_mapmode
+		}
+		superb_communication_mapmode = {
+			remove_province_modifier = superb_communication_mapmode
+		}
+		excellent_communication_mapmode = {
+			remove_province_modifier = excellent_communication_mapmode
+		}
+		rapid_communication_mapmode = {
+			remove_province_modifier = rapid_communication_mapmode
+		}
+		quick_communication_mapmode = {
+			remove_province_modifier = quick_communication_mapmode
+		}
+		fairly_quick_communication_mapmode = {
+			remove_province_modifier = fairly_quick_communication_mapmode
+		}
+		decent_communication_mapmode = {
+			remove_province_modifier = decent_communication_mapmode
+		}
+		average_communication_mapmode = {
+			remove_province_modifier = average_communication_mapmode
+		}
+		moderate_communication_mapmode = {
+			remove_province_modifier = moderate_communication_mapmode
+		}
+		mediocre_communication_mapmode = {
+			remove_province_modifier = mediocre_communication_mapmode
+		}
+		difficult_communication_mapmode = {
+			remove_province_modifier = difficult_communication_mapmode
+		}
+		very_difficult_communication_mapmode = {
+			remove_province_modifier = very_difficult_communication_mapmode
+		}
+		poor_communication_mapmode = {
+			remove_province_modifier = poor_communication_mapmode
+		}
+		very_poor_communication_mapmode = {
+			remove_province_modifier = very_poor_communication_mapmode
+		}
+		terrible_communication_mapmode = {
+			remove_province_modifier = terrible_communication_mapmode
+		}
+		nightmarish_communication_mapmode = {
+			remove_province_modifier = nightmarish_communication_mapmode
+		}
+	}
+}
+
+remove_ce_mod_both = {
+	#if = {
+	#	limit = {
+	#		has_province_modifier = martial_law
+	#	}
+		remove_province_modifier = martial_law
+	#}
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		instant_communication = {
+			remove_province_modifier = instant_communication
+			remove_province_modifier = instant_communication_mapmode
+		}
+		perfect_communication = {
+			remove_province_modifier = perfect_communication
+			remove_province_modifier = perfect_communication_mapmode
+		}
+		superb_communication = {
+			remove_province_modifier = superb_communication
+			remove_province_modifier = superb_communication_mapmode
+		}
+		excellent_communication = {
+			remove_province_modifier = excellent_communication
+			remove_province_modifier = excellent_communication_mapmode
+		}
+		rapid_communication = {
+			remove_province_modifier = rapid_communication
+			remove_province_modifier = rapid_communication_mapmode
+		}
+		quick_communication = {
+			remove_province_modifier = quick_communication
+			remove_province_modifier = quick_communication_mapmode
+		}
+		fairly_quick_communication = {
+			remove_province_modifier = fairly_quick_communication
+			remove_province_modifier = fairly_quick_communication_mapmode
+		}
+		decent_communication = {
+			remove_province_modifier = decent_communication
+			remove_province_modifier = decent_communication_mapmode
+		}
+		average_communication = {
+			remove_province_modifier = average_communication
+			remove_province_modifier = average_communication_mapmode
+		}
+		moderate_communication = {
+			remove_province_modifier = moderate_communication
+			remove_province_modifier = moderate_communication_mapmode
+		}
+		mediocre_communication = {
+			remove_province_modifier = mediocre_communication
+			remove_province_modifier = mediocre_communication_mapmode
+		}
+		difficult_communication = {
+			remove_province_modifier = difficult_communication
+			remove_province_modifier = difficult_communication_mapmode
+		}
+		very_difficult_communication = {
+			remove_province_modifier = very_difficult_communication
+			remove_province_modifier = very_difficult_communication_mapmode
+		}
+		poor_communication = {
+			remove_province_modifier = poor_communication
+			remove_province_modifier = poor_communication_mapmode
+		}
+		very_poor_communication = {
+			remove_province_modifier = very_poor_communication
+			remove_province_modifier = very_poor_communication_mapmode
+		}
+		terrible_communication = {
+			remove_province_modifier = terrible_communication
+			remove_province_modifier = terrible_communication_mapmode
+		}
+		nightmarish_communication = {
+			remove_province_modifier = nightmarish_communication
+			remove_province_modifier = nightmarish_communication_mapmode
+		}
+	}
+}
+
+remove_ce_mod_real = {
+	#if = {
+	#	limit = {
+	#		has_province_modifier = martial_law
+	#	}
+		remove_province_modifier = martial_law
+	#}
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		instant_communication = {
+			remove_province_modifier = instant_communication
+		}
+		perfect_communication = {
+			remove_province_modifier = perfect_communication
+		}
+		superb_communication = {
+			remove_province_modifier = superb_communication
+		}
+		excellent_communication = {
+			remove_province_modifier = excellent_communication
+		}
+		rapid_communication = {
+			remove_province_modifier = rapid_communication
+		}
+		quick_communication = {
+			remove_province_modifier = quick_communication
+		}
+		fairly_quick_communication = {
+			remove_province_modifier = fairly_quick_communication
+		}
+		decent_communication = {
+			remove_province_modifier = decent_communication
+		}
+		average_communication = {
+			remove_province_modifier = average_communication
+		}
+		moderate_communication = {
+			remove_province_modifier = moderate_communication
+		}
+		mediocre_communication = {
+			remove_province_modifier = mediocre_communication
+		}
+		difficult_communication = {
+			remove_province_modifier = difficult_communication
+		}
+		very_difficult_communication = {
+			remove_province_modifier = very_difficult_communication
+		}
+		poor_communication = {
+			remove_province_modifier = poor_communication
+		}
+		very_poor_communication = {
+			remove_province_modifier = very_poor_communication
+		}
+		terrible_communication = {
+			remove_province_modifier = terrible_communication
+		}
+		nightmarish_communication = {
+			remove_province_modifier = nightmarish_communication
+		}
+	}
+}
+
+calc_prov_factor = {
+	set_variable = { which = prov_rad which = travel_time_terrain_base }
+	subtract_variable = { which = prov_rad which = travel_time_reduced }
+	
+	if = {
+		limit = { NOT = { check_variable = { which = prov_rad value = 0.01 } } }
+		set_variable = { which = prov_rad value = 0.01 }
+	}
+
+	multiply_variable = { which = prov_rad which = prov_radius }
+	multiply_variable = { which = prov_rad value = 0.2 }
+	
+	if = {
+		limit = {
+			has_province_flag = nomad_speed_boost
+			OR = {
+				AND = {
+					nomad_speed_boost_trigger = yes
+					ROOT = { is_nomad = yes }
+				}
+				AND = { # Russians adopt the Yam on the Steppe.
+					OR = {
+						owner = { culture_group = east_slavic }
+						controller = { culture_group = east_slavic }
+					}
+					ROOT = { culture_group = east_slavic }
+					OR = {
+						superregion = greater_russia_superregion
+						superregion = central_asia_superregion
+						superregion = eastern_steppe_superregion
+					}
+				}
+			}
+			NOT = { has_building = road_and_rail_network }
+			check_variable = { which = prov_rad value = 0.001 }
+		}
+		divide_variable = { which = prov_rad value = 3 }
+	}
+	
+	if = {
+		limit = { owner = { full_idea_group = logistic_ideas } }
+		multiply_variable = { which = prov_rad value = 0.9 }
+	}
+
+	set_variable = { which = prov_factor which = prov_rad }
+	multiply_variable = { which = prov_factor value = 0.5 }
+	#if = {
+	#	limit = { NOT = { check_variable = { which = prov_rad value = 0.01 } } }
+	#	set_variable = { which = prov_rad value = 0.01 }
+	#}
+	if = {
+		limit = { NOT = { check_variable = { which = prov_factor value = 0.01 } } }
+		set_variable = { which = prov_factor value = 0.01 }
+	}
+}
+
+calc_dist = {
+	# Distance approximation without sqrt given abs X and Y diff between 2 points
+	set_variable = { which = XYsum value = 0.001 }
+	change_variable = { which = XYsum which = Xdiff }
+	change_variable = { which = XYsum which = Ydiff }
+
+	set_variable = { which = XYmult which = Xdiff }
+	multiply_variable = { which = XYmult which = Ydiff }
+	multiply_variable = { which = XYmult value = 1.135 }
+
+	if = { # same effect as what game does, but without the report in the error log
+		limit = { is_variable_equal = { which = XYsum value = 0 } }
+		set_variable = { which = XYsum value = 0.001 }
+	}
+
+	divide_variable = { which = XYmult which = XYsum }
+	subtract_variable = { which = XYsum which = XYmult }
+
+	set_variable = { which = distance which = XYsum } # Redundant if XYsum is called distance from the start, this is just for clarity
+
+	set_variable = { which = XYsum value = 0 }
+	set_variable = { which = XYmult value = 0 }
+	set_variable = { which = Xdiff value = 0 }
+	set_variable = { which = Ydiff value = 0 }
+}
+
+set_road_discount = {
+	#set_variable = { which = travel_time_reduced 	value = 0 }
+
+	trigger_switch = {
+		on_trigger = has_building
+		road_network = {
+			trigger_switch = {
+				on_trigger = has_province_flag
+				favorable_terrain = { set_variable = { which = travel_time_reduced 	value = 0.25 } }
+				challenging_terrain = { set_variable = { which = travel_time_reduced 	value = 0.5 } }
+				rugged_terrain = { set_variable = { which = travel_time_reduced 	value = 1.5 } }
+			}
+		}
+		paved_road_network = {
+			trigger_switch = {
+				on_trigger = has_province_flag
+				favorable_terrain = { set_variable = { which = travel_time_reduced 	value = 0.5 } }
+				challenging_terrain = { set_variable = { which = travel_time_reduced 	value = 1 } }
+				rugged_terrain = { set_variable = { which = travel_time_reduced 	value = 2 } }
+			}
+		}
+		highway_network = {
+			trigger_switch = {
+				on_trigger = has_province_flag
+				favorable_terrain = { set_variable = { which = travel_time_reduced 	value = 0.75 } }
+				challenging_terrain = { set_variable = { which = travel_time_reduced 	value = 1.5 } }
+				rugged_terrain = { set_variable = { which = travel_time_reduced 	value = 3 } }
+			}
+		}
+		road_and_rail_network = {
+			trigger_switch = {
+				on_trigger = has_province_flag
+				favorable_terrain = { set_variable = { which = travel_time_reduced 	value = 1.5 } }
+				challenging_terrain = {
+					if = {
+						limit = {
+							OR = {
+								hills_trigger = yes
+								has_terrain = tundra
+							}
+						}
+						set_variable = { which = travel_time_reduced 	value = 3 }
+					}
+					else = { set_variable = { which = travel_time_reduced 	value = 2.5 } }
+				}
+				rugged_terrain = { set_variable = { which = travel_time_reduced 	value = 4.5 } }
+			}
+		}
+	}
+}
+
+calc_sea_zone_dist = {
+	sea_zone = {
+		set_variable = { which = itr which = PREV }
+		
+		set_province_flag = spread_sea_dist
+		set_province_flag = has_sea_dist
+		
+		while = {
+			limit = { check_variable = { which = itr value = 1 } }
+			subtract_variable = { which = itr value = 1 }
+			portgroup = {
+				limit = { has_province_flag = spread_sea_dist }
+				clr_province_flag = spread_sea_dist
+				portgroup = {
+					limit = {
+						NOT = { has_province_flag = has_sea_dist }
+						has_province_flag = sea_neighbor_of_@PREV
+					}
+					set_province_flag = has_sea_dist
+					set_province_flag = set_spread
+					set_variable = { which = sea_dist which = PREV }
+					change_variable = { which = sea_dist value = 1 }
+				}
+			}
+			if = {
+				limit = { check_variable = { which = itr value = 1 } }
+				portgroup = {
+					limit = { has_province_flag = set_spread }
+					clr_province_flag = set_spread
+					set_province_flag = spread_sea_dist
+				}
+			}
+			else = {
+				portgroup = {
+					limit = { has_province_flag = set_spread }
+					clr_province_flag = set_spread
+				}
+			}
+		}
+	}
+	set_variable = { which = itr value = 0 }
+}
+
+clean_sea_zone_calc = {
+	portgroup = {
+		clr_province_flag = has_sea_dist
+		set_variable = { which = sea_dist value = 0 }
+	}
+}
+
+calc_port_dist = {
+	set_variable = { which = inform_sender_1 which = PREV }
+	set_variable = { which = inform_sender_2 which = PREV }
+
+	set_variable = { which = boarding_cost value = 2 }
+	multiply_variable = { which = boarding_cost which = inform_sender_2 }
+	multiply_variable = { which = boarding_cost which = travel_time_sailing_modifier }
+	
+	if = {
+		limit = { owner = { full_idea_group = naval_ideas } }
+		multiply_variable = { which = boarding_cost value = 0.95 }
+	}
+
+	change_variable = { which = inform_sender_1 which = boarding_cost }
+
+	change_variable = { which = inform_sender_2 which = travel_time_sailing_modifier }
+	multiply_variable = { which = inform_sender_2 value = 0.5 }
+
+	if = {
+		limit = {
+			NOT = { check_variable = { which = sea_dist value = 2 } }
+		}
+		# Start calculating absolute distance
+		calc_dist_init = { targ=PREV x_coord=x_coord y_coord=y_coord }
+		calc_dist = yes
+
+		multiply_variable = { which = distance value = 0.125 }
+
+		multiply_variable = { which = inform_sender_2 which = distance }
+
+		set_variable = { which = distance value = 0 }
+
+	}
+	else = {
+		multiply_variable = { which = inform_sender_2 which = sea_dist }
+		multiply_variable = { which = inform_sender_2 value = 10 }
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = inform_sender_2 value = 0.001 } }
+		}
+		set_variable = { which = inform_sender_2 value = 0.001 }
+	}
+
+	change_variable = { which = inform_sender_1 which = inform_sender_2 }
+	
+	set_variable = { which = runner_spread_temp which = inform_sender_1 }
+	
+	calc_prov_factor = yes
+	change_variable = { which = inform_sender_1 which = prov_factor }
+	set_variable = { which = prov_factor value = 0 }
+
+	set_variable = { which = inform_sender_2 value = 0 }
+	set_variable = { which = boarding_cost value = 0 }
+}
+
+calc_baby_port_dist = {
+	set_province_flag = baby_port_origin
+	
+	set_variable = { which = inform_sender_1 which = runner_spread }
+	set_variable = { which = inform_sender_2 which = travel_time_sailing_modifier }
+
+	sea_zone = {
+		set_variable = { which = runner_final_time which = PREV }
+
+		set_variable = { which = inform_sender_1 which = PREV }
+		set_variable = { which = inform_sender_2 which = PREV }
+
+		set_variable = { which = x_coord which = PREV }
+		set_variable = { which = y_coord which = PREV }
+
+		set_variable = { which = prov_id which = PREV }
+
+		#if = {
+		#	limit = {
+		#		PREV = {
+		#			OR = {
+		#				has_province_flag = part_of_5266
+		#				has_province_flag = part_of_5267
+		#				has_province_flag = part_of_5268
+		#			}
+		#		}
+		#	}
+		#	set_province_flag = part_of_5266
+		#}
+
+		every_neighbor_province = {
+			limit = {
+				owner = { has_country_flag = runner_country_@ROOT }
+
+				has_building = harbour_infrastructure_1
+				
+				is_blockaded = no
+				
+				controlled_by = owner
+
+				OR = {
+					NOT = { has_province_flag = had_runner }
+
+					check_variable = { which = runner_final_time which = PREV }
+				}
+				
+				NOT = { has_province_flag = baby_port_origin }
+			}
+			set_variable = { which = travel_time_sailing_modifier value = 1.4 }
+
+			calc_port_dist = yes
+
+			if = {
+				limit = {
+					check_variable = { which = runner_final_time which = inform_sender_1 }
+				}
+
+				set_global_flag = runner_still_running
+
+				set_variable = { which = runner_final_time which = inform_sender_1 }
+				set_variable = { which = runner_spread which = runner_spread_temp }
+				
+				if = {
+					limit = {
+						NOT = { has_province_flag = has_runner }
+					}
+					set_province_flag = has_runner_recent
+				}
+
+				PREV = {
+					set_variable = { which = inform_sender_rp which = prov_id }
+
+					PREV = {
+						set_variable = { which = inform_sender_rp which = PREV }
+
+						set_variable = { which = runner_prev which = inform_sender_rp }
+
+						set_variable = { which = inform_sender_rp value = 0 }
+					}
+
+					set_variable = { which = inform_sender_rp value = 0 }
+				}
+			}
+
+			set_variable = { which = travel_time_sailing_modifier value = 0 }
+			set_variable = { which = runner_spread_temp value = 0 }
+		}
+
+		#clr_province_flag = part_of_5266
+
+		set_variable = { which = runner_final_time value = 0 }
+
+		set_variable = { which = inform_sender_1 value = 0 }
+		set_variable = { which = inform_sender_2 value = 0 }
+
+		#set_variable = { which = x_coord value = 0 }
+		#set_variable = { which = y_coord value = 0 }
+
+		#set_variable = { which = prov_id value = 0 }
+	}
+	clr_province_flag = baby_port_origin
+	
+	set_variable = { which = inform_sender_1 value = 0 }
+	set_variable = { which = inform_sender_2 value = 0 }
+
+	set_variable = { which = prov_factor value = 0 }
+}
+
+# Code that make runners run around
+send_runners_code = {
+	# Every province which hosts a runner sends out that runner to surrounding areas
+	if = {
+		limit = {
+			has_province_flag = has_runner
+		}
+		clr_province_flag = has_runner
+
+		#if = {
+		#	limit = {
+		#		has_province_modifier = runner_mapmode
+		#	}
+			remove_province_modifier = runner_mapmode
+		#}
+		
+		set_variable = { which = inform_sender which = runner_spread }
+		
+		calc_prov_factor = yes
+		
+		# Difficult to travel through occupied lands
+		#occupied_penalty = { varname=prov_rad }		#CE is not this reactive, and cannot be.
+		
+		change_variable = { which = inform_sender which = prov_rad }
+		set_variable = { which = prov_rad value = 0 }
+
+		every_neighbor_province = {
+			limit = {
+				owner = { has_country_flag = runner_country_@ROOT }
+
+				OR = {
+					NOT = { has_province_flag = had_runner }
+
+					check_variable = { which = runner_final_time which = PREV }
+				}
+				check_variable = { which = x_coord value = 0.001 }
+				check_variable = { which = y_coord value = 0.001 }
+			}
+			# Calculate what this runner's runner_final_time will be when it arrives in the province
+			set_variable = { which = inform_sender which = PREV }
+			set_variable = { which = runner_spread_temp which = inform_sender }
+
+			calc_prov_factor = yes
+			
+			# Difficult to travel through occupied lands
+			#occupied_penalty = { varname=prov_factor }		#CE is not this reactive, and cannot be.
+
+			change_variable = { which = inform_sender which = prov_factor }
+			set_variable = { which = prov_factor value = 0 }
+
+			change_variable = { which = inform_sender value = 0.001 }
+
+			# If the the path runner is going through is faster then the path other runner used to arrive to that province, go there
+			if = {
+				limit = {
+					OR = {
+						NOT = { has_province_flag = had_runner }
+
+						check_variable = { which = runner_final_time which = inform_sender }
+					}
+				}
+
+				subtract_variable = { which = inform_sender value = 0.001 }
+
+				if = {
+					limit = {
+						NOT = { has_province_flag = has_runner }
+					}
+					set_province_flag = has_runner_recent
+				}
+				
+				set_province_flag = had_runner
+				set_global_flag = runner_still_running
+
+				set_variable = { which = runner_final_time which = inform_sender }
+				set_variable = { which = runner_spread which = runner_spread_temp }
+
+				PREV = {
+					set_variable = { which = inform_sender_rp which = prov_id }
+
+					PREV = {
+						set_variable = { which = inform_sender_rp which = PREV }
+
+						set_variable = { which = runner_prev which = inform_sender_rp }
+
+						set_variable = { which = inform_sender_rp value = 0 }
+					}
+
+					set_variable = { which = inform_sender_rp value = 0 }
+				}
+
+				#if = {
+				#	limit = {
+				#		has_province_modifier = runner_on_the_way
+				#	}
+					remove_province_modifier = runner_on_the_way
+				#}
+			}
+			
+			set_variable = { which = runner_spread_temp value = 0 }
+		}
+
+		# If the province has a port, runners also hop onto a ship
+		if = {
+			limit = {
+				has_province_flag = large_port_present
+
+				#is_blockaded = no		#CE is not this reactive, and cannot be.
+				
+				#controlled_by = owner
+
+				NOT = { has_province_flag = pass }
+			}
+			if = {
+				limit = {
+					any_province = {
+						owner = { has_country_flag = runner_country_@ROOT }
+
+						has_province_flag = large_port_present
+
+						#is_blockaded = no		#CE is not this reactive, and cannot be.
+						
+						#controlled_by = owner
+
+						OR = {
+							NOT = { has_province_flag = had_runner }
+
+							check_variable = { which = runner_final_time which = PREV }
+						}
+						
+						NOT = { province_id = PREV }
+						check_variable = { which = x_coord value = 0.001 }
+						check_variable = { which = y_coord value = 0.001 }
+					}
+				}
+				set_variable = { which = itr value = 10 }
+
+				calc_sea_zone_dist = yes
+
+				# Start actual runner hopping
+				set_variable = { which = inform_sender_1 which = runner_spread }
+				set_variable = { which = inform_sender_2 which = travel_time_sailing_modifier }
+
+				every_province = {
+					limit = {
+						owner = { has_country_flag = runner_country_@ROOT }
+
+						has_province_flag = large_port_present
+
+						sea_zone = { has_province_flag = has_sea_dist }
+
+						#is_blockaded = no
+						
+						#controlled_by = owner
+
+						OR = {
+							NOT = { has_province_flag = had_runner }
+
+							check_variable = { which = runner_final_time which = PREV }
+						}
+						
+						NOT = { province_id = PREV }
+						check_variable = { which = x_coord value = 0.001 }
+						check_variable = { which = y_coord value = 0.001 }
+					}
+					sea_zone = {
+						PREV = { set_variable = { which = sea_dist which = PREV } }
+					}
+
+					calc_port_dist = yes
+					
+					set_variable = { which = sea_dist value = 0 }
+					
+					if = {
+						limit = {
+							NOT = {
+								AND = {
+									has_province_flag = had_runner
+									check_variable = { which = inform_sender_1 which = runner_final_time }
+								}
+							}
+						}
+
+						set_global_flag = runner_still_running
+						
+						if = {
+							limit = {
+								NOT = { has_province_flag = has_runner }
+							}
+							set_province_flag = has_runner_recent
+						}
+						
+						set_province_flag = had_runner
+
+						set_variable = { which = runner_final_time which = inform_sender_1 }
+						set_variable = { which = runner_spread which = runner_spread_temp }
+
+						PREV = {
+							set_variable = { which = inform_sender_rp which = prov_id }
+
+							PREV = {
+								set_variable = { which = inform_sender_rp which = PREV }
+
+								set_variable = { which = runner_prev which = inform_sender_rp }
+
+								set_variable = { which = inform_sender_rp value = 0 }
+							}
+
+							set_variable = { which = inform_sender_rp value = 0 }
+						}
+
+						if = {
+							limit = {
+								ROOT = { has_country_flag = doing_travel_calc_2 }
+							}
+							clr_province_flag = has_runner_recent
+
+							set_variable = { which = runner_final_time which = PREV }
+							set_variable = { which = days_difference which = inform_sender_1 }
+							subtract_variable = { which = days_difference which = runner_final_time }
+
+							set_variable = { which = runner_final_time which = inform_sender_1 }
+							set_variable = { which = runner_spread which = runner_spread_temp }
+
+							if = { limit = { NOT = { check_variable = { which = days_difference value = 2 } } }  province_event = { id = POP_Travel_Time.009 days = 1 } }
+							if = { limit = { check_variable = { which = days_difference value = 2 } NOT = { check_variable = { which = days_difference value = 4 } } }  province_event = { id = POP_Travel_Time.009 days = 1 } }
+							if = { limit = { check_variable = { which = days_difference value = 4 } NOT = { check_variable = { which = days_difference value = 6 } } }  province_event = { id = POP_Travel_Time.009 days = 1 } }
+							if = { limit = { check_variable = { which = days_difference value = 6 } NOT = { check_variable = { which = days_difference value = 8 } } }  province_event = { id = POP_Travel_Time.009 days = 2 } }
+							if = { limit = { check_variable = { which = days_difference value = 8 } NOT = { check_variable = { which = days_difference value = 10 } } }  province_event = { id = POP_Travel_Time.009 days = 2 } }
+							if = { limit = { check_variable = { which = days_difference value = 10 } NOT = { check_variable = { which = days_difference value = 12 } } }  province_event = { id = POP_Travel_Time.009 days = 3 } }
+							if = { limit = { check_variable = { which = days_difference value = 12 } NOT = { check_variable = { which = days_difference value = 14 } } }  province_event = { id = POP_Travel_Time.009 days = 3 } }
+							if = { limit = { check_variable = { which = days_difference value = 14 } NOT = { check_variable = { which = days_difference value = 16 } } }  province_event = { id = POP_Travel_Time.009 days = 4 } }
+							if = { limit = { check_variable = { which = days_difference value = 16 } NOT = { check_variable = { which = days_difference value = 18 } } }  province_event = { id = POP_Travel_Time.009 days = 4 } }
+							if = { limit = { check_variable = { which = days_difference value = 18 } NOT = { check_variable = { which = days_difference value = 20 } } }  province_event = { id = POP_Travel_Time.009 days = 5 } }
+							if = { limit = { check_variable = { which = days_difference value = 20 } NOT = { check_variable = { which = days_difference value = 22 } } }  province_event = { id = POP_Travel_Time.009 days = 5 } }
+							if = { limit = { check_variable = { which = days_difference value = 22 } NOT = { check_variable = { which = days_difference value = 24 } } }  province_event = { id = POP_Travel_Time.009 days = 6 } }
+							if = { limit = { check_variable = { which = days_difference value = 24 } NOT = { check_variable = { which = days_difference value = 26 } } }  province_event = { id = POP_Travel_Time.009 days = 6 } }
+							if = { limit = { check_variable = { which = days_difference value = 26 } NOT = { check_variable = { which = days_difference value = 28 } } }  province_event = { id = POP_Travel_Time.009 days = 7 } }
+							if = { limit = { check_variable = { which = days_difference value = 28 } NOT = { check_variable = { which = days_difference value = 30 } } }  province_event = { id = POP_Travel_Time.009 days = 7 } }
+							if = { limit = { check_variable = { which = days_difference value = 30 } NOT = { check_variable = { which = days_difference value = 32 } } }  province_event = { id = POP_Travel_Time.009 days = 8 } }
+							if = { limit = { check_variable = { which = days_difference value = 32 } NOT = { check_variable = { which = days_difference value = 34 } } }  province_event = { id = POP_Travel_Time.009 days = 8 } }
+							if = { limit = { check_variable = { which = days_difference value = 34 } NOT = { check_variable = { which = days_difference value = 36 } } }  province_event = { id = POP_Travel_Time.009 days = 9 } }
+							if = { limit = { check_variable = { which = days_difference value = 36 } NOT = { check_variable = { which = days_difference value = 38 } } }  province_event = { id = POP_Travel_Time.009 days = 9 } }
+							if = { limit = { check_variable = { which = days_difference value = 38 } NOT = { check_variable = { which = days_difference value = 40 } } }  province_event = { id = POP_Travel_Time.009 days = 10 } }
+							if = { limit = { check_variable = { which = days_difference value = 40 } NOT = { check_variable = { which = days_difference value = 42 } } }  province_event = { id = POP_Travel_Time.009 days = 10 } }
+							if = { limit = { check_variable = { which = days_difference value = 42 } NOT = { check_variable = { which = days_difference value = 44 } } }  province_event = { id = POP_Travel_Time.009 days = 11 } }
+							if = { limit = { check_variable = { which = days_difference value = 44 } NOT = { check_variable = { which = days_difference value = 46 } } }  province_event = { id = POP_Travel_Time.009 days = 11 } }
+							if = { limit = { check_variable = { which = days_difference value = 46 } NOT = { check_variable = { which = days_difference value = 48 } } }  province_event = { id = POP_Travel_Time.009 days = 12 } }
+							if = { limit = { check_variable = { which = days_difference value = 48 } NOT = { check_variable = { which = days_difference value = 50 } } }  province_event = { id = POP_Travel_Time.009 days = 12 } }
+							if = { limit = { check_variable = { which = days_difference value = 50 } NOT = { check_variable = { which = days_difference value = 52 } } }  province_event = { id = POP_Travel_Time.009 days = 13 } }
+							if = { limit = { check_variable = { which = days_difference value = 52 } NOT = { check_variable = { which = days_difference value = 54 } } }  province_event = { id = POP_Travel_Time.009 days = 13 } }
+							if = { limit = { check_variable = { which = days_difference value = 54 } NOT = { check_variable = { which = days_difference value = 56 } } }  province_event = { id = POP_Travel_Time.009 days = 14 } }
+							if = { limit = { check_variable = { which = days_difference value = 56 } NOT = { check_variable = { which = days_difference value = 58 } } }  province_event = { id = POP_Travel_Time.009 days = 14 } }
+							if = { limit = { check_variable = { which = days_difference value = 58 } NOT = { check_variable = { which = days_difference value = 60 } } }  province_event = { id = POP_Travel_Time.009 days = 15 } }
+							if = { limit = { check_variable = { which = days_difference value = 60 } }  province_event = { id = POP_Travel_Time.009 days = 15 } }
+
+							add_province_modifier = {
+								name = runner_on_the_way
+								duration = 60
+							}
+						}
+					}
+					
+					set_variable = { which = runner_spread_temp value = 0 }
+				}
+
+				# Fishing ports can still receive runners from a bigger port in same sea zone
+				calc_baby_port_dist = yes
+
+				# Only one province in the sea zone gets to send out another wave of runner, for calculative efficiency
+				if = {
+					limit = { NOT = { ROOT = { has_country_flag = doing_travel_calc } } }
+					#every_country = {
+					#	limit = { has_country_flag = runner_country_@ROOT }
+					#	every_owned_province = {
+					#		limit = {
+					#			has_province_flag = large_port_present
+					#			is_blockaded = no
+					#			has_province_flag = has_runner_recent
+					#		}
+					#		sea_zone = { set_variable = { which = runner_final_time value = 0 } }
+					#	}
+					#}
+					every_country = {
+						limit = { has_country_flag = runner_country_@ROOT }
+						every_owned_province = {
+							limit = {
+								has_province_flag = large_port_present
+								is_blockaded = no
+								has_province_flag = has_runner_recent
+							}
+							sea_zone = {
+								set_variable = { which = runner_final_time value = 0 }
+								if = {
+									limit = {
+										OR = {
+											check_variable = { which = runner_final_time which = PREV }
+											is_variable_equal = { which = runner_final_time value = 0 }
+										}
+									}
+									set_variable = { which = runner_final_time which = PREV }
+								}
+							}
+						}
+					}
+					every_country = {
+						limit = { has_country_flag = runner_country_@ROOT }
+						every_owned_province = {
+							limit = {
+								has_province_flag = large_port_present
+								is_blockaded = no
+								has_province_flag = has_runner_recent
+							}
+							sea_zone = {
+								if = {
+									limit = { NOT = { check_variable = { which = runner_final_time which = PREV } } }
+									PREV = { set_province_flag = pass }
+								}
+								set_variable = { which = runner_final_time value = 0 }
+							}
+						}
+					}
+					#every_country = {
+					#	limit = { has_country_flag = runner_country_@ROOT }
+					#	every_owned_province = {
+					#		limit = {
+					#			has_province_flag = large_port_present
+					#			is_blockaded = no
+					#			has_province_flag = has_runner_recent
+					#		}
+					#		sea_zone = { set_variable = { which = runner_final_time value = 0 } }
+					#	}
+					#}
+				}
+
+				clean_sea_zone_calc = yes
+			}
+		}
+	}
+}
+
+send_runners_flag = {
+	set_country_flag = runner_country_@ROOT
+
+	if = {
+		limit = {
+			is_subject_other_than_tributary_trigger = yes
+		}
+		overlord = {
+			set_country_flag = runner_country_@ROOT
+
+			if = {
+				limit = {
+					is_subject_other_than_tributary_trigger = yes
+				}
+				overlord = {
+					set_country_flag = runner_country_@ROOT
+
+					if = {
+						limit = {
+							num_of_subjects = 1
+						}
+						every_subject_country = {
+							#limit = {
+							#	exists = yes
+							#}
+							set_country_flag = runner_country_@ROOT
+
+							if = {
+								limit = {
+									num_of_subjects = 1
+								}
+								every_subject_country = {
+									#limit = {
+									#	exists = yes
+									#}
+									set_country_flag = runner_country_@ROOT
+
+									if = {
+										limit = {
+											num_of_subjects = 1
+										}
+										every_subject_country = {
+											#limit = {
+											#	exists = yes
+											#}
+											set_country_flag = runner_country_@ROOT
+
+											if = {
+												limit = {
+													num_of_subjects = 1
+												}
+												every_subject_country = {
+													#limit = {
+													#	exists = yes
+													#}
+													set_country_flag = runner_country_@ROOT
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					num_of_subjects = 1
+				}
+				every_subject_country = {
+					#limit = {
+					#	exists = yes
+					#}
+					set_country_flag = runner_country_@ROOT
+
+					if = {
+						limit = {
+							num_of_subjects = 1
+						}
+						every_subject_country = {
+							#limit = {
+							#	exists = yes
+							#}
+							set_country_flag = runner_country_@ROOT
+
+							if = {
+								limit = {
+									num_of_subjects = 1
+								}
+								every_subject_country = {
+									#limit = {
+									#	exists = yes
+									#}
+									set_country_flag = runner_country_@ROOT
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			num_of_subjects = 1
+		}
+		every_subject_country = {
+			#limit = {
+			#	exists = yes
+			#}
+			set_country_flag = runner_country_@ROOT
+
+			if = {
+				limit = {
+					num_of_subjects = 1
+				}
+				every_subject_country = {
+					#limit = {
+					#	exists = yes
+					#}
+					set_country_flag = runner_country_@ROOT
+				}
+			}
+		}
+	}
+}
+
+send_runners = {
+	every_country = {
+		limit = {
+			#exists = yes
+			has_country_flag = runner_country_@ROOT
+		}
+
+		every_owned_province = {
+			send_runners_code = yes
+		}
+	}
+
+	if = {
+		limit = {
+			NOT = { has_country_flag = doing_travel_calc }
+		}
+
+		every_country = {
+			limit = {
+				#exists = yes
+				has_country_flag = runner_country_@ROOT
+			}
+
+			every_owned_province = {
+				limit = {
+					has_province_flag = has_runner_recent
+				}
+
+				set_province_flag = has_runner
+				clr_province_flag = has_runner_recent
+			}
+		}
+	}
+	else = {
+		every_owned_province = {
+			limit = {
+				has_province_flag = has_runner_recent
+			}
+
+			set_province_flag = has_runner
+			clr_province_flag = has_runner_recent
+			remove_ce_mod_both = yes
+			set_ce_mod_both = yes
+
+			add_province_modifier = {
+				name = runner_mapmode
+				duration = 2
+			}
+		}
+
+		every_country = {
+			limit = {
+				#exists = yes
+				has_country_flag = runner_country_@ROOT
+				NOT = { tag = ROOT }
+			}
+
+			every_owned_province = {
+				limit = {
+					has_province_flag = has_runner_recent
+				}
+
+				set_province_flag = has_runner
+				clr_province_flag = has_runner_recent
+				remove_ce_mod_mapmode = yes
+				set_ce_mod_mapmode = yes
+
+				add_province_modifier = {
+					name = runner_mapmode
+					duration = 2
+				}
+			}
+		}
+	}
+}
+
+
+travel_isolated_provinces = {
+	capital_scope = {
+		save_event_target_as = owner_capital
+		
+		set_variable = { which = runner_prev_informsender which = prov_id }
+	}
+	if = {
+		limit = {
+			event_target:owner_capital = {
+				always = yes
+			}
+		}
+		every_owned_province = {
+			limit = {
+				NOT = { has_province_flag = had_runner }
+				check_variable = { which = x_coord value = 0.001 }
+				check_variable = { which = y_coord value = 0.001 }
+			}
+			set_province_flag = had_runner
+
+			# Start calculating absolute distance
+			calc_dist_init = { targ=event_target:owner_capital x_coord=x_coord y_coord=y_coord }
+			calc_dist = yes
+			
+			set_variable = { which = runner_final_time value = 0.5 }
+			if = {
+				limit = {
+					check_variable = { which = distance value = 0.001 }
+				}
+				if = {
+					limit = {
+						NOT = { check_variable = { which = distance value = 300 } }
+					}
+					logistic_funct = {
+						type1=which type2=value type3=value type4=value
+						inp=distance midpnt=0 steepns=-0.021 maxval=1.2
+					}
+					change_variable = { which = runner_final_time which = logistic_val }
+					set_variable = { which = logistic_val value = 0 }
+				}
+				
+				multiply_variable = { which = runner_final_time which = distance }
+
+				if = {
+					limit = {
+						is_part_of_hre = yes
+					}
+					divide_variable = { which = runner_final_time	value = 1.5 }
+				}
+
+				set_variable = { which = distance value = 0 }
+				
+				set_variable = { which = runner_prev_informsender which = event_target:owner_capital }
+				set_variable = { which = runner_prev which = runner_prev_informsender }
+			}
+			
+			set_variable = { which = runner_prev_informsender value = 0 }
+		}
+	}
+	capital_scope = {
+		set_variable = { which = Xdiff value = 0 }
+		set_variable = { which = Ydiff value = 0 }
+		
+		set_variable = { which = runner_prev_informsender value = 0 }
+	}
+}
+
+travel_time_prep = {
+	#if = {
+	#	limit = {
+	#		NOT = { has_country_flag = doing_travel_calc }
+	#		NOT = { has_country_flag = ce_keep_modifiers }
+	#	}
+	#	every_owned_province = {
+	#		remove_ce_mod_real = yes
+	#	}
+	#}
+	#else = {
+	every_owned_province = {
+		remove_ce_mod_mapmode = yes
+	}
+
+	send_runners_flag = yes
+
+	every_country = {
+		limit = {
+			#exists = yes
+			has_country_flag = runner_country_@ROOT
+		}
+		every_owned_province = {
+			set_variable = { which = runner_final_time_save which = runner_final_time }
+			set_variable = { which = runner_prev_save which = runner_prev }
+
+			set_variable = { which = runner_final_time value = 0 }
+			set_variable = { which = runner_spread value = 0 }
+			set_variable = { which = runner_prev value = 0 }
+
+			set_road_discount = yes
+
+			if = {
+				limit = {
+					has_province_flag = large_port_present
+				}
+				set_variable = { which = travel_time_sailing_modifier  value = 0 }
+
+				trigger_switch = {
+					on_trigger = has_building
+					harbour_infrastructure_2 = {
+						set_variable = { which = travel_time_sailing_modifier   	value = 1 }
+					}
+					harbour_infrastructure_3x = {
+						set_variable = { which = travel_time_sailing_modifier   	value = 0.8 }
+					}
+					harbour_infrastructure_4 = {
+						set_variable = { which = travel_time_sailing_modifier   	value = 0.65 }
+					}
+					harbour_infrastructure_5 = {
+						set_variable = { which = travel_time_sailing_modifier   	value = 0.5 }
+					}
+				}
+
+				trigger_switch = {
+					on_trigger = has_province_flag
+					has_small_natural_harbour = {
+						subtract_variable = { which = travel_time_sailing_modifier value = 0.05 }
+					}
+					has_great_natural_harbour = {
+						subtract_variable = { which = travel_time_sailing_modifier value = 0.15 }
+					}
+				}
+			}
+		}
+	}
+
+	capital_scope = {
+		set_variable = { which = runner_final_time value = 0 }
+		
+		# Difficult to travel through occupied lands
+		#occupied_penalty = { varname=runner_final_time }		#CE is not this reactive, and cannot be.
+		
+		set_variable = { which = runner_spread which = runner_final_time }
+		
+		set_variable = { which = runner_prev which = prov_id }
+
+		set_province_flag = has_runner
+		set_province_flag = had_runner
+
+		set_variable = { which = runner_multiplier_bureaucracy value = 1 }
+
+		#set_variable = { which = capital_effect_factor which = owner }
+
+		trigger_switch = {
+			on_trigger = has_building
+			bureaucracy_1 = {
+				set_variable = { which = subtractor value = 0.05 }
+			}
+			bureaucracy_2 = {
+				set_variable = { which = subtractor value = 0.08 }
+			}
+			bureaucracy_3 = {
+				set_variable = { which = subtractor value = 0.12 }
+			}
+			bureaucracy_4 = {
+				set_variable = { which = subtractor value = 0.17 }
+			}
+			bureaucracy_5 = {
+				set_variable = { which = subtractor value = 0.25 }
+			}
+		}
+		#multiply_variable = { which = subtractor which = capital_effect_factor }
+
+		subtract_variable = { which = runner_multiplier_bureaucracy which = subtractor }
+		
+		set_variable = { which = subtractor value = 0 }
+
+		owner = {
+			set_variable = { which = runner_multiplier_bureaucracy which = PREV }
+
+			# For pelpel
+			calc_ce_hinder = yes
+
+			every_country = {
+				limit = {
+					#exists = yes
+					has_country_flag = runner_country_@ROOT
+				}
+				every_owned_province = {
+					set_variable = { which = runner_multiplier_bureaucracy which = PREV }
+				}
+			}
+		}
+
+		#set_variable = { which = capital_effect_factor value = 0 }
+		set_variable = { which = multiplier value = 0 }
+	}
+}
+
+travel_time_main = {
+	set_variable = { which = itr value = 1 }
+
+	# Since while loop doesn't take in flags in its limit, a workaround is used
+	while = {
+		limit = {
+			check_variable = { which = itr value = 1 }
+		}
+
+		send_runners = yes
+
+		if = {
+			limit = {
+				NOT = { has_global_flag = runner_still_running }
+			}
+
+			set_variable = { which = itr value = 0 }
+		}
+
+		clr_global_flag = runner_still_running
+	}
+
+	every_country = {
+		limit = {
+			#exists = yes
+			has_country_flag = runner_country_@ROOT
+		}
+
+		every_owned_province = {
+			limit = {
+				has_province_flag = pass
+			}
+
+			clr_province_flag = pass
+		}
+	}
+}
+
+travel_time_recap = {
+	every_country = {
+		limit = {
+			#exists = yes
+			has_country_flag = runner_country_@ROOT
+		}
+		every_owned_province = {
+			limit = {
+				has_province_modifier = has_regional_capital
+				#owner = { check_variable = { which = capital_effect_factor value = 0.001 } }
+			}
+			#set_variable = { which = capital_effect_factor which = owner }
+
+			set_variable = { which = subtractor1 	value = 0 }
+			set_variable = { which = subtractor2 	value = 0 }
+
+			trigger_switch = {
+				on_trigger = has_building
+				bureaucracy_1 = {
+					set_variable = { which = subtractor1 	value = 0.3 }
+					set_variable = { which = subtractor2 	value = 4 }
+				}
+				bureaucracy_2 = {
+					set_variable = { which = subtractor1 	value = 0.45 }
+					set_variable = { which = subtractor2 	value = 6 }
+				}
+				bureaucracy_3 = {
+					set_variable = { which = subtractor1 	value = 0.6 }
+					set_variable = { which = subtractor2 	value = 8 }
+				}
+				bureaucracy_4 = {
+					set_variable = { which = subtractor1 	value = 0.6 }
+					set_variable = { which = subtractor2 	value = 8 }
+				}
+				bureaucracy_5 = {
+					set_variable = { which = subtractor1 	value = 0.6 }
+					set_variable = { which = subtractor2 	value = 8 }
+				}
+			}
+
+			#multiply_variable = { which = subtractor1 which = capital_effect_factor }
+			#multiply_variable = { which = subtractor2 which = capital_effect_factor }
+
+			#set_variable = { which = capital_effect_factor 	value = 0 }
+
+			set_variable = { which = multiplier value = 1 }
+			subtract_variable = { which = multiplier which = subtractor1 }
+
+			multiply_variable = { which = runner_final_time which = multiplier }
+			subtract_variable = { which = runner_final_time which = subtractor2 }
+			
+			if = {
+				limit = {
+					NOT = { check_variable = { which = runner_final_time value = 1 } }
+				}
+				set_variable = { which = runner_final_time value = 1 }
+			}
+			
+			set_variable = { which = runner_spread which = runner_final_time }
+
+			set_variable = { which = subtractor1 value = 0 }
+			set_variable = { which = subtractor2 value = 0 }
+			set_variable = { which = multiplier value = 0 }
+
+			set_province_flag = has_runner
+		}
+	}
+
+	if = {
+		limit = {
+			has_country_flag = doing_travel_calc
+		}
+		every_owned_province = {
+			limit = {
+				has_province_flag = had_runner
+			}
+			if = {
+				limit = {
+					has_province_flag = has_runner
+				}
+				remove_ce_mod_both = yes
+
+				set_ce_mod_both = yes
+
+				add_province_modifier = {
+					name = runner_mapmode
+					duration = 2
+				}
+			}
+			else = {
+				remove_ce_mod_mapmode = yes
+			}
+		}
+
+		every_country = {
+			limit = {
+				#exists = yes
+				has_country_flag = runner_country_@ROOT
+
+				NOT = { tag = ROOT }
+			}
+			every_owned_province = {
+				limit = {
+					has_province_flag = had_runner
+				}
+				if = {
+					limit = {
+						has_province_flag = has_runner
+					}
+					remove_ce_mod_mapmode = yes
+
+					set_ce_mod_mapmode = yes
+
+					add_province_modifier = {
+						name = runner_mapmode
+						duration = 2
+					}
+				}
+				else = {
+					remove_ce_mod_mapmode = yes
+				}
+			}
+		}
+	}
+}
+
+travel_time_final = {
+	clr_country_flag = runner_country_@ROOT
+
+	every_owned_province = {
+		if = {
+			limit = {
+				has_province_flag = had_runner
+			}
+			clr_province_flag = had_runner
+
+			multiply_variable = { which = runner_final_time which = runner_multiplier_bureaucracy }
+			
+			if = {
+				limit = { owner = { has_idea = state_organization } }
+				multiply_variable = { which = runner_final_time value = 0.9 }
+			}
+			
+			if = {
+				limit = {
+					superregion = persia_superregion
+					owner = { culture_group = persian_group }
+				}
+				multiply_variable = { which = runner_final_time value = 0.8 }
+			}
+			
+			if = {
+				limit = {
+					OR = {
+						region = peru_region
+						region = bolivia_region
+					}
+					owner = { culture_group = andean_american }
+				}
+				multiply_variable = { which = runner_final_time value = 0.8 }
+			}
+			
+			set_ce_mod_real = yes
+		}
+
+		set_variable = { which = runner_final_time_save value = 0 }
+		set_variable = { which = runner_prev_save value = 0 }
+		set_variable = { which = runner_multiplier_bureaucracy value = 0 }
+		set_variable = { which = travel_time_reduced value = 0 }
+		set_variable = { which = travel_time_sailing_modifier  value = 0 }
+		set_variable = { which = boarding_cost  value = 0 }
+		
+		set_variable = { which = runner_spread value = 0 }
+	}
+	
+	every_subject_country = {
+		limit = {
+			has_country_flag = runner_country_@ROOT
+		}
+		every_owned_province = {
+			limit = {
+				has_province_flag = had_runner
+			}
+			set_variable = {
+				which = runner_final_time_overlord
+				which = runner_final_time
+			}
+		}
+	}
+	
+	# Japan limiting power of shugo impact autonomy of every non-owner japanese province by its CE
+	#if = {
+	#	limit = {
+	#		has_country_flag = limiting_shugo_power
+	#	}
+	#	regiongroup = {
+	#		region = {
+	#			if = {
+	#				limit = {
+	#					has_province_modifier = has_shugo_ce
+	#				}
+	#				remove_province_modifier = has_shugo_ce
+	#				
+	#				set_variable = {
+	#					which = runner_final_time_shugo
+	#					value = 0
+	#				}
+	#			}
+	#		}
+	#	}
+	#	
+	#	every_subject_country = {
+	#		limit = {
+	#			NOT = { has_country_flag = kami }
+	#			has_country_flag = runner_country_@ROOT
+	#		}
+	#		every_owned_province = {
+	#			limit = {
+	#				has_province_flag = had_runner
+	#				
+	#				OR = {
+	#					region = west_japan_region
+	#					region = central_japan_region
+	#					region = east_japan_region
+	#				}
+	#			}
+	#			add_permanent_province_modifier = {
+	#				name = has_shugo_ce
+	#				duration = -1
+	#			}
+	#			
+	#			set_variable = {
+	#				which = runner_final_time_shugo
+	#				which = runner_final_time
+	#			}
+	#		}
+	#	}
+	#}
+
+	every_country = {
+		limit = {
+			#exists = yes
+			has_country_flag = runner_country_@ROOT
+		}
+		clr_country_flag = runner_country_@ROOT
+
+		every_owned_province = {
+			#if = {
+			#	limit = {
+			#		has_province_flag = had_runner
+			#	}
+				clr_province_flag = had_runner
+			#}
+
+			set_variable = { which = runner_final_time which = runner_final_time_save }
+			set_variable = { which = runner_prev which = runner_prev_save }
+			set_variable = { which = runner_final_time_save value = 0 }
+			set_variable = { which = runner_prev_save value = 0 }
+			set_variable = { which = runner_multiplier_bureaucracy value = 0 }
+			set_variable = { which = travel_time_reduced value = 0 }
+			set_variable = { which = travel_time_sailing_modifier  value = 0 }
+			set_variable = { which = boarding_cost  value = 0 }
+			
+			set_variable = { which = runner_spread value = 0 }
+		}
+	}
+}
+
+travel_time_final_dispatch = {
+	clr_country_flag = runner_country_@ROOT
+
+	every_owned_province = {
+		if = {
+			limit = {
+				has_province_flag = had_runner
+			}
+			clr_province_flag = had_runner
+
+			multiply_variable = { which = runner_final_time which = runner_multiplier_bureaucracy }
+
+			remove_ce_mod_both = yes
+
+			set_ce_mod_real = yes
+		}
+
+		set_variable = { which = runner_final_time_save value = 0 }
+		set_variable = { which = runner_prev_save value = 0 }
+		set_variable = { which = runner_multiplier_bureaucracy value = 0 }
+		set_variable = { which = travel_time_reduced value = 0 }
+		set_variable = { which = travel_time_sailing_modifier  value = 0 }
+		set_variable = { which = boarding_cost  value = 0 }
+		
+		set_variable = { which = runner_spread value = 0 }
+	}
+
+	every_country = {
+		limit = {
+			#exists = yes
+			has_country_flag = runner_country_@ROOT
+		}
+		clr_country_flag = runner_country_@ROOT
+
+		every_owned_province = {
+			if = {
+				limit = {
+					has_province_flag = had_runner
+				}
+				clr_province_flag = had_runner
+
+				remove_ce_mod_mapmode = yes
+			}
+
+			set_variable = { which = runner_final_time which = runner_final_time_save }
+			set_variable = { which = runner_prev which = runner_prev_save }
+			set_variable = { which = runner_final_time_save value = 0 }
+			set_variable = { which = runner_prev_save value = 0 }
+			set_variable = { which = runner_multiplier_bureaucracy value = 0 }
+			set_variable = { which = travel_time_reduced value = 0 }
+			set_variable = { which = travel_time_sailing_modifier  value = 0 }
+			set_variable = { which = boarding_cost  value = 0 }
+			
+			set_variable = { which = runner_spread value = 0 }
+		}
+	}
+}
+
+#get_conquest_ce = {
+#	regiongroup = {
+#		region = {
+#			limit = {
+#				is_city = yes
+#			}
+#			set_variable = { which = conquest_runner_final_time value = 120 }
+#			set_variable = { which = conquest_runner_prev value = 0 }
+#			set_variable = { which = country_id value = 0 }
+#
+#			set_road_discount = yes
+#
+#			if = {
+#				limit = {
+#					has_province_flag = large_port_present
+#				}
+#				set_variable = { which = travel_time_sailing_modifier  value = 0 }
+#
+#				trigger_switch = {
+#					on_trigger = has_building
+#					harbour_infrastructure_2 = {
+#						set_variable = { which = travel_time_sailing_modifier   	value = 1 }
+#					}
+#					harbour_infrastructure_3x = {
+#						set_variable = { which = travel_time_sailing_modifier   	value = 0.8 }
+#					}
+#					harbour_infrastructure_4 = {
+#						set_variable = { which = travel_time_sailing_modifier   	value = 0.65 }
+#					}
+#					harbour_infrastructure_5 = {
+#						set_variable = { which = travel_time_sailing_modifier   	value = 0.5 }
+#					}
+#				}
+#
+#				trigger_switch = {
+#					on_trigger = has_province_flag
+#					has_small_natural_harbour = {
+#						subtract_variable = { which = travel_time_sailing_modifier value = 0.05 }
+#					}
+#					has_great_natural_harbour = {
+#						subtract_variable = { which = travel_time_sailing_modifier value = 0.15 }
+#					}
+#				}
+#			}
+#		}
+#	}
+#	
+#	capital_scope = {
+#		set_variable = { which = conquest_runner_final_time value = 0 }
+#		set_variable = { which = country_id which = ROOT }
+#
+#		set_province_flag = conquest_has_runner
+#
+#		# Find the closest port and calculate absolute distance to other ports
+#		if = {
+#			limit = {
+#				has_province_flag = large_port_present
+#			}
+#			ROOT = { set_country_flag = found_port }
+#			save_event_target_as = port_targ
+#
+#		}
+#		else = {
+#			every_neighbor_province = {
+#				limit = {
+#					owned_by = PREV
+#
+#					has_province_flag = large_port_present
+#				}
+#				ROOT = { set_country_flag = found_port }
+#				save_event_target_as = port_targ
+#			}
+#
+#			if = {
+#				limit = {
+#					NOT = { ROOT = { has_country_flag = found_port } }
+#				}
+#				every_neighbor_province = {
+#					limit = {
+#						owned_by = PREV
+#					}
+#					every_neighbor_province = {
+#						limit = {
+#							owned_by = PREV
+#
+#							has_province_flag = large_port_present
+#						}
+#						ROOT = { set_country_flag = found_port }
+#
+#						save_event_target_as = port_targ
+#					}
+#				}
+#			}
+#		}
+#
+#		if = {
+#			limit = {
+#				ROOT = { has_country_flag = found_port }
+#			}
+#			ROOT = { clr_country_flag = found_port }
+#
+#			if = {
+#				limit = {
+#					event_target:port_targ = { always = yes }
+#				}
+#				event_target:port_targ = {
+#					contgroup = {
+#						limit = {
+#							PREV = { has_province_flag = part_cont_of_@PREV }
+#						}
+#						save_event_target_as = cc_targ
+#					}
+#
+#					set_variable = { which = itr value = 8 }
+#
+#					calc_sea_zone_dist = yes
+#
+#					# Start actual runner hopping
+#					set_variable = { which = inform_sender_1 value = 0 }
+#
+#					set_variable = { which = inform_sender_2 which = travel_time_sailing_modifier }
+#
+#					set_variable = { which = Xdiff which = x_coord }
+#					set_variable = { which = Ydiff which = y_coord }
+#
+#					every_province = {
+#						limit = {
+#							has_province_flag = large_port_present
+#							has_province_flag = adjacent_cont_of_@event_target:cc_targ
+#
+#							NOT = { province_id = PREV }
+#
+#							sea_zone = { has_province_flag = has_sea_dist }
+#						}
+#						set_variable = { which = sea_dist value = 100 }
+#
+#						sea_zone = {
+#							if = {
+#								limit = {
+#									has_province_flag = has_sea_dist
+#								}
+#								PREV = {
+#									set_variable = { which = sea_dist which = PREV }
+#
+#									if = {
+#										limit = {
+#											check_variable = { which = sea_dist value = 2 }
+#										}
+#										subtract_variable = { which = sea_dist value = 2 }
+#
+#										multiply_variable = { which = sea_dist value = 0.5 }
+#
+#										change_variable = { which = sea_dist value = 2 }
+#									}
+#								}
+#							}
+#						}
+#
+#						calc_port_dist = yes
+#						
+#						set_variable = { which = sea_dist value = 0 }
+#
+#						set_variable = { which = conquest_runner_final_time which = inform_sender_1 }
+#						set_variable = { which = country_id which = ROOT }
+#
+#						set_province_flag = conquest_has_runner
+#
+#						PREV = {
+#							set_variable = { which = inform_sender_rp which = prov_id }
+#
+#							PREV = {
+#								set_variable = { which = inform_sender_rp which = PREV }
+#
+#								set_variable = { which = conquest_runner_prev which = inform_sender_rp }
+#
+#								set_variable = { which = inform_sender_rp value = 0 }
+#							}
+#
+#							set_variable = { which = inform_sender_rp value = 0 }
+#						}
+#						
+#						set_variable = { which = runner_spread_temp value = 0 }
+#					}
+#
+#					set_variable = { which = Xdiff value = 0 }
+#					set_variable = { which = Ydiff value = 0 }
+#
+#					clean_sea_zone_calc = yes
+#				}
+#			}
+#			else = {
+#				set_variable = { which = tvet6 value = 1 }
+#			}
+#		}
+#	}
+#
+#	set_variable = { which = itr value = 1 }
+#
+#	while = {
+#		limit = {
+#			check_variable = { which = itr value = 1 }
+#		}
+#		every_province = {
+#			limit = {
+#				has_province_flag = conquest_has_runner
+#			}
+#			clr_province_flag = conquest_has_runner
+#
+#			set_variable = { which = inform_sender which = conquest_runner_final_time }
+#
+#			calc_prov_factor = yes
+#
+#			subtract_variable = { which = inform_sender which = prov_factor }
+#			set_variable = { which = prov_factor value = 0 }
+#
+#			if = {
+#				limit = {
+#					NOT = { check_variable = { which = inform_sender value = 0 } }
+#				}
+#				set_variable = { which = inform_sender value = 0 }
+#			}
+#
+#			change_variable = { which = inform_sender which = prov_rad }
+#			set_variable = { which = prov_rad value = 0 }
+#
+#			every_neighbor_province = {
+#				limit = {
+#					is_city = yes
+#
+#					check_variable = { which = conquest_runner_final_time which = PREV }
+#				}
+#				# Calculate what this runner's runner_final_time will be when it arrives in the province
+#				set_variable = { which = inform_sender which = PREV }
+#
+#				calc_prov_factor = yes
+#
+#				#if = {
+#				#	limit = {
+#				#		ROOT = { has_country_flag = great_predator_plan_set }
+#				#
+#				#		NOT = {
+#				#			PREV = { owner = { tag = ROOT } }
+#				#
+#				#			owned_by = PREV
+#				#		}
+#				#	}
+#				#	owner = {
+#				#		set_variable = { which = inform_compare_ci which = country_id }
+#				#
+#				#		PREV = { set_variable = { which = inform_compare_ci which = PREV } }
+#				#
+#				#		set_variable = { which = inform_compare_ci value = 0 }
+#				#	}
+#				#
+#				#	PREV = {
+#				#		set_variable = { which = inform_compare_ci which = country_id }
+#				#
+#				#		if = {
+#				#			limit = {
+#				#				NOT = { is_variable_equal = { which = inform_compare_ci which = PREV } }
+#				#			}
+#				#			PREV = { change_variable = { which = inform_sender value = 20 } }
+#				#		}
+#				#
+#				#		set_variable = { which = inform_compare_ci value = 0 }
+#				#	}
+#				#
+#				#	set_variable = { which = inform_compare_ci value = 0 }
+#				#}
+#
+#				change_variable = { which = inform_sender which = prov_factor }
+#				set_variable = { which = prov_factor value = 0 }
+#
+#				# If the the path runner is going through is faster then the path other runner used to arrive to that province, go there
+#				if = {
+#					limit = {
+#						check_variable = { which = conquest_runner_final_time which = inform_sender }
+#
+#						NOT = { is_variable_equal = { which = conquest_runner_final_time which = inform_sender } }
+#					}
+#					if = {
+#						limit = {
+#							NOT = { has_province_flag = conquest_has_runner }
+#						}
+#						set_province_flag = conquest_has_runner_recent
+#					}
+#
+#					set_global_flag = conquest_runner_still_running
+#
+#					set_variable = { which = conquest_runner_final_time which = inform_sender }
+#
+#					if = {
+#						limit = {
+#							NOT = { owned_by = PREV }
+#						}
+#						PREV = {
+#							owner = {
+#								set_variable = { which = inform_sender_ci which = country_id }
+#
+#								PREV = { set_variable = { which = inform_sender_ci which = PREV } }
+#
+#								set_variable = { which = inform_sender_ci value = 0 }
+#							}
+#							PREV = { set_variable = { which = inform_sender_ci which = PREV } }
+#
+#							set_variable = { which = inform_sender_ci value = 0 }
+#						}
+#
+#						set_variable = { which = country_id which = inform_sender_ci }
+#						set_variable = { which = inform_sender_ci value = 0 }
+#
+#					}
+#					else = {
+#						set_variable = { which = country_id which = PREV }
+#					}
+#
+#					PREV = {
+#						set_variable = { which = inform_sender_rp which = prov_id }
+#
+#						PREV = {
+#							set_variable = { which = inform_sender_rp which = PREV }
+#
+#							set_variable = { which = conquest_runner_prev which = inform_sender_rp }
+#
+#							set_variable = { which = inform_sender_rp value = 0 }
+#						}
+#
+#						set_variable = { which = inform_sender_rp value = 0 }
+#					}
+#				}
+#			}
+#		}
+#		every_province = {
+#			limit = {
+#				has_province_flag = conquest_has_runner_recent
+#			}
+#			clr_province_flag = conquest_has_runner_recent
+#			set_province_flag = conquest_has_runner
+#		}
+#
+#		if = {
+#			limit = {
+#				NOT = { has_global_flag = conquest_runner_still_running }
+#			}
+#			set_variable = { which = itr value = 0 }
+#		}
+#		clr_global_flag = conquest_runner_still_running
+#	}
+#}
+#
+#get_conquest_utility = {
+#	every_province = {
+#		limit = {
+#			is_city = yes
+#		}
+#		set_variable = { which = multiplier value = 50 }
+#		subtract_variable = { which = multiplier which = conquest_runner_final_time }
+#
+#		multiply_variable = { which = multiplier value = 0.2 }
+#
+#		if = {
+#			limit = {
+#				PREV = { accepted_culture = PREV }
+#			}
+#			change_variable = { which = multiplier value = 1 }
+#		}
+#		if = {
+#			limit = {
+#				PREV = { primary_culture = PREV }
+#			}
+#			change_variable = { which = multiplier value = 2 }
+#		}
+#		if = {
+#			limit = {
+#				PREV = { culture_group = PREV }
+#			}
+#			change_variable = { which = multiplier value = 0.5 }
+#		}
+#
+#		if = {
+#			limit = {
+#				PREV = { religion = PREV }
+#			}
+#			change_variable = { which = multiplier value = 0.5 }
+#		}
+#		if = {
+#			limit = {
+#				PREV = { religion_group = PREV }
+#			}
+#			change_variable = { which = multiplier value = 0.5 }
+#		}
+#
+#		if = {
+#			limit = {
+#				is_core = PREV
+#			}
+#			change_variable = { which = multiplier value = 1 }
+#		}
+#		if = {
+#			limit = {
+#				is_claim = PREV
+#			}
+#			change_variable = { which = multiplier value = 0.25 }
+#		}
+#
+#		if = {
+#			limit = {
+#				NOT = { check_variable = { which = multiplier value = 0.001 } }
+#			}
+#			set_variable = { which = multiplier value = 0.001 }
+#		}
+#
+#		set_variable = { which = conquest_province_utility which = province_value_utility }
+#		multiply_variable = { which = conquest_province_utility which = multiplier }
+#
+#		set_variable = { which = conquest_runner_final_time value = 0 }
+#		set_variable = { which = country_id value = 0 }
+#		set_variable = { which = multiplier value = 0 }
+#	}
+#}
+
+add_sea_connection = { #id1 #id2
+	$id1$ = {
+		hidden_effect = {
+			set_province_flag = sea_neighbor_of_$id2$
+			#change_variable = { which = neighbors_num value = 1 }
+		}
+		$id2$ = {
+			custom_tooltip = seazone_connect_tt
+			hidden_effect = {
+				set_province_flag = sea_neighbor_of_$id1$
+				#change_variable = { which = neighbors_num value = 1 }
+			}
+		}
+	}
+}
+
+#replace_missing_estates = {
+#	every_owned_province = {
+#		limit = {
+#			is_city = yes
+#		}
+#		if = { ### Fixes estate reset issues
+#			limit = {
+#				has_province_flag = burghers_control_province
+#				is_state = yes
+#				NOT = { has_estate = estate_city_burghers }
+#			}
+#			set_estate = estate_city_burghers
+#		}
+#		if = {
+#			limit = {
+#				has_province_flag = greater_nobles_control_province
+#				is_state = yes
+#				NOT = { has_estate = estate_greater_nobles }
+#			}
+#			set_estate = estate_greater_nobles
+#		}
+#		if = {
+#			limit = {
+#				has_province_flag = lesser_nobles_control_province
+#				is_state = yes
+#				NOT = { has_estate = estate_lesser_nobles }
+#			}
+#			set_estate = estate_lesser_nobles
+#		}
+#	}
+#}

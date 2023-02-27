@@ -1,0 +1,388 @@
+########################################
+# Flavor Events for Knights of St:John
+#
+# Scripted by Sara Wendel-Örtqvist
+########################################
+
+
+# Pierre d'Aubusson
+country_event = {
+	id = flavor_kni.1
+	title = "flavor_kni.EVTNAME1"
+	desc = "flavor_kni.EVTDESC1"
+	picture = POPE_PREACHING_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = KNI
+		is_year = 1483
+		exists = PAP
+		NOT = { is_year = 1503 }
+	}
+	
+	mean_time_to_happen = { years = 16 }
+	
+	option = {
+		name = "flavor_kni.EVTOPTA1"
+		add_papal_influence = 5
+		add_years_of_income = 1
+		PAP = {
+			add_opinion = {
+				who = ROOT
+				modifier = opinion_pierre_daubusson
+				years = 50
+			}
+		}
+	}
+	option = {
+		name = "flavor_kni.EVTOPTB1"
+		trigger = {
+			exists = HUN
+		}
+		add_years_of_income = 2
+		HUN = {
+			add_opinion = {
+				who = ROOT
+				modifier = opinion_pierre_daubusson
+				years = 50
+			}
+		}
+	}
+	option = {
+		name = "flavor_kni.EVTOPTC1"
+		trigger = {
+			exists = HAB
+		}
+		add_years_of_income = 2
+		HAB = {
+			add_opinion = {
+				who = ROOT
+				modifier = opinion_pierre_daubusson
+				years = 50
+			}
+		}
+	}
+}
+
+# Rhodians and other Greeks accepted into the Order
+country_event = {
+	id = flavor_kni.2
+	title = "flavor_kni.EVTNAME2"
+	desc = "flavor_kni.EVTDESC2"
+	picture = BATTLE_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = KNI
+		is_year = 1500
+		NOT = { is_year = 1550 }
+		owns = 320 # Rhodes
+		is_at_war = no
+	}
+	
+	mean_time_to_happen = { years = 16 }
+	
+	option = {
+		name = "flavor_kni.EVTOPTA2"
+		320 = {
+			add_province_modifier = {
+				name = kni_accepted_cultures
+				duration = -1
+			}
+		}
+	}
+}
+
+# The Great Carrack of Alexandria
+country_event = {
+	id = flavor_kni.3
+	title = "flavor_kni.EVTNAME3"
+	desc = "flavor_kni.EVTDESC3"
+	picture = SHIP_SAILING_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = KNI
+		is_year = 1550
+		NOT = { is_year = 1600 }
+		358 = { # Alexandria
+			owned_by = TUR
+		}
+	}
+	
+	mean_time_to_happen = { years = 16 }
+	
+	option = {
+		name = "flavor_kni.EVTOPTA3"
+		add_years_of_income = 2
+		TUR = {
+			add_opinion = {
+				who = ROOT
+				modifier = opinion_captured_alexandria_great_carrack
+				years = 50
+			}
+		}
+	}
+}
+
+# Gabriele Tadini de Martinengo
+country_event = {
+	id = flavor_kni.4
+	title = "flavor_kni.EVTNAME4"
+	desc = "flavor_kni.EVTDESC4"
+	picture = FORT_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = KNI
+		is_year = 1500
+		NOT = { is_year = 1550 }
+		capital_scope = {
+			has_siege = no
+		}
+	}
+	
+	mean_time_to_happen = { years = 16 }
+	
+	option = {
+		name = "flavor_kni.EVTOPTA4"
+		capital_scope = {
+			add_province_modifier = {
+				name = kni_martinengo
+				duration = 36500
+			}
+		}
+	}
+}
+
+# Jean Parisot de la Valette
+country_event = {
+	id = flavor_kni.5
+	title = "flavor_kni.EVTNAME5"
+	desc = "flavor_kni.EVTDESC5"
+	picture = FORT_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = KNI
+		owns = 126 # Malta
+		126 = {
+			has_siege = no
+		}
+		is_year = 1520
+		NOT = { is_year = 1568 }
+	}
+	
+	mean_time_to_happen = { years = 16 }
+	
+	option = {
+		name = "flavor_kni.EVTOPTA5"
+		126 = {
+			add_province_modifier = {
+				name = kni_valetta
+				duration = 36500
+			}
+		}
+	}
+}
+
+province_event = {
+	id = flavor_kni.6
+	title = "flavor_kni.6.n"
+	desc = "flavor_kni.6.t"
+	picture = BATTLE_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		province_id = 126 # Malta
+		NOT = { exists = KNI }
+		NOT = { is_year = 1700 }
+		is_capital = no
+		owner = {
+			religion = catholic
+		}
+	}
+	
+	mean_time_to_happen = { years = 5 }
+	
+	immediate = {
+		owner = { save_event_target_as = former_owner }
+	}
+	
+	option = {
+		name = "flavor_kni.6.a"
+		ai_chance = {
+			factor = 60
+			modifier = {
+				factor = 1.4
+				owner = { is_papal_controller = yes }
+			}
+			modifier = {
+				factor = 0.5
+				owner = { has_country_flag = excommunicated }
+			}
+			modifier = {
+				factor = 1.2
+				owner = { has_opinion = { who = PAP value = 100 } }
+			}
+		}
+		add_core = KNI
+		cede_province = KNI
+		change_variable = { which = province_religion value = -14 }
+		change_variable = { which = catholic value = 14 }
+		change_religion = catholic
+		remove_core = ROOT
+		event_target:former_owner = {
+			create_subject = { subject_type = march subject = KNI }
+			# vassalize = KNI
+			add_prestige = 30
+			add_papal_influence = 15
+		}
+	}
+	option = {
+		name = "flavor_kni.6.b"
+		ai_chance = {
+			factor = 40
+		}
+		event_target:former_owner = {
+			set_country_flag = knight_refuse_home
+			add_prestige = -10
+			add_papal_influence = -5
+		}
+	}
+}
+
+# Holy Land settler events
+country_event = {
+	id = flavor_kni.101
+	title = "flavor_kni.101.name"
+	desc = "flavor_kni.101.desc"
+	picture = POPE_PREACHING_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "flavor_kni.101.opta" # Jerusalem
+		ai_chance = {
+			factor = 55
+		}
+		trigger = { owns = 379 }
+		379 = { add_province_modifier = { name = "frankish_settlers" duration = 109500 } }
+		#hidden_effect = { 379 = { province_event = { id = flavor_kni.102 days = 109500 random = 21900 } } }
+	}
+	option = {
+		name = "flavor_kni.101.optb" # Ghazza
+		ai_chance = {
+			factor = 5
+		}
+		trigger = { owns = 2634 }
+		2634 = { add_province_modifier = { name = "frankish_settlers" duration = 109500 } }
+		#hidden_effect = { 2634 = { province_event = { id = flavor_kni.102 days = 109500 random = 21900 } } }
+	}
+	option = {
+		name = "flavor_kni.101.optc" # Al Naqab
+		ai_chance = {
+			factor = 5
+		}
+		trigger = { owns = 1331 }
+		1331 = { add_province_modifier = { name = "frankish_settlers" duration = 109500 } }
+		#hidden_effect = { 1331 = { province_event = { id = flavor_kni.102 days = 109500 random = 21900 } } }
+	}
+	option = {
+		name = "flavor_kni.101.optd" # Al Karak
+		ai_chance = {
+			factor = 3
+		}
+		trigger = { owns = 2575 }
+		2575 = { add_province_modifier = { name = "frankish_settlers" duration = 109500 } }
+		#hidden_effect = { 2575 = { province_event = { id = flavor_kni.102 days = 109500 random = 21900 } } }
+	}
+	option = {
+		name = "flavor_kni.101.opte" # Hawran
+		ai_chance = {
+			factor = 2
+		}
+		trigger = { owns = 2636 }
+		2636 = { add_province_modifier = { name = "frankish_settlers" duration = 109500 } }
+		#hidden_effect = { 2636 = { province_event = { id = flavor_kni.102 days = 109500 random = 21900 } } }
+	}
+	option = {
+		name = "flavor_kni.101.optf" # Nabulus
+		ai_chance = {
+			factor = 5
+		}
+		trigger = { owns = 364 }
+		364 = { add_province_modifier = { name = "frankish_settlers" duration = 109500 } }
+		#hidden_effect = { 364 = { province_event = { id = flavor_kni.102 days = 109500 random = 21900 } } }
+	}
+	option = {
+		name = "flavor_kni.101.optg" # Al Jalil
+		ai_chance = {
+			factor = 5
+		}
+		trigger = { owns = 2635 }
+		2635 = { add_province_modifier = { name = "frankish_settlers" duration = 109500 } }
+		#hidden_effect = { 2635 = { province_event = { id = flavor_kni.102 days = 109500 random = 21900 } } }
+	}
+	option = {
+		name = "flavor_kni.101.opth" # Bayrut
+		ai_chance = {
+			factor = 5
+		}
+		trigger = { owns = 1334 }
+		1334 = { add_province_modifier = { name = "frankish_settlers" duration = 109500 } }
+		#hidden_effect = { 1334 = { province_event = { id = flavor_kni.102 days = 109500 random = 21900 } } }
+	}
+	option = {
+		name = "flavor_kni.101.opti" # Tarabulus
+		ai_chance = {
+			factor = 5
+		}
+		trigger = { owns = 378 }
+		378 = { add_province_modifier = { name = "frankish_settlers" duration = 109500 } }
+		#hidden_effect = { 378 = { province_event = { id = flavor_kni.102 days = 109500 random = 21900 } } }
+	}
+	option = {
+		name = "flavor_kni.101.optj" # Latakiyah
+		ai_chance = {
+			factor = 5
+		}
+		trigger = { owns = 3886 }
+		3886 = { add_province_modifier = { name = "frankish_settlers" duration = 109500 } }
+		#hidden_effect = { 3886 = { province_event = { id = flavor_kni.102 days = 109500 random = 21900 } } }
+	}
+	option = {
+		name = "flavor_kni.101.optk" # Antakya
+		ai_chance = {
+			factor = 5
+		}
+		trigger = { owns = 332 }
+		332 = { add_province_modifier = { name = "frankish_settlers" duration = 109500 } }
+		#hidden_effect = { 332 = { province_event = { id = flavor_kni.102 days = 109500 random = 21900 } } }
+	}
+}
+
+#province_event = {
+#	id = flavor_kni.102
+#	title = "flavor_kni.102.name"
+#	desc = "flavor_kni.102.desc"
+#	picture = POPE_PREACHING_eventPicture
+#	
+#	is_triggered_only = yes
+#	
+#	trigger = {
+#		has_province_modifier = "frankish_settlers"
+#	}
+#	
+#	option = {
+#		name = "flavor_kni.102.opta"
+#		remove_province_modifier = "frankish_settlers"
+#		# ubran gravity instead
+#	}
+#}

@@ -1,0 +1,123 @@
+muslim_ghazi = { #Holy Warriors
+	
+	color = { 235 115 115 }
+	area = nation
+	government = any
+	defection = none
+	independence = none
+	defect_delay = 24
+	gfx_type = culture_province
+	
+	resilient = yes
+	reinforcing = no
+	general = yes
+	smart = yes
+	unit_transfer = no				# Units remain after enforcing demands
+	will_relocate = no				# Units will relocate if they have sieged all provinces nearby and has to move over sea.
+	
+	artillery = 0.0
+	infantry = 0.6
+	cavalry = 0.4
+	morale = 0.85
+	
+	# Possible handle actions
+	handle_action_negotiate = no
+	handle_action_stability = no
+	handle_action_build_core = no
+	handle_action_send_missionary = no
+	
+	# The rebel type with the highest modifier for this province gets picked
+	spawn_chance = {
+		factor = 0.25
+		modifier = {
+			NOT = { any_neighbor_province = { religion_group = muslim owner = { religion_group = muslim is_free_or_tributary_trigger = yes } } }
+			factor = 0
+		}
+		modifier = {
+			owner = { amalgamation_trigger = yes }
+			factor = 0
+		}
+		modifier = {
+			has_province_flag = TP_trading_post
+			factor = 0
+		}
+	}
+	
+	# This is checked for EACH province in the Area of Operations
+	movement_evaluation = {
+		factor = 0
+	}
+	
+	# Province Scope
+	siege_won_trigger = { }
+	siege_won_effect = {
+		if = {
+			limit = { NOT = { has_province_flag = ghazi_raid } }
+			if = {
+				limit = {
+					NOT = { religion = sunni }
+					event_target:ghazi_origins = { religion = sunni }
+				}
+				custom_tooltip = sunni_20
+				hidden_effect = {
+					change_variable = { which = sunni value = 4 }
+					change_variable = { which = province_religion value = -4 }
+				}
+			}
+			if = {
+				limit = {
+					NOT = { religion = shiite }
+					event_target:ghazi_origins = { religion = shiite }
+				}
+				custom_tooltip = shiite_20
+				hidden_effect = {
+					change_variable = { which = shiite value = 4 }
+					change_variable = { which = province_religion value = -4 }
+				}
+			}
+			if = {
+				limit = {
+					NOT = { religion = wahhabi }
+					event_target:ghazi_origins = { religion = wahhabi }
+				}
+				custom_tooltip = wahhabi_20
+				hidden_effect = {
+					change_variable = { which = wahhabi value = 4 }
+					change_variable = { which = province_religion value = -4 }
+				}
+			}
+			if = {
+				limit = {
+					NOT = { religion = ibadi }
+					event_target:ghazi_origins = { religion = ibadi }
+				}
+				custom_tooltip = ibadi_20
+				hidden_effect = {
+					change_variable = { which = ibadi value = 4 }
+					change_variable = { which = province_religion value = -4 }
+				}
+			}
+		}
+		set_province_flag = ghazi_raid
+	}
+	
+	# Country scope
+	can_negotiate_trigger = { }
+	
+	# Country scope
+	can_enforce_trigger = {
+		any_owned_province = { controlled_by = muslim_ghazi }
+	}
+	
+	# Localisation for their demands
+	demands_description = "muslim_ghazi_demand"
+	
+	# Country scope
+	demands_enforced_effect = {
+		every_owned_province = {
+			limit = { OR = { controlled_by = muslim_ghazi has_province_flag = ghazi_raid } }
+			set_province_flag = ghazi_victory
+			province_event = { id = dg_islam.101 }
+		}
+	}
+}

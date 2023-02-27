@@ -1,0 +1,4260 @@
+########################################
+#                                      #
+#     FormingHistoricalNations.txt     #
+#                                      #
+########################################
+#
+# 2011-jan-16 FB add ai_importance = 200
+# 2011-aug-01 FB fixes to denmark_norway_nation
+# 2012-jul-04 GG new requirement : either 80% of provinces or 66% and capital province
+# 2013-aug-26 GG EUIV changes
+#
+########################################
+#
+# List of decisions :
+#
+# prussian_nation
+# form_kingdom_of_prussia
+# anglofrench_nation
+# denmark_norway_nation
+# spanish_nation
+# english_nation
+# french_nation
+# form_greece_kingdom
+# irish_nation
+# mughal_nation
+# aztec_empire
+# mayan_empire
+# incan_empire
+# netherlands_nation
+# unite_turkish_nation
+# unite_turkish_republic
+# persian_nation
+# roumanian_nation
+# russian_nation
+# saxon_nation
+# nation_bretonne
+# british_nation
+# bulgaria_nation
+# italian_nation_no_hre
+# tuscany_nation
+# sicilian_nation
+# german_nation
+# bavarian_nation
+# swabian_nation
+# hannover_nation
+# form_sardinia_piedmont
+# form_julich_berg_kleve
+# form_siam
+# form_goldenhorde
+# form_celestial_empire
+# westphalia_nation
+# malaccan_nation
+# polish_nation
+# polish_lithuanian_nation
+# austrian_nation
+# egyptian_nation
+# become_sultan_of_delhi
+# georgian_nation
+# assam_nation
+#
+# To be added later on :
+#
+# austro_hungarian_nation
+#
+########################################
+
+country_decisions = {
+	
+	prussian_nation = {
+		major = yes
+		potential = {
+			tag = TEU
+			NOT = { exists = PRU }
+		}
+		provinces_to_highlight = {
+			region = prussia_region
+		}
+		allow = {
+			OR = {
+				AND = {
+					check_variable = { which = "Demesne_in_Prussia" value = 4 }
+					is_subject_other_than_tributary_trigger = yes
+				}
+				AND = {
+					check_variable = { which = "Demesne_in_Prussia" value = 6 }
+					check_variable = { which = "Cores_on_Prussia" value = 5 }
+					is_free_or_tributary_trigger = yes
+				}
+			}
+			OR = {
+				religion = protestant
+				religion = reformed
+				religion = hussite
+				government = monarchy
+				government = republic
+			}
+			owns_or_non_sovereign_subject_of = 41 # Ostpreussen
+			is_at_war = no
+		}
+		effect = {
+			prussia_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			if = {
+				limit = {
+					is_free_or_tributary_trigger = yes
+				}
+				prussia_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			}
+			if = {
+				limit = {
+					is_subject_other_than_tributary_trigger = yes
+				}
+				prussia_region = {
+					limit = {
+						NOT = { owned_by = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				overlord = {
+					prussia_region = {
+						limit = {
+							owned_by = PREV
+						}
+						remove_claim = PRU
+					}
+				}
+			}
+			add_prestige = 20
+			if = {
+				limit = { adm_tech = 35 }
+				administratisation_effect = yes
+			}
+			else = {
+				despotisation_effect = yes
+			}
+			if = {
+				limit = {
+					OR = {
+						has_country_modifier = title_1
+						has_country_modifier = title_2
+					}
+				}
+				change_title_3 = yes
+			}
+			change_tag = PRU
+			add_absolutism = 10
+			if = {
+				limit = {
+					has_custom_ideas = no
+					NOT = { has_idea_group = PRU_ideas }
+				}
+				swap_national_ideas_effect = yes
+			}
+			every_country = {
+				limit = {
+					capital_scope = { region = prussia_region }
+					NOT = { tag = ROOT }
+				}
+				add_historical_rival = PRU
+				ROOT = { add_historical_rival = PREV }
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+	# form_kingdom_of_prussia = {
+		# major = yes
+		# potential = {
+			# culture_group = low_germanic
+			# NOT = { exists = PRU }
+			# NOT = { exists = GER }
+			# NOT = { tag = TEU }
+			# NOT = { tag = ERG }
+			# NOT = { tag = ROM }
+			# capital_scope = { is_part_of_hre = yes }
+			# OR = {
+				# government = monarchy
+				# government = republic
+			# }
+			# is_colonial_nation = no
+		# }
+		# provinces_to_highlight = {
+			# region = prussia_region
+		# }
+		# allow = {
+			# is_free_or_tributary_trigger = yes
+			# OR = {
+				# check_variable = { which = "Demesne_in_Prussia" value = 10 }
+				# check_variable = { which = "Cores_on_Prussia" value = 6 }
+				# AND = {
+					# check_variable = { which = "Cores_on_Prussia" value = 4 }
+					# adm_tech = 40
+				# }
+			# }
+			# is_at_war = no
+		# }
+		# effect = {
+			# prussia_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# prussia_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# add_prestige = 20
+			# if = {
+				# limit = { NOT = { adm_tech = 35 } }
+				# despotisation_effect = yes
+			# }
+			# if = {
+				# limit = { adm_tech = 35 }
+				# administratisation_effect = yes
+			# }
+			# if = {
+				# limit = {
+					# NOT = { has_country_modifier = title_5 }
+					# NOT = { has_country_modifier = title_6 }
+				# }
+				# change_title_5 = yes
+			# }
+			# change_tag = PRU
+			# add_absolutism = 10
+			# if = {
+				# limit = {
+					# has_custom_ideas = no
+					# NOT = { has_idea_group = PRU_ideas }
+				# }
+				# swap_national_ideas_effect = yes
+			# }
+			# every_country = {
+				# limit = {
+					# capital_scope = { region = prussia_region }
+					# NOT = { tag = ROOT }
+				# }
+				# add_historical_rival = PRU
+				# ROOT = { add_historical_rival = PREV }
+			# }
+		# }
+		# ai_will_do = {
+			# factor = 1
+		# }
+		# ai_importance = 400
+	# }
+	
+	# denmark_norway_nation = {
+		# major = yes
+		# potential = {
+			# always = no
+			# NOT = { exists = DAN }
+			# forming_DAN_trigger = yes
+			# NOT = { tag = KAL }
+			# NOT = { tag = ERG }
+			# NOT = { tag = PAP }
+			# NOT = { tag = ROM }
+			# OR = {
+				# tag = DEN
+				# tag = NOR
+			# }
+		# }
+		# provinces_to_highlight = {
+			# OR = {
+				# region = danish_region
+				# region = norwegian_region
+			# }
+		# }
+		# allow = {
+			# OR = {
+				# AND = {
+					# OR = {
+						# AND = {
+							# primary_culture = danish
+							# NOT = { exists = DEN }
+						# }
+						# tag = DEN
+					# }
+					# NOT = { exists = NOR }
+				# }
+				# AND = {
+					# OR = {
+						# AND = {
+							# primary_culture = norwegian
+							# NOT = { exists = NOR }
+						# }
+						# tag = NOR
+					# }
+					# NOT = { exists = DEN }
+				# }
+			# }
+			# OR = {
+				# check_variable = { which = "Demesne_in_Denmark" value = 8 }
+				# check_variable = { which = "Demesne_in_Norway" value = 5 }
+				# AND = {
+					# check_variable = { which = "Cores_on_Denmark" value = 7 }
+					# check_variable = { which = "Cores_on_Norway" value = 4 }
+				# }
+			# }
+			# is_free_or_tributary_trigger = yes
+			# owns = 12 # Sjaeland
+			# owns = 16 # Akerhus
+			
+			# is_at_war = no
+		# }
+		# effect = {
+			# danish_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# danish_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# norwegian_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# norwegian_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# add_prestige = 20
+			# if = {
+				# limit = { government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+				# change_title_5 = yes
+			# }
+			# change_tag = DAN
+			# add_absolutism = 10
+			# if = {
+				# limit = {
+					# has_custom_ideas = no
+					# NOT = { has_idea_group = DAN_ideas }
+				# }
+				# swap_national_ideas_effect = yes
+			# }
+			# every_country = {
+				# limit = {
+					# OR = {
+						# primary_culture = norwegian
+						# primary_culture = danish
+						# capital_scope = { region = danish_region }
+						# capital_scope = { region = norwegian_region }
+					# }
+					# NOT = { tag = ROOT }
+				# }
+				# add_historical_rival = DAN
+				# ROOT = { add_historical_rival = PREV }
+			# }
+		# }
+		# ai_will_do = {
+			# factor = 1
+		# }
+		# ai_importance = 400
+	# }
+	
+	# spanish_nation = {
+		# major = yes
+		# potential = {
+			# always = no
+			# NOT = { tag = FRA }
+			# NOT = { exists = SPA }
+			# NOT = { tag = PAP }
+			# NOT = { tag = ERG }
+			# NOT = { tag = ROM }
+			# NOT = { tag = LAT }
+			# OR = {
+				# culture_group = iberian
+				# primary_culture = basque
+				# primary_culture = catalan
+			# }
+			# is_colonial_nation = no
+			# NOT = { CAS = { vassal_of = ARA ai = no } }
+			# NOT = { ARA = { vassal_of = CAS ai = no } }
+			# NOT = { CAS = { junior_union_with = ARA ai = no } }
+			# NOT = { ARA = { junior_union_with = CAS ai = no } }
+			# NOT = { religion_group = muslim }
+		# }
+		# provinces_to_highlight = {
+			# OR = {
+				# region = castille_region
+				# region = leon_region
+				# region = aragon_region
+				# region = andalucia_region
+			# }
+		# }
+		# allow = {
+			# is_free_or_tributary_trigger = yes
+			# #NOT = { CAS = { is_subject_of_type = permanent_union } }
+			# #NOT = { ARA = { is_subject_of_type = permanent_union } }
+			# is_at_war = no
+			# NOT = { andalucia_region = { owner = { religion_group = muslim } } }
+			# OR = {
+				# AND = {
+					# check_variable = { which = "Demesne_in_Castille" value = 15 }
+					# check_variable = { which = "Demesne_in_Leon" value = 12 }
+					# check_variable = { which = "Demesne_in_Aragon" value = 15 }
+					# check_variable = { which = "Demesne_in_Andalusia" value = 14 }
+				# }
+				# AND = {
+					# check_variable = { which = "Cores_on_Castille" value = 10 }
+					# check_variable = { which = "Cores_on_Leon" value = 8 }
+					# check_variable = { which = "Cores_on_Aragon" value = 10 }
+					# check_variable = { which = "Cores_on_Andalusia" value = 9 }
+				# }
+			# }
+			# NOT = { religion_group = muslim }
+		# }
+		# effect = {
+			# castille_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# castille_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# leon_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# leon_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# aragon_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# aragon_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# andalucia_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# andalucia_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# if = {
+				# limit = {
+					# OR = {
+						# ARA = { vassal_of = ROOT }
+						# ARA = { junior_union_with = ROOT }
+						# CAS = { vassal_of = ROOT }
+						# CAS = { junior_union_with = ROOT }
+					# }
+				# }
+				# add_absolutism = -10
+			# }
+			# if = {
+				# limit = {
+					# NOT = {
+						# OR = {
+							# ARA = { vassal_of = ROOT }
+							# ARA = { junior_union_with = ROOT }
+							# CAS = { vassal_of = ROOT }
+							# CAS = { junior_union_with = ROOT }
+						# }
+					# }
+				# }
+				# add_absolutism = 10
+			# }
+			# add_prestige = 20
+			# if = {
+				# limit = { government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+				# change_title_5 = yes
+			# }
+			# if = {
+				# limit = {
+					# OR = {
+						# ARA = { vassal_of = ROOT }
+						# ARA = { junior_union_with = ROOT }
+					# }
+				# }
+				# inherit = ARA
+				# every_owned_province = {
+					# limit = {
+						# OR = {
+							# culture = aragonese
+							# culture = catalan
+							# culture_group = basque_group
+						# }
+						# OR = {
+							# is_core = ARA
+							# is_core = NAV
+						# }
+					# }
+					# add_local_autonomy = 60
+					# add_province_modifier = { name = fueros duration = -1 }
+				# }
+			# }
+			# if = {
+				# limit = {
+					# OR = {
+						# CAS = { vassal_of = ROOT }
+						# CAS = { junior_union_with = ROOT }
+					# }
+				# }
+				# inherit = CAS
+				# every_owned_province = {
+					# limit = {
+						# OR = {
+							# culture = castillian
+							# culture = asturian
+						# }
+						# is_core = CAS
+					# }
+					# add_local_autonomy = 60
+					# add_province_modifier = { name = fueros duration = -1 }
+				# }
+			# }
+			# change_tag = SPA
+			# every_country = {
+				# limit = {
+					# junior_union_with = ROOT
+					# capital_scope = {
+						# OR = {
+							# region = aragon_region
+							# region = castille_region
+							# region = leon_region
+							# region = andalucia_region
+						# }
+					# }
+				# }
+				# set_country_flag = junior_union_at_formation
+			# }
+			# add_absolutism = 10
+			# if = {
+				# limit = {
+					# has_custom_ideas = no
+					# NOT = { has_idea_group = SPA_ideas }
+				# }
+				# swap_national_ideas_effect = yes
+			# }
+			# every_country = {
+				# limit = {
+					# OR = {
+						# capital_scope = { region = aragon_region }
+						# capital_scope = { region = castille_region }
+						# capital_scope = { region = leon_region }
+						# capital_scope = { region = andalucia_region }
+					# }
+					# NOT = { tag = ROOT }
+				# }
+				# add_historical_rival = SPA
+				# ROOT = { add_historical_rival = PREV }
+			# }
+		# }
+		# ai_will_do = {
+			# factor = 1
+		# }
+		# ai_importance = 400
+	# }
+	
+#	english_nation = {
+#		major = yes
+#		potential = {
+#			always = no
+#			NOT = { exists = ENG }
+#			NOT = { exists = GBR }
+#			forming_ENG_trigger = yes
+#			NOT = { tag = PAP }
+#			NOT = { tag = ERG }
+#			NOT = { tag = ROM }
+#			NOT = { tag = LAT }
+#			primary_culture = english
+#			is_colonial_nation = no
+#		}
+#		provinces_to_highlight = {
+#			OR = {
+#				region = south_england_region
+#				region = north_england_region
+#			}
+#		}
+#		allow = {
+#			is_free_or_tributary_trigger = yes
+#			OR = {
+#				check_variable = { which = "Demesne_in_England" value = 16 }
+#				check_variable = { which = "Cores_on_England" value = 12 }
+#			}
+#			owns = 236		# London
+#			is_at_war = no
+#		}
+#		effect = {
+#			north_england_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			north_england_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			south_england_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			south_england_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			add_prestige = 20
+#			ENG = { Effect_set_capital = { target=236 } }
+#			if = {
+#				limit = { government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+#				change_title_5 = yes
+#			}
+#			change_tag = ENG
+#			add_absolutism = 10
+#			if = {
+#				limit = {
+#					has_custom_ideas = no
+#					NOT = { has_idea_group = ENG_ideas }
+#				}
+#				swap_national_ideas_effect = yes
+#			}
+#			every_country = {
+#				limit = {
+#					OR = {
+#						primary_culture = english
+#						capital_scope = { region = north_england_region }
+#						capital_scope = { region = south_england_region }
+#					}
+#					NOT = { tag = ROOT }
+#				}
+#				add_historical_rival = ENG
+#				ROOT = { add_historical_rival = PREV }
+#			}
+#		}
+#		ai_will_do = {
+#			factor = 1
+#		}
+#		ai_importance = 400
+#	}
+	
+#	french_nation = {
+#		major = yes
+#		potential = {
+#			always = no
+#			NOT = { tag = SPA }		# Basque is a valid culture for both FRA and SPA
+#			NOT = { tag = PAP }
+#			NOT = { tag = ERG }
+#			NOT = { tag = ROM }
+#			NOT = { tag = LAT }
+#			NOT = { exists = FRA }
+#			forming_FRA_trigger = yes
+#			NOT = { tag = ENG }
+#			OR = {
+#				culture_group = langue_d_oil
+#				culture_group = langue_d_oc
+#				tag = NAV
+#				#culture_group = basque
+#				#primary_culture = breton
+#			}
+#			is_colonial_nation = no
+#			#num_of_cities = 6
+#		}
+#		provinces_to_highlight = {
+#			OR = {
+#				region = east_france_region
+#				region = provence_region
+#				region = high_countries_region
+#				region = languedoc_region
+#				region = aquitaine_region
+#				area = normandy_area
+#				area = anjou_poitou_area
+#			}
+#		}
+#		allow = {
+#			is_free_or_tributary_trigger = yes
+#			OR = {
+#				has_country_flag = true_france
+#				AND = {
+#					owns = 177 # Maine
+#					owns = 183 # Paris
+#					owns = 184 # Orliens
+#					owns = 186 # Argonne
+#					owns = 1335 # Brye
+#					owns = 1386 # Perche
+#					owns = 1387 # Valoys
+#					owns = 2330 # Evrecin
+#				}
+#			}
+#			OR = {
+#				check_variable = { which = "Demesne_in_France" value = 30 }
+#				check_variable = { which = "Cores_on_France" value = 23 }
+#			}
+#			is_at_war = no
+#		}
+#		effect = {
+#			france_superregion = { limit = { owned_by = ROOT } add_core = FRA }
+#			france_superregion = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			add_prestige = 20
+#			FRA = { Effect_set_capital = { target=183 } } # Paris
+#			if = {
+#				limit = { government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+#				change_title_5 = yes
+#			}
+#			change_tag = FRA
+#			add_absolutism = 10
+#			if = {
+#				limit = {
+#					has_custom_ideas = no
+#					NOT = { has_idea_group = FRA_ideas }
+#				}
+#				swap_national_ideas_effect = yes
+#			}
+#			every_country = {
+#				limit = {
+#					OR = {
+#						culture_group = langue_d_oc
+#						culture_group = langue_d_oil
+#						capital_scope = { region = east_france_region }
+#					}
+#					NOT = { tag = ROOT }
+#				}
+#				add_historical_rival = FRA
+#				ROOT = { add_historical_rival = PREV }
+#			}
+#		}
+#		ai_will_do = {
+#			factor = 1
+#		}
+#		ai_importance = 400
+#	}
+	
+	form_greece_kingdom = {
+		major = yes
+		potential = {
+			OR = {
+				primary_culture = greek
+				tag = ATH
+				tag = ACH
+				tag = MOE
+				tag = EPI
+			}
+			NOT = { exists = GRE }
+			NOT = { tag = ERG }
+			NOT = { tag = PAP }
+			NOT = { tag = BYZ }
+			NOT = { tag = OTT }
+			NOT = { tag = TUR }
+			NOT = { tag = ROM }
+			NOT = { tag = LAT }
+			is_colonial_nation = no
+		}
+		provinces_to_highlight = {
+			region = greece_region
+		}
+		allow = {
+			is_free_or_tributary_trigger = yes
+			owns = 146 # Attica
+			is_core = 146 # Attica
+			is_at_war = no
+			OR = {
+				check_variable = { which = "Demesne_in_Greece" value = 20 }
+				check_variable = { which = "Cores_on_Greece" value = 16 }
+			}
+		}
+		effect = {
+			greece_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			greece_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			add_prestige = 20
+			if = {
+				limit = { government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+				change_title_5 = yes
+			}
+			change_tag = GRE
+			change_primary_culture = greek
+			add_absolutism = 10
+			if = {
+				limit = {
+					has_custom_ideas = no
+					NOT = { has_idea_group = GRE_ideas }
+				}
+				swap_national_ideas_effect = yes
+			}
+			every_country = {
+				limit = {
+					OR = {
+						primary_culture = greek
+						capital_scope = { region = greece_region }
+					}
+					NOT = { tag = ROOT }
+				}
+				add_historical_rival = GRE
+				ROOT = { add_historical_rival = PREV }
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+#	irish_nation = {
+#		major = yes
+#		potential = {
+#			always = no
+#			OR = {
+#				primary_culture = irish
+#				primary_culture = hiberno_norman
+#			}
+#			NOT = { exists = IRE }
+#			NOT = { tag = PAP }
+#			NOT = { tag = ERG }
+#			NOT = { tag = ROM }
+#			NOT = { tag = LAT }
+#			NOT = { tag = GBR }
+#			forming_IRE_trigger = yes
+#			is_colonial_nation = no
+#		}
+#		provinces_to_highlight = {
+#			region = ireland_region
+#		}
+#		allow = {
+#			is_free_or_tributary_trigger = yes
+#			is_at_war = no
+#			check_variable = { which = "Demesne_in_Ireland" value = 8 }
+#			calc_true_if = {
+#				ireland_region = {
+#					type = all
+#					OR = {
+#						NOT = {
+#							OR = {
+#								owner = { primary_culture = irish }
+#								owner = { primary_culture = hiberno_norman }
+#							}
+#						}
+#						owned_by = ROOT
+#						owner = { is_subject_of = ROOT }
+#					}
+#				}
+#				amount = 15
+#			}
+#		}
+#		effect = {
+#			ireland_region = { hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			add_prestige = 20
+#			if = {
+#				limit = {
+#					government = monarchy
+#					NOT = {
+#						has_country_modifier = title_5
+#						has_country_modifier = title_6
+#					}
+#				}
+#				change_title_5 = yes
+#			}
+#			change_tag = IRE
+#			if = {
+#				limit = {
+#					has_custom_ideas = no
+#					NOT = { has_idea_group = irish_ideas }
+#				}
+#				swap_national_ideas_effect = yes
+#			}
+#			add_absolutism = 10
+#		}
+#		ai_will_do = {
+#			factor = 1
+#		}
+#		ai_importance = 400
+#	}
+	
+	mughal_nation = {
+		major = yes
+		potential = {
+			religion_group = muslim
+			OR = {
+				culture_group = altaic
+				culture_group = tartar_group
+				culture_group = persian_group
+			}
+			NOT = { exists = MUG }
+			NOT = { tag = PER }
+			NOT = { tag = TUR }
+			OR = {
+				owns_or_non_sovereign_subject_of = 521	# Panipat
+				owns_or_non_sovereign_subject_of = 522	# Jindh
+				owns_or_non_sovereign_subject_of = 524	# Braj
+				owns_or_non_sovereign_subject_of = 2163	# Delhi
+				owns_or_non_sovereign_subject_of = 2555	# Katehar
+				owns_or_non_sovereign_subject_of = 2705	# Mewat
+			}
+			is_colonial_nation = no
+		}
+		provinces_to_highlight = {
+			continent = indian_continent
+		}
+		allow = {
+			is_free_or_tributary_trigger = yes
+			is_at_war = no
+			owns_or_non_sovereign_subject_of = 521		# Panipat
+			owns_or_non_sovereign_subject_of = 522		# Jindh
+			owns_or_non_sovereign_subject_of = 524		# Braj
+			owns_or_non_sovereign_subject_of = 2163		# Delhi
+			owns_or_non_sovereign_subject_of = 2555		# Katehar
+			owns_or_non_sovereign_subject_of = 2705		# Mewat
+			OR = {
+				check_variable = { which = "Cores_on_India" value = 20 }
+				check_variable = { which = "Demesne_in_India" value = 30 }
+			}
+		}
+		effect = {
+			west_bengal_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			west_bengal_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			east_bengal_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			east_bengal_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			upper_doab_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			upper_doab_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			central_doab_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			central_doab_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			punjab_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			punjab_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			awadh_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			awadh_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			bihar_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			bihar_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			hindusthan_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			hindusthan_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			west_india_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			west_india_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			add_prestige = 20
+			if = {
+				limit = {
+					government = monarchy
+					NOT = { has_country_modifier = title_6 }
+				}
+				change_title_6 = yes
+			}
+			if = {
+				limit = {
+					technology_group = steppestech
+				}
+				change_technology_group = muslim
+				#change_unit_type = indian
+			}
+			change_primary_culture = urdu
+			set_country_flag = urdu_state
+			change_tag = MUG
+			despotisation_effect = yes
+			add_absolutism = 10
+			if = {
+				limit = {
+					has_custom_ideas = no
+					NOT = { has_idea_group = MUG_ideas }
+				}
+				swap_national_ideas_effect = yes
+			}
+			every_country = {
+				limit = {
+					OR = {
+						capital_scope = { region = east_bengal_region }
+						capital_scope = { region = west_bengal_region }
+						capital_scope = { region = punjab_region }
+						capital_scope = { region = central_doab_region }
+						capital_scope = { region = upper_doab_region }
+						capital_scope = { region = awadh_region }
+						capital_scope = { region = west_india_region }
+					}
+					NOT = { tag = ROOT }
+				}
+				add_historical_rival = MUG
+				ROOT = { add_historical_rival = PREV }
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+	aztec_empire = {
+		major = yes
+		potential = {
+			primary_culture = nahuatl_c
+			NOT = { exists = AZT }
+			is_colonial_nation = no
+		}
+		provinces_to_highlight = {
+			region = mexico_region
+		}
+		allow = {
+			OR = {
+				check_variable = { which = "Demesne_in_Nahualt" value = 35 }
+				check_variable = { which = "Cores_on_Nahualt" value = 25 }
+			}
+			is_free_or_tributary_trigger = yes
+			owns_or_non_sovereign_subject_of = 2200		# Acolhua
+			owns_or_non_sovereign_subject_of = 852		# Tepanec
+			owns_or_non_sovereign_subject_of = 2406		# Tlacopan
+			owns_or_non_sovereign_subject_of = 1471		# Tenochtitlan
+			owns_or_non_sovereign_subject_of = 851		# Tlapanec
+			owns_or_non_sovereign_subject_of = 2204		# Teotitlan
+			owns_or_non_sovereign_subject_of = 2201		# Tlaxcala
+			is_at_war = no
+		}
+		effect = {
+			mexico_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			mexico_region = { limit = { NOT = { owned_by = ROOT } is_city = yes } add_permanent_claim = ROOT }
+			zacatecas_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			zacatecas_region = { limit = { NOT = { owned_by = ROOT } is_city = yes } add_permanent_claim = ROOT }
+			zapotec_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			zapotec_region = { limit = { NOT = { owned_by = ROOT } is_city = yes } add_permanent_claim = ROOT }
+			add_prestige = 20
+			if = {
+				limit = {
+					trib_fed_trigger = yes
+				}
+				trib_king_effect = yes
+			}
+			if = {
+				limit = { NOT = { has_country_modifier = title_6 } }
+				change_title_6 = yes
+			}
+			change_tag = AZT
+			add_absolutism = 10
+			if = {
+				limit = {
+					has_custom_ideas = no
+					NOT = { has_idea_group = AZT_ideas }
+				}
+				swap_national_ideas_effect = yes
+			}
+			every_country = {
+				limit = {
+					capital_scope = { region = mexico_region }
+					NOT = { tag = ROOT }
+				}
+				add_historical_rival = AZT
+				ROOT = { add_historical_rival = PREV }
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+	mayan_empire = {
+		major = yes
+		potential = {
+			culture_group = mayan_group
+			NOT = { exists = MAY }
+			is_colonial_nation = no
+		}
+		provinces_to_highlight = {
+			region = central_america_region
+		}
+		allow = {
+			OR = {
+				check_variable = { which = "Demesne_in_Maya" value = 15 }
+				check_variable = { which = "Cores_on_Maya" value = 10 }
+			}
+			is_free_or_tributary_trigger = yes
+			owns = 840		# Copan
+			is_core = 840
+			owns = 845		# Uxmal
+			is_core = 845
+			owns = 846		# Chichen-Itza
+			is_core = 846
+			owns = 2208		# Tikal
+			is_core = 2208
+			is_at_war = no
+		}
+		effect = {
+			guatemala_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			guatemala_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			yucatan_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			yucatan_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			chiapas_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			chiapas_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			belize_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			belize_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			campeche_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			campeche_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			add_prestige = 20
+			if = {
+				limit = {
+					trib_fed_trigger = yes
+				}
+				trib_king_effect = yes
+			}
+			if = {
+				limit = { NOT = { has_country_modifier = title_6 } }
+				change_title_6 = yes
+			}
+			change_tag = MAY
+			add_absolutism = 10
+			if = {
+				limit = {
+					has_custom_ideas = no
+					NOT = { has_idea_group = MAY_ideas }
+				}
+				swap_national_ideas_effect = yes
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+	incan_empire = {
+		major = yes
+		potential = {
+			religion = inti
+			NOT = { exists = INC }
+			is_colonial_nation = no
+		}
+		provinces_to_highlight = {
+			region = peru_region
+			region = bolivia_region
+		}
+		allow = {
+			OR = {
+				check_variable = { which = "Demesne_in_Inca" value = 35 }
+				check_variable = { which = "Cores_on_Inca" value = 25 }
+			}
+			is_free_or_tributary_trigger = yes
+			owns_core_province = 2068			# Cuzco
+			OR = {
+				owns_core_province = 816		# Pachacamac
+				AND = {
+					816 = { owned_by = CHC }
+					alliance_with = CHC
+				}
+			}
+			OR = {
+				owns_core_province = 820		# Huancayo
+				owns_core_province = 3435		# lupaca
+			}
+			OR = {
+				owns_core_province = 811		# Kasha Marka
+				owns_core_province = 3436		# Golla
+			}
+			is_at_war = no
+		}
+		effect = {
+			peru_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			peru_region = { limit = { NOT = { owned_by = ROOT } is_city = yes } add_permanent_claim = ROOT }
+			bolivia_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			bolivia_region = { limit = { NOT = { owned_by = ROOT } is_city = yes } add_permanent_claim = ROOT }
+			add_prestige = 20
+			INC = { Effect_set_capital = { target=2068 } }
+			if = {
+				limit = {
+					OR = {
+						trib_king_trigger = yes
+						trib_desp_trigger = yes
+						trib_fed_trigger = yes
+					}
+				}
+				despotisation_effect = yes
+			}
+			if = {
+				limit = { NOT = { has_country_modifier = title_6 } }
+				change_title_6 = yes
+			}
+			
+			change_tag = INC
+			add_absolutism = 10
+			if = {
+				limit = {
+					AND = {
+						816 = { owned_by = CHC }
+						alliance_with = CHC
+					}
+				}
+				inherit = CHC
+			}
+			if = {
+				limit = {
+					has_custom_ideas = no
+					NOT = { has_idea_group = INC_ideas }
+				}
+				swap_national_ideas_effect = yes
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+	# netherlands_nation = {
+		# major = yes
+		# potential = {
+			# NOT = { exists = NED }
+			# NOT = { tag = PAP }
+			# NOT = { tag = ERG }
+			# NOT = { tag = GER }
+			# NOT = { tag = PRU }
+			# NOT = { tag = EBU }
+			# NOT = { tag = LOT }
+			# NOT = { tag = ROM }
+			# culture_group = low_frankish
+			# #NOT = { primary_culture = burgundian }
+			# is_colonial_nation = no
+		# }
+		# provinces_to_highlight = {
+			# OR = {
+				# region = belgii_region
+				# region = low_countries_region
+			# }
+		# }
+		# allow = {
+			# is_free_or_tributary_trigger = yes
+			# OR = {
+				# check_variable = { which = "Demesne_in_the_Netherlands" value = 15 }
+				# check_variable = { which = "Cores_on_the_Netherlands" value = 10 }
+			# }
+			# OR = {
+				# adm_tech = 25
+				# ADM = 5
+				# AND = {
+					# full_idea_group = mercantilism_ideas
+					# full_idea_group = humanist_ideas
+					# NOT = { absolutism = 70 }
+					# stability = 1
+				# }
+			# }
+			# is_at_war = no
+		# }
+		# effect = {
+			# belgii_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# belgii_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# low_countries_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# low_countries_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# if = {
+				# limit = {
+					# government = theocracy
+					# religion = catholic
+				# }
+				# administratisation_effect = yes
+				# PAP = {
+					# add_opinion = {
+						# who = ROOT
+						# modifier = opinion_displeased
+					# }
+				# }
+			# }
+			# if = {
+				# limit = {
+					# government = theocracy
+					# NOT = { religion = catholic }
+				# }
+				# administratisation_effect = yes
+			# }
+			# if = {
+				# limit = {
+					# NOT = {
+						# has_country_modifier = title_3
+						# has_country_modifier = title_4
+						# has_country_modifier = title_5
+						# has_country_modifier = title_6
+					# }
+				# }
+				# change_title_3 = yes
+			# }
+			# add_prestige = 20
+			# change_tag = NED
+			# add_absolutism = 10
+			# if = {
+				# limit = {
+					# has_custom_ideas = no
+					# NOT = { has_idea_group = NED_ideas }
+				# }
+				# swap_national_ideas_effect = yes
+			# }
+			# #country_event = { id = holyromanempire.5 days = 5 } # Netherlands now have to wait for the Treaty of Westphalia
+			
+			# #These flags effectively stop any further dutch revolt event
+			# clr_global_flag = dutch_rebellion_start
+			# set_global_flag = dutch_rebellion_end
+		# }
+		# ai_will_do = {
+			# factor = 1
+		# }
+		# ai_importance = 400
+	# }
+	
+	persian_nation = {
+		major = yes
+		potential = {
+			culture_group = persian_group
+			NOT = { exists = PER }
+			NOT = { tag = MUG }
+			OR = {
+				owns = 390 # Yazd
+				owns = 414 # Isfahan
+				#owns = 426 # Mazandaran
+				owns = 1313 # Rey
+				owns = 1314 # Qasvin
+				owns = 2225 # Qom
+			}
+			is_colonial_nation = no
+		}
+		provinces_to_highlight = {
+			region = persia_region
+		}
+		allow = {
+			is_free_or_tributary_trigger = yes
+			OR = {
+				check_variable = { which = "Demesne_in_Persia" value = 30 }
+				check_variable = { which = "Cores_on_Persia" value = 20 }
+			}
+			owns = 390 # Yazd
+			owns = 414 # Isfahan
+			owns = 426 # Mazandaran
+			owns = 1313 # Rey
+			owns = 1314 # Qasvin
+			owns = 2225 # Qom
+			is_at_war = no
+		}
+		effect = {
+			persia_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			persia_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			khorasan_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			khorasan_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			afghanistan_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			afghanistan_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			add_prestige = 20
+			if = {
+				limit = { government = monarchy NOT = { has_country_modifier = title_6 } }
+				change_title_6 = yes
+			}
+			change_tag = PER
+			add_absolutism = 10
+			if = {
+				limit = {
+					has_custom_ideas = no
+					NOT = { has_idea_group = PER_ideas }
+				}
+				swap_national_ideas_effect = yes
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+#	roumanian_nation = {
+#		major = yes
+#		potential = {
+#			culture_group = romanian
+#			NOT = { tag = ERG }
+#			NOT = { tag = PAP }
+#			NOT = { tag = ROM }
+#			NOT = { tag = LAT }
+#			NOT = { tag = BYZ }
+#			NOT = { exists = ROU }
+#			is_colonial_nation = no
+#		}
+#		provinces_to_highlight = {
+#			OR = {
+#				region = south_carpathia_region
+#				area = transylvania_area
+#			}
+#		}
+#		allow = {
+#			is_free_or_tributary_trigger = yes
+#			is_at_war = no
+#			OR = {
+#				adm_tech = 35
+#				AND = {
+#					ADM = 5
+#					statesman = 2
+#				}
+#				AND = {
+#					NOT = { absolutism = 80 }
+#					full_idea_group = administrative_ideas
+#					full_idea_group = diplomatic_ideas
+#				}
+#			}
+#			OR = {
+#				check_variable = { which = "Demesne_in_Roumania" value = 12 }
+#				check_variable = { which = "Cores_on_Roumania" value = 10 }
+#			}
+#		}
+#		effect = {
+#			south_carpathia_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			south_carpathia_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			add_prestige = 15
+#			if = {
+#				limit = { government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+#				change_title_5 = yes
+#			}
+#			if = {
+#				limit = {
+#					OR = {
+#						WAL = { vassal_of = ROOT }
+#						WAL = { junior_union_with = ROOT }
+#				}
+#			}
+#				inherit = WAL
+#			}
+#			if = {
+#				limit = {
+#					OR = {
+#						MOL = { vassal_of = ROOT }
+#						MOL = { junior_union_with = ROOT }
+#					}
+#				}
+#				inherit = MOL
+#			}
+#			change_tag = ROU
+#			if = {
+#				limit = {
+#					has_custom_ideas = no
+#					NOT = { has_idea_group = RMN_ideas }
+#				}
+#				swap_national_ideas_effect = yes
+#			}
+#			add_absolutism = 10
+#		}
+#		ai_will_do = {
+#			factor = 1
+#		}
+#		ai_importance = 400
+#	}
+	
+#	russian_nation = {
+#		major = yes
+#		potential = {
+#			always = no
+#			NOT = { exists = RUS }
+#			NOT = { tag = ERG }
+#			NOT = { tag = PAP }
+#			NOT = { tag = ROM }
+#			#government = monarchy
+#			OR = {
+#				primary_culture = russian
+#				primary_culture = novgorodian
+#				primary_culture = ruthenian
+#			}
+#			is_colonial_nation = no
+#		}
+#		provinces_to_highlight = {
+#			OR = {
+#				region = north_russia_region
+#				region = russia_region
+#				region = east_russia_region
+#			}
+#		}
+#		allow = {
+#			is_free_or_tributary_trigger = yes
+#			is_at_war = no
+#			absolutism = 25
+#			OR = {
+#				adm_tech = 23
+#				full_idea_group = expansion_ideas
+#				AND = {
+#					adm_tech = 20
+#					ADM = 5
+#				}
+#			}
+#			OR = {
+#				check_variable = { which = "Demesne_in_Russia" value = 45 }
+#				check_variable = { which = "Cores_on_Russia" value = 30 }
+#			}
+#		}
+#		effect = {
+#			north_russia_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			north_russia_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			russia_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			russia_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			east_russia_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			east_russia_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			steppes_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			steppes_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			sloboda_ukraine_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			sloboda_ukraine_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			add_prestige = 20
+#			if = {
+#				limit = { government = monarchy NOT = { has_country_modifier = title_6 } }
+#				change_title_6 = yes
+#			}
+#			change_tag = RUS
+#			set_country_flag = rus_formed
+#			add_absolutism = 10
+#			
+#			if = {
+#				limit = {
+#					has_custom_ideas = no
+#					NOT = { has_idea_group = RUS_ideas }
+#				}
+#				swap_national_ideas_effect = yes
+#			}
+#			every_country = {
+#				limit = {
+#					OR = {
+#						primary_culture = russian
+#						capital_scope = { region = north_russia_region }
+#						capital_scope = { region = russia_region }
+#						capital_scope = { region = east_russia_region }
+#						tag = LIT
+#						tag = POL
+#						tag = PLC
+#					}
+#					NOT = { tag = ROOT }
+#					NOT = { is_subject_of = ROOT }
+#				}
+#				add_historical_rival = RUS
+#				ROOT = { add_historical_rival = PREV }
+#			}
+#		}
+#		ai_will_do = {
+#			factor = 1
+#		}
+#		ai_importance = 400
+#	}
+	
+#	russian_republic = {
+#		major = yes
+#		potential = {
+#			always = no
+#			NOT = { exists = RUS }
+#			NOT = { tag = PAP }
+#			NOT = { tag = ERG }
+#			NOT = { tag = ROM }
+#			NOT = { tag = LAT }
+#			government = republic
+#			OR = {
+#				primary_culture = russian
+#				primary_culture = novgorodian
+#				primary_culture = ruthenian
+#			}
+#			is_colonial_nation = no
+#			NOT = { has_country_flag = rus_formed }
+#		}
+#		provinces_to_highlight = {
+#			OR = {
+#				region = north_russia_region
+#				region = russia_region
+#				region = east_russia_region
+#			}
+#		}
+#		allow = {
+#			is_free_or_tributary_trigger = yes
+#			is_at_war = no
+#			OR = {
+#				adm_tech = 23
+#				full_idea_group = expansion_ideas
+#				AND = {
+#					adm_tech = 20
+#					ADM = 5
+#				}
+#			}
+#			OR = {
+#				check_variable = { which = "Demesne_in_Russia" value = 45 }
+#				check_variable = { which = "Cores_on_Russia" value = 30 }
+#			}
+#		}
+#		effect = {
+#			north_russia_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			north_russia_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			russia_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			russia_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			east_russia_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			east_russia_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			add_prestige = 20
+#			if = {
+#				limit = { NOT = { has_country_modifier = title_6 } }
+#				change_title_6 = yes
+#			}
+#			set_country_flag = rus_formed
+#			add_absolutism = 10
+#			if = {
+#				limit = {
+#					has_custom_ideas = no
+#					NOT = { has_idea_group = RUS_ideas }
+#				}
+#				swap_national_ideas_effect = yes
+#			}
+#		}
+#		ai_will_do = {
+#			factor = 1
+#		}
+#		ai_importance = 400
+#	}
+	
+	# saxon_nation = {
+		# major = yes
+		# potential = {
+			# OR = {
+				# primary_culture = high_saxon
+				# primary_culture = thuringian
+			# }
+			# NOT = { exists = SAX }
+			# forming_SAX_trigger = yes
+			# NOT = { tag = PAP }
+			# NOT = { tag = ERG }
+			# NOT = { tag = GER }
+			# NOT = { tag = PRU }
+			# NOT = { tag = WES }
+			# NOT = { tag = HSA }
+			# NOT = { tag = ROM }
+			# NOT = { tag = LAT }
+			# check_variable = { which = "Demesne_in_the_Upper_Saxon_Circuit" value = 5 }
+			# is_colonial_nation = no
+		# }
+		# provinces_to_highlight = {
+			# region = upper_saxon_circle_region
+		# }
+		# allow = {
+			# is_free_or_tributary_trigger = yes
+			# is_at_war = no
+			# check_variable = { which = "Cores_on_the_Upper_Saxon_Circuit" value = 10 }
+			# OR = {
+				# AND = {
+					# owns = 59		# Meissen
+					# is_core = 59	# Meissen
+				# }
+				# AND = {
+					# owns = 1373		# Leipzig
+					# is_core = 1373	# Leipzig
+				# }
+				# AND = {
+					# owns = 2617		# Dresden
+					# is_core = 2617	# Dresden
+				# }
+			# }
+		# }
+		# effect = {
+			# upper_saxon_circle_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# upper_saxon_circle_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# add_prestige = 20
+			# if = {
+				# limit = { government = monarchy OR = { has_country_modifier = title_1 has_country_modifier = title_2 } }
+				# change_title_3 = yes
+			# }
+			# if = {
+				# limit = { NOT = { hre_size = 1 } government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+				# change_title_5 = yes
+			# }
+			# change_tag = SAX
+			# add_absolutism = 10
+			# if = {
+				# limit = {
+					# has_custom_ideas = no
+					# NOT = { has_idea_group = SAX_ideas }
+				# }
+				# swap_national_ideas_effect = yes
+			# }
+			# if = {
+				# limit = {
+					# has_country_flag = wettin_succession
+				# }
+				# clr_country_flag = wettin_succession
+			# }
+		# }
+		# ai_will_do = {
+			# factor = 1
+		# }
+		# ai_importance = 400
+	# }
+	
+#	nation_bretonne = {
+#		major = yes
+#		potential = {
+#			OR = {
+#				tag = MNF
+#				tag = BLO
+#			}
+#			NOT = { exists = BRI }
+#			forming_BRI_trigger = yes
+#			check_variable = { which = "Demesne_in_Brittany" value = 3 }
+#			is_colonial_nation = no
+#		}
+#		provinces_to_highlight = {
+#			area = brittany_area
+#		}
+#		allow = {
+#			OR = {
+#				AND = {
+#					tag = MNF
+#					NOT = { exists = BLO }
+#				}
+#				AND = {
+#					tag = BLO
+#					NOT = { exists = MNF }
+#				}
+#			}
+#			is_free_or_tributary_trigger = yes
+#			is_at_war = no
+#			check_variable = { which = "Cores_on_Brittany" value = 4 }
+#		}
+#		effect = {
+#			brittany_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			brittany_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			add_prestige = 20
+#			if = {
+#				limit = { government = monarchy OR = { has_country_modifier = title_1 has_country_modifier = title_2 } }
+#				change_title_3 = yes
+#			}
+#			change_tag = BRI
+#			add_absolutism = 10
+#			if = {
+#				limit = {
+#					has_custom_ideas = no
+#					NOT = { has_idea_group = BRI_ideas }
+#				}
+#				swap_national_ideas_effect = yes
+#			}
+#		}
+#		ai_will_do = {
+#			factor = 1
+#		}
+#		ai_importance = 400
+#	}
+	
+#	british_nation = {
+#		major = yes
+#		potential = {
+#			always = no
+#			NOT = { exists = GBR }
+#			OR = {
+#				AND = {
+#					tag = ENG
+#					NOT = { has_global_flag = hundred_years_war }
+#					NOT = { has_global_flag = war_of_the_roses }
+#				}
+#				NOT = { exists = ENG }
+#				ENG = {
+#					is_subject_of = ROOT
+#				}
+#			}
+#			OR = {
+#				tag = SCO
+#				NOT = {
+#					exists = SCO
+#				}
+#				SCO = {
+#					is_subject_of = ROOT
+#				}
+#			}
+#			forming_GBR_trigger = yes
+#			NOT = { tag = PAP }
+#			NOT = { tag = ERG }
+#			NOT = { tag = ROM }
+#			NOT = { tag = LAT }
+#			OR = {
+#				culture_group = british
+#				culture_group = gaelic
+#			}
+#			is_colonial_nation = no
+#		}
+#		provinces_to_highlight = {
+#			OR = {
+#				region = south_england_region
+#				region = north_england_region
+#				region = scotland_region
+#				region = ireland_region
+#			}
+#		}
+#		allow = {
+#			is_free_or_tributary_trigger = yes
+#			is_at_war = no
+#			OR = {
+#				adm_tech = 35
+#				AND = {
+#					absolutism = 70
+#					adm_tech = 30
+#					ADM = 5
+#					south_england_region = {
+#						type = all
+#						owned_by = ROOT
+#					}
+#					north_england_region = {
+#						type = all
+#						owned_by = ROOT
+#					}
+#					scotland_region = {
+#						type = all
+#						owned_by = ROOT
+#					}
+#					ireland_region = {
+#						type = all
+#						owned_by = ROOT
+#					}
+#				}
+#			}
+#			owns = 236	# London
+#			OR = {
+#				check_variable = { which = "Demesne_in_Great_Britain" value = 38 }
+#				AND = {
+#					check_variable = { which = "Cores_on_England" value = 14 }
+#					check_variable = { which = "Cores_on_Wales" value = 2 }
+#					check_variable = { which = "Cores_on_Scotland" value = 8 }
+#					check_variable = { which = "Cores_on_Ireland" value = 8 }
+#				}
+#			}
+#		}
+#		effect = {
+#			south_england_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			south_england_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			north_england_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			north_england_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			scotland_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			scotland_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			ireland_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			ireland_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			add_prestige = 20
+#			if = {
+#				limit = { government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+#				change_title_5 = yes
+#			}
+#			change_tag = GBR
+#			GBR = { Effect_set_capital = { target=236 } }
+#			add_absolutism = 10
+#			if = {
+#				limit = {
+#					has_custom_ideas = no
+#					NOT = { has_idea_group = ENG_ideas }
+#				}
+#				swap_national_ideas_effect = yes
+#			}
+#			if = {
+#				limit = {
+#					exists = SCO
+#					NOT = {
+#						tag = SCO
+#					}
+#				}
+#				inherit = SCO
+#			}
+#			if = {
+#				limit = {
+#					exists = ENG
+#					NOT = {
+#						tag = ENG
+#					}
+#				}
+#				inherit = ENG
+#			}
+#		}
+#		ai_will_do = {
+#			factor = 1
+#		}
+#		ai_importance = 400
+#	}
+	
+#	bulgaria_nation = {
+#		major = yes
+#		potential = {
+#			primary_culture = bulgarian
+#			NOT = { exists = BUL }
+#			NOT = { tag = ERG }
+#			NOT = { tag = PAP }
+#			NOT = { tag = BYZ }
+#			NOT = { tag = ROM }
+#			NOT = { tag = LAT }
+#			is_colonial_nation = no
+#		}
+#		provinces_to_highlight = {
+#			OR = {
+#				province_id = 148	# Ohrid
+#				province_id = 150	# Silistria
+#				province_id = 156	# Nisava
+#				province_id = 157	# Lodogoria
+#				province_id = 159	# Dobrogea
+#				province_id = 1426	# Serdica
+#				province_id = 1427	# Maritsa
+#				province_id = 2381	# Karvuna
+#				province_id = 2382	# Vidin
+#			}
+#		}
+#		allow = {
+#			is_free_or_tributary_trigger = yes
+#			is_at_war = no
+#			owns = 148	# Ohrid
+#			owns = 150	# Silistria
+#			owns = 156	# Nisava
+#			owns = 157	# Lodogoria
+#			owns = 159	# Dobrogea
+#			owns = 1426	# Serdica
+#			owns = 1427	# Maritsa
+#			owns = 2381	# Karvuna
+#			owns = 2382	# Vidin
+#		}
+#		effect = {
+#			east_bulgaria_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			east_bulgaria_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			west_bulgaria_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			west_bulgaria_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			dobrogea_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			dobrogea_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			add_prestige = 20
+#			if = {
+#				limit = { government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+#				change_title_5 = yes
+#			}
+#			change_tag = BUL
+#			add_absolutism = 10
+#			if = {
+#				limit = {
+#					has_custom_ideas = no
+#					NOT = { has_idea_group = BUL_ideas }
+#				}
+#				swap_national_ideas_effect = yes
+#			}
+#		}
+#		ai_will_do = {
+#			factor = 1
+#		}
+#		ai_importance = 400
+#	}
+	
+#	serbia_nation = {
+#		major = yes
+#		potential = {
+#			always = no
+#			NOT = { exists = SER }
+#			NOT = { tag = ERG }
+#			NOT = { tag = PAP }
+#			NOT = { tag = BYZ }
+#			NOT = { tag = ROM }
+#			NOT = { tag = LAT }
+#			NOT = { tag = ILL }
+#			primary_culture = serbian
+#			is_colonial_nation = no
+#		}
+#		provinces_to_highlight = {
+#			serbia_region_trigger = yes
+#		}
+#		allow = {
+#			is_free_or_tributary_trigger = yes
+#			is_at_war = no
+#			# owns = 2612	# Belgrade
+#			OR = {
+#				check_variable = { which = "Demesne_in_Serbia" value = 8 }
+#				check_variable = { which = "Cores_on_Serbia" value = 6 }
+#			}
+#		}
+#		effect = {
+#			south_serbia_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			south_serbia_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			north_serbia_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			north_serbia_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			macedonia_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			macedonia_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			add_prestige = 20
+#			if = {
+#				limit = { government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+#				change_title_5 = yes
+#			}
+#			change_tag = SER
+#			add_absolutism = 10
+#			if = {
+#				limit = {
+#					has_custom_ideas = no
+#					NOT = { has_idea_group = SER_ideas }
+#				}
+#				swap_national_ideas_effect = yes
+#			}
+#		}
+#		ai_will_do = {
+#			factor = 1
+#		}
+#		ai_importance = 400
+#	}
+	
+#	italian_nation_no_hre = {
+#		major = yes
+#		potential = {
+#			OR = {
+#				culture_group = latin
+#				tag = URB
+#			}
+#			NOT = { has_global_flag = iron_crown_relinquished }
+#			NOT = { exists = ITA }
+#			NOT = { exists = ITE }
+#			NOT = { tag = PAP }
+#			NOT = { tag = ERG }
+#			NOT = { tag = ROM }
+#			NOT = { tag = LAT }
+#			OR = {
+#				NOT = { hre_size = 1 }
+#				has_global_flag = westphalia_italy
+#				is_emperor = yes
+#			}
+#			is_colonial_nation = no
+#			NOT = { adm_tech = 50 }
+#		}
+#		provinces_to_highlight = {
+#			superregion = italy_superregion
+#			NOT = {
+#				region = naples_region
+#				region = sicily_region
+#			}
+#		}
+#		allow = {
+#			NOT = { has_global_flag = iron_crown_relinquished }
+#			NOT = { adm_tech = 50 }
+#			OR = {
+#				check_variable = { which = "Demesne_in_Italy" value = 30 }
+#				AND = {
+#					check_variable = { which = "Cores_on_Emilia_Romagna" value = 4 }
+#					check_variable = { which = "Cores_on_Tuscany" value = 8 }
+#					check_variable = { which = "Cores_on_Lombardy" value = 4 }
+#					check_variable = { which = "Cores_on_Sardinia" value = 2 }
+#					check_variable = { which = "Cores_on_Liguria_Piedmont" value = 4 }
+#					check_variable = { which = "Cores_on_Veneto" value = 5 }
+#					check_variable = { which = "Cores_on_Umbria_Marcha" value = 4 }
+#				}
+#			}
+#			owns = 1347		# Pavia, historical capital
+#			is_free_or_tributary_trigger = yes
+#			is_at_war = no
+#		}
+#		effect = {
+#			set_global_flag = iron_crown_relinquished
+#			disable_italian_powers = yes
+#			east_italy_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			east_italy_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			west_italy_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			west_italy_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			central_italy_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			central_italy_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			add_prestige = 20
+#			if = {
+#				limit = { government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+#				change_title_5 = yes
+#			}
+#			change_tag = ITA
+#			add_absolutism = 10
+#			if = {
+#				limit = {
+#					has_custom_ideas = no
+#					NOT = { has_idea_group = ITA_ideas }
+#				}
+#				swap_national_ideas_effect = yes
+#			}
+#		}
+#		ai_will_do = {
+#			factor = 1
+#		}
+#		ai_importance = 400
+#	}
+	
+#	italian_nation_in_hre = {
+#		major = yes
+#		potential = {
+#			OR = {
+#				culture_group = latin
+#				tag = URB
+#			}
+#			NOT = { exists = ITA }
+#			NOT = { exists = ITE }
+#			NOT = { tag = PAP }
+#			NOT = { tag = ERG }
+#			NOT = { tag = ROM }
+#			NOT = { tag = LAT }
+#			hre_size = 1
+#			is_emperor = no
+#			is_colonial_nation = no
+#		}
+#		provinces_to_highlight = {
+#			superregion = italy_superregion
+#			NOT = {
+#				region = naples_region
+#				region = sicily_region
+#			}
+#		}
+#		allow = {
+#			government = monarchy
+#			OR = {
+#				check_variable = { which = "Demesne_in_Italy" value = 30 }
+#				AND = {
+#					check_variable = { which = "Cores_on_Emilia_Romagna" value = 4 }
+#					check_variable = { which = "Cores_on_Tuscany" value = 8 }
+#					check_variable = { which = "Cores_on_Lombardy" value = 4 }
+#					check_variable = { which = "Cores_on_Sardinia" value = 2 }
+#					check_variable = { which = "Cores_on_Liguria_Piedmont" value = 4 }
+#					check_variable = { which = "Cores_on_Veneto" value = 5 }
+#					check_variable = { which = "Cores_on_Umbria_Marcha" value = 4 }
+#				}
+#			}
+#			owns = 1347		# Pavia, historical capital
+#			is_free_or_tributary_trigger = yes
+#			is_at_war = no
+#		}
+#		effect = {
+#			emperor = {
+#				country_event = { id = "flavor_ita.1" days = 1 }
+#			}
+#		}
+#		ai_will_do = {
+#			factor = 1
+#		}
+#		ai_importance = 400
+#	}
+	
+#	italian_nation_late = {
+#		major = yes
+#		potential = {
+#			OR = {
+#				AND = {
+#					OR = {
+#						culture_group = latin
+#						tag = URB
+#					}
+#					NOT = { exists = ITA }
+#				}
+#				tag = ITA
+#			}
+#			NOT = { exists = ITE }
+#			NOT = { tag = PAP }
+#			NOT = { tag = ERG }
+#			NOT = { tag = ROM }
+#			NOT = { tag = LAT }
+#			NOT = { hre_size = 1 }
+#			is_colonial_nation = no
+#			adm_tech = 50
+#		}
+#		provinces_to_highlight = {
+#			superregion = italy_superregion
+#		}
+#		allow = {
+#			adm_tech = 50
+#			OR = {
+#				check_variable = { which = "Demesne_in_Italy" value = 30 }
+#				AND = {
+#					check_variable = { which = "Cores_on_Emilia_Romagna" value = 4 }
+#					check_variable = { which = "Cores_on_Tuscany" value = 8 }
+#					check_variable = { which = "Cores_on_Lombardy" value = 4 }
+#					check_variable = { which = "Cores_on_Sardinia" value = 2 }
+#					check_variable = { which = "Cores_on_Liguria_Piedmont" value = 4 }
+#					check_variable = { which = "Cores_on_Veneto" value = 5 }
+#					check_variable = { which = "Cores_on_Umbria_Marcha" value = 4 }
+#				}
+#			}
+#			OR = {
+#				check_variable = { which = "Demesne_in_Two_Sicilies" value = 15 }
+#				check_variable = { which = "Cores_on_Two_Sicilies" value = 10 }
+#			}
+#			OR = {
+#				owns = 118 # Lazio
+#				owns = 2530 # Roma
+#			}
+#			is_free_or_tributary_trigger = yes
+#			is_at_war = no
+#		}
+#		effect = {
+#			italy_superregion = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			italy_superregion = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			add_prestige = 20
+#			if = {
+#				limit = { government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+#				change_title_5 = yes
+#			}
+#			change_tag = ITE
+#			add_absolutism = 10
+#			if = {
+#				limit = {
+#					has_custom_ideas = no
+#					NOT = { has_idea_group = ITA_ideas }
+#				}
+#				swap_national_ideas_effect = yes
+#			}
+#			disable_italian_powers = yes
+#			# country_event = { id = holyromanempire.1 days = 5 } # Useless... the Empire has to be gone for the decision to work.
+#		}
+#		ai_will_do = {
+#			factor = 1
+#		}
+#		ai_importance = 400
+#	}
+	
+	# tuscany_nation = {
+		# major = yes
+		# potential = {
+			# NOT = { exists = TUS }
+			# NOT = { tag = ITA }
+			# NOT = { tag = ITC }
+			# NOT = { tag = ITD }
+			# NOT = { tag = ITE }
+			# NOT = { tag = PAP }
+			# NOT = { tag = ERG }
+			# NOT = { tag = SPI }
+			# NOT = { tag = ROM }
+			# NOT = { tag = LAT }
+			# primary_culture = tuscan
+			# is_emperor = no
+			# capital_scope = { area = tuscany_area }
+			# check_variable = { which = "Demesne_in_Tuscany" value = 4 }
+			# is_colonial_nation = no
+		# }
+		# provinces_to_highlight = {
+			# OR = {
+				# area = tuscany_area
+				# area = siena_area
+			# }
+		# }
+		# allow = {
+			# is_free_or_tributary_trigger = yes
+			# prestige = 25
+			# OR = {
+				# adm_tech = 20
+				# AND = {
+					# NOT = { absolutism = 90 }
+					# stability = 1
+					# full_idea_group = culture_ideas
+				# }
+				# AND = {
+					# ADM = 5
+					# statesman = 2
+				# }
+			# }
+			# government = monarchy
+			# OR = {
+				# check_variable = { which = "Demesne_in_Tuscany" value = 8 }
+				# check_variable = { which = "Cores_on_Tuscany" value = 6 }
+			# }
+			# is_at_war = no
+# #			every_country = {
+# #				limit = { papal_trigger = yes }
+# #				add_opinion = { who = ROOT modifier = opinion_improved_relations }
+# #			}
+		# }
+		# effect = {
+			# tuscany_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# tuscany_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# add_prestige = 20
+			# if = {
+				# limit = { government = monarchy NOT = { has_country_modifier = title_4 has_country_modifier = title_5 has_country_modifier = title_6 } }
+				# change_title_4 = yes
+			# }
+			# change_tag = TUS
+			# add_absolutism = 10
+			# if = {
+				# limit = {
+					# has_custom_ideas = no
+					# NOT = { has_idea_group = TUS_ideas }
+				# }
+				# swap_national_ideas_effect = yes
+			# }
+			# swap_non_generic_missions = yes
+		# }
+		# ai_will_do = {
+			# factor = 1
+		# }
+		# ai_importance = 400
+	# }
+	
+	# sicilian_nation = {
+		# major = yes
+		# potential = {
+			# always = no
+			# NOT = { exists = NAP }
+			# OR = { #There can only be one Sicily alive
+				# AND = {
+					# tag = SIC
+					# NOT = { exists = KNP }
+				# }
+				# AND = {
+					# tag = KNP
+					# NOT = { exists = SIC }
+				# }
+			# }
+			# is_emperor = no
+			# is_colonial_nation = no
+			# adm_tech = 20
+			# capital_scope = { region = sicily_region }
+			# culture_group = napolitan
+		# }
+		# provinces_to_highlight = {
+			# OR = {
+				# region = sicily_region
+				# region = naples_region
+			# }
+		# }
+		# allow = {
+			# government = monarchy
+			# prestige = 50
+			# is_free_or_tributary_trigger = yes
+			# OR = {
+				# adm_tech = 30
+				# AND = {
+					# NOT = { absolutism = 90 }
+					# stability = 3
+					# full_idea_group = administrative_ideas
+					# full_idea_group = culture_ideas
+					# full_idea_group = diplomatic_ideas
+				# }
+				# AND = {
+					# ADM = 6
+					# statesman = 1
+				# }
+			# }
+			# owns = 2531	# Napoli
+			# owns = 125	# Palermu
+			# OR = {
+				# check_variable = { which = "Demesne_in_Two_Sicilies" value = 20 }
+				# check_variable = { which = "Cores_on_Two_Sicilies" value = 15 }
+			# }
+			# is_at_war = no
+		# }
+		# effect = {
+			# sicily_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# sicily_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# naples_region = { limit = { owned_by = ROOT } add_core = NAP }
+			# naples_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# add_prestige = 20
+			# if = {
+				# limit = { government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+				# change_title_5 = yes
+			# }
+			# change_tag = NAP
+			# add_absolutism = 10
+			# if = {
+				# limit = {
+					# has_custom_ideas = no
+					# NOT = { has_idea_group = NAP_ideas }
+				# }
+				# swap_national_ideas_effect = yes
+			# }
+		# }
+		# ai_will_do = {
+			# factor = 1
+		# }
+		# ai_importance = 400
+	# }
+	
+	# german_nation = {
+		# major = yes
+		# potential = {
+			# OR = {
+				# culture_group = high_germanic
+				# culture_group = low_germanic
+			# }
+			# NOT = { exists = GER }
+			# OR = {
+				# NOT = { tag = ERG }
+				# AND = {
+					# dip_tech = 45
+					# NOT = {
+						# tag = ERG
+						# ai = yes
+					# }
+				# }
+			# }
+			# NOT = { tag = PAP }
+			# is_colonial_nation = no
+		# }
+		# provinces_to_highlight = {
+			# OR = {
+				# superregion = germany_superregion
+				# region = austrian_circle_region
+				# region = swabia_bavarian_region
+			# }
+		# }
+		# allow = {
+			# is_free_or_tributary_trigger = yes
+			# OR = {
+				# check_variable = { which = "Demesne_in_Germany" value = 70 }
+				# AND = {
+					# check_variable = { which = "Cores_on_Bavarian_Circuit" value = 3 }
+					# check_variable = { which = "Cores_on_Franconian_Circuit" value = 3 }
+					# check_variable = { which = "Cores_on_the_Swabian_Circuit" value = 6 }
+					# check_variable = { which = "Cores_on_the_Upper_Saxon_Circuit" value = 10 }
+					# check_variable = { which = "Cores_on_the_Lower_Saxon_Circuit" value = 10 }
+					# check_variable = { which = "Cores_on_the_Upper_Rhine_Circuit" value = 9 }
+					# check_variable = { which = "Cores_on_Westphalia" value = 4 }
+				# }
+			# }
+			# is_at_war = no
+			# OR = {
+				# NOT = { hre_size = 1 }
+				# AND = {
+					# hre_size = 1
+					# NOT = { hre_size = 2 }
+					# is_emperor = yes
+				# }
+				# adm_tech = 50
+			# }
+		# }
+		# effect = {
+			# lower_saxon_circle_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# lower_saxon_circle_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# upper_saxon_circle_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# upper_saxon_circle_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# westphalian_circle_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# westphalian_circle_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# upper_rhenish_circle_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# upper_rhenish_circle_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# swabia_bavarian_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# swabia_bavarian_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# #all_core_province = { limit = { owned_by = ROOT } } add_core = GER }
+			# add_prestige = 20
+			# if = {
+				# limit = { government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+				# change_title_5 = yes
+			# }
+			# change_tag = GER
+			# add_absolutism = 10
+			# emperor = {
+				# add_opinion = {
+					# who = root
+					# modifier = opinion_left_empire
+				# }
+			# }
+			# leave_the_hre = yes
+			# emperor = {
+				# country_event = { id = hre_event.5 }
+			# }
+		# }
+		# ai_will_do = {
+			# factor = 1
+		# }
+		# ai_importance = 400
+	# }
+	
+	# bavarian_nation = {
+		# major = yes
+		# potential = {
+			# NOT = { exists = BAV }
+			# NOT = { tag = PAP }
+			# NOT = { tag = ERG }
+			# NOT = { tag = GER }
+			# NOT = { tag = PRU }
+			# NOT = { tag = WES }
+			# NOT = { tag = HSA }
+			# NOT = { tag = ROM }
+			# NOT = { tag = LAT }
+			# primary_culture = bavarian
+			# is_colonial_nation = no
+		# }
+		# provinces_to_highlight = {
+			# OR = {
+				# area = lower_bavaria_area
+				# area = upper_bavaria_area
+			# }
+		# }
+		# allow = {
+			# is_free_or_tributary_trigger = yes
+			# check_variable = { which = "Demesne_in_Bavarian_Circuit" value = 8 }
+			# is_core = 64
+			# is_core = 65
+			# is_core = 1351
+			# is_core = 1509
+			# is_at_war = no
+		# }
+		# effect = {
+			# lower_bavaria_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# lower_bavaria_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# upper_bavaria_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# upper_bavaria_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# add_prestige = 20
+			# if = {
+				# limit = { government = monarchy OR = { has_country_modifier = title_1 has_country_modifier = title_2 } }
+				# change_title_3 = yes
+			# }
+			# if = {
+				# limit = { NOT = { hre_size = 1 } government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+				# change_title_5 = yes
+			# }
+			# change_tag = BAV
+			# if = {
+				# limit = {
+					# has_custom_ideas = no
+					# NOT = { has_idea_group = BAV_ideas }
+				# }
+				# swap_national_ideas_effect = yes
+			# }
+			# add_absolutism = 10
+			# swap_non_generic_missions = yes
+		# }
+		# ai_will_do = {
+			# factor = 1
+		# }
+		# ai_importance = 400
+	# }
+	
+	# swabian_nation = {
+		# major = yes
+		# potential = {
+			# primary_culture = schwabisch
+			# NOT = { exists = SWA }
+			# NOT = { tag = PAP }
+			# NOT = { tag = ERG }
+			# NOT = { tag = GER }
+			# NOT = { tag = PRU }
+			# NOT = { tag = WES }
+			# NOT = { tag = HSA }
+			# NOT = { tag = ROM }
+			# NOT = { tag = LAT }
+			# is_colonial_nation = no
+		# }
+		# provinces_to_highlight = {
+			# OR = {
+				# area = lower_swabia_area
+				# area = upper_swabia_area
+			# }
+		# }
+		# allow = {
+			# is_free_or_tributary_trigger = yes
+			# check_variable = { which = "Demesne_in_the_Swabian_Circuit" value = 8 }
+			# is_core = 77
+			
+			# is_at_war = no
+		# }
+		# effect = {
+			# lower_swabia_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# lower_swabia_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# upper_swabia_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# upper_swabia_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# add_prestige = 20
+			# if = {
+				# limit = { government = monarchy OR = { has_country_modifier = title_1 has_country_modifier = title_2 } }
+				# change_title_3 = yes
+			# }
+			# if = {
+				# limit = { NOT = { hre_size = 1 } government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+				# change_title_5 = yes
+			# }
+			# change_tag = SWA
+			# add_absolutism = 10
+		# }
+		# ai_will_do = {
+			# factor = 1
+		# }
+		# ai_importance = 400
+	# }
+	
+	# lower_saxony_nation = {
+		# major = yes
+		# potential = {
+			# NOT = { exists = LSA }
+			# NOT = { tag = PAP }
+			# NOT = { tag = ERG }
+			# NOT = { tag = GER }
+			# NOT = { tag = PRU }
+			# NOT = { tag = WES }
+			# NOT = { tag = HSA }
+			# NOT = { tag = ROM }
+			# NOT = { tag = LAT }
+			# OR = {
+				# primary_culture = old_saxon
+				# primary_culture = eastphalian
+				# primary_culture = westphalian
+			# }
+			# is_colonial_nation = no
+		# }
+		# provinces_to_highlight = {
+			# OR = {
+				# area = eastphalia_area
+				# region = westphalian_circle_region
+			# }
+		# }
+		# allow = {
+			# is_free_or_tributary_trigger = yes
+			# is_at_war = no
+			# OR = {
+				# check_variable = { which = "Demesne_in_Eastphalia" value = 8 }
+				# check_variable = { which = "Cores_on_Eastphalia" value = 5 }
+			# }
+			# OR = {
+				# check_variable = { which = "Demesne_in_Westphalia" value = 8 }
+				# check_variable = { which = "Cores_on_Westphalia" value = 5 }
+			# }
+		# }
+		# effect = {
+			# westphalian_circle_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# westphalian_circle_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# eastphalia_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# eastphalia_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# add_prestige = 20
+			# if = {
+				# limit = { government = monarchy OR = { has_country_modifier = title_1 has_country_modifier = title_2 } }
+				# change_title_3 = yes
+			# }
+			# if = {
+				# limit = { NOT = { hre_size = 1 } government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+				# change_title_5 = yes
+			# }
+			# change_tag = LSA
+			# add_absolutism = 10
+		# }
+		# ai_will_do = {
+			# factor = 1
+		# }
+		# ai_importance = 400
+	# }
+	
+	form_sardinia_piedmont = {
+		major = yes
+		potential = {
+			culture_group = latin
+			NOT = { exists = SPI }
+			NOT = { exists = ITA }
+			NOT = { tag = ERG }
+			NOT = { tag = PAP }
+			NOT = { tag = ROM }
+			NOT = { tag = LAT }
+			capital_scope = { OR = { area = piedmont_area area = liguria_area area = corsica_sardinia_area } }
+			is_colonial_nation = no
+		}
+		provinces_to_highlight = {
+			OR = {
+				area = piedmont_area
+				area = liguria_area
+				area = corsica_sardinia_area
+			}
+		}
+		allow = {
+			is_free_or_tributary_trigger = yes
+			OR = {
+				adm_tech = 35
+				AND = {
+					#NOT = { absolutism = 80 }
+					stability = 1
+					full_idea_group = diplomatic_ideas
+				}
+				AND = {
+					adm_tech = 19
+					ADM = 5
+					statesman = 1
+				}
+			}
+			owns = 103 # Piemonte
+			OR = {
+				AND = {
+					check_variable = { which = "Demesne_in_Liguria_Piedmont" value = 5 }
+					check_variable = { which = "Demesne_in_Sardinia" value = 4 }
+				}
+				AND = {
+					check_variable = { which = "Cores_on_Liguria_Piedmont" value = 4 }
+					check_variable = { which = "Cores_on_Sardinia" value = 3 }
+				}
+			}
+			is_at_war = no
+		}
+		effect = {
+			corsica_sardinia_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			corsica_sardinia_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			piedmont_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			piedmont_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			liguria_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			liguria_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			add_prestige = 20
+			if = {
+				limit = { government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+				change_title_5 = yes
+			}
+			if = {
+				limit = {
+					OR = {
+						SAR = { vassal_of = ROOT }
+						SAR = { junior_union_with = ROOT }
+					}
+				}
+				inherit = SAR
+			}
+			change_tag = SPI
+			add_absolutism = 10
+			if = {
+				limit = {
+					has_custom_ideas = no
+					NOT = { has_idea_group = SPI_ideas }
+				}
+				swap_national_ideas_effect = yes
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+	form_siam = {
+		major = yes
+		potential = {
+			culture_group = thai_group
+			is_year = 1700
+			NOT = { tag = SUV }
+			NOT = { exists = SIA }
+			#num_of_cities = 16
+			is_colonial_nation = no
+		}
+		provinces_to_highlight = {
+			OR = {
+				region = lan_xang_region
+				region = inland_siam_region
+				region = coastal_siam_region
+			}
+		}
+		allow = {
+			OR = {
+				AND = {
+					check_variable = { which = "Demesne_in_Thai_Plain" value = 10 }
+					check_variable = { which = "Demesne_in_Lan_Xang" value = 9 }
+				}
+				AND = {
+					check_variable = { which = "Cores_on_Thai_Plain" value = 8 }
+					check_variable = { which = "Cores_on_Lan_Xang" value = 7 }
+				}
+			}
+			is_free_or_tributary_trigger = yes
+			owns = 600  #Ayutthaya
+			owns = 601  #Sukhotai
+			owns = 602  #Lopburi
+			is_at_war = no
+		}
+		effect = {
+			lan_xang_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			lan_xang_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			inland_siam_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			inland_siam_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			coastal_siam_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			coastal_siam_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			add_prestige = 20
+			change_tag = SIA
+			add_absolutism = 10
+			if = {
+				limit = {
+					has_custom_ideas = no
+					NOT = { has_idea_group = AYU_ideas }
+				}
+				swap_national_ideas_effect = yes
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+	form_goldenhorde = {
+		major = yes
+		potential = {
+			OR = {
+				tag = BLU
+				tag = CHU
+				AND = {
+					tag = WHI
+					is_year = 1361 # Allows the White Horde collapse to occur first
+				}
+			}
+			NOT = { exists = GOL }
+		}
+		provinces_to_highlight = {
+			OR = {
+				region = steppes_region
+				region = kazakh_region
+				region = crimea_region
+			}
+		}
+		allow = {
+			OR = {
+				AND = {
+					tag = BLU
+					OR = {
+						NOT = { exists = WHI }
+						WHI = {
+							junior_union_with = ROOT
+						}
+					}
+					OR = {
+						NOT = { exists = CHU }
+						CHU = {
+							junior_union_with = ROOT
+						}
+					}
+				}
+				AND = {
+					tag = WHI
+					OR = {
+						NOT = { exists = BLU }
+						BLU = {
+							junior_union_with = ROOT
+						}
+					}
+					OR = {
+						NOT = { exists = CHU }
+						CHU = {
+							junior_union_with = ROOT
+						}
+					}
+				}
+				AND = {
+					tag = CHU
+					OR = {
+						NOT = { exists = BLU }
+						BLU = {
+							junior_union_with = ROOT
+						}
+					}
+					OR = {
+						NOT = { exists = WHI }
+						WHI = {
+							junior_union_with = ROOT
+						}
+					}
+				}
+			}
+			is_free_or_tributary_trigger = yes
+			OR = {
+				check_variable = { which = "Demesne_in_Altaic_Throne" value = 28 }
+				check_variable = { which = "Cores_on_Altaic_Throne" value = 21 }
+			}
+			country_or_vassal_holds = 1293 # Astrakhan
+			country_or_vassal_holds = 1310 # Sarai-al-Jadid
+			country_or_vassal_holds = 2444 # Sarai Juk
+			has_heir = yes
+			is_subject = no
+			has_any_disaster = no
+			is_at_war = no
+		}
+		effect = {
+			steppes_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			steppes_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			kazakh_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			kazakh_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			crimea_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			crimea_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			if = {
+				limit = {
+					BLU = { junior_union_with = ROOT ai = yes }
+				}
+				inherit = BLU
+			}
+			if = {
+				limit = {
+					CHU = { junior_union_with = ROOT ai = yes }
+				}
+				inherit = CHU
+			}
+			if = {
+				limit = {
+					WHI = { junior_union_with = ROOT ai = yes }
+				}
+				inherit = WHI
+			}
+			add_prestige = 20
+			change_tag = GOL
+			add_absolutism = 10
+			Effect_set_capital = { target=1310 }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+	form_celestial_empire = {
+		major = yes
+		potential = {
+			OR = {
+				culture_group = chinese_group
+				has_country_flag = barbarian_claimant_china
+			}
+			is_emperor_of_china = no
+			is_colonial_nation = no
+			NOT = { has_country_flag = mandate_of_heaven_claimed }
+		}
+		provinces_to_highlight = {
+			OR = {
+				superregion = north_china_superregion
+				superregion = east_china_superregion
+				superregion = southwest_china_superregion
+			}
+		}
+		allow = {
+			check_variable = { which = "Demesne_in_the_Mandate_of_Heaven" value = 135 }
+			OR = {
+				owns = 701 #Kaifeng
+				owns = 702 #Luoyang
+				owns = 708 #Beijing
+				owns = 2150 #Nanjing
+				owns = 2252 #Xi'an
+			}
+			is_subject = no
+			is_at_war = no
+		}
+		effect = {
+			set_country_flag = mandate_of_heaven_claimed
+			random_country = {
+				limit = {
+					has_country_flag = former_dynasty_china
+				}
+				clr_country_flag = former_dynasty_china
+			}
+			random_country = {
+				limit = {
+					has_country_flag = mandate_of_heaven_claimed
+					NOT = { tag = ROOT }
+				}
+				clr_country_flag = mandate_of_heaven_claimed
+				set_country_flag = former_dynasty_china
+			}
+			set_country_flag = mandate_of_heaven_claimed
+			clr_country_flag = red_turban_reb
+			clr_country_flag = imperial_appenage
+			if = {
+				limit = { government = monarchy NOT = { has_country_modifier = title_6 } }
+				change_title_6 = yes
+			}
+			add_legitimacy = 100
+			add_stability_3 = yes
+			add_prestige = 20
+			if = {
+				limit = {
+					culture_group = chinese_group
+				}
+				north_china_superregion = { limit = { culture_group = chinese_group NOT = { is_core = ROOT } } add_core = ROOT }
+				north_china_superregion = { limit = { NOT = { culture_group = chinese_group } NOT = { owned_by = ROOT } NOT = { is_permanent_claim = ROOT } NOT = { province_id = 5266 } } add_permanent_claim = ROOTT }
+				east_china_superregion = { limit = { culture_group = chinese_group NOT = { is_core = ROOT } } add_core = ROOT }
+				east_china_superregion = { limit = { NOT = { culture_group = chinese_group } NOT = { owned_by = ROOT } NOT = { is_permanent_claim = ROOT } NOT = { province_id = 5267 } } add_permanent_claim = ROOTT }
+				southwest_china_superregion = { limit = { culture_group = chinese_group NOT = { is_core = ROOT } } add_core = ROOT }
+				southwest_china_superregion = { limit = { NOT = { culture_group = chinese_group } NOT = { owned_by = ROOT } NOT = { is_permanent_claim = ROOT } NOT = { province_id = 5268 } } add_permanent_claim = ROOTT }
+			}
+			else_if = {
+				limit = {
+					has_country_flag = barbarian_claimant_china
+				}
+				north_china_superregion = { limit = { owned_by = ROOT NOT = { is_core = ROOT } } add_core = ROOT }
+				north_china_superregion = { limit = { NOT = { owned_by = ROOT } NOT = { is_permanent_claim = ROOT } NOT = { province_id = 5266 } } add_permanent_claim = ROOTT }
+				east_china_superregion = { limit = { owned_by = ROOT NOT = { is_core = ROOT } } add_core = ROOT }
+				east_china_superregion = { limit = { NOT = { owned_by = ROOT } NOT = { is_permanent_claim = ROOT } NOT = { province_id = 5267 } } add_permanent_claim = ROOTT }
+				southwest_china_superregion = { limit = { owned_by = ROOT NOT = { is_core = ROOT } } add_core = ROOT }
+				southwest_china_superregion = { limit = { NOT = { owned_by = ROOT } NOT = { is_permanent_claim = ROOT } NOT = { province_id = 5268 } } add_permanent_claim = ROOTT }
+			}
+			add_absolutism = 10
+			country_event = { id = chinese_factions.1 days = 1 }
+			country_event = { id = tianxia.120 }
+			if = {
+				limit = {
+					technology_group = steppestech
+				}
+				change_technology_group = chinese
+				change_unit_type = chinese
+			}
+			add_country_modifier = { name = "recently_unified_china" duration = 1825 }
+			remove_country_modifier = mongol_xingsheng
+			remove_country_modifier = non_imperial_hegemon
+			set_emperor_of_china = ROOT
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+	#westphalia_nation = {
+	#	major = yes
+	#	potential = {
+	#		NOT = { exists = WES }
+	#		NOT = { tag = PAP }
+	#		NOT = { tag = ERG }
+	#		NOT = { tag = GER }
+	#		NOT = { tag = USA }
+	#		NOT = { tag = BRZ }
+	#		NOT = { tag = MEX }
+	#		NOT = { tag = LSA }
+	#		NOT = { tag = HSA }
+	#		OR = {
+	#			primary_culture = hessian
+	#			primary_culture = old_saxon
+	#		}
+	#		is_colonial_nation = no
+	#	}
+	#	allow = {
+	#		is_at_war = no
+	#		OR = {
+	#			adm_tech = 50
+	#			NOT = { hre_size = 1 }
+	#		}
+	#		OR = {
+	#			check_variable = { which = "Demesne_in_the_Lower_Rhine_Circuit" value = 5 }
+	#			check_variable = { which = "Cores_on_the_Lower_Rhine_Circuit" value = 3 }
+	#		}
+	#	}
+	#	effect = {
+	#		westphalian_circle_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+	#		westphalian_circle_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+	#		add_prestige = 20
+	#		if = {
+	#			limit = { government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+	#			change_title_5 = yes
+	#		}
+	#		change_tag = WES
+	#		add_absolutism = 10
+	#	}
+	#	ai_will_do = {
+	#		factor = 1
+	#	}
+	#}
+	
+	malaccan_nation = {
+		major = yes
+		potential = {
+			primary_culture = malayan
+			NOT = { exists = MLC }
+			NOT = { tag = MPH }
+			NOT = { tag = SRV }
+			NOT = { tag = IND }
+			check_variable = { which = "Demesne_in_Malaya_Peninsula" value = 1 }
+			is_colonial_nation = no
+		}
+		provinces_to_highlight = {
+			region = malaya_region
+		}
+		allow = {
+			is_at_war = no
+			is_free_or_tributary_trigger = yes
+			OR = {
+				check_variable = { which = "Demesne_in_Malaya_Peninsula" value = 12 }
+				check_variable = { which = "Cores_on_Malaya_Peninsula" value = 8 }
+			}
+			owns = 596 # Selangor
+		}
+		effect = {
+			malaya_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			malaya_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			596 = {
+				# add_base_tax = 4
+				# add_base_production = 4
+				add_building = fort_15th
+			}
+			MLC = { Effect_set_capital = { target=596 } }
+			add_prestige = 20
+			change_tag = MLC
+			add_absolutism = 10
+			if = {
+				limit = {
+					has_custom_ideas = no
+					NOT = { has_idea_group = MLC_ideas }
+				}
+				swap_national_ideas_effect = yes
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	polish_nation = {
+		major = yes
+		potential = {
+			OR = {
+				tag = MAZ
+				AND = {
+					primary_culture = silesian
+					dynasty = "Piast"
+				}
+			}
+			NOT = { exists = POL }
+			NOT = { tag = PAP }
+			NOT = { tag = ERG }
+			NOT = { tag = ROM }
+			NOT = { tag = LAT }
+			is_colonial_nation = no
+		}
+		provinces_to_highlight = {
+			OR = {
+				region = polonia_major_region
+				region = polonia_minor_region
+			}
+		}
+		allow = {
+			is_at_war = no
+			is_free_or_tributary_trigger = yes
+			OR = {
+				check_variable = { which = "Demesne_in_Poland" value = 18 }
+				check_variable = { which = "Cores_on_Poland" value = 12 }
+			}
+			owns = 262 # Kraków
+		}
+		effect = {
+			polonia_major_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			polonia_major_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			polonia_minor_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			polonia_minor_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			add_prestige = 20
+			if = {
+				limit = { government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+				change_title_5 = yes
+			}
+			change_tag = POL
+			add_absolutism = 10
+			if = {
+				limit = {
+					has_custom_ideas = no
+					NOT = { has_idea_group = POL_ideas }
+				}
+				swap_national_ideas_effect = yes
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	lithuanian_nation = {
+		major = yes
+		potential = {
+			OR = {
+				primary_culture = lithuanian
+				AND = {
+					primary_culture = ruthenian
+					dynasty = "Gediminai"
+				}
+			}
+			NOT = { exists = LIT }
+			NOT = { tag = PAP }
+			NOT = { tag = ERG }
+			NOT = { tag = ROM }
+			NOT = { tag = LAT }
+			NOT = { tag = RUS }
+			NOT = { tag = PLC }
+			is_colonial_nation = no
+		}
+		provinces_to_highlight = {
+			OR = {
+				region = lithuania_region
+				region = ruthenia_region
+			}
+		}
+		allow = {
+			is_at_war = no
+			is_free_or_tributary_trigger = yes
+			OR = {
+				tag = TRK
+				AND = {
+					check_variable = { which = "Demesne_in_Lithuania" value = 15 }
+					owns = 272 # Aukstaitija
+				}
+				AND = {
+					check_variable = { which = "Cores_on_Lithuania" value = 10 }
+					owns = 272 # Aukstaitija
+				}
+			}
+		}
+		effect = {
+			lithuania_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = LIT }
+			lithuania_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			ruthenia_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = LIT }
+			ruthenia_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			add_prestige = 20
+			if = {
+				limit = { government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+				change_title_5 = yes
+			}
+			change_tag = LIT
+			add_absolutism = 5
+			if = {
+				limit = {
+					has_custom_ideas = no
+					NOT = { has_idea_group = LIT_ideas }
+				}
+				swap_national_ideas_effect = yes
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	polish_lithuanian_nation_dip = {
+		major = yes
+		potential = {
+			tag = POL
+			NOT = { exists = PLC }
+		}
+		allow = {
+			is_at_war = no
+			is_free_or_tributary_trigger = yes
+			OR = {
+				adm_tech = 20
+				AND = {
+					ai = no
+					ADM = 5
+					statesman = 1
+					full_idea_group = aristocracy_ideas
+				}
+				AND = {
+					ai = yes
+					ADM = 4
+					#statesman = 1 #AI picks advisors at random and the ai_will_do weights don't work
+					full_idea_group = aristocracy_ideas
+				}
+			}
+			LIT = { is_subject_of = ROOT }
+			custom_trigger_tooltip = { tooltip="flavor_pol.union.1" has_country_flag = 1_union_krewo }
+			custom_trigger_tooltip = { tooltip="flavor_pol.union.2" has_country_flag = 2_union_horodlo }
+			custom_trigger_tooltip = { tooltip="flavor_pol.union.3" has_country_flag = 3_union_grodno }
+			custom_trigger_tooltip = { tooltip="flavor_pol.union.4" has_country_flag = 4_union_krakow }
+			custom_trigger_tooltip = { tooltip="flavor_pol.union.5" has_country_flag = 5_union_lublin }
+		}
+		effect = {
+			polonia_major_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			polonia_major_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			polonia_minor_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			polonia_minor_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			lithuania_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			lithuania_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			ruthenia_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			ruthenia_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			add_prestige = 20
+			if = {
+				limit = { government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+				change_title_5 = yes
+			}
+			if = {
+				limit = {
+					OR = {
+						LIT = { vassal_of = ROOT }
+						LIT = { junior_union_with = ROOT }
+					}
+				}
+				inherit = LIT
+			}
+			change_tag = PLC
+			add_absolutism = 10
+			if = {
+				limit = {
+					has_custom_ideas = no
+					NOT = { has_idea_group = POL_ideas }
+				}
+				swap_national_ideas_effect = yes
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	polish_lithuanian_nation = {
+		major = yes
+		potential = {
+			tag = POL
+			NOT = { exists = PLC }
+		}
+		provinces_to_highlight = {
+			OR = {
+				region = lithuania_region
+				region = ruthenia_region
+			}
+		}
+		allow = {
+			is_at_war = no
+			is_free_or_tributary_trigger = yes
+			OR = {
+				adm_tech = 20
+				AND = {
+					ADM = 5
+					statesman = 1
+					full_idea_group = aristocracy_ideas
+				}
+			}
+			NOT = { exists = LIT }
+			OR = {
+				check_variable = { which = "Demesne_in_Lithuania" value = 30 }
+				check_variable = { which = "Cores_on_Lithuania" value = 20 }
+			}
+		}
+		effect = {
+			polonia_major_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			polonia_major_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			polonia_minor_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			polonia_minor_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			lithuania_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			lithuania_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			ruthenia_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			ruthenia_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			add_prestige = 20
+			if = {
+				limit = { government = monarchy NOT = { has_country_modifier = title_5 has_country_modifier = title_6 } }
+				change_title_5 = yes
+			}
+			if = {
+				limit = {
+					OR = {
+						LIT = { vassal_of = ROOT }
+						LIT = { junior_union_with = ROOT }
+					}
+				}
+				inherit = LIT
+			}
+			change_tag = PLC
+			add_absolutism = 10
+			if = {
+				limit = {
+					has_custom_ideas = no
+					NOT = { has_idea_group = POL_ideas }
+				}
+				swap_national_ideas_effect = yes
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	# austrian_nation = {
+		# major = yes
+		# potential = {
+			# OR = {
+				# primary_culture = austrian
+				# primary_culture = slovenian
+			# }
+			# NOT = { exists = HAB }
+			# NOT = { tag = PAP }
+			# NOT = { tag = ERG }
+			# NOT = { tag = GER }
+			# NOT = { tag = PRU }
+			# NOT = { tag = WES }
+			# NOT = { tag = HSA }
+			# NOT = { tag = ROM }
+			# NOT = { tag = LAT }
+			# government = monarchy
+		# }
+		# provinces_to_highlight = {
+			# region = austrian_circle_region
+		# }
+		# allow = {
+			# is_at_war = no
+			# is_free_or_tributary_trigger = yes
+			# OR = {
+				# check_variable = { which = "Demesne_in_Austrian_Circuit" value = 5 }
+				# check_variable = { which = "Cores_on_Austrian_Circuit" value = 3 }
+				# owns = 83 # Ostmark
+			# }
+		# }
+		# effect = {
+			# austrian_circle_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# austrian_circle_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# add_prestige = 10
+			# change_tag = HAB
+			# add_absolutism = 10
+			# if = {
+				# limit = {
+					# has_custom_ideas = no
+					# NOT = { has_idea_group = HAB_ideas }
+				# }
+				# swap_national_ideas_effect = yes
+			# }
+		# }
+		# ai_will_do = {
+			# factor = 1
+		# }
+	# }
+	
+	egyptian_nation_foreign = {
+		major = yes
+		potential = {
+			OR = {
+				primary_culture = egyptian
+				primary_culture = coptic_culture
+			}
+			NOT = { exists = MAM }
+			NOT = {
+				exists = EGY
+			}
+		}
+		provinces_to_highlight = {
+			region = egypt_region
+		}
+		allow = {
+			is_at_war = no
+			is_free_or_tributary_trigger = yes
+			egypt_region = { owned_by = ROOT }
+			capital_scope = { region = egypt_region }
+		}
+		effect = {
+			egypt_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			egypt_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			if = {
+				limit = {
+					electivisation_trigger = yes
+				}
+				administratisation_effect = yes
+			}
+			add_prestige = 10
+			change_tag = EGY
+			add_absolutism = 10
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	egyptian_nation = {
+		major = yes
+		potential = {
+			tag = MAM
+			NOT = {
+				exists = EGY
+			}
+			OR = {
+				has_institution = banking
+				has_institution = renaissance
+				has_institution = casual_literacy
+				has_institution = global_trade
+			}
+		}
+		provinces_to_highlight = {
+			region = egypt_region
+		}
+		allow = {
+			has_institution = enlightenment
+			is_at_war = no
+			is_free_or_tributary_trigger = yes
+			egypt_region = { owned_by = ROOT }
+		}
+		effect = {
+			egypt_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			egypt_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			if = {
+				limit = {
+					electivisation_trigger = yes
+				}
+				administratisation_effect = yes
+			}
+			add_prestige = 10
+			change_tag = EGY
+			add_absolutism = 10
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	jurchen_nation = {
+		major = yes
+		potential = {
+			primary_culture = jurchen
+			NOT = { exists = MCH }
+			NOT = { tag = QNG }
+		}
+		provinces_to_highlight = {
+			culture = jurchen
+			owner = { primary_culture = jurchen }
+		}
+		allow = {
+			is_free_or_tributary_trigger = yes
+			is_at_war = no
+			OR = {
+				custom_trigger_tooltip = {
+					num_of_owned_provinces_with = {
+						value = 14
+						culture = jurchen
+					}
+					tooltip = jurchen_nation_claim
+				}
+				custom_trigger_tooltip = {
+					tooltip = jurchen_nations
+					AND = {
+						OR = {
+							tag = MHX
+							NOT = {
+								exists = MHX
+							}
+							MHX = {
+								is_subject_of = ROOT
+							}
+						}
+						OR = {
+							tag = MJZ
+							NOT = {
+								exists = MJZ
+							}
+							MJZ = {
+								is_subject_of = ROOT
+							}
+						}
+						OR = {
+							tag = MHR
+							NOT = {
+								exists = MHR
+							}
+							MHR = {
+								is_subject_of = ROOT
+							}
+						}
+						OR = {
+							tag = MWK
+							NOT = {
+								exists = MWK
+							}
+							MWK = {
+								is_subject_of = ROOT
+							}
+						}
+						OR = {
+							tag = MUD
+							NOT = {
+								exists = MUD
+							}
+							MUD = {
+								is_subject_of = ROOT
+							}
+						}
+						OR = {
+							tag = MNA
+							NOT = {
+								exists = MNA
+							}
+							MNA = {
+								is_subject_of = ROOT
+							}
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			add_prestige = 20
+			add_manpower = 20
+			change_tag = MCH
+			if = {
+				limit = {
+					overlord_of = MHX
+					MHX = { is_subject_other_than_tributary_trigger = yes }
+				}
+				inherit = MHX
+			}
+			if = {
+				limit = {
+					overlord_of = MJZ
+					MJZ = { is_subject_other_than_tributary_trigger = yes }
+				}
+				inherit = MJZ
+			}
+			if = {
+				limit = {
+					overlord_of = MWK
+					MWK = { is_subject_other_than_tributary_trigger = yes }
+				}
+				inherit = MWK
+			}
+			if = {
+				limit = {
+					overlord_of = MHR
+					MHR = { is_subject_other_than_tributary_trigger = yes }
+				}
+				inherit = MHR
+			}
+			if = {
+				limit = {
+					overlord_of = MUD
+					MUD = { is_subject_other_than_tributary_trigger = yes }
+				}
+				inherit = MUD
+			}
+			if = {
+				limit = {
+					overlord_of = MXI
+					MXI = { is_subject_other_than_tributary_trigger = yes }
+				}
+				inherit = MXI
+			}
+			if = {
+				limit = {
+					overlord_of = MNA
+					MNA = { is_subject_other_than_tributary_trigger = yes }
+				}
+				inherit = MNA
+			}
+			add_absolutism = 10
+			add_adm_power = 1500
+			add_dip_power = 1500
+			add_mil_power = 1500
+			if = {
+				limit = {
+					government = monarchy
+					NOT = {
+						has_country_modifier = title_5
+						has_country_modifier = title_6
+					}
+				}
+				change_title_5 = yes
+			}
+			if = {
+				limit = {
+					has_custom_ideas = no
+					NOT = { has_idea_group = MCH_ideas }
+				}
+				swap_national_ideas_effect = yes
+			}
+			east_manchuria_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = MCH }
+			east_manchuria_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			west_manchuria_region = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = MCH }
+			west_manchuria_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+#	tibetan_nation = {
+#		major = yes
+#		potential = {
+#			culture_group = tibetic
+#			NOT = { exists = TIB }
+#			is_free_or_tributary_trigger = yes
+#		}
+#		provinces_to_highlight = {
+#			region = tibet_region
+#		}
+#		allow = {
+#			is_at_war = no
+#			custom_trigger_tooltip = {
+#				num_of_owned_provinces_with = {
+#					value = 15
+#					region = tibet_region
+#				}
+#				tooltip = tibetan_nation_claim
+#			}
+#		}
+#		effect = {
+#			add_prestige = 20
+#			tibet_region = { limit = { owned_by = ROOT } add_core = TIB }
+#			tibet_region = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			change_tag = TIB
+#			change_title_6 = yes
+#			if = {
+#				limit = {
+#					has_custom_ideas = no
+#					NOT = { has_idea_group = TIB_ideas_dg }
+#				}
+#				swap_national_ideas_effect = yes
+#			}
+#			if = {
+#				limit = {
+#					BHU = { vassal_of = ROOT }
+#				}
+#				inherit = BHU
+#			}
+#			if = {
+#				limit = {
+#					MDO = { vassal_of = ROOT }
+#				}
+#				inherit = MDO
+#			}
+#			if = {
+#				limit = {
+#					GUG = { vassal_of = ROOT }
+#				}
+#				inherit = GUG
+#			}
+#			if = {
+#				limit = {
+#					UTS = { vassal_of = ROOT }
+#				}
+#				inherit = UTS
+#			}
+#			if = {
+#				limit = {
+#					LDK = { vassal_of = ROOT }
+#				}
+#				inherit = LDK
+#			}
+#			if = {
+#				limit = {
+#					SKK = { vassal_of = ROOT }
+#				}
+#				inherit = SKK
+#			}
+#		}
+#		ai_will_do = {
+#			factor = 1
+#		}
+#		ai_importance = 400
+#	}
+	
+	# pomeranian_nation = {
+		# major = yes
+		# potential = {
+			# primary_culture = pommeranian
+			# NOT = { exists = POM }
+			# NOT = { tag = PAP }
+			# NOT = { tag = ERG }
+			# NOT = { tag = GER }
+			# NOT = { tag = PRU }
+			# NOT = { tag = WES }
+			# NOT = { tag = HSA }
+			# NOT = { tag = ROM }
+			# NOT = { tag = LAT }
+			# capital_scope = { or = { area = vorpommern_area area = hinterpommern_area } }
+			# is_colonial_nation = no
+		# }
+		# provinces_to_highlight = {
+			# OR = {
+				# province_id = 47
+				# province_id = 2483
+				# province_id = 2844
+				# province_id = 2847
+			# }
+		# }
+		# allow = {
+			# is_free_or_tributary_trigger = yes
+			# num_of_owned_provinces_with = {
+				# value = 4
+				# or = { area = vorpommern_area area = hinterpommern_area }
+			# }
+			# owns = 47 # Vorpommern
+			# owns = 2843 # Stralsund
+			# owns = 2844 # Pyritz
+			# owns = 2847 # Stargard
+			# is_core = 47 # Vorpommern
+			# is_core = 2843 # Stralsund
+			# is_core = 2844 # Pyritz
+			# is_core = 2847 # Stargard
+			# is_at_war = no
+		# }
+		# effect = {
+			# vorpommern_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# vorpommern_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# hinterpommern_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+			# hinterpommern_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+			# add_prestige = 20
+			# if = {
+				# limit = {
+					# government = monarchy
+					# OR = {
+						# has_country_modifier = title_1
+						# has_country_modifier = title_2
+					# }
+				# }
+				# change_title_3 = yes
+			# }
+			# change_tag = POM
+			# add_absolutism = 10
+			# if = {
+				# limit = {
+					# has_custom_ideas = no
+					# NOT = { has_idea_group = POM_ideas }
+				# }
+				# swap_national_ideas_effect = yes
+			# }
+		# }
+		# ai_will_do = {
+			# factor = 1
+		# }
+		# ai_importance = 400
+	# }
+	
+	become_sultan_of_delhi = {
+		major = yes
+		potential = {
+			owns_or_non_sovereign_subject_of = 2163		# Delhi
+			religion_group = muslim
+			capital_scope = {
+				indian_region_trigger = yes
+			}
+			#NOT = { has_country_flag = ruler_of_the_deccan_flag }
+			#NOT = { has_country_flag = ruler_of_dravidia_flag }
+			OR = {
+				NOT = { exists = DLH }
+				DLH = { is_subject_of = ROOT }
+			}
+			NOT = { tag = MUG }
+			is_colonial_nation = no
+		}
+		provinces_to_highlight = {
+			continent = indian_continent
+		}
+		allow = {
+			is_free_or_tributary_trigger = yes
+			is_at_war = no
+			OR = {
+				check_variable = { which = "Cores_on_India" value = 5 }
+				check_variable = { which = "Demesne_in_India" value = 10 }
+			}
+		}
+		effect = {
+			inherit = DLH
+			add_prestige = 20
+			change_tag = DLH
+			Effect_set_capital = { target=2163 }
+			change_primary_culture = capital
+			remove_country_modifier = blessing_of_god
+			every_owned_province = {
+				limit = {
+					indian_region_trigger = yes
+					NOT = { is_core = DLH }
+				}
+				hidden_effect = { remove_core = ROOT } add_core = ROOT
+			}
+			every_owned_province = {
+				limit = {
+					indian_region_trigger = yes
+					NOT = { is_core = DLH }
+				}
+				add_territorial_core_effect = yes
+			}
+			if = {
+				limit = {
+					government = monarchy
+					NOT = { has_country_modifier = title_6 }
+				}
+				change_title_6 = yes
+			}
+			if = {
+				limit = {
+					trib_king_trigger = yes
+				}
+				despotisation_effect = yes
+			}
+			add_absolutism = 10
+			if = {
+				limit = {
+					has_custom_ideas = no
+					NOT = { has_idea_group = DLH_ideas }
+				}
+				swap_national_ideas_effect = yes
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+	georgian_nation = {
+		major = yes
+		potential = {
+			primary_culture = georgian
+			NOT = { exists = GEO }
+			NOT = { tag = BYZ }
+			NOT = { tag = PAP }
+			NOT = { tag = ERG }
+			NOT = { tag = ROM }
+			NOT = { tag = LAT }
+			is_colonial_nation = no
+		}
+		provinces_to_highlight = {
+			OR = {
+				province_id = 422
+				province_id = 423
+				province_id = 1301
+			}
+		}
+		allow = {
+			is_free_or_tributary_trigger = yes
+			is_at_war = no
+			owns_core_province = 422 # Kakheti
+			owns_core_province = 423 # Kartli
+			owns_core_province = 1301 # Imeretia
+		}
+		effect = {
+			2549 = { add_core = GEO } # Jiqeti
+			1300 = { add_core = GEO } # Abkhazia
+			1449 = { add_core = GEO } # Klarjeti
+			2581 = { add_core = GEO } # Kars
+			419 = { add_core = GEO } # Hayastan
+			2576 = { add_core = GEO } # Herethi
+			add_prestige = 20
+			if = {
+				limit = {
+					government = monarchy
+					OR = {
+						has_country_modifier = title_1
+						has_country_modifier = title_2
+						has_country_modifier = title_3
+					}
+				}
+				change_title_4 = yes
+			}
+			change_tag = GEO
+			add_absolutism = 10
+			if = {
+				limit = {
+					has_custom_ideas = no
+					NOT = { has_idea_group = GEO_ideas }
+				}
+				swap_national_ideas_effect = yes
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+	assam_nation = {
+		major = yes
+		potential = {
+			culture_group = assamese_group
+			NOT = { exists = ASS }
+			is_colonial_nation = no
+		}
+		provinces_to_highlight = {
+			OR = {
+				province_id = 570
+				province_id = 571
+				province_id = 3193
+			}
+		}
+		allow = {
+			is_free_or_tributary_trigger = yes
+			is_at_war = no
+			owns_core_province = 3193 # Sadiya
+			owns_core_province = 571 # Brahmaputra
+			owns_core_province = 570 # Ahom
+		}
+		effect = {
+			3193 = { add_core = ASS } # Sadiya
+			571 = { add_core = ASS } # Brahmaputra
+			570 = { add_core = ASS } # Ahom
+			566 = { add_core = ASS } # Darrang
+			2695 = { add_core = ASS } # Koch Hajo
+			add_prestige = 20
+			if = {
+				limit = {
+					government = monarchy
+					NOT = {
+						has_country_modifier = title_5
+						has_country_modifier = title_6
+					}
+				}
+				change_title_5 = yes
+			}
+			change_tag = ASS
+			add_absolutism = 10
+			if = {
+				limit = {
+					has_custom_ideas = no
+					NOT = { has_idea_group = ASS_ideas }
+				}
+				swap_national_ideas_effect = yes
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+	
+	
+#	form_morocco = { #an alternative to "Fez" for countires that otherwise meet the requirments and want a unification
+#		potential = {
+#			religion_group = muslim
+#			OR = {
+#				primary_culture = tuareg
+#				primary_culture = fassi
+#				primary_culture = berber
+#				primary_culture = andalucian
+#				tag = GRA
+#				tag = SOS
+#				tag = TFL
+#			}
+#			NOT = { tag = FEZ }
+#			NOT = { tag = TLE }
+#			NOT = { tag = ALG }
+#			NOT = { tag = ALM }
+#			OR = {
+#				NOT = { exists = MOR }
+#				MOR = { is_subject_of = ROOT }
+#			}
+#		}
+#		provinces_to_highlight = {
+#			OR = {
+#				area = fez_area
+#				area = marrekesh_area
+#				area = sus_area
+#				area = tafilalt_area
+#				area = anfa_area
+#			}
+#		}
+#		allow = {
+#			is_at_war = no
+#			is_free_or_tributary_trigger = yes
+#			OR = {
+#				check_variable = { which = "Demesne_in_Morocco" value = 15 }
+#				check_variable = { which = "Cores_on_Morocco" value = 12 }
+#			}
+#			OR = {
+#				adm_tech = 20
+#				AND = {
+#					ADM = 5
+#					statesman = 1
+#				}
+#			}
+#			owns = 347 # Tachelhit
+#		}
+#		effect = {
+#			inherit = MOR
+#			fez_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			fez_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			marrekesh_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			marrekesh_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			sus_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			sus_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			tafilalt_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			tafilalt_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			anfa_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			anfa_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			change_tag = MOR
+#			Effect_set_capital = { target=347 }
+#			if = {
+#				limit = {
+#					technology_group = soudantech
+#				}
+#				change_technology_group = muslim
+#				change_unit_type = muslim
+#			}
+#			if = {
+#				limit = {
+#					government = monarchy
+#					NOT = {
+#						has_country_modifier = title_5
+#						has_country_modifier = title_6
+#					}
+#				}
+#				change_title_5 = yes
+#			}
+#			add_absolutism = 10
+#			if = {
+#				limit = {
+#					has_custom_ideas = no
+#					NOT = { has_idea_group = MOR_ideas }
+#				}
+#				swap_national_ideas_effect = yes
+#			}
+#		}
+#		ai_will_do = {
+#			factor = 1
+#		}
+#	}
+	
+#	form_julich_berg_kleve = {
+#		major = yes
+#		potential = {
+#			OR = {
+#				tag = JUL
+#				tag = BRG
+#				tag = KLE
+#			}
+#		}
+#		provinces_to_highlight = {
+#			OR = {
+#				province_id = 51
+#				province_id = 1253
+#				province_id = 2623
+#			}
+#		}
+#		allow = {
+#			is_free_or_tributary_trigger = yes
+#			is_at_war = no
+#			owns = 51 # Kleve
+#			owns = 1253 # Julich
+#			owns = 2623 # Berg
+#		}
+#		effect = {
+#			51 = { add_core = JBC } # Kleve
+#			1253 = { add_core = JBC } # Julich
+#			2623 = { add_core = JBC } # Berg
+#			2637 = { add_permanent_claim = ROOT } # Mark
+#			add_prestige = 20
+#			change_tag = JBC
+#			add_absolutism = 10
+#			if = {
+#				limit = {
+#					has_custom_ideas = no
+#					NOT = { has_idea_group = JBC_ideas }
+#				}
+#				swap_national_ideas_effect = yes
+#			}
+#		}
+#		ai_will_do = {
+#			factor = 1
+#		}
+#		ai_importance = 400
+#	}
+	
+	become_brandenburg = {
+		major = yes
+		potential = {
+			OR = {
+				tag = HOH
+				tag = ANS
+				tag = BYR
+			}
+		}
+		provinces_to_highlight = {
+			province_id = 50
+		}
+		allow = {
+			is_at_war = no
+			NOT = { exists = BRA }
+			owns = 50 # Brandenburg
+		}
+		effect = {
+			50 = { add_core = BRA } # Brandenburg
+			66 = { add_core = BRA } # Altmark
+			264 = { add_core = BRA } # Neumark
+			2621 = { add_core = BRA } # Prignitz
+			2835 = { add_core = BRA } # Lubusz
+			4015 = { add_core = BRA } # Havelland
+			Effect_set_capital = { target=50 }
+			add_prestige = 20
+			change_tag = BRA
+			change_primary_culture = capital
+			if = {
+				limit = {
+					OR = {
+						has_country_modifier = title_1
+						has_country_modifier = title_2
+					}
+				}
+				change_title_3 = yes
+			}
+			add_absolutism = 10
+			if = {
+				limit = {
+					has_custom_ideas = no
+					NOT = { has_idea_group = PRU_ideas }
+				}
+				swap_national_ideas_effect = yes
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+#	claim_sardinia = {
+#		major = yes
+#		potential = {
+#			always = no
+#			NOT = { exists = SAR }
+#			NOT = { exists = SPI }
+#			NOT = { tag = ITA }
+#			NOT = { tag = ITC }
+#			NOT = { tag = ITD }
+#			NOT = { tag = ITE }
+#			NOT = { tag = PAP }
+#			NOT = { tag = ERG }
+#			NOT = { tag = LAT }
+#			primary_culture = sardinian
+#			is_emperor = no
+#			capital_scope = { area = corsica_sardinia_area }
+#			check_variable = { which = "Demesne_in_Sardinia" value = 1 }
+#			is_colonial_nation = no
+#		}
+#		provinces_to_highlight = {
+#			area = corsica_sardinia_area
+#		}
+#		allow = {
+#			is_free_or_tributary_trigger = yes
+#			is_at_war = no
+#			government = monarchy
+#			owns = 2242 # Casteddu
+#			OR = {
+#				check_variable = { which = "Demesne_in_Sardinia" value = 4 }
+#				check_variable = { which = "Cores_on_Sardinia" value = 3 }
+#			}
+#		}
+#		effect = {
+#			corsica_sardinia_area = { limit = { owned_by = ROOT } hidden_effect = { remove_core = ROOT } add_core = ROOT }
+#			corsica_sardinia_area = { limit = { NOT = { owned_by = ROOT } } add_permanent_claim = ROOT }
+#			add_prestige = 15
+#			if = {
+#				limit = {
+#					government = monarchy
+#					OR = {
+#						has_country_modifier = title_1
+#						has_country_modifier = title_2
+#						has_country_modifier = title_3
+#					}
+#				}
+#				change_title_4 = yes
+#			}
+#			change_tag = SAR
+#			Effect_set_capital = { target=2242 }
+#			add_absolutism = 10
+#			if = {
+#				limit = {
+#					has_custom_ideas = no
+#					NOT = { has_idea_group = SAR_ideas }
+#				}
+#				swap_national_ideas_effect = yes
+#			}
+#		}
+#		ai_will_do = {
+#			factor = 1
+#		}
+#		ai_importance = 400
+#	}
+	
+	form_ava = {
+		major = yes
+		potential = {
+			OR = {
+				tag = SAG
+				tag = PIN
+			}
+			NOT = { exists = AVA }
+		}
+		provinces_to_highlight = {
+			OR = {
+				province_id = 584
+				province_id = 2429
+			}
+		}
+		allow = {
+			is_free_or_tributary_trigger = yes
+			is_at_war = no
+			owns_core_province = 584 # Ava
+			owns_core_province = 2429 # Sagaing
+			OR = {
+				AND = {
+					tag = SAG
+					NOT = { exists = PIN }
+				}
+				AND = {
+					tag = PIN
+					NOT = { exists = SAG }
+				}
+			}
+		}
+		effect = {
+			every_province = {
+				limit = {
+					OR = {
+						region = inland_burma_region
+						region = coastal_burma_region
+					}
+					is_core = ROOT
+				}
+				add_core = AVA
+			}
+			add_prestige = 20
+			change_tag = AVA
+			add_absolutism = 10
+			Effect_set_capital = { target=584 }
+			584 = { rename_capital = "Awa" }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+	
+	adopt_mamluk_government = {
+		major = yes
+		potential = {
+			religion_group = muslim
+			capital_scope = { continent = mena }
+			NOT = { exists = MAM }
+			NOT = { exists = EGY }
+			any_owned_province = {
+				region = egypt_region
+			}
+			NOT = { has_country_flag = formed_mamluks }
+			#NOT = { tag = HLR }
+			NOT = { tag = PAP }
+			NOT = { tag = TUR }
+			NOT = { tag = BYZ }
+			NOT = { tag = ROM }
+			NOT = { tag = OTT }
+			NOT = { tag = ARB }
+			NOT = { has_country_flag = adopted_mamluk_govt }
+			NOT = { has_institution = enlightenment }
+		}
+		provinces_to_highlight = {
+			province_id = 361
+		}
+		allow = {
+			NOT = { exists = MAM } #To Show why it might disappear
+			owns_core_province = 361
+		}
+		effect = {
+			Effect_set_capital = { target=361 } # Cairo
+			change_tag = MAM
+			if = {
+				limit = { has_regency = no }
+				kill_ruler = yes
+			}
+			if = {
+				limit = { has_heir = yes }
+				kill_heir = yes
+			}
+			if = {
+				limit = {
+					has_custom_ideas = no
+					NOT = { has_idea_group = MAM_ideas }
+				}
+				swap_national_ideas_effect = yes
+			}
+			MAM = {
+				electivisation_effect = yes
+				egypt_region = {
+					limit = {
+						NOT = { is_core = MAM }
+						NOT = { is_claim = MAM }
+					}
+					add_permanent_claim = ROOT
+				}
+				set_country_flag = formed_mamluks
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				adm_tech = 20
+			}
+		}
+	}
+
+}

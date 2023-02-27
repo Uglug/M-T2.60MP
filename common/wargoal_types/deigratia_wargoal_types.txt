@@ -1,0 +1,425 @@
+#	INSTRUCTIONS:
+#	-------------
+#	prestige_factor - Multiplied with any prestige increase normally associated with a peace option.
+#	transfer_trade_cost_factor - Multiplied with the cost for transfering trade power.
+#	peace_cost_factor - Multiplied with the cost of the peace options in the peace treaty
+#	po_xxx - Peace options. If toggled on, badboy_factor and prestige_factor are multiplied with any associated base changes to these (see defines.txt.)
+#	allowed_provinces - If 'po_demand_provinces' is on, badboy_factor applies to these provinces.
+#	allow_annex - Always allow annexation (even if other rules disallow)
+#	deny_annex - Always deny annexation (even if other rules allows it)
+##
+#	ROOT = attacker
+#	FROM = target
+##
+#	Place peace offers in attacker and/or defender blocks
+#	The peace options are:
+#	po_demand_provinces
+#	po_revoke_cores
+#	po_release_vassals
+#	po_release_annexed
+#	po_change_religion
+#	po_form_personal_union
+#	po_gold
+#	po_become_vassal
+#	po_concede_defeat
+#	po_annul_treaties
+#	po_change_government
+#	po_revoke_elector
+#	po_trade_power
+#	po_humiliate
+#	po_enforce_rebel_demands
+##
+#	NOTE: The order in which the peace options are listed is the order in which the AI will normally prioritize them in peace treaties
+##
+#	WAR GOAL TYPES:
+#	- take_colony
+#	- take_core
+#	- take_border
+#	- take_province
+#	- take_capital
+#	- defend_capital
+#	- defend_country
+#	- naval_superiority
+#	- superiority
+#	- take_region
+#	- blockade_ports
+#
+#	--------------------------------------------------------------
+
+take_prisoners = {
+	type = superiority
+	
+	badboy_factor = 1
+	prestige_factor = 2
+	peace_cost_factor = 1.5
+	
+	peace_options = {
+		# # # po_annex = no
+		po_demand_provinces
+		po_revoke_cores
+		po_release_vassals
+		po_release_annexed
+		po_return_cores
+		# po_change_religion = no
+		# po_form_personal_union = no
+		po_gold
+		po_become_vassal
+		po_concede_defeat
+		po_annul_treaties
+		# po_change_government = no
+		# po_revoke_elector = no
+		# po_trade_power = no
+		po_humiliate
+	}
+}
+
+superiority_crusade = {
+	type = superiority
+	
+	attacker = {
+		badboy_factor = 1.00
+		prestige_factor = 1.25
+		peace_cost_factor = 0.75
+		
+		allowed_provinces = {
+			#OR = {
+			#	NOT = { religion_group = ROOT }
+			#	is_claim = ROOT
+			#	is_core = ROOT
+			#}
+			always = yes
+		}
+		
+		peace_options = {
+			po_demand_provinces
+			# # po_annex
+		}
+		
+		country_desc = ALL_INFIDELS
+		prov_desc = HEATHEN_PROVS
+	}
+	defender = {
+		badboy_factor = 0.75
+		prestige_factor = 1.25
+		peace_cost_factor = 1.0
+		
+		allowed_provinces = {
+			#OR = {
+			#	NOT = { religion_group = FROM }
+			#	is_claim = FROM
+			#	is_core = FROM
+			#}
+			always = yes
+		}
+		
+		peace_options = {
+			po_demand_provinces
+			# # po_annex
+		}
+		country_desc = ALL_INFIDELS
+		prov_desc = ALL_PROVS
+	}
+	
+	allow_leader_change = yes
+	war_name = CRUSADE_WAR_NAME
+}
+
+superiority_crusade_pagan = {
+	type = superiority
+	
+	attacker = {
+		badboy_factor = 0.75
+		prestige_factor = 1.00
+		peace_cost_factor = 0.75
+		
+		allowed_provinces = {
+			OR = {
+				NOT = { religion_group = ROOT }
+				is_claim = ROOT
+				is_core = ROOT
+			}
+			#always = yes
+		}
+		
+		peace_options = {
+			po_demand_provinces
+			po_change_religion
+			# # po_annex
+		}
+		
+		country_desc = ALL_INFIDELS
+		prov_desc = HEATHEN_PROVS
+	}
+	defender = {
+		badboy_factor = 0.75
+		prestige_factor = 1.25
+		peace_cost_factor = 1.0
+		
+		allowed_provinces = {
+			OR = {
+				NOT = { religion_group = FROM }
+				is_claim = FROM
+				is_core = FROM
+			}
+			#always = yes
+		}
+		
+		peace_options = {
+			po_demand_provinces
+			# # po_annex
+		}
+		country_desc = ALL_INFIDELS
+		prov_desc = ALL_PROVS
+	}
+	
+	allow_leader_change = yes
+	war_name = CRUSADE_WAR_NAME
+}
+
+superiority_heretic = {
+	type = superiority
+	
+	badboy_factor = 0.75
+	prestige_factor = 1.5
+	peace_cost_factor = 0.75
+	
+	allowed_provinces = {
+		OR = {
+			AND = {
+				religion_group = ROOT
+				NOT = { religion = ROOT }
+			}
+			is_claim = ROOT
+			is_core = ROOT
+		}
+	}
+	
+	peace_options = {
+		po_change_religion
+		po_demand_provinces
+	}
+	
+	country_desc = ALL_HERETICS
+	prov_desc = HERETIC_PROVS
+	war_name = HERETIC_WAR_NAME
+}
+
+take_caliph = {
+	type = take_capital
+	
+	badboy_factor = 0.50
+	prestige_factor = 1
+	peace_cost_factor = 0.50
+	
+	allowed_provinces = {
+		always = yes
+	}
+	
+	peace_options = {
+		# # po_annex
+		po_demand_provinces
+	}
+	
+	war_name = CALIPH_WAR_NAME
+}
+
+superiority_religious_league_minor = {
+	type = superiority
+	
+	attacker = {
+		badboy_factor = 0.5
+		prestige_factor = 1.5
+		peace_cost_factor = 0.5
+		
+		peace_options = {
+			po_become_vassal
+			# po_demand_provinces = no #removed
+			po_revoke_elector  #added
+			# po_revoke_cores = no
+			po_release_vassals
+			# po_release_annexed = no #removed
+			po_change_religion
+			po_gold
+			po_annul_treaties
+			# po_change_hre_religion = no #removed
+		}
+	}
+	
+	defender = {
+		badboy_factor = 0.5
+		prestige_factor = 1.5
+		peace_cost_factor = 0.5
+		
+		peace_options = {
+			po_become_vassal
+			# po_demand_provinces = no #removed
+			po_revoke_elector  #added
+			po_revoke_cores
+			po_release_vassals
+			# po_release_annexed = no #removed
+			po_change_religion
+			po_gold
+			po_annul_treaties
+			# po_change_hre_religion = no #removed
+		}
+	}
+	
+	war_name = RELIGIOUS_LEAGUE_WAR_NAME
+}
+
+superiority_religious_league_major = {
+	type = superiority
+	
+	attacker = {
+		badboy_factor = 0.5
+		prestige_factor = 1.5
+		peace_cost_factor = 0.5
+		
+		peace_options = {
+			po_become_vassal
+			#po_demand_provinces = no #removed
+			po_revoke_elector  #added
+			po_revoke_cores
+			po_release_vassals
+			po_release_annexed
+			po_change_religion
+			po_gold
+			po_annul_treaties
+			po_change_hre_religion
+		}
+	}
+	
+	defender = {
+		badboy_factor = 0.5
+		prestige_factor = 1.5
+		peace_cost_factor = 0.8 #Changed
+		
+		peace_options = {
+			po_become_vassal
+			# po_demand_provinces = no #removed
+			po_revoke_elector  #added
+			po_revoke_cores
+			po_release_vassals
+			po_release_annexed
+			po_change_religion
+			po_gold
+			po_annul_treaties
+			po_change_hre_religion
+		}
+	}
+	
+	war_name = RELIGIOUS_LEAGUE_WAR_NAME
+}
+
+reunify_country = {
+	type = take_capital
+	
+	badboy_factor = 0.25
+	prestige_factor = 0.25
+	peace_cost_factor = 0.25
+	
+	peace_options = {
+		# # po_annex
+		po_become_vassal
+		po_demand_provinces
+	}
+}
+
+force_pope_to_resign = {
+	type = take_capital
+	
+	badboy_factor = 0.5
+	prestige_factor = 2
+	peace_cost_factor = 0.4
+	
+	peace_options = {
+		po_become_vassal
+		# po_demand_provinces = no #removed
+		# po_release_vassals = no
+		# po_release_annexed = no
+		# po_change_religion = no
+		# po_gold = no
+		# po_annul_treaties = no
+	}
+	
+	allow_leader_change = yes
+	
+	war_name = VASSAL_MISSION_WAR_NAME
+}
+
+defend_capital_religious_independence = {
+	type = defend_capital
+	
+	attacker = {
+		badboy_factor = 1
+		prestige_factor = 1
+		peace_cost_factor = 1
+		
+		peace_options = {
+			po_concede_defeat
+			po_independence
+		}
+	}
+	
+	defender = {
+		badboy_factor = 0.5
+		prestige_factor = 1
+		peace_cost_factor = 0.75
+		
+		allowed_provinces = {
+			always = yes
+		}
+		
+		peace_options = {
+			po_demand_provinces
+			po_change_religion
+		}
+		
+		allow_annex = yes
+	}
+	
+	war_name = INDEPENDENCE_WAR_NAME
+}
+
+take_capital_throne_annulment = {
+	type = take_capital
+	
+	attacker = {
+		badboy_factor = 1
+		prestige_factor = 1.5
+		peace_cost_factor = 1.25
+		
+		allowed_provinces = {
+			always = yes
+		}
+		
+		peace_options = {
+			po_concede_defeat
+			po_annul_treaties
+			po_humiliate
+			po_enforce_rebel_demands
+			# po_form_personal_union = no
+		}
+	}
+	
+	defender = {
+		badboy_factor = 0.5
+		prestige_factor = 1
+		peace_cost_factor = 0.75
+		
+		allowed_provinces = {
+			is_core = FROM
+		}
+		
+		peace_options = {
+			po_demand_provinces
+			po_annul_treaties
+			po_humiliate
+			po_enforce_rebel_demands
+			# po_form_personal_union = no
+		}
+	}
+	
+	prov_desc = ALL_PROVS
+	war_name = THRONE_WAR_NAME
+}

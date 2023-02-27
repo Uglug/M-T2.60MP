@@ -1,0 +1,271 @@
+# all disabled pending full removal if new diplo actions really work as advertised
+country_decisions = {
+	create_strong_bonds = {
+		potential = {
+			is_subject_of_type = tributary_state
+			overlord = {
+				OR = {
+					culture_group = chinese_group
+					has_country_flag = barbarian_claimant_china
+					has_country_flag = mandate_of_heaven_claimed
+				}
+			}
+		}
+		allow = {
+			adm_power = 200
+			dip_power = 200
+			mil_power = 200
+			overlord = {
+				ROOT = {
+					years_in_vassalage_under = {
+						who = PREV
+						years = 10
+						all_subject_country = yes
+					}
+				}
+			}
+			#absolutism = 40
+			NOT = { has_ruler_modifier = refused_stronger_bonds }
+		}
+		effect = {
+			add_adm_power = -50
+			add_dip_power = -50
+			add_mil_power = -50
+			overlord = {
+				country_event = { id = diplomacy_events.001 }
+			}
+		}
+		ai_will_do = { # this is a trigger
+			factor = 1
+			modifier = {
+				factor = 0
+				NOT = { religion = confucianism }
+			}
+		}
+	}
+
+	subject_integration = {
+		potential = {
+			any_subject_country = {
+				OR = {
+					is_subject_of_type = vassal
+					is_subject_of_type = personal_union
+				}
+			}
+		}
+		allow = {
+			adm_power = 25
+			dip_power = 25
+			mil_power = 25
+			any_subject_country = {
+				OR = {
+					is_subject_of_type = vassal
+					is_subject_of_type = personal_union
+				}
+				NOT = { has_ruler_modifier = policy_partner }
+				NOT = { liberty_desire = 25 }
+				OR = {
+					AND = {
+						is_subject_of_type = vassal
+						years_in_vassalage_under = { who = ROOT years = 10 }
+					}
+					AND = {
+						is_subject_of_type = personal_union
+						years_in_union_under = { who = ROOT years = 10 }
+					}
+				}
+			}
+			OR = {
+				ADM = 3
+				advisor = spymaster
+				advisor = statesman
+			}
+			absolutism = 5
+		}
+		effect = {
+			add_adm_power = -25
+			add_dip_power = -25
+			add_mil_power = -25
+			country_event = { id = diplomacy_events.011 }
+		}
+		ai_will_do = { # this is a trigger
+			factor = 0 #was 1
+		}
+	}
+
+	curtail_nobility = {
+		potential = {
+			any_subject_country = {
+				is_subject_of_type = personal_union
+			}
+		}
+		allow = {
+			any_subject_country = {
+				is_subject_of_type = personal_union
+				NOT = { has_country_flag = curtailed_nobility }
+			}
+			adm_power = 50
+			dip_power = 50
+			mil_power = 50
+			#absolutism = 40
+		}
+		effect = {
+			add_adm_power = -50
+			add_dip_power = -50
+			add_mil_power = -50
+			country_event = { id = diplomacy_events.021 }
+		}
+		ai_will_do = { # this is a trigger
+			factor = 0
+		}
+	}
+
+	subject_subjugation = {
+		potential = {
+			any_subject_country = {
+				OR = {
+					AND = {
+						ROOT = { OR = { NOT = { tag = FRA } has_country_flag = edit_de_moulins } }
+						is_subject_of_type = appanage_subject
+					}
+					is_subject_of_type = autonomous_vassal
+					is_subject_of_type = decentralized_vassal
+					is_subject_of_type = rebellious_decentralized_vassal
+					is_subject_of_type = subjugated_vassal
+					is_subject_of_type = rebellious_subjugated_vassal
+					AND = {
+						ROOT = {
+							OR = {
+								has_country_flag = centralised_japan
+								NOT = { culture_group = japanese }
+							}
+						}
+						is_subject_of_type = daimyo_vassal
+					}
+					AND = {
+						ROOT = { daimyo_trigger = no }
+						is_subject_of_type = centralised_daimyo_vassal
+					}
+				}
+			}
+		}
+		allow = {
+			is_at_war = no
+			adm_power = 200
+			dip_power = 200
+			mil_power = 200
+			any_subject_country = {
+				NOT = { liberty_desire = 25 }
+				NOT = { has_ruler_modifier = policy_partner }
+				is_at_war = no
+				OR = {
+					AND = {
+						ROOT = { OR = { NOT = { tag = FRA } has_country_flag = edit_de_moulins } }
+						is_subject_of_type = appanage_subject
+					}
+					is_subject_of_type = autonomous_vassal
+					is_subject_of_type = decentralized_vassal
+					is_subject_of_type = rebellious_decentralized_vassal
+					is_subject_of_type = subjugated_vassal
+					is_subject_of_type = rebellious_subjugated_vassal
+					AND = {
+						ROOT = {
+							OR = {
+								has_country_flag = centralised_japan
+								NOT = { culture_group = japanese }
+							}
+						}
+						is_subject_of_type = daimyo_vassal
+					}
+					AND = {
+						ROOT = { daimyo_trigger = no }
+						is_subject_of_type = centralised_daimyo_vassal
+					}
+				}
+				years_in_vassalage_under = { who = ROOT years = 10 all_subject_country = yes }
+			}
+			NOT = { overextension_percentage = 0.01 }
+			OR = {
+				ADM = 4
+				advisor = alderman
+				advisor = statesman
+			}
+			absolutism = 5
+			OR = {
+				AND = {
+					ai = yes
+					NOT = { has_country_modifier = no_valid_subjugation_targets }
+				}
+				ai = no
+			}
+		}
+		effect = {
+			add_adm_power = -50
+			add_dip_power = -50
+			add_mil_power = -50
+			country_event = { id = diplomacy_events.031 }
+		}
+		ai_will_do = { # this is a trigger
+			factor = 1
+			modifier = {
+				factor = 0
+				any_subject_country = {
+					is_subject_of_type = vassal
+				}
+			}
+		}
+	}
+
+	fief_subjugation = {
+		potential = {
+			any_subject_country = {
+				is_subject_of_type = overseas_fief
+			}
+		}
+		allow = {
+			is_at_war = no
+			adm_power = 200
+			dip_power = 200
+			mil_power = 200
+			any_subject_country = {
+				NOT = { has_ruler_modifier = policy_partner }
+				NOT = { liberty_desire = 25 }
+				is_at_war = no
+				#AND = {
+					is_subject_of_type = overseas_fief
+					#years_in_vassalage_under = { who = ROOT years = 10 }
+				#}
+			}
+			NOT = { overextension_percentage = 0.01 }
+			OR = {
+				ADM = 4
+				advisor = alderman
+				advisor = statesman
+			}
+			absolutism = 10
+		}
+		effect = {
+			add_adm_power = -50
+			add_dip_power = -50
+			add_mil_power = -50
+			random_subject_country = {
+				limit = {
+					NOT = { has_ruler_modifier = policy_partner }
+					NOT = { liberty_desire = 25 }
+					is_at_war = no
+					is_subject_of_type = overseas_fief
+				}
+				country_event = { id = diplomacy_events.041 }
+			}
+		}
+		ai_will_do = { # this is a trigger
+			factor = 1
+			modifier = {
+				factor = 0
+				any_subject_country = {
+					is_subject_of_type = vassal
+				}
+			}
+		}
+	}
+}

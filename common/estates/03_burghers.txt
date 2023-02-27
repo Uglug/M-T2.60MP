@@ -1,0 +1,448 @@
+estate_city_burghers =
+{
+	icon = 3
+	
+	color = { 35 35 150 }
+	
+	# Is estate kept in control of province on conquest?
+	keep_on_conquest = no
+	
+	min_provinces_to_want_territory = 999
+#	wanted_territory_modifier = {
+#		desc = EST_VAL_REPUBLIC
+#		trigger = {
+#			government = republic
+#			NOT = { has_disaster = estate_nobility_disaster }
+#		}
+#		value = 0
+#	}
+	
+	# If true, country will get estate
+	trigger = {
+		estate_city_burghers_trigger = yes
+	}
+	
+	# If true, province can be granted to estate
+	province_trigger = {
+		
+	}
+	
+	# Min autonomy in estate provinces
+	min_autonomy = 0
+	
+	# Estate cancels out the following multiplicative local autonomy effects:
+	
+	# These scale with loyalty & power
+#	country_modifier_happy = {
+#		trade_efficiency = 0.15
+#		global_trade_goods_size_modifier = 0.075
+#	}
+#	country_modifier_neutral = {
+#		trade_efficiency = 0.10
+#	}
+#	country_modifier_angry = {
+#		trade_efficiency = -0.2
+#		global_trade_goods_size_modifier = -0.075
+#	}
+	
+	# These do not scale, but only applied in provinces owned by the estate
+	province_modifier_happy = {
+	}
+	province_modifier_neutral = {
+	}
+	province_modifier_angry = {
+	}
+	
+	# Influence modifiers
+	base_influence = 0
+	influence_modifier = {
+		desc = burghers_influence_50
+		trigger = {
+			has_country_flag = burghers_influence_50
+		}
+		influence = 50
+	}
+	
+	influence_modifier = {
+		desc = burghers_influence_25
+		trigger = {
+			has_country_flag = burghers_influence_25
+		}
+		influence = 25
+	}
+	
+	influence_modifier = {
+		desc = burghers_influence_13
+		trigger = {
+			has_country_flag = burghers_influence_13
+		}
+		influence = 13
+	}
+	
+	influence_modifier = {
+		desc = burghers_influence_6
+		trigger = {
+			has_country_flag = burghers_influence_6
+		}
+		influence = 6
+	}
+	
+	influence_modifier = {
+		desc = burghers_influence_3
+		trigger = {
+			has_country_flag = burghers_influence_3
+		}
+		influence = 3
+	}
+	
+	influence_modifier = {
+		desc = burghers_influence_2
+		trigger = {
+			has_country_flag = burghers_influence_2
+		}
+		influence = 2
+	}
+	
+	influence_modifier = {
+		desc = burghers_influence_1
+		trigger = {
+			has_country_flag = burghers_influence_1
+		}
+		influence = 1
+	}
+	
+	
+	#Custom Names
+#	custom_name = {
+#		desc = estate_bourgeoisie
+#		trigger = {
+#			OR = {
+#				culture_group = langue_d_oil
+#				culture_group = langue_d_oc
+#			}
+#
+#		}
+#	}
+#	custom_name = {
+#		desc = estate_burgueses
+#		trigger = {
+#			OR = {
+#				culture_group = iberian
+#				culture_group = portuguese
+#			}
+#		}
+#	}
+#	custom_name = {
+#		desc = estate_burgesos
+#		trigger = {
+#			culture_group = catalan_group
+#		}
+#	}
+#	custom_name = {
+#		desc = estate_burgesak
+#		trigger = {
+#			culture_group = basque_group
+#		}
+#	}
+#	custom_name = {
+#		desc = estate_merchant_guilds
+#		trigger = {
+#			NOT = { religion_group = christian } #Diversify a bit more.
+#		}
+#	}
+	
+	# For province assignment
+#	ai_grant_province = {
+#		factor = 1
+#		modifier = {
+#			factor = 0.5
+#			NOT = { province_trade_power = 5 }
+#		}
+#		modifier = {
+#			factor = 2
+#			province_trade_power = 10
+#		}
+#	}
+#
+#	# Does the AI want to give any extra territory beyond the minimum?
+#	ai_territory_modifier = {
+#		trigger = {
+#			government = monarchy
+#			technology_group = western
+#			num_of_cities = 10
+#		}
+#		value = 10
+#	}
+#	ai_territory_modifier = {
+#		trigger = {
+#			has_idea_group = trade_ideas
+#			num_of_cities = 10
+#		}
+#		value = 5
+#	}
+#	ai_territory_modifier = {
+#		trigger = {
+#			has_idea_group = plutocracy_ideas
+#			num_of_cities = 10
+#		}
+#		value = 5
+#	}
+	
+	# Special interactions
+	interaction = {
+		name = "burghers_POWER"
+		icon = 21
+		years_between_use = 0
+		
+		trigger = {
+			
+		}
+		
+		effect = {
+			country_event = {
+				id = POP_Estates_Interactions.201
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	interaction = { ### Bestow Privileges
+		name = "burghers_PRIVILEGES"
+		icon = 17
+		years_between_use = 0
+		
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = estate_interaction_strength_not_under_5
+				check_variable = { which = estate_burghers_weight_share		value = 0.05 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = estate_interaction_freeze_all_privileges_description
+				NOT = { has_country_flag = freeze_all_privileges }
+			}
+			custom_trigger_tooltip = {
+				tooltip = BG_privilege_granting_left
+				NOT = { check_variable = { which = BG_privileges_time_left		value = 1 } }
+			}
+			hidden_trigger = {
+				NOT = { has_country_flag = one_estate_interaction }
+			}
+		}
+		
+		effect = {
+			country_event = {
+				id = POP_Estates_Interactions.202
+			}
+			hidden_effect = { set_country_flag = one_estate_interaction }
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	interaction = {
+		name = "burghers_FAVORS"
+		icon = 1
+		years_between_use = 0
+		
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = estate_interaction_loyalty_not_under_11
+				check_variable = { which = estate_burghers_loyalty			value = 0.11 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = estate_interaction_strength_not_under_5
+				check_variable = { which = estate_burghers_weight_share		value = 0.05 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = estate_interaction_freeze_all_privileges_description
+				NOT = { has_country_flag = freeze_all_privileges }
+			}
+			custom_trigger_tooltip = {
+				tooltip = BG_favor_time_left
+				NOT = { check_variable = { which = BG_favor_time_left			value = 1 } }
+			}
+			hidden_trigger = {
+				NOT = { has_country_flag = one_estate_interaction }
+			}
+		}
+		
+		effect = {
+			country_event = {
+				id = POP_Estates_Interactions.203
+			}
+			hidden_effect = { set_country_flag = one_estate_interaction }
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+#	interaction = {
+#		name = "burghers_COLLABORATION"
+#		icon = 22
+#		years_between_use = 0
+#
+#		trigger = {
+#		}
+#
+#		effect = {
+#			country_event = {
+#				id = POP_Estates_Interactions.204
+#			}
+#		}
+#		ai_will_do = {
+#			factor = 0
+#		}
+#	}
+	interaction = {
+		name = "burghers_DEMAND_SUPPORT"
+		icon = 6
+		years_between_use = 0
+		
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = estate_interaction_loyalty_not_under_11
+				check_variable = { which = estate_burghers_loyalty			value = 0.11 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = estate_interaction_strength_not_under_5
+				check_variable = { which = estate_burghers_weight_share		value = 0.05 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = estate_interaction_freeze_all_privileges_description
+				NOT = { has_country_flag = freeze_all_privileges }
+			}
+			custom_trigger_tooltip = {
+				tooltip = BG_demand_support_time_left
+				NOT = { check_variable = { which = BG_demand_support_time_left		value = 1 } }
+			}
+			hidden_trigger = {
+				NOT = { has_country_flag = one_estate_interaction }
+			}
+		}
+		
+		effect = {
+			country_event = {
+				id = POP_Estates_Interactions.205
+			}
+			hidden_effect = { set_country_flag = one_estate_interaction }
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	interaction = {
+		name = "burghers_CONFRONT"
+		icon = 4
+		years_between_use = 0
+		
+		trigger = {
+			stability = 1
+			custom_trigger_tooltip = {
+				tooltip = estate_interaction_freeze_all_privileges_description
+				NOT = { has_country_flag = freeze_all_privileges }
+			}
+			custom_trigger_tooltip = {
+				tooltip = BG_privilege_revokation_left
+				NOT = { check_variable = { which = BG_privileges_time_left			value = 1 } }
+				#	check_variable = { which = estate_burghers_weight_share   			value = 0.05 }
+			}
+			hidden_trigger = {
+				NOT = { has_country_flag = one_estate_interaction }
+			}
+		}
+		
+		effect = {
+			country_event = {
+				id = POP_Estates_Interactions.206
+			}
+			hidden_effect = { set_country_flag = one_estate_interaction }
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	interaction = {
+		name = "burghers_SUPPORT_OFFENSIVE_WAR"
+		icon = 12
+		years_between_use = 0
+		
+		potential = {
+			is_at_war = yes
+			any_known_country = {
+				# NOT = { offensive_war_with = PREV }
+				defensive_war_with = PREV
+			}
+		}
+		
+		trigger = {
+			NOT = { has_country_modifier = burghers_war_used }
+			hidden_trigger = {
+				NOT = { has_country_flag = one_estate_interaction }
+			}
+		}
+		
+		effect = {
+			country_event = {
+				id = POP_Estates_Interactions.207
+			}
+			hidden_effect = { set_country_flag = one_estate_interaction }
+		}
+		ai_will_do = {
+			factor = 0
+			#	modifier = {
+			#		factor = 0
+			#		OR = {
+			#			NOT = { has_country_flag = country_ai_request_war_aid_Burghers }
+			#			has_country_modifier = burghers_just_demanded_war_support
+			#		}
+			#	}
+		}
+	}
+	interaction = {
+		name = "burghers_SUPPORT_DEFENSIVE_WAR"
+		icon = 18
+		years_between_use = 0
+		
+		potential = {
+			is_at_war = yes
+			any_known_country = {
+				offensive_war_with = PREV
+				NOT = { defensive_war_with = PREV }
+			}
+		}
+		
+		trigger = {
+			NOT = { has_country_modifier = burghers_war_used }
+			hidden_trigger = {
+				NOT = { has_country_flag = one_estate_interaction }
+			}
+		}
+		
+		effect = {
+			set_variable = { which = BUR_free_picks 	value = 1 }
+			#	hidden_effect = {
+			#		if = {
+			#			limit = {
+			#				NOT = {
+			#					has_country_flag = BUR_free_pick_assigned
+			#				}
+			#				check_variable = { which = estate_burghers_loyalty	value = 0.7 }
+			#			}
+			#			set_country_flag = BUR_free_pick_assigned
+			#			set_variable = { which = BUR_free_picks		value = 0 }
+			#			set_variable = { which = BUR_free_picks 	value = 1 }
+			#		}
+			#	}
+			country_event = {
+				id = POP_Estates_Interactions.207
+			}
+			hidden_effect = { set_country_flag = one_estate_interaction }
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+}

@@ -1,0 +1,64 @@
+country_decisions = {
+	
+	seize_morea = {
+		potential = {
+			tag = BYZ
+			exists = MOE
+			MOE = { is_free_or_tributary_trigger = yes }
+			NOT = { has_country_flag = seized_morea }
+		}
+		allow = {
+			OR = {
+				is_neighbor_of = MOE
+				MOE = {
+					NOT = { dynasty = "Kantakouzenós"}
+				}
+			}
+		}
+		effect = {
+			set_country_flag = seized_morea
+			add_prestige = 5
+			create_alliance = MOE
+			MOE = {
+				define_ruler = {
+					dynasty = ROOT
+					DIP = 3
+					ADM = 3
+					MIL = 3
+				}
+				kill_heir = yes
+			}
+			custom_tooltip = seize_morea.big_enough_for_theme_system_custom_tooltip
+			hidden_effect = {
+				if = {
+					limit = { check_variable = { which = "Demesne_in_Constantinople" value = 25 } }
+					vassalize = MOE
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	
+	restrict_morean_autonomy = {
+		potential = {
+			tag = BYZ
+			exists = MOE
+			MOE = { is_free_or_tributary_trigger = yes }
+			has_country_flag = seized_morea
+			NOT = { has_country_flag = restricted_morean_autonomy }
+		}
+		allow = {
+			is_neighbor_of = MOE
+			check_variable = { which = "Demesne_in_Constantinople" value = 25 }
+		}
+		effect = {
+			set_country_flag = restricted_morean_autonomy
+			vassalize = MOE
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+}

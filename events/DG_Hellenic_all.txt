@@ -1,0 +1,1961 @@
+namespace = dg_hellenic
+#12 of 15 events finished and optimized (although the Olympics could stand to be changed to country events)
+
+#See also the Romuva events (Defiled Priestess, etc) and the Pagan events (Sacred grove, etc)
+
+#01 - $MONARCH$ consults the Oracle
+#02 - The oracle provides a clear answer
+#03 - The oracle provides a cryptic answer
+#04 - Hellenistic philosophy
+#05 - The $MONARCHTITLE$'s policies
+#08 - Panhellenic Games (Olympic games)
+#09 - Olympic Victory
+#10 - Olympic Defeat
+#11 - Olympic Scandal
+#12 - Panhellenic Games
+#13 - Ancient Temple (restoration of a major Roman temple within the borders of the Empire); some used as current churches, some abandoned
+#14 - Neoplatonic Revival (Gemistus Pletho)
+
+#06* - Hellenism (Imperial Cults, Mystery Cults, Philosophy or Neoplatonism)
+#07* - Mystery Cults (Serapis in Egypt, Atargatis in Syria, Cybele in Italy and the West, Dionysus in Anatolia, Traditional Greek gods in Greece)
+#13* - Patron God of $COUNTRY$ 
+
+country_event = { #$MONARCH$ consults the Oracle
+	
+	id = dg_hellenic.001
+	title = dg_hellenic.001.t
+	desc = dg_hellenic.001.d
+	picture = hellenic_oracle
+	
+	is_triggered_only = yes #by decision
+	
+	option = {
+		name = dg_hellenic.001.a #Will our armies be victorious?
+		ai_chance = {
+			factor = 20
+			modifier = {
+				is_at_war = yes
+				factor = 2
+			}
+			modifier = {
+				is_at_war = no
+				factor = 0.5
+			}
+		}
+		hidden_effect = { set_country_flag = oracle_war }
+		random_list = {
+			60 = { country_event = { id = dg_hellenic.002 days = 30 } }
+			40 = { country_event = { id = dg_hellenic.003 days = 30 } }
+		}
+	}
+	option = {
+		name = dg_hellenic.001.b #Who should lead our armies?
+		ai_chance = {
+			factor = 20
+			modifier = {
+				is_at_war = yes
+				factor = 2
+			}
+			modifier = {
+				is_at_war = no
+				factor = 0.5
+			}
+			modifier = {
+				NOT = { num_of_generals = 1 }
+				factor = 2
+			}
+			modifier = {
+				NOT = { army_tradition = 10 }
+				factor = 2
+			}
+			modifier = {
+				NOT = { army_tradition = 25 }
+				factor = 2
+			}
+			modifier = {
+				army_tradition = 90
+				factor = 0
+			}
+			modifier = {
+				army_tradition = 75
+				factor = 0.5
+			}
+			modifier = {
+				army_tradition = 50
+				factor = 0.5
+			}
+			modifier = {
+				num_of_generals = 1
+				factor = 0.5
+			}
+			modifier = {
+				num_of_generals = 2
+				factor = 0.5
+			}
+			modifier = {
+				num_of_generals = 3
+				factor = 0
+			}
+		}
+		hidden_effect = { set_country_flag = oracle_general }
+		random_list = {
+			60 = { country_event = { id = dg_hellenic.002 days = 30 } }
+			40 = { country_event = { id = dg_hellenic.003 days = 30 } }
+		}
+	}
+	option = {
+		name = dg_hellenic.001.c #Will I have a son?
+		trigger = {
+			government = monarchy
+			has_heir = no
+		}
+		ai_chance = {
+			factor = 20
+			modifier = {
+				is_at_war = no
+				factor = 2
+			}
+		}
+		hidden_effect = { set_country_flag = oracle_heir }
+		random_list = {
+			60 = { country_event = { id = dg_hellenic.002 days = 30 } }
+			40 = { country_event = { id = dg_hellenic.003 days = 30 } }
+		}
+	}
+	option = {
+		name = dg_hellenic.001.e #How should we invest our wealth?
+		ai_chance = {
+			factor = 20
+			modifier = {
+				is_at_war = yes
+				factor = 0
+			}
+			modifier = {
+				is_bankrupt = yes
+				factor = 0.5
+			}
+		}
+		hidden_effect = { set_country_flag = oracle_invest }
+		random_list = {
+			60 = { country_event = { id = dg_hellenic.002 days = 30 } }
+			40 = { country_event = { id = dg_hellenic.003 days = 30 } }
+		}
+	}
+	option = {
+		name = dg_hellenic.001.f #How can we bring peace to $COUNTRY$?
+		ai_chance = {
+			factor = 20
+			modifier = {
+				num_of_rebel_controlled_provinces = 1
+				factor = 2
+			}
+			modifier = {
+				num_of_rebel_controlled_provinces = 2
+				factor = 2
+			}
+			modifier = {
+				NOT = { stability = 0 }
+				factor = 2
+			}
+			modifier = {
+				NOT = { stability = -1 }
+				factor = 2
+			}
+			modifier = {
+				NOT = { stability = -2 }
+				factor = 2
+			}
+			modifier = {
+				stability = 1
+				factor = 0.5
+			}
+			modifier = {
+				stability = 2
+				factor = 0.5
+			}
+			modifier = {
+				stability = 3
+				factor = 0
+			}
+		}
+		hidden_effect = { set_country_flag = oracle_peace }
+		random_list = {
+			60 = { country_event = { id = dg_hellenic.002 days = 30 } }
+			40 = { country_event = { id = dg_hellenic.003 days = 30 } }
+		}
+	}
+}
+
+country_event = { #The oracle provides a clear answer
+	
+	id = dg_hellenic.002
+	title = dg_hellenic.002.t
+	desc = dg_hellenic.002.d
+	picture = hellenic_oracle
+	
+	is_triggered_only = yes #by dg_hellenic.001
+	
+	immediate = {
+		hidden_effect = {
+			#Humans know how to use the advice, the AI flails randomly
+			if = {
+				limit = { ai = yes }
+				random_list = {
+					70 = { set_country_flag = oracle_good_advice }
+					30 = { set_country_flag = oracle_bad_advice }
+				}
+			}
+			else = {
+				random_list = {
+					60 = { set_country_flag = oracle_good_advice }
+					40 = { set_country_flag = oracle_bad_advice }
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = dg_hellenic.002.a #Follow their advice
+		ai_chance = { factor = 75 }
+		if = {
+			limit = {
+				monthly_income = 500
+			}
+			add_treasury = -500
+		}
+		else_if = {
+			limit = {
+				monthly_income = 10
+			}
+			add_years_of_income = -0.08
+		}
+		else = {
+			add_treasury = -10
+		}
+		country_event = { id = dg_hellenic.005 days = 100 }
+	}
+	option = {
+		name = dg_hellenic.002.b #Consider their advice
+		ai_chance = { factor = 25 }
+		add_prestige = -1
+		hidden_effect = {
+			clr_country_flag = oracle_war
+			clr_country_flag = oracle_general
+			clr_country_flag = oracle_heir
+			clr_country_flag = oracle_invest
+			clr_country_flag = oracle_peace
+			clr_country_flag = oracle_good_advice
+			clr_country_flag = oracle_bad_advice
+		}
+	}
+}
+
+country_event = { #The oracle provides a cryptic answer
+	
+	id = dg_hellenic.003
+	title = dg_hellenic.003.t
+	desc = dg_hellenic.003.d
+	picture = hellenic_oracle
+	
+	is_triggered_only = yes #By dg_hellenic.001
+	
+	option = {
+		name = dg_hellenic.003.a #The oracle has spoken!
+		if = {
+			limit = { DIP = 6 }
+			add_legitimacy = 4
+			add_devotion = 8
+			add_republican_tradition = 2
+			add_prestige = 4
+		}
+		else_if = {
+			limit = {
+				DIP = 5
+			}
+			add_legitimacy = 3
+			add_devotion = 6
+			add_republican_tradition = 1.5
+			add_prestige = 3
+		}
+		else_if = {
+			limit = {
+				DIP = 4
+			}
+			add_legitimacy = 2
+			add_devotion = 4
+			add_republican_tradition = 1
+			add_prestige = 2
+		}
+		else_if = {
+			limit = {
+				DIP = 3
+			}
+			add_legitimacy = 1
+			add_devotion = 2
+			add_republican_tradition = 0.5
+			add_prestige = 1
+		}
+		else_if = {
+			limit = {
+				DIP = 1
+			}
+			add_legitimacy = -1
+			add_devotion = -2
+			add_republican_tradition = -0.5
+			add_prestige = -1
+		}
+		else = {
+			add_legitimacy = -2
+			add_devotion = -4
+			add_republican_tradition = -1
+			add_prestige = -2
+		}
+		hidden_effect = {
+			clr_country_flag = oracle_war
+			clr_country_flag = oracle_general
+			clr_country_flag = oracle_heir
+			clr_country_flag = oracle_invest
+			clr_country_flag = oracle_peace
+		}
+	}
+}
+
+country_event = { #Hellenistic philosophy
+	
+	id = dg_hellenic.004
+	title = dg_hellenic.004.t
+	desc = dg_hellenic.004.d
+	picture = hellenic_philosophy
+	
+	trigger = {
+		religion = hellenic_pagan
+		OR = { has_regency = no has_consort_regency = yes }
+		NOT = { has_ruler_modifier = cynicism_philosophy }
+		NOT = { has_ruler_modifier = epicurianism_philosophy }
+		NOT = { has_ruler_modifier = stoicism_philosophy }
+		NOT = { has_country_flag = hellenistic_philosophies_neutral } #Removed upon new ruler
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 10
+		
+		modifier = {
+			is_at_war = yes
+			factor = 2
+		}
+		modifier = {
+			piety = 0.60
+			factor = 0.7
+		}
+		modifier = {
+			piety = 0.20
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { piety = -0.20 }
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { piety = -0.60 }
+			factor = 1.4
+		}
+	}
+	
+	immediate = { hidden_effect = { set_country_flag = hellenistic_philosophy } }
+	
+	option = {
+		name = dg_hellenic.004.b #Follow the peace of epicurianism
+		ai_chance = {
+			factor = 30
+			modifier = {
+				overlord = {
+					has_ruler_modifier = epicurianism_philosophy
+				}
+				factor = 2
+			}
+			modifier = {
+				government = republic
+				factor = 0.7
+			}
+			modifier = {
+				government = monarchy
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { stability = 0 }
+				factor = 1.4
+			}
+			modifier = {
+				num_of_rebel_controlled_provinces = 1
+				factor = 1.4
+			}
+			modifier = {
+				is_at_war = yes
+				factor = 0.7
+			}
+		}
+		add_ruler_modifier = { name = "epicurianism_philosophy" }
+		every_country = {
+			limit = {
+				religion = hellenic_pagan
+				has_ruler_modifier = epicurianism_philosophy
+			}
+			if = {
+				limit = {
+					piety = 0.6
+				}
+				add_opinion = { who = ROOT modifier = same_doctrine_fanatical }
+			}
+			else_if = {
+				limit = {
+					piety = 0.2
+				}
+				add_opinion = { who = ROOT modifier = same_doctrine_pious }
+			}
+			else_if = {
+				limit = {
+					piety = -0.2
+				}
+				add_opinion = { who = ROOT modifier = same_doctrine_observant }
+			}
+		}
+	}
+	option = {
+		name = dg_hellenic.004.c #Follow the resolve of stoicism
+		ai_chance = {
+			factor = 20
+			modifier = {
+				overlord = {
+					has_ruler_modifier = stoicism_philosophy
+				}
+				factor = 2
+			}
+			modifier = {
+				government = republic
+				factor = 1.4
+			}
+			modifier = {
+				num_of_rebel_controlled_provinces = 1
+				factor = 1.4
+			}
+		}
+		add_ruler_modifier = { name = "stoicism_philosophy" }
+		every_country = {
+			limit = {
+				religion = hellenic_pagan
+				has_ruler_modifier = stoicism_philosophy
+			}
+			if = {
+				limit = {
+					piety = 0.6
+				}
+				add_opinion = { who = ROOT modifier = same_doctrine_fanatical }
+			}
+			else_if = {
+				limit = {
+					piety = 0.2
+				}
+				add_opinion = { who = ROOT modifier = same_doctrine_pious }
+			}
+			else_if = {
+				limit = {
+					piety = -0.2
+				}
+				add_opinion = { who = ROOT modifier = same_doctrine_observant }
+			}
+		}
+	}
+	option = {
+		name = dg_hellenic.004.a #Follow the truth of cynicism
+		ai_chance = {
+			factor = 10
+			modifier = {
+				overlord = {
+					has_ruler_modifier = cynicism_philosophy
+				}
+				factor = 2
+			}
+			modifier = {
+				NOT = { prestige = 0 }
+				factor = 1.4
+			}
+			modifier = {
+				prestige = 25
+				factor = 0.7
+			}
+			modifier = {
+				prestige = 50
+				factor = 0.7
+			}
+			modifier = {
+				prestige = 75
+				factor = 0.7
+			}
+			modifier = {
+				prestige = 100
+				factor = 0.7
+			}
+		}
+		add_ruler_modifier = { name = "cynicism_philosophy" }
+		every_country = {
+			limit = {
+				religion = hellenic_pagan
+				has_ruler_modifier = cynicism_philosophy
+			}
+			if = {
+				limit = {
+					piety = 0.6
+				}
+				add_opinion = { who = ROOT modifier = same_doctrine_fanatical }
+			}
+			else_if = {
+				limit = {
+					piety = 0.2
+				}
+				add_opinion = { who = ROOT modifier = same_doctrine_pious }
+			}
+			else_if = {
+				limit = {
+					piety = -0.2
+				}
+				add_opinion = { who = ROOT modifier = same_doctrine_observant }
+			}
+		}
+	}
+	option = {
+		name = dg_hellenic.004.e #I follow my own path
+		ai_chance = {
+			factor = 40
+			modifier = {
+				NOT = { primary_culture = greek }
+				factor = 2
+			}
+		}
+	}
+}
+
+country_event = { #The $MONARCHTITLE$'s policies
+	
+	id = dg_hellenic.005
+	title = dg_hellenic.005.t
+	desc = dg_hellenic.005.d
+	picture = all_powerful_advisor
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			random_list = {
+				50 = { set_country_flag = oracle_first_option }
+				50 = { set_country_flag = oracle_second_option }
+			}
+		}
+	}
+	
+	option = {
+		name = dg_hellenic.005.a
+		if = {
+			limit = {
+				has_country_flag = oracle_war
+				has_country_flag = oracle_good_advice
+				has_country_flag = oracle_first_option
+			}
+			add_country_modifier = { name = "morale_boost" duration = 2000 }
+		}
+		if = {
+			limit = {
+				has_country_flag = oracle_war
+				has_country_flag = oracle_bad_advice
+				has_country_flag = oracle_first_option
+			}
+			add_country_modifier = { name = "decreased_morale" duration = 2000 }
+		}
+		if = {
+			limit = {
+				has_country_flag = oracle_general
+				has_country_flag = oracle_good_advice
+				has_country_flag = oracle_first_option
+			}
+			create_general = { tradition = 50 }
+		}
+		if = {
+			limit = {
+				has_country_flag = oracle_general
+				has_country_flag = oracle_bad_advice
+			}
+			create_general = { tradition = 0 }
+		}
+		if = {
+			limit = {
+				has_country_flag = oracle_heir
+				has_country_flag = oracle_bad_advice
+				has_country_flag = oracle_first_option
+			}
+			add_country_modifier = { name = "low_fertility" duration = 2000 }
+		}
+		if = {
+			limit = {
+				has_country_flag = oracle_invest
+				has_country_flag = oracle_good_advice
+				has_country_flag = oracle_first_option
+			}
+			add_country_modifier = { name = "trade_investment" duration = 2000 }
+		}
+		if = {
+			limit = {
+				has_country_flag = oracle_invest
+				has_country_flag = oracle_bad_advice
+				has_country_flag = oracle_first_option
+			}
+			add_dip_power = -100 # add_country_modifier = { name = "trade_disaster" duration = 2000 }
+		}
+		if = {
+			limit = {
+				has_country_flag = oracle_war
+				has_country_flag = oracle_bad_advice
+				has_country_flag = oracle_second_option
+			}
+			add_country_modifier = { name = "deserters" duration = 2000 }
+		}
+		if = {
+			limit = {
+				has_country_flag = oracle_general
+				has_country_flag = oracle_good_advice
+				has_country_flag = oracle_second_option
+			}
+			create_general = { tradition = 75 }
+		}
+		if = {
+			limit = {
+				has_country_flag = oracle_heir
+				has_country_flag = oracle_good_advice
+				has_country_flag = oracle_second_option
+			}
+			define_heir = { dynasty = ROOT claim = 100 }
+		}
+		if = {
+			limit = {
+				has_country_flag = oracle_heir
+				has_country_flag = oracle_bad_advice
+				has_country_flag = oracle_second_option
+			}
+			define_heir = { dynasty = ROOT claim = 0 }
+		}
+		if = {
+			limit = {
+				has_country_flag = oracle_invest
+				has_country_flag = oracle_bad_advice
+				has_country_flag = oracle_second_option
+			}
+			add_country_modifier = { name = "financial_disaster" duration = 2000 }
+		}
+		if = {
+			limit = {
+				has_country_flag = oracle_peace
+				has_country_flag = oracle_good_advice
+				has_country_flag = oracle_second_option
+			}
+			add_stability_1 = yes
+		}
+		if = {
+			limit = {
+				has_country_flag = oracle_peace
+				has_country_flag = oracle_bad_advice
+				has_country_flag = oracle_second_option
+			}
+			add_country_modifier = { name = "disorder" duration = 2000 }
+		}
+		hidden_effect = {
+			clr_country_flag = oracle_war
+			clr_country_flag = oracle_general
+			clr_country_flag = oracle_heir
+			clr_country_flag = oracle_invest
+			clr_country_flag = oracle_peace
+			clr_country_flag = oracle_good_advice
+			clr_country_flag = oracle_bad_advice
+			clr_country_flag = oracle_first_option
+			clr_country_flag = oracle_second_option
+		}
+	}
+}
+
+country_event = { #Panhellenic Games
+	
+	id = dg_hellenic.008
+	title = dg_hellenic.008.t
+	desc = dg_hellenic.008.d
+	picture = hellenic_olympics
+	
+	trigger = {
+		religion = hellenic_pagan
+		NOT = { check_variable = { which = olympiad value = 3 } }
+		is_month = 6
+		NOT = { is_month = 9 }
+		NOT = { has_country_modifier = olympic_games }
+		NOT = { has_country_flag = olympic_games_abolished }
+		NOT = { has_country_flag = olympic_games_skipped }
+		OR = {
+			NOT = { any_known_country = { religion = hellenic_pagan num_of_cities = ROOT } } #Only the biggest Hellenic country gets the games
+			AND = {
+				primary_culture = greek
+				is_free_or_tributary_trigger = yes
+			}
+		}
+		any_owned_province = {
+			controlled_by = owner
+			has_siege = no
+			NOT = { has_province_modifier = religious_scandal_province }
+			is_city = yes
+			OR = {
+				is_in_capital_area = yes
+				is_overseas = no
+			}
+			OR = {
+				has_owner_culture = yes
+				has_owner_religion = yes
+				has_building = temple
+				is_capital = yes
+			}
+		}
+		OR = {
+			ai = yes
+			has_country_flag = religious_news_trivial
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	immediate = {
+		hidden_effect = {
+			#Choose a suitable location
+			random_owned_province = {
+				limit = {
+					owner = { religion = hellenic_pagan }
+					province_id = 146 #Athens = Olympia
+				}
+				change_variable = { which = olympic_games value = 4 }
+			}
+			capital_scope = {
+				change_variable = { which = olympic_games value = 1 }
+			}
+			every_owned_province = {
+				limit = {
+					OR = {
+						is_in_capital_area = yes
+						is_overseas = no #State
+					}
+				}
+				if = {
+					limit = { has_owner_religion = yes }
+					change_variable = { which = olympic_games value = 2 }
+				}
+				if = {
+					limit = { has_owner_culture = yes }
+					change_variable = { which = olympic_games value = 2 }
+				}
+				if = {
+					limit = { has_port = yes }
+					change_variable = { which = olympic_games value = 1 }
+				}
+				if = {
+					limit = { has_building = temple }
+					change_variable = { which = olympic_games value = 1 }
+				}
+				if = {
+					limit = { unrest = 1 }
+					change_variable = { which = olympic_games value = -1 }
+				}
+				if = {
+					limit = { unrest = 3 }
+					change_variable = { which = olympic_games value = -1 }
+				}
+				if = {
+					limit = { unrest = 5 }
+					change_variable = { which = olympic_games value = -1 }
+				}
+				if = {
+					limit = {
+						OR = {
+							is_colony = yes
+							NOT = { controlled_by = owner }
+							has_siege = yes
+							has_province_modifier = religious_scandal_province
+						}
+					}
+					set_variable = { which = olympic_games value = 0 }
+				}
+			}
+			random_owned_province = {
+				limit = {
+					owner = { NOT = { has_country_flag = olympic_games_site_chosen } }
+					check_variable = { which = olympic_games value = 8 }
+				}
+				set_province_flag = olympic_games_site
+				owner = { set_country_flag = olympic_games_site_chosen }
+			}
+			random_owned_province = {
+				limit = {
+					owner = { NOT = { has_country_flag = olympic_games_site_chosen } }
+					check_variable = { which = olympic_games value = 7 }
+				}
+				set_province_flag = olympic_games_site
+				owner = { set_country_flag = olympic_games_site_chosen }
+			}
+			random_owned_province = {
+				limit = {
+					owner = { NOT = { has_country_flag = olympic_games_site_chosen } }
+					check_variable = { which = olympic_games value = 6 }
+				}
+				set_province_flag = olympic_games_site
+				owner = { set_country_flag = olympic_games_site_chosen }
+			}
+			random_owned_province = {
+				limit = {
+					owner = { NOT = { has_country_flag = olympic_games_site_chosen } }
+					check_variable = { which = olympic_games value = 5 }
+				}
+				set_province_flag = olympic_games_site
+				owner = { set_country_flag = olympic_games_site_chosen }
+			}
+			random_owned_province = {
+				limit = {
+					owner = { NOT = { has_country_flag = olympic_games_site_chosen } }
+					check_variable = { which = olympic_games value = 4 }
+				}
+				set_province_flag = olympic_games_site
+				owner = { set_country_flag = olympic_games_site_chosen }
+			}
+			random_owned_province = {
+				limit = {
+					owner = { NOT = { has_country_flag = olympic_games_site_chosen } }
+					check_variable = { which = olympic_games value = 3 }
+				}
+				set_province_flag = olympic_games_site
+				owner = { set_country_flag = olympic_games_site_chosen }
+			}
+			random_owned_province = {
+				limit = {
+					owner = { NOT = { has_country_flag = olympic_games_site_chosen } }
+					check_variable = { which = olympic_games value = 2 }
+				}
+				set_province_flag = olympic_games_site
+				owner = { set_country_flag = olympic_games_site_chosen }
+			}
+			random_owned_province = {
+				limit = {
+					owner = { NOT = { has_country_flag = olympic_games_site_chosen } }
+					check_variable = { which = olympic_games value = 1 }
+				}
+				set_province_flag = olympic_games_site
+				owner = { set_country_flag = olympic_games_site_chosen }
+			}
+			random_owned_province = {
+				limit = { owner = { NOT = { has_country_flag = olympic_games_site_chosen } } }
+				set_province_flag = olympic_games_site
+				owner = { clr_country_flag = olympic_games_site_chosen }
+			}
+			every_owned_province = { set_variable = { which = olympic_games value = 0 } }
+		}
+	}
+	
+	option = {
+		name = dg_hellenic.008.a #Let the games begin
+		ai_chance = { factor = 70 }
+		if = {
+			limit = {
+				monthly_income = 250
+			}
+			add_treasury = -500
+		}
+		else_if = {
+			limit = {
+				monthly_income = 5
+			}
+			add_years_of_income = -0.16
+		}
+		else = {
+			add_treasury = -10
+		}
+		add_prestige = 5
+		add_country_modifier = { name = olympic_games duration = 100 }
+		set_country_flag = olympic_games
+		random_owned_province = {
+			limit = { has_province_flag = olympic_games_site }
+			add_province_modifier = { name = olympic_games_site duration = 30 } #Actually just five days
+		}
+		every_country = {
+			limit = {
+				OR = {
+					religion = hellenic_pagan
+					is_subject_of = ROOT
+				}
+				NOT = { tag = ROOT }
+			}
+			country_event = { id = dg_hellenic.012 }
+		}
+	}
+	option = {
+		name = dg_hellenic.008.b #$MONARCH$ shall participate personally
+		trigger = {
+			OR = { has_regency = no has_consort_regency = yes }
+			is_female = no
+		}
+		ai_chance = { factor = 10 }
+		if = {
+			limit = {
+				monthly_income = 250
+			}
+			add_treasury = -1000
+		}
+		else_if = {
+			limit = {
+				monthly_income = 5
+			}
+			add_years_of_income = -0.32
+		}
+		else = {
+			add_treasury = -20
+		}
+		add_prestige = 5
+		add_country_modifier = { name = olympic_games duration = 100 }
+		set_country_flag = olympic_games
+		set_country_flag = emperor_participating
+		random_owned_province = {
+			limit = { has_province_flag = olympic_games_site }
+			add_province_modifier = { name = olympic_games_site duration = 30 } #Actually five days!
+		}
+		every_country = {
+			limit = {
+				OR = {
+					religion = hellenic_pagan
+					is_subject_of = ROOT
+				}
+				NOT = { tag = ROOT }
+			}
+			country_event = { id = dg_hellenic.012 }
+		}
+	}
+	
+	option = {
+		name = dg_hellenic.008.c #Skip them
+		ai_chance = {
+			factor = 30
+			modifier = {
+				NOT = {
+					OR = {
+						is_bankrupt = yes
+						num_of_loans = 2
+						war_exhaustion = 10
+						has_disaster = civil_war
+					}
+				}
+				factor = 0
+			}
+		}
+		add_prestige = -10
+		hidden_effect = {
+			set_country_flag = olympic_games_skipped
+			every_owned_province = { clr_province_flag = olympic_games_site }
+		}
+	}
+}
+
+country_event = { #Olympic victory
+	
+	id = dg_hellenic.009
+	title = dg_hellenic.009.t
+	desc = dg_hellenic.009.d
+	picture = hellenic_chariots
+	
+	trigger = {
+		has_country_flag = olympic_games
+		any_owned_province = {
+			has_province_flag = olympic_games_site
+			NOT = { has_province_modifier = olympic_games_site }
+		}
+	}
+	
+	mean_time_to_happen = { months = 2 }
+	
+	immediate = {
+		clr_country_flag = olympic_games
+		clr_country_flag = olympic_program
+	}
+	
+	option = {
+		name = dg_hellenic.009.a #Reward the winners
+		ai_chance = {
+			factor = 50
+			modifier = {
+				num_of_loans = 1
+				factor = 0.7
+			}
+			modifier = {
+				num_of_loans = 2
+				factor = 0.7
+			}
+			modifier = {
+				is_bankrupt = yes
+				factor = 0.5
+			}
+			modifier = {
+				NOT = { years_of_income = 0.25 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { years_of_income = 0.10 }
+				factor = 0.7
+			}
+			modifier = {
+				years_of_income = 1
+				factor = 1.4
+			}
+			modifier = {
+				years_of_income = 2
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { legitimacy = 80 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { legitimacy = 60 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { legitimacy = 40 }
+				factor = 1.4
+			}
+			modifier = {
+				legitimacy = 1
+				factor = 0.7
+			}
+			modifier = {
+				government = theocracy
+				factor = 0.5
+			}
+		}
+		if = {
+			limit = { NOT = { has_country_flag = emperor_participating } }
+			add_prestige = 5
+			if = {
+				limit = {
+					monthly_income = 50
+				}
+				add_treasury = -50
+			}
+			else_if = {
+				limit = {
+					monthly_income = 5
+				}
+				add_years_of_income = -0.08
+			}
+			else = {
+				add_treasury = -5
+			}
+			if = {
+				limit = {
+					piety = 0.60
+				}
+				add_legitimacy = 4
+				add_devotion = 8
+				add_republican_tradition = 2
+			}
+			else_if = {
+				limit = {
+					piety = 0.20
+				}
+				add_legitimacy = 3
+				add_devotion = 6
+				add_republican_tradition = 1.5
+			}
+			else_if = {
+				limit = {
+					piety = -0.20
+				}
+				add_legitimacy = 2
+				add_devotion = 4
+				add_republican_tradition = 1
+			}
+			else_if = {
+				limit = {
+					piety = -0.60
+				}
+				add_legitimacy = 1
+				add_devotion = 2
+				add_republican_tradition = 0.5
+			}
+		}
+		if = {
+			limit = { has_country_flag = emperor_participating }
+			add_prestige = 10
+		}
+		hidden_effect = {
+			clr_country_flag = emperor_participating
+			every_owned_province = { clr_province_flag = olympic_games_site }
+		}
+	}
+	option = {
+		name = dg_hellenic.009.b #Celebrate the games
+		ai_chance = { factor = 50 }
+		if = {
+			limit = { has_country_flag = emperor_participating }
+			add_prestige = 10
+		}
+		else = {
+			add_prestige = 5
+		}
+		hidden_effect = {
+			clr_country_flag = emperor_participating
+			every_owned_province = { clr_province_flag = olympic_games_site }
+		}
+	}
+}
+
+country_event = { #Olympic defeat
+	
+	id = dg_hellenic.010
+	title = dg_hellenic.010.t
+	desc = dg_hellenic.010.d
+	picture = hellenic_olympics
+	
+	trigger = {
+		has_country_flag = olympic_games
+		any_owned_province = {
+			has_province_flag = olympic_games_site
+			NOT = { has_province_modifier = olympic_games_site }
+		}
+	}
+	
+	mean_time_to_happen = {
+		
+		months = 3
+		
+		modifier = {
+			has_country_flag = emperor_participating
+			factor = 2
+		}
+		modifier = {
+			has_country_flag = olympic_program
+			factor = 1.4
+		}
+	}
+	
+	immediate = {
+		clr_country_flag = olympic_games
+		clr_country_flag = olympic_program
+	}
+	
+	option = {
+		name = dg_hellenic.010.a #Accept the results
+		ai_chance = {
+			factor = 25
+			modifier = {
+				NOT = { prestige = 0.25 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { prestige = 0 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { prestige = -0.25 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { prestige = -0.50 }
+				factor = 0.7
+			}
+		}
+		if = {
+			limit = { has_country_flag = emperor_participating }
+			add_prestige = -10
+		}
+		else = {
+			add_prestige = -3
+		}
+		hidden_effect = {
+			clr_country_flag = emperor_participating
+			every_owned_province = { clr_province_flag = olympic_games_site }
+		}
+	}
+	option = {
+		name = dg_hellenic.010.b #Encourage our athletes to do better in the future
+		ai_chance = {
+			factor = 25
+			modifier = {
+				num_of_loans = 1
+				factor = 0.7
+			}
+			modifier = {
+				num_of_loans = 2
+				factor = 0.7
+			}
+			modifier = {
+				is_bankrupt = yes
+				factor = 0.5
+			}
+			modifier = {
+				NOT = { years_of_income = 0.10 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { years_of_income = 0.25 }
+				factor = 0.7
+			}
+			modifier = {
+				years_of_income = 1
+				factor = 1.4
+			}
+			modifier = {
+				years_of_income = 2
+				factor = 1.4
+			}
+		}
+		trigger = { NOT = { has_country_flag = emperor_participating } }
+		if = {
+			limit = {
+				monthly_income = 100
+			}
+			add_treasury = -100
+		}
+		else_if = {
+			limit = {
+				monthly_income = 5
+			}
+			add_years_of_income = -0.08
+		}
+		else = {
+			add_treasury = -5
+		}
+		set_country_flag = olympic_program
+		hidden_effect = {
+			clr_country_flag = emperor_participating
+			every_owned_province = { clr_province_flag = olympic_games_site }
+		}
+	}
+	option = {
+		name = dg_hellenic.010.c #Punish the winners for embarassing us
+		ai_chance = {
+			factor = 50
+			modifier = {
+				NOT = { legitimacy = 80 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { legitimacy = 60 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { legitimacy = 40 }
+				factor = 0.7
+			}
+		}
+		trigger = { has_country_flag = emperor_participating }
+		add_legitimacy = -5
+		add_devotion = -10
+		add_republican_tradition = -2.5
+		hidden_effect = {
+			clr_country_flag = emperor_participating
+			every_owned_province = { clr_province_flag = olympic_games_site }
+		}
+	}
+}
+
+country_event = { #Olympic scandal
+	
+	id = dg_hellenic.011
+	title = dg_hellenic.011.t
+	desc = dg_hellenic.011.d
+	picture = hellenic_olympics
+	
+	trigger = {
+		has_country_flag = olympic_games
+		any_owned_province = {
+			has_province_flag = olympic_games_site
+			NOT = { has_province_modifier = olympic_games_site }
+		}
+	}
+	
+	mean_time_to_happen = {
+		
+		months = 4
+		
+		modifier = {
+			has_country_flag = olympic_program
+			factor = 0.7
+		}
+	}
+	
+	immediate = {
+		clr_country_flag = olympic_games
+		clr_country_flag = olympic_program
+	}
+	
+	option = {
+		name = dg_hellenic.011.c #Execute the offenders
+		trigger = {
+			NOT = { has_country_flag = emperor_participating }
+			piety = 0.20
+		}
+		ai_chance = { factor = 20 }
+		random = {
+			chance = 25
+			subtract_stability_1 = yes
+		}
+		hidden_effect = {
+			clr_country_flag = emperor_participating
+			every_owned_province = { clr_province_flag = olympic_games_site }
+		}
+	}
+	option = {
+		name = dg_hellenic.011.a #Make the offenders pay a fine
+		ai_chance = { factor = 50 }
+		random_owned_province = {
+			limit = { has_province_flag = olympic_games_site }
+			add_province_modifier = { name = religious_scandal_province duration = 1000 }
+		}
+		add_prestige = -10
+		if = {
+			limit = { has_country_flag = emperor_participating }
+			add_years_of_income = -0.08
+		}
+		hidden_effect = {
+			clr_country_flag = emperor_participating
+			every_owned_province = { clr_province_flag = olympic_games_site }
+		}
+	}
+	option = {
+		name = dg_hellenic.011.b #Sweep it under the rug
+		trigger = { DIP = 2 }
+		ai_chance = {
+			factor = 30
+			modifier = {
+				has_country_flag = emperor_participating
+				factor = 2
+			}
+			modifier = {
+				DIP = 5
+				factor = 1.4
+			}
+			modifier = {
+				DIP = 6
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { DIP = 3 }
+				factor = 0.7
+			}
+		}
+		add_dip_power = -20
+		if = {
+			limit = {
+				NOT = { DIP = 5 }
+				DIP = 4
+			}
+			random = {
+				chance = 20
+				random_owned_province = {
+					limit = { has_province_flag = olympic_games_site }
+					add_province_modifier = { name = religious_scandal_province duration = 2000 }
+				}
+				add_prestige = -20
+			}
+		}
+		else_if = {
+			limit = {
+				DIP = 3
+			}
+			random = {
+				chance = 40
+				random_owned_province = {
+					limit = { has_province_flag = olympic_games_site }
+					add_province_modifier = { name = religious_scandal_province duration = 2000 }
+				}
+				add_prestige = -20
+			}
+		}
+		else = {
+			random = {
+				chance = 60
+				random_owned_province = {
+					limit = { has_province_flag = olympic_games_site }
+					add_province_modifier = { name = religious_scandal_province duration = 2000 }
+				}
+				add_prestige = -20
+			}
+		}
+		hidden_effect = {
+			clr_country_flag = emperor_participating
+			every_owned_province = { clr_province_flag = olympic_games_site }
+		}
+	}
+}
+
+country_event = { #Panhellenic Games
+	
+	id = dg_hellenic.012
+	title = dg_hellenic.012.t
+	desc = dg_hellenic.012.d
+	picture = hellenic_olympics
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = dg_hellenic.012.a #Send our finest athletes
+		ai_chance = { factor = 50 }
+		if = {
+			limit = {
+				monthly_income = 250
+			}
+			add_treasury = -125
+		}
+		else_if = {
+			limit = {
+				monthly_income = 10
+			}
+			add_years_of_income = -0.04
+		}
+		else = {
+			add_treasury = -5
+		}
+		set_country_flag = olympic_games
+	}
+	option = {
+		name = dg_hellenic.012.b #Boycott the games
+		ai_chance = {
+			factor = 50
+			modifier = {
+				NOT = { religion = hellenic_pagan }
+				factor = 2
+			}
+			modifier = {
+				NOT = {
+					OR = {
+						FROM = { war_with = ROOT }
+						FROM = { truce_with = ROOT }
+						FROM = { is_enemy = ROOT }
+						FROM = { is_rival = ROOT }
+					}
+				}
+				factor = 0
+			}
+		}
+		FROM = { add_prestige = -1 }
+	}
+}
+
+province_event = { #13 - Restoration of an Ancient Temple
+	
+	id = dg_hellenic.013
+	title = dg_hellenic.013.t
+	desc = dg_hellenic.013.d
+	picture = all_ruined_temple
+	
+	trigger = {
+		owner = { religion_group = european_pagan }
+		has_owner_religion = no
+		urban_province_trigger = yes
+		temple_trigger = no
+		NOT = { has_province_flag = ancient_pagan_temple }
+		NOT = { any_neighbor_province = { has_province_flag = ancient_pagan_temple } }
+		OR = {
+			has_owner_culture = yes
+			AND = {
+				owner = { religion = hellenic_pagan }
+				province_group = roman_dejure_group
+			}
+		}
+	}
+	
+	mean_time_to_happen = { years = 20 }
+	
+	
+	immediate = {
+		set_province_flag = ancient_pagan_temple
+		if = {
+			limit = { owner = { has_country_flag = temple_restoration } }
+			custom_tooltip = temple_restoration
+		}
+		else = {
+			custom_tooltip = temple_seized
+		}
+	}
+	
+	option = {
+		name = dg_hellenic.013.a #Seize it
+		trigger = { NOT = { owner = { has_country_flag = temple_restoration } } }
+		ai_chance = {
+			factor = 35
+			modifier = {
+				is_core = owner
+				factor = 1.4
+			}
+			modifier = {
+				unrest = 1
+				factor = 0.7
+			}
+		}
+		add_building = temple
+		hidden_effect = {
+			set_variable = { which = added_unrest value = 10 }
+			add_base_unrest = yes
+		}
+		custom_tooltip = added_unrest_10
+		custom_tooltip = hellenic_pagan_10
+		hidden_effect = { change_variable = { which = converted_heathens value = 2 } }
+		hidden_effect = {
+			random_list = {
+				50 = { owner = { set_country_flag = temple_restoration } }
+				50 = { owner = { clr_country_flag = temple_restoration } }
+			}
+		}
+	}
+	option = {
+		name = dg_hellenic.013.b #Restore it
+		trigger = { owner = { has_country_flag = temple_restoration } }
+		ai_chance = { factor = 35 }
+		owner = { add_treasury = -50 }
+		add_building = temple
+		custom_tooltip = hellenic_pagan_10
+		hidden_effect = { change_variable = { which = converted_heathens value = 2 } }
+		hidden_effect = {
+			random_list = {
+				50 = { owner = { set_country_flag = temple_restoration } }
+				50 = { owner = { clr_country_flag = temple_restoration } }
+			}
+		}
+	}
+	option = {
+		name = dg_hellenic.013.c #Leave it alone
+		ai_chance = { factor = 30 }
+		owner = {
+			if = {
+				limit = {
+					piety = 0.60
+				}
+				add_prestige = -4
+			}
+			else_if = {
+				limit = {
+					piety = 0.20
+				}
+				add_prestige = -3
+			}
+			else_if = {
+				limit = {
+					piety = -0.20
+				}
+				add_prestige = -2
+			}
+			else_if = {
+				limit = {
+					piety = -0.60
+				}
+				add_prestige = -1
+			}
+		}
+		hidden_effect = {
+			random_list = {
+				50 = { owner = { set_country_flag = temple_restoration } }
+				50 = { owner = { clr_country_flag = temple_restoration } }
+			}
+		}
+	}
+}
+
+country_event = { #14 - Neoplatonic Revival (Gemistus Pletho)
+	
+	id = dg_hellenic.014
+	title = dg_hellenic.014.t
+	desc = dg_hellenic.014.d
+	picture = hellenic_philosophy
+	
+	trigger = {
+		OR = {
+			primary_culture = greek
+			dominant_culture = greek
+		}
+		advisor = philosopher
+		NOT = { has_global_flag = hellenic_neoplatonic_revival }
+		NOT = { is_religion_enabled = protestant }
+		NOT = { religion = hellenic_pagan }
+		OR = {
+			ai = no
+			NOT = { any_known_country = { ai = no OR = { primary_culture = greek dominant_culture = greek } } }
+		}
+	}
+	
+	mean_time_to_happen = {
+		
+		years = 8
+		
+		
+		modifier = {
+			piety = 0.60
+			factor = 1.4
+		}
+		modifier = {
+			piety = 0.20
+			factor = 1.4
+		}
+		modifier = {
+			NOT = { piety = -0.20 }
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { piety = -0.60 }
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { num_of_cities = 5 }
+			factor = 0.7
+		}
+		modifier = {
+			NOT = { num_of_cities = 3 }
+			factor = 0.7
+		}
+	}
+	
+	immediate = { set_global_flag = hellenic_neoplatonic_revival }
+	
+	option = {
+		name = dg_hellenic.014.a #Let him be our ambassador to the West
+		ai_chance = {
+			factor = 50
+			modifier = {
+				philosopher = 3
+				factor = 1.4
+			}
+			modifier = {
+				philosopher = 2
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { prestige = 75 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { prestige = 50 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { prestige = 25 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { prestige = 0 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { prestige = -25 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { prestige = -50 }
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { prestige = -75 }
+				factor = 1.4
+			}
+		}
+		if = {
+			limit = { philosopher = 3 }
+			add_prestige = 30
+			random_owned_province = {
+				limit = { culture = greek }
+				random = {
+					chance = 30
+					custom_tooltip = hellenic_pagan_10
+					hidden_effect = {
+						change_variable = { which = hellenic_pagan value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { philosopher = 2 }
+			add_prestige = 20
+			random_owned_province = {
+				limit = { culture = greek }
+				random = {
+					chance = 20
+					custom_tooltip = hellenic_pagan_10
+					hidden_effect = {
+						change_variable = { which = hellenic_pagan value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+		else = {
+			add_prestige = 10
+			random_owned_province = {
+				limit = { culture = greek }
+				random = {
+					chance = 10
+					custom_tooltip = hellenic_pagan_10
+					hidden_effect = {
+						change_variable = { which = hellenic_pagan value = 2 }
+						change_variable = { which = province_religion value = -2 }
+					}
+				}
+			}
+		}
+		remove_advisor = philosopher
+	}
+	option = {
+		name = dg_hellenic.014.b #Burn him as a heretic
+		ai_chance = {
+			factor = 50
+			modifier = {
+				piety = 0.20
+				factor = 1.4
+			}
+			modifier = {
+				piety = 0.60
+				factor = 1.4
+			}
+			modifier = {
+				NOT = { piety = -0.20 }
+				factor = 0.7
+			}
+			modifier = {
+				NOT = { piety = -0.60 }
+				factor = 0.7
+			}
+			modifier = {
+				government = monarchy
+				NOT = { legitimacy = 90 }
+				factor = 1.4
+			}
+			modifier = {
+				government = monarchy
+				NOT = { legitimacy = 80 }
+				factor = 1.4
+			}
+			modifier = {
+				government = monarchy
+				NOT = { legitimacy = 70 }
+				factor = 1.4
+			}
+			modifier = {
+				government = monarchy
+				NOT = { legitimacy = 60 }
+				factor = 1.4
+			}
+			modifier = {
+				government = republic
+				NOT = { republican_tradition = 90 }
+				factor = 1.4
+			}
+			modifier = {
+				government = republic
+				NOT = { republican_tradition = 80 }
+				factor = 1.4
+			}
+			modifier = {
+				government = republic
+				NOT = { republican_tradition = 70 }
+				factor = 1.4
+			}
+			modifier = {
+				government = republic
+				NOT = { republican_tradition = 60 }
+				factor = 1.4
+			}
+			modifier = {
+				government = theocracy
+				NOT = { devotion = 90 }
+				factor = 1.4
+			}
+			modifier = {
+				government = theocracy
+				NOT = { devotion = 80 }
+				factor = 1.4
+			}
+			modifier = {
+				government = theocracy
+				NOT = { devotion = 70 }
+				factor = 1.4
+			}
+			modifier = {
+				government = theocracy
+				NOT = { devotion = 60 }
+				factor = 1.4
+			}
+		}
+		kill_advisor = philosopher
+		if = {
+			limit = {
+				piety = 0.60
+			}
+			add_legitimacy = 4
+			add_devotion = 8
+			add_republican_tradition = 2
+		}
+		else_if = {
+			limit = {
+				piety = 0.20
+			}
+			add_legitimacy = 3
+			add_devotion = 6
+			add_republican_tradition = 1.5
+		}
+		else_if = {
+			limit = {
+				piety = -0.20
+			}
+			add_legitimacy = 2
+			add_devotion = 4
+			add_republican_tradition = 1
+		}
+		else_if = {
+			limit = {
+				piety = -0.60
+			}
+			add_legitimacy = 1
+			add_devotion = 2
+			add_republican_tradition = 0.5
+		}
+	}
+	option = {
+		name = dg_hellenic.014.c #Follow his recommendations
+		trigger = { ai = no }
+		set_country_flag = voluntary_conversion
+		if = {
+			limit = { NOT = { is_religion_enabled = hellenic_pagan } }
+			custom_tooltip = convert_dangerous_religion
+			subtract_stability_1 = yes
+		}
+		if = {
+			limit = {
+				check_variable = { which = hellenic_pagan_population value = 75 }
+			}
+			custom_tooltip = convert_population_75
+			add_stability_1 = yes
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = hellenic_pagan_population value = 50 }
+			}
+			custom_tooltip = convert_population_50
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = hellenic_pagan_population value = 25 }
+			}
+			custom_tooltip = convert_population_25
+			subtract_stability_1 = yes
+		}
+		else = {
+			custom_tooltip = convert_population_0
+			subtract_stability_2 = yes
+		}
+		if = {
+			limit = {
+				patriarch_authority = 0.75
+			}
+			custom_tooltip = convert_church_strong
+			subtract_stability_2 = yes
+		}
+		else_if = {
+			limit = {
+				patriarch_authority = 0.50
+			}
+			custom_tooltip = convert_piety_moderate
+			subtract_stability_1 = yes
+		}
+		else_if = {
+			limit = {
+				patriarch_authority = 0.25
+			}
+			custom_tooltip = convert_church_weak
+		}
+		else = {
+			custom_tooltip = convert_church_insignificant
+		}
+		if = {
+			limit = {
+				ADM = 5
+			}
+			if = {
+				limit = {
+					capital_scope = { religion = hellenic_pagan }
+				}
+				custom_tooltip = convert_ruler_strong
+				add_stability_3 = yes
+			}
+			else = {
+				custom_tooltip = convert_ruler_moderate
+				add_stability_2 = yes
+			}
+		}
+		if = {
+			limit = {
+				ADM = 3
+			}
+			if = {
+				limit = {
+					capital_scope = { religion = hellenic_pagan }
+				}
+				custom_tooltip = convert_ruler_moderate
+				add_stability_2 = yes
+			}
+			else = {
+				custom_tooltip = convert_ruler_weak
+				add_stability_1 = yes
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					capital_scope = { religion = hellenic_pagan }
+				}
+				custom_tooltip = convert_ruler_weak
+				add_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_ruler_incompetent
+			}
+		}
+		if = {
+			limit = { advisor = philosopher }
+			custom_tooltip = convert_philosopher
+			add_stability_1 = yes
+		}
+		if = {
+			limit = {
+				has_country_flag = was_hellenic_pagan
+			}
+			if = {
+				limit = {
+					check_variable = { which = sympathy_to_old_religion value = 1 }
+				}
+				custom_tooltip = convert_previous_recent
+				add_stability_2 = yes
+			}
+			else = {
+				custom_tooltip = convert_previous_old
+				add_stability_1 = yes
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = sympathy_to_old_religion value = 1 }
+			}
+			custom_tooltip = convert_recent
+			add_stability_1 = yes
+		}
+		change_religion = hellenic_pagan
+	}
+}
+
+#15* - Sacred flame goes out
+
+#16* - Female child has finished service in Vestal Virgins (Romuva/Hellenic)
+
+#17* - Replacing a dead Virgin (Romuva/Hellenic)

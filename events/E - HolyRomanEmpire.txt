@@ -1,0 +1,1831 @@
+
+# Privilegia triggers for Emperor...
+country_event = {
+	id = holyromanempire.9073
+	title = "EVTNAME9073"
+	desc = "EVTDESC9073"
+	picture = HRE_eventPicture
+	
+	major = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA9073"
+	}
+}
+
+# ...and for member states
+country_event = {
+	id = holyromanempire.9074
+	title = "EVTNAME9074"
+	desc = "EVTDESC9074"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA9074"
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				will_back_next_reform = no
+			}
+		}
+		emperor = {
+			vassalize = ROOT
+			ROOT = {
+				set_country_flag = "privileged_vassal"
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB9074"
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				will_back_next_reform = yes
+			}
+		}
+		every_owned_province = {
+			limit = {
+				is_part_of_hre = yes
+			}
+			add_permanent_claim = emperor
+		}
+		every_owned_province = {
+			leave_the_hre = yes
+		}
+		emperor = {
+			add_opinion = { who = ROOT modifier = opinion_left_empire }
+		}
+		add_opinion = { who = emperor modifier = opinion_united_empire }
+		elector = no
+	}
+}
+
+# Renovatio triggers for Emperor...
+country_event = {
+	id = holyromanempire.9075
+	title = "EVTNAME9075"
+	desc = "EVTDESC9075"
+	picture = HRE_eventPicture
+	
+	major = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		NOT = { exists = ERG }
+	}
+	
+	option = {
+		name = "EVTOPTA9075"
+		trigger = {
+			has_global_flag = singleplayer
+		}
+		change_tag = ERG
+		if = {
+			limit = {
+				NOT = { has_country_modifier = title_6 }
+			}
+			change_title_6 = yes
+		}
+		add_accepted_culture = pommeranian
+		add_accepted_culture = old_saxon
+		add_accepted_culture = eastphalian
+		add_accepted_culture = westphalian
+		add_accepted_culture = low_saxon
+		add_accepted_culture = prussian
+		add_accepted_culture = baltendeutsche
+		add_accepted_culture = hessian
+		add_accepted_culture = high_saxon
+		add_accepted_culture = thuringian
+		add_accepted_culture = ripuarianfranconian
+		add_accepted_culture = eastfranconian
+		add_accepted_culture = bavarian
+		add_accepted_culture = schwabisch
+		add_accepted_culture = rhine_alemanisch
+		add_accepted_culture = suisse
+		add_accepted_culture = austrian
+		add_prestige = 100
+		every_province = {
+			limit = {
+				is_part_of_hre = yes
+				is_city = yes
+				OR = {
+					owned_by = ROOT
+					owner = { is_neighbor_of = ROOT }
+				}
+				NOT = { is_core = ROOT }
+			}
+			add_core = emperor
+		}
+		every_country = {
+			limit = {
+				is_part_of_hre = yes
+				is_emperor = no
+				#num_of_cities = 1
+			}
+			country_event = { id = holyromanempire.9076 }
+		}
+		dismantle_hre = yes
+		add_adm_power = 250
+	}
+	option = {
+		name = "EVTOPTB9075"
+		trigger = {
+			has_global_flag = multiplayer
+		}
+		custom_tooltip = erg_tagchange_tt
+		set_country_flag = erg_tagchange
+	}
+		
+}
+
+# ...and for member states
+country_event = {
+	id = holyromanempire.9076
+	title = "EVTNAME9076"
+	desc = "EVTDESC9076"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA9076"
+		ERG = {
+			inherit = ROOT
+		}
+	}
+}
+
+# On Action: Emperor from same dynasty
+country_event = {
+	id = holyromanempire.900
+	title = "EVTNAME900"
+	desc = "EVTDESC900_01"
+	picture = KING_SICK_IN_BED_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		is_emperor = yes
+	}
+	
+	option = {
+		name = "EVTOPTA900"
+		add_imperial_influence = 10
+		if = {
+			limit = { has_dlc = "Common Sense" }
+			random_known_country = {
+				limit = {
+					free_city_trigger = yes
+					religion = catholic
+					is_at_war = no
+				}
+				country_event = {
+					id = free_cities.6
+					tooltip = free_cities.6.tt1
+				}
+			}
+		}
+	}
+}
+
+# On Action: HRE Prince released by the emperor
+#country_event = {
+#	id = holyromanempire.901
+#	title = "EVTNAME901"
+#	desc = "EVTDESC901"
+#	picture = HRE_eventPicture
+#	
+#	is_triggered_only = yes
+#	
+#	trigger = {
+#		is_emperor = yes
+#	}
+#	
+#	immediate = {
+#		add_scaled_imperial_influence = 10
+#	}
+#
+#	option = {
+#		name = "EVTOPTA901"
+#	}
+#}
+
+# On Action: HRE Prince converts to non-Emperor religion
+#country_event = {
+#	id = holyromanempire.902
+#	title = "EVTNAME902"
+#	desc = "EVTDESC902"
+#	picture = HRE_eventPicture
+#	
+#	is_triggered_only = yes
+#	
+#	trigger = {
+#		is_emperor = yes
+#	}
+#	
+#	immediate = {
+#		add_scaled_imperial_influence = -10
+#	}
+#
+#	option = {
+#		name = "EVTOPTA902"
+#	}
+#}
+
+# On Action: HRE Prince converts to Emperor's religion
+#country_event = {
+#	id = holyromanempire.903
+#	title = "EVTNAME903"
+#	desc = "EVTDESC903"
+#	picture = HRE_eventPicture
+#	
+#	is_triggered_only = yes
+#	
+#	trigger = {
+#		is_emperor = yes
+#	}
+#	
+#	immediate = {
+#		add_scaled_imperial_influence = 10
+#	}
+#	
+#	option = {
+#		name = "EVTOPTA903"
+#	}
+#}
+
+# On Action: Emperor wins HRE defensive war
+#country_event = {
+#	id = holyromanempire.904
+#	title = "EVTNAME904"
+#	desc = "EVTDESC904"
+#	picture = HRE_eventPicture
+#	
+#	is_triggered_only = yes
+#	
+#	trigger = {
+#		is_emperor = yes
+#	}
+#
+#	immediate = {
+#		add_scaled_imperial_influence = 10
+#	}
+#
+#	option = {
+#		name = "EVTOPTA904"
+#	}
+#}
+
+# On Action: HRE member annexed by non-HRE country
+#country_event = {
+#	id = holyromanempire.905
+#	title = "EVTNAME905"
+#	desc = "EVTDESC905"
+#	picture = HRE_eventPicture
+#	
+#	is_triggered_only = yes
+#	
+#	trigger = {
+#		is_emperor = yes
+#	}
+#	
+#	immediate = {
+#		add_imperial_influence = -10	#not scaled
+#	}
+#	
+#	option = {
+#		name = "EVTOPTA905"
+#	}
+#}
+
+
+# On Action: HRE member released from non-HRE vassalage
+#country_event = {
+#	id = holyromanempire.907
+#	title = "EVTNAME907"
+#	desc = "EVTDESC907"
+#	picture = HRE_eventPicture
+#	
+#	is_triggered_only = yes
+#	
+#	trigger = {
+#		is_emperor = yes
+#	}
+#	
+#	immediate = {
+#		add_scaled_imperial_influence = 5
+#	}
+#	
+#	option = {
+#		name = "EVTOPTA907"
+#	}
+#}
+
+# On Action: Emperor coming to the defense of a HRE member
+#country_event = {
+#	id = holyromanempire.908
+#	title = "EVTNAME908"
+#	desc = "EVTDESC908"
+#	picture = HRE_eventPicture
+#	
+#	is_triggered_only = yes
+#	
+#	trigger = {
+#		is_emperor = yes
+#	}
+#	
+#	immediate = {
+#		add_imperial_influence = 5
+#	}
+#	
+#	option = {
+#		name = "EVTOPTA908"
+#	}
+#}
+
+# On Action: Emperor NOT coming to the defense of a HRE member
+#country_event = {
+#	id = holyromanempire.909
+#	title = "EVTNAME909"
+#	desc = "EVTDESC909"
+#	picture = HRE_eventPicture
+#	
+#	is_triggered_only = yes
+#	
+#	trigger = {
+#		is_emperor = yes
+#	}
+#	
+#	immediate = {
+#		add_imperial_influence = -10		#not scaled!
+#	}
+#	
+#	option = {
+#		name = "EVTOPTA909"
+#	}
+#}
+
+# On Action: HRE Member takes a HRE province from an outside country in a peace
+province_event = {
+	id = holyromanempire.950
+	title = "EVTNAME950"
+	desc = "EVTDESC950"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		NOT = { is_claim = ROOT }
+	}
+	
+	immediate = {
+		add_claim = ROOT
+	}
+	
+	option = {
+		name = "EVTOPTA950"
+	}
+}
+
+# Nation formation that allow to leave the Empire
+country_event = {
+	id = holyromanempire.1
+	title = "holyromanempire.1.n"
+	desc = "holyromanempire.1.n"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "holyromanempire.1.a"
+		every_owned_province = {
+			limit = {
+				is_part_of_hre = yes
+				north_italy_region_trigger = yes
+			}
+			leave_the_hre = yes
+		}
+		emperor = {
+			add_opinion = { who = ROOT modifier = opinion_left_empire }
+		}
+	}
+	
+	option = {
+		name = "holyromanempire.1.b"
+	}
+}
+
+# holyromanempire.2 - Loss of electorate when vassal
+country_event = {
+	id = holyromanempire.2
+	title = "holyromanempire.2.n"			# Decision of the Imperial Court of Justice
+	desc = "holyromanempire.2.t"
+	picture = HRE_eventPicture
+	
+	major = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = "OPT.BASTARD"
+		add_prestige = -10
+		elector = no
+	}
+}
+
+# holyromanempire.3 - Get cores in the ERG
+country_event = {
+	id = holyromanempire.3
+	title = "holyromanempire.3.n"
+	desc = "holyromanempire.3.t"
+	picture = HRE_eventPicture
+	
+	trigger = {
+		is_at_war = no	#FB 2011.07.28
+		OR = { has_regency = no has_consort_regency = yes }	#FB 2011.07.28
+		prestige = 0	#FB 2011.07.28
+		stability = 0	#FB 2011.07.28
+		capital_scope = { is_part_of_hre = yes }
+		government = monarchy
+		has_country_modifier = title_5
+		any_owned_province = {
+			is_core = ROOT
+			any_neighbor_province = {
+				NOT = { owned_by = ROOT }
+				NOT = { is_core = ROOT }
+				culture_group = ROOT
+				religion_group = ROOT	#FB 2011.07.28
+				is_part_of_hre = yes
+				NOT = { owned_by = emperor }
+				owner = {
+					NOT = { num_of_cities = ROOT }
+					NOT = { prestige = ROOT }
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 40	#FB was 120
+		
+		
+		modifier = {
+			factor = 1.5
+			NOT = { DIP = 3 }
+		}
+		modifier = {
+			factor = 1.5
+			NOT = { DIP = 5 }
+		}
+		modifier = {
+			factor = 0.5
+			DIP = 6
+		}
+		modifier = {
+			factor = 1.2
+			prestige = 20	#FB 2011.07.28
+		}
+		modifier = {
+			factor = 1.2
+			prestige = 40	#FB 2011.07.28
+		}
+		modifier = {
+			factor = 1.2
+			stability = 2	#FB 2011.07.28
+		}
+		modifier = {
+			factor = 1.2
+			stability = 3	#FB 2011.07.28
+		}
+	}
+	
+	option = {
+		name = "OPT.YES3"
+		random_owned_province = {
+			limit = {
+				is_core = ROOT
+				any_neighbor_province = { NOT = { owned_by = ROOT } }
+			}	#FB 2011.07.28
+			random_neighbor_province = {
+				limit = {
+					NOT = { owned_by = ROOT }
+					NOT = { is_core = ROOT }
+					culture_group = ROOT
+					religion_group = ROOT	#FB 2011.07.28
+					is_part_of_hre = yes
+					NOT = { owned_by = emperor }
+					owner = {
+						NOT = { num_of_cities = ROOT }
+						NOT = { prestige = ROOT }	#FB 2011.07.28
+					}
+				}
+				add_core = ROOT
+			}
+		}
+	}
+}
+
+# holyromanempire.4 - Loss of electorate when vassal
+country_event = {
+	id = holyromanempire.4
+	title = "holyromanempire.4.n"			# Decision of the Imperial Court of Justice
+	desc = "holyromanempire.4.t"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+	
+	option = {
+		name = "OPT.BASTARD"
+		add_prestige = -10
+		elector = no
+		FROM = {
+			elector = yes
+		}
+	}
+}
+
+# Nation formation that allow to leave the Empire
+country_event = {
+	id = holyromanempire.5
+	title = "holyromanempire.1.n"
+	desc = "holyromanempire.1.n"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "holyromanempire.1.a"
+		every_owned_province = {
+			limit = {
+				is_part_of_hre = yes
+				OR = {
+					region = belgii_region
+					region = low_countries_region
+				}
+			}
+			leave_the_hre = yes
+		}
+		leave_the_hre = yes
+		set_country_flag = netherlands_out_of_HRE
+		emperor = {
+			add_opinion = { who = ROOT modifier = opinion_left_empire }
+		}
+	}
+	
+	option = {
+		name = "holyromanempire.1.b"
+		set_country_flag = netherlands_in_the_HRE
+	}
+}
+
+# Effects of the [Treaty of Westphalia] - Italy already out of the HRE
+country_event = {
+	id = holyromanempire.101
+	title = "holyromanempire.101.name"
+	desc = "holyromanempire.101.desc"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "holyromanempire.101.opta"
+		ai_chance = { factor = 100 }
+		set_global_flag = westphalia_italy
+		every_known_country = {
+			limit = {
+				ai = no
+				culture_group = latin
+				check_variable = { which = "Demesne_in_Italy" value = 1 }
+			}
+			country_event = { id = holyromanempire.102 days = 5 }
+		}
+	}
+	
+	option = {
+		name = "holyromanempire.101.optb"
+		ai_chance = { factor = 0 }
+		add_prestige = -10
+		add_imperial_influence = 10
+	}
+}
+
+country_event = {
+	id = holyromanempire.102
+	title = "holyromanempire.102.name"
+	desc = "holyromanempire.102.desc"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "holyromanempire.102.opta"
+	}
+}
+
+# Effects of the [Treaty of Westphalia] - Italy still in the HRE
+country_event = {
+	id = holyromanempire.105
+	title = "holyromanempire.105.name"
+	desc = "holyromanempire.105.desc"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "holyromanempire.105.opta"
+		ai_chance = { factor = 100 }
+		if = {
+			limit = {
+				is_elector = yes
+			}
+			elector = no
+		}
+		country_event = { id = holyromanempire.106 days = 5 }
+	}
+	
+	option = {
+		name = "holyromanempire.105.optb"
+		ai_chance = { factor = 0 }
+		add_prestige = -35
+	}
+}
+
+country_event = {
+	id = holyromanempire.106
+	title = "holyromanempire.106.name"
+	desc = "holyromanempire.106.desc"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "holyromanempire.106.opta"
+		ai_chance = { factor = 100 }
+		set_global_flag = westphalia_italy
+		every_province = {
+			limit = {
+				is_city = yes
+				OR = { region = provence_region north_italy_region_trigger = yes }
+			}
+			leave_the_hre = yes
+			owner = {
+				if = {
+					limit = {
+						capital_scope = {
+							OR = { region = provence_region north_italy_region_trigger = yes }
+						}
+					}
+					leave_the_hre = yes
+				}
+			}
+		}
+		FROM = {
+			country_event = { id = holyromanempire.107 days = 5 }
+		}
+	}
+	
+	option = {
+		name = "holyromanempire.106.optb"
+		ai_chance = { factor = 0 }
+		add_prestige = -10
+		add_imperial_influence = 10
+		FROM = {
+			country_event = { id = holyromanempire.108 days = 5 }
+		}
+	}
+}
+
+country_event = {
+	id = holyromanempire.107
+	title = "holyromanempire.107.name"
+	desc = "holyromanempire.107.desc"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "holyromanempire.107.opta"
+	}
+}
+
+country_event = {
+	id = holyromanempire.108
+	title = "holyromanempire.108.name"
+	desc = "holyromanempire.108.desc"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "holyromanempire.108.opta"
+	}
+}
+
+# Effects of the [Treaty of Westphalia] - Switzerland still independent
+country_event = {
+	id = holyromanempire.201
+	title = "holyromanempire.201.name"
+	desc = "holyromanempire.201.desc"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "holyromanempire.201.opta"
+		ai_chance = { factor = 100 }
+		if = {
+			limit = {
+				is_elector = yes
+			}
+			elector = no
+		}
+		country_event = { id = holyromanempire.202 days = 5 }
+	}
+	
+	option = {
+		name = "holyromanempire.201.optb"
+		ai_chance = { factor = 0 }
+		add_prestige = -35
+	}
+}
+
+country_event = {
+	id = holyromanempire.202
+	title = "holyromanempire.202.name"
+	desc = "holyromanempire.202.desc"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "holyromanempire.202.opta"
+		ai_chance = { factor = 100 }
+		set_global_flag = westphalia_switzerland
+		switzerland_region = {
+			limit = {
+				is_city = yes
+			}
+			leave_the_hre = yes
+			owner = {
+				if = {
+					limit = {
+						capital_scope = {
+							region = switzerland_region
+						}
+					}
+					leave_the_hre = yes
+				}
+			}
+		}
+		FROM = {
+			country_event = { id = holyromanempire.107 days = 5 }
+		}
+	}
+	
+	option = {
+		name = "holyromanempire.202.optb"
+		ai_chance = { factor = 0 }
+		add_prestige = -10
+		add_imperial_influence = 10
+		FROM = {
+			country_event = { id = holyromanempire.108 days = 5 }
+		}
+	}
+}
+
+# Effects of the [Treaty of Westphalia] - Low Countries independent
+country_event = {
+	id = holyromanempire.301
+	title = "holyromanempire.301.name"
+	desc = "holyromanempire.301.desc"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "holyromanempire.301.opta"
+		ai_chance = { factor = 100 }
+		if = {
+			limit = {
+				is_elector = yes
+			}
+			elector = no
+		}
+		emperor = {
+			country_event = { id = holyromanempire.302 days = 5 }
+		}
+	}
+	
+	option = {
+		name = "holyromanempire.301.optb"
+		ai_chance = { factor = 0 }
+		add_prestige = -35
+	}
+}
+
+country_event = {
+	id = holyromanempire.302
+	title = "holyromanempire.302.name"
+	desc = "holyromanempire.302.desc"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "holyromanempire.302.opta"
+		ai_chance = { factor = 100 }
+		set_global_flag = westphalia_low_countries
+		belgii_region = {
+			limit = {
+				is_city = yes
+			}
+			leave_the_hre = yes
+			owner = {
+				if = {
+					limit = {
+						capital_scope = {
+							OR = { region = belgii_region region = low_countries_region }
+						}
+					}
+					leave_the_hre = yes
+				}
+			}
+		}
+		low_countries_region = {
+			limit = {
+				is_city = yes
+			}
+			leave_the_hre = yes
+			owner = {
+				if = {
+					limit = {
+						capital_scope = {
+							OR = { region = belgii_region region = low_countries_region }
+						}
+					}
+					leave_the_hre = yes
+				}
+			}
+		}
+		FROM = {
+			country_event = { id = holyromanempire.107 days = 5 }
+		}
+	}
+	
+	option = {
+		name = "holyromanempire.302.optb"
+		ai_chance = { factor = 0 }
+		add_prestige = -10
+		add_imperial_influence = 10
+		FROM = {
+			country_event = { id = holyromanempire.108 days = 5 }
+		}
+	}
+}
+
+# Effects of the [Treaty of Westphalia] - Foreign control over Imperial land
+country_event = {
+	id = holyromanempire.401
+	title = "holyromanempire.401.name"
+	desc = "holyromanempire.401.desc"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "holyromanempire.401.opta"
+		ai_chance = { factor = 100 }
+		set_global_flag = westphalia_france
+		france_superregion = {
+			limit = {
+				is_city = yes
+				owner = { OR = { AND = { is_part_of_hre = no culture_group = langue_d_oil tag = BUR } overlord = { AND = { is_part_of_hre = no culture_group = langue_d_oil tag = BUR } } } }
+			}
+			leave_the_hre = yes
+		}
+		every_known_country = {
+			limit = {
+				ai = no
+				OR = { AND = { is_part_of_hre = no culture_group = langue_d_oil tag = BUR } overlord = { AND = { is_part_of_hre = no culture_group = langue_d_oil tag = BUR } } }
+				check_variable = { which = "Demesne_in_France" value = 1 }
+			}
+			country_event = { id = holyromanempire.102 days = 5 }
+		}
+	}
+	
+	option = {
+		name = "holyromanempire.401.optb"
+		ai_chance = { factor = 0 }
+		add_prestige = -10
+		add_imperial_influence = 10
+	}
+}
+
+country_event = {
+	id = holyromanempire.402
+	title = "holyromanempire.402.name"
+	desc = "holyromanempire.402.desc"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "holyromanempire.402.opta"
+	}
+}
+
+# Vehmic Courts (westphalian_circle_region)
+province_event = {
+	id = holyromanempire.1001
+	title = "holyromanempire.1001.n"
+	desc = "holyromanempire.1001.t"
+	picture = VEHM_eventPicture
+	
+	trigger = {
+		region = westphalian_circle_region
+		owner = {
+			NOT = { num_of_cities = 2 }
+			NOT = { stability = 0 }
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 100
+		
+		modifier = {
+			NOT = { owner = { imperial_influence = 50 } }
+			factor = 0.80
+		}
+		modifier = {
+			NOT = { owner = { imperial_influence = 40 } }
+			factor = 0.80
+		}
+		modifier = {
+			NOT = { owner = { imperial_influence = 30 } }
+			factor = 0.80
+		}
+		modifier = {
+			NOT = { owner = { imperial_influence = 20 } }
+			factor = 0.80
+		}
+		modifier = {
+			NOT = { owner = { imperial_influence = 10 } }
+			factor = 0.80
+		}
+	}
+	
+	option = {
+		name = "holyromanempire.1001.a"
+		owner = {
+			add_stability_1 = yes
+		}
+	}
+}
+
+# Giving provinces German names.
+country_event = {
+	id = holyromanempire.1002
+	title = "holyromanempire.1002.name"
+	desc = "holyromanempire.1002.desc"
+	picture = HRE_eventPicture
+	
+	hidden = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = "holyromanempire.1002.opta"
+		
+		40 = { # Mazoji Lietuva
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Memelland"
+				rename_capital = "Memel"
+				set_province_flag = german_name
+			}
+		}
+		41 = { # Ostpreussen
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Ostpreussen"
+				rename_capital = "Königsberg"
+				set_province_flag = german_name
+			}
+		}
+		2845 = { # Lauenburg
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Lauenburg-Bütow"
+				rename_capital = "Lauenburg"
+				set_province_flag = german_name
+			}
+		}
+		42 = { # Pomezania
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Masuren"
+				rename_capital = "Osterode"
+				set_province_flag = german_name
+			}
+		}
+		4024 = { # Galindia
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Galindien"
+				rename_capital = "Ortelsburg"
+				set_province_flag = german_name
+			}
+		}
+		43 = { # Pomorsko
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Pommerellen"
+				rename_capital = "Dirschau"
+				set_province_flag = german_name
+			}
+		}
+		1844 = { # Marienburg
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Elbing"
+				rename_capital = "Marienburg"
+				set_province_flag = german_name
+			}
+		}
+		2355 = { # Danzig
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Danzig"
+				rename_capital = "Danzig"
+				set_province_flag = german_name
+			}
+		}
+		1391 = { # Ermland
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Ermland"
+				rename_capital = "Allenstein"
+				set_province_flag = german_name
+			}
+		}
+		2398 = { # Chelminskie
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Kulm"
+				rename_capital = "Kulm"
+				set_province_flag = german_name
+			}
+		}
+		4025 = { # Techolo
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Tuchel"
+				rename_capital = "Tuchel"
+				set_province_flag = german_name
+			}
+		}
+		4003 = { # Glogow
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Glogau"
+				rename_capital = "Glogau"
+				set_province_flag = german_name
+			}
+		}
+		4002 = { # Jawor
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Jauer"
+				rename_capital = "Jauer"
+				set_province_flag = german_name
+			}
+		}
+		2561 = { # Lignica
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Liegnitz"
+				rename_capital = "Liegnitz"
+				set_province_flag = german_name
+			}
+		}
+		4001 = { # Olesnica
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Oels"
+				rename_capital = "Oels"
+				set_province_flag = german_name
+			}
+		}
+		1359 = { # Wroclaw
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Breslau"
+				rename_capital = "Breslau"
+				set_province_flag = german_name
+			}
+		}
+		2633 = { # Swidnica
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Schweidnitz"
+				rename_capital = "Schweidnitz"
+				set_province_flag = german_name
+			}
+		}
+		2831 = { # Klodzko
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Vogtland"
+				rename_capital = "Plauen"
+				set_province_flag = german_name
+			}
+		}
+		1278 = { # Opole
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Oppeln"
+				rename_capital = "Oppeln"
+				set_province_flag = german_name
+			}
+		}
+		4000 = { # Opava
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Troppau"
+				rename_capital = "Troppau"
+				set_province_flag = german_name
+			}
+		}
+		3999 = { # Ratibor
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Ratibor"
+				rename_capital = "Ratibor"
+				set_province_flag = german_name
+			}
+		}
+		269 = { # Teschen
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Teschen"
+				rename_capital = "Teschen"
+				set_province_flag = german_name
+			}
+		}
+		60 = { # Oberlausitz
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Oberlausitz"
+				rename_capital = "Görlitz"
+				set_province_flag = german_name
+			}
+		}
+		3742 = { # Cottbus
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Cottbus"
+				rename_capital = "Cottbus"
+				set_province_flag = german_name
+			}
+		}
+		2620 = { # Niederlausitz
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Niederlausitz"
+				rename_capital = "Alten Dober"
+				set_province_flag = german_name
+			}
+		}
+		2620 = { # Niederlausitz
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Leitmeritz"
+				rename_capital = "Leitmeritz"
+				set_province_flag = german_name
+			}
+		}
+		3748 = { # Chebsko
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Egerland"
+				rename_capital = "Karlsbad"
+				set_province_flag = german_name
+			}
+		}
+		1277 = { # Plzensko
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Pilsen"
+				rename_capital = "Pilsen"
+				set_province_flag = german_name
+			}
+		}
+		84 = { # Olomocko
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Olmütz"
+				rename_capital = "Olmütz"
+				set_province_flag = german_name
+			}
+		}
+		39 = { # Kurzeme
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Kurland"
+				rename_capital = "Goldingen"
+				set_province_flag = german_name
+			}
+		}
+		1264 = { # Zemgale
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Semgallen"
+				rename_capital = "Mittau"
+				set_province_flag = german_name
+			}
+		}
+		1342 = { # Yankunytjatjara
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Pilten"
+				rename_capital = "Pilten"
+				set_province_flag = german_name
+			}
+		}
+		36 = { # Rovala
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Rewal"
+				rename_capital = "Rewal"
+				set_province_flag = german_name
+			}
+		}
+		1263 = { # Ugandi
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Dorpat"
+				rename_capital = "Dorpat"
+				set_province_flag = german_name
+			}
+		}
+		1265 = { # Zemaitija
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Samogitien"
+				rename_capital = "Mednick"
+				set_province_flag = german_name
+			}
+		}
+		1280 = { # Suvalkija
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Suwalken"
+				rename_capital = "Seinai"
+				set_province_flag = german_name
+			}
+		}
+		3397 = { # Aukstaitija
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Aukschtaitien"
+				rename_capital = "Kaunas"
+				set_province_flag = german_name
+			}
+		}
+		272 = { # Aukstaitija
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Wilna"
+				rename_capital = "Wilna"
+				set_province_flag = german_name
+			}
+		}
+		3764 = { # Krynki
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Garten"
+				rename_capital = "Garten"
+				set_province_flag = german_name
+			}
+		}
+		296 = { # Grodno
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Traken"
+				rename_capital = "Traken"
+				set_province_flag = german_name
+			}
+		}
+		3398 = { # Didzioji Lietuva
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Litauen"
+				rename_capital = "Braslau"
+				set_province_flag = german_name
+			}
+		}
+		254 = { # Nakelskie
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Naklas"
+				rename_capital = "Naklas"
+				set_province_flag = german_name
+			}
+		}
+		2401 = { # Poznanskie
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Posen"
+				rename_capital = "Posen"
+				set_province_flag = german_name
+			}
+		}
+		2814 = { # Inowroclawskie
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Jungbreslau"
+				rename_capital = "Jungbreslau"
+				set_province_flag = german_name
+			}
+		}
+		2834 = { # Walcz
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Deutsch Krone"
+				rename_capital = "Deutsch Krone"
+				set_province_flag = german_name
+			}
+		}
+		3756 = { # Gniezno
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Gnesen"
+				rename_capital = "Gnesen"
+				set_province_flag = german_name
+			}
+		}
+		2815 = { # Dobrzyn
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Dobrin"
+				rename_capital = "Dobrin"
+				set_province_flag = german_name
+			}
+		}
+		257 = { # Plockie
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Plock"
+				rename_capital = "Plock"
+				set_province_flag = german_name
+			}
+		}
+		4026 = { # Ciechanow
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Zichenau"
+				rename_capital = "Zichenau"
+				set_province_flag = german_name
+			}
+		}
+		2506 = { # Wizna
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Wizna"
+				rename_capital = "Wizna"
+				set_province_flag = german_name
+			}
+		}
+		3763 = { # Bialystok
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Bielsk"
+				rename_capital = "Bielsk"
+				set_province_flag = german_name
+			}
+		}
+		128 = { # Koroska
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Kärnten"
+				rename_capital = "Klagenfurt"
+				set_province_flag = german_name
+			}
+		}
+		2384 = { # Stajerska
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Untersteiermark"
+				rename_capital = "Marburg"
+				set_province_flag = german_name
+			}
+		}
+		267 = { # Budejovicko
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Budweis"
+				rename_capital = "Budweis"
+				set_province_flag = german_name
+			}
+		}
+		3751 = { # Jihlavsko
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Iglau"
+				rename_capital = "Iglau"
+				set_province_flag = german_name
+			}
+		}
+		38 = { # Riga
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Riga"
+				rename_capital = "Riga"
+				set_province_flag = german_name
+			}
+		}
+		2835 = { # Lubusz
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Lebus"
+				rename_capital = "Landsbergan der Warthe"
+				set_province_flag = german_name
+			}
+		}
+		264 = { # Neumark
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Neumark"
+				rename_capital = "Dramburg"
+				set_province_flag = german_name
+			}
+		}
+		2831 = { # Klodzko
+			if = {
+				limit = {
+					NOT = { has_province_flag = german_name }
+					OR = {
+						culture_group = high_germanic
+						culture_group = low_germanic
+					}
+				}
+				change_province_name = "Glatz"
+				rename_capital = "Glatz"
+				set_province_flag = german_name
+			}
+		}
+	}
+}

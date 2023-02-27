@@ -1,0 +1,492 @@
+########################################
+# Count's Feud
+########################################
+
+# Support monarch or pretender?
+country_event = {
+	id = counts_feud.1
+	title = counts_feud.1.t
+	desc = counts_feud.1.d
+	picture = BAD_WITH_MONARCH_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+	
+	#	mean_time_to_happen = {
+	#		days = 1
+	#	}
+	
+	immediate = {
+		set_country_flag = had_counts_feud
+		
+		
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					continent = europe
+				}
+				set_province_flag = counts_feud
+			}
+			random_owned_province = {
+				limit = {
+					continent = europe
+					NOT = { has_province_flag = counts_feud }
+				}
+				set_province_flag = counts_feud
+			}
+		}
+	}
+	
+	option = {
+		name = counts_feud.1.a
+		
+		set_country_flag = monarch_flag
+		
+		random_owned_province = {
+			limit = {
+				continent = europe
+				NOT = { has_province_modifier = pretender_organizing }
+			}
+			add_province_modifier = {
+				name = "pretender_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+		random_owned_province = {
+			limit = {
+				continent = europe
+				NOT = { has_province_modifier = pretender_organizing }
+			}
+			add_province_modifier = {
+				name = "pretender_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+	}
+	option = {
+		name = counts_feud.1.b
+		
+		set_country_flag = pretender_flag
+		
+		
+		if = {
+			limit = {
+				OR = { has_regency = no has_consort_regency = yes }
+			}
+			tooltip = {
+				kill_ruler = yes
+			}
+		}
+		if = {
+			limit = {
+				has_heir = yes
+			}
+			kill_heir = yes
+		}
+		define_ruler = {
+			adm = 2
+			dip = 3
+			mil = 2
+		}
+		random_owned_province = {
+			limit = {
+				continent = europe
+				NOT = { has_province_modifier = nobles_organizing }
+			}
+			add_province_modifier = {
+				name = "nobles_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+	}
+}
+
+# Manors burned down!
+country_event = {
+	id = counts_feud.2
+	title = counts_feud.2.t
+	desc = counts_feud.2.d
+	picture = ANGRY_MOB_eventPicture
+	
+	
+	is_triggered_only = yes
+	
+	#	mean_time_to_happen = {
+	#		days = 1
+	#	}
+	
+	option = {
+		name = "flavor_dan.EVTOPTOK"
+		if = {
+			limit = {
+				has_country_flag = pretender_flag
+			}
+			random_owned_province = {
+				limit = {
+					continent = europe
+				}
+				add_province_modifier = {
+					name = "nobles_organizing"
+					duration = 1825
+				}
+				hidden_effect = {
+					set_variable = { which = added_unrest value = 5 }
+					add_base_unrest = yes
+				}
+				custom_tooltip = added_unrest_5
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = monarch_flag
+			}
+			random_owned_province = {
+				limit = {
+					continent = europe
+				}
+				add_province_modifier = {
+					name = "pretender_organizing"
+					duration = 1825
+				}
+				hidden_effect = {
+					set_variable = { which = added_unrest value = 5 }
+					add_base_unrest = yes
+				}
+				custom_tooltip = added_unrest_5
+			}
+		}
+	}
+}
+
+
+
+
+# Event for Sweden! Send forces to help?
+country_event = {
+	id = counts_feud.3
+	title = counts_feud.3.t
+	desc = counts_feud.3.d
+	picture = DIPLOMACY_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = SWE
+		OR = {
+			AND = {
+				exists = DAN
+				DAN = { has_disaster = counts_feud }
+				has_opinion = { who = DAN value = 80 }
+				reverse_has_opinion = { who = DAN value = 80 }
+				NOT = { war_with = DAN }
+				NOT = { alliance_with = DAN }
+				NOT = { is_subject_of = DAN }
+			}
+			AND = {
+				exists = DEN
+				DEN = { has_disaster = counts_feud }
+				has_opinion = { who = DEN value = 80 }
+				reverse_has_opinion = { who = DEN value = 80 }
+				NOT = { war_with = DEN }
+				NOT = { alliance_with = DEN }
+				NOT = { is_subject_of = DEN }
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 16
+	}
+	
+	option = {
+		name = counts_feud.3.a #Help rebels
+		trigger = { exists = DAN }
+		DAN = {
+			if = {
+				limit = {
+					has_country_flag = monarch_flag
+				}
+				random_owned_province = {
+					limit = {
+						continent = europe
+					}
+					add_province_modifier = {
+						name = "pretender_organizing"
+						duration = 1825
+					}
+					hidden_effect = {
+						set_variable = { which = added_unrest value = 5 }
+						add_base_unrest = yes
+					}
+					custom_tooltip = added_unrest_5
+				}
+				random_owned_province = {
+					limit = {
+						continent = europe
+					}
+					add_province_modifier = {
+						name = "pretender_organizing"
+						duration = 1825
+					}
+					hidden_effect = {
+						set_variable = { which = added_unrest value = 5 }
+						add_base_unrest = yes
+					}
+					custom_tooltip = added_unrest_5
+				}
+				country_event = { id = counts_feud.4 }
+			}
+			if = {
+				limit = {
+					has_country_flag = pretender_flag
+				}
+				random_owned_province = {
+					limit = {
+						continent = europe
+					}
+					add_province_modifier = {
+						name = "nobles_organizing"
+						duration = 1825
+					}
+					hidden_effect = {
+						set_variable = { which = added_unrest value = 5 }
+						add_base_unrest = yes
+					}
+					custom_tooltip = added_unrest_5
+				}
+				random_owned_province = {
+					limit = {
+						continent = europe
+					}
+					add_province_modifier = {
+						name = "nobles_organizing"
+						duration = 1825
+					}
+					hidden_effect = {
+						set_variable = { which = added_unrest value = 5 }
+						add_base_unrest = yes
+					}
+					custom_tooltip = added_unrest_5
+				}
+			}
+			add_opinion = {
+				who = SWE
+				modifier = supported_rebels
+			}
+		}
+	}
+	option = {
+		name = counts_feud.3.b #Help monarch
+		trigger = { exists = DAN }
+		DAN = {
+			country_event = {
+				id = counts_feud.5
+			}
+			add_opinion = {
+				who = SWE
+				modifier = opinion_supported_monarch
+			}
+		}
+	}
+	option = {
+		name = counts_feud.3.a #Help rebels
+		trigger = { exists = DEN }
+		DEN = {
+			if = {
+				limit = {
+					has_country_flag = monarch_flag
+				}
+				random_owned_province = {
+					limit = {
+						continent = europe
+					}
+					add_province_modifier = {
+						name = "pretender_organizing"
+						duration = 1825
+					}
+					hidden_effect = {
+						set_variable = { which = added_unrest value = 5 }
+						add_base_unrest = yes
+					}
+					custom_tooltip = added_unrest_5
+				}
+				random_owned_province = {
+					limit = {
+						continent = europe
+					}
+					add_province_modifier = {
+						name = "pretender_organizing"
+						duration = 1825
+					}
+					hidden_effect = {
+						set_variable = { which = added_unrest value = 5 }
+						add_base_unrest = yes
+					}
+					custom_tooltip = added_unrest_5
+				}
+				country_event = { id = counts_feud.4 }
+			}
+			if = {
+				limit = {
+					has_country_flag = pretender_flag
+				}
+				random_owned_province = {
+					limit = {
+						has_province_flag = rebels_2
+					}
+					spawn_rebels = {
+						type = noble_rebels
+						size = 1
+					}
+					clr_province_flag = rebels_2
+				}
+				random_owned_province = {
+					limit = {
+						has_province_flag = rebels_1
+					}
+					spawn_rebels = {
+						type = noble_rebels
+						size = 1
+					}
+					clr_province_flag = rebels_1
+				}
+			}
+			add_opinion = {
+				who = SWE
+				modifier = supported_rebels
+			}
+		}
+	}
+	option = {
+		trigger = { exists = DEN }
+		name = counts_feud.3.b #Help monarch
+		DEN = {
+			country_event = {
+				id = counts_feud.5
+			}
+			add_opinion = {
+				who = SWE
+				modifier = opinion_supported_monarch
+			}
+		}
+	}
+	option = {
+		name = counts_feud.3.c   #Do nothing
+		add_prestige = -1
+	}
+}
+
+# DAN: SWE helped rebels!?
+country_event = {
+	id = counts_feud.4
+	title = counts_feud.4.t
+	desc = counts_feud.4.d
+	picture = DIPLOMACY_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = counts_feud.4.a
+		tooltip = {
+			add_opinion = {
+				who = SWE
+				modifier = supported_rebels
+			}
+		}
+	}
+}
+
+# DAN: SWE helped us!
+country_event = {
+	id = counts_feud.5
+	title = counts_feud.5.t
+	desc = counts_feud.4.d
+	picture = DIPLOMACY_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = counts_feud.5.d
+		tooltip = {
+			add_opinion = {
+				who = SWE
+				modifier = opinion_supported_monarch
+			}
+		}
+	}
+}
+
+# Skipper Clement captured
+country_event = {
+	id = counts_feud.6
+	title = counts_feud.6.t
+	desc = counts_feud.6.d
+	picture = BATTLE_eventPicture
+	
+	fire_only_once = yes
+	
+	is_triggered_only = yes
+	
+	#	mean_time_to_happen = {
+	#		days = 1
+	#	}
+	
+	
+	option = {
+		name = "flavor_dan.EVTOPTOK"
+		add_prestige = 5
+		every_owned_province = {
+			limit = {
+				continent = europe
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = -5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+	}
+}
+
+# The Aftermath
+country_event = {
+	id = counts_feud.100
+	title = counts_feud.100.t
+	desc = counts_feud.100.d
+	picture = COURT_eventPicture
+	
+	is_triggered_only = yes
+	
+	#	mean_time_to_happen = {
+	#		days = 1
+	#	}
+	
+	option = {
+		name = counts_feud.100.a
+		every_owned_province = {
+			limit = {
+				has_province_flag = counts_feud
+			}
+			clr_province_flag = counts_feud
+		}
+		clr_country_flag = pretender_flag
+		clr_country_flag = monarch_flag
+		add_stability_1 = yes
+		add_treasury = 50
+	}
+}

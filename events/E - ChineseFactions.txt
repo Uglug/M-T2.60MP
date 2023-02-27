@@ -1,0 +1,3689 @@
+######################################
+#
+# Events for Chinese Factions. Id 11100-
+#
+######################################
+
+
+### Eunuchs ###
+
+country_event = {
+	
+	id = chinese_factions.1
+	title = "chinese_factions.1.n"				# A Slice of the Cake
+	desc = "chinese_factions.1.t"				# Now that we have achieved the unification of China, everybody want to rip the benefits. Already, three factions are fighting for power.
+	picture = CMNG_COURT_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		add_faction = temples
+		add_faction = enuchs
+		add_faction = bureaucrats
+		add_faction_influence = {
+			faction = temples
+			influence = 30
+		}
+		add_faction_influence = {
+			faction = enuchs
+			influence = 30
+		}
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = 30
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_country_modifier = chinese_physiocratic_economy
+					has_country_modifier = chinese_mercantilistic_economy
+				}
+			}
+			country_event = { id = chinese_factions.2 days = 1 }
+		}
+	}
+	
+	option = {
+		name = "chinese_factions.1.a"			# Favour the Temples
+		add_faction_influence = {
+			faction = temples
+			influence = 10
+		}
+	}
+	
+	option = {
+		name = "chinese_factions.1.b"			# Favour the Enuchs
+		add_faction_influence = {
+			faction = enuchs
+			influence = 10
+		}
+	}
+	
+	option = {
+		name = "chinese_factions.1.c"			# Favour the Bureaucrats
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = 10
+		}
+	}
+}
+
+#Peasants or Merchants
+country_event = {
+	id = chinese_factions.2
+	title = "chinese_factions.2.t"
+	desc = "chinese_factions.2.n"
+	picture = CMNG_COURT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "chinese_factions.2.a" # Support the peasants
+		add_country_modifier = {
+			name = chinese_physiocratic_economy
+			duration = -1
+		}
+	}
+	option = {
+		name = "chinese_factions.2.b" # Support the merchants
+		add_country_modifier = {
+			name = chinese_mercantilistic_economy
+			duration = -1
+		}
+	}
+	after = {
+		country_event = { id = chinese_factions.3 days = 1 }
+	}
+}
+
+#Wei-suo or general trained military
+country_event = {
+	id = chinese_factions.3
+	title = "chinese_factions.3.t"
+	desc = "chinese_factions.3.n"
+	picture = CMNG_COURT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "chinese_factions.3.a" # Reimplement the Wei-Suo system
+		add_country_modifier = {
+			name = wei_suo_system
+			duration = -1
+		}
+	}
+	option = {
+		name = "chinese_factions.3.b" # Have general train the troops
+		add_country_modifier = {
+			name = general_trained_militia
+			duration = -1
+		}
+	}
+}
+
+# Eunuch Offers His Service
+country_event = {
+	id = chinese_factions.11000
+	title = "EVTNAME11000"
+	desc = "EVTDESC11000"
+	picture = ADVISOR_eventPicture
+	
+	trigger = {
+		faction_in_power = enuchs
+		NOT = { tag = AAA }
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.9
+			stability = 1
+		}
+		modifier = {
+			factor = 0.9
+			stability = 2
+		}
+		modifier = {
+			factor = 0.9
+			stability = 3
+		}
+		modifier = {
+			factor = 1.5
+			NOT = {
+				stability = 0
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11000"
+		add_faction_influence = {
+			faction = enuchs
+			influence = 5
+		}
+		create_advisor = statesman
+	}
+	
+	option = {
+		name = "EVTOPTB11000"
+		add_faction_influence = {
+			faction = enuchs
+			influence = -5
+		}
+	}
+}
+
+#Eunuch Schemes for power
+country_event = {
+	id = chinese_factions.11002
+	title = "EVTNAME11002"
+	desc = "EVTDESC11002"
+	picture = DEBATE_REPUBLICAN_eventPicture
+	
+	trigger = {
+		faction_in_power = enuchs
+		statesman = 3
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.9
+			NOT = {
+				stability = 0
+			}
+		}
+		modifier = {
+			factor = 0.9
+			NOT = {
+				stability = -1
+			}
+		}
+		modifier = {
+			factor = 0.9
+			NOT = {
+				stability = -2
+			}
+		}
+		modifier = {
+			factor = 1.5
+			stability = 1
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11002"
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+		kill_advisor = statesman
+		add_faction_influence = {
+			faction = enuchs
+			influence = -5
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11002"
+		add_adm_power = 20
+		add_faction_influence = {
+			faction = enuchs
+			influence = 5
+		}
+	}
+}
+
+#Eunuchs Isolate the Emperor
+country_event = {
+	id = chinese_factions.11004
+	title = "EVTNAME11004"
+	desc = "EVTDESC11004"
+	picture = COURT_eventPicture
+	
+	trigger = {
+		faction_in_power = enuchs
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.9
+			NOT = {
+				legitimacy = 80
+			}
+		}
+		modifier = {
+			factor = 0.9
+			NOT = {
+				legitimacy = 70
+			}
+		}
+		modifier = {
+			factor = 0.9
+			NOT = {
+				legitimacy = 60
+			}
+		}
+		modifier = {
+			factor = 1.4
+			stability = 1
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11004"
+		add_stability_1 = yes
+		add_faction_influence = {
+			faction = enuchs
+			influence = 6
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11004"
+		add_prestige = 5
+	}
+}
+
+# A Grave for a Eunuch
+country_event = {
+	id = chinese_factions.11006
+	title = "EVTNAME11006"
+	desc = "EVTDESC11006"
+	picture = DEATH_OF_HEIR_eventPicture
+	
+	trigger = {
+		faction_in_power = enuchs
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.8
+			economic_ideas = 4
+		}
+		modifier = {
+			factor = 0.8
+			economic_ideas = 5
+		}
+		modifier = {
+			factor = 1.5
+			NOT = { economic_ideas = 4 }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11006"
+		add_faction_influence = {
+			faction = enuchs
+			influence = -10
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11006"
+		add_faction_influence = {
+			faction = enuchs
+			influence = -5
+		}
+		add_years_of_income = -0.1
+	}
+}
+
+# The Yellow River Trade
+country_event = {
+	id = chinese_factions.11008
+	title = "EVTNAME11008"
+	desc = "EVTDESC11008"
+	picture = MERCHANTS_TALKING_eventPicture
+	
+	trigger = {
+		faction_in_power = enuchs
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		#modifier = {
+		#	factor = 0.9
+		#	mercantilism = 60
+		#}
+		#modifier = {
+		#	factor = 0.9
+		#	mercantilism = 80
+		#}
+		#
+		#modifier = {
+		#	factor = 1.5
+		#	NOT = {
+		#		mercantilism = 30
+		#	}
+		#}
+	}
+	
+	option = {
+		name = "EVTOPTA11008"
+		add_stability_1 = yes
+		add_dip_power = -30
+		add_faction_influence = {
+			faction = enuchs
+			influence = 6
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11008"
+		add_dip_power = 50
+		add_faction_influence = {
+			faction = enuchs
+			influence = -5
+		}
+	}
+}
+
+# A Gift
+country_event = {
+	id = chinese_factions.11010
+	title = "EVTNAME11010"
+	desc = "EVTDESC11010"
+	picture = IMPORTANT_STATUE_eventPicture
+	
+	trigger = {
+		faction_in_power = enuchs
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.8
+			prestige = 2
+		}
+		modifier = {
+			factor = 0.8
+			prestige = 30
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11010"
+		add_years_of_income = 0.2
+		add_faction_influence = {
+			faction = enuchs
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11010"
+		add_faction_influence = {
+			faction = enuchs
+			influence = -1
+		}
+	}
+}
+
+# Destitute Banknotes
+country_event = {
+	id = chinese_factions.11012
+	title = "EVTNAME11012"
+	desc = "EVTDESC11012"
+	picture = ECONOMY_eventPicture
+	
+	trigger = {
+		faction_in_power = enuchs
+		inflation = 12
+		NOT = { tag = AAA }
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.8
+			inflation = 16
+		}
+		modifier = {
+			factor = 0.8
+			inflation = 24
+		}
+		modifier = {
+			factor = 0.9
+			inflation = 32
+		}
+		modifier = {
+			factor = 1.5
+			has_idea = national_bank
+		}
+		modifier = {
+			factor = 1.5
+			advisor = master_of_mint
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11012"
+		create_advisor = master_of_mint
+		add_faction_influence = {
+			faction = enuchs
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11012"
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+		add_inflation = -2
+		add_faction_influence = {
+			faction = enuchs
+			influence = -5
+		}
+	}
+}
+
+# Treasurer Empties Coffers
+country_event = {
+	id = chinese_factions.11014
+	title = "EVTNAME11014"
+	desc = "EVTDESC11014"
+	picture = ECONOMY_eventPicture
+	
+	trigger = {
+		faction_in_power = enuchs
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.9
+			NOT = {
+				stability = 0
+			}
+		}
+		modifier = {
+			factor = 0.9
+			NOT = {
+				stability = -1
+			}
+		}
+		modifier = {
+			factor = 0.9
+			NOT = {
+				prestige = 0
+			}
+		}
+		modifier = {
+			factor = 0.8
+			advisor = treasurer
+		}
+		modifier = {
+			factor = 1.5
+			stability = 1
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11014"
+		add_years_of_income = -0.4
+		remove_advisor = treasurer
+		add_faction_influence = {
+			faction = enuchs
+			influence = -4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11014"
+		add_inflation = 2
+		add_faction_influence = {
+			faction = enuchs
+			influence = 5
+		}
+	}
+}
+
+# Eunuch Excells at Examination
+country_event = {
+	id = chinese_factions.11016
+	title = "EVTNAME11016"
+	desc = "EVTDESC11016"
+	picture = ADVISOR_eventPicture
+	
+	trigger = {
+		faction_in_power = enuchs
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.8
+			economic_ideas = 4
+		}
+		modifier = {
+			factor = 1.5
+			NOT = {
+				stability = 0
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11016"
+		define_advisor = {
+			type = philosopher
+			skill = 2
+			discount = yes
+		}
+		add_faction_influence = {
+			faction = enuchs
+			influence = 5
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11016"
+		add_adm_power = 20
+		add_faction_influence = {
+			faction = enuchs
+			influence = -5
+		}
+	}
+}
+
+# Eunuch Smokes Opium
+country_event = {
+	id = chinese_factions.11018
+	title = "EVTNAME11018"
+	desc = "EVTDESC11018"
+	picture = COURT_eventPicture
+	
+	trigger = {
+		faction_in_power = enuchs
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.9
+			NOT = {
+				prestige = 10
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				prestige = 0
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				legitimacy = 80
+			}
+		}
+		modifier = {
+			factor = 1.5
+			stability = 1
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11018"
+		add_prestige = -5
+		add_faction_influence = {
+			faction = enuchs
+			influence = 5
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11018"
+		add_years_of_income = 0.1
+		add_adm_power = -10
+		add_faction_influence = {
+			faction = enuchs
+			influence = -5
+		}
+	}
+}
+
+### Bureaucrats ###
+
+#The Examinations of $YEAR$
+country_event = {
+	id = chinese_factions.11100
+	title = "EVTNAME11100"
+	desc = "EVTDESC11100"
+	picture = UNIVERSITY_eventPicture
+	
+	trigger = {
+		faction_in_power = bureaucrats
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.9
+			stability = 1
+		}
+		modifier = {
+			factor = 0.9
+			stability = 2
+		}
+		modifier = {
+			factor = 1.5
+			NOT = {
+				stability = 0
+			}
+		}
+		modifier = {
+			factor = 1.5
+			NOT = {
+				stability = -1
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11100"
+		add_adm_power = 30
+		add_prestige = 5
+		add_legitimacy = 5
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11100"
+		add_adm_power = 40
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = 6
+		}
+	}
+}
+
+# A Jade Seal
+country_event = {
+	id = chinese_factions.11102
+	title = "EVTNAME11102"
+	desc = "EVTDESC11102"
+	picture = IMPORTANT_STATUE_eventPicture
+	
+	trigger = {
+		faction_in_power = bureaucrats
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.9
+			legitimacy = 70
+		}
+		modifier = {
+			factor = 0.9
+			legitimacy = 80
+		}
+		modifier = {
+			factor = 0.9
+			prestige = 105
+		}
+		modifier = {
+			factor = 1.5
+			NOT = {
+				stability = 0
+			}
+		}
+		modifier = {
+			factor = 1.5
+			NOT = {
+				stability = -2
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11102"
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = -3
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11102"
+		add_prestige = 5
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = 3
+		}
+	}
+}
+
+# The Levy in $PROVINCENAME$
+#province_event = {
+#	id = chinese_factions.11104
+#	title = "EVTNAME11104"
+#	desc = "EVTDESC11104"
+#	picture = REFORM_eventPicture
+#	
+#	trigger = {
+#		owner = { faction_in_power = bureaucrats }
+#		manpower = 4
+#	}
+#	
+#	mean_time_to_happen = {
+#		months = 2500
+#		modifier = {
+#			factor = 0.9
+#			owner = { army_tradition = 10 }
+#		}
+#		modifier = {
+#			factor = 0.9
+#			owner = { army_tradition = 20 }
+#		}
+#		modifier = {
+#			factor = 1.5
+#			owner = { NOT = { economic_ideas = 4 } }
+#		}
+#		modifier = {
+#			factor = 1.5
+#			owner = { NOT = { stability = 1 } }
+#		}
+#	}
+#	
+#	option = {
+#		name = "EVTOPTA11104"
+#		add_province_manpower = 2
+#		owner = {
+#			add_manpower = 1
+#			add_army_tradition = 5
+#			add_faction_influence = {
+#				faction = bureaucrats
+#				influence = 5
+#			}
+#		}
+#	}
+#	
+#	option = {
+#		name = "EVTOPTB11104"
+#		# add_base_tax = 1
+#		owner = {
+#			add_years_of_income = 0.2
+#			add_prestige = 5
+#			add_faction_influence = {
+#				faction = bureaucrats
+#				influence = -5
+#			}
+#		}
+#	}
+#}
+
+# Field Marshal Dishonored
+country_event = {
+	id = chinese_factions.11106
+	title = "EVTNAME11106"
+	desc = "EVTDESC11106"
+	picture = ECONOMY_eventPicture
+	
+	trigger = {
+		faction_in_power = bureaucrats
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.9
+			army_tradition = 10
+		}
+		modifier = {
+			factor = 0.9
+			army_tradition = 20
+		}
+		modifier = {
+			factor = 1.5
+			stability = 1
+		}
+		modifier = {
+			factor = 1.5
+			stability = 2
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11106"
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = -10
+		}
+		add_army_tradition = -5
+		add_war_exhaustion = 4
+	}
+	
+	option = {
+		name = "EVTOPTB11106"
+		add_army_tradition = 5
+		add_years_of_income = -0.1
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = -2
+		}
+	}
+}
+
+# Heir Controlled
+country_event = {
+	id = chinese_factions.11108
+	title = "EVTNAME11108"
+	desc = "EVTDESC11108"
+	picture = DEBATE_REPUBLICAN_eventPicture
+	
+	trigger = {
+		faction_in_power = bureaucrats
+		has_heir = yes
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.9
+			NOT = {
+				legitimacy = 80
+			}
+		}
+		modifier = {
+			factor = 0.9
+			NOT = {
+				legitimacy = 70
+			}
+		}
+		modifier = {
+			factor = 0.6
+			NOT = {
+				heir_claim = 70
+			}
+		}
+		modifier = {
+			factor = 1.5
+			stability = 1
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11108"
+		add_heir_claim = 10
+		add_legitimacy = 5
+		add_prestige = 5
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11108"
+		add_heir_claim = -10
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = -5
+		}
+	}
+}
+
+# Confucian Wisdom
+country_event = {
+	id = chinese_factions.11110
+	title = "EVTNAME11110"
+	desc = "EVTDESC11110"
+	picture = INVENTION_eventPicture
+	
+	trigger = {
+		faction_in_power = bureaucrats
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.9
+			stability = 1
+		}
+		modifier = {
+			factor = 0.9
+			stability = 3
+		}
+		modifier = {
+			factor = 0.9
+			has_idea = patron_of_art
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11110"
+		add_prestige = 5
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = 5
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11110"
+		add_adm_power = 25
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = 4
+		}
+	}
+}
+
+#Literati Publishes
+country_event = {
+	id = chinese_factions.11112
+	title = "EVTNAME11112"
+	desc = "EVTDESC11112"
+	picture = ECONOMY_eventPicture
+	
+	trigger = {
+		faction_in_power = bureaucrats
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.8
+			stability = 1
+		}
+		modifier = {
+			factor = 1.5
+			NOT = {
+				stability = 0
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11112"
+		add_prestige = 10
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = 5
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11112"
+		add_prestige = -5
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = -5
+		}
+	}
+}
+
+# Retainer Flogged
+country_event = {
+	id = chinese_factions.11114
+	title = "EVTNAME11114"
+	desc = "EVTDESC11114"
+	picture = DEBATE_REPUBLICAN_eventPicture
+	
+	trigger = {
+		faction_in_power = bureaucrats
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 1.5
+			NOT = {
+				stability = 0
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11114"
+		add_adm_power = 20
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = 5
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11114"
+		add_adm_power = -20
+		add_legitimacy = 5
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = -5
+		}
+	}
+}
+
+# Drama on The Pearl River
+country_event = {
+	id = chinese_factions.11116
+	title = "EVTNAME11116"
+	desc = "EVTDESC11116"
+	picture = NAVAL_MILITARY_eventPicture
+	
+	trigger = {
+		faction_in_power = bureaucrats
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.9
+			NOT = {
+				stability = 0
+			}
+		}
+		modifier = {
+			factor = 0.9
+			NOT = {
+				stability = -1
+			}
+		}
+		
+		modifier = {
+			factor = 1.5
+			stability = 1
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11116"
+		add_years_of_income = -0.5
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = -5
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11116"
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+		add_prestige = 5
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = -5
+		}
+	}
+}
+
+# Renovating a Pagoda
+country_event = {
+	id = chinese_factions.11122
+	title = "EVTNAME11122"
+	desc = "EVTDESC11122"
+	picture = FORT_eventPicture
+	
+	trigger = {
+		faction_in_power = bureaucrats
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.9
+			has_idea = patron_of_art
+		}
+		modifier = {
+			factor = 1.5
+			NOT = {
+				prestige = 2
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11122"
+		add_years_of_income = -0.6
+		add_prestige = 6
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = 5
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11122"
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = -5
+		}
+		add_prestige = -4
+	}
+}
+
+# Temple Faction Diplomacy
+country_event = {
+	id = chinese_factions.11204
+	title = "EVTNAME11204"
+	desc = "EVTDESC11204"
+	picture = DIPLOMACY_eventPicture
+	
+	trigger = {
+		faction_in_power = bureaucrats
+		any_known_country = {
+			NOT = {
+				has_opinion = { who = ROOT value = 100 }
+			}
+		}
+	}
+	
+	mean_time_to_happen = { years = 41 }
+	
+	option = {
+		name = "EVTOPTA11204"
+		random_neighbor_country = {
+			add_opinion = { who = ROOT modifier = opinion_left_in_peace }
+		}
+		add_faction_influence = {
+			faction = temples
+			influence = -5
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11204"
+		random_neighbor_country = {
+			reverse_add_casus_belli = {
+				target = ROOT
+				type = cb_insult
+				months = 24
+			}
+		}
+		add_mil_power = 20
+		add_faction_influence = {
+			faction = temples
+			influence = 4
+		}
+	}
+}
+
+# A Flair For Feet
+country_event = {
+	id = chinese_factions.11206
+	title = "EVTNAME11206"
+	desc = "EVTDESC11206"
+	picture = ANGRY_MOB_eventPicture
+	
+	trigger = {
+		faction_in_power = temples
+	}
+	
+	mean_time_to_happen = {
+		years = 29
+		modifier = {
+			factor = 1.5
+			NOT = {
+				stability = 0
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11206"
+		add_prestige = 10
+		random_owned_province = {
+			limit = {
+				NOT = { has_province_modifier = turmoil_organizing }
+			}
+			add_province_modifier = {
+				name = "turmoil_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+		random_owned_province = {
+			limit = {
+				NOT = { has_province_modifier = turmoil_organizing }
+			}
+			add_province_modifier = {
+				name = "turmoil_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+		random_owned_province = {
+			limit = {
+				NOT = { has_province_modifier = turmoil_organizing }
+			}
+			add_province_modifier = {
+				name = "turmoil_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+		random_owned_province = {
+			limit = {
+				NOT = { has_province_modifier = turmoil_organizing }
+			}
+			add_province_modifier = {
+				name = "turmoil_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+		random_owned_province = {
+			limit = {
+				NOT = { has_province_modifier = turmoil_organizing }
+			}
+			add_province_modifier = {
+				name = "turmoil_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+		add_faction_influence = {
+			faction = temples
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11206"
+		add_prestige = -5
+		add_faction_influence = {
+			faction = temples
+			influence = -5
+		}
+	}
+}
+
+# Imperial Insults
+country_event = {
+	id = chinese_factions.11208
+	title = "EVTNAME11208"
+	desc = "EVTDESC11208"
+	picture = DEBATE_REPUBLICAN_eventPicture
+	
+	trigger = {
+		faction_in_power = temples
+	}
+	
+	mean_time_to_happen = {
+		years = 20
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = -1
+			}
+		}
+		modifier = {
+			factor = 1.7
+			stability = 0
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11208"
+		random_neighbor_country = {
+			add_opinion = { who = ROOT modifier = opinion_pleased_apology }
+		}
+		add_faction_influence = {
+			faction = temples
+			influence = -6
+		}
+	}
+	option = {
+		name = "EVTOPTB11208"
+		random_neighbor_country = {
+			add_opinion = { who = ROOT modifier = opinion_displeased }
+		}
+		add_faction_influence = {
+			faction = temples
+			influence = -4
+		}
+	}
+}
+
+# Army Inspections
+country_event = {
+	id = chinese_factions.11210
+	title = "EVTNAME11210"
+	desc = "EVTDESC11210"
+	picture = LAND_MILITARY_eventPicture
+	
+	trigger = {
+		faction_in_power = temples
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.9
+			army_size_percentage = 0.6
+		}
+		modifier = {
+			factor = 0.9
+			army_size_percentage = 0.7
+		}
+		modifier = {
+			factor = 0.9
+			army_tradition = 2
+		}
+		modifier = {
+			factor = 1.5
+			is_at_war = no
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11210"
+		add_army_tradition = 5
+		add_mil_power = 20
+		add_faction_influence = {
+			faction = temples
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11210"
+		add_army_tradition = -5
+		add_faction_influence = {
+			faction = temples
+			influence = -5
+		}
+	}
+}
+
+# Temple Conspiracy
+country_event = {
+	id = chinese_factions.11212
+	title = "EVTNAME11212"
+	desc = "EVTDESC11212"
+	picture = LIBERUM_VETO_eventPicture
+	
+	trigger = {
+		faction_in_power = temples
+		stability = -1
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.8
+			NOT = {
+				legitimacy = 40
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				legitimacy = 60
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				legitimacy = 80
+			}
+		}
+		modifier = {
+			factor = 1.5
+			prestige = 2
+		}
+		modifier = {
+			factor = 1.5
+			stability = 1
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11212"
+		add_stability_1 = yes
+		add_prestige = 5
+		add_faction_influence = {
+			faction = temples
+			influence = 10
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11212"
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+		add_prestige = -5
+		add_legitimacy = -5
+		add_faction_influence = {
+			faction = temples
+			influence = -10
+		}
+	}
+}
+
+# Examining the Examinations
+country_event = {
+	id = chinese_factions.11214
+	title = "EVTNAME11214"
+	desc = "EVTDESC11214"
+	picture = DEBATE_REPUBLICAN_eventPicture
+	
+	trigger = {
+		faction_in_power = temples
+	}
+	
+	mean_time_to_happen = {
+		years = 45
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = 0
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = -1
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = -2
+			}
+		}
+		modifier = {
+			factor = 1.5
+			stability = 1
+		}
+		modifier = {
+			factor = 1.5
+			prestige = 40
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11214"
+		add_adm_power = 35
+		add_faction_influence = {
+			faction = temples
+			influence = -5
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11214"
+		add_stability_1 = yes
+		add_faction_influence = {
+			faction = temples
+			influence = 6
+		}
+	}
+}
+
+# A Gift From the Temple
+country_event = {
+	id = chinese_factions.11216
+	title = "EVTNAME11216"
+	desc = "EVTDESC11216"
+	picture = BUDDHA_eventPicture
+	
+	trigger = {
+		faction_in_power = temples
+		stability = 0
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.8
+			NOT = {
+				prestige = 30
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				prestige = 10
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				prestige = 0
+			}
+		}
+		modifier = {
+			factor = 1.5
+			stability = 1
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11216"
+		add_adm_power = 25
+		add_faction_influence = {
+			faction = temples
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11216"
+		add_prestige = -5
+		subtract_stability_2 = yes
+		add_faction_influence = {
+			faction = temples
+			influence = -4
+		}
+	}
+}
+
+# Records of the Grand Historian
+country_event = {
+	id = chinese_factions.11218
+	title = "EVTNAME11218"
+	desc = "EVTDESC11218"
+	picture = ECONOMY_eventPicture
+	
+	trigger = {
+		faction_in_power = temples
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.8
+			NOT = {
+				legitimacy = 70
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				legitimacy = 60
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				prestige = 2
+			}
+		}
+		modifier = {
+			factor = 1.5
+			stability = 1
+		}
+		modifier = {
+			factor = 1.5
+			stability = 3
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11218"
+		add_army_tradition = 5
+		add_navy_tradition = 5
+		add_prestige = 5
+		add_legitimacy = 5
+		add_years_of_income = -0.6
+		add_faction_influence = {
+			faction = temples
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11218"
+		add_prestige = 5
+		add_faction_influence = {
+			faction = temples
+			influence = -1
+		}
+	}
+}
+
+# A Tibetan Monk
+country_event = {
+	id = chinese_factions.11220
+	title = "EVTNAME11220"
+	desc = "EVTDESC11220"
+	picture = BUDDHA_eventPicture
+	
+	trigger = {
+		faction_in_power = temples
+		exists = TIB
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.8
+			has_opinion = { who = TIB value = 100 }
+		}
+		modifier = {
+			factor = 0.8
+			has_opinion = { who = TIB value = 150 }
+		}
+		modifier = {
+			factor = 0.8
+			has_opinion = { who = TIB value = 175 }
+		}
+		modifier = {
+			factor = 1.5
+			stability = 0
+		}
+		modifier = {
+			factor = 1.5
+			stability = 1
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11220"
+		add_adm_power = 35
+		add_prestige = 5
+		random_owned_province = {
+			limit = {
+				NOT = {
+					religion = buddhism
+				}
+			}
+			change_religion = buddhism
+		}
+		add_faction_influence = {
+			faction = temples
+			influence = -3
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11220"
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+		add_casus_belli = {
+			target = TIB
+			type = cb_insult
+			months = 12
+		}
+		add_faction_influence = {
+			faction = temples
+			influence = 4
+		}
+	}
+}
+
+# Burning of Books
+country_event = {
+	id = chinese_factions.11222
+	title = "EVTNAME11222"
+	desc = "EVTDESC11222"
+	picture = REVOLUTION_eventPicture
+	
+	trigger = {
+		faction_in_power = temples
+		NOT = {
+			stability = -1
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.8
+			innovativeness_ideas = 4
+		}
+		modifier = {
+			factor = 0.8
+			innovativeness_ideas = 6
+		}
+		modifier = {
+			factor = 1.5
+			NOT = { innovativeness_ideas = 4 }
+		}
+		modifier = {
+			factor = 1.5
+			NOT = { innovativeness_ideas = 3 }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11222"
+		add_stability_1 = yes
+		random_owned_province = {
+			limit = {
+				NOT = { has_province_modifier = turmoil_organizing }
+			}
+			add_province_modifier = {
+				name = "turmoil_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+		random_owned_province = {
+			limit = {
+				NOT = { has_province_modifier = turmoil_organizing }
+			}
+			add_province_modifier = {
+				name = "turmoil_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+		random_owned_province = {
+			limit = {
+				NOT = { has_province_modifier = turmoil_organizing }
+			}
+			add_province_modifier = {
+				name = "turmoil_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+		random_owned_province = {
+			limit = {
+				NOT = { has_province_modifier = turmoil_organizing }
+			}
+			add_province_modifier = {
+				name = "turmoil_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+		random_owned_province = {
+			limit = {
+				NOT = { has_province_modifier = turmoil_organizing }
+			}
+			add_province_modifier = {
+				name = "turmoil_organizing"
+				duration = 1825
+			}
+			hidden_effect = {
+				set_variable = { which = added_unrest value = 5 }
+				add_base_unrest = yes
+			}
+			custom_tooltip = added_unrest_5
+		}
+		add_faction_influence = {
+			faction = temples
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11222"
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+		add_prestige = 10
+		add_faction_influence = {
+			faction = temples
+			influence = -4
+		}
+	}
+}
+
+# Burying of Scholars
+country_event = {
+	id = chinese_factions.11224
+	title = "EVTNAME11224"
+	desc = "EVTDESC11224"
+	picture = DEBATE_REPUBLICAN_eventPicture
+	
+	trigger = {
+		faction_in_power = temples
+		innovativeness_ideas = 5
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.8
+			innovativeness_ideas = 4
+		}
+		modifier = {
+			factor = 0.8
+			innovativeness_ideas = 6
+		}
+		modifier = {
+			factor = 1.5
+			stability = 1
+		}
+		modifier = {
+			factor = 1.5
+			stability = 2
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11224"
+		add_prestige = -5
+		add_adm_power = -35
+		add_faction_influence = {
+			faction = temples
+			influence = -5
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11224"
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+		add_faction_influence = {
+			faction = temples
+			influence = -8
+		}
+	}
+}
+
+### Multiple-Choice Questions ###
+
+# Jin Era Statue
+country_event = {
+	id = chinese_factions.11226
+	title = "EVTNAME11226"
+	desc = "EVTDESC11226"
+	picture = IMPORTANT_STATUE_eventPicture
+	
+	trigger = {
+		OR = {
+			faction_in_power = temples
+			faction_in_power = bureaucrats
+			faction_in_power = enuchs
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 1.5
+			NOT = {
+				stability = 0
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11226"
+		add_stability_1 = yes
+		add_faction_influence = {
+			faction = temples
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11226"
+		add_years_of_income = 0.2
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTC11226"
+		add_prestige = 10
+		add_legitimacy = 10
+		add_army_tradition = 10
+		add_faction_influence = {
+			faction = enuchs
+			influence = 4
+		}
+	}
+}
+
+# The Classic of Music
+country_event = {
+	id = chinese_factions.11228
+	title = "EVTNAME11228"
+	desc = "EVTDESC11228"
+	picture = ECONOMY_eventPicture
+	
+	trigger = {
+		OR = {
+			faction_in_power = temples
+			faction_in_power = bureaucrats
+			faction_in_power = enuchs
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 54
+		modifier = {
+			factor = 0.8
+			stability = 2
+		}
+		modifier = {
+			factor = 0.8
+			legitimacy = 80
+		}
+		modifier = {
+			factor = 2
+			NOT = {
+				stability = 0
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11228"
+		add_faction_influence = {
+			faction = enuchs
+			influence = 5
+		}
+		add_faction_influence = {
+			faction = temples
+			influence = 3
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11228"
+		add_faction_influence = {
+			faction = enuchs
+			influence = 5
+		}
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = 3
+		}
+	}
+}
+
+# Cheating at Examinations
+country_event = {
+	id = chinese_factions.11230
+	title = "EVTNAME11230"
+	desc = "EVTDESC11230"
+	picture = UNIVERSITY_eventPicture
+	
+	trigger = {
+		OR = {
+			faction_in_power = temples
+			faction_in_power = bureaucrats
+			faction_in_power = enuchs
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 45
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = 0
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = -2
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				legitimacy = 70
+			}
+		}
+		modifier = {
+			factor = 1.5
+			legitimacy = 90
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11230"
+		add_adm_power = -20
+		add_prestige = -2
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = -6
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11230"
+		add_army_tradition = -5
+		add_navy_tradition = -5
+		add_faction_influence = {
+			faction = enuchs
+			influence = -6
+		}
+	}
+	
+	option = {
+		name = "EVTOPTC11230"
+		add_prestige = -10
+		add_faction_influence = {
+			faction = temples
+			influence = -6
+		}
+	}
+}
+
+# Withdrawing Excess Paper
+country_event = {
+	id = chinese_factions.11232
+	title = "EVTNAME11232"
+	desc = "EVTDESC11232"
+	picture = ECONOMY_eventPicture
+	
+	trigger = {
+		OR = {
+			faction_in_power = temples
+			faction_in_power = bureaucrats
+			faction_in_power = enuchs
+		}
+		inflation = 20
+	}
+	
+	mean_time_to_happen = {
+		years = 54
+		modifier = {
+			factor = 0.8
+			inflation = 25
+		}
+		modifier = {
+			factor = 0.8
+			inflation = 30
+		}
+		modifier = {
+			factor = 1.5
+			NOT = {
+				stability = 0
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11232"
+		add_inflation = -3
+		add_years_of_income = -1
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11232"
+		add_inflation = -2
+		add_years_of_income = -0.6
+		add_prestige = -5
+		add_adm_power = -20
+		add_faction_influence = {
+			faction = enuchs
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTC11232"
+		add_inflation = -1
+		add_years_of_income = -0.3
+		add_prestige = 5
+		add_legitimacy = 5
+		add_faction_influence = {
+			faction = temples
+			influence = 4
+		}
+	}
+}
+
+# Honoring The Ancestors
+country_event = {
+	id = chinese_factions.11234
+	title = "EVTNAME11234"
+	desc = "EVTDESC11234"
+	picture = COURT_eventPicture
+	
+	trigger = {
+		OR = {
+			faction_in_power = temples
+			faction_in_power = bureaucrats
+			faction_in_power = enuchs
+		}
+		religion = confucianism
+	}
+	
+	mean_time_to_happen = {
+		years = 54
+		
+		modifier = {
+			factor = 0.8
+			stability = 1
+		}
+		modifier = {
+			factor = 0.7
+			stability = 2
+		}
+		modifier = {
+			factor = 0.6
+			stability = 3
+		}
+		modifier = {
+			factor = 1.5
+			war_exhaustion = 5
+		}
+		modifier = {
+			factor = 1.5
+			NOT = {
+				legitimacy = 80
+			}
+		}
+		modifier = {
+			factor = 1.5
+			NOT = {
+				prestige = 10
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11234"
+		add_stability_1 = yes
+		add_faction_influence = {
+			faction = enuchs
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11234"
+		add_prestige = 5
+		add_army_tradition = 5
+		add_navy_tradition = 5
+		add_faction_influence = {
+			faction = temples
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTC11234"
+		add_years_of_income = 0.2
+		add_inflation = -0.1
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = 4
+		}
+	}
+}
+
+# Bad Feng Shui
+country_event = {
+	id = chinese_factions.11236
+	title = "EVTNAME11236"
+	desc = "EVTDESC11236"
+	picture = FORT_eventPicture
+	
+	trigger = {
+		OR = {
+			faction_in_power = temples
+			faction_in_power = bureaucrats
+			faction_in_power = enuchs
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = 0
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = -1
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = -2
+			}
+		}
+		modifier = {
+			factor = 1.5
+			stability = 1
+		}
+		modifier = {
+			factor = 1.5
+			legitimacy = 80
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11236"
+		add_legitimacy = -20
+		add_prestige = -2
+		add_faction_influence = {
+			faction = temples
+			influence = -4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11236"
+		add_years_of_income = -0.5
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = -4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTC11236"
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+		add_faction_influence = {
+			faction = enuchs
+			influence = -4
+		}
+	}
+}
+
+# Court Bickering
+country_event = {
+	id = chinese_factions.11238
+	title = "EVTNAME11238"
+	desc = "EVTDESC11238"
+	picture = LIBERUM_VETO_eventPicture
+	
+	trigger = {
+		OR = {
+			faction_in_power = temples
+			faction_in_power = bureaucrats
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 54
+		modifier = {
+			factor = 0.9
+			NOT = {
+				legitimacy = 70
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				prestige = 2
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = 1
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11238"
+		add_army_tradition = -3
+		add_faction_influence = {
+			faction = temples
+			influence = -5
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11238"
+		add_prestige = -3
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = -5
+		}
+	}
+	
+	option = {
+		name = "EVTOPTC11238"
+		add_legitimacy = 1
+	}
+}
+
+# Choosing a Tomb
+country_event = {
+	id = chinese_factions.11240
+	title = "EVTNAME11240"
+	desc = "EVTDESC11240"
+	picture = DEATH_OF_HEIR_eventPicture
+	
+	trigger = {
+		OR = {
+			faction_in_power = temples
+			faction_in_power = bureaucrats
+			faction_in_power = enuchs
+		}
+		prestige = 30
+	}
+	
+	mean_time_to_happen = {
+		years = 58
+		modifier = {
+			factor = 0.8
+			stability = 2
+		}
+		modifier = {
+			factor = 0.8
+			stability = 3
+		}
+		modifier = {
+			factor = 0.8
+			prestige = 50
+		}
+		modifier = {
+			factor = 1.5
+			NOT = { stability = 1 }
+		}
+		modifier = {
+			factor = 1.5
+			NOT = { stability = 0 }
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			add_ruler_modifier = {
+				name = choosing_a_tomb_timer
+				hidden = yes
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11240"
+		add_legitimacy = 20
+		add_adm_power = 45
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = 4
+		}
+	}
+	option = {
+		name = "EVTOPTB11240"
+		add_legitimacy = 20
+		add_dip_power = 45
+		add_faction_influence = {
+			faction = temples
+			influence = 4
+		}
+	}
+	option = {
+		name = "EVTOPTC11240"
+		add_legitimacy = 20
+		add_mil_power = 45
+		add_faction_influence = {
+			faction = enuchs
+			influence = 4
+		}
+	}
+}
+
+# The Gilded Pagoda
+country_event = {
+	id = chinese_factions.11242
+	title = "EVTNAME11242"
+	desc = "EVTDESC11242"
+	picture = FORT_eventPicture
+	
+	trigger = {
+		OR = {
+			faction_in_power = temples
+			faction_in_power = bureaucrats
+			faction_in_power = enuchs
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 45
+		modifier = {
+			factor = 0.8
+			stability = 1
+		}
+		modifier = {
+			factor = 0.8
+			stability = 2
+		}
+		modifier = {
+			factor = 0.9
+			prestige = 2
+		}
+		modifier = {
+			factor = 1.5
+			NOT = {
+				legitimacy = 60
+			}
+		}
+		modifier = {
+			factor = 2
+			NOT = {
+				stability = -1
+			}
+		}
+		modifier = {
+			factor = 2
+			NOT = {
+				stability = 2
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11242"
+		add_years_of_income = 0.5
+		add_faction_influence = {
+			faction = enuchs
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11242"
+		add_adm_power = 40
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTC11242"
+		add_prestige = 10
+		add_legitimacy = 10
+		add_faction_influence = {
+			faction = temples
+			influence = 4
+		}
+	}
+}
+
+### Events When Having Lost The Mandate of Heaven ###
+
+# The Shadow that Stalks the Corridor
+country_event = {
+	id = chinese_factions.11300
+	title = "EVTNAME11300"
+	desc = "EVTDESC11300"
+	picture = ASSASSINATION_eventPicture
+	
+	trigger = {
+		has_country_modifier = the_mandate_of_heaven_lost
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.9
+			NOT = {
+				legitimacy = 70
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				legitimacy = 60
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = -2
+			}
+		}
+		modifier = {
+			factor = 1.5
+			prestige = 2
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11300"
+		random_list = {
+			25 = {
+				kill_ruler = yes
+				subtract_stability_1 = yes
+			}
+			50 = {
+				add_legitimacy = -15
+			}
+			25 = {
+				add_legitimacy = -20
+			}
+		}
+		add_faction_influence = {
+			faction = enuchs
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11300"
+		random_list = {
+			40 = {
+				kill_ruler = yes
+				subtract_stability_1 = yes
+			}
+			60 = {
+				add_stability_1 = yes
+			}
+		}
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTC11300"
+		random_list = {
+			50 = {
+				kill_ruler = yes
+			}
+			50 = {
+				add_stability_2 = yes
+				add_legitimacy = 20
+			}
+		}
+	}
+}
+
+# Bureaucrat Swindles the Treasury
+#country_event = {
+#	id = chinese_factions.11302
+#	title = "EVTNAME11302"
+#	desc = "EVTDESC11302"
+#	picture = ECONOMY_eventPicture
+#	
+#	trigger = {
+#		has_country_modifier = the_mandate_of_heaven_lost
+#	}
+#	
+#	mean_time_to_happen = {
+#		months = 550
+#		modifier = {
+#			factor = 0.8
+#			inflation = 5
+#		}
+#		modifier = {
+#			factor = 0.8
+#			inflation = 10
+#		}
+#		modifier = {
+#			factor = 0.8
+#			inflation = 15
+#		}
+#	}
+#	
+#	option = {
+#		name = "EVTOPTA11302"
+#		add_stability_1 = yes
+#		add_years_of_income = -0.4
+#		add_inflation = 3
+#		add_faction_influence = {
+#			faction = enuchs
+#			influence = 3
+#		}
+#	}
+#
+#	option = {
+#		name = "EVTOPTB11302"
+#		add_legitimacy = 15
+#		add_years_of_income = -0.2
+#		add_inflation = 2
+#		add_faction_influence = {
+#			faction = temples
+#			influence = 3
+#		}
+#	}
+#	
+#	option = {
+#		name = "EVTOPTC11302"
+#		random_list = {
+#			30 = {}
+#			40 = {
+#				subtract_stability_points_50 = yes
+#			}
+#			30 = {
+#				subtract_stability_1 = yes
+#			}
+#		}
+#		add_legitimacy = -5
+#		add_faction_influence = {
+#			faction = bureaucrats
+#			influence = 6
+#		}
+#	}
+#}
+
+# Brigands on the Silk Road
+country_event = {
+	id = chinese_factions.11304
+	title = "EVTNAME11304"
+	desc = "EVTDESC11304"
+	picture = ANGRY_MOB_eventPicture
+	
+	trigger = {
+		has_country_modifier = the_mandate_of_heaven_lost
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = -1
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = -2
+			}
+		}
+		modifier = {
+			factor = 1.5
+			army_tradition = 10
+		}
+		modifier = {
+			factor = 1.5
+			army_tradition = 20
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11304"
+		add_manpower = -2
+		add_war_exhaustion = 6
+		add_faction_influence = {
+			faction = enuchs
+			influence = 5
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11304"
+		add_absolutism = -10
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = 5
+		}
+	}
+	
+	option = {
+		name = "EVTOPTC11304"
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+		add_faction_influence = {
+			faction = temples
+			influence = 5
+		}
+	}
+}
+
+# Reputation for Cruelty
+country_event = {
+	id = chinese_factions.11306
+	title = "EVTNAME11306"
+	desc = "EVTDESC11306"
+	picture = COURT_eventPicture
+	
+	trigger = {
+		has_country_modifier = the_mandate_of_heaven_lost
+	}
+	
+	mean_time_to_happen = {
+		years = 39
+		modifier = {
+			factor = 0.8
+			NOT = {
+				legitimacy = 70
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				legitimacy = 60
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				prestige = 2
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11306"
+		add_stability_1 = yes
+		add_dip_power = 20
+		add_faction_influence = {
+			faction = enuchs
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11306"
+		add_legitimacy = 30
+		add_adm_power = 20
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = 4
+		}
+	}
+}
+
+# Portentous Solar Eclipse
+country_event = {
+	id = chinese_factions.11308
+	title = "EVTNAME11308"
+	desc = "EVTDESC11308"
+	picture = COMET_SIGHTED_eventPicture
+	
+	trigger = {
+		has_country_modifier = the_mandate_of_heaven_lost
+	}
+	
+	mean_time_to_happen = {
+		years = 54
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = 0
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = -1
+			}
+		}
+		modifier = {
+			factor = 1.5
+			legitimacy = 80
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11308"
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+		add_faction_influence = {
+			faction = temples
+			influence = -3
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11308"
+		add_inflation = 2
+		add_faction_influence = {
+			faction = enuchs
+			influence = -3
+		}
+	}
+	
+	option = {
+		name = "EVTOPTC11308"
+		add_adm_power = -100
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = -3
+		}
+	}
+}
+
+# Buddhist Resurgence
+country_event = {
+	id = chinese_factions.11310
+	title = "EVTNAME11310"
+	desc = "EVTDESC11310"
+	picture = BUDDHA_eventPicture
+	
+	trigger = {
+		has_country_modifier = the_mandate_of_heaven_lost
+	}
+	
+	mean_time_to_happen = {
+		years = 20
+		modifier = {
+			factor = 0.8
+			NOT = {
+				legitimacy = 80
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = -1
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11310"
+		random_owned_province = {
+			limit = {
+				NOT = {
+					religion = buddhism
+				}
+			}
+			change_religion = buddhism
+		}
+		random_owned_province = {
+			limit = {
+				NOT = {
+					religion = buddhism
+				}
+			}
+			change_religion = buddhism
+		}
+		add_faction_influence = {
+			faction = temples
+			influence = -4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11310"
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = -4
+		}
+	}
+}
+
+# Temple Desecrated
+country_event = {
+	id = chinese_factions.11312
+	title = "EVTNAME11312"
+	desc = "EVTDESC11312"
+	picture = ST_PETERS_CHURCH_eventPicture
+	
+	trigger = {
+		has_country_modifier = the_mandate_of_heaven_lost
+	}
+	
+	mean_time_to_happen = { years = 37 }
+	
+	option = {
+		name = "EVTOPTA11312"
+		add_years_of_income = -0.4
+		add_faction_influence = {
+			faction = temples
+			influence = 3
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11312"
+		add_legitimacy = -10
+		random_owned_province = {
+			limit = {
+				NOT = {
+					religion = buddhism
+				}
+			}
+			change_religion = buddhism
+		}
+		add_faction_influence = {
+			faction = enuchs
+			influence = 3
+		}
+	}
+}
+
+# Plague Strikes the Court
+#country_event = {
+#	id = chinese_factions.11314
+#	title = "EVTNAME11314"
+#	desc = "EVTDESC11314"
+#	picture = PLAGUE_eventPicture
+#	
+#	trigger = {
+#		has_country_modifier = the_mandate_of_heaven_lost
+#	}
+#	
+#	mean_time_to_happen = {
+#		months = 450
+#		modifier = {
+#			factor = 0.8
+#			NOT = {
+#				stability = -2
+#			}
+#		}
+#		modifier = {
+#			factor = 0.8
+#			NOT = {
+#				legitimacy = 70
+#			}
+#		}
+#		modifier = {
+#			factor = 1.5
+#			prestige = 2
+#		}
+#	}
+#	
+#	option = {
+#		name = "EVTOPTA11314"
+#		add_prestige = -10
+#		add_legitimacy = -10
+#		random_list = {
+#			5 = {
+#				kill_ruler = yes
+#				random_list = {
+#					30 = {}
+#					40 = {
+#						subtract_stability_points_50 = yes
+#					}
+#					30 = {
+#						subtract_stability_1 = yes
+#					}
+#				}
+#			}
+#			95 = {
+#				random_owned_province = {
+#					# add_base_tax = 1
+#				}
+#			}
+#		}
+#	}
+#	
+#	option = {
+#		name = "EVTOPTB11314"
+#		random_list = {
+#			30 = {
+#				kill_ruler = yes
+#				random_list = {
+#					30 = {}
+#					40 = {
+#						subtract_stability_points_50 = yes
+#					}
+#					30 = {
+#						subtract_stability_1 = yes
+#					}
+#				}
+#			}
+#			70 = {
+#				add_prestige = 10
+#				add_legitimacy = 20
+#				add_stability_1 = yes
+#			}
+#		}
+#	}
+#}
+
+# Daggers in the Dark
+country_event = {
+	id = chinese_factions.11316
+	title = "EVTNAME11316"
+	desc = "EVTDESC11316"
+	picture = ASSASSINATION_eventPicture
+	
+	trigger = {
+		has_country_modifier = the_mandate_of_heaven_lost
+	}
+	
+	mean_time_to_happen = {
+		years = 29
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = -1
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = -2
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				legitimacy = 80
+			}
+		}
+		
+		modifier = {
+			factor = 1.5
+			legitimacy = 80
+		}
+		modifier = {
+			factor = 1.5
+			prestige = 2
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11316"
+		add_legitimacy = -10
+		add_prestige = -10
+		add_faction_influence = {
+			faction = enuchs
+			influence = -4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11316"
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = -4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTC11316"
+		add_manpower = -1
+		add_army_tradition = -10
+		add_faction_influence = {
+			faction = temples
+			influence = -4
+		}
+	}
+}
+
+# The Concubine's Child
+country_event = {
+	id = chinese_factions.11318
+	title = "EVTNAME11318"
+	desc = "EVTDESC11318"
+	picture = NEW_HEIR_eventPicture
+	
+	trigger = {
+		has_country_modifier = the_mandate_of_heaven_lost
+		has_heir = no
+	}
+	
+	mean_time_to_happen = {
+		years = 29
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = -1
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = -2
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				legitimacy = 80
+			}
+		}
+		modifier = {
+			factor = 1.5
+			prestige = 2
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11318"
+		define_heir = {
+			dynasty = ROOT
+			claim = 20
+			adm = 0
+			dip = 0
+			mil = 0
+		}
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+		add_faction_influence = {
+			faction = temples
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11318"
+		add_dip_power = 20
+		add_faction_influence = {
+			faction = enuchs
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTC11318"
+		add_prestige = -2
+		add_legitimacy = -20
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = 4
+		}
+	}
+}
+
+# A Riding Accident
+country_event = {
+	id = chinese_factions.11320
+	title = "EVTNAME11320"
+	desc = "EVTDESC11320"
+	picture = DEATH_OF_HEIR_eventPicture
+	
+	trigger = {
+		has_country_modifier = the_mandate_of_heaven_lost
+		has_heir = yes
+	}
+	
+	mean_time_to_happen = {
+		years = 45
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = 0
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = -1
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				legitimacy = 80
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11320"
+		kill_heir = yes
+		add_faction_influence = {
+			faction = temples
+			influence = -6
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11320"
+		kill_heir = yes
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = -6
+		}
+	}
+	
+	option = {
+		name = "EVTOPTC11320"
+		kill_heir = yes
+		add_faction_influence = {
+			faction = enuchs
+			influence = -6
+		}
+	}
+}
+
+# Flawed Insights
+country_event = {
+	id = chinese_factions.11322
+	title = "EVTNAME11322"
+	desc = "EVTDESC11322"
+	picture = DEBATE_REPUBLICAN_eventPicture
+	
+	trigger = {
+		has_country_modifier = the_mandate_of_heaven_lost
+	}
+	
+	mean_time_to_happen = {
+		years = 33
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = -1
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = -2
+			}
+		}
+		modifier = {
+			factor = 1.5
+			legitimacy = 80
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11322"
+		add_adm_power = -40
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = -4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11322"
+		add_dip_power = -20
+		add_adm_power = -20
+		add_faction_influence = {
+			faction = enuchs
+			influence = -4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11322"
+		add_mil_power = -40
+		add_faction_influence = {
+			faction = temples
+			influence = -4
+		}
+	}
+}
+
+# Gold turns to Lead
+country_event = {
+	id = chinese_factions.11324
+	title = "EVTNAME11324"
+	desc = "EVTDESC11324"
+	picture = ECONOMY_eventPicture
+	
+	trigger = {
+		has_country_modifier = the_mandate_of_heaven_lost
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = 0
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = -1
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = -2
+			}
+		}
+		modifier = {
+			factor = 1.5
+			legitimacy = 80
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11324"
+		add_years_of_income = -1
+		add_faction_influence = {
+			faction = enuchs
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11324"
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+		add_faction_influence = {
+			faction = enuchs
+			influence = -4
+		}
+	}
+}
+
+# Grand Secretary Howls at the Moon
+country_event = {
+	id = chinese_factions.11326
+	title = "EVTNAME11326"
+	desc = "EVTDESC11326"
+	picture = ADVISOR_eventPicture
+	
+	trigger = {
+		has_country_modifier = the_mandate_of_heaven_lost
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = 1
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = 0
+			}
+		}
+		modifier = {
+			factor = 1.5
+			legitimacy = 80
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11326" # This is not a Ramones' reference
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+		add_legitimacy = -10
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11326" # Neither is this
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+		add_prestige = -10
+		kill_advisor = statesman
+		add_faction_influence = {
+			faction = bureaucrats
+			influence = -4
+		}
+	}
+}
+
+# Tax Barge Sinks
+country_event = {
+	id = chinese_factions.11328
+	title = "EVTNAME11328"
+	desc = "EVTDESC11328"
+	picture = SHIP_SAILING_eventPicture
+	
+	trigger = {
+		has_country_modifier = the_mandate_of_heaven_lost
+	}
+	
+	mean_time_to_happen = {
+		years = 45
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = 1
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = 0
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				navy_tradition = 10
+			}
+		}
+		modifier = {
+			factor = 5
+			has_idea = superior_seamanship
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11328"
+		add_years_of_income = -0.5
+		add_faction_influence = {
+			faction = temples
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11328"
+		add_inflation = 2
+		add_legitimacy = -5
+		add_faction_influence = {
+			faction = temples
+			influence = -4
+		}
+	}
+}
+
+# False Edicts
+country_event = {
+	id = chinese_factions.11330
+	title = "EVTNAME11330"
+	desc = "EVTDESC11330"
+	picture = LIBERUM_VETO_eventPicture
+	
+	trigger = {
+		has_country_modifier = the_mandate_of_heaven_lost
+	}
+	
+	mean_time_to_happen = {
+		years = 37
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = 0
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = -1
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = -2
+			}
+		}
+		modifier = {
+			factor = 1.5
+			legitimacy = 80
+		}
+		modifier = {
+			factor = 2
+			legitimacy = 90
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA11330"
+		add_legitimacy = 20
+		add_absolutism = -10
+		add_faction_influence = {
+			faction = enuchs
+			influence = 4
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB11330"
+		add_legitimacy = -30
+		random_list = {
+			30 = {}
+			40 = {
+				subtract_stability_points_50 = yes
+			}
+			30 = {
+				subtract_stability_1 = yes
+			}
+		}
+		if = {
+			limit = {
+				NOT = { absolutism = 20 }
+			}
+			add_absolutism = 10
+		}
+		add_faction_influence = {
+			faction = enuchs
+			influence = -4
+		}
+	}
+}

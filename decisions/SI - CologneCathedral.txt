@@ -1,0 +1,173 @@
+#originally by Lord Tarly, modified by Marco Dandolo
+#Ported to M&T by Sun_Wu
+
+country_decisions = {
+	cologne_cathedral_begin = {
+		major = yes
+		potential = {
+			owns = 85 #City of Cologne
+			OR = {
+				tag = FRK
+				AND = { government = theocracy government_rank = 4 }
+				papal_trigger = yes
+			}
+			NOT = { has_country_flag = cologne_cathedral_plan }
+		}
+		allow = {
+			adm_tech = 29 #needs basic technology
+			prestige = 10 #must have some prestige
+			is_core = 85 #legitimate rule
+			is_free_or_tributary_trigger = yes
+			is_at_war = no
+			OR = { #devoutness!
+				# asceticism_ideas = 5
+				# ceremony_ideas = 5
+				# popular_religion_ideas = 5
+				# scholasticism_ideas = 5
+				# theology_ideas = 5
+				has_idea_group = asceticism_ideas
+				has_idea_group = ceremony_ideas
+				has_idea_group = popular_religion_ideas
+				has_idea_group = scholasticism_ideas
+				has_idea_group = theology_ideas
+			}
+			# economic_ideas = 2 #construction!
+			has_idea_group = economic_ideas
+			adm = 3 #not a complete idiot
+			OR = {
+				num_of_cardinals = 1 #papal influence
+				papal_trigger = yes
+			}
+			advisor = architect
+			treasury = 750
+			adm_power = 75
+			religion = catholic
+		}
+		effect = {
+			set_country_flag = cologne_cathedral_plan
+			add_treasury = -700
+			add_adm_power = -75
+			country_event = { id = cologne_cathedral.1 }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	cologne_cathedral_stopped = {
+		major = yes
+		potential = {
+			owns = 85 #City of Cologne
+			OR = {
+				tag = FRK
+				AND = { government = theocracy government_rank = 4 }
+				papal_trigger = yes
+			}
+			has_country_modifier = cologne_cathedral_stopped
+		}
+		allow = {
+			adm_tech = 29 #needs basic technology
+			prestige = 10 #must have some prestige
+			is_core = 85 #legitimate rule
+			is_free_or_tributary_trigger = yes
+			is_at_war = no
+			OR = { #devoutness!
+				# asceticism_ideas = 5
+				# ceremony_ideas = 5
+				# popular_religion_ideas = 5
+				# scholasticism_ideas = 5
+				# theology_ideas = 5
+				has_idea_group = asceticism_ideas
+				has_idea_group = ceremony_ideas
+				has_idea_group = popular_religion_ideas
+				has_idea_group = scholasticism_ideas
+				has_idea_group = theology_ideas
+			}
+			# economic_ideas = 2 #construction!
+			has_idea_group = economic_ideas
+			adm = 3 #not a complete idiot
+			OR = {
+				num_of_cardinals = 1 #papal influence
+				papal_trigger = yes
+			}
+			advisor = architect
+			treasury = 350
+			religion = catholic
+		}
+		effect = {
+			set_country_flag = cologne_cathedral_plan
+			add_treasury = -300
+			remove_country_modifier = cologne_cathedral_stopped
+			add_country_modifier = {
+				name = "cologne_cathedral_wip"
+				duration = -1
+			}
+			country_event = { id = cologne_cathedral.12 }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	KOL_cologne_capital = {
+		major = yes
+		potential = {
+			tag = KOL
+			NOT = { has_country_flag = KOL_moved_to_Cologne }
+			government = theocracy
+			government_rank = 4
+		}
+		allow = {
+			owns = 85 #City of Cologne
+			is_core = 85 #legitimate rule
+			treasury = 300
+			NOT = {
+				85 = {
+					is_core = FRK
+				}
+			}
+		}
+		effect = {
+			set_country_flag = KOL_moved_to_Cologne
+			add_treasury = -250
+			add_prestige = 10
+			ROOT = { Effect_set_capital = { target=85 } }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	free_imperial_city_cologne = {
+		major = yes
+		potential = {
+			tag = FRK
+			85 = { is_part_of_hre = yes }
+			NOT = { has_country_flag = imperial_city_cologne }
+		}
+		allow = {
+			owns = 85 #City of Cologne
+			prestige = 15
+			treasury = 125
+			emperor = {
+				has_opinion = { who = ROOT value = 100 }
+			}
+			NOT = { truce_with = emperor }
+			is_at_war = no
+			dip = 3
+			dip_power = 20
+		}
+		effect = {
+			set_country_flag = imperial_city_cologne
+			add_treasury = -100
+			add_dip_power = -15
+			emperor = {
+				country_event = { id = cologne_city.3 }
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+}

@@ -1,0 +1,51 @@
+# Use set_bar_data to set up a progress bar for localisations
+# Use after_ttt_bar_data to clean up bar data
+# "data1" is the current bar state
+# "id" is the event-unique bar ID (can be =1 to =5), "scope" is the place (=country / =province)
+# "datamax" & "datamin" are maximum and minimum values for the progress bar
+# "datatype", "maxtype" $ "mintype" tell whether the inputs are variable names (=which) or direct values (=value)
+
+set_ttt_bar_data = { #id #scope #data #datatype #datamax #maxtype #datamin #mintype
+	set_variable = { which = ttt_bar_scale $maxtype$ = $datamax$ }
+	subtract_variable = { which = ttt_bar_scale $mintype$ = $datamin$ }
+	set_variable = { which = ttt_bar$id$_fill $datatype$ = $data$ }
+	if = {
+		limit = {
+			check_variable = { which = ttt_bar$id$_fill $maxtype$ = $datamax$ }
+		}
+		set_variable = { which = ttt_bar$id$_fill $maxtype$ = $datamax$ }
+		subtract_variable = { which = ttt_bar$id$_fill $mintype$ = $datamin$ }
+	}
+	else_if = {
+		limit = {
+			NOT = {
+				check_variable = { which = ttt_bar$id$_fill $mintype$ = $datamin$ }
+			}
+		}
+		set_variable = { which = ttt_bar$id$_fill $mintype$ = $datamin$ }
+	}
+	else = {
+		subtract_variable = { which = ttt_bar$id$_fill $mintype$ = $datamin$ }
+	}
+	divide_variable = { which = ttt_bar$id$_fill which = ttt_bar_scale }
+	set_variable = { which = ttt_bar_scale value = 0 }
+	set_variable = { which = ttt_bar$id$_extra which = ttt_bar$id$_fill }
+	while = {
+		limit = {
+			check_variable = { which = ttt_bar$id$_extra value = 0.1 }
+		}
+		subtract_variable = { which = ttt_bar$id$_extra value = 0.1 }
+	}
+	if = {
+		limit = {
+			check_variable = { which = ttt_bar$id$_extra value = 0.05 }
+		}
+		multiply_variable = { which = ttt_bar$id$_extra value = -1 }
+	}
+	set_$scope$_flag = ttt_bar$id$
+}
+after_ttt_bar_data = { #id #scope
+	set_variable = { which = ttt_bar$id$_fill value = 0 }
+	set_variable = { which = ttt_bar$id$_extra value = 0 }
+	clr_$scope$_flag = ttt_bar$id$
+}

@@ -1,0 +1,176 @@
+##########################
+#
+#0861501 - Core Events
+#
+##########################
+#
+# 2011-jun-05	Fuzzbug		new file created woth event 861501
+# 2011-jul-14	Fuzzbug		fine tuning of modifiers based on feedback on PI forum
+# 2011-jul-27	Fuzzbug		added any_neighbor_province is_core MTTH modifier to 861501
+# 2011-dec-25	Gigau		split core gaining process into 2 steps (i.e. split 0861501 into two events)
+# 2011-dec-26	Fuzzbug		comments and corrections
+# 2012-jan-10	Masakary	added a 3rd event to remove modifier from cored provinces
+# 2014-apr-22	Gigau		Ported to MEIOU and Taxes
+#
+##########################
+
+
+# regarding_cores.1 : First step in gaining Core - allow well run countries to earn cores much quicker
+# (the default in MEIOU is 300 years)
+province_event = {
+	id = regarding_cores.1
+	title = "regarding_cores.1.n"
+	desc = "regarding_cores.1.t"
+	picture = FLANDERS_eventPicture
+	
+	#hidden = yes
+	
+	immediate = { #prevent abuse
+		add_core = owner
+	}
+	
+	trigger = {
+		is_territorial_core = owner
+		tolerance_to_this = 1
+		NOT = { nationalism = 1 }
+		controlled_by = owner
+		has_siege = no
+		OR = {
+			has_owner_culture = yes
+			AND = {
+				owner = { culture_group = ROOT }
+				OR = {
+					owner = {
+						dip_tech = 20 #early nationalism threshold
+						government_rank = 5
+					}
+					owner = { dip_tech = 45 } #medium nationalism threshold
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 80 #80 years
+		modifier = {
+			factor = 0.8
+			owner = { culture_group = ROOT }
+		}
+		modifier = {
+			factor = 0.9
+			owner = { early_nationalism_trigger = yes }
+		}
+		modifier = {
+			factor = 0.8
+			owner = { mid_nationalism_trigger = yes }
+		}
+		modifier = {
+			factor = 0.6
+			owner = { late_nationalism_trigger = yes }
+		}
+	}
+	
+	option = {
+		name = "OPT.EXCELLENT"
+		tooltip = { add_core = owner } #prevent abuse
+		reduce_local_autonomy_times5_effect = yes
+	}
+}
+
+# regarding_cores.4 : Losing cores
+country_event = {
+	id = regarding_cores.4
+	title = "regarding_cores.4.n"
+	desc = "regarding_cores.4.t"
+	picture = REVOLUTION_eventPicture
+	
+	trigger = {
+		NOT = { prestige = -90 }
+		any_known_country = {
+			any_owned_province = {
+				NOT = { culture = ROOT }
+				is_core = ROOT
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		years = 16
+
+		modifier = {
+			factor = 0.9
+			calc_true_if = {
+				any_known_country = {
+					any_owned_province = {
+						NOT = { culture = ROOT }
+						is_core = ROOT
+					}
+				}
+				amount = 10
+			}
+		}
+		modifier = {
+			factor = 0.9
+			calc_true_if = {
+				any_known_country = {
+					any_owned_province = {
+						NOT = { culture = ROOT }
+						is_core = ROOT
+					}
+				}
+				amount = 20
+			}
+		}
+		modifier = {
+			factor = 0.9
+			calc_true_if = {
+				any_known_country = {
+					any_owned_province = {
+						NOT = { culture = ROOT }
+						is_core = ROOT
+					}
+				}
+				amount = 30
+			}
+		}
+		modifier = {
+			factor = 0.9
+			calc_true_if = {
+				any_known_country = {
+					any_owned_province = {
+						NOT = { culture = ROOT }
+						is_core = ROOT
+					}
+				}
+				amount = 40
+			}
+		}
+		modifier = {
+			factor = 0.9
+			calc_true_if = {
+				any_known_country = {
+					any_owned_province = {
+						NOT = { culture = ROOT }
+						is_core = ROOT
+					}
+				}
+				amount = 50
+			}
+		}
+	}
+
+	option = {
+		name = "OPT.YIELD"
+		every_country = {
+			every_owned_province = {
+				limit = {
+					is_core = ROOT
+					NOT = { owned_by = ROOT }
+					NOT = { culture = ROOT }
+				}
+				remove_core = ROOT
+			}
+		}
+		add_prestige = 90
+	}
+}

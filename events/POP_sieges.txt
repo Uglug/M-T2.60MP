@@ -1,0 +1,171 @@
+# Author: Demian (before rework)
+# Author: KJH (tweaks; before rework)
+# Author: Phlopsi
+namespace = POP_sieges
+
+country_event = {
+	id = POP_sieges.001
+	title = EVTNAME5060
+	desc = EVTDESC5060
+	picture = COMET_SIGHTED_eventPicture
+
+	hidden = yes
+	is_triggered_only = yes
+
+	immediate = {
+		every_country = {
+			limit = {
+				OR = {
+					is_at_war = yes
+					num_of_rebel_armies = 1
+				}
+			}
+			every_owned_province = {
+				limit = { is_city = yes }
+				if = {
+					limit = {
+						has_siege = yes
+						fort_level = 1
+						garrison = 1 # mothballed forts have no garrison
+					}
+					# check if siege is possible
+					export_num_of_units_in_province_00_effect = { which = temp2 }
+					export_to_variable = { which = temp value = trigger_value:fort_level }
+					# Fix off-by-one error
+					subtract_variable = { which = temp value = 1 }
+					set_variable = { which = tv_required_siege_unit_strength which = temp }
+					multiply_variable = { which = tv_required_siege_unit_strength value = 2 }
+					
+					set_variable = { which = temp which = temp2 }
+					subtract_variable = { which = temp which = tv_required_siege_unit_strength }
+					if = {
+						limit = { check_variable = { which = temp value = 0 } }
+						# The first month of a siege is guaranteed to not increase the risk of a disease
+						# outbreak, because troops may have arrived on the day of the calculation,
+						# basically not even having started the siege.
+						if = {
+							limit = { has_province_flag = siege }
+							# There is a 5/8 (62.5%) chance, that the risk of a disease outbreak increases.
+							# There is a 1/8 (12.5%) chance, that troops will suffer a disease outbreak.
+							# It takes at least 3 months after a disease outbreak until another one hits.
+							random_list = {
+								3 = {}
+								1 = { change_variable = { which = pv_disease_risk value = 1 } }
+								1 = { change_variable = { which = pv_disease_risk value = 2 } }
+								1 = { change_variable = { which = pv_disease_risk value = 3 } }
+								1 = { change_variable = { which = pv_disease_risk value = 4 } }
+								1 = { change_variable = { which = pv_disease_risk value = 5 } }
+							}
+							
+							if = {
+								limit = {
+									check_variable = {
+										which = pv_disease_risk
+										value = 15 # 5 (max progress per month) * 3 (min months between disease outbreaks)
+									}
+								}
+								subtract_variable = { which = pv_disease_risk value = 15 }
+								# There is a 4/9 (44.4%) chance, that the disease outbreak will be mild.
+								# There is a 3/9 (33.3%) chance, that the disease outbreak will be moderate.
+								# There is a 2/9 (22.2%) chance, that the disease outbreak will be severe.
+								random_list = {
+									4 = {
+										add_province_modifier = { name = mild_disease_outbreak duration = -1 }
+										province_event = { id = POP_sieges.002 days = 1 }
+									}
+									3 = {
+										add_province_modifier = { name = moderate_disease_outbreak duration = -1 }
+										province_event = { id = POP_sieges.003 days = 1 }
+									}
+									2 = {
+										add_province_modifier = { name = severe_disease_outbreak duration = -1 }
+										province_event = { id = POP_sieges.004 days = 1 }
+									}
+								}
+							}
+							#calculate outnumbered factor
+							export_to_variable = { which = temp value = trigger_value:garrison }
+							# Fix off-by-one error
+							subtract_variable = { which = temp value = 0.001 }
+							multiply_variable = { which = temp value = 2 }
+							divide_variable = { which = temp2 which = temp } #besiegers/garrison - 1
+							if = {
+								limit = { check_variable = { which = temp2 value = 6 } }
+								set_variable = { which = temp2 value = 5 }
+							}
+							else = { subtract_variable = { which = temp2 value = 1 } }
+							set_variable = { which = temp value = 0 }
+							subtract_variable = { which = temp which = pv_siege_progress_modifier }
+							set_variable = { which = pv_siege_progress_modifier which = temp2 }
+							if = {
+								limit = { check_variable = { which = pv_siege_progress_modifier value = 0 } }
+								multiply_variable = { which = pv_siege_progress_modifier value = 0.001 }
+								multiply_variable = { which = pv_siege_progress_modifier value = 1000 }
+							}
+							else = { set_variable = { which = pv_siege_progress_modifier value = 0 } }
+							change_variable = { which = temp which = pv_siege_progress_modifier }
+							change_siege_effect = { variable = temp }
+						}
+						else = { set_province_flag = siege }
+					}
+					else_if = {
+						limit = { has_province_flag = siege }
+						subtract_variable = { which = temp which = pv_siege_progress_modifier }
+						set_variable = { which = pv_siege_progress_modifier value = 0 }
+						change_siege_effect = { variable = temp }
+					}
+					set_variable = { which = tv_required_siege_unit_strength	value = 0 }
+				}
+				else_if = {
+					limit = { has_province_flag = siege }
+					set_variable = { which = pv_disease_risk	value = 0 }
+					set_variable = { which = pv_siege_progress_modifier	value = 0 }
+					clr_province_flag = siege
+				}
+			}
+		}
+	}
+	option = { name = "POP_sieges.001.a" }
+}
+
+province_event = {
+	id = POP_sieges.002
+	title = EVTNAME5060
+	desc = EVTDESC5060
+	picture = COMET_SIGHTED_eventPicture
+
+	hidden = yes
+	is_triggered_only = yes
+
+	immediate = { remove_province_modifier = mild_disease_outbreak }
+
+	option = { name = EVTOPTA5060 }
+}
+
+province_event = {
+	id = POP_sieges.003
+	title = EVTNAME5060
+	desc = EVTDESC5060
+	picture = COMET_SIGHTED_eventPicture
+
+	hidden = yes
+	is_triggered_only = yes
+
+	immediate = { remove_province_modifier = moderate_disease_outbreak }
+
+	option = { name = EVTOPTA5060 }
+}
+
+province_event = {
+	id = POP_sieges.004
+	title = EVTNAME5060
+	desc = EVTDESC5060
+	picture = COMET_SIGHTED_eventPicture
+
+	hidden = yes
+	is_triggered_only = yes
+
+	immediate = { remove_province_modifier = severe_disease_outbreak }
+
+	option = { name = EVTOPTA5060 }
+}

@@ -1,0 +1,8 @@
+-- Default: 0.15
+NDefines.NGui.MACRO_BUILD_BIG_SMALL_HEIGHT = 0.1
+
+-- Default: 0.149
+NDefines.NGui.MACRO_BUILD_FOCUS_ZOOM_HEIGHT = 0.1
+
+-- Default: 0.25
+NDefines.NGui.PROVINCE_FOCUS_ZOOM_HEIGHT = 0.1

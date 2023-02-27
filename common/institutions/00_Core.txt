@@ -1,0 +1,3691 @@
+#
+# remember to add graphics for relevant ones when you add to this
+#
+# if a modifier is scaled, its multiplied with development in the province.
+#
+# update export_inst_cost scripted effect when adding/removing!
+
+#######################################
+# Legalism.
+# 
+# Most in the old world start with it.
+#######################################
+
+legalism = {
+	penalty = 0.50
+	bonus = {
+		max_states = 1
+	}
+	
+	
+	history = {
+		is_year = 1000
+		OR = {
+			NOT = { has_province_flag = tribals_control_province }
+			AND = {
+				check_variable = { which = tribals_ratio	value = 0.001 }
+				NOT = { check_variable = { which = tribals_ratio	value = 12 } }
+			}
+			AND = {
+				culture = haussa
+				NOT = { province_id = 2921 }
+			}
+		}
+		owner = {
+			OR = {
+				capital_scope = { has_province_flag = tribals_control_province }
+				NOT = { any_owned_province = { has_province_flag = tribals_control_province } }
+				# Keeos BYZ and Epirus legalistic at game start
+				tag = BYZ
+			}
+		}
+	}
+	
+	# no need for events, as its there from the start.
+	#can_start = {	is_year = 1000	}
+	#start_chance = 100
+	#on_start = institution_events.1
+	
+	can_embrace = {
+		NOT = { has_country_modifier = mongol_xingsheng }
+	}
+	
+	embracement_speed = {
+		modifier = {
+			factor = -0.8
+			scale = no
+			potential = {
+				NOT = { province_trade_power = 0.5 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_0_5_TRADE_POWER
+				NOT = { province_trade_power = 0.5 }
+			}
+		}
+
+		modifier = {
+			factor = -0.4
+			scale = no
+			potential = {
+				province_trade_power = 0.5
+				NOT = { province_trade_power = 3 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_3_TRADE_POWER
+				province_trade_power = 0.5
+				NOT = { province_trade_power = 3 }
+			}
+		}
+
+		modifier = {
+			factor = -0.2
+			scale = no
+			potential = {
+				province_trade_power = 3
+				NOT = { province_trade_power = 8 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_8_TRADE_POWER
+				province_trade_power = 3
+				NOT = { province_trade_power = 8 }
+			}
+		}
+
+		modifier = {
+			factor = -0.4
+			scale = no
+			potential = {
+				has_province_flag = tribals_control_province
+			}
+			custom_trigger_tooltip = {
+				tooltip = TRIBES_RESIST_LEGALISM
+				has_province_flag = tribals_control_province
+			}
+		}
+		
+		# Province to Province Spread
+		modifier = {
+			factor = 2.6
+			scale = no
+			custom_trigger_tooltip = {
+				tooltip = NEIGHBOR_HAS_LEGALISM
+				OR = {
+					any_neighbor_province = {
+						legalism = 100
+					}
+					any_friendly_coast_border_province = {
+						legalism = 100
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 0.6
+			scale = no
+			potential = {
+				owner = {
+					has_institution = legalism
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_legalism_embraced
+				owner = {
+					has_institution = legalism
+				}
+				OR = {
+					any_neighbor_province = {
+						legalism = 100
+					}
+					any_friendly_coast_border_province = {
+						legalism = 100
+					}
+				}
+			}
+		}
+		
+		# Art Center Reinvents Institution
+		#		modifier = {
+		#			factor = 2.0
+		#			scale = no
+		#			potential = {
+		#				has_province_flag = institution_reinvention_legalism_5
+		#				has_province_flag = has_art_center_modifier
+		#			}
+		#			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_REINVENT always = yes }
+		#		}
+		
+		# Art Center Transmits Institution
+		modifier = {
+			factor = 3.6
+			scale = no
+			potential = {
+				has_province_flag = institution_legalism_spread_1
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 3
+			scale = no
+			potential = {
+				has_province_flag = institution_legalism_spread_2
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 2.4
+			scale = no
+			potential = {
+				has_province_flag = institution_legalism_spread_3
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 1.8
+			scale = no
+			potential = {
+				has_province_flag = institution_legalism_spread_4
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 1.4
+			scale = no
+			potential = {
+				has_province_flag = institution_legalism_spread_5
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		
+		# Center of Trade Spread
+		modifier = {
+			factor = 2.4
+			scale = no
+			potential = {
+				has_province_modifier = dominant_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_legalism_trade_dominant
+				has_province_modifier = dominant_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 30
+					}
+				}
+				any_country = {
+					exists = yes
+					has_institution = legalism
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 2.5
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 2
+			scale = no
+			potential = {
+				has_province_modifier = major_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_legalism_trade_major
+				has_province_modifier = major_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 30
+					}
+				}
+				any_country = {
+					exists = yes
+					has_institution = legalism
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 5
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 1.8
+			scale = no
+			potential = {
+				has_province_modifier = important_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_legalism_trade_important
+				has_province_modifier = important_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 30
+					}
+				}
+				any_country = {
+					exists = yes
+					has_institution = legalism
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 7.5
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 1.4
+			scale = no
+			potential = {
+				has_province_modifier = minor_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_legalism_trade_minor
+				has_province_modifier = minor_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 30
+					}
+				}
+				any_country = {
+					has_institution = legalism
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 10
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 1.4
+			scale = no
+			potential = {
+				is_capital = yes
+				owner = { is_subject = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_overlord_institution_spread
+				is_capital = yes
+				owner = {
+					is_subject = yes
+					overlord = {
+						has_institution = legalism
+						PREV = {
+							ai_attitude = {
+								who = PREV
+								attitude = attitude_loyal
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	ai_will_do = { #Cost of embracing institution must be lower than this factor * last month's regular income. (Or it has a more than long term goal...)
+		factor = 24
+	}
+}
+
+#######################################
+# Meritocracy.
+# 
+# China starts with it, spreads slowly but can be reinvented with difficulty.
+#######################################
+
+I_meritocracy = {
+	penalty = 0.20
+	bonus = {
+		advisor_cost = -0.15
+	}
+	
+	
+	history = {
+		is_year = 1000
+		NOT = { has_province_flag = tribals_control_province }
+		owner = {
+			OR = {
+				capital_scope = { has_province_flag = tribals_control_province }
+				NOT = { any_owned_province = { has_province_flag = tribals_control_province } }
+			}
+		}
+		OR = {
+			owned_by = QII
+			owned_by = CSE
+			owned_by = KOR
+			owned_by = CYU
+			owned_by = SNG
+			owned_by = QIN
+			owned_by = XIA
+			owned_by = TIA
+			owned_by = DAA
+			owned_by = WUU
+			owned_by = MNG
+			owned_by = ZOU
+			owned_by = CEN
+			owned_by = ZHN
+			owned_by = LNG
+			owned_by = YUE
+			owned_by = CMN
+			owned_by = DAI
+			owned_by = CNG
+			owned_by = ZHE
+			owned_by = CTA
+			owned_by = XNG
+			owned_by = SHU
+			owned_by = DXI
+			AND = {
+				is_year = 1392
+				owned_by = JOS
+			}
+			AND = {
+				is_year = 1421
+				owned_by = RYU
+			}
+		}
+	}
+	
+	# no need for events, as its there from the start.
+	#can_start = {	is_year = 1000	}
+	#start_chance = 100
+	#on_start = institution_events.1
+	
+	can_embrace = {
+		NOT = { has_country_modifier = mongol_xingsheng }
+	}
+	
+	embracement_speed = {
+		modifier = {
+			factor = -2
+			scale = no
+			potential = {
+				NOT = { legalism = 100 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = NO_LEGALISM
+				NOT = { legalism = 100 }
+			}
+		}
+		modifier = {
+			factor = -1.2
+			scale = no
+			potential = {
+				NOT = { province_trade_power = 2 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_2_TRADE_POWER
+				NOT = { province_trade_power = 2 }
+			}
+		}
+		modifier = {
+			factor = -0.4
+			scale = no
+			potential = {
+				province_trade_power = 2
+				NOT = { province_trade_power = 6 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_6_TRADE_POWER
+				province_trade_power = 2
+				NOT = { province_trade_power = 6 }
+			}
+		}
+		
+		# Province to Province Spread
+		modifier = {
+			factor = 3
+			scale = no
+			custom_trigger_tooltip = {
+				tooltip = NEIGHBOR_HAS_MERITOCRACY
+				OR = {
+					any_neighbor_province = {
+						I_meritocracy = 100
+					}
+					any_friendly_coast_border_province = {
+						I_meritocracy = 100
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 2.0
+			scale = no
+			potential = {
+				owner = {
+					has_institution = I_meritocracy
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_meritocracy_embraced
+				owner = {
+					has_institution = I_meritocracy
+				}
+				OR = {
+					any_neighbor_province = {
+						I_meritocracy = 100
+					}
+					any_friendly_coast_border_province = {
+						I_meritocracy = 100
+					}
+				}
+			}
+		}
+
+  		modifier = {
+           		factor = 2.0
+           		scale = no
+           		potential = {
+               			is_part_of_hre = yes
+           		}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_hre_meritocracy_embraced
+				is_part_of_hre = yes
+				emperor = {
+					has_institution = meritocracy
+				}
+				OR = {
+					any_neighbor_province = {
+						meritocracy = 100
+					}
+					any_friendly_coast_border_province = {
+						meritocracy = 100
+					}
+				}
+			}
+		}
+
+		modifier = {
+   			factor = -0.4
+   			scale = no
+			potential = {
+				OR = {
+					region = hausa_region
+					region = central_africa_region
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_sahara_desert_interferance 
+				OR = {
+					region = hausa_region
+					region = central_africa_region
+				}
+				NOT = {
+					any_neighbor_province = { meritocracy = 100 }
+				}
+			}
+		}
+		
+		# Art Center Reinvents Institution
+		#		modifier = {
+		#			factor = 2.4
+		#			scale = no
+		#			potential = {
+		#				has_province_flag = institution_reinvention_meritocracy_5
+		#				has_province_flag = has_art_center_modifier
+		#			}
+		#			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_REINVENT always = yes }
+		#		}
+		
+		
+		# Art Center Transmits Institution
+		modifier = {
+			factor = 6.4
+			scale = no
+			potential = {
+				has_province_flag = institution_meritocracy_spread_1
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 5.2
+			scale = no
+			potential = {
+				has_province_flag = institution_meritocracy_spread_2
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 4
+			scale = no
+			potential = {
+				has_province_flag = institution_meritocracy_spread_3
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 2.8
+			scale = no
+			potential = {
+				has_province_flag = institution_meritocracy_spread_4
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 1.6
+			scale = no
+			potential = {
+				has_province_flag = institution_meritocracy_spread_5
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		
+		# Center of Trade Spread
+		modifier = {
+			factor = 3.2
+			scale = no
+			potential = {
+				has_province_modifier = dominant_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_meritocracy_trade_dominant
+				has_province_modifier = dominant_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 50
+					}
+				}
+				any_country = {
+					exists = yes
+					has_institution = I_meritocracy
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 2.5
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 3.0
+			scale = no
+			potential = {
+				has_province_modifier = major_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_meritocracy_trade_major
+				has_province_modifier = major_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 50
+					}
+				}
+				any_country = {
+					exists = yes
+					has_institution = I_meritocracy
+					ROOT = {
+						has_province_modifier = major_center_of_trade
+						trade_share = {
+							country = PREV
+							share = 5
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 2.8
+			scale = no
+			potential = {
+				has_province_modifier = important_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_meritocracy_trade_important
+				has_province_modifier = important_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 50
+					}
+				}
+				any_country = {
+					exists = yes
+					has_institution = I_meritocracy
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 7.5
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 2.6
+			scale = no
+			potential = {
+				has_province_modifier = minor_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_meritocracy_trade_minor
+				has_province_modifier = minor_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 50
+					}
+				}
+				any_country = {
+					exists = yes
+					has_institution = I_meritocracy
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 10
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 2.6
+			scale = no
+			potential = {
+				is_capital = yes
+				owner = { is_subject = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_overlord_institution_spread
+				is_capital = yes
+				owner = {
+					is_subject = yes
+					overlord = {
+						has_institution = I_meritocracy
+						PREV = {
+							ai_attitude = {
+								who = PREV
+								attitude = attitude_loyal
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	ai_will_do = { #Cost of embracing institution must be lower than this factor * last month's regular income. (Or it has a more than long term goal...)
+		factor = 24
+		
+		modifier = {
+			factor = 0.25
+			is_at_war = yes
+		}
+	}
+}
+
+#######################################
+# Banking.
+# 
+# Starts mostly in Europe: France and Italy, mostly.
+#######################################
+
+banking = {
+	penalty = 0.50
+	bonus = {
+		production_efficiency = 0.1
+		interest = -2
+	}
+	
+	historical_start_date = 1358.1.1
+	historical_start_province = 101 # Liguria
+	
+	history = {
+		is_year = 1358
+		NOT = { has_province_flag = tribals_control_province }
+		OR = {
+			province_id = 202 # Veneisi
+			area = venetia_area
+			area = tuscany_area
+			area = liguria_area
+			area = lombardy_area
+			area = flanders_area
+		}
+	}
+	
+	# Should as soon as 1358 ticks around.
+	can_start = {
+		is_year = 1358
+		province_id = 101 # Liguria
+	}
+	start_chance = 100
+	on_start = institution_events.1
+	
+	can_embrace = {
+		always = yes
+	}
+	
+	embracement_speed = {
+		modifier = {
+			factor = -2.4
+			scale = no
+			potential = {
+				NOT = { legalism = 100 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = NO_LEGALISM
+				NOT = { legalism = 100 }
+			}
+		}
+		modifier = {
+			factor = -1.8
+			scale = no
+			potential = {
+				NOT = { province_trade_power = 0.5 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_0_5_TRADE_POWER
+				NOT = { province_trade_power = 0.5 }
+			}
+		}
+		modifier = {
+			factor = -1.6
+			scale = no
+			potential = {
+				province_trade_power = 0.5
+				NOT = { province_trade_power = 1.5 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_1_5_TRADE_POWER
+				province_trade_power = 0.5
+				NOT = { province_trade_power = 1.5 }
+			}
+		}
+		modifier = {
+			factor = -1.2
+			scale = no
+			potential = {
+				province_trade_power = 1.5
+				NOT = { province_trade_power = 3 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_3_TRADE_POWER
+				province_trade_power = 1.5
+				NOT = { province_trade_power = 3 }
+			}
+		}
+		modifier = {
+			factor = -0.8
+			scale = no
+			potential = {
+				province_trade_power = 3
+				NOT = { province_trade_power = 8 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_8_TRADE_POWER
+				province_trade_power = 3
+				NOT = { province_trade_power = 8 }
+			}
+		}
+		modifier = {
+			factor = -0.4
+			scale = no
+			potential = {
+				province_trade_power = 8
+				NOT = { province_trade_power = 15 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_15_TRADE_POWER
+				province_trade_power = 8
+				NOT = { province_trade_power = 15 }
+			}
+		}
+		
+		# Province to Province Spread
+		modifier = {
+			factor = 4.4
+			scale = no
+			custom_trigger_tooltip = {
+				tooltip = NEIGHBOR_HAS_BANKING
+				OR = {
+					any_neighbor_province = {
+						banking = 100
+					}
+					any_friendly_coast_border_province = {
+						banking = 100
+					}
+				}
+			}
+		}
+
+		modifier = {
+			factor = 2.2
+			scale = no
+			potential = {
+				owner = {
+					has_institution = banking
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_banking_embraced
+				owner = {
+					has_institution = banking
+				}
+				OR = {
+					any_neighbor_province = {
+						banking = 100
+					}
+					any_friendly_coast_border_province = {
+						banking = 100
+					}
+				}
+			}
+		}
+
+  		modifier = {
+           		factor = 2.2
+           		scale = no
+           		potential = {
+               			is_part_of_hre = yes
+           		}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_hre_banking_embraced
+				is_part_of_hre = yes
+				emperor = {
+					has_institution = banking
+				}
+				OR = {
+					any_neighbor_province = {
+						banking = 100
+					}
+					any_friendly_coast_border_province = {
+						banking = 100
+					}
+				}
+			}
+		}
+
+		modifier = {
+			factor = -0.4
+			scale = no
+			potential = {
+				always = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = LACKS_BURGHERS_ESTATE
+				NOT = { has_province_flag = burghers_control_province }
+			}
+		}
+
+		modifier = {
+			factor = -0.4
+			scale = no
+			potential = {
+				has_province_flag = tribals_control_province
+			}
+			custom_trigger_tooltip = {
+				tooltip = TRIBES_RESIST_BANKING
+				has_province_flag = tribals_control_province
+			}
+		}
+
+		modifier = {
+   			factor = -0.4
+   			scale = no
+			potential = {
+				OR = {
+					region = hausa_region
+					region = central_africa_region
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_sahara_desert_interferance 
+				OR = {
+					region = hausa_region
+					region = central_africa_region
+				}
+				NOT = {
+					any_neighbor_province = { banking = 100 }
+				}
+			}
+		}
+		
+		# Art Center Reinvents Institution
+		#		modifier = {
+		#			factor = 4.2
+		#			scale = no
+		#			potential = {
+		#				has_province_flag = institution_reinvention_banking_5
+		#				has_province_flag = has_art_center_modifier
+		#			}
+		#			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_REINVENT always = yes }
+		#		}
+		
+		# Art Center Transmits Institution
+		modifier = {
+			factor = 3.8
+			scale = no
+			potential = {
+				has_province_flag = institution_banking_spread_1
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 3
+			scale = no
+			potential = {
+				has_province_flag = institution_banking_spread_2
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 2.6
+			scale = no
+			potential = {
+				has_province_flag = institution_banking_spread_3
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 2.2
+			scale = no
+			potential = {
+				has_province_flag = institution_banking_spread_4
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 1.8
+			scale = no
+			potential = {
+				has_province_flag = institution_banking_spread_5
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		
+		# Center of Trade Spread
+		modifier = {
+			factor = 3.8
+			scale = no
+			potential = {
+				has_province_modifier = dominant_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_banking_trade_dominant
+				has_province_modifier = dominant_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 20
+					}
+				}
+				any_country = {
+					exists = yes
+					has_institution = banking
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 2.5
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 3.4
+			scale = no
+			potential = {
+				has_province_modifier = major_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_banking_trade_major
+				has_province_modifier = major_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 20
+					}
+				}
+				any_country = {
+					exists = yes
+					has_institution = banking
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 5
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 3.0
+			scale = no
+			potential = {
+				has_province_modifier = important_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_banking_trade_important
+				has_province_modifier = important_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 20
+					}
+				}
+				any_country = {
+					exists = yes
+					has_institution = banking
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 7.5
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 2.8
+			scale = no
+			potential = {
+				has_province_modifier = minor_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_banking_trade_minor
+				has_province_modifier = minor_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 20
+					}
+				}
+				any_country = {
+					exists = yes
+					has_institution = banking
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 10
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = -0.4
+			scale = no
+			potential = {
+				NOT = { base_production = 1 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = NO_CITY
+				NOT = { base_production = 1 }
+			}
+		}
+		modifier = {
+			factor = -0.2
+			scale = no
+			potential = {
+				NOT = { base_production = 5 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = NO_CITY_SMALL
+				NOT = { base_production = 5 }
+			}
+		}
+		modifier = {
+			factor = 2.4
+			scale = no
+			potential = {
+				is_capital = yes
+				owner = { is_subject = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_overlord_institution_spread
+				is_capital = yes
+				owner = {
+					is_subject = yes
+					overlord = {
+						has_institution = banking
+						PREV = {
+							ai_attitude = {
+								who = PREV
+								attitude = attitude_loyal
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	ai_will_do = { #Cost of embracing institution must be lower than this factor * last month's regular income. (Or it has a more than long term goal...)
+		factor = 24
+	}
+}
+
+#######################################
+# Renaissance
+# 
+# Spawned from high urban, prestigious, and educated societies.  Spreads best in the same situation, but can spread quite slowly otherwise.
+#######################################
+
+renaissance = {
+	penalty = 0.50
+	
+	bonus = {
+		advisor_pool = 1
+		build_cost = -0.10
+	}
+	
+	historical_start_date = 1450.1.1
+	historical_start_province = 116 # Florence
+	
+	history = {
+		NOT = { has_province_flag = tribals_control_province }
+		OR = {
+			AND = {
+				is_year = 1450
+				continent = europe
+			}
+			AND = {
+				is_year = 1500
+				owner = {
+					NOT = { technology_group = north_american }
+					NOT = { technology_group = mesoamerican }
+					NOT = { technology_group = south_american }
+					NOT = { technology_group = andean }
+				}
+				continent = south_america
+			}
+			AND = {
+				is_year = 1500
+				owner = {
+					NOT = { technology_group = north_american }
+					NOT = { technology_group = mesoamerican }
+					NOT = { technology_group = south_american }
+					NOT = { technology_group = andean }
+				}
+				continent = north_america
+			}
+			AND = {
+				is_year = 1600
+				asia_continent_trigger = yes
+				owner = {
+					NOT = { government = tribal }
+				}
+			}
+			is_year = 1780
+		}
+	}
+	
+	can_start = {
+		is_year = 1450
+		custom_trigger_tooltip = {
+			tooltip = institution_25y_tt
+			OR = {
+				NOT = { has_global_flag = institution_spawn }
+				had_global_flag = { flag = institution_spawn days = 9125 }
+			}
+		}
+		superregion = italy_superregion
+		art_center_trigger = yes
+		#		NOT = { province_id = 126 }
+		is_island = no
+		base_production = 5
+		OR = {
+			has_building = small_university
+			has_building = medium_university
+			has_building = big_university
+		}
+	}
+	start_chance = 5		#in 100 for when a province can_start
+	
+	on_start = institution_events.2
+	
+	can_embrace = {
+		always = yes
+	}
+	
+	embracement_speed = {
+		modifier = {
+			factor = -2
+			scale = no
+			potential = {
+				NOT = { legalism = 100 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = NO_LEGALISM
+				NOT = { legalism = 100 }
+			}
+		}
+		modifier = {
+			factor = -1.4
+			scale = no
+			potential = {
+				NOT = { province_trade_power = 1 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_1_TRADE_POWER
+				NOT = { province_trade_power = 1 }
+			}
+		}
+		modifier = {
+			factor = -1
+			scale = no
+			potential = {
+				province_trade_power = 1
+				NOT = { province_trade_power = 5 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_5_TRADE_POWER
+				province_trade_power = 1
+				NOT = { province_trade_power = 5 }
+			}
+		}
+
+		modifier = {
+			factor = -0.8
+			scale = no
+			potential = {
+				has_province_flag = tribals_control_province
+			}
+			custom_trigger_tooltip = {
+				tooltip = TRIBES_RESIST_RENAISSANCE
+				has_province_flag = tribals_control_province
+			}
+		}
+
+		
+		# Province to Province Spread
+		modifier = {
+			factor = 2.6
+			scale = no
+			custom_trigger_tooltip = {
+				tooltip = NEIGHBOR_HAS_RENAISSANCE
+				OR = {
+					any_neighbor_province = {
+						renaissance = 100
+					}
+					any_friendly_coast_border_province = {
+						renaissance = 100
+					}
+				}
+			}
+		}
+
+		modifier = {
+			factor = 0.8
+			scale = no
+			custom_trigger_tooltip = {
+				tooltip = CATHOLIC_NEIGHBOR_HAS_RENAISSANCE
+				OR = {
+					AND = {
+						any_neighbor_province = {
+							renaissance = 100
+							religion = catholic
+
+						}
+					}
+					AND = {
+						any_friendly_coast_border_province = {
+							renaissance = 100
+							religion = catholic
+						}
+					}
+				}
+			}
+		}
+
+		modifier = {
+			factor = 3.2
+			scale = no
+			custom_trigger_tooltip = {
+				tooltip = NEIGHBOR_HAS_RENAISSANCE_UNIVERSITY
+				OR = {
+					any_neighbor_province = {
+						renaissance = 100
+						university_province_trigger = yes
+					}
+					any_friendly_coast_border_province = {
+						renaissance = 100
+						university_province_trigger = yes
+					}
+				}
+			}
+		}
+
+		modifier = {
+			factor = 1.0
+			scale = no
+			potential = {
+				owner = {
+					has_institution = renaissance
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_renaissance_embraced
+				owner = {
+					has_institution = renaissance
+				}
+				OR = {
+					any_neighbor_province = {
+						renaissance = 100
+					}
+					any_friendly_coast_border_province = {
+						renaissance = 100
+					}
+				}
+			}
+		}
+
+  		modifier = {
+           		factor = 1.0
+           		scale = no
+           		potential = {
+               			is_part_of_hre = yes
+           		}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_hre_renaissance_embraced
+				is_part_of_hre = yes
+				emperor = {
+					has_institution = renaissance
+				}
+				OR = {
+					any_neighbor_province = {
+						renaissance = 100
+					}
+					any_friendly_coast_border_province = {
+						renaissance = 100
+					}
+				}
+			}
+		}
+
+		modifier = {
+   			factor = -0.6
+   			scale = no
+			potential = {
+				OR = {
+					region = hausa_region
+					region = central_africa_region
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_sahara_desert_interferance 
+				OR = {
+					region = hausa_region
+					region = central_africa_region
+				}
+			}
+		}
+		
+		# Art Center Transmits Institution
+		modifier = {
+			factor = 8
+			scale = no
+			potential = {
+				has_province_flag = institution_renaissance_spread_1
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 6
+			scale = no
+			potential = {
+				has_province_flag = institution_renaissance_spread_2
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 4.5
+			scale = no
+			potential = {
+				has_province_flag = institution_renaissance_spread_3
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 3
+			scale = no
+			potential = {
+				has_province_flag = institution_renaissance_spread_4
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 2
+			scale = no
+			potential = {
+				has_province_flag = institution_renaissance_spread_5
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		
+		# Art Center Reinvents Institution
+		#		modifier = {
+		#			factor = 3.6
+		#			scale = no
+		#			potential = {
+		#				has_province_flag = institution_reinvention_renaissance_5
+		#				has_province_flag = has_art_center_modifier
+		#			}
+		#			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_REINVENT always = yes }
+		#		}
+		
+		# Center of Trade Spread
+		modifier = {
+			factor = 2.2
+			scale = no
+			potential = {
+				has_province_modifier = dominant_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_renaissance_trade_dominant
+				has_province_modifier = dominant_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 40
+					}
+				}
+				any_country = {
+					exists = yes
+					has_institution = renaissance
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 2.5
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 1.6
+			scale = no
+			potential = {
+				has_province_modifier = major_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_renaissance_trade_major
+				has_province_modifier = major_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 40
+					}
+				}
+				any_country = {
+					exists = yes
+					has_institution = renaissance
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 5
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 1
+			scale = no
+			potential = {
+				has_province_modifier = important_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_renaissance_trade_important
+				has_province_modifier = important_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 40
+					}
+				}
+				any_country = {
+					exists = yes
+					has_institution = renaissance
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 7.5
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 0.6
+			scale = no
+			potential = {
+				has_province_modifier = minor_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_renaissance_trade_minor
+				has_province_modifier = minor_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 40
+					}
+				}
+				any_country = {
+					exists = yes
+					has_institution = renaissance
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 10
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = -0.4
+			scale = no
+			potential = {
+				NOT = { base_production = 1 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = NO_CITY
+				NOT = { base_production = 1 }
+			}
+		}
+		modifier = {
+			factor = -0.2
+			scale = no
+			potential = {
+				base_production = 1
+				NOT = { base_production = 5 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = NO_CITY_SMALL
+				base_production = 1
+				NOT = { base_production = 5 }
+			}
+		}
+		modifier = {
+			factor = 1
+			scale = no
+			potential = {
+				is_capital = yes
+				owner = { is_subject = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_overlord_institution_spread
+				is_capital = yes
+				owner = {
+					is_subject = yes
+					overlord = {
+						has_institution = renaissance
+						PREV = {
+							ai_attitude = {
+								who = PREV
+								attitude = attitude_loyal
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	ai_will_do = { #Cost of embracing institution must be lower than this factor * last month's regular income. (Or it has a more than long term goal...)
+		factor = 24
+		
+		modifier = {
+			factor = 0.25
+			is_at_war = yes
+		}
+	}
+}
+
+
+#######################################
+# Casual Literacy
+#######################################
+
+casual_literacy = {
+	penalty = 0.50
+	
+	bonus = {
+		years_of_nationalism = -5
+	}
+	
+	historical_start_date = 1550.1.1
+	historical_start_province = 1365 #Frankfurt
+	
+	history = {
+		NOT = { has_province_flag = tribals_control_province }
+		OR = {
+			AND = {
+				is_year = 1560
+				OR = {
+					religion = protestant
+					religion = reformed
+					region = west_italy_region
+					region = east_italy_region
+					region = central_italy_region
+					region = naples_region
+					region = sicily_region
+					region = east_france_region
+					region = ouest_france_region
+					region = aquitaine_region
+					region = languedoc_region
+				}
+			}
+			AND = {
+				is_year = 1575
+				continent = europe
+				development = 12
+			}
+			AND = {
+				is_year = 1600
+				continent = europe
+			}
+			AND = {
+				is_year = 1600
+				owner = {
+					NOT = { technology_group = north_american }
+					NOT = { technology_group = mesoamerican }
+					NOT = { technology_group = south_american }
+					NOT = { technology_group = andean }
+				}
+				continent = south_america
+			}
+			AND = {
+				is_year = 1600
+				owner = {
+					NOT = { technology_group = north_american }
+					NOT = { technology_group = mesoamerican }
+					NOT = { technology_group = south_american }
+					NOT = { technology_group = andean }
+				}
+				continent = north_america
+			}
+			AND = {
+				is_year = 1625
+				OR = {
+					superregion = near_east_superregion
+					superregion = anatolia_superregion
+				}
+			}
+			AND = {
+				is_year = 1650
+				superregion = persia_superregion
+			}
+			AND = {
+				is_year = 1725
+				OR = {
+					superregion = west_india_superregion
+					superregion = north_india_superregion
+					superregion = rajputana_superregion
+					superregion = east_india_superregion
+					superregion = central_india_superregion
+					superregion = south_india_superregion
+					superregion = east_china_superregion
+					superregion = north_china_superregion
+					superregion = southwest_china_superregion
+					superregion = southeast_asia_superregion
+				}
+			}
+		}
+	}
+	
+	can_start = {
+		is_year = 1525
+		custom_trigger_tooltip = {
+			tooltip = institution_25y_tt
+			OR = {
+				NOT = { has_global_flag = institution_spawn }
+				had_global_flag = { flag = institution_spawn days = 9125 }
+			}
+		}
+		art_center_trigger = yes
+		base_production = 10
+		owner = { adm_tech = 23 }
+		is_island = no
+		OR = {
+			is_part_of_hre = yes
+			owner = { has_idea_group = innovativeness_ideas }
+		}
+		OR = {
+			religion = protestant
+			religion = reformed
+			owner = { adm_tech = 25 }
+		}
+		legalism = 100
+		renaissance = 100
+	}
+	start_chance = 5		#in 100 for when a province can_start
+	
+	on_start = institution_events.4
+	
+	can_embrace = {
+		always = yes
+	}
+	
+	
+	embracement_speed = {
+		modifier = {
+			factor = -1.8
+			scale = no
+			potential = {
+				NOT = { legalism = 100 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = NO_LEGALISM
+				NOT = { legalism = 100 }
+			}
+		}
+		modifier = {
+			factor = -1
+			scale = no
+			potential = {
+				NOT = { renaissance = 100 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = NO_RENAISSANCE
+				NOT = { renaissance = 100 }
+			}
+		}
+		modifier = {
+			factor = -0.6
+			scale = no
+			potential = {
+				NOT = { base_production = 1 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = NO_CITY
+				NOT = { base_production = 1 }
+			}
+		}
+
+		modifier = {
+			factor = -0.2
+			scale = no
+			potential = {
+				base_production = 1
+				NOT = { base_production = 5 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = NO_CITY_SMALL
+				base_production = 1
+				NOT = { base_production = 5 }
+			}
+		}
+
+		modifier = {
+			factor = -2.0
+			scale = no
+			potential = {
+				NOT = { province_trade_power = 1 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_1_TRADE_POWER
+				NOT = { province_trade_power = 1 }
+			}
+		}
+
+		modifier = {
+			factor = 0.5
+			scale = no
+			custom_trigger_tooltip = {
+				tooltip = protestants_printing_bibles
+				AND = {
+					any_neighbor_province = {
+						casual_literacy = 100
+						religion = protestant
+					}
+				NOT = { religion = catholic }
+				}
+			}
+		}
+		
+		modifier = {
+			factor = -0.8
+			scale = no
+			potential = {
+				has_province_flag = tribals_control_province
+			}
+			custom_trigger_tooltip = {
+				tooltip = TRIBES_RESIST_CASUAL_LITERACY
+				has_province_flag = tribals_control_province
+			}
+		}
+		
+		# Province to Province Spread
+		modifier = {
+			factor = 4.5
+			scale = no
+			custom_trigger_tooltip = {
+				tooltip = NEIGHBOR_HAS_CASUAL_LITERACY
+				OR = {
+					any_neighbor_province = {
+						casual_literacy = 100
+					}
+					any_friendly_coast_border_province = {
+						casual_literacy = 100
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 1.8
+			scale = no
+			potential = {
+				owner = {
+					has_institution = casual_literacy
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_casual_literacy_embraced
+				owner = {
+					has_institution = casual_literacy
+				}
+				OR = {
+					any_neighbor_province = {
+						casual_literacy = 100
+					}
+					any_friendly_coast_border_province = {
+						casual_literacy = 100
+					}
+				}
+			}
+		}
+
+  		modifier = {
+           		factor = 1.8
+           		scale = no
+           		potential = {
+               			is_part_of_hre = yes
+           		}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_hre_casual_literacy_embraced
+				is_part_of_hre = yes
+				emperor = {
+					has_institution = casual_literacy
+				}
+				OR = {
+					any_neighbor_province = {
+						casual_literacy = 100
+					}
+					any_friendly_coast_border_province = {
+						casual_literacy = 100
+					}
+				}
+			}
+		}
+
+		modifier = {
+   			factor = -0.8
+   			scale = no
+			potential = {
+				OR = {
+					region = hausa_region
+					region = central_africa_region
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_sahara_desert_interferance 
+				OR = {
+					region = hausa_region
+					region = central_africa_region
+				}
+				NOT = {
+					any_neighbor_province = { casual_literacy = 100 }
+				}
+			}
+		}
+		
+		# Art Center Transmits Institution
+		modifier = {
+			factor = 5.6
+			scale = no
+			potential = {
+				has_province_flag = institution_casual_literacy_spread_1
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 4.4
+			scale = no
+			potential = {
+				has_province_flag = institution_casual_literacy_spread_2
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 3.4
+			scale = no
+			potential = {
+				has_province_flag = institution_casual_literacy_spread_3
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 2.6
+			scale = no
+			potential = {
+				has_province_flag = institution_casual_literacy_spread_4
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 1.8
+			scale = no
+			potential = {
+				has_province_flag = institution_casual_literacy_spread_5
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		
+		modifier = {
+			factor = 2.2
+			scale = no
+			potential = {
+				has_province_modifier = dominant_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_casual_literacy_trade_dominant
+				has_province_modifier = dominant_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 40
+					}
+				}
+				any_country = {
+					exists = yes
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 2.5
+						}
+					}
+					has_institution = casual_literacy
+				}
+			}
+		}
+		modifier = {
+			factor = 1.6
+			scale = no
+			potential = {
+				has_province_modifier = major_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_casual_literacy_trade_major
+				has_province_modifier = major_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 40
+					}
+				}
+				any_country = {
+					exists = yes
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 5
+						}
+					}
+					has_institution = casual_literacy
+				}
+			}
+		}
+		modifier = {
+			factor = 1.2
+			scale = no
+			potential = {
+				has_province_modifier = important_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_casual_literacy_trade_important
+				has_province_modifier = important_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 40
+					}
+				}
+				any_country = {
+					exists = yes
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 7.5
+						}
+					}
+					has_institution = casual_literacy
+				}
+			}
+		}
+		modifier = {
+			factor = 0.6
+			scale = no
+			potential = {
+				has_province_modifier = minor_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_casual_literacy_trade_minor
+				has_province_modifier = minor_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 40
+					}
+				}
+				any_country = {
+					exists = yes
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 10
+						}
+					}
+					has_institution = casual_literacy
+				}
+			}
+		}
+		modifier = {
+			factor = 1.2
+			scale = no
+			potential = {
+				is_capital = yes
+				owner = { is_subject = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_overlord_institution_spread
+				is_capital = yes
+				owner = {
+					is_subject = yes
+					overlord = {
+						has_institution = casual_literacy
+						PREV = {
+							ai_attitude = {
+								who = PREV
+								attitude = attitude_loyal
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	ai_will_do = { #Cost of embracing institution must be lower than this factor * last month's regular income. (Or it has a more than long term goal...)
+		factor = 24
+		
+		modifier = {
+			factor = 0.25
+			is_at_war = yes
+		}
+	}
+}
+
+#######################################
+# Globalized Trade
+#######################################
+
+global_trade = {
+	penalty = 0.50
+	
+	bonus = {
+		global_foreign_trade_power = 0.15
+		trade_steering = 0.1
+	}
+	
+	historical_start_date = 1600.1.1
+	historical_start_province = 97 #Holland
+	
+	history = {
+		NOT = { has_province_flag = tribals_control_province }
+		OR = {
+			AND = {
+				is_year = 1620
+				continent = europe
+				owner = { technology_group = western }
+			}
+			
+			AND = {
+				is_year = 1660
+				continent = europe
+			}
+			AND = {
+				is_year = 1660
+				owner = {
+					NOT = { technology_group = north_american }
+					NOT = { technology_group = mesoamerican }
+					NOT = { technology_group = south_american }
+					NOT = { technology_group = andean }
+				}
+				continent = south_america
+			}
+			AND = {
+				is_year = 1660
+				owner = {
+					NOT = { technology_group = north_american }
+					NOT = { technology_group = mesoamerican }
+					NOT = { technology_group = south_american }
+					NOT = { technology_group = andean }
+				}
+				continent = north_america
+			}
+			AND = {
+				is_year = 1700
+				is_capital = no
+				OR = {
+					north_africa_region_trigger = yes
+					superregion = near_east_superregion
+					superregion = anatolia_superregion
+				}
+			}
+			
+			AND = {
+				is_year = 1720
+				has_port = yes
+				is_capital = no
+				OR = {
+					superregion = west_india_superregion
+					superregion = north_india_superregion
+					superregion = rajputana_superregion
+					superregion = east_india_superregion
+					superregion = central_india_superregion
+					superregion = south_india_superregion
+					superregion = persia_superregion
+					superregion = southeast_asia_superregion
+				}
+			}
+			AND = {
+				is_year = 1750
+				has_port = yes
+				is_capital = no
+				africa_continent_trigger = yes
+			}
+		}
+	}
+	
+	can_start = {
+		is_year = 1600
+		custom_trigger_tooltip = {
+			tooltip = institution_25y_tt
+			OR = {
+				NOT = { has_global_flag = institution_spawn }
+				had_global_flag = { flag = institution_spawn days = 9125 }
+			}
+		}
+		is_island = no
+		is_state = yes
+		base_production = 10
+		OR = {
+			AND = {
+				has_port = yes
+				has_province_modifier = important_center_of_trade
+			}
+			has_province_modifier = major_center_of_trade
+			has_province_modifier = dominant_center_of_trade
+		}
+		owner = {
+			dip_tech = 29
+			calc_true_if = {
+				amount = 2
+				all_active_trade_node = {
+					has_merchant = PREV
+					NOT = {
+						same_continent = PREV
+					}
+				}
+			}
+			OR = {
+				colony = 2
+				AND = {
+					colony = 1
+					any_owned_province = {
+						is_owned_by_trade_company = yes
+					}
+				}
+			}
+		}
+	}
+	start_chance = 4		#in 100 for when a province can_start
+	
+	
+	on_start = institution_events.5
+	
+	
+	can_embrace = {
+		always = yes
+	}
+	
+	
+	embracement_speed = {
+		modifier = {
+			factor = -1.5
+			scale = no
+			potential = {
+				NOT = { banking = 100 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = NO_BANKING
+				NOT = { banking = 100 }
+			}
+		}
+
+		modifier = {
+			factor = -0.8
+			scale = no
+			potential = {
+				NOT = { casual_literacy = 100 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = NO_CASUAL_LITERACY
+				NOT = { casual_literacy = 100 }
+			}
+		}
+
+
+		modifier = {
+			factor = -3.2
+			scale = no
+			potential = {
+				NOT = { province_trade_power = 1 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_1_TRADE_POWER
+				NOT = { province_trade_power = 1 }
+			}
+		}
+		modifier = {
+			factor = -2.4
+			scale = no
+			potential = {
+				province_trade_power = 1
+				NOT = { province_trade_power = 2 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_2_TRADE_POWER
+				province_trade_power = 1
+				NOT = { province_trade_power = 2 }
+			}
+		}
+		modifier = {
+			factor = -1.8
+			scale = no
+			potential = {
+				province_trade_power = 2
+				NOT = { province_trade_power = 5 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_5_TRADE_POWER
+				province_trade_power = 2
+				NOT = { province_trade_power = 5 }
+			}
+		}
+		modifier = {
+			factor = -1.2
+			scale = no
+			potential = {
+				province_trade_power = 5
+				NOT = { province_trade_power = 10 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_10_TRADE_POWER
+				province_trade_power = 5
+				NOT = { province_trade_power = 10 }
+			}
+		}
+		modifier = {
+			factor = -0.6
+			scale = no
+			potential = {
+				province_trade_power = 10
+				NOT = { province_trade_power = 18 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_18_TRADE_POWER
+				province_trade_power = 10
+				NOT = { province_trade_power = 18 }
+			}
+		}
+		
+		modifier = {
+			factor = -0.8
+			scale = no
+			potential = {
+				NOT = { base_production = 1 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = NO_CITY
+				NOT = { base_production = 1 }
+			}
+		}
+
+		modifier = {
+			factor = -0.4
+			scale = no
+			potential = {
+				base_production = 1
+				NOT = { base_production = 5 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = NO_CITY_SMALL
+				base_production = 1
+				NOT = { base_production = 5 }
+			}
+		}
+		
+		# Province to Province Spread
+		modifier = {
+			factor = 3.2
+			scale = no
+			custom_trigger_tooltip = {
+				tooltip = NEIGHBOR_HAS_GLOBAL_TRADE
+				OR = {
+					any_neighbor_province = {
+						global_trade = 100
+					}
+					any_friendly_coast_border_province = {
+						global_trade = 100
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 2
+			scale = no
+			potential = {
+				owner = {
+					has_institution = global_trade
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_global_trade_embraced
+				owner = {
+					has_institution = global_trade
+				}
+				OR = {
+					any_neighbor_province = {
+						global_trade = 100
+					}
+					any_friendly_coast_border_province = {
+						global_trade = 100
+					}
+				}
+			}
+		}
+
+  		modifier = {
+			factor = 2
+			scale = no
+			potential = {
+				is_part_of_hre = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_hre_global_trade_embraced
+				is_part_of_hre = yes
+				emperor = {
+					has_institution = global_trade
+				}
+				OR = {
+					any_neighbor_province = {
+						global_trade = 100
+					}
+					any_friendly_coast_border_province = {
+						global_trade = 100
+					}
+				}
+			}
+		}
+
+		modifier = {
+			factor = -0.4
+			scale = no
+			potential = {
+				owner = {
+					NOT = { dip_tech = 27 }
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = NO_ASTROLABE
+			}
+		}
+
+		modifier = {
+			factor = -1
+			scale = no
+			potential = {
+				owner = {
+						has_reform = celestial_empire
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = EMPIRE_CLOSED
+			}
+		}
+
+		modifier = {
+   			factor = -1
+   			scale = no
+			potential = {
+				OR = {
+					region = hausa_region
+					region = central_africa_region
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_sahara_desert_interferance 
+				OR = {
+					region = hausa_region
+					region = central_africa_region
+				}
+				NOT = {
+					any_neighbor_province = { global_trade = 100 }
+				}
+			}
+		}
+		
+		# Art Center Transmits Institution
+		modifier = {
+			factor = 4
+			scale = no
+			potential = {
+				has_province_flag = institution_global_trade_spread_1
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 3
+			scale = no
+			potential = {
+				has_province_flag = institution_global_trade_spread_2
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 2.5
+			scale = no
+			potential = {
+				has_province_flag = institution_global_trade_spread_3
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 1.5
+			scale = no
+			potential = {
+				has_province_flag = institution_global_trade_spread_4
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 1
+			scale = no
+			potential = {
+				has_province_flag = institution_global_trade_spread_5
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		
+		# Center of Trade Spread
+		modifier = {
+			factor = 4.2
+			scale = no
+			potential = {
+				has_province_modifier = dominant_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_global_trade_trade_dominant
+				has_province_modifier = dominant_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 30
+					}
+				}
+				any_country = {
+					exists = yes
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 2.5
+						}
+					}
+					has_institution = global_trade
+				}
+			}
+		}
+		modifier = {
+			factor = 3.6
+			scale = no
+			potential = {
+				has_province_modifier = major_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_global_trade_trade_major
+				has_province_modifier = major_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 30
+					}
+				}
+				any_country = {
+					exists = yes
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 5
+						}
+					}
+					has_institution = global_trade
+				}
+			}
+		}
+		modifier = {
+			factor = 3
+			scale = no
+			potential = {
+				has_province_modifier = important_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_global_trade_trade_important
+				has_province_modifier = important_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 30
+					}
+				}
+				any_country = {
+					exists = yes
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 7.5
+						}
+					}
+					has_institution = global_trade
+				}
+			}
+		}
+		modifier = {
+			factor = 2.4
+			scale = no
+			potential = {
+				has_province_modifier = minor_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_global_trade_trade_minor
+				has_province_modifier = minor_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 30
+					}
+				}
+				any_country = {
+					has_institution = global_trade
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 10
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 2
+			scale = no
+			potential = {
+				is_capital = yes
+				owner = { is_subject = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_overlord_institution_spread
+				is_capital = yes
+				owner = {
+					is_subject = yes
+					overlord = {
+						has_institution = global_trade
+						PREV = {
+							ai_attitude = {
+								who = PREV
+								attitude = attitude_loyal
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	ai_will_do = { #Cost of embracing institution must be lower than this factor * last month's regular income. (Or it has a more than long term goal...)
+		factor = 24
+		
+		modifier = {
+			factor = 0.25
+			is_at_war = yes
+		}
+	}
+}
+
+
+#######################################
+# Industrialization
+#######################################
+
+manufactories = {
+	penalty = 0.50
+	
+	bonus = {
+		production_efficiency = 0.10
+	}
+	
+	historical_start_date = 1650.1.1
+	historical_start_province = 183 #Paris
+	
+	history = {
+		NOT = { has_province_flag = tribals_control_province }
+		OR = {
+			AND = {
+				is_year = 1680
+				continent = europe
+				owner = { technology_group = western }
+			}
+			
+			AND = {
+				is_year = 1720
+				continent = europe
+			}
+			AND = {
+				is_year = 1750
+				OR = {
+					superregion = east_china_superregion
+					superregion = north_china_superregion
+					superregion = southwest_china_superregion
+				}
+			}
+			AND = {
+				is_year = 1750
+				OR = {
+					superregion = west_india_superregion
+					superregion = north_india_superregion
+					superregion = rajputana_superregion
+					superregion = east_india_superregion
+					superregion = central_india_superregion
+					superregion = south_india_superregion
+				}
+			}
+			AND = {
+				is_year = 1750
+				OR = {
+					superregion = near_east_superregion
+					superregion = anatolia_superregion
+				}
+			}
+			AND = {
+				is_year = 1750
+				maghreb_region_trigger = yes
+			}
+			AND = {
+				is_year = 1750
+				region = egypt_region
+			}
+			AND = {
+				is_year = 1760
+				owner = {
+					NOT = { technology_group = north_american }
+					NOT = { technology_group = mesoamerican }
+					NOT = { technology_group = south_american }
+					NOT = { technology_group = andean }
+				}
+				continent = south_america
+			}
+			AND = {
+				is_year = 1760
+				owner = {
+					NOT = { technology_group = north_american }
+					NOT = { technology_group = mesoamerican }
+					NOT = { technology_group = south_american }
+					NOT = { technology_group = andean }
+				}
+				continent = north_america
+			}
+			
+			AND = {
+				is_year = 1780
+				superregion = persia_superregion
+			}
+		}
+	}
+	
+	can_start = {
+		is_year = 1650
+		custom_trigger_tooltip = {
+			tooltip = institution_25y_tt
+			OR = {
+				NOT = { has_global_flag = institution_spawn }
+				had_global_flag = { flag = institution_spawn days = 9125 }
+			}
+		}
+		base_production = 30
+		OR = {
+			has_building = factory
+			has_building = steam_powered_factory
+		}
+		production_center_trigger = yes
+		is_island = no
+		global_trade = 100
+	}
+	
+	start_chance = 5		#in 100 for when a province can_start
+	
+	on_start = institution_events.6
+	
+	can_embrace = {
+		always = yes
+	}
+	
+	embracement_speed = {
+		modifier = {
+			factor = -2
+			scale = no
+			potential = {
+				NOT = { global_trade = 100 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = NO_GLOBAL_TRADE
+				NOT = { global_trade = 100 }
+			}
+		}
+		modifier = {
+			factor = -1.8
+			scale = no
+			potential = {
+				NOT = { province_trade_power = 1 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_1_TRADE_POWER
+				NOT = { province_trade_power = 1 }
+			}
+		}
+		modifier = {
+			factor = -1.4
+			scale = no
+			potential = {
+				province_trade_power = 1
+				NOT = { province_trade_power = 2 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_2_TRADE_POWER
+				province_trade_power = 1
+				NOT = { province_trade_power = 2 }
+			}
+		}
+		modifier = {
+			factor = -1.0
+			scale = no
+			potential = {
+				province_trade_power = 2
+				NOT = { province_trade_power = 5 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_5_TRADE_POWER
+				province_trade_power = 2
+				NOT = { province_trade_power = 5 }
+			}
+		}
+		modifier = {
+			factor = -0.6
+			scale = no
+			potential = {
+				province_trade_power = 5
+				NOT = { province_trade_power = 10 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_10_TRADE_POWER
+				province_trade_power = 5
+				NOT = { province_trade_power = 10 }
+			}
+		}
+		modifier = {
+			factor = -0.3
+			scale = no
+			potential = {
+				province_trade_power = 10
+				NOT = { province_trade_power = 18 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_18_TRADE_POWER
+				province_trade_power = 10
+				NOT = { province_trade_power = 18 }
+			}
+		}
+
+		modifier = {
+			factor = -0.6
+			scale = no
+			potential = {
+				NOT = { base_production = 1 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = NO_CITY
+				NOT = { base_production = 1 }
+			}
+		}
+
+		modifier = {
+			factor = -0.3
+			scale = no
+			potential = {
+				base_production = 1
+				NOT = { base_production = 5 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = NO_CITY_SMALL
+				base_production = 1
+				NOT = { base_production = 5 }
+			}
+		}
+
+		modifier = {
+			factor = -0.8
+			scale = no
+			potential = {
+				NOT = {
+					has_building = factory
+					has_building = steam_powered_factory
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = NO_FACTORY
+				base_production = 1
+				NOT = {
+					has_building = factory
+					has_building = steam_powered_factory
+				}
+			}
+		}
+
+		modifier = {
+			factor = -0.4
+			scale = no
+			potential = {
+				always = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = LACKS_BURGHERS_ESTATE
+				NOT = { has_province_flag = burghers_control_province }
+			}
+		}
+
+		modifier = {
+			factor = -1
+			scale = no
+			potential = {
+				has_province_flag = tribals_control_province
+			}
+			custom_trigger_tooltip = {
+				tooltip = TRIBES_RESIST_MANUFACTORIES
+				has_province_flag = tribals_control_province
+			}
+		}
+		
+		# Province to Province Spread
+		modifier = {
+			factor = 3.2
+			scale = no
+			custom_trigger_tooltip = {
+				tooltip = NEIGHBOR_HAS_MANUFACTORIES
+				OR = {
+					any_neighbor_province = {
+						manufactories = 100
+					}
+					any_friendly_coast_border_province = {
+						manufactories = 100
+					}
+				}
+			}
+		}
+
+		modifier = {
+			factor = 1.2
+			scale = no
+			custom_trigger_tooltip = {
+				tooltip = NEIGHBOR_HAS_CENTER_PRODUCTION
+				AND = {
+					any_neighbor_province = {
+						manufactories = 100
+						OR = {
+							has_province_modifier = dominant_center_of_production
+							has_province_modifier = major_center_of_production
+							has_province_modifier = important_center_of_production
+							has_province_modifier = minor_center_of_production
+						}
+					}
+				}
+			}
+		}
+
+		modifier = {
+			factor = 2
+			scale = no
+			potential = {
+				owner = {
+					has_institution = manufactories
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_manufactories_embraced
+				owner = {
+					has_institution = manufactories
+				}
+				OR = {
+					any_neighbor_province = {
+						manufactories = 100
+					}
+					any_friendly_coast_border_province = {
+						manufactories = 100
+					}
+				}
+			}
+		}
+
+  		modifier = {
+			factor = 2
+			scale = no
+			potential = {
+				is_part_of_hre = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_hre_manufactories_embraced
+				is_part_of_hre = yes
+				emperor = {
+					has_institution = manufactories
+				}
+				OR = {
+					any_neighbor_province = {
+						manufactories = 100
+					}
+					any_friendly_coast_border_province = {
+						manufactories = 100
+					}
+				}
+			}
+		}
+
+		modifier = {
+   			factor = -1
+   			scale = no
+			potential = {
+				OR = {
+					region = hausa_region
+					region = central_africa_region
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_sahara_desert_interferance 
+				OR = {
+					region = hausa_region
+					region = central_africa_region
+				}
+				NOT = {
+					any_neighbor_province = { manufactories = 100 }
+				}
+			}
+		}
+		
+		# Art Center Transmits Institution
+		modifier = {
+			factor = 3.2
+			scale = no
+			potential = {
+				has_province_flag = institution_manufactories_spread_1
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 2.4
+			scale = no
+			potential = {
+				has_province_flag = institution_manufactories_spread_2
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 1.6
+			scale = no
+			potential = {
+				has_province_flag = institution_manufactories_spread_3
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 0.8
+			scale = no
+			potential = {
+				has_province_flag = institution_manufactories_spread_4
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 0.4
+			scale = no
+			potential = {
+				has_province_flag = institution_manufactories_spread_5
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		
+		# Center of Production Spread
+		modifier = {
+			factor = 4
+			scale = no
+			potential = {
+				has_province_modifier = dominant_center_of_production
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_manufactories_production_dominant
+				has_province_modifier = dominant_center_of_production
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 40
+					}
+				}
+				any_country = {
+					exists = yes
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 2.5
+						}
+					}
+					has_institution = manufactories
+				}
+			}
+		}
+		modifier = {
+			factor = 3
+			scale = no
+			potential = {
+				has_province_modifier = major_center_of_production
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_manufactories_production_major
+				has_province_modifier = major_center_of_production
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 40
+					}
+				}
+				any_country = {
+					exists = yes
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 5
+						}
+					}
+					has_institution = manufactories
+				}
+			}
+		}
+		modifier = {
+			factor = 2
+			scale = no
+			potential = {
+				has_province_modifier = important_center_of_production
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_manufactories_production_important
+				has_province_modifier = important_center_of_production
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 40
+					}
+				}
+				any_country = {
+					exists = yes
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 7.5
+						}
+					}
+					has_institution = manufactories
+				}
+			}
+		}
+		modifier = {
+			factor = 1.5
+			scale = no
+			potential = {
+				has_province_modifier = minor_center_of_production
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_manufactories_production_minor
+				has_province_modifier = minor_center_of_production
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 40
+					}
+				}
+				any_country = {
+					exists = yes
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 10
+						}
+					}
+					has_institution = manufactories
+				}
+			}
+		}
+		modifier = {
+			factor = 1.5
+			scale = no
+			potential = {
+				is_capital = yes
+				owner = { is_subject = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_overlord_institution_spread
+				is_capital = yes
+				owner = {
+					is_subject = yes
+					overlord = {
+						has_institution = manufactories
+						PREV = {
+							ai_attitude = {
+								who = PREV
+								attitude = attitude_loyal
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	ai_will_do = { #Cost of embracing institution must be lower than this factor * last month's regular income. (Or it has a more than long term goal...)
+		factor = 24
+		
+		modifier = {
+			factor = 0.25
+			is_at_war = yes
+		}
+	}
+}
+
+
+
+#######################################
+# Enlightenment
+#######################################
+enlightenment = {
+	penalty = 0.5
+	
+	bonus = {
+		num_accepted_cultures = 1
+		technology_cost = -0.10
+	}
+	
+	historical_start_date = 1700.1.1
+	historical_start_province = 236 #London
+	
+	history = {
+		NOT = { has_province_flag = tribals_control_province }
+		OR = {
+			AND = {
+				is_year = 1700
+				continent = europe
+				owner = { technology_group = western }
+			}
+			
+			AND = {
+				is_year = 1730
+				continent = europe
+			}
+			
+			AND = {
+				is_year = 1800
+				OR = {
+					superregion = near_east_superregion
+					superregion = anatolia_superregion
+				}
+			}
+			AND = {
+				is_year = 1770
+				owner = {
+					NOT = { technology_group = north_american }
+					NOT = { technology_group = mesoamerican }
+					NOT = { technology_group = south_american }
+					NOT = { technology_group = andean }
+				}
+				continent = south_america
+			}
+			AND = {
+				is_year = 1770
+				owner = {
+					NOT = { technology_group = north_american }
+					NOT = { technology_group = mesoamerican }
+					NOT = { technology_group = south_american }
+					NOT = { technology_group = andean }
+				}
+				continent = north_america
+			}
+		}
+	}
+	
+	can_start = {
+		is_year = 1700
+		custom_trigger_tooltip = {
+			tooltip = institution_25y_tt
+			OR = {
+				NOT = { has_global_flag = institution_spawn }
+				had_global_flag = { flag = institution_spawn days = 9125 }
+			}
+		}
+		university_province_trigger = yes
+		art_center_trigger = yes
+		owner = { check_variable = { which = education_level value = 60 } }
+		is_in_capital_area = yes
+		is_island = no
+		renaissance = 100
+		casual_literacy = 100
+	}
+	start_chance = 6		#in 100 for when a province can_start
+	
+	
+	on_start = institution_events.7
+	
+	
+	can_embrace = {
+		always = yes
+	}
+	
+	
+	embracement_speed = {
+		modifier = {
+			factor = -2.5
+			scale = no
+			potential = {
+				NOT = { renaissance = 100 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = NO_RENAISSANCE
+				NOT = { renaissance = 100 }
+			}
+		}
+		modifier = {
+			factor = -2.5
+			scale = no
+			potential = {
+				NOT = { casual_literacy = 100 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = NO_CASUAL_LITERACY
+				NOT = { casual_literacy = 100 }
+			}
+		}
+		modifier = {
+			factor = -2.4
+			scale = no
+			potential = {
+				NOT = { province_trade_power = 1 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_1_TRADE_POWER
+				NOT = { province_trade_power = 1 }
+			}
+		}
+		modifier = {
+			factor = -1.4
+			scale = no
+			potential = {
+				province_trade_power = 1
+				NOT = { province_trade_power = 5 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = UNDER_5_TRADE_POWER
+				province_trade_power = 1
+				NOT = { province_trade_power = 5 }
+			}
+		}
+		# Province to Province Spread
+		modifier = {
+			factor = 2.4
+			scale = no
+			custom_trigger_tooltip = {
+				tooltip = NEIGHBOR_HAS_ENLIGHTENMENT
+				OR = {
+					any_neighbor_province = {
+						enlightenment = 100
+					}
+					any_friendly_coast_border_province = {
+						enlightenment = 100
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 2
+			scale = no
+			custom_trigger_tooltip = {
+				tooltip = NEIGHBOR_HAS_ENLIGHTENMENT_UNIVERSITY
+				OR = {
+					any_neighbor_province = {
+						enlightenment = 100
+						university_province_trigger = yes
+					}
+					any_friendly_coast_border_province = {
+						enlightenment = 100
+						university_province_trigger = yes
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 2.0
+			scale = no
+			potential = {
+				owner = {
+					has_institution = enlightenment
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_enlightenment_embraced
+				owner = {
+					has_institution = enlightenment
+				}
+				OR = {
+					any_neighbor_province = {
+						renaissance = 100
+					}
+					any_friendly_coast_border_province = {
+						renaissance = 100
+					}
+				}
+			}
+		}
+
+  		modifier = {
+           		factor = 2.0
+           		scale = no
+           		potential = {
+               			is_part_of_hre = yes
+           		}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_hre_enlightenment_embraced
+				is_part_of_hre = yes
+				emperor = {
+					has_institution = enlightenment
+				}
+				OR = {
+					any_neighbor_province = {
+						enlightenment = 100
+					}
+					any_friendly_coast_border_province = {
+						enlightenment = 100
+					}
+				}
+			}
+		}
+
+		modifier = {
+   			factor = -1.6
+   			scale = no
+			potential = {
+				OR = {
+					region = hausa_region
+					region = central_africa_region
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_sahara_desert_interferance 
+				OR = {
+					region = hausa_region
+					region = central_africa_region
+				}
+				NOT = {
+					any_neighbor_province = { enlightenment = 100 }
+				}
+			}
+		}
+		
+		# Art Center Transmits Institution
+		modifier = {
+			factor = 4.8
+			scale = no
+			potential = {
+				has_province_flag = institution_enlightenment_spread_1
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 3.2
+			scale = no
+			potential = {
+				has_province_flag = institution_enlightenment_spread_2
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 2.8
+			scale = no
+			potential = {
+				has_province_flag = institution_enlightenment_spread_3
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 2.0
+			scale = no
+			potential = {
+				has_province_flag = institution_enlightenment_spread_4
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		modifier = {
+			factor = 1.2
+			scale = no
+			potential = {
+				has_province_flag = institution_enlightenment_spread_5
+				has_province_flag = has_art_center_modifier
+			}
+			custom_trigger_tooltip = { tooltip = ART_CENTER_INSTITUTION_SPREAD always = yes }
+		}
+		
+		# Center of Trade Spread
+		modifier = {
+			factor = 1.8
+			scale = no
+			potential = {
+				has_province_modifier = dominant_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_enlightenment_trade_dominant
+				has_province_modifier = dominant_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 50
+					}
+				}
+				any_country = {
+					exists = yes
+					has_institution = enlightenment
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 2.5
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 1.4
+			scale = no
+			potential = {
+				has_province_modifier = major_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_enlightenment_trade_major
+				has_province_modifier = major_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 50
+					}
+				}
+				any_country = {
+					exists = yes
+					has_institution = enlightenment
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 5
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 1.0
+			scale = no
+			potential = {
+				has_province_modifier = important_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_enlightenment_trade_important
+				has_province_modifier = important_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 50
+					}
+				}
+				any_country = {
+					exists = yes
+					has_institution = enlightenment
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 7.5
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 0.6
+			scale = no
+			potential = {
+				has_province_modifier = minor_center_of_trade
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_enlightenment_trade_minor
+				has_province_modifier = minor_center_of_trade
+				owner = {
+					check_variable = {
+						which = education_level
+						value = 50
+					}
+				}
+				any_country = {
+					exists = yes
+					has_institution = enlightenment
+					ROOT = {
+						trade_share = {
+							country = PREV
+							share = 10
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 1.2
+			scale = no
+			potential = {
+				is_capital = yes
+				owner = { is_subject = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = tooltip_overlord_institution_spread
+				is_capital = yes
+				owner = {
+					is_subject = yes
+					overlord = {
+						has_institution = enlightenment
+						PREV = {
+							ai_attitude = {
+								who = PREV
+								attitude = attitude_loyal
+							}
+						}
+					}
+				}
+			}
+		}
+		
+	}
+	
+	ai_will_do = { #Cost of embracing institution must be lower than this factor * last month's regular income. (Or it has a more than long term goal...)
+		factor = 24
+		
+		modifier = {
+			factor = 0.25
+			is_at_war = yes
+		}
+	}
+}

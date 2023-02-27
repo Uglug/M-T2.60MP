@@ -1,0 +1,173 @@
+########################################
+# Flavor Events for Trebizond
+#
+# Scripted by Gigau, based on Starki113r's ideas
+########################################
+
+country_event = {
+	id = flavor_tre.1
+	title = "flavor_tre.1.name"
+	desc = "flavor_tre.1.desc"
+	picture = orthodox_court
+	
+	trigger = {
+		tag = TRE
+		NOT = { has_opinion_modifier = { who = BYZ modifier = tre_ambitions } }
+		NOT = { has_opinion_modifier = { who = BYZ modifier = tre_temperance } }
+		north_anatolia_region = {
+			type = all
+			owned_by = ROOT
+		}
+		south_anatolia_region = {
+			type = all
+			owned_by = ROOT
+		}
+		calc_true_if = {
+			all_owned_province = {
+				black_sea_exclaves_trigger = yes
+			}
+			amount = 9
+		}
+		NOT = { owns = 1402 } # Konstantinoupolis
+	}
+	
+	mean_time_to_happen = { years = 5 }
+	
+	option = {
+		name = "flavor_tre.1.opta"
+		add_permanent_claim = 1402 # Konstantinoupolis
+		add_prestige = 10
+		1402 = { # Konstantinoupolis
+			owner = {
+				country_event = { id = flavor_tre.2 }
+				ROOT = {
+					add_opinion = {
+						modifier = tre_ambitions
+						who = PREV
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = "flavor_tre.1.optb"
+		add_prestige = 10
+		subtract_stability_3 = yes
+		random_owned_province = {
+			add_province_modifier = {
+				name = "pretender_organizing"
+				duration = 1825
+			}
+		}
+		1402 = { # Konstantinoupolis
+			owner = {
+				country_event = { id = flavor_tre.3 }
+				ROOT = {
+					add_opinion = {
+						modifier = tre_temperance
+						who = PREV
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = flavor_tre.2
+	title = "flavor_tre.2.name"
+	desc = "flavor_tre.2.desc"
+	picture = orthodox_court
+	
+	is_triggered_only = yes
+	
+	
+	option = {
+		name = "flavor_tre.2.opta"
+		add_casus_belli = {
+			target = FROM
+			type = cb_insult
+			months = 60
+		}
+		add_opinion = {
+			modifier = tre_ambitions
+			who = FROM
+		}
+	}
+}
+
+country_event = {
+	id = flavor_tre.3
+	title = "flavor_tre.3.name"
+	desc = "flavor_tre.3.desc"
+	picture = orthodox_court
+	
+	is_triggered_only = yes
+	
+	
+	option = {
+		name = "flavor_tre.3.opta"
+		add_opinion = {
+			modifier = tre_temperance
+			who = FROM
+		}
+	}
+}
+
+country_event = {
+	id = flavor_tre.4
+	title = "flavor_tre.4.name"
+	desc = "flavor_tre.4.desc"
+	picture = orthodox_court
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = TRE
+		BYZ = { is_free_or_tributary_trigger = yes }
+		OR = {
+			AND = {
+				BYZ = { owns = 1402 } # Konstantinoupolis
+				controls = 1402 # Konstantinoupolis
+				war_with = BYZ
+			}
+			AND = {
+				owns = 1402 # Konstantinoupolis
+				is_at_war = no
+			}
+		}
+	}
+
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = "flavor_tre.4.opta"
+		if = {
+			limit = {
+				war_with = BYZ
+			}
+			white_peace = BYZ
+		}
+		inherit = BYZ
+		add_stability_1 = yes
+		add_prestige = 25
+		add_core = 1402
+		every_province = {
+			limit = {
+				is_city = yes
+				is_core = BYZ
+				NOT = { is_core = ROOT }
+			}
+			random_list = {
+				25 = {
+					add_province_modifier = {
+						name = "nationalists_organizing"
+						duration = 1825
+					}
+				}
+				75 = {
+				}
+			}
+		}
+	}
+}

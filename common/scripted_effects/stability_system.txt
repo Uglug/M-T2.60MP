@@ -1,0 +1,302 @@
+check_stability_modifier = {
+	export_to_variable = {
+		which = stability_cost_modifier
+		value = modifier:stability_cost_modifier
+	}
+	if = {
+		limit = {
+			check_variable = { which = stability_cost_modifier	value = 0.01 }
+		}
+		set_variable = { 	  which = stability_cost_modifier_invert 		which = stability_cost_modifier }
+		change_variable = {   which = stability_cost_modifier				value = 1 }
+		subtract_variable = { which = stability_cost_modifier				which = stability_cost_modifier_invert }
+		subtract_variable = { which = stability_cost_modifier				which = stability_cost_modifier_invert }
+	}
+	else = {
+		multiply_variable = { which = stability_cost_modifier 	value = -1 }
+		change_variable = { which = stability_cost_modifier		value = 1 }
+	}
+}
+
+get_multiplier_stability = {
+	### Check for any change ###
+	export_to_variable = {
+		which = national_multiplier_stability
+		value = stability
+	}
+
+	multiply_variable = { which = national_multiplier_stability value = 0.1 }
+	change_variable = { which = national_multiplier_stability value = 1 }
+	
+	if = {
+		limit = {
+			NOT = { check_variable = { which = national_multiplier_stability value = 1.3 } }
+			check_variable = { which = national_multiplier_stability	value = 1.2 }
+		}
+		set_variable = { which = stability_threshold 	value = 300 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = national_multiplier_stability	value = 1.1 }
+		}
+		set_variable = { which = stability_threshold 	value = 200 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { which = national_multiplier_stability	value = 1.0 }
+		}
+		set_variable = { which = stability_threshold 	value = 150 }
+	}
+	else = {
+		set_variable = { which = stability_threshold 	value = 100 }
+	}
+	#set_variable = { 	  which = stability_points_to_go 			value = 0 }
+	set_variable = { 	  which = stability_points_to_go			which = stability_threshold }
+	subtract_variable = { which = stability_points_to_go			which = stability_points }
+}
+check_stability_gain = {
+	hidden_effect = {
+		country_event = {
+			id = POP_Stability.002
+		}
+	}
+}
+
+check_stability_gain_full = {
+	### Check for Level up ###
+	if = {
+		limit = {
+			NOT = { check_variable = { which = national_multiplier_stability	value = 1.0 } }
+			check_variable = { which = stability_points 	value = 100 }
+		}
+		subtract_variable = { which = stability_points 		value = 100 }
+		base_add_stability = yes
+	}
+	if = {
+		limit = {
+			check_variable = { which = national_multiplier_stability	value = 1.0 }
+			NOT = { check_variable = { which = national_multiplier_stability	value = 1.1 } }
+			check_variable = { which = stability_points 	value = 150 }
+		}
+		subtract_variable = { which = stability_points 		value = 150 }
+		base_add_stability = yes
+	}
+	if = {
+		limit = {
+			check_variable = { which = national_multiplier_stability	value = 1.1 }
+			NOT = { check_variable = { which = national_multiplier_stability	value = 1.2 } }
+			check_variable = { which = stability_points 	value = 200 }
+		}
+		subtract_variable = { which = stability_points 		value = 200 }
+		base_add_stability = yes
+	}
+	if = {
+		limit = {
+			check_variable = { which = national_multiplier_stability	value = 1.2 }
+			NOT = { check_variable = { which = national_multiplier_stability value = 1.3 } }
+			check_variable = { which = stability_points 	value = 300 }
+		}
+		subtract_variable = { which = stability_points 		value = 300 }
+		base_add_stability = yes
+	}
+	if = {
+		limit = {
+			check_variable = { which = national_multiplier_stability	value = 1.3 }
+			check_variable = { which = stability_points 	value = 350 }
+		}
+		set_variable = { which = stability_points 		value = 350 }
+	}
+	get_multiplier_stability = yes
+	if = {
+		limit = {
+			has_country_flag = stability_changed
+		}
+		clr_country_flag = stability_changed
+		country_event = {
+			id = POP_Stability.001
+		}
+	}
+}
+
+base_add_stability = {
+	add_stability = 1
+	set_country_flag = stability_changed
+	if = {
+		limit = {
+			is_emperor_of_china = yes
+		}
+		add_mandate = 5
+	}
+}
+
+add_stability_6 = {
+	custom_tooltip = stability_points_gained_300
+	hidden_effect = {
+		change_variable = { which = stability_points 	value = 300 }
+		country_event = {
+			id = POP_Stability.002
+		}
+	}
+}
+
+add_stability_5 = {
+	custom_tooltip = stability_points_gained_250
+	hidden_effect = {
+		change_variable = { which = stability_points 	value = 250 }
+		country_event = {
+			id = POP_Stability.002
+		}
+	}
+}
+
+add_stability_4 = {
+	custom_tooltip = stability_points_gained_200
+	hidden_effect = {
+		change_variable = { which = stability_points 	value = 200 }
+		country_event = {
+			id = POP_Stability.002
+		}
+	}
+}
+
+add_stability_3 = {
+	custom_tooltip = stability_points_gained_150
+	hidden_effect = {
+		change_variable = { which = stability_points 	value = 150 }
+		country_event = {
+			id = POP_Stability.002
+		}
+	}
+}
+
+add_stability_2 = {
+	custom_tooltip = stability_points_gained_100
+	hidden_effect = {
+		change_variable = { which = stability_points 	value = 100 }
+		country_event = {
+			id = POP_Stability.002
+		}
+	}
+}
+
+add_stability_1 = {
+	custom_tooltip = stability_points_gained_50
+	hidden_effect = {
+		change_variable = { which = stability_points 	value = 50 }
+		country_event = {
+			id = POP_Stability.002
+		}
+	}
+}
+
+subtract_stability_points_50 = {
+	custom_tooltip = stability_points_lost_50
+	hidden_effect = {
+		subtract_variable = { which = stability_points 	value = 50 }
+		if = {
+			limit = {
+				NOT = { check_variable = { which = stability_points   value = 0 } }
+			}
+			add_stability = -1
+			country_event = {
+				id = POP_Stability.003
+			}
+			if = {
+				limit = {
+					is_emperor_of_china = yes
+				}
+				add_mandate = -5
+			}
+		}
+	}
+}
+
+subtract_stability_1 = {
+	add_stability = -1
+	hidden_effect = {
+		country_event = {
+			id = POP_Stability.003
+		}
+	}
+	if = {
+		limit = {
+			is_emperor_of_china = yes
+		}
+		add_mandate = -5
+	}
+}
+
+subtract_stability_2 = {
+	add_stability = -2
+	hidden_effect = {
+		country_event = {
+			id = POP_Stability.003
+		}
+	}
+	if = {
+		limit = {
+			is_emperor_of_china = yes
+		}
+		add_mandate = -10
+	}
+}
+
+subtract_stability_3 = {
+	add_stability = -3
+	hidden_effect = {
+		country_event = {
+			id = POP_Stability.003
+		}
+	}
+	if = {
+		limit = {
+			is_emperor_of_china = yes
+		}
+		add_mandate = -15
+	}
+}
+
+subtract_stability_4 = {
+	add_stability = -4
+	hidden_effect = {
+		country_event = {
+			id = POP_Stability.003
+		}
+	}
+	if = {
+		limit = {
+			is_emperor_of_china = yes
+		}
+		add_mandate = -20
+	}
+}
+
+subtract_stability_5 = {
+	add_stability = -5
+	hidden_effect = {
+		country_event = {
+			id = POP_Stability.003
+		}
+	}
+	if = {
+		limit = {
+			is_emperor_of_china = yes
+		}
+		add_mandate = -25
+	}
+}
+
+subtract_stability_6 = {
+	add_stability = -6
+	hidden_effect = {
+		country_event = {
+			id = POP_Stability.003
+		}
+	}
+	if = {
+		limit = {
+			is_emperor_of_china = yes
+		}
+		add_mandate = -30
+	}
+}

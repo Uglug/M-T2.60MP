@@ -1,0 +1,904 @@
+# Events concerning venetian festivities/flavour
+# by Marco Dandolo
+
+#Events 0-19 Festa della Sensa
+
+#0 Desponsamus te, mare
+#1 Preparations
+#2 Invitation to rival
+#3 Invitation to neighbour
+#4 Guest comes
+#5 Guest comes not
+#6 Procession
+#7 Banquet preparation
+#8 Ball preparation
+#9 Bucintoro damaged
+#10 Festivity begins
+#11 Festivity begins (guest)
+#12 A fine banquet
+#13 A fine banquet (guest)
+#14 Banquet, guest satisfied
+#15 Banquet, guest not satisfied
+#16 A serene ball
+#17 Diplomatic dispute (rival)
+#18 Thrown into channel (rival)
+#19 Sensa ends (guest)
+
+
+#####################
+# Festa della Sensa #
+#####################
+
+#Desponsamus te, mare
+country_event = {
+	id = festa_sensa.0
+	title = "festa_sensa.EVTNAME0"
+	desc = "festa_sensa.EVTDESC0"
+	picture = FESTA_SENSA_eventPicture
+	
+	trigger = {
+		merchant_trigger = yes
+		culture_group = latin
+		has_country_modifier = festivating_sensa
+		is_month = 8
+		NOT = {
+			has_country_modifier = glorious_sensa
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	option = {
+		
+		name = "festa_sensa.EVTOPTA0"	#Glory to the Doge!
+		
+		trigger = {
+			OR = {
+				adm = 3
+				dip = 3
+				mil = 3
+			}
+		}
+		
+		add_prestige = 7
+		add_republican_tradition = 3
+		remove_country_modifier = festivating_sensa
+		add_country_modifier = {
+			name = "glorious_sensa"
+			duration = 3650
+		}
+		
+		clr_country_flag = sensa_procession
+		clr_country_flag = sensa_bankett
+		clr_country_flag = sensa_much_food
+		clr_country_flag = sensa_some_food
+		clr_country_flag = sensa_little_food
+		clr_country_flag = sensa_no_food
+		clr_country_flag = sensa_ball
+		clr_country_flag = sensa_ball_yes
+		clr_country_flag = sensa_ball_no
+		clr_country_flag = sensa_bucintoro
+		clr_country_flag = sensa_fine_bankett
+		clr_country_flag = sensa_scandal_ball
+		clr_country_flag = sensa_ball_two
+		clr_country_flag = sensa_decision
+		
+		every_country = {
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = rival_at_sensa
+						has_country_flag = neighbour_at_sensa
+					}
+				}
+				country_event = { id = festa_sensa.19 }
+			}
+			#if = {
+			#	limit = {
+			#		has_country_flag = neighbour_at_sensa
+			#	}
+			#	country_event = { id = festa_sensa.19 }
+			#}
+		}
+		
+		#every_country = {
+		#	limit = {
+		#		has_country_flag = neighbour_at_sensa
+		#	}
+		#	country_event = { id = festa_sensa.19 }
+		#}
+		
+		custom_tooltip = doge_add
+		doge_power_add_effect = yes
+	}
+	
+	option = {
+		name = "festa_sensa.EVTOPTB0"	#Glory to Saint Mark!
+		
+		add_prestige = 12
+		add_republican_tradition = 10
+		remove_country_modifier = festivating_sensa
+		add_country_modifier = {
+			name = "glorious_sensa"
+			duration = 3650
+		}
+		
+		clr_country_flag = sensa_procession
+		clr_country_flag = sensa_bankett
+		clr_country_flag = sensa_much_food
+		clr_country_flag = sensa_some_food
+		clr_country_flag = sensa_little_food
+		clr_country_flag = sensa_no_food
+		clr_country_flag = sensa_ball
+		clr_country_flag = sensa_ball_yes
+		clr_country_flag = sensa_ball_no
+		clr_country_flag = sensa_bucintoro
+		clr_country_flag = sensa_fine_bankett
+		clr_country_flag = sensa_scandal_ball
+		clr_country_flag = sensa_ball_two
+		clr_country_flag = sensa_decision
+		
+		every_country = {
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = rival_at_sensa
+						has_country_flag = neighbour_at_sensa
+					}
+				}
+				country_event = { id = festa_sensa.19 }
+			}
+			#if = {
+			#	limit = {
+			#		has_country_flag = neighbour_at_sensa
+			#	}
+			#	country_event = { id = festa_sensa.19 }
+			#}
+		}
+		
+		#every_country = {
+		#	limit = {
+		#		has_country_flag = neighbour_at_sensa
+		#	}
+		#	country_event = { id = festa_sensa.19 }
+		#}
+	}
+}
+
+#Preparations
+country_event = {
+	id = festa_sensa.1
+	title = "festa_sensa.EVTNAME1"
+	desc = "festa_sensa.EVTDESC1"
+	picture = FESTA_SENSA_eventPicture
+	
+	is_triggered_only = yes
+	
+	
+	option = {
+		name = "festa_sensa.EVTOPTA1"	#We shall invite a rival
+		
+		add_dip_power = -10
+		random_rival_country = {
+			country_event = {
+				id = festa_sensa.2
+			}
+		}
+		add_prestige = 1
+		add_country_modifier = {
+			name = "preparing_sensa"
+			duration = -1
+		}
+	}
+	
+	option = {
+		name = "festa_sensa.EVTOPTB1"	#We shall invite a neighbour
+		
+		add_dip_power = -5
+		random_neighbor_country = {
+			country_event = { id = festa_sensa.3 }
+		}
+		add_prestige = 1
+		add_country_modifier = {
+			name = "preparing_sensa"
+			duration = -1
+		}
+	}
+	
+	option = {
+		name = "festa_sensa.EVTOPTC1"	#No invitations this time
+		
+		add_prestige = -1
+		add_country_modifier = {
+			name = "preparing_sensa"
+			duration = -1
+		}
+	}
+}
+
+#Invitation for rival
+country_event = {
+	id = festa_sensa.2
+	title = "festa_sensa.EVTNAME2"
+	desc = "festa_sensa.EVTDESC2"
+	picture = FESTA_SENSA_eventPicture
+	
+	is_triggered_only = yes
+	
+	
+	option = {
+		name = "festa_sensa.EVTOPTA2"	#An invitation? Lovely!
+		
+		add_dip_power = -5
+		FROM = {
+			country_event = { id = festa_sensa.4 }
+		}
+		add_prestige = 2
+		set_country_flag = rival_at_sensa
+	}
+	
+	option = {
+		name = "festa_sensa.EVTOPTB2"	#We won't come
+		
+		add_prestige = -2
+		FROM = {
+			country_event = { id = festa_sensa.5 }
+		}
+	}
+}
+
+#Invitation for neighbour
+country_event = {
+	id = festa_sensa.3
+	title = "festa_sensa.EVTNAME2"
+	desc = "festa_sensa.EVTDESC2"
+	picture = FESTA_SENSA_eventPicture
+	
+	is_triggered_only = yes
+	
+	
+	option = {
+		name = "festa_sensa.EVTOPTA2"	#An invitation? Lovely!
+		
+		add_dip_power = -5
+		FROM = {
+			country_event = { id = festa_sensa.4 }
+		}
+		add_prestige = 2
+		set_country_flag = neighbour_at_sensa
+		ai_chance = { factor = 75 }
+	}
+	
+	option = {
+		name = "festa_sensa.EVTOPTB2"	#We won't come
+		
+		add_prestige = -2
+		FROM = {
+			country_event = { id = festa_sensa.5 }
+		}
+	}
+}
+
+#Guest comes
+country_event = {
+	id = festa_sensa.4
+	title = "festa_sensa.EVTNAME4"
+	desc = "festa_sensa.EVTDESC4"
+	picture = FESTA_SENSA_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "festa_sensa.EVTOPTA4"	#Wonderful!
+	}
+}
+
+#Guest stays at home
+country_event = {
+	id = festa_sensa.5
+	title = "festa_sensa.EVTNAME5"
+	desc = "festa_sensa.EVTDESC5"
+	picture = FESTA_SENSA_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "festa_sensa.EVTOPTA5"	#How unfortunate
+		add_prestige = -1
+	}
+}
+
+#The procession
+country_event = {
+	id = festa_sensa.6
+	title = "festa_sensa.EVTNAME6"
+	desc = "festa_sensa.EVTDESC6"
+	picture = PIAZZA_SAN_MARCO_eventPicture
+	
+	trigger = {
+		has_country_modifier = preparing_sensa
+		#merchant_trigger = yes
+		culture_group = latin
+		NOT = {
+			has_country_flag = sensa_procession
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = "festa_sensa.EVTOPTA6"	#The Members of the Ten first
+		
+		add_republican_tradition = 1
+		set_country_flag = sensa_procession
+		
+		custom_tooltip = consiglio_x_add
+		consiglio_x_power_add_effect = yes
+		custom_tooltip = consiglio_p_sub
+		change_variable = {
+			which = "consiglio_p_power"
+			value = -3
+		}
+		custom_tooltip = consiglio_m_sub
+		change_variable = {
+			which = "consiglio_m_power"
+			value = -3
+		}
+	}
+	
+	option = {
+		name = "festa_sensa.EVTOPTB6"	#The members of the Senate first
+		
+		add_prestige = 1
+		set_country_flag = sensa_procession
+		
+		custom_tooltip = consiglio_p_add
+		consiglio_p_power_add_effect = yes
+		custom_tooltip = consiglio_m_sub
+		consiglio_m_power_sub_effect = yes
+		custom_tooltip = consiglio_x_sub
+		consiglio_x_power_sub_effect = yes
+	}
+	
+	option = {
+		name = "festa_sensa.EVTOPTC6"	#The other members of the Maggior Consiglio
+		
+		add_years_of_income = 0.05
+		set_country_flag = sensa_procession
+		
+		custom_tooltip = consiglio_m_add
+		consiglio_m_power_add_effect = yes
+		custom_tooltip = consiglio_p_sub
+		consiglio_p_power_sub_effect = yes
+		custom_tooltip = consiglio_x_sub
+		consiglio_x_power_sub_effect = yes
+	}
+	
+	
+	option = {
+		name = "festa_sensa.EVTOPTD6"	#I'm not interested in this discussion
+		set_country_flag = sensa_procession
+	}
+}
+
+#Bankett
+country_event = {
+	id = festa_sensa.7
+	title = "festa_sensa.EVTNAME7"
+	desc = "festa_sensa.EVTDESC7"
+	picture = FEAST_eventPicture
+	
+	trigger = {
+		has_country_modifier = preparing_sensa
+		#merchant_trigger = yes
+		culture_group = latin
+		NOT = {
+			has_country_flag = sensa_bankett
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = "festa_sensa.EVTOPTA7"	#Banketts on every piazza and everything for free
+		
+		add_years_of_income = -0.10
+		add_republican_tradition = 5
+		add_prestige = 1
+		set_country_flag = sensa_bankett
+		set_country_flag = sensa_much_food
+	}
+	
+	option = {
+		name = "festa_sensa.EVTOPTB7"	#Some exclusive banketts in extraordinary palazzi
+		
+		add_years_of_income = -0.08
+		add_republican_tradition = 4
+		set_country_flag = sensa_bankett
+		set_country_flag = sensa_some_food
+	}
+	
+	option = {
+		name = "festa_sensa.EVTOPTC7"	#Don't exaggerate
+		
+		add_years_of_income = -0.06
+		add_republican_tradition = 3
+		set_country_flag = sensa_bankett
+		set_country_flag = sensa_little_food
+	}
+	
+	
+	option = {
+		name = "festa_sensa.EVTOPTD7"	#I'm not a medieval lord, spending 'lavishly on food'
+		set_country_flag = sensa_bankett
+		set_country_flag = sensa_no_food
+	}
+}
+
+#Ball
+country_event = {
+	id = festa_sensa.8
+	title = "festa_sensa.EVTNAME8"
+	desc = "festa_sensa.EVTDESC8"
+	picture = THEATRE_eventPicture
+	
+	trigger = {
+		has_country_modifier = preparing_sensa
+		#merchant_trigger = yes
+		culture_group = latin
+		NOT = {
+			has_country_flag = sensa_ball
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = "festa_sensa.EVTOPTA8"	#We shall host a Ball
+		
+		add_years_of_income = -0.05
+		add_republican_tradition = 1
+		add_prestige = 1
+		set_country_flag = sensa_ball
+		set_country_flag = sensa_ball_yes
+	}
+	
+	option = {
+		name = "festa_sensa.EVTOPTB8"	#Why only one? We shall host two!
+		
+		add_years_of_income = -0.1
+		add_republican_tradition = 2
+		add_prestige = 2
+		set_country_flag = sensa_ball
+		set_country_flag = sensa_ball_yes
+		set_country_flag = sensa_ball_two
+	}
+	
+	option = {
+		name = "festa_sensa.EVTOPTC8"	#I can't dance, I can't talk...
+		
+		set_country_flag = sensa_ball
+		set_country_flag = sensa_ball_no
+	}
+}
+
+#Bucintoro
+country_event = {
+	id = festa_sensa.9
+	title = "festa_sensa.EVTNAME9"
+	desc = "festa_sensa.EVTDESC9"
+	picture = FESTA_SENSA_eventPicture
+	
+	trigger = {
+		merchant_trigger = yes
+		culture_group = latin
+		overextension_percentage = 0.5
+		
+		has_country_modifier = preparing_sensa
+		NOT = {
+			has_country_flag = sensa_bucintoro
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+		modifier = {
+			factor = 0.9
+			overextension_percentage = 0.6
+		}
+		modifier = {
+			factor = 0.9
+			overextension_percentage = 0.7
+		}
+		modifier = {
+			factor = 0.9
+			overextension_percentage = 0.8
+		}
+		modifier = {
+			factor = 0.9
+			overextension_percentage = 0.9
+		}
+	}
+	
+	option = {
+		name = "festa_sensa.EVTOPTA9"	#We must repair it
+		
+		add_years_of_income = -0.03
+		set_country_flag = sensa_bucintoro
+	}
+	
+	option = {
+		name = "festa_sensa.EVTOPTB9"	#The Bucintoro seems perfect!
+		
+		add_republican_tradition = -1
+		add_prestige = -1
+		set_country_flag = sensa_bucintoro
+	}
+}
+
+#Festivities begin!
+country_event = {
+	id = festa_sensa.10
+	title = "festa_sensa.EVTNAME10"
+	desc = "festa_sensa.EVTDESC10"
+	picture = FESTA_SENSA_eventPicture
+	
+	trigger = {
+		merchant_trigger = yes
+		culture_group = latin
+		
+		has_country_modifier = preparing_sensa
+		has_country_flag = sensa_procession
+		has_country_flag = sensa_bankett
+		has_country_flag = sensa_ball
+		
+		NOT = {
+			has_country_modifier = festivating_sensa
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	option = {
+		name = "festa_sensa.EVTOPTA10"	#Viva San Marco!
+		
+		remove_country_modifier = preparing_sensa
+		add_country_modifier = {
+			name = "festivating_sensa"
+			duration = -1
+		}
+		
+		every_country = {
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = rival_at_sensa
+						has_country_flag = neighbour_at_sensa
+					}
+				}
+				country_event = { id = festa_sensa.11 }
+			}
+			#if = {
+			#	limit = {
+			#		has_country_flag = neighbour_at_sensa
+			#	}
+			#	country_event = { id = festa_sensa.11 }
+			#}
+		}
+		
+		#every_country = {
+		#	limit = {
+		#		has_country_flag = neighbour_at_sensa
+		#	}
+		#	country_event = { id = festa_sensa.11 }
+		#}
+	}
+}
+
+#Guest notification
+country_event = {
+	id = festa_sensa.11
+	title = "festa_sensa.EVTNAME10"
+	desc = "festa_sensa.EVTDESC11"
+	picture = FESTA_SENSA_eventPicture
+	
+	is_triggered_only = yes
+	
+	
+	option = {
+		name = "festa_sensa.EVTOPTA11"	#I'm so excited
+	}
+}
+
+#A fine Bankett
+country_event = {
+	id = festa_sensa.12
+	title = "festa_sensa.EVTNAME12"
+	desc = "festa_sensa.EVTDESC12"
+	picture = FEAST_eventPicture
+	
+	trigger = {
+		merchant_trigger = yes
+		culture_group = latin
+		has_country_modifier = festivating_sensa
+		OR = {
+			has_country_flag = sensa_much_food
+			has_country_flag = sensa_some_food
+		}
+		NOT = {
+			has_country_flag = sensa_fine_bankett
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+		modifier = {
+			factor = 0.5
+			has_country_flag = sensa_much_food
+		}
+	}
+	
+	option = {
+		name = "festa_sensa.EVTOPTA12"	#I want to discuss something with a member of the Ten
+		
+		set_country_flag = sensa_fine_bankett
+		
+		custom_tooltip = consiglio_x_add
+		consiglio_x_power_add_effect = yes
+	}
+	
+	option = {
+		name = "festa_sensa.EVTOPTB12"	#There is a problem I have to clear with a Senator
+		
+		set_country_flag = sensa_fine_bankett
+		
+		custom_tooltip = consiglio_p_add
+		consiglio_p_power_add_effect = yes
+	}
+	
+	option = {
+		name = "festa_sensa.EVTOPTC12"	#A talk with a friend from the Maggior Consiglio would be fine
+		
+		set_country_flag = sensa_fine_bankett
+		
+		custom_tooltip = consiglio_m_add
+		consiglio_m_power_add_effect = yes
+	}
+	
+	
+	option = {
+		name = "festa_sensa.EVTOPTD12"	#I'm not interested in any talk
+		
+		set_country_flag = sensa_fine_bankett
+		add_republican_tradition = 1
+	}
+}
+
+#A fine Bankett (Guest)
+country_event = {
+	id = festa_sensa.13
+	title = "festa_sensa.EVTNAME13"
+	desc = "festa_sensa.EVTDESC13"
+	picture = FEAST_eventPicture
+	
+	trigger = {
+		OR = {
+			has_country_flag = neighbour_at_sensa
+			has_country_flag = rival_at_sensa
+		}
+		any_known_country = {
+			has_country_modifier = festivating_sensa
+		}
+		NOT = { has_country_flag = sensa_fine_bankett_guest }
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = "festa_sensa.EVTOPTA13"	#I've never seen so much food
+		
+		trigger = {
+			any_known_country = {
+				has_country_flag = sensa_much_food
+			}
+			NOT = {
+				any_known_country = {
+					has_country_flag = sensa_no_food
+				}
+			}
+		}
+		
+		set_country_flag = sensa_fine_bankett_guest
+		add_prestige = 1
+		every_country = {
+			limit = {
+				has_country_modifier = festivating_sensa
+			}
+			country_event = { id = festa_sensa.14 }
+			add_opinion = {
+				who = PREV
+				modifier = opinion_pleased
+			}
+		}
+	}
+	
+	option = {
+		name = "festa_sensa.EVTOPTB13"	#It could've been better
+		
+		trigger = {
+			NOT = {
+				any_known_country = {
+					has_country_flag = sensa_much_food
+				}
+			}
+		}
+		
+		set_country_flag = sensa_fine_bankett_guest
+		every_country = {
+			limit = {
+				has_country_modifier = festivating_sensa
+			}
+			country_event = { id = festa_sensa.15 }
+			add_opinion = {
+				who = PREV
+				modifier = opinion_mildly_displeased
+			}
+		}
+	}
+}
+
+#Host notification (bankett was good)
+country_event = {
+	id = festa_sensa.14
+	title = "festa_sensa.EVTNAME14"
+	desc = "festa_sensa.EVTDESC14"
+	picture = FEAST_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "festa_sensa.EVTOPTA14"	#Thank you
+		add_prestige = 1
+		add_opinion = {
+			who = FROM
+			modifier = opinion_pleased
+		}
+	}
+}
+
+#Host notification (bankett was bad)
+country_event = {
+	id = festa_sensa.15
+	title = "festa_sensa.EVTNAME15"
+	desc = "festa_sensa.EVTDESC15"
+	picture = FEAST_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "festa_sensa.EVTOPTA15"	#What?
+		add_prestige = -2
+		add_opinion = {
+			who = FROM
+			modifier = opinion_mildly_displeased
+		}
+	}
+}
+
+#Scandal at the ball
+country_event = {
+	id = festa_sensa.16
+	title = "festa_sensa.EVTNAME16"
+	desc = "festa_sensa.EVTDESC16"
+	picture = FESTA_SENSA_eventPicture
+	
+	trigger = {
+		has_country_modifier = festivating_sensa
+		merchant_trigger = yes
+		culture_group = latin
+		any_known_country = {
+			has_country_flag = rival_at_sensa
+		}
+		has_country_flag = sensa_ball_yes
+		NOT = { has_country_flag = sensa_scandal_ball }
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = "festa_sensa.EVTOPTA16"	#Let's have a talk
+		trigger = {
+			dip = 2
+		}
+		set_country_flag = sensa_scandal_ball
+		add_prestige = 1
+		every_country = {
+			limit = {
+				has_country_flag = rival_at_sensa
+			}
+			country_event = { id = festa_sensa.17 }
+			add_opinion = {
+				who = PREV
+				modifier = opinion_pleased
+			}
+		}
+	}
+	
+	option = {
+		name = "festa_sensa.EVTOPTB16"	#Let's have fun!
+		
+		set_country_flag = sensa_scandal_ball
+		add_prestige = 5
+		every_country = {
+			limit = {
+				has_country_flag = rival_at_sensa
+			}
+			country_event = { id = festa_sensa.18 }
+			add_opinion = {
+				who = PREV
+				modifier = opinion_mildly_displeased
+			}
+		}
+	}
+}
+
+#Rival notification (diplomatic dispute)
+country_event = {
+	id = festa_sensa.17
+	title = "festa_sensa.EVTNAME17"
+	desc = "festa_sensa.EVTDESC17"
+	picture = FESTA_SENSA_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "festa_sensa.EVTOPTA17"	#Thank you
+		add_prestige = 1
+		add_opinion = {
+			who = FROM
+			modifier = opinion_pleased
+		}
+	}
+}
+
+#Rival notification (thrown into water)
+country_event = {
+	id = festa_sensa.18
+	title = "festa_sensa.EVTNAME18"
+	desc = "festa_sensa.EVTDESC18"
+	picture = FESTA_SENSA_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "festa_sensa.EVTOPTA18"	#What?!
+		add_prestige = -5
+		add_opinion = {
+			who = FROM
+			modifier = opinion_mildly_displeased
+		}
+	}
+}
+
+#Final guest notification (end of Sensa)
+country_event = {
+	id = festa_sensa.19
+	title = "festa_sensa.EVTNAME19"
+	desc = "festa_sensa.EVTDESC19"
+	picture = FESTA_SENSA_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "festa_sensa.EVTOPTA19"	#Back home
+		add_prestige = 1
+		
+		clr_country_flag = rival_at_sensa
+		clr_country_flag = neighbour_at_sensa
+		clr_country_flag = sensa_fine_bankett_guest
+	}
+}

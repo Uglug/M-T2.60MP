@@ -1,0 +1,274 @@
+namespace = POP_weather
+
+### By Demian
+
+country_event = {
+	id = POP_weather.001
+	title = POP_weather.001.t
+	desc = POP_weather.001.d
+	picture = REFORM_eventPicture
+	#is_triggered_only = yes
+	hidden = no
+	
+	trigger = {
+		has_country_flag = center_of_universe
+		NOT = { has_country_modifier = drought_assignment }
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	immediate = {
+		add_country_modifier = {
+			name = drought_assignment
+			duration = 1825
+			hidden = yes
+		}
+		
+		regiongroup = {
+			region = {
+				limit = {
+					is_wasteland = no
+				}
+				set_variable = { which = local_weather_factor 		value = 1 } ### Fail safe, set to 1 just in case
+				set_variable = { which = local_weather_multiplier   value = 1 }
+			}
+		}
+		
+		srgroup = {
+			random_list = {
+				5 = {  set_variable = { which = local_weather_factor 	value = 1.25 } }
+				10 = { set_variable = { which = local_weather_factor 	value = 1.111 } }
+				20 = { set_variable = { which = local_weather_factor 	value = 1.052 } }
+				30 = { set_variable = { which = local_weather_factor 	value = 1 } }
+				20 = { set_variable = { which = local_weather_factor 	value = 0.95 } }
+				10 = { set_variable = { which = local_weather_factor 	value = 0.90 } }
+				5 = {  set_variable = { which = local_weather_factor 	value = 0.80 } }
+			}
+			
+			every_province = {
+				limit = {
+					has_province_flag = part_of_@PREV
+				}
+				set_variable = { which = local_weather_factor which = PREV }
+			}
+			
+			set_variable = { which = local_weather_factor value = 0 }
+		}
+		
+		contgroup = {
+			set_variable = { which = local_weather_multiplier   value = 1 }
+			
+			trigger_switch = {
+				on_trigger = has_province_flag
+				
+				excellent_climate = {
+					clr_province_flag = excellent_climate
+					
+					random_list = {
+						20 = { set_province_flag = excellent_climate }
+						30 = { set_province_flag = good_climate }
+						50 = { set_province_flag = fair_climate }
+					}
+				}
+				good_climate = {
+					clr_province_flag = good_climate
+					
+					random_list = {
+						15 = { set_province_flag = excellent_climate }
+						25 = { set_province_flag = good_climate }
+						35 = { set_province_flag = fair_climate }
+						25 = { set_province_flag = average_climate }
+					}
+				}
+				fair_climate = {
+					clr_province_flag = fair_climate
+					
+					random_list = {
+						5 = { set_province_flag = excellent_climate }
+						20 = { set_province_flag = good_climate }
+						25 = { set_province_flag = fair_climate }
+						35 = { set_province_flag = average_climate }
+						15 = { set_province_flag = poor_climate }
+					}
+				}
+				average_climate = {
+					clr_province_flag = average_climate
+					
+					random_list = {
+						10 = { set_province_flag = good_climate }
+						20 = { set_province_flag = fair_climate }
+						40 = { set_province_flag = average_climate }
+						20 = { set_province_flag = poor_climate }
+						10 = { set_province_flag = bad_climate }
+					}
+				}
+				poor_climate = {
+					clr_province_flag = poor_climate
+					
+					random_list = {
+						15 = { set_province_flag = fair_climate }
+						35 = { set_province_flag = average_climate }
+						25 = { set_province_flag = poor_climate }
+						20 = { set_province_flag = bad_climate }
+						5 = { set_province_flag = terrible_climate }
+					}
+				}
+				bad_climate = {
+					clr_province_flag = bad_climate
+					
+					random_list = {
+						25 = { set_province_flag = average_climate }
+						35 = { set_province_flag = poor_climate }
+						25 = { set_province_flag = bad_climate }
+						15 = { set_province_flag = terrible_climate }
+					}
+				}
+				terrible_climate = {
+					clr_province_flag = terrible_climate
+					
+					random_list = {
+						50 = { set_province_flag = poor_climate }
+						30 = { set_province_flag = bad_climate }
+						20 = { set_province_flag = terrible_climate }
+					}
+				}
+			}
+			trigger_switch = {
+				on_trigger = has_province_flag
+				
+				excellent_climate = {
+					set_variable = { which = local_weather_multiplier   value = 1.2 }
+				}
+				good_climate = {
+					set_variable = { which = local_weather_multiplier   value = 1.125 }
+				}
+				fair_climate = {
+					set_variable = { which = local_weather_multiplier   value = 1.05 }
+				}
+				average_climate = {
+					set_variable = { which = local_weather_multiplier   value = 1 }
+				}
+				poor_climate = {
+					set_variable = { which = local_weather_multiplier   value = 0.9 }
+				}
+				bad_climate = {
+					set_variable = { which = local_weather_multiplier   value = 0.8 }
+				}
+				terrible_climate = {
+					set_variable = { which = local_weather_multiplier   value = 0.7 }
+				}
+			}
+			
+			every_province = {
+				limit = {
+					has_province_flag = part_cont_of_@PREV
+				}
+				set_variable = { which = local_weather_multiplier   which = PREV }
+				
+				multiply_variable = { which = local_weather_factor 	which = local_weather_multiplier }
+				
+				set_variable = { which = local_weather_multiplier value = 0 }
+			}
+			
+			set_variable = { which = local_weather_multiplier value = 0 }
+		}
+	}
+	
+	option = {
+		name = "POP_weather.001.a"
+		
+		#	country_event = {
+		#		id = POP_weather.002
+		#	}
+	}
+}
+
+country_event = {  ### Innate Fertility Calculations
+	id = POP_weather.002
+	title = POP_weather.002.t
+	desc = POP_weather.002.d
+	picture = REFORM_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	
+	immediate = {
+		
+		regiongroup = {
+			region = {
+				set_variable = { which = innate_rural_pop 	value = 0 }
+				
+				### 1st Tier Arability ###
+				if = {
+					limit = {
+						OR = {
+							grass_trigger = yes
+							shrub_trigger = yes
+						}
+					}
+					set_variable = { which = innate_rural_pop 	value = 1 }
+				}
+				
+				### 2nd Tier Arability ###
+				if = {
+					limit = {
+						OR = {
+							wood_trigger = yes     ### Forests Cleared
+							AND = {
+								has_terrain = marsh       ### Marsh Drained
+								has_province_flag = marsh_developed
+							}
+						}
+					}
+					set_variable = { which = innate_rural_pop 	value = 0.8 }
+				}
+				
+				### 3rd Tier Arability ###
+				if = {
+					limit = {
+						OR = {
+							has_port = yes				### Dikes and Levies
+							hills_trigger = yes			### Terraced Hills
+							forest_trigger = yes		### Forests Cleared
+							has_terrain = taiga			### Taiga's Cleared
+							AND = {
+								has_terrain = marsh     ### Marsh Drained
+								NOT = { has_province_flag = marsh_developed }
+							}
+						}
+					}
+					set_variable = { which = innate_rural_pop 	value = 0.6 }
+				}
+				
+				### 4th Tier Arability ###
+				if = {
+					limit = {
+						OR = {
+							jungle_trigger = yes		### Clearing Jungles
+							highlands_trigger = yes		### Highland Farming
+							desert_trigger = yes		### Mountain Farming
+							#has_terrain = steppe		### Irrigation Canals
+						}
+					}
+					set_variable = { which = innate_rural_pop 	value = 0.5 }
+				}
+				
+				### 5th Tier Arability ###
+				if = {
+					limit = {
+						desert_trigger = yes			### Desert Irrigation
+					}
+					set_variable = {  which = innate_rural_pop 	value = 0.4 }
+				}
+				set_variable = { which = innate_rural_pop_tech which = owner }
+				multiply_variable = { which = innate_rural_pop 	which = innate_rural_pop_tech }
+				multiply_variable = { which = innate_rural_pop    which = innate_rural_pop_base }
+				
+				set_variable = { which = innate_rural_pop_tech value = 0 }
+			}
+		}
+	}
+	option = {
+		name = "POP_weather.002.a"
+	}
+}

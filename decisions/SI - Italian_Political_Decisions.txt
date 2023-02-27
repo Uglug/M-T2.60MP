@@ -1,0 +1,406 @@
+# Serenissima Italia Political Decisions
+# by Marco Dandolo
+
+country_decisions = {
+	move_capital_to_torino = {
+		major = yes
+		potential = {
+			capital = 205
+			OR = {
+				tag = SAV
+				tag = SPI
+			}
+			NOT = { has_country_flag = savoia_moved_to_torino }
+		}
+		allow = {
+			adm_tech = 18
+			years_of_income = 0.35
+			is_at_war = no
+			owns = 103 # Piemonte
+		}
+		effect = {
+			add_years_of_income = -0.25
+			add_prestige = 5
+			#103 = { add_base_tax = 1 }
+			#103 = { add_base_manpower = 1 }
+			Effect_set_capital = { target=103 }
+			if = {
+				limit = {
+					NOT = { primary_culture = piedmontese }
+				}
+				change_primary_culture = piedmontese
+			}
+			set_country_flag = savoia_moved_to_torino
+		}
+		
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	move_capital_to_pesaro = {
+		major = yes
+		potential = {
+			tag = URB
+			capital = 1414
+			NOT = { has_country_flag = urbino_moved_to_pesaro }
+		}
+		allow = {
+			adm_tech = 18
+			years_of_income = 0.35
+			is_at_war = no
+			owns = 3700 #Meiou
+		}
+		effect = {
+			add_years_of_income = -0.25
+			add_prestige = 7
+			#3700 = { add_base_tax = 1 }
+			#3700 = { add_base_manpower = 1 }
+			Effect_set_capital = { target=3700 }
+			set_country_flag = urbino_moved_to_pesaro
+		}
+		
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	finish_duomo_di_siena = {
+		major = yes
+		potential = {
+			tag = SIE
+			capital = 117
+			NOT = { has_country_flag = siena_duomo_build }
+		}
+		allow = {
+			piety = -0.20
+			religion = catholic
+			adm_tech = 15
+			OR = {
+				adm = 4
+				advisor = architect
+			}
+			treasury = 1200
+			is_at_war = no
+			owns = 117 # Siena
+		}
+		effect = {
+			add_treasury = -1000
+			add_prestige = 20
+			add_adm_power = 100
+			#117 = { add_base_tax = 1 }
+			#117 = { add_base_manpower = 1 }
+			117 = { add_building = temple }
+			set_country_flag = siena_duomo_build
+		}
+		
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	become_duke_of_mantua = {
+		major = yes
+		potential = {
+			tag = MAN
+			government = monarchy
+			NOT = { has_country_modifier = title_3 }
+			NOT = { has_country_flag = duke_of_mantua }
+		}
+		allow = {
+			adm_tech = 15
+			is_at_war = no
+			109 = { is_part_of_hre = yes }
+			years_of_income = 1.5
+		}
+		effect = {
+			add_years_of_income = -1
+			add_prestige = 10
+			feudalisation_effect = yes
+			change_title_3 = yes
+			add_legitimacy = 50
+			set_country_flag = duke_of_mantua
+		}
+		
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	become_duke_of_milan = {
+		major = yes
+		potential = {
+			tag = MLO
+			government = monarchy
+			NOT = { has_country_modifier = title_3 }
+			NOT = { has_country_flag = duke_of_milan }
+		}
+		allow = {
+			adm_tech = 10
+			is_at_war = no
+			prestige = 10
+			legitimacy = 70
+			104 = { is_part_of_hre = yes }
+			years_of_income = 1.5
+		}
+		effect = {
+			add_years_of_income = -1
+			add_prestige = 10
+			feudalisation_effect = yes
+			change_title_3 = yes
+			add_legitimacy = 50
+			set_country_flag = duke_of_milan
+		}
+		
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	create_duchy_for_family = {
+		major = yes
+		potential = {
+			1346 = { # Parma
+				owned_by = ROOT
+				NOT = { is_core = ROOT }
+				NOT = { is_core = PAR }
+			}
+			NOT = { tag = MLO }
+			NOT = { exists = PAR }
+			NOT = {
+				owns = 101 # Liguria
+				owns = 104 # Lombardia
+				owns = 106 # Modena
+				owns = 1347 # Pavia
+				owns = 2564 # Massa
+				owns = 2372 # Cremona
+			}
+		}
+		allow = {
+			government = monarchy
+			is_at_war = no
+		}
+		effect = {
+			add_prestige = 15
+			add_legitimacy = 30
+			1346 = { add_core = PAR }
+			create_vassal = PAR
+			PAR = {
+				define_ruler = {
+					name = "Alessandro"
+					dynasty = ROOT
+				}
+			}
+		}
+		
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	establish_livorno_harbour = {
+		major = yes
+		potential = {
+			owns = 3868 # Livorno
+			#OR = {
+			#	tag = TUS
+			#	tag = PIS
+			#	tag = FIR
+			#	tag = ITA
+			#}
+			capital_scope = { superregion = italy_superregion }
+			3868 = {
+				NOT = { has_province_modifier = livorno_natural_harbour }
+			}
+			
+			1380 = {
+				NOT = { has_province_flag = has_natural_harbour }
+			}
+		}
+		allow = {
+			adm_tech = 18
+			treasury = 600
+			is_at_war = no
+			adm = 3
+			owns = 1380 # Pisa
+			owns = 3868 # Livorno
+			3868 = { has_harbour_infrastructure_1 = yes }
+		}
+		effect = {
+			add_treasury = -500
+			add_adm_power = -50
+			3868 = {
+				add_permanent_province_modifier = {
+					name = "livorno_natural_harbour"
+					duration = -1
+				}
+				set_province_flag = has_natural_harbour
+				set_province_flag = has_small_natural_harbour
+				set_province_flag = good_natural_place
+				remove_province_modifier = lack_of_harbour
+			}
+		}
+		
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	reestablish_pisa = {
+		major = yes
+		potential = {
+			tag = PIS
+			capital = 1380 # Pisa
+			1380 = { has_province_modifier = lack_of_harbour }
+		}
+		allow = {
+			treasury = 750
+			is_at_war = no
+			adm = 3
+			adm_tech = 15
+			owns = 1380 # Pisa
+		}
+		effect = {
+			add_treasury = -500
+			add_adm_power = -50
+			1380 = {
+				remove_province_modifier = lack_of_harbour
+			}
+		}
+		
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	develop_pisa = {
+		major = yes
+		potential = {
+			owns = 1380 # Pisa
+			#OR = {
+			#	tag = TUS
+			#	tag = FIR
+			#	tag = ITA
+			#}
+			capital_scope = { superregion = italy_superregion }
+			1380 = {
+				has_province_modifier = lack_of_harbour
+				base_production = 3 # Non Pisa based rulers need a real reason
+			}
+		}
+		allow = {
+			treasury = 750
+			is_at_war = no
+			adm = 3
+			adm_tech = 15
+			owns = 1380 # Pisa
+		}
+		effect = {
+			add_treasury = -500
+			add_adm_power = -50
+			1380 = {
+				remove_province_modifier = lack_of_harbour
+			}
+		}
+		
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	build_the_ravenna_canal = {
+		major = yes
+		potential = {
+			owns = 3867 # Ravenna
+			adm_tech = 14
+			capital_scope = { superregion = italy_superregion }
+			3867 = {
+				NOT = {
+					has_province_modifier = romagna_natural_harbour
+				}
+			}
+		}
+		allow = {
+			adm_tech = 18
+			is_at_war = no
+			ADM = 3
+			treasury = 600
+			adm_power = 100
+			3867 = { has_harbour_infrastructure_2 = yes }
+		}
+		effect = {
+			3867 = {
+				add_permanent_province_modifier = {
+					name = "romagna_natural_harbour"
+					duration = -1
+				}
+				set_province_flag = has_natural_harbour
+				set_province_flag = has_small_natural_harbour
+				set_province_flag = good_natural_place
+			}
+			add_treasury = -500
+			add_adm_power = -100
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 25
+	}
+	create_order_santo_stefano = {
+		major = yes
+		potential = {
+			tag = TUS
+			NOT = { has_country_modifier = order_of_santo_stefano }
+		}
+		allow = {
+			mil = 3
+			years_of_income = 0.25
+			num_of_ports = 2
+			num_of_galley = 5
+		}
+		effect = {
+			add_years_of_income = -0.15
+			add_prestige = 5
+			add_papal_influence = 15
+			add_country_modifier = {
+				name = "order_of_santo_stefano"
+				duration = -1
+			}
+			set_country_flag = order_of_santo_stefano
+		}
+		
+		
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	signoria_to_monarchy = {
+		major = yes
+		potential = {
+			OR = {
+				constitutionalm_trigger = yes
+				administratisation_trigger = yes
+			}
+			is_free_or_tributary_trigger = yes
+		}
+		allow = {
+			adm_tech = 16
+			stability = 1
+			OR = {
+				full_idea_group = administrative_ideas
+				adm = 4
+			}
+			is_at_war = no
+			num_of_cities = 2
+			has_regency = no
+		}
+		effect = {
+			feudalisation_effect = yes
+			subtract_stability_1 = yes
+			every_owned_province = { add_unrest = 5 }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+}

@@ -1,0 +1,368 @@
+court_wizard_effect = {
+		#set_variable = {       which = court_loss_L               value = 0 }
+		set_variable = {       which = court_loss_L               which = court_target_L }
+		multiply_variable = {  which = court_loss_L               value = 0.05 }
+		#set_variable = {       which = court_increase_cost      value = 0 }
+		set_variable = {       which = court_increase_cost      value = 1 }
+		#set_variable = {       which = court_cost_ticker        value = 0 }
+		set_variable = {       which = court_cost_ticker        which = court_target_L }
+		while = {
+			limit = {
+				check_variable = { which = court_cost_ticker    value = 0.001 }
+			}
+			if = {
+				limit = {
+					NOT = { check_variable = { which = court_cost_ticker    value = 40 } }
+				}
+				multiply_variable = { which = court_increase_cost   value = 1.05 }
+				subtract_variable = { which = court_cost_ticker     value = 5 }
+			}
+			else_if = {
+				limit = {
+					NOT = { check_variable = { which = court_cost_ticker    value = 70 } }
+				}
+				multiply_variable = { which = court_increase_cost   value = 1.1 }
+				subtract_variable = { which = court_cost_ticker     value = 5 }
+			}
+			else = {
+				multiply_variable = { which = court_increase_cost   value = 1.15 }
+				subtract_variable = { which = court_cost_ticker     value = 5 }
+			}
+		}
+		multiply_variable = { which = court_loss_L which = court_increase_cost }
+		divide_variable = { which = court_loss_L which = costlier_with_time_factor }
+		multiply_variable = { which = court_loss_L         value = 0.5 }
+		#set_variable = {       which = court_clients            value = 0 }
+		set_variable = {       which = court_clients            which = upper_pop_non_overseas }
+		set_variable = {       which = court_clients_vassal     value = 0 }
+		every_subject_country = {
+			#limit = {
+			#	exists = yes
+			#}
+			#set_variable = {    which = court_clients_vassal                value = 0 }
+			set_variable = {    which = court_clients_vassal                which = upper_pop_non_overseas }
+			multiply_variable = { which = court_clients_vassal                value = 0.5 }
+			PREV = { change_variable = { which = court_clients_vassal       which = PREV } }
+			set_variable = {    which = court_clients_vassal                value = 0 }
+		}
+		change_variable = {    which = court_clients            which = court_clients_vassal }
+		if = {
+			limit = {
+				check_variable = { which = court_clients value = 0.1 }
+			}
+			multiply_variable = { which = court_loss_L which = court_clients }
+		}
+		
+		if = {
+			limit = {
+				has_country_flag = BG_appoint_as_court_suppliers_1_flag
+			}
+			trigger_switch = {
+				on_trigger = has_country_modifier
+				BG_appoint_as_court_suppliers_1_20 = {
+					multiply_variable = { which = court_loss_L value = 1.09 }
+				}
+				BG_appoint_as_court_suppliers_1_40 = {
+					multiply_variable = { which = court_loss_L value = 1.18 }
+				}
+				BG_appoint_as_court_suppliers_1_60 = {
+					multiply_variable = { which = court_loss_L value = 1.27 }
+				}
+				BG_appoint_as_court_suppliers_1_80 = {
+					multiply_variable = { which = court_loss_L value = 1.36 }
+				}
+				BG_appoint_as_court_suppliers_1_100 = {
+					multiply_variable = { which = court_loss_L value = 1.45 }
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				has_country_flag = BG_appoint_as_court_suppliers_2_flag
+			}
+			trigger_switch = {
+				on_trigger = has_country_modifier
+				BG_appoint_as_court_suppliers_2_20 = {
+					multiply_variable = { which = court_loss_L value = 1.18 }
+				}
+				BG_appoint_as_court_suppliers_2_40 = {
+					multiply_variable = { which = court_loss_L value = 1.36 }
+				}
+				BG_appoint_as_court_suppliers_2_60 = {
+					multiply_variable = { which = court_loss_L value = 1.54 }
+				}
+				BG_appoint_as_court_suppliers_2_80 = {
+					multiply_variable = { which = court_loss_L value = 1.72 }
+				}
+				BG_appoint_as_court_suppliers_2_100 = {
+					multiply_variable = { which = court_loss_L value = 1.9 }
+				}
+			}
+		}
+		
+		#set_variable = { 	   which = court_capital_bonus 		value = 0 }
+		set_variable = { 	   which = court_capital_bonus 		which = capital_maintenance }
+		multiply_variable = {    which = court_capital_bonus		value = 0.5 }
+		
+		subtract_variable = {   which = court_loss_L			which = court_capital_bonus }
+		if = {
+			limit = {
+				NOT = { check_variable = { which = court_loss_L value = 0 } }
+			}
+			set_variable = { which = court_loss_L value = 0 }
+		}
+		set_variable = { which = court_state_contribute which = court_loss_L }
+		
+		calc_misc_expenses = yes
+		
+		set_variable = { which = court_cost_ticker			value = 0 }
+		set_variable = { which = court_clients				value = 0 }
+		set_variable = { which = court_clients_vassal		value = 0 }
+		set_variable = { which = court_increase_cost		value = 0 }
+		set_variable = { which = court_loss_L value = 0 }
+}
+
+court_wizard_effect_disp = {
+		#set_variable = {       which = court_loss_L               value = 0 }
+		set_variable = {       which = court_loss_L               which = court_target_L }
+		multiply_variable = {  which = court_loss_L               value = 0.05 }
+		#set_variable = {       which = court_increase_cost      value = 0 }
+		set_variable = {       which = court_increase_cost      value = 1 }
+		#set_variable = {       which = court_cost_ticker        value = 0 }
+		set_variable = {       which = court_cost_ticker        which = court_target_L }
+		while = {
+			limit = {
+				check_variable = { which = court_cost_ticker    value = 0.001 }
+			}
+			if = {
+				limit = {
+					NOT = { check_variable = { which = court_cost_ticker    value = 40 } }
+				}
+				multiply_variable = { which = court_increase_cost   value = 1.05 }
+				subtract_variable = { which = court_cost_ticker     value = 5 }
+			}
+			else_if = {
+				limit = {
+					NOT = { check_variable = { which = court_cost_ticker    value = 70 } }
+				}
+				multiply_variable = { which = court_increase_cost   value = 1.1 }
+				subtract_variable = { which = court_cost_ticker     value = 5 }
+			}
+			else = {
+				multiply_variable = { which = court_increase_cost   value = 1.15 }
+				subtract_variable = { which = court_cost_ticker     value = 5 }
+			}
+		}
+		multiply_variable = { which = court_loss_L which = court_increase_cost }
+		#set_variable = {      which = costlier_with_time_factor  value = 0 }
+		set_variable = {      which = costlier_with_time_factor  which = year_ticker }
+		multiply_variable = {   which = costlier_with_time_factor  value = 0.002 }
+		change_variable = {   which = costlier_with_time_factor  value = 1 }
+		divide_variable = { which = court_loss_L which = costlier_with_time_factor }
+		multiply_variable = { which = court_loss_L         value = 0.5 }
+		#set_variable = {       which = court_clients            value = 0 }
+		set_variable = {       which = court_clients            which = upper_pop_non_overseas }
+		set_variable = {       which = court_clients_vassal     value = 0 }
+		every_subject_country = {
+			#limit = {
+			#	exists = yes
+			#}
+			#set_variable = {    which = court_clients_vassal                value = 0 }
+			set_variable = {    which = court_clients_vassal                which = upper_pop_non_overseas }
+			multiply_variable = { which = court_clients_vassal                value = 0.5 }
+			PREV = { change_variable = { which = court_clients_vassal       which = PREV } }
+			set_variable = {    which = court_clients_vassal                value = 0 }
+		}
+		change_variable = {    which = court_clients            which = court_clients_vassal }
+		if = {
+			limit = {
+				check_variable = { which = court_clients value = 0.1 }
+			}
+			multiply_variable = { which = court_loss_L which = court_clients }
+		}
+		
+		set_variable = { which = court_missing_endowment	which = court_loss_L }
+		
+		if = {
+			limit = {
+				has_country_flag = BG_appoint_as_court_suppliers_1_flag
+			}
+			trigger_switch = {
+				on_trigger = has_country_modifier
+				BG_appoint_as_court_suppliers_1_20 = {
+					multiply_variable = { which = court_loss_L value = 1.09 }
+				}
+				BG_appoint_as_court_suppliers_1_40 = {
+					multiply_variable = { which = court_loss_L value = 1.18 }
+				}
+				BG_appoint_as_court_suppliers_1_60 = {
+					multiply_variable = { which = court_loss_L value = 1.27 }
+				}
+				BG_appoint_as_court_suppliers_1_80 = {
+					multiply_variable = { which = court_loss_L value = 1.36 }
+				}
+				BG_appoint_as_court_suppliers_1_100 = {
+					multiply_variable = { which = court_loss_L value = 1.45 }
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				has_country_flag = BG_appoint_as_court_suppliers_2_flag
+			}
+			trigger_switch = {
+				on_trigger = has_country_modifier
+				BG_appoint_as_court_suppliers_2_20 = {
+					multiply_variable = { which = court_loss_L value = 1.18 }
+				}
+				BG_appoint_as_court_suppliers_2_40 = {
+					multiply_variable = { which = court_loss_L value = 1.36 }
+				}
+				BG_appoint_as_court_suppliers_2_60 = {
+					multiply_variable = { which = court_loss_L value = 1.54 }
+				}
+				BG_appoint_as_court_suppliers_2_80 = {
+					multiply_variable = { which = court_loss_L value = 1.72 }
+				}
+				BG_appoint_as_court_suppliers_2_100 = {
+					multiply_variable = { which = court_loss_L value = 1.9 }
+				}
+			}
+		}
+		
+		#set_variable = { 	   which = court_capital_bonus 		value = 0 }
+		set_variable = { 	   which = court_capital_bonus 		which = capital_maintenance }
+		multiply_variable = {    which = court_capital_bonus		value = 0.5 }
+		
+		subtract_variable = {   which = court_loss_L			which = court_capital_bonus }
+		if = {
+			limit = {
+				NOT = { check_variable = { which = court_loss_L value = 0 } }
+			}
+			set_variable = { which = court_loss_L value = 0 }
+		}
+		multiply_variable = { which = court_missing_endowment	value = 7.5 }  #1/10%, *0.75
+		subtract_variable = { which = court_missing_endowment   which = court_money_endowed }
+		multiply_variable = { which = court_missing_endowment value = 0.001 }
+		multiply_variable = { which = court_missing_endowment value = 1000 }
+		set_variable = { which = court_state_contribute which = court_loss_L }
+		calc_misc_expenses = yes
+		
+		set_variable = { which = court_cost_ticker			value = 0 }
+		set_variable = { which = court_clients				value = 0 }
+		set_variable = { which = court_clients_vassal		value = 0 }
+		set_variable = { which = court_increase_cost		value = 0 }
+		set_variable = { which = costlier_with_time_factor	value = 0 }
+}
+
+education_wizard_effect = {
+	#set_variable = {       which = education_loss_L               value = 0 }
+	set_variable = {       which = education_loss_L               which = education_target_L }
+	if = {
+		limit = {
+			check_variable = { which = upper_pop_non_overseas value = 0.1 }
+		}
+		multiply_variable = { which = education_loss_L which = upper_pop_non_overseas }
+	}
+	multiply_variable = {  which = education_loss_L               value = 0.05 }
+	#set_variable = {       which = education_increase_cost      value = 0 }
+	set_variable = {       which = education_increase_cost      value = 1 }
+	set_variable = {       which = education_cost_ticker        which = education_target_L }
+	divide_variable = {  which = education_loss_L    which = university_education_multiplier }
+	while = {
+		limit = {
+			check_variable = { which = education_cost_ticker    value = 0.001 }
+		}
+		multiply_variable = { which = education_increase_cost   value = 1.125 }
+		subtract_variable = { which = education_cost_ticker     value = 5 }
+	}
+	divide_variable = { which = education_loss_L         which = costlier_with_time_factor }
+	divide_variable = { which = education_loss_L         value = 1.3 }
+	multiply_variable = { which = education_loss_L which = education_increase_cost }
+	
+	subtract_variable = {    which = education_loss_L        which = education_church_contribute }
+	if = {
+		limit = {
+			NOT = { check_variable = { which = education_loss_L value = 0 } }
+		}
+		set_variable = { which = education_loss_L value = 0 }
+	}
+
+	set_variable = { which = education_state_contribute which = education_loss_L }
+	calc_misc_expenses = yes
+	
+	set_variable = { which = education_cost_ticker value = 0 }
+	set_variable = { which = education_increase_cost value = 0 }
+	set_variable = { which = education_loss_L value = 0 }
+}
+education_wizard_effect_disp = {
+	set_variable = { which = university_education_multiplier    value = 0 }
+	every_owned_province = {
+		limit = {
+			is_city = yes
+		}
+		PREV = {
+			change_variable = { which = university_education_multiplier  which = PREV }
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { which = upper_pop_non_overseas value = 0.1 }
+		}
+		divide_variable = { which = university_education_multiplier which = upper_pop_non_overseas }
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = university_education_multiplier  value = 0 } }
+		}
+		set_variable = { which = university_education_multiplier    value = 0 }
+	}
+	change_variable = {    which = university_education_multiplier  value = 1 }
+	#set_variable = {       which = education_loss_L               value = 0 }
+	set_variable = {       which = education_loss_L               which = education_target_L }
+	if = {
+		limit = {
+			check_variable = { which = upper_pop_non_overseas value = 0.1 }
+		}
+		multiply_variable = { which = education_loss_L which = upper_pop_non_overseas }
+	}
+	multiply_variable = {  which = education_loss_L               value = 0.05 }
+	#set_variable = {       which = education_increase_cost      value = 0 }
+	set_variable = {       which = education_increase_cost      value = 1 }
+	set_variable = {       which = education_cost_ticker        which = education_target_L }
+	divide_variable = {  which = education_loss_L    which = university_education_multiplier }
+	while = {
+		limit = {
+			check_variable = { which = education_cost_ticker    value = 0.001 }
+		}
+		multiply_variable = { which = education_increase_cost   value = 1.125 }
+		subtract_variable = { which = education_cost_ticker     value = 5 }
+	}
+	#set_variable = {      which = costlier_with_time_factor  value = 0 }
+	set_variable = {      which = costlier_with_time_factor  which = year_ticker }
+	multiply_variable = {   which = costlier_with_time_factor  value = 0.002 }
+	change_variable = {   which = costlier_with_time_factor  value = 1 }
+	divide_variable = { which = education_loss_L         which = costlier_with_time_factor }
+	divide_variable = { which = education_loss_L         value = 1.3 }
+	multiply_variable = { which = education_loss_L which = education_increase_cost }
+	
+	set_variable = { which = education_missing_endowment	which = education_loss_L }
+	subtract_variable = {    which = education_loss_L        which = education_church_contribute }
+	if = {
+		limit = {
+			NOT = { check_variable = { which = education_loss_L value = 0 } }
+		}
+		set_variable = { which = education_loss_L value = 0 }
+	}
+	multiply_variable = { which = education_missing_endowment	value = 15 }  #1/5%, *0.75
+	subtract_variable = { which = education_missing_endowment   which = education_money_endowed }
+	multiply_variable = { which = education_missing_endowment value = 0.001 }
+	multiply_variable = { which = education_missing_endowment value = 1000 }
+	
+	set_variable = { which = education_state_contribute which = education_loss_L }
+	calc_misc_expenses = yes
+	
+	set_variable = { which = education_cost_ticker value = 0 }
+	set_variable = { which = costlier_with_time_factor value = 0 }
+	set_variable = { which = education_increase_cost value = 0 }
+}

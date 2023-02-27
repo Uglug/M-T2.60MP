@@ -1,0 +1,159 @@
+country_decisions = {
+	
+	evangelical_union = {
+		potential = {
+			OR = {
+				religion = reformed
+				religion = protestant
+			}
+			tech_1750_trigger = yes
+			check_variable = { which = reformed_population value = 25 }
+			check_variable = { which = protestant_population value = 25 }
+			NOT = { has_country_flag = evangelical_union }
+			is_religion_enabled = protestant
+			is_religion_enabled = reformed
+		}
+		allow = {
+			is_at_war = no
+			adm_power = 200
+			DIP = 4
+		}
+		effect = {
+			set_country_flag = evangelical_union
+			add_adm_power = -200
+			if = {
+				limit = {
+					dominant_religion = protestant
+					NOT = { religion = protestant }
+				}
+				subtract_stability_1 = yes
+				change_religion = protestant
+			}
+			if = {
+				limit = {
+					dominant_religion = reformed
+					NOT = { religion = reformed }
+				}
+				subtract_stability_1 = yes
+				change_religion = reformed
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	#book_of_common_prayer = { }
+	
+	witchcraft_laws = {
+		potential = {
+			OR = {
+				religion = catholic
+				religion = protestant
+				religion = reformed
+				religion = gnostic
+				religion = hussite
+			}
+			OR = {
+				any_owned_province = { has_province_modifier = witch_hunt }
+				has_country_flag = witch_hunts_discouraged
+				tech_1700_trigger = yes
+				NOT = { piety = -0.20 }
+			}
+			NOT = { has_country_flag = witchcraft_laws }
+		}
+		allow = {
+			ADM = 2
+		}
+		effect = {
+			set_country_flag = witchcraft_laws
+			custom_tooltip = prevents_witch_hunts
+			add_piety = -0.05
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				NOT = { any_owned_province = { has_province_modifier = witch_hunt } }
+				NOT = { has_country_flag = witch_hunts_discouraged }
+				factor = 0
+			}
+		}
+	}
+	
+	divorce_spouse = {
+		potential = {
+			OR = {
+				religion = protestant
+				AND = {
+					religion = catholic
+					has_country_flag = national_church
+				}
+			}
+			government = monarchy
+			has_regency = no
+			has_heir = no
+			ruler_age = 25
+			OR = {
+				NOT = { has_country_flag = divorced_ruler }
+				had_country_flag = { flag = divorced_ruler days = 1000 }
+			}
+			NOT = { any_known_country = { reverse_has_opinion_modifier = { who = ROOT modifier = marriage_broken } } }
+		}
+		allow = {
+			months_of_ruling = 24
+			num_of_royal_marriages = 1
+			OR = {
+				NOT = { has_country_modifier = limited_divorce_aspect }
+				adm_power = 50
+			}
+		}
+		effect = {
+			if = {
+				limit = { has_country_modifier = limited_divorce_aspect }
+				add_adm_power = -50
+			}
+			add_prestige = -2.5
+			add_legitimacy = -2.5
+			hidden_effect = { set_country_flag = divorced_ruler }
+			random = {
+				chance = 25
+				define_heir = { claim = 90 dynasty = ROOT }
+				add_legitimacy = 5
+			}
+			random_known_country = {
+				limit = {
+					marriage_with = ROOT
+					religion = ROOT
+					OR = {
+						ai = no
+						is_rival = ROOT
+						is_emperor = yes
+						culture_group = ROOT
+					}
+				}
+				country_event = { id = dg_catholic.087 days = 30 }
+			}
+			random_known_country = {
+				limit = {
+					NOT = {
+						any_known_country = {
+							marriage_with = ROOT
+							religion = ROOT
+							OR = {
+								ai = no
+								is_rival = ROOT
+								is_emperor = yes
+								culture_group = ROOT
+							}
+						}
+					}
+					marriage_with = ROOT
+				}
+				reverse_add_opinion = { who = ROOT modifier = marriage_broken }
+				country_event = { id = dg_catholic.087 days = 30 }
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+}

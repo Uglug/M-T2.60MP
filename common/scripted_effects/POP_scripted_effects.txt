@@ -1,0 +1,4464 @@
+### POP scripted effects ###
+
+### The Following Scripted Effects are for the use of all M&T developers in their events ###
+update_pop_display = {
+	set_variable = { which = tempRural which = rural_pop_display }
+	set_variable = { which = tempUrban which = urban_pop_display }
+	
+	set_variable = { which = rural_pop_display			value = 0 }
+	set_variable = { which = urban_pop_display			value = 0 }
+	set_variable = { which = upper_pop_display			value = 0 }
+	set_variable = { which = total_pop_display			value = 0 }
+	Pop_InvRatioToVal = {
+		PopTotal=total_pop_r
+		PopRatio=urban_ratio
+		output=rural_pop_display
+	}
+	Pop_RatioToVal = {
+		PopTotal=total_pop_r
+		PopRatio=urban_ratio
+		output=urban_pop_display
+	}
+	change_variable = { which = upper_pop_display		which = upper_pop_r }
+	change_variable = { which = total_pop_display		which = total_pop_r }
+	
+	subtract_variable = { which = tempRural which = rural_pop_display }
+	subtract_variable = { which = tempUrban which = urban_pop_display }
+	#multiply_variable = { which = tempRural value = 1.5 }
+	#multiply_variable = { which = tempUrban value = 1.5 }
+	subtract_variable = { which = rural_change_display which = tempRural }
+	subtract_variable = { which = urban_change_display which = tempUrban }
+	
+	set_variable = { which = tempRural value = 0 }
+	set_variable = { which = tempUrban value = 0 }
+	set_variable = { which = total_change_display which = rural_change_display }
+	change_variable = { which = total_change_display which = urban_change_display }
+}
+
+province_trauma_effect = {
+	if = {
+		limit = {
+			NOT = { check_variable = { which = province_trauma value = 0.001 } }
+		}
+		set_variable = { which = province_trauma	value = $amount$ }
+	}
+	else = {
+		change_variable = { which = province_trauma	value = $amount$ }
+	}
+	
+	if = { limit = { check_variable = { which = province_trauma value = 6 } }
+		if = { limit = { check_variable = { which = province_trauma value = 8 } }
+			if = { limit = { check_variable = { which = province_trauma value = 10 } }
+				if = {
+					limit = {
+						NOT = { has_province_modifier = trauma_devastating }
+					}
+					add_devastation = -100
+					remove_trauma = yes
+					add_permanent_province_modifier = {
+						name = trauma_devastating
+						duration = -1
+					}
+					add_devastation = 100
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						NOT = { has_province_modifier = trauma_terrible }
+					}
+					add_devastation = -100
+					remove_trauma = yes
+					add_permanent_province_modifier = {
+						name = trauma_terrible
+						duration = -1
+					}
+					add_devastation = 80
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					NOT = { has_province_modifier = trauma_harsh }
+				}
+				add_devastation = -100
+				remove_trauma = yes
+				add_permanent_province_modifier = {
+					name = trauma_harsh
+					duration = -1
+				}
+				add_devastation = 60
+			}
+		}
+	}
+	else = {
+		if = { limit = { check_variable = { which = province_trauma value = 2 } }
+			if = { limit = { check_variable = { which = province_trauma value = 4 } }
+				if = {
+					limit = {
+						NOT = { has_province_modifier = trauma_limited }
+					}
+					add_devastation = -100
+					remove_trauma = yes
+					add_permanent_province_modifier = {
+						name = trauma_limited
+						duration = -1
+					}
+					add_devastation = 40
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						NOT = { has_province_modifier = trauma_mild }
+					}
+					add_devastation = -100
+					remove_trauma = yes
+					add_permanent_province_modifier = {
+						name = trauma_mild
+						duration = -1
+					}
+					add_devastation = 20
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = province_trauma value = 0 } }
+		}
+		set_variable = { which = province_trauma	value = 0 }
+	}
+}
+
+province_trauma_effect_var = {
+	if = {
+		limit = {
+			NOT = { check_variable = { which = province_trauma value = 0.001 } }
+		}
+		set_variable = { which = province_trauma	which = $amountvar$ }
+	}
+	else = {
+		change_variable = { which = province_trauma	which = $amountvar$ }
+	}
+	
+	if = { limit = { check_variable = { which = province_trauma value = 6 } }
+		if = { limit = { check_variable = { which = province_trauma value = 8 } }
+			if = { limit = { check_variable = { which = province_trauma value = 10 } }
+				if = {
+					limit = {
+						NOT = { has_province_modifier = trauma_devastating }
+					}
+					add_devastation = -100
+					remove_trauma = yes
+					add_permanent_province_modifier = {
+						name = trauma_devastating
+						duration = -1
+					}
+					add_devastation = 100
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						NOT = { has_province_modifier = trauma_terrible }
+					}
+					add_devastation = -100
+					remove_trauma = yes
+					add_permanent_province_modifier = {
+						name = trauma_terrible
+						duration = -1
+					}
+					add_devastation = 80
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					NOT = { has_province_modifier = trauma_harsh }
+				}
+				add_devastation = -100
+				remove_trauma = yes
+				add_permanent_province_modifier = {
+					name = trauma_harsh
+					duration = -1
+				}
+				add_devastation = 60
+			}
+		}
+	}
+	else = {
+		if = { limit = { check_variable = { which = province_trauma value = 2 } }
+			if = { limit = { check_variable = { which = province_trauma value = 4 } }
+				if = {
+					limit = {
+						NOT = { has_province_modifier = trauma_limited }
+					}
+					add_devastation = -100
+					remove_trauma = yes
+					add_permanent_province_modifier = {
+						name = trauma_limited
+						duration = -1
+					}
+					add_devastation = 40
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						NOT = { has_province_modifier = trauma_mild }
+					}
+					add_devastation = -100
+					remove_trauma = yes
+					add_permanent_province_modifier = {
+						name = trauma_mild
+						duration = -1
+					}
+					add_devastation = 20
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = province_trauma value = 0 } }
+		}
+		set_variable = { which = province_trauma	value = 0 }
+	}
+}
+
+cavalry_elephants_flags = {
+	if = {
+		limit = {
+			all_owned_province = { has_province_flag = no_horses_present }
+		}
+		if = { limit = { NOT = { has_country_flag = no_cavalry } }
+			set_country_flag = no_cavalry
+		}
+	}
+	else_if = { limit = { has_country_flag = no_cavalry }
+		clr_country_flag = no_cavalry
+	}
+}
+
+init_as_zero = {
+	if = {
+		limit = {
+			is_variable_equal = { which = $variable$ value = 0 }
+		}
+		set_variable = { which = $variable$ value = 0 }
+	}
+}
+
+remove_autonomy_mod = {
+	trigger_switch = {
+		on_trigger = has_country_modifier
+		
+		average_autonomy_100 = { remove_country_modifier = average_autonomy_100 }
+		average_autonomy_90 = { remove_country_modifier = average_autonomy_90 }
+		average_autonomy_80 = { remove_country_modifier = average_autonomy_80 }
+		average_autonomy_70 = { remove_country_modifier = average_autonomy_70 }
+		average_autonomy_60 = { remove_country_modifier = average_autonomy_60 }
+		average_autonomy_50 = { remove_country_modifier = average_autonomy_50 }
+		average_autonomy_40 = { remove_country_modifier = average_autonomy_40 }
+		average_autonomy_30 = { remove_country_modifier = average_autonomy_30 }
+		average_autonomy_20 = { remove_country_modifier = average_autonomy_20 }
+		average_autonomy_10 = { remove_country_modifier = average_autonomy_10 }
+	}
+}
+
+remove_tribes_settled = {
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		tribes_settled_7 = {
+			remove_province_modifier = tribes_settled_7
+		}
+		tribes_settled_6 = {
+			remove_province_modifier = tribes_settled_6
+		}
+		tribes_settled_5 = {
+			remove_province_modifier = tribes_settled_5
+		}
+		tribes_settled_4 = {
+			remove_province_modifier = tribes_settled_4
+		}
+		tribes_settled_3 = {
+			remove_province_modifier = tribes_settled_3
+		}
+		tribes_settled_2 = {
+			remove_province_modifier = tribes_settled_2
+		}
+		tribes_settled_1 = {
+			remove_province_modifier = tribes_settled_1
+		}
+		tribes_settled_0 = {
+			remove_province_modifier = tribes_settled_0
+		}
+	}
+}
+
+set_tribal_settlement = {
+	set_variable = { which = tribal_settlement_display			which = settlement_score_gravity }
+	multiply_variable = { which = tribal_settlement_display 	value = 2 }
+	subtract_variable = { which = tribal_settlement_display 	value = 100 }
+	multiply_variable = { which = tribal_settlement_display		value = 0.001 }
+	multiply_variable = { which = tribal_settlement_display 	value = 1000 }
+	if = { limit = { check_variable = { which = tribal_settlement_display value = -5 } }
+		if = { limit = { check_variable = { which = tribal_settlement_display value = 50 } }
+			if = { limit = { check_variable = { which = tribal_settlement_display value = 75 } }
+				if = { limit = { NOT = { has_province_modifier = tribes_settled_7 } }
+					remove_tribes_settled = yes
+					add_permanent_province_modifier = { name = tribes_settled_7	duration = -1 }
+				}
+			}
+			else = {
+				if = { limit = { NOT = { has_province_modifier = tribes_settled_6 } }
+					remove_tribes_settled = yes
+					add_permanent_province_modifier = { name = tribes_settled_6	duration = -1 }
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = tribal_settlement_display value = 25 } }
+				if = { limit = { NOT = { has_province_modifier = tribes_settled_5 } }
+					remove_tribes_settled = yes
+					add_permanent_province_modifier = { name = tribes_settled_5	duration = -1 }
+				}
+			}
+			else = {
+				if = { limit = { NOT = { has_province_modifier = tribes_settled_4 } }
+					remove_tribes_settled = yes
+					add_permanent_province_modifier = { name = tribes_settled_4	duration = -1 }
+				}
+			}
+		}
+	}
+	else = {
+		if = { limit = { check_variable = { which = tribal_settlement_display value = -50 } }
+			if = { limit = { check_variable = { which = tribal_settlement_display value = -25 } }
+				if = { limit = { NOT = { has_province_modifier = tribes_settled_3 } }
+					remove_tribes_settled = yes
+					add_permanent_province_modifier = { name = tribes_settled_3	duration = -1 }
+				}
+			}
+			else = {
+				if = { limit = { NOT = { has_province_modifier = tribes_settled_2 } }
+					remove_tribes_settled = yes
+					add_permanent_province_modifier = { name = tribes_settled_2	duration = -1 }
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = tribal_settlement_display value = -75 } }
+				if = { limit = { NOT = { has_province_modifier = tribes_settled_1 } }
+					remove_tribes_settled = yes
+					add_permanent_province_modifier = { name = tribes_settled_1	duration = -1 }
+				}
+			}
+			else = {
+				if = { limit = { NOT = { has_province_modifier = tribes_settled_0 } }
+					remove_tribes_settled = yes
+					add_permanent_province_modifier = { name = tribes_settled_0	duration = -1 }
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			5154 = {
+				has_province_flag = tribal_settlement_MAPMODE
+			}
+		}
+		if = { limit = { check_variable = { which = tribal_settlement_display value = -5 } }
+			if = { limit = { check_variable = { which = tribal_settlement_display value = 50 } }
+				if = { limit = { check_variable = { which = tribal_settlement_display value = 75 } }
+					if = { limit = { NOT = { has_province_modifier = tribes_settled_7_MAPMODE } }
+						remove_tribes_settled_MAPMODE = yes
+						add_permanent_province_modifier = { name = tribes_settled_7_MAPMODE	duration = -1 }
+					}
+				}
+				else = {
+					if = { limit = { NOT = { has_province_modifier = tribes_settled_6_MAPMODE } }
+						remove_tribes_settled_MAPMODE = yes
+						add_permanent_province_modifier = { name = tribes_settled_6_MAPMODE	duration = -1 }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = tribal_settlement_display value = 25 } }
+					if = { limit = { NOT = { has_province_modifier = tribes_settled_5_MAPMODE } }
+						remove_tribes_settled_MAPMODE = yes
+						add_permanent_province_modifier = { name = tribes_settled_5_MAPMODE	duration = -1 }
+					}
+				}
+				else = {
+					if = { limit = { NOT = { has_province_modifier = tribes_settled_4_MAPMODE } }
+						remove_tribes_settled_MAPMODE = yes
+						add_permanent_province_modifier = { name = tribes_settled_4_MAPMODE	duration = -1 }
+					}
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = tribal_settlement_display value = -50 } }
+				if = { limit = { check_variable = { which = tribal_settlement_display value = -25 } }
+					if = { limit = { NOT = { has_province_modifier = tribes_settled_3_MAPMODE } }
+						remove_tribes_settled_MAPMODE = yes
+						add_permanent_province_modifier = { name = tribes_settled_3_MAPMODE	duration = -1 }
+					}
+				}
+				else = {
+					if = { limit = { NOT = { has_province_modifier = tribes_settled_2_MAPMODE } }
+						remove_tribes_settled_MAPMODE = yes
+						add_permanent_province_modifier = { name = tribes_settled_2_MAPMODE	duration = -1 }
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = tribal_settlement_display value = -75 } }
+					if = { limit = { NOT = { has_province_modifier = tribes_settled_1_MAPMODE } }
+						remove_tribes_settled_MAPMODE = yes
+						add_permanent_province_modifier = { name = tribes_settled_1_MAPMODE	duration = -1 }
+					}
+				}
+				else = {
+					if = { limit = { NOT = { has_province_modifier = tribes_settled_0_MAPMODE } }
+						remove_tribes_settled_MAPMODE = yes
+						add_permanent_province_modifier = { name = tribes_settled_0_MAPMODE	duration = -1 }
+					}
+				}
+			}
+		}
+	}
+}
+
+clear_income_modifier = {
+	if = {
+		limit = {
+			has_$type$_modifier = $modname$_$value$
+		}
+		remove_$type$_modifier = $modname$_$value$
+	}
+}
+
+reset_income_modifier = {
+	if = {
+		limit = {
+			check_variable = { which = $varname$ value = $value$ }
+		}
+		subtract_variable = { which = $varname$ value = $value$ }
+		
+		if = {
+			limit = {
+				NOT = { has_$type$_modifier = $modname$_$value$ }
+			}
+			add_$type$_modifier = {
+				name = $modname$_$value$
+				duration = -1
+				hidden = yes
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			has_$type$_modifier = $modname$_$value$
+		}
+		remove_$type$_modifier = $modname$_$value$
+	}
+}
+
+set_income_modifier = {
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=163.84 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=81.92 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=40.96 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=20.48 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=10.24 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=5.12 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=2.56 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=1.28 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=0.64 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=0.32 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=0.16 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=0.08 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=0.04 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=0.02 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=0.01 type=$type$ }
+
+	set_variable = { which = $varname$ value = 0 }
+}
+
+set_income_modifier_country = {
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=13107.2 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=6553.6 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=3276.8 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=1638.4 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=819.2 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=409.6 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=204.8 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=102.4 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=51.2 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=25.6 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=12.8 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=6.4 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=3.2 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=1.6 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=0.8 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=0.4 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=0.2 type=$type$ }
+	reset_income_modifier = { varname=$varname$ modname=$modname$ value=0.1 type=$type$ }
+
+	set_variable = { which = $varname$ value = 0 }
+}
+
+set_legitimacy_var = {
+	if = {
+		limit = {
+			legitimacy = 51
+		}
+		if = {
+			limit = {
+				legitimacy = 76
+			}
+			if = {
+				limit = {
+					legitimacy = 88
+				}
+				if = {
+					limit = {
+						legitimacy = 97
+					}
+					set_variable = { which = legitimacy value = 97 }
+				}
+				else = {
+					set_variable = { which = legitimacy value = 91 }
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						legitimacy = 85
+					}
+					set_variable = { which = legitimacy value = 85 }
+				}
+				else = {
+					set_variable = { which = legitimacy value = 78 }
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					legitimacy = 63
+				}
+				if = {
+					limit = {
+						legitimacy = 72
+					}
+					set_variable = { which = legitimacy value = 72 }
+				}
+				else = {
+					set_variable = { which = legitimacy value = 66 }
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						legitimacy = 60
+					}
+					set_variable = { which = legitimacy value = 60 }
+				}
+				else = {
+					set_variable = { which = legitimacy value = 53 }
+				}
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				legitimacy = 26
+			}
+			if = {
+				limit = {
+					legitimacy = 38
+				}
+				if = {
+					limit = {
+						legitimacy = 47
+					}
+					set_variable = { which = legitimacy value = 47 }
+				}
+				else = {
+					set_variable = { which = legitimacy value = 41 }
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						legitimacy = 35
+					}
+					set_variable = { which = legitimacy value = 35 }
+				}
+				else = {
+					set_variable = { which = legitimacy value = 28 }
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					legitimacy = 13
+				}
+				if = {
+					limit = {
+						legitimacy = 22
+					}
+					set_variable = { which = legitimacy value = 22 }
+				}
+				else = {
+					set_variable = { which = legitimacy value = 16 }
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						legitimacy = 10
+					}
+					set_variable = { which = legitimacy value = 10 }
+				}
+				else = {
+					set_variable = { which = legitimacy value = 3 }
+				}
+			}
+		}
+	}
+}
+
+set_repub_trad_var = {
+	if = {
+		limit = {
+			republican_tradition = 51
+		}
+		if = {
+			limit = {
+				republican_tradition = 76
+			}
+			if = {
+				limit = {
+					republican_tradition = 88
+				}
+				if = {
+					limit = {
+						republican_tradition = 97
+					}
+					set_variable = { which = republican_tradition value = 97 }
+				}
+				else = {
+					set_variable = { which = republican_tradition value = 91 }
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						republican_tradition = 85
+					}
+					set_variable = { which = republican_tradition value = 85 }
+				}
+				else = {
+					set_variable = { which = republican_tradition value = 78 }
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					republican_tradition = 63
+				}
+				if = {
+					limit = {
+						republican_tradition = 72
+					}
+					set_variable = { which = republican_tradition value = 72 }
+				}
+				else = {
+					set_variable = { which = republican_tradition value = 66 }
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						republican_tradition = 60
+					}
+					set_variable = { which = republican_tradition value = 60 }
+				}
+				else = {
+					set_variable = { which = republican_tradition value = 53 }
+				}
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				republican_tradition = 26
+			}
+			if = {
+				limit = {
+					republican_tradition = 38
+				}
+				if = {
+					limit = {
+						republican_tradition = 47
+					}
+					set_variable = { which = republican_tradition value = 47 }
+				}
+				else = {
+					set_variable = { which = republican_tradition value = 41 }
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						republican_tradition = 35
+					}
+					set_variable = { which = republican_tradition value = 35 }
+				}
+				else = {
+					set_variable = { which = republican_tradition value = 28 }
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					republican_tradition = 13
+				}
+				if = {
+					limit = {
+						republican_tradition = 22
+					}
+					set_variable = { which = republican_tradition value = 22 }
+				}
+				else = {
+					set_variable = { which = republican_tradition value = 16 }
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						republican_tradition = 10
+					}
+					set_variable = { which = republican_tradition value = 10 }
+				}
+				else = {
+					set_variable = { which = republican_tradition value = 3 }
+				}
+			}
+		}
+	}
+}
+
+set_devotion_var = {
+	if = {
+		limit = {
+			devotion = 51
+		}
+		if = {
+			limit = {
+				devotion = 76
+			}
+			if = {
+				limit = {
+					devotion = 88
+				}
+				if = {
+					limit = {
+						devotion = 97
+					}
+					set_variable = { which = devotion value = 97 }
+				}
+				else = {
+					set_variable = { which = devotion value = 91 }
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						devotion = 85
+					}
+					set_variable = { which = devotion value = 85 }
+				}
+				else = {
+					set_variable = { which = devotion value = 78 }
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					devotion = 63
+				}
+				if = {
+					limit = {
+						devotion = 72
+					}
+					set_variable = { which = devotion value = 72 }
+				}
+				else = {
+					set_variable = { which = devotion value = 66 }
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						devotion = 60
+					}
+					set_variable = { which = devotion value = 60 }
+				}
+				else = {
+					set_variable = { which = devotion value = 53 }
+				}
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				devotion = 26
+			}
+			if = {
+				limit = {
+					devotion = 38
+				}
+				if = {
+					limit = {
+						devotion = 47
+					}
+					set_variable = { which = devotion value = 47 }
+				}
+				else = {
+					set_variable = { which = devotion value = 41 }
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						devotion = 35
+					}
+					set_variable = { which = devotion value = 35 }
+				}
+				else = {
+					set_variable = { which = devotion value = 28 }
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					devotion = 13
+				}
+				if = {
+					limit = {
+						devotion = 22
+					}
+					set_variable = { which = devotion value = 22 }
+				}
+				else = {
+					set_variable = { which = devotion value = 16 }
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						devotion = 10
+					}
+					set_variable = { which = devotion value = 10 }
+				}
+				else = {
+					set_variable = { which = devotion value = 3 }
+				}
+			}
+		}
+	}
+}
+
+set_horde_unity_var = {
+	if = {
+		limit = {
+			horde_unity = 51
+		}
+		if = {
+			limit = {
+				horde_unity = 76
+			}
+			if = {
+				limit = {
+					horde_unity = 88
+				}
+				if = {
+					limit = {
+						horde_unity = 97
+					}
+					set_variable = { which = horde_unity value = 97 }
+				}
+				else = {
+					set_variable = { which = horde_unity value = 91 }
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						horde_unity = 85
+					}
+					set_variable = { which = horde_unity value = 85 }
+				}
+				else = {
+					set_variable = { which = horde_unity value = 78 }
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					horde_unity = 63
+				}
+				if = {
+					limit = {
+						horde_unity = 72
+					}
+					set_variable = { which = horde_unity value = 72 }
+				}
+				else = {
+					set_variable = { which = horde_unity value = 66 }
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						horde_unity = 60
+					}
+					set_variable = { which = horde_unity value = 60 }
+				}
+				else = {
+					set_variable = { which = horde_unity value = 53 }
+				}
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				horde_unity = 26
+			}
+			if = {
+				limit = {
+					horde_unity = 38
+				}
+				if = {
+					limit = {
+						horde_unity = 47
+					}
+					set_variable = { which = horde_unity value = 47 }
+				}
+				else = {
+					set_variable = { which = horde_unity value = 41 }
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						horde_unity = 35
+					}
+					set_variable = { which = horde_unity value = 35 }
+				}
+				else = {
+					set_variable = { which = horde_unity value = 28 }
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					horde_unity = 13
+				}
+				if = {
+					limit = {
+						horde_unity = 22
+					}
+					set_variable = { which = horde_unity value = 22 }
+				}
+				else = {
+					set_variable = { which = horde_unity value = 16 }
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						horde_unity = 10
+					}
+					set_variable = { which = horde_unity value = 10 }
+				}
+				else = {
+					set_variable = { which = horde_unity value = 3 }
+				}
+			}
+		}
+	}
+}
+get_multiplier_prestige = {
+	export_to_variable = {
+		which = national_multiplier_prestige
+		value = prestige
+	}
+	if = {
+		limit = {
+			check_variable = { which = national_multiplier_prestige value = 0.01 }
+		}
+		divide_variable = { which = national_multiplier_prestige 	value = 800 }
+		change_variable = { which = national_multiplier_prestige	value = 1 }
+	}
+	else = {
+		set_variable = { which = national_multiplier_prestige 	value = 1 }
+	}
+}
+get_multiplier_we = {
+	export_to_variable = {
+		which = national_multiplier_war_exhaustion
+		value = war_exhaustion
+	}
+	
+	divide_variable = { which = national_multiplier_war_exhaustion value = -60 }
+	change_variable = { which = national_multiplier_war_exhaustion value = 1 }
+}
+
+get_country_total = {
+	set_variable = { which = country_total_pop_r            value = 0 }  ### Total Population of the country
+	set_variable = { which = country_total_urban            value = 0 }  ### Total Urban Population of the country
+	set_variable = { which = country_percent_urbanized    	value = 0 }  ### How much of your country is urban vs rural
+	
+	every_owned_province = {
+		limit = {
+			is_city = yes
+		}
+	
+		set_variable = { which = country_total_pop_r					value = 0 }  ### Province level variable, to be upgraded to national
+		set_variable = { which = country_percent_urbanized			value = 0 }  ### Province level variable, to be upgraded to national
+		
+		set_variable = { which = country_total_pop_r					which = total_pop_r }
+		set_variable = { which = country_total_urban				which = total_pop_r }
+		multiply_variable = { which = country_total_urban			which = urban_ratio }
+		multiply_variable = { which = country_total_urban			value = 0.01 }
+		
+		
+		### Added to the national total
+		PREV = {
+			change_variable = { which = country_total_pop_r				which = PREV }
+			change_variable = { which = country_total_urban		which = PREV }
+		}
+		
+		# Cleanup
+		set_variable = { which = country_total_pop_r				value = 0 }
+		set_variable = { which = country_total_urban		value = 0 }
+		
+	}
+	######################################################
+	### Calculating country level percent urbanization ###
+	######################################################
+	
+	if = {
+		limit = {
+			NOT = { check_variable = { which = country_total_pop_r   value = 0.001 } }
+		}
+		set_variable = { which = country_total_pop_r   value = 0.001 }
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = country_percent_urbanized   value = 0.001 } }
+		}
+		set_variable = { which = country_percent_urbanized				which = country_total_urban }
+		divide_variable = { which = country_percent_urbanized				which = country_total_pop_r }
+	}
+	else = {
+		set_variable = { which = country_percent_urbanized				value = 0 }
+	}
+	multiply_variable = { which = country_percent_urbanized			value = 100 }
+	
+	set_variable = { which = country_total_pop which = country_total_pop_r }
+	multiply_variable = { which = country_total_pop			value = 0.1 }
+	
+	if = {
+		limit = {
+			NOT = { check_variable = { which = country_total_pop   value = 0.001 } }
+		}
+		set_variable = { which = country_total_pop value = 0.001 }
+	}
+	
+	if = {
+		limit = {
+			NOT = { check_variable = { which = country_total_pop_r   value = 0.001 } }
+		}
+		set_variable = { which = country_total_pop_r value = 0.001 }
+	}
+}
+
+calc_upper_pop = {
+	every_owned_province = {
+		limit = {
+			NOT = { is_wasteland = yes }
+		}
+		set_variable = { which = upper_pop			value = 0.001 }
+	}
+	set_variable = { which = upper_pop_r			value = 0 }
+	set_variable = { which = upper_total			value = 0 }
+	set_variable = { which = upper_total			which = country_total_pop_r }
+	multiply_variable = { which = upper_total		value = 0.05 }
+	set_variable = { which = upper_total_weight			value = 0 } ### Will tally country's total weight
+	every_owned_province = {
+		limit = {
+			is_city = yes
+		}
+		set_variable = { which = upper_rural_weight			value = 0.001 }
+		set_variable = { which = upper_pop_contrib			value = 0 }
+		if = {
+			limit = {
+				check_variable = { which = wealth_rural_as_asset		value = 0.001 }
+			}
+			change_variable = { which = upper_rural_weight		which = wealth_rural_as_asset }
+			multiply_variable = { which = upper_rural_weight		value = 0.01 }
+		}
+		Pop_InvRatioToVal = {
+			PopTotal=total_pop_r
+			PopRatio=urban_ratio
+			output=upper_pop_contrib
+		}
+		multiply_variable = { which = upper_pop_contrib		value = 0.1 }
+		change_variable = { which = upper_rural_weight		which = upper_pop_contrib }
+		change_variable = { which = upper_ratio				which = upper_rural_weight }
+		
+		set_variable = { which = upper_urban_weight			value = 0.001 }
+		set_variable = { which = upper_pop_contrib			value = 0 }
+		if = {
+			limit = {
+				check_variable = { which = wealth_urban_as_asset		value = 0.001 }
+			}
+			change_variable = { which = upper_urban_weight		which = wealth_urban_as_asset }
+			multiply_variable = { which = upper_urban_weight		value = 0.01 }
+		}
+		Pop_RatioToVal = {
+			PopTotal=total_pop_r
+			PopRatio=urban_ratio
+			output=upper_pop_contrib
+		}
+		multiply_variable = { which = upper_pop_contrib		value = 0.1 }
+		change_variable = { which = upper_urban_weight		which = upper_pop_contrib }
+		change_variable = { which = upper_urban_weight		which = upper_pop_contrib }
+		change_variable = { which = upper_ratio				which = upper_urban_weight }
+		
+		set_variable = { which = upper_pop_contrib			value = 0 }
+		
+		# Prevent overflow
+		multiply_variable = { which = upper_ratio			value = 0.1 }
+		
+		set_variable = { which = upper_weight				which = upper_ratio }
+		set_variable = { which = upper_total_weight			which = upper_ratio }
+		
+		PREV = { change_variable = { which = upper_total_weight	which = PREV } } ### Tabulate total upper class weight at country scope
+		
+		# Cleanup
+		set_variable = { which = upper_total_weight			value = 0 }
+	}
+	
+	every_owned_province = {
+		limit = {
+			is_city = yes
+			#	is_overseas = no
+		}
+		set_variable = { which = upper_total_weight		value = 0 }
+		set_variable = { which = upper_total			value = 0 }
+		change_variable = { which = upper_total_weight	which = PREV }
+		change_variable = { which = upper_total			which = PREV }
+		multiply_variable = { which = upper_ratio		value = 100 } ### Value must be scaled up because variables can only be represented to the 0.001 place
+
+		if = {
+			limit = {
+				check_variable = { which = upper_ratio		value = 0.001 }
+			}
+			divide_variable = {
+				which = upper_ratio
+				which = upper_total_weight
+			}
+		}
+		
+		set_variable = { which = upper_pop_r						value = 0 }
+		set_variable = { which = upper_pop_r						which = upper_ratio }
+		multiply_variable = { which = upper_pop_r					which = upper_total }
+		multiply_variable = { which = upper_pop_r					value = 0.01 } ### Prepare for estate calculations
+		update_pop_display = yes
+		set_variable = { which = upper_pop			which = upper_pop_r }
+		multiply_variable = { which = upper_pop		value = 0.1 } ### Prepare for estate calculations
+		
+		PREV = { change_variable = { which = upper_pop_r	which = PREV } }
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = upper_pop_r value = 1 } }
+		}
+		set_variable = { which = upper_pop_r     value = 0 }
+		every_owned_province = {
+			limit = {
+				is_city = yes
+				#	is_overseas = no
+			}
+			set_variable = { which = upper_pop_r     value = 0.01 }
+			set_variable = { which = upper_pop     value = 0.001 }
+			if = {
+				limit = {
+					is_capital = yes
+				}
+				set_variable = { which = upper_pop_r     value = 1 }
+				set_variable = { which = upper_pop     value = 0.1 }
+			}
+			PREV = { change_variable = { which = upper_pop_r	which = PREV } }
+			update_pop_display = yes
+		}
+	}
+	set_variable = { which = upper_pop			which = upper_pop_r }
+	multiply_variable = { which = upper_pop		value = 0.1 } ### Prepare for estate calculations
+	if = { ### Variables set to 0 after calculations are done
+		limit = {
+			NOT = { has_global_flag = show_for_developers }
+		}
+		set_variable = { which = upper_total			value = 0 }
+		
+		every_owned_province = {
+			limit = {
+				is_city = yes
+			}
+			set_variable = { which = upper_ratio		value = 0 }
+			set_variable = { which = upper_total_weight	value = 0 }
+			set_variable = { which = upper_total		value = 0 }
+		}
+	}
+	set_variable = {    	which = upper_pop_overseas 		value = 0 }
+	set_variable = { 		which = upper_pop_non_overseas 	value = 0 }
+	set_variable = { 		which = upper_pop_non_overseas 	which = upper_pop }
+	every_owned_province = {
+		limit = {
+			is_overseas = yes
+		}
+		set_variable = {    which = upper_pop_overseas value = 0 }
+		set_variable = {    which = upper_pop_overseas which = upper_pop }
+		
+		PREV = { change_variable = { which = upper_pop_overseas	which = PREV } }
+	}
+	subtract_variable = { 	which = upper_pop_non_overseas 	which = upper_pop_overseas }
+}
+
+recalc_infra_rural = {
+}
+
+#recalc_infra_dev_level_subtract = {
+#	trigger_switch = {
+#		on_trigger = has_country_modifier
+#		development_level_1 = { every_owned_province = { subtract_variable = { which = urban_development_cost value = -30 } } }
+#		development_level_2 = { every_owned_province = { subtract_variable = { which = urban_development_cost value = -10 } } }
+#		development_level_3 = { }
+#		development_level_4 = { every_owned_province = { subtract_variable = { which = urban_development_cost value = 20 } } }
+#		development_level_5 = { every_owned_province = { subtract_variable = { which = urban_development_cost value = 40 } } }
+#		development_level_6 = { every_owned_province = { subtract_variable = { which = urban_development_cost value = 60 } } }
+#		development_level_7 = { every_owned_province = { subtract_variable = { which = urban_development_cost value = 80 } } }
+#		development_level_8 = { every_owned_province = { subtract_variable = { which = urban_development_cost value = 100 } } }
+#	}
+#}
+#recalc_infra_dev_level = {
+#	trigger_switch = {
+#		on_trigger = has_country_modifier
+#		development_level_1 = { recalc_infra_dev_level_helper = { value=30 } }
+#		development_level_2 = { recalc_infra_dev_level_helper = { value=10 } }
+#		development_level_3 = { recalc_infra_dev_level_helper = { value=0 } }
+#		development_level_4 = { recalc_infra_dev_level_helper = { value=20 } }
+#		development_level_5 = { recalc_infra_dev_level_helper = { value=40 } }
+#		development_level_6 = { recalc_infra_dev_level_helper = { value=60 } }
+#		development_level_7 = { recalc_infra_dev_level_helper = { value=80 } }
+#		development_level_8 = { recalc_infra_dev_level_helper = { value=100 } }
+#	}
+#}
+#recalc_infra_dev_level_helper = {
+#	every_owned_province = {
+#		set_variable = { which = development_level_build_mod value = $value$ }
+#		change_variable = { which = urban_development_cost which = development_level_build_mod }
+#		recalc_infra_apply = yes
+#	}
+#}
+
+recalc_infra_owner_change = { ### INCOMPLETE
+	province_event = { id = MT_general_fixes.300 }
+	### if owner > 0
+		### export owner mod, apply
+		### export FROM mod, apply if >0
+		## reset mods
+	### else clear mods
+	
+	
+#	export_to_variable = { which = temp value = modifier:development_cost who = FROM }
+#	export_to_variable = { which = dev_build_cost_change value = modifier:development_cost who = owner }
+#	subtract_variable = { which = dev_build_cost_change which = temp }
+#	
+#	FROM = {
+#		trigger_switch = {
+#			on_trigger = has_country_modifier
+#			development_level_1 = { PREV = { change_variable = { which = dev_build_cost_change value = 0.3 } } }
+#			development_level_2 = { PREV = { change_variable = { which = dev_build_cost_change value = 0.1 } } }
+#			development_level_3 = { }
+#			development_level_4 = { PREV = { change_variable = { which = dev_build_cost_change value = -0.2 } } }
+#			development_level_5 = { PREV = { change_variable = { which = dev_build_cost_change value = -0.4 } } }
+#			development_level_6 = { PREV = { change_variable = { which = dev_build_cost_change value = -0.6 } } }
+#			development_level_7 = { PREV = { change_variable = { which = dev_build_cost_change value = -0.8 } } }
+#			development_level_8 = { PREV = { change_variable = { which = dev_build_cost_change value = -1.0 } } }
+#		}
+#	}
+#	owner = {
+#		trigger_switch = {
+#			on_trigger = has_country_modifier
+#			development_level_1 = { PREV = { change_variable = { which = dev_build_cost_change value = -0.3 } } }
+#			development_level_2 = { PREV = { change_variable = { which = dev_build_cost_change value = -0.1 } } }
+#			development_level_3 = { }
+#			development_level_4 = { PREV = { change_variable = { which = dev_build_cost_change value = 0.2 } } }
+#			development_level_5 = { PREV = { change_variable = { which = dev_build_cost_change value = 0.4 } } }
+#			development_level_6 = { PREV = { change_variable = { which = dev_build_cost_change value = 0.6 } } }
+#			development_level_7 = { PREV = { change_variable = { which = dev_build_cost_change value = 0.8 } } }
+#			development_level_8 = { PREV = { change_variable = { which = dev_build_cost_change value = 1.0 } } }
+#		}
+#	}
+}
+
+recalc_infra_apply = {
+	set_variable = { which = temp which = urban_development_cost }
+	divide_variable = { which = temp value = 100 }
+	AddModHelper = { name=urban_development_mod num=81.92 }
+	AddModHelper = { name=urban_development_mod num=40.96 }
+	AddModHelper = { name=urban_development_mod num=20.48 }
+	AddModHelper = { name=urban_development_mod num=10.24 }
+	AddModHelper = { name=urban_development_mod num=5.12 }
+	AddModHelper = { name=urban_development_mod num=2.56 }
+	AddModHelper = { name=urban_development_mod num=1.28 }
+	AddModHelper = { name=urban_development_mod num=0.64 }
+	AddModHelper = { name=urban_development_mod num=0.32 }
+	AddModHelper = { name=urban_development_mod num=0.16 }
+	AddModHelper = { name=urban_development_mod num=0.08 }
+	AddModHelper = { name=urban_development_mod num=0.04 }
+	AddModHelper = { name=urban_development_mod num=0.02 }
+	AddModHelper = { name=urban_development_mod num=0.01 }
+}
+
+recalc_infra = {
+	if = {
+		limit = {
+			NOT = { has_province_flag = no_recalc_infra }
+		}
+		urban_gravity_calc = yes
+		
+		remove_urban_development_rank_MAPMODE = yes
+		
+		set_variable = { which = urban_development_cost which = wealth_urban_as_asset }
+		divide_variable = { which = urban_development_cost value = 20 }
+#		set_variable = { which = urban_development_cost_disp which = urban_development_cost }
+
+		export_to_variable = {
+			which = temp
+			value = modifier:development_cost
+			who = owner
+		}
+		export_to_variable = {
+			which = development_build_cost_mod
+			value = modifier:local_development_cost
+		}
+		change_variable = { which = development_build_cost_mod which = temp }
+		if = {
+			limit = {
+				NOT = {
+					check_variable = { which = development_build_cost_mod value = 0 }
+				}
+			}
+			subtract_variable = { which = development_build_cost_mod value = 1 }
+			
+			set_variable = { which = development_build_cost_var value = 1 }
+			divide_variable = { which = development_build_cost_var which = development_build_cost_mod }
+			change_variable = { which = development_build_cost_var value = 1 }
+			
+			change_variable = { which = development_build_cost_mod value = 1 }
+			multiply_variable = { which = development_build_cost_mod value = 100 }
+			
+			multiply_variable = { which = development_build_cost_var which = urban_development_cost }
+			subtract_variable = { which = urban_development_cost which = development_build_cost_var }
+		}
+		else = {
+			set_variable = { which = development_build_cost_var value = 0 }
+		}
+	
+#		owner = {
+#			trigger_switch = {
+#				on_trigger = has_country_modifier
+#				development_level_1 = { PREV = { set_variable = { which = development_level_build_mod value = 30 } } }
+#				development_level_2 = { PREV = { set_variable = { which = development_level_build_mod value = 10 } } }
+#				development_level_3 = { PREV = { set_variable = { which = development_level_build_mod value = 0 } } }
+#				development_level_4 = { PREV = { set_variable = { which = development_level_build_mod value = 20 } } }
+#				development_level_5 = { PREV = { set_variable = { which = development_level_build_mod value = 40 } } }
+#				development_level_6 = { PREV = { set_variable = { which = development_level_build_mod value = 60 } } }
+#				development_level_7 = { PREV = { set_variable = { which = development_level_build_mod value = 80 } } }
+#				development_level_8 = { PREV = { set_variable = { which = development_level_build_mod value = 100 } } }
+#			}
+#		}
+#		change_variable = { which = urban_development_cost which = development_level_build_mod }
+
+		multiply_variable = { which = development_build_cost_var value = 0.001 }
+		multiply_variable = { which = development_build_cost_var value = 1000 }
+		multiply_variable = { which = urban_development_cost value = 0.001 }
+		multiply_variable = { which = urban_development_cost value = 1000 }
+		
+		recalc_infra_apply = yes
+		
+		if = { limit = { check_variable = { which = wealth_urban_as_asset value = 6400 } }
+			if = { limit = { check_variable = { which = wealth_urban_as_asset value = 18000 } }
+				if = { limit = { NOT = { has_province_modifier = urban_development_rank_10 } }
+					remove_urban_development_rank = yes
+					add_permanent_province_modifier = { name = urban_development_rank_10	 duration = -1 } 
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = wealth_urban_as_asset value = 12000 } }
+					if = { limit = { NOT = { has_province_modifier = urban_development_rank_9 } }
+						remove_urban_development_rank = yes
+						add_permanent_province_modifier = { name = urban_development_rank_9	 duration = -1 }
+					}
+				}
+				else = {
+					if = { limit = { NOT = { has_province_modifier = urban_development_rank_8 } }
+						remove_urban_development_rank = yes
+						add_permanent_province_modifier = { name = urban_development_rank_8	 duration = -1 }
+					}
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = wealth_urban_as_asset value = 1600 } }
+				if = { limit = { check_variable = { which = wealth_urban_as_asset value = 3400 } }
+					if = { limit = { check_variable = { which = wealth_urban_as_asset value = 4800 } }
+						if = { limit = { NOT = { has_province_modifier = urban_development_rank_7 } }
+							remove_urban_development_rank = yes
+							add_permanent_province_modifier = { name = urban_development_rank_7	 duration = -1 }
+						}
+					}
+					else = {
+						if = { limit = { NOT = { has_province_modifier = urban_development_rank_6 } }
+							remove_urban_development_rank = yes
+							add_permanent_province_modifier = { name = urban_development_rank_6	 duration = -1 }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = wealth_urban_as_asset value = 2400 } }
+						if = { limit = { NOT = { has_province_modifier = urban_development_rank_5 } }
+							remove_urban_development_rank = yes
+							add_permanent_province_modifier = { name = urban_development_rank_5	 duration = -1 }
+						}
+					}
+					else = {
+						if = { limit = { NOT = { has_province_modifier = urban_development_rank_4 } }
+							remove_urban_development_rank = yes
+							add_permanent_province_modifier = { name = urban_development_rank_4	 duration = -1 }
+						}
+					}
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = wealth_urban_as_asset value = 600 } }
+					if = { limit = { check_variable = { which = wealth_urban_as_asset value = 1000 } }
+						if = { limit = { NOT = { has_province_modifier = urban_development_rank_3 } }
+							remove_urban_development_rank = yes
+							add_permanent_province_modifier = { name = urban_development_rank_3	 duration = -1 }
+						}
+					}
+					else = {
+						if = { limit = { NOT = { has_province_modifier = urban_development_rank_2 } }
+							remove_urban_development_rank = yes
+							add_permanent_province_modifier = { name = urban_development_rank_2	 duration = -1 }
+						}
+					}
+				}
+				else = {
+					if = { limit = { check_variable = { which = wealth_urban_as_asset value = 300 } }
+						if = { limit = { NOT = { has_province_modifier = urban_development_rank_1 } }
+							remove_urban_development_rank = yes
+							add_permanent_province_modifier = { name = urban_development_rank_1	 duration = -1 }
+						}
+					}
+					else = {
+						if = { limit = { NOT = { has_province_modifier = urban_development_rank_0 } }
+							remove_urban_development_rank = yes
+							add_permanent_province_modifier = { name = urban_development_rank_0	 duration = -1 }
+						}
+					}
+				}
+			}
+		}
+		set_province_flag = infra_calc_done
+	}
+}
+
+urban_gravity_calc = {
+	### Urban Gravity Calculations set ###			
+	set_variable = { 	  which = urban_gravity_base 	    value = 0 }
+	set_variable = { 	  which = urban_gravity_percentage  value = 1 }
+	set_variable = { 	  which = urban_gravity_base 	    which = rural_pop } ### Each rural pop gives 1/50th of an urban gravity.  Gotta start somewhere.
+	multiply_variable = { which = urban_gravity_base  	    value = 0.01 }
+	
+	set_variable = { which = wealth_urban_as_asset value = 0 }
+	
+	### Below, we calculate the urban gravity and wealth contributed by various buildings, modifiers, etc ###
+	
+	##################################################################################################################################################################
+	
+	### SOURCES ###													### URBAN GRAVITY BASE ###		
+	
+	trigger_switch = {
+		on_trigger = has_province_flag
+		pilgrimage_site_minor = { change_variable = { which = urban_gravity_base value = 0.25 } }
+		pilgrimage_site_major = { change_variable = { which = urban_gravity_base value = 1 } }
+	}
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		minor_center_of_transport = { change_variable = { which = urban_gravity_base value = 0.25 }   change_variable = { which = urban_gravity_percentage value = 0.10 } change_variable = { which = wealth_urban_growth_multiplier value = 0.05 } }
+		important_center_of_transport = { change_variable = { which = urban_gravity_base value = 0.5 }    change_variable = { which = urban_gravity_percentage value = 0.15 } change_variable = { which = wealth_urban_growth_multiplier value = 0.10 } }
+		major_center_of_transport = { change_variable = { which = urban_gravity_base value = 0.75 }   change_variable = { which = urban_gravity_percentage value = 0.20 } change_variable = { which = wealth_urban_growth_multiplier value = 0.15 } }
+		dominant_center_of_transport = { change_variable = { which = urban_gravity_base value = 1 }      change_variable = { which = urban_gravity_percentage value = 0.25 } change_variable = { which = wealth_urban_growth_multiplier value = 0.20 } }
+	}
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		mission_small_urban_gravity = { change_variable = { which = urban_gravity_base value = 0.50 } }
+		mission_medium_urban_gravity = {  change_variable = { which = urban_gravity_base value = 1.00 } }
+		mission_large_urban_gravity = { change_variable = { which = urban_gravity_base value = 1.50 } }
+	}
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		preeminent_region_city = { change_variable = { which = urban_gravity_base value = 0.15 }   change_variable = { which = urban_gravity_percentage value = 0.10 } }
+		preeminent_sub_continent_city = {  change_variable = { which = urban_gravity_base value = 0.25 }   change_variable = { which = urban_gravity_percentage value = 0.15 } }
+		preeminent_continent_city = { change_variable = { which = urban_gravity_base value = 0.35 }   change_variable = { which = urban_gravity_percentage value = 0.20 } }
+	}
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		minor_center_of_trade = { change_variable = { which = urban_gravity_base value = 0.25 }   change_variable = { which = urban_gravity_percentage value = 0.10 } change_variable = { which = wealth_urban_growth_multiplier value = 0.05 } }
+		important_center_of_trade = { change_variable = { which = urban_gravity_base value = 0.5 }    change_variable = { which = urban_gravity_percentage value = 0.15 } change_variable = { which = wealth_urban_growth_multiplier value = 0.10 } }
+		major_center_of_trade = { change_variable = { which = urban_gravity_base value = 0.75 }   change_variable = { which = urban_gravity_percentage value = 0.20 } change_variable = { which = wealth_urban_growth_multiplier value = 0.15 } }
+		dominant_center_of_trade = { change_variable = { which = urban_gravity_base value = 1 }      change_variable = { which = urban_gravity_percentage value = 0.25 } change_variable = { which = wealth_urban_growth_multiplier value = 0.20 } }
+	}
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		minor_center_of_production = { change_variable = { which = urban_gravity_base value = 0.25 }   change_variable = { which = urban_gravity_percentage value = 0.10 } change_variable = { which = wealth_urban_growth_multiplier value = 0.05 } }
+		important_center_of_production = { change_variable = { which = urban_gravity_base value = 0.5 }    change_variable = { which = urban_gravity_percentage value = 0.15 } change_variable = { which = wealth_urban_growth_multiplier value = 0.10 } }
+		major_center_of_production = { change_variable = { which = urban_gravity_base value = 0.75 }   change_variable = { which = urban_gravity_percentage value = 0.20 } change_variable = { which = wealth_urban_growth_multiplier value = 0.15 } }
+		dominant_center_of_production = { change_variable = { which = urban_gravity_base value = 1 }      change_variable = { which = urban_gravity_percentage value = 0.25 } change_variable = { which = wealth_urban_growth_multiplier value = 0.20 } }
+	}
+	
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		minor_center_of_art = { change_variable = { which = urban_gravity_base value = 0.15 }     change_variable = { which = urban_gravity_percentage value = 0.05 } change_variable = { which = wealth_urban_growth_multiplier value = 0.025 } }
+		median_center_of_art = { change_variable = { which = urban_gravity_base value = 0.30 }     change_variable = { which = urban_gravity_percentage value = 0.10 } change_variable = { which = wealth_urban_growth_multiplier value = 0.05 } }
+		important_center_of_art = { change_variable = { which = urban_gravity_base value = 0.30 }     change_variable = { which = urban_gravity_percentage value = 0.15 } change_variable = { which = wealth_urban_growth_multiplier value = 0.10 } }
+	}
+	
+	trigger_switch = {
+		on_trigger = has_building
+		art_corporation = { change_variable = { which = urban_gravity_base value = 0.20 }    change_variable = { which = urban_gravity_percentage value = 0.075 } change_variable = { which = wealth_urban_as_asset value = 200 } }
+		fine_arts_academy = { change_variable = { which = urban_gravity_base value = 0.40 }    change_variable = { which = urban_gravity_percentage value = 0.15 }  change_variable = { which = wealth_urban_as_asset value = 500 } }
+		opera = { change_variable = { which = urban_gravity_base value = 0.60 }    change_variable = { which = urban_gravity_percentage value = 0.30 }  change_variable = { which = wealth_urban_as_asset value = 900 } }
+	}
+	trigger_switch = {
+		on_trigger = has_building
+		town_hall = { change_variable = { which = urban_gravity_base value = 0.65 }                                                                          change_variable = { which = wealth_urban_as_asset value = 75 } }
+		urban_infrastructure_1 = { change_variable = { which = urban_gravity_base value = 1.15 }      change_variable = { which = urban_gravity_percentage value = 0.15 }   change_variable = { which = wealth_urban_as_asset value = 225 } }
+		urban_infrastructure_2 = { change_variable = { which = urban_gravity_base value = 2.3 }      change_variable = { which = urban_gravity_percentage value = 0.30 }   change_variable = { which = wealth_urban_as_asset value = 575 } }
+		urban_infrastructure_3 = { change_variable = { which = urban_gravity_base value = 4 }      change_variable = { which = urban_gravity_percentage value = 0.45 }   change_variable = { which = wealth_urban_as_asset value = 1075 } }
+		urban_infrastructure_4 = { change_variable = { which = urban_gravity_base value = 5.5 }      change_variable = { which = urban_gravity_percentage value = 0.60 }   change_variable = { which = wealth_urban_as_asset value = 1775 } }
+		urban_infrastructure_5 = { change_variable = { which = urban_gravity_base value = 7 }      change_variable = { which = urban_gravity_percentage value = 0.75 }   change_variable = { which = wealth_urban_as_asset value = 2775 } }
+	}
+	trigger_switch = {
+		on_trigger = has_building
+		small_university = { change_variable = { which = urban_gravity_base value = 0.5 }                                                                          change_variable = { which = wealth_urban_as_asset value = 150 }         set_province_flag = university_present }
+		medium_university = { change_variable = { which = urban_gravity_base value = 1.5 }    change_variable = { which = urban_gravity_percentage value = 0.10 }   change_variable = { which = wealth_urban_as_asset value = 400 }         set_province_flag = university_present }
+		big_university = { change_variable = { which = urban_gravity_base value = 2.5 }    change_variable = { which = urban_gravity_percentage value = 0.25 }   change_variable = { which = wealth_urban_as_asset value = 750 }         set_province_flag = university_present }
+	}
+	trigger_switch = {
+		on_trigger = has_building
+		warehouse = { change_variable = { which = urban_gravity_base value = 0.15 }   change_variable = { which = urban_gravity_percentage value = 0.05 }   change_variable = { which = wealth_urban_as_asset value = 100 }  }
+		warehouse_district = { change_variable = { which = urban_gravity_base value = 0.25 }   change_variable = { which = urban_gravity_percentage value = 0.15 }   change_variable = { which = wealth_urban_as_asset value = 400 }  }
+	}
+	trigger_switch = {
+		on_trigger = has_building
+		marketplace = {                                                              change_variable = { which = urban_gravity_percentage value = 0.35 }   change_variable = { which = wealth_urban_as_asset value = 75 }  }
+		merchant_guild = { change_variable = { which = urban_gravity_base value = 0.15 }   change_variable = { which = urban_gravity_percentage value = 0.50 }   change_variable = { which = wealth_urban_as_asset value = 225 }  }
+		trade_depot = { change_variable = { which = urban_gravity_base value = 0.2 }    change_variable = { which = urban_gravity_percentage value = 0.60 }   change_variable = { which = wealth_urban_as_asset value = 575 }  }
+		customs_house = { change_variable = { which = urban_gravity_base value = 0.3 }    change_variable = { which = urban_gravity_percentage value = 0.70 }   change_variable = { which = wealth_urban_as_asset value = 1075 } }
+	}
+	trigger_switch = {
+		on_trigger = has_building
+		temple = { change_variable = { which = urban_gravity_percentage value = 0.10 }   change_variable = { which = wealth_urban_as_asset value = 50 } }
+		temple_heathen = { change_variable = { which = urban_gravity_percentage value = 0.10 }   change_variable = { which = wealth_urban_as_asset value = 50 } }
+		great_temple = { change_variable = { which = urban_gravity_percentage value = 0.25 }   change_variable = { which = wealth_urban_as_asset value = 275 } }
+	}
+	if = { limit = { has_building = bank }                                    change_variable = { which = urban_gravity_base value = 0.5 }    change_variable = { which = urban_gravity_percentage value = 0.25 }   change_variable = { which = wealth_urban_as_asset value = 450 } }
+	if = { limit = { has_building = stock_exchange }                          change_variable = { which = urban_gravity_base value = 1 }      change_variable = { which = urban_gravity_percentage value = 0.25 }   change_variable = { which = wealth_urban_as_asset value = 950 } }
+	trigger_switch = {
+		on_trigger = has_building
+		workshop = { change_variable = { which = wealth_urban_as_asset value = 100 }          }
+		corporation_guild = { change_variable = { which = wealth_urban_as_asset value = 450 }          }
+		urban_manufactory = { change_variable = { which = wealth_urban_as_asset value = 950 }          }
+		factory = {   change_variable = { which = wealth_urban_as_asset value = 1650 }         }
+		steam_powered_factory = {   change_variable = { which = wealth_urban_as_asset value = 2650 }         }
+	}
+	trigger_switch = {
+		on_trigger = has_building																																		#removed due to possible related bugs
+		military_harbour_1 = { change_variable = { which = urban_gravity_base value = 0.25 }           change_variable = { which = wealth_urban_as_asset value = 350 }  } 
+		military_harbour_2 = { change_variable = { which = urban_gravity_base value = 0.5 }            change_variable = { which = wealth_urban_as_asset value = 800 }  } 
+		military_harbour_3 = { change_variable = { which = urban_gravity_base value = 1 }              change_variable = { which = wealth_urban_as_asset value = 1450 } } 
+		military_harbour_4 = { change_variable = { which = urban_gravity_base value = 1.5 }            change_variable = { which = wealth_urban_as_asset value = 2350 } } 
+	}
+	trigger_switch = {
+		on_trigger = has_building
+		harbour_infrastructure_1 = { change_variable = { which = urban_gravity_base value = 0.1 }                                                                          change_variable = { which = wealth_urban_as_asset value = 50 } }
+		harbour_infrastructure_2 = { change_variable = { which = urban_gravity_base value = 0.2 }    change_variable = { which = urban_gravity_percentage value = 0.2 }    change_variable = { which = wealth_urban_as_asset value = 200 }    set_province_flag = large_port_present }
+		harbour_infrastructure_3x = { change_variable = { which = urban_gravity_base value = 0.25 }   change_variable = { which = urban_gravity_percentage value = 0.25 }   change_variable = { which = wealth_urban_as_asset value = 550 }     set_province_flag = large_port_present }
+		harbour_infrastructure_4 = { change_variable = { which = urban_gravity_base value = 0.3 }    change_variable = { which = urban_gravity_percentage value = 0.3 }    change_variable = { which = wealth_urban_as_asset value = 1050 }   set_province_flag = large_port_present }
+		harbour_infrastructure_5 = { change_variable = { which = urban_gravity_base value = 0.5 }    change_variable = { which = urban_gravity_percentage value = 0.40 }   change_variable = { which = wealth_urban_as_asset value = 1750 }    set_province_flag = large_port_present }
+	}
+	trigger_switch = {
+		on_trigger = has_building
+		road_network = { change_variable = { which = urban_gravity_percentage value = 0.20 } }
+		paved_road_network = { change_variable = { which = urban_gravity_base value = 0.15 }   change_variable = { which = urban_gravity_percentage value = 0.30 } }
+		highway_network = { change_variable = { which = urban_gravity_base value = 0.25 }   change_variable = { which = urban_gravity_percentage value = 0.40 } }
+		road_and_rail_network = { change_variable = { which = urban_gravity_base value = 0.40 }   change_variable = { which = urban_gravity_percentage value = 0.50 } }
+	}
+	trigger_switch = {
+		on_trigger = has_building
+		fort_14th = { change_variable = { which = urban_gravity_base value = 0.1 }    change_variable = { which = urban_gravity_percentage value = 0.1 } }
+		fort_15th = { change_variable = { which = urban_gravity_base value = 0.2 }    change_variable = { which = urban_gravity_percentage value = 0.15 } }
+		fort_16th = { change_variable = { which = urban_gravity_base value = 0.3 }    change_variable = { which = urban_gravity_percentage value = 0.2 } }
+		fort_17th = { change_variable = { which = urban_gravity_base value = 0.4 }    change_variable = { which = urban_gravity_percentage value = 0.25 } }
+		fort_18th = { change_variable = { which = urban_gravity_base value = 0.5 }    change_variable = { which = urban_gravity_percentage value = 0.30 } }
+	}
+	
+	if = {
+		limit = { has_province_flag = was_capital }
+		remove_capital_bonus_modifier = yes
+	}
+	trigger_switch = {
+		on_trigger = has_building
+		bureaucracy_1 = { change_variable = { which = urban_gravity_base value = 0.5 }    change_variable = { which = urban_gravity_percentage value = 0.25 }   if = { limit = { is_capital = no } remove_province_modifier = has_regional_capital add_province_modifier = { name = has_regional_capital duration = 600 hidden = yes } } owner = { change_variable = { which = bureaucracy_strength_country    value = 1 } change_variable = { which = capital_maintenance     value = 30 } change_variable = { which = capital_num value = 1 } } set_variable = { which = bureaucracy_strength_province   value = 1 } remove_capital_bonus_modifier = yes }
+		bureaucracy_2 = { change_variable = { which = urban_gravity_base value = 1 }      change_variable = { which = urban_gravity_percentage value = 0.35 }   if = { limit = { is_capital = no } remove_province_modifier = has_regional_capital add_province_modifier = { name = has_regional_capital duration = 600 hidden = yes } } owner = { change_variable = { which = bureaucracy_strength_country    value = 2 } change_variable = { which = capital_maintenance     value = 60 } change_variable = { which = capital_num value = 2 } } set_variable = { which = bureaucracy_strength_province   value = 2 } remove_capital_bonus_modifier = yes }
+		bureaucracy_3 = { change_variable = { which = urban_gravity_base value = 2 }      change_variable = { which = urban_gravity_percentage value = 0.50 }   if = { limit = { is_capital = no } remove_province_modifier = has_regional_capital add_province_modifier = { name = has_regional_capital duration = 600 hidden = yes } } owner = { change_variable = { which = bureaucracy_strength_country    value = 3 } change_variable = { which = capital_maintenance     value = 120 } change_variable = { which = capital_num value = 3 } } set_variable = { which = bureaucracy_strength_province   value = 3 } remove_capital_bonus_modifier = yes }
+		bureaucracy_4 = { change_variable = { which = urban_gravity_base value = 3 }      change_variable = { which = urban_gravity_percentage value = 0.75 }   if = { limit = { is_capital = no } remove_province_modifier = has_regional_capital add_province_modifier = { name = has_regional_capital duration = 600 hidden = yes } } owner = { change_variable = { which = bureaucracy_strength_country    value = 4 } change_variable = { which = capital_maintenance     value = 240 } change_variable = { which = capital_num value = 4 } } set_variable = { which = bureaucracy_strength_province   value = 4 } remove_capital_bonus_modifier = yes }
+		bureaucracy_5 = { change_variable = { which = urban_gravity_base value = 4 }      change_variable = { which = urban_gravity_percentage value = 1 }      if = { limit = { is_capital = no } remove_province_modifier = has_regional_capital add_province_modifier = { name = has_regional_capital duration = 600 hidden = yes } } owner = { change_variable = { which = bureaucracy_strength_country    value = 5 } change_variable = { which = capital_maintenance     value = 500 } change_variable = { which = capital_num value = 5 } } set_variable = { which = bureaucracy_strength_province   value = 5 } remove_capital_bonus_modifier = yes }
+	}
+	
+	if = {
+		limit = {
+			owner = { has_country_modifier = special_country_gravity_conditions }
+		}
+		if = {
+			limit = {
+				owner = { has_country_modifier = BUR_citizenship_granted }
+				has_province_flag = burghers_control_province
+				is_overseas = no
+			}
+			change_variable = { which = urban_gravity_percentage    value = 0.25 }
+		}
+	}
+	
+	if = {
+		limit = {
+			AND = {
+				owned_by = PAP
+				is_capital = yes
+			}
+		}
+		change_variable = { which = urban_gravity_base value = 1 } change_variable = { which = wealth_urban_as_asset value = 250 }
+	}
+	
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		consequential_capital_rank_1 = { change_variable = { which = urban_gravity_base value = 0.25 } }
+		consequential_capital_rank_2 = { change_variable = { which = urban_gravity_base value = 0.5 } }
+		consequential_capital_rank_3 = { change_variable = { which = urban_gravity_base value = 1 } }
+		consequential_capital_rank_4 = { change_variable = { which = urban_gravity_base value = 1.5 } }
+		consequential_capital_rank_5 = { change_variable = { which = urban_gravity_base value = 2 } }
+		consequential_capital_rank_6 = { change_variable = { which = urban_gravity_base value = 2.5 } }
+		consequential_capital_rank_7 = { change_variable = { which = urban_gravity_base value = 3 } }
+		consequential_capital_rank_8 = { change_variable = { which = urban_gravity_base value = 3.5 } }
+		consequential_capital_rank_9 = { change_variable = { which = urban_gravity_base value = 4 } }
+		consequential_capital_rank_10 = { change_variable = { which = urban_gravity_base value = 4.5 } }
+		consequential_capital_rank_11 = { change_variable = { which = urban_gravity_base value = 5 } }
+		consequential_capital_rank_12 = { change_variable = { which = urban_gravity_base value = 5.5 } }
+	}
+	trigger_switch = {
+		on_trigger = has_province_modifier
+		mission_large_urban_gravity = { change_variable = { which = urban_gravity_base value = 1.5 } }
+		mission_medium_urban_gravity = { change_variable = { which = urban_gravity_base value = 1.0 } }
+		mission_small_urban_gravity = { change_variable = { which = urban_gravity_base value = 0.5 } }
+	}
+
+	if = { limit = { has_province_modifier = mission_urban_gravity }		  change_variable = { which = urban_gravity_base value = 0.25 } }
+
+	if = { limit = { has_province_modifier = monastic_town } change_variable = { which = urban_gravity_base value = 0.15 } }
+	if = { limit = { has_province_modifier = frankish_settlers } change_variable = { which = urban_gravity_base value = 0.25 }   change_variable = { which = urban_gravity_percentage value = 0.1 } }
+	if = { limit = { has_province_modifier = developping_consort_seat } change_variable = { which = urban_gravity_base value = 0.25 }   change_variable = { which = urban_gravity_percentage value = 0.1 } }
+	if = { limit = { has_province_modifier = ottoman_prince_gravity } change_variable = { which = urban_gravity_base value = 0.25 }   change_variable = { which = urban_gravity_percentage value = 0.1 } }
+	if = {
+		limit = {
+			OR = {
+				has_province_modifier = industrious_ruler_gravity
+				owner = { has_country_modifier = industrious_ruler_gravity }
+			}
+		}
+		change_variable = { which = urban_gravity_base value = 0.25 }
+		change_variable = { which = urban_gravity_percentage value = 0.1 }
+	}
+
+	trigger_switch = {
+		on_trigger = has_building
+		mines_1 = { change_variable = { which = urban_gravity_base value = 0.1 } }
+		mines_2 = { change_variable = { which = urban_gravity_base value = 0.2 } }
+		mines_3 = { change_variable = { which = urban_gravity_base value = 0.3 } }
+		mines_4 = { change_variable = { which = urban_gravity_base value = 0.4 } }
+		mines_5 = { change_variable = { which = urban_gravity_base value = 0.5 } }
+	}
+
+	if = { limit = { has_province_modifier = ostsiedlung_province_effect }
+		change_variable = { which = urban_gravity_base value = 0.25 }
+		change_variable = { which = urban_gravity_percentage value = 0.1 }
+	}
+	
+	set_variable = {      which = urban_gravity_total           value = 0 } ### Ultimately responsible for how big a city gets.  A gravity of 15 will have an equilibrium urban pop of 15000.
+	set_variable = {      which = urban_gravity_total           which = urban_gravity_base }
+	multiply_variable = { which = urban_gravity_total           value = 10 }
+	set_variable = {	  which = urban_gravity_base_disp 		which = urban_gravity_total }
+	multiply_variable = { which = urban_gravity_total           which = urban_gravity_percentage }
+	set_variable = {	  which = urban_gravity_percentage_disp which = urban_gravity_percentage }
+
+	set_variable = { which = LogisticFunctInp which = wealth_urban_as_asset }
+	multiply_variable = { which = LogisticFunctInp value = 0.01 }
+		
+	if = {
+		limit = {
+			check_variable = { which = LogisticFunctInp value = 320 }
+		}
+		set_variable = { which = wealth_multiplier value = 7 }
+	}
+	else = {
+		logistic_funct = {
+			type1=which type2=value type3=value type4=value
+			inp=LogisticFunctInp midpnt=0 steepns=0.015 maxval=12
+		}
+		set_variable = { which = wealth_multiplier which = logistic_val }
+		set_variable = { which = logistic_val value = 0 }
+		subtract_variable = { which = wealth_multiplier value = 5 }
+	}
+		
+	set_variable = { which = LogisticFunctInp value = 0 }
+	set_variable = { which = wealth_as_asset value = 0 }
+	multiply_variable = { which = wealth_urban_as_asset which = wealth_multiplier }
+	multiply_variable = { which = wealth_urban_as_asset value = 0.001 }
+	multiply_variable = { which = wealth_urban_as_asset value = 1000 }
+
+	if = {
+		limit = { NOT = { check_variable = { which = urban_gravity_total value = 0.01 } } }
+		set_variable = { which = urban_gravity_total value = 0.01 } # Minimum of 100 people
+	}
+	update_urban_density = yes
+}
+
+POP_production_power_none = {
+	set_variable = { which = $returnVal$  which = urban_pop }
+	
+	multiply_variable = { which = $returnVal$  value = 0.025 }
+}
+
+POP_production_power_workshop = {
+	set_variable = { which = $returnVal$  which = urban_pop }
+	
+	if = {
+		limit = {
+			check_variable = { which = urban_pop value = 4 }
+		}
+		multiply_variable = { which = $returnVal$  value = 0.025 }
+		
+		change_variable = { which = $returnVal$ value = 3.1 }
+	}
+	else = {
+		multiply_variable = { which = $returnVal$ value = 0.8 }
+	}
+}
+
+POP_production_power_corporation_guild = {
+	set_variable = { which = $returnVal$  which = urban_pop }
+	
+	if = {
+		limit = {
+			check_variable = { which = urban_pop value = 8 }
+		}
+		multiply_variable = { which = $returnVal$  value = 0.05 }
+		
+		change_variable = { which = $returnVal$ value = 6.8 }
+	}
+	else = {
+		multiply_variable = { which = $returnVal$ value = 0.9 }
+	}
+}
+
+POP_production_power_urban_manufactory = {
+	set_variable = { which = $returnVal$  which = urban_pop }
+	
+	if = {
+		limit = {
+			check_variable = { which = urban_pop value = 16 }
+		}
+		multiply_variable = { which = $returnVal$  value = 0.1 }
+		
+		change_variable = { which = $returnVal$ value = 13.6 }
+	}
+	else = {
+		multiply_variable = { which = $returnVal$ value = 0.95 }
+	}
+}
+
+POP_production_power_factory = {
+	set_variable = { which = $returnVal$  which = urban_pop }
+	
+	if = {
+		limit = {
+			check_variable = { which = urban_pop value = 20 }
+		}
+		multiply_variable = { which = $returnVal$  value = 0.15 }
+		
+		change_variable = { which = $returnVal$ value = 19 }
+	}
+	else = {
+		multiply_variable = { which = $returnVal$ value = 1.10 }
+	}
+}
+
+POP_production_power_steam_powered_factory = {
+	set_variable = { which = $returnVal$  which = urban_pop }
+	
+	if = {
+		limit = {
+			check_variable = { which = urban_pop value = 20 }
+		}
+		multiply_variable = { which = $returnVal$  value = 0.25 }
+		
+		change_variable = { which = $returnVal$ value = 20 }
+	}
+	else = {
+		multiply_variable = { which = $returnVal$ value = 1.25 }
+	}
+}
+
+POP_trade_power_none = {
+	set_variable = { which = $returnVal$        which = urban_pop }
+	multiply_variable = { which = $returnVal$	value = 0.2 }
+	
+	change_variable = { which = $returnMult$ value = 0 }
+}
+
+POP_trade_power_marketplace = {
+	set_variable = { which = $returnVal$        which = urban_pop }
+	
+	if = {
+		limit = {
+			check_variable = { which = urban_pop value = 4 }
+		}
+		multiply_variable = { which = $returnVal$ value = 0.2 }
+		change_variable = { which = $returnVal$ value = 1.2 }
+	}
+	else = {
+		multiply_variable = { which = $returnVal$ value = 0.5 }
+	}
+	
+	change_variable = { which = $returnVal$ value = 0.25 }
+	change_variable = { which = $returnMult$ value = 0.15 }
+}
+
+POP_trade_power_merchant_guild = {
+	set_variable = { which = $returnVal$        which = urban_pop }
+	
+	if = {
+		limit = {
+			check_variable = { which = urban_pop value = 8 }
+		}
+		multiply_variable = { which = $returnVal$ value = 0.2 }
+		change_variable = { which = $returnVal$ value = 3.2 }
+	}
+	else = {
+		multiply_variable = { which = $returnVal$ value = 0.6 }
+	}
+	
+	change_variable = { which = $returnVal$ value = 0.35 }
+	change_variable = { which = $returnMult$ value = 0.2 }
+}
+
+POP_trade_power_trade_depot = {
+	set_variable = { which = $returnVal$        which = urban_pop }
+	
+	if = {
+		limit = {
+			check_variable = { which = urban_pop value = 14 }
+		}
+		multiply_variable = { which = $returnVal$ value = 0.25 }
+		change_variable = { which = $returnVal$ value = 7.7 }
+	}
+	else = {
+		multiply_variable = { which = $returnVal$ value = 0.8 }
+	}
+	
+	change_variable = { which = $returnVal$ value = 0.5 }
+	change_variable = { which = $returnMult$ value = 0.25 }
+}
+
+POP_trade_power_customs_house = {
+	set_variable = { which = $returnVal$        which = urban_pop }
+	
+	if = {
+		limit = {
+			check_variable = { which = urban_pop value = 20 }
+		}
+		multiply_variable = { which = $returnVal$ value = 0.3 }
+		change_variable = { which = $returnVal$ value = 14 }
+	}
+	else = {
+		multiply_variable = { which = $returnVal$ value = 1 }
+	}
+	
+	change_variable = { which = $returnVal$ value = 0.75 }
+	change_variable = { which = $returnMult$ value = 0.3 }
+}
+
+POP_modify_trade_power_buildings = {
+	set_variable = { which = building_trade_multiplier value = 1 }
+	
+	POP_trade_power_none = {
+		returnVal = statTradePowerUrban
+		returnMult = building_trade_multiplier
+	}
+	
+	trigger_switch = {
+		on_trigger = has_building
+		customs_house = {
+			POP_trade_power_customs_house = {
+				returnVal = statTradePowerUrban
+				returnMult = building_trade_multiplier
+			}
+		}
+		trade_depot = {
+			POP_trade_power_trade_depot = {
+				returnVal = statTradePowerUrban
+				returnMult = building_trade_multiplier
+			}
+		}
+		merchant_guild = {
+			POP_trade_power_merchant_guild = {
+				returnVal = statTradePowerUrban
+				returnMult = building_trade_multiplier
+			}
+		}
+		marketplace = {
+			POP_trade_power_marketplace = {
+				returnVal = statTradePowerUrban
+				returnMult = building_trade_multiplier
+			}
+		}
+	}
+	trigger_switch = {
+		on_trigger = has_building
+		warehouse = { change_variable = { which = building_trade_multiplier value = 0.075 } }
+		warehouse_district = { change_variable = { which = building_trade_multiplier value = 0.15 } }
+	}
+	if = { limit = { has_building = bank } change_variable = { which = building_trade_multiplier value = 0.2 } }
+	if = { limit = { has_building = stock_exchange } change_variable = { which = building_trade_multiplier value = 0.30 } }
+	trigger_switch = {
+		on_trigger = has_building
+		harbour_infrastructure_1 = { change_variable = { which = building_trade_multiplier value = 0.05 } }
+		harbour_infrastructure_2 = { change_variable = { which = building_trade_multiplier value = 0.2 } }
+		harbour_infrastructure_3x = { change_variable = { which = building_trade_multiplier value = 0.3 } }
+		harbour_infrastructure_4 = { change_variable = { which = building_trade_multiplier value = 0.4 } }
+		harbour_infrastructure_5 = { change_variable = { which = building_trade_multiplier value = 0.5 } }
+	}
+	trigger_switch = {
+		on_trigger = has_building
+		military_harbour_1 = { change_variable = { which = building_trade_multiplier value = 0.025 } }
+		military_harbour_2 = { change_variable = { which = building_trade_multiplier value = 0.05 } }
+		military_harbour_3 = { change_variable = { which = building_trade_multiplier value = 0.075 } }
+		military_harbour_4 = { change_variable = { which = building_trade_multiplier value = 0.10 } }
+	}
+	trigger_switch = { # Benefits split between Rural and Urban, at 1/5th for urban.
+		on_trigger = has_building
+		road_network = { change_variable = { which = statTradePowerRural value = 0.20 } change_variable = { which = statTradePowerUrban value = 0.05 } change_variable = { which = building_trade_multiplier value = 0.10 } }
+		paved_road_network = { change_variable = { which = statTradePowerRural value = 0.40 } change_variable = { which = statTradePowerUrban value = 0.10 } change_variable = { which = building_trade_multiplier value = 0.20 } }
+		highway_network = { change_variable = { which = statTradePowerRural value = 0.60 } change_variable = { which = statTradePowerUrban value = 0.15 } change_variable = { which = building_trade_multiplier value = 0.35 } }
+		road_and_rail_network = { change_variable = { which = statTradePowerRural value = 0.80 } change_variable = { which = statTradePowerUrban value = 0.20 } change_variable = { which = building_trade_multiplier value = 0.50 } }
+	}
+	multiply_variable = { which = statTradePowerRural which = building_trade_multiplier }
+	multiply_variable = { which = statTradePowerUrban which = building_trade_multiplier }
+	multiply_variable = { which = statTradePowerUpper which = building_trade_multiplier }
+	
+	set_variable = { which = statTradePower value = 0 }
+	change_variable = { which = statTradePower which = statTradePowerRural }
+	change_variable = { which = statTradePower which = statTradePowerUrban }
+	change_variable = { which = statTradePower which = statTradePowerUpper }
+	
+	set_variable = { which = building_trade_multiplier value = 0 }
+}
+
+#########################
+### Updating Pop Info ###
+#########################
+PopGrowthTick = {
+	set_variable = { which = temp1_gpg value = 1.35 } # Max density
+	set_variable = { which = temp2_gpg $type3$ = $timeToMax$ } # Time it takes to get from 0 to max
+	
+	multiply_variable = { which = temp1_gpg $type1$ = $popMax$ }
+	
+	set_variable = { which = temp3_gpg which = temp2_gpg }
+	divide_variable = { which = temp3_gpg value = 3 }
+	
+	set_variable = { which = temp4_gpg value = 5 }
+	divide_variable = { which = temp4_gpg which = temp2_gpg }
+	
+	logit_funct = {
+		type1=$type2$ type2=which type3=which type4=which
+		logistic_val=$popVal$ midpnt=temp3_gpg steepns=temp4_gpg maxval=temp1_gpg
+		inp=time
+	}
+	
+	change_variable = { which = time $type4$ = $scale$ }
+	
+	logistic_funct = {
+		type1=which type2=which type3=which type4=which
+		inp=time midpnt=temp3_gpg steepns=temp4_gpg maxval=temp1_gpg
+	}
+	
+	set_variable = { which = $return$ which = logistic_val }
+	subtract_variable = { which = $return$ $type2$ = $popVal$ }
+	
+	# Until migration is in
+	if = {
+		limit = {
+			NOT = { check_variable = { which = $return$ value = 0.001 } }
+		}
+		set_variable = { which = $return$ value = 0.001 }
+	}
+	
+	
+	set_variable = { which = temp1_gpg value = 0 }
+	set_variable = { which = temp2_gpg value = 0 }
+	set_variable = { which = temp3_gpg value = 0 }
+	set_variable = { which = temp4_gpg value = 0 }
+	
+	set_variable = { which = logistic_val value = 0 }
+}
+
+update_rural_density = {
+	if = {
+		limit = {
+			NOT = { check_variable = { which = ideal_rural_pop value = 1 } }
+		}
+		set_variable = { which = ideal_rural_pop value = 1 }
+	}
+	Pop_InvRatioToVal = {
+		PopTotal=total_pop_r
+		PopRatio=urban_ratio
+		output=rural_density
+	}
+	if = {
+		limit = {
+			check_variable = { which = rural_density value = 0.01 }
+		}
+		set_variable = { which = total_pop_compare which = rural_density }
+		multiply_variable = { which = total_pop_compare value = 2 }
+		if = {
+			limit = {
+				check_variable = { which = ideal_rural_pop which = total_pop_compare }
+				check_variable = { which = rural_density value = 10 }
+			}
+			set_variable = { which = ideal_rural_pop which = rural_density }
+		}
+		set_variable = { which = total_pop_compare value = 0 }
+		
+		divide_variable = { which = rural_density which = ideal_rural_pop }
+	}
+	
+	if = {
+		limit = {
+			NOT = { check_variable = { which = rural_density value = 0.5 } }
+		}
+		set_variable = { which = rural_density value = 0.5 }
+	}
+}
+
+update_urban_density = {
+	if = {
+		limit = {
+			check_variable = { which = urban_gravity_total value = 0.01 }
+		}
+		Pop_RatioToVal = {
+			PopTotal=total_pop_r
+			PopRatio=urban_ratio
+			output=urban_density
+		}
+		divide_variable = { which = urban_density which = urban_gravity_total }
+		
+		if = {
+			limit = {
+				NOT = { check_variable = { which = urban_density value = 0.5 } }
+			}
+			set_variable = { which = urban_density value = 0.5 }
+		}
+	}
+	else = {
+		set_variable = { which = urban_density value = 0 }
+	}
+}
+
+update_base_dev = {
+	while = {
+		limit = {
+			OR = {
+				check_variable = { which = $dev_diff_var$ value = 1 }
+				
+				NOT = { check_variable = { which = $dev_diff_var$ value = -0.999 } }
+			}
+		}
+		if = {
+			limit = {
+				check_variable = { which = $dev_diff_var$ value = 1 }
+			}
+			set_province_flag = update_capital
+			
+			if = {
+				limit = {
+					check_variable = { which = $dev_diff_var$ value = 5 }
+				}
+				if = {
+					limit = {
+						check_variable = { which = $dev_diff_var$ value = 7 }
+					}
+					if = {
+						limit = {
+							check_variable = { which = $dev_diff_var$ value = 8 }
+						}
+						add_base_$dev_type$ = 8
+						change_variable = { which = $dev_diff_var$ value = -8 }
+					}
+					else = {
+						add_base_$dev_type$ = 7
+						change_variable = { which = $dev_diff_var$ value = -7 }
+					}
+				}
+				else = {
+					if = {
+						limit = {
+							check_variable = { which = $dev_diff_var$ value = 6 }
+						}
+						add_base_$dev_type$ = 6
+						change_variable = { which = $dev_diff_var$ value = -6 }
+					}
+					else = {
+						add_base_$dev_type$ = 5
+						change_variable = { which = $dev_diff_var$ value = -5 }
+					}
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = $dev_diff_var$ value = 3 }
+					}
+					if = {
+						limit = {
+							check_variable = { which = $dev_diff_var$ value = 4 }
+						}
+						add_base_$dev_type$ = 4
+						change_variable = { which = $dev_diff_var$ value = -4 }
+					}
+					else = {
+						add_base_$dev_type$ = 3
+						change_variable = { which = $dev_diff_var$ value = -3 }
+					}
+				}
+				else = {
+					if = {
+						limit = {
+							check_variable = { which = $dev_diff_var$ value = 2 }
+						}
+						add_base_$dev_type$ = 2
+						change_variable = { which = $dev_diff_var$ value = -2 }
+					}
+					else = {
+						add_base_$dev_type$ = 1
+						change_variable = { which = $dev_diff_var$ value = -1 }
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				NOT = { check_variable = { which = $dev_diff_var$ value = -0.999 } }
+			}
+			set_province_flag = update_capital
+			
+			if = {
+				limit = {
+					check_variable = { which = $dev_diff_var$ value = -4 }
+				}
+				if = {
+					limit = {
+						check_variable = { which = $dev_diff_var$ value = -2 }
+					}
+					if = {
+						limit = {
+							check_variable = { which = $dev_diff_var$ value = -1 }
+						}
+						add_base_$dev_type$ = -1
+						change_variable = { which = $dev_diff_var$ value = 1 }
+					}
+					else = {
+						add_base_$dev_type$ = -2
+						change_variable = { which = $dev_diff_var$ value = 2 }
+					}
+				}
+				else = {
+					if = {
+						limit = {
+							check_variable = { which = $dev_diff_var$ value = -3 }
+						}
+						add_base_$dev_type$ = -3
+						change_variable = { which = $dev_diff_var$ value = 3 }
+					}
+					else = {
+						add_base_$dev_type$ = -4
+						change_variable = { which = $dev_diff_var$ value = 4 }
+					}
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = $dev_diff_var$ value = -6 }
+					}
+					if = {
+						limit = {
+							check_variable = { which = $dev_diff_var$ value = -5 }
+						}
+						add_base_$dev_type$ = -5
+						change_variable = { which = $dev_diff_var$ value = 5 }
+					}
+					else = {
+						add_base_$dev_type$ = -6
+						change_variable = { which = $dev_diff_var$ value = 6 }
+					}
+				}
+				else = {
+					if = {
+						limit = {
+							check_variable = { which = $dev_diff_var$ value = -7 }
+						}
+						add_base_$dev_type$ = -7
+						change_variable = { which = $dev_diff_var$ value = 7 }
+					}
+					else = {
+						add_base_$dev_type$ = -8
+						change_variable = { which = $dev_diff_var$ value = 8 }
+					}
+				}
+			}
+		}
+	}
+}
+
+#######################
+### Add POPULATION ####
+#######################
+
+### This Scripted Effect Adds Population to a province.  Except in the case of receiving population from "fleeing populations," set one of the variables down below before using
+### the scripted effect to add either a percentage or a base quantity of population ###
+# REFERENCE #  set_variable = { which = rural_percentage_added value = X } # This adds a percentage of population based on the current value.  Make sure values are between 1, which is 100 percent, and 0.01, which is 1 percent.
+# REFERENCE #  set_variable = { which = rural_base_pop_added value = X } # This adds a literal amount of population.  A value of 1 = 10K.  A value of 0.001 = 10.
+
+add_rural_population_DEVS = {
+	hidden_effect = {
+		set_variable = {           which = rural_population_old			which = rural_pop }
+		set_variable = {           which = rural_population_added		value = 0 }
+		
+		if = {
+			limit = {
+				check_variable = { which = rural_percentage_added		value = 0.001 }
+			}
+			set_variable = {       which = rural_population_added		which = rural_pop }
+			multiply_variable = {  which = rural_population_added		which = rural_percentage_added }
+		}
+		if = {
+			limit = {
+				check_variable = { which = rural_base_pop_added			value = 0.001 }
+			}
+			set_variable = { which = rural_population_added				which = rural_base_pop_added }
+		}
+		if = {
+			limit = {
+				check_variable = { which = rural_population_fleeing		value = 0.001 }
+			}
+			set_variable = {       which = rural_population_added		which = rural_population_fleeing }
+		}
+		
+		multiply_variable = { which = rural_population_added value = 10 }
+		
+		# Change the rural population directly by the amount in rural_population_added
+		Pop_InvCalcGrowthPrec = {
+			PopTotal=total_pop_r
+			PopRatio=urban_ratio
+			PopGrowth=rural_population_added
+			PopRef=rural_pop
+			PopTotalRef=total_pop
+		}
+		
+		if = {
+			limit = {
+				NOT = { check_variable = { which = rural_pop   value = 0.01 } }
+			}
+			set_variable = { which = rural_pop   value = 0.01 }
+		}
+		
+		# Update density values to match the new population
+		update_rural_density = yes
+		
+		if = {
+			limit = {
+				check_variable = { which = tribals_ratio				value = 0.001 }
+				OR = {
+					check_variable = { which = rural_percentage_added	value = 0.001 }
+					check_variable = { which = rural_base_pop_added		value = 0.001 }
+					check_variable = { which = rural_population_fleeing	value = 0.001 }
+				}
+			} # Increases in population decrease the tribal ratio
+			set_variable = { which = rural_population_tribal_decrease			which = rural_population_old }
+			divide_variable = { which = rural_population_tribal_decrease		which = rural_pop }
+			change_variable = { which = rural_population_tribal_decrease		value = 0.5 }
+			divide_variable = { which = rural_population_tribal_decrease		value = 1.5 }
+			multiply_variable = { which = tribals_ratio							which = rural_population_tribal_decrease }
+			set_variable = { which = rural_population_tribal_decrease			value = 0 }
+			if = { limit = { check_variable = { which = tribals_ratio				value = 100 } } #cap at boundaries
+				set_variable = { which = tribals_ratio								value = 100 }
+			}
+			if = { limit = { NOT = { check_variable = { which = tribals_ratio		value = 0 } } } #cap at boundaries
+				set_variable = { which = tribals_ratio								value = 0 }
+			}
+	
+			set_variable = {   which = tribals_ratio_display		which = tribals_ratio }
+			multiply_variable = {   which = tribals_ratio_display		value = 0.01 }
+			multiply_variable = {   which = tribals_ratio_display	value = 100 }
+		}
+		
+		
+		set_variable = { which = rural_percentage_added value = 0 }
+		set_variable = { which = rural_base_pop_added value = 0 }
+		set_variable = { which = rural_population_old value = 0 }
+		set_variable = { which = rural_population_added value = 0 }
+	}
+}
+#######################
+### KILL POPULATION ###
+#######################
+
+### This Scripted Effect Removes Rural Population from a province.  Set either the "rural_percentage_added" or "rural_population_added" variables down below before using
+### the scripted effect.  This will kill either a percentage or a base quantity of rural population.  If you don't want to just kill the population but you
+### instead want to move them to a different province, you may set the "percent_rural_transfered" variable which represents what percentage will flee and what percentage
+### dies.  Then, while in the scope of the province losing its population, change the scope to the target where you want the population to go.  Then, set the variable
+### rural_population_fleeing to 0, and then use the code snippet "change_variable = { which = rural_population_fleeing which = PREV }" Then, use the scripted effect
+### "add_rural_population_DEV" and the rural population will be automatically added.
+# REFERENCE #  set_variable = { which = rural_percentage_removed   value = X } # This adds a percentage of population based on the current value.  Make sure values are between 1, which is 100 percent, and 0.01, which is 1 percent.
+# REFERENCE #  set_variable = { which = rural_base_pop_removed    value = X } # This adds a literal amount of population.  A value of 1 = 10K.  A value of 0.001 = 10.
+# Reference #  set_variable = { which = percent_rural_transfered  value = X } # This defines the amount of rural population you want to flee.  A value of 0.80 will cause 80 percent to flee and 20 percent to die.
+
+remove_rural_population_DEVS = {
+	hidden_effect = {
+		set_variable = {           which = rural_population_old			which = rural_pop }
+		
+		set_variable = { which = rural_population_removed value = 0 }
+		
+		if = {
+			limit = {
+				check_variable = { which = rural_percentage_removed value = 0.001 }
+			}
+			set_variable = {       which = rural_population_removed 	which = rural_pop }
+			multiply_variable = {  which = rural_population_removed     which = rural_percentage_removed }
+			if = {
+				limit = {
+					check_variable = { which = percent_rural_transfered value = 0.001 }
+				}
+				set_variable = { 	  which = rural_population_fleeing	   value = 0 }
+				set_variable = {      which = rural_population_fleeing     which = rural_population_removed }
+				multiply_variable = { which = rural_population_fleeing     which = percent_rural_transfered }
+			}
+		}
+		if = {
+			limit = {
+				check_variable = { which = rural_base_pop_removed value = 0.001 }
+			}
+			set_variable = { which = rural_population_removed          which = rural_base_pop_removed }
+		}
+		
+		# Change the rural population directly by the amount in rural_population_removed
+		multiply_variable = { which = rural_population_removed value = -10 }
+		
+		Pop_InvCalcGrowthPrec = {
+			PopTotal=total_pop_r
+			PopRatio=urban_ratio
+			PopGrowth=rural_population_removed
+			PopRef=rural_pop
+			PopTotalRef=total_pop
+		}
+		
+		if = {
+			limit = {
+				NOT = { check_variable = { which = rural_pop   value = 0.01 } }
+			}
+			set_variable = { which = rural_pop   value = 0.01 }
+		}
+		
+		# Update density values to match the new population
+		update_rural_density = yes
+		
+		if = {
+			limit = {
+				check_variable = { which = tribals_ratio				value = 0.001 }
+				OR = {
+					check_variable = { which = rural_percentage_removed	value = 0.001 }
+					check_variable = { which = rural_base_pop_removed	value = 0.001 }
+					check_variable = { which = percent_rural_transfered	value = 0.001 }
+				}
+			}
+			if = {
+				limit = {
+					OR = {
+						is_city = yes
+						is_colony = yes
+					}
+					has_province_flag = plague_attacked
+					owner = { NOT = { is_tribal = yes } }
+					NOT = { check_variable = { which = province_plague_immunity value = 0 } }
+					OR = {
+						continent = north_america
+						continent = south_america
+						superregion = australia_superregion
+					}
+					OR = {
+						AND = {
+							owner = { is_colonial_nation = no }
+							owner = { capital_scope = { continent = europe  } }
+						}
+						AND = {
+							owner = { is_colonial_nation = yes }
+							owner = { colonial_parent = { capital_scope = { continent = europe  } } }
+						}
+					}
+				}
+				 # Plague deaths primarily kill the natives, if the controller isnt tribal themselves
+				set_variable = { which = rural_population_tribal_decrease			which = rural_pop }
+				divide_variable = { which = rural_population_tribal_decrease		which = rural_population_old }
+				change_variable = { which = rural_population_tribal_decrease		value = 0.5 }
+				divide_variable = { which = rural_population_tribal_decrease		value = 1.5 }
+				multiply_variable = { which = tribals_ratio							which = rural_population_tribal_decrease }
+				set_variable = { which = rural_population_tribal_decrease			value = 0 }
+				if = { limit = { check_variable = { which = tribals_ratio				value = 100 } } #cap at boundaries
+					set_variable = { which = tribals_ratio								value = 100 }
+				}
+				if = { limit = { NOT = { check_variable = { which = tribals_ratio		value = 0 } } } #cap at boundaries
+					set_variable = { which = tribals_ratio								value = 0 }
+				}
+		
+				set_variable = {   which = tribals_ratio_display		which = tribals_ratio }
+				multiply_variable = {   which = tribals_ratio_display		value = 0.01 }
+				multiply_variable = {   which = tribals_ratio_display	value = 100 }
+			}
+			else = {
+				# Deceases in population increase the tribal ratio
+				set_variable = { which = rural_population_tribal_increase			which = rural_population_old }
+				divide_variable = { which = rural_population_tribal_increase		which = rural_pop }
+				change_variable = { which = rural_population_tribal_increase		value = 0.5 }
+				divide_variable = { which = rural_population_tribal_increase		value = 1.5 }
+				multiply_variable = { which = tribals_ratio							which = rural_population_tribal_increase }
+				set_variable = { which = rural_population_tribal_increase			value = 0 }
+				if = { limit = { check_variable = { which = tribals_ratio				value = 100 } } #cap at boundaries
+					set_variable = { which = tribals_ratio								value = 100 }
+				}
+				if = { limit = { NOT = { check_variable = { which = tribals_ratio		value = 0 } } } #cap at boundaries
+					set_variable = { which = tribals_ratio								value = 0 }
+				}
+		
+				set_variable = {   which = tribals_ratio_display		which = tribals_ratio }
+				multiply_variable = {   which = tribals_ratio_display		value = 0.01 }
+				multiply_variable = {   which = tribals_ratio_display	value = 100 }
+			}
+		}
+		
+		set_variable = { which = rural_percentage_removed  value = 0 }
+		set_variable = { which = rural_base_pop_removed    value = 0 }
+		set_variable = { which = percent_rural_transfered  value = 0 }
+		set_variable = { which = rural_population_old value = 0 }
+		set_variable = { which = rural_population_removed value = 0 }
+	}
+}
+
+
+
+### This Scripted Effect Adds Urban Population to a province.  Except in the case of receiving urban population from "fleeing populations," set one of the variables down below before using
+### the scripted effect to add either a percentage or a base quantity of urban population ###
+# REFERENCE #  set_variable = { which = urban_percentage_added value = X } # This adds a percentage of urban population based on the current value.  Make sure values are between 1, which is 100 percent, and 0.01, which is 1 percent.
+# REFERENCE #  set_variable = { which = urban_base_pop_added value = X } # This adds a literal amount of urban population.  A value of 1 = 10K.  A value of 0.001 = 10.
+
+add_urban_population_DEVS = {
+	hidden_effect = {
+		set_variable = { 		   which = urban_population_added      value = 0 }
+		if = {
+			limit = {
+				check_variable = { which = urban_percentage_added      value = 0.001 }
+			}
+			set_variable = {       which = urban_population_added 	   which = urban_pop }
+			multiply_variable = {  which = urban_population_added      which = urban_percentage_added }
+		}
+		if = {
+			limit = {
+				check_variable = { which = urban_base_pop_added        value = 0.001 }
+			}
+			set_variable = { which = urban_population_added            which = urban_base_pop_added }
+		}
+		if = {
+			limit = {
+				check_variable = { which = urban_population_fleeing      value = 0.001 }
+			}
+			set_variable = {       which = urban_population_added 	     which = urban_population_fleeing }
+		}
+		
+		multiply_variable = { which = urban_population_added value = 10 }
+		
+		# Change the urban population directly by the amount in urban_population_added
+		Pop_CalcGrowthPrec = {
+			PopTotal=total_pop_r
+			PopRatio=urban_ratio
+			PopGrowth=urban_population_added
+			PopRef=urban_pop
+			PopTotalRef=total_pop
+		}
+		
+		if = {
+			limit = {
+				NOT = { check_variable = { which = urban_pop   value = 0.001 } }
+			}
+			set_variable = { which = urban_pop   value = 0.001 }
+		}
+		
+		# Update density values to match the new population
+		update_urban_density = yes
+		
+		set_variable = { which = urban_percentage_added value = 0 }
+		set_variable = { which = urban_base_pop_added value = 0 }
+		set_variable = { which = urban_population_added value = 0 }
+	}
+}
+
+### This Scripted Effect Removes Urban Population from a province.  Set either the "urban_percentage_added" or "urban_population_added" variables down below before using
+### the scripted effect.  This will kill either a percentage or a base quantity of Urban population.  If you don't want to just kill the population but you
+### instead want to move them to a different province, you may set the "percent_urban_transfered" variable which represents what percentage will flee and what percentage
+### dies.  Then, while in the scope of the province losing its population, change the scope to the target where you want the population to go.  Then, set the variable
+### urban_population_fleeing to 0, and then use the code snippet "change_variable = { which = urban_population_fleeing which = PREV }" Then, use the scripted effect
+### "add_urban_population_DEV" and the rural population will be automatically added.
+# REFERENCE #  set_variable = { which = urban_percentage_removed  value = X } # This adds a percentage of population based on the current value.  Make sure values are between 1, which is 100 percent, and 0.01, which is 1 percent.
+# REFERENCE #  set_variable = { which = urban_base_pop_removed    value = X } # This adds a literal amount of population.  A value of 1 = 10K.  A value of 0.001 = 10.
+# Reference #  set_variable = { which = percent_urban_transfered  value = X } # This defines the amount of urban population you want to flee.  A value of 0.80 will cause 80 percent to flee and 20 percent to die.
+
+remove_urban_population_DEVS = {
+	hidden_effect = {
+		set_variable = { which = urban_population_removed 		value = 0 }
+		
+		if = {
+			limit = {
+				check_variable = { which = urban_percentage_removed      value = 0.001 }
+			}
+			set_variable = {      which = urban_population_removed		which = urban_pop }
+			multiply_variable = { which = urban_population_removed		which = urban_percentage_removed }
+			set_variable = { 	  which = urban_continent_food_loss		value = 0 }
+			set_variable = { 	  which = urban_continent_food_loss		which = eats_continent_food }
+			multiply_variable = { which = urban_continent_food_loss		which = urban_percentage_removed }
+			subtract_variable = { which = eats_continent_food			which = urban_continent_food_loss }
+		}
+		if = {
+			limit = {
+				check_variable = { which = urban_base_pop_removed        value = 0.001 }
+			}
+			set_variable = { 	  which = urban_population_removed          which = urban_base_pop_removed }
+			set_variable = { 	  which = urban_continent_food_loss			value = 0 }
+			set_variable = { 	  which = urban_continent_food_loss			which = eats_continent_food }
+			set_variable = { 	  which = urban_pop_total					value = 0 }
+			change_variable = {   which = urban_pop_total					which = urban_pop }
+			set_variable = { 	  which = urban_pop_loss_percent			value = 0 }
+			set_variable = { 	  which = urban_pop_loss_percent			which = urban_base_pop_removed }
+			if = {
+				limit = {
+					is_variable_equal = {
+						which = urban_pop_total
+						value = 0
+					}
+				}
+				
+				# log = "<ERROR><1719EF16><THIS:[This.GetName]><PREV:[Prev.GetName]><ROOT:[Root.GetName]><FROM:[From.GetName]> Division by zero!"
+				
+			}
+			else = {
+				divide_variable = {
+					which = urban_pop_loss_percent
+					which = urban_pop_total
+				}
+			}
+			multiply_variable = { which = urban_continent_food_loss			which = urban_pop_loss_percent }
+			subtract_variable = { which = eats_continent_food				which = urban_continent_food_loss }
+		}
+		if = {
+			limit = {
+				check_variable = { which = percent_urban_transfered      value = 0.001 }
+			}
+			set_variable = { 	  which = urban_population_fleeing		value = 0 }
+			set_variable = { 	  which = urban_population_fleeing		which = urban_population_removed }
+			multiply_variable = { which = urban_population_fleeing		which = percent_rural_transfered }
+		}
+		# Change the urban population directly by the amount in urban_population_removed
+		multiply_variable = { which = urban_population_removed value = -10 }
+		
+		Pop_CalcGrowthPrec = {
+			PopTotal=total_pop_r
+			PopRatio=urban_ratio
+			PopGrowth=urban_population_removed
+			PopRef=urban_pop
+			PopTotalRef=total_pop
+		}
+		
+		if = {
+			limit = {
+				NOT = { check_variable = { which = urban_pop   value = 0.001 } }
+			}
+			set_variable = { which = urban_pop   value = 0.001 }
+		}
+		
+		# Update density values to match the new population
+		update_urban_density = yes
+		
+		set_variable = { which = urban_population_removed  value = 0 }
+		set_variable = { which = urban_percentage_removed  value = 0 }
+		set_variable = { which = urban_base_pop_removed    value = 0 }
+		set_variable = { which = percent_urban_transfered  value = 0 }
+	}
+}
+
+update_population_pulse = {
+	if = {
+		limit = {
+			NOT = { check_variable = { which = urban_ratio value = 0.001 } }
+		}
+		set_variable = { which = urban_ratio  value = 0.001 }
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = total_pop_r value = 1 } }
+		}
+		set_variable = { which = total_pop_r  value = 1 }
+	}
+	if = {
+		limit = {
+			check_variable = { which = rural_population_growth_pulse value = 0.001 }
+		}
+		set_variable = { which = rural_population_old  which = rural_pop }
+		Pop_InvCalcGrowthPrec = {
+			PopTotal=total_pop_r
+			PopRatio=urban_ratio
+			PopGrowth=rural_population_growth_pulse
+			PopRef=rural_pop
+			PopTotalRef=total_pop
+		}
+		if = {
+			limit = {
+				check_variable = { which = tribals_ratio				value = 0.001 }
+				check_variable = { which = rural_population_growth_pulse value = 0.001 }
+			} # Increases in population decrease the tribal ratio
+			set_variable = { which = rural_population_tribal_decrease			which = rural_population_old }
+			multiply_variable = { which = rural_population_tribal_decrease		value = 100 }
+			divide_variable = { which = rural_population_tribal_decrease		which = rural_pop }
+			change_variable = { which = rural_population_tribal_decrease		value = 50 }
+			divide_variable = { which = rural_population_tribal_decrease		value = 1.50 }
+			multiply_variable = { which = tribals_ratio							which = rural_population_tribal_decrease }
+			multiply_variable = { which = tribals_ratio							value = 0.01 }
+			set_variable = { which = rural_population_tribal_decrease			value = 0 }
+			if = { limit = { check_variable = { which = tribals_ratio				value = 100 } } #cap at boundaries
+				set_variable = { which = tribals_ratio								value = 100 }
+			}
+			if = { limit = { NOT = { check_variable = { which = tribals_ratio		value = 0 } } } #cap at boundaries
+				set_variable = { which = tribals_ratio								value = 0 }
+			}
+
+			set_variable = {   which = tribals_ratio_display		which = tribals_ratio }
+			multiply_variable = {   which = tribals_ratio_display		value = 0.01 }
+			multiply_variable = {   which = tribals_ratio_display	value = 100 }
+		}
+		set_variable = { which = rural_population_old  value = 0 }
+	}
+	if = {
+		limit = {
+			check_variable = { which = urban_population_growth_pulse value = 0.001 }
+		}
+		Pop_CalcGrowthPrec = {
+			PopTotal=total_pop_r
+			PopRatio=urban_ratio
+			PopGrowth=urban_population_growth_pulse
+			PopRef=urban_pop
+			PopTotalRef=total_pop
+		}
+	}
+	
+	# Update density
+	update_rural_density = yes
+	update_urban_density = yes
+}
+
+### Requires that you set the variable of wealth_urban_percentage_removed, a value between 0 and 1 ###
+### wealth_urban_total_damage remains as a variable that can be captured for looting etc
+urban_wealth_damaged = {
+	hidden_effect = {
+		set_variable = { 		   which = wealth_urban_total_damage 			value = 0 }
+		set_variable = { 		   which = wealth_urban_fluid_damaged			value = 0 }
+		set_variable = { 		   which = wealth_urban_as_asset_damaged 		value = 0 }
+		if = {
+			limit = {
+				check_variable = { which = wealth_urban_as_asset value = 0.001 }
+			}
+			set_variable = { 		   which = wealth_urban_as_asset_damaged 		which = wealth_urban_as_asset }
+			multiply_variable = {	   which = wealth_urban_as_asset_damaged		which = wealth_urban_percentage_removed }
+		}
+		
+		set_variable = { 		   which = wealth_urban_fluid_damaged			which = wealth_urban_fluid }
+		multiply_variable = {	   which = wealth_urban_fluid_damaged			which = wealth_urban_percentage_removed }
+		multiply_variable = {		   which = wealth_urban_percentage_removed		value = 0.5 }
+		set_variable = {		   which = wealth_urban_total_damage 			which = wealth_urban_fluid_damaged }
+		change_variable = {		   which = wealth_urban_total_damage			which = wealth_urban_as_asset_damaged }
+		if = {
+			limit = {
+				has_global_flag = show_for_developers
+			}
+			subtract_variable = {	   which = wealth_z_urban_gamelong_damage       which = wealth_urban_total_damage }
+		}
+		subtract_variable = {	   which = wealth_urban_fluid					which = wealth_urban_total_damage }
+		# Fluid wealth can go into the negatives as far as 10% of asset wealth before buildings are destroyed
+		set_variable = {		   which = wealth_urban_pillaging_threshold		value = 0 }
+		subtract_variable = {	   which = wealth_urban_pillaging_threshold		which = wealth_urban_as_asset }
+		multiply_variable = {		   which = wealth_urban_pillaging_threshold		value = 0.1 }
+		if = {
+			limit = {
+				NOT = { check_variable = { which = wealth_urban_fluid 			which = wealth_urban_pillaging_threshold  } }
+			}
+			### Fire Event Which Kills Buildings ###
+			province_event = { id = POP_looting.001 }
+		}
+		if = { ### Variables set to 0 after calculations are done
+			limit = {
+				NOT = { has_global_flag = show_for_developers }
+			}
+			set_variable = { which = wealth_urban_fluid_damaged 			value = 0 }
+			set_variable = { which = wealth_urban_as_asset_damaged			value = 0 }
+			set_variable = { which = wealth_urban_percentage_removed		value = 0 }
+		}
+	}
+}
+
+### Requires that you set the variable of wealth_rural_percentage_removed, a value between 0 and 1 ###
+### wealth_rural_total_damage remains as a variable that can be captured for looting etc
+rural_wealth_damaged = {
+	hidden_effect = {
+		set_variable = {		   which = wealth_rural_total_damage 			value = 0 }
+		set_variable = {		   which = wealth_rural_fluid_damaged			value = 0 }
+		set_variable = {		   which = wealth_rural_fluid_damaged			which = wealth_rural_fluid }
+		multiply_variable = {	   which = wealth_rural_fluid_damaged			which = wealth_rural_percentage_removed }
+		set_variable = {		   which = wealth_rural_as_asset_damaged		value = 0 }
+		if = {
+			limit = {
+				check_variable = { which = wealth_rural_as_asset value = 0.001 }
+			}
+			set_variable = {		   which = wealth_rural_as_asset_damaged		which = wealth_rural_as_asset }
+			multiply_variable = {	   which = wealth_rural_as_asset_damaged		which = wealth_rural_percentage_removed }
+			divide_variable = {		   which = wealth_rural_as_asset_damaged		value = 1.5 }
+		}
+		set_variable = {		   which = wealth_rural_total_damage			which = wealth_rural_fluid_damaged }
+		change_variable = {		   which = wealth_rural_total_damage			which = wealth_rural_as_asset_damaged }
+		if = {
+			limit = {
+				has_global_flag = show_for_developers
+			}
+			subtract_variable = {	   which = wealth_z_rural_gamelong_damage       which = wealth_rural_total_damage }
+		}
+		subtract_variable = {	   which = wealth_rural_fluid					which = wealth_rural_total_damage }
+		if = {
+			limit = {
+				check_variable = { which = farm_efficiency_ducats_invested value = 0.001 }
+			}
+			set_variable = {		   which = farm_efficiency_ducats_damaged		value = 0 }
+			set_variable = {		   which = farm_efficiency_ducats_damaged		which = farm_efficiency_ducats_invested }
+			multiply_variable = {	   which = farm_efficiency_ducats_damaged		which = wealth_rural_percentage_removed }
+			multiply_variable = {	   which = farm_efficiency_ducats_damaged		value = 0.75 } # Nerfed slightly, WIP /Dezuman
+			subtract_variable = {	   which = farm_efficiency_ducats_invested		which = farm_efficiency_ducats_damaged }
+		}
+		
+		# Half of FE investment damage now adds to the potential loot /Dezuman
+		multiply_variable = {	   which = farm_efficiency_ducats_damaged		value = 0.15 }
+		change_variable = {		   which = wealth_rural_total_damage			which = farm_efficiency_ducats_damaged }
+		
+		if = {
+			limit = {
+				has_global_flag = show_for_developers
+			}
+			change_variable = {		   which = farm_efficiency_z_ducats_gamelong_damaged	which = farm_efficiency_ducats_damaged }
+		}
+		
+		if = {
+			limit = {
+				check_variable = { which = rural_production_power value = 0.001 }
+			}
+			set_variable = { 		   which = rural_production_power_damaged		value = 0 }
+			set_variable = { 		   which = rural_production_power_damaged		which = wealth_rural_percentage_removed }
+			multiply_variable = { 	   which = rural_production_power_damaged		which = rural_production_power }
+			subtract_variable = { 	   which = rural_production_power 				which = rural_production_power_damaged }
+			if = {
+				limit = {
+					NOT = { check_variable = { which = rural_production_power		value = 0.1 } }
+				}
+				set_variable = { which = rural_production_power 	value = 0.1 }
+			}
+		}
+		# Fluid wealth can go into the negatives as far as 10% of asset wealth before buildings are destroyed
+		set_variable = { 		   which = wealth_rural_pillaging_threshold		value = 0 }
+		subtract_variable = { 	   which = wealth_rural_pillaging_threshold		which = wealth_rural_as_asset }
+		multiply_variable = { 	   which = wealth_rural_pillaging_threshold		value = 0.1 }
+		if = {
+			limit = {
+				NOT = { check_variable = { which = wealth_rural_fluid 			which = wealth_rural_pillaging_threshold  } }
+			}
+			### Fire Event Which Kills Buildings ###
+			province_event = { id = POP_looting.004 }
+		}
+		
+		if = { ### Variables set to 0 after calculations are done
+			limit = {
+				NOT = { has_global_flag = show_for_developers }
+			}
+			set_variable = { which = wealth_rural_fluid_damaged 			value = 0 }
+			set_variable = { which = wealth_rural_as_asset_damaged 			value = 0 }
+			set_variable = { which = wealth_rural_percentage_removed		value = 0 }
+			set_variable = { which = farm_efficiency_ducats_damaged			value = 0 }
+			set_variable = { which = rural_production_power_damaged 		value = 0 }
+		}
+	}
+}
+
+# Fire this only after both rural_wealth_damaged and urban_wealth_damaged
+loot_province = {
+	hidden_effect = {
+		set_variable = { 			which = wealth_total_loot					value = 0 }
+		if = {
+			limit = {
+				check_variable = {  which = wealth_rural_total_damage 			value = 0.001 }
+			}
+			change_variable = {		which = wealth_total_loot					which = wealth_rural_total_damage }
+		}
+		if = {
+			limit = {
+				check_variable = { which = wealth_urban_total_damage 			value = 0.001 }
+			}
+			change_variable = {		which = wealth_total_loot					which = wealth_urban_total_damage }
+		}
+		
+		set_variable = { 			which = wealth_loot_percent					value = 0.4 }
+		
+		set_variable = { 			which = country_loot_modifier 				which = controller }
+		if = {
+			limit = {
+				NOT = { is_variable_equal = { which = country_loot_modifier 	value = 0 } }
+			}
+			multiply_variable = { 	which = wealth_loot_percent					which = country_loot_modifier }
+			set_variable = {		which = country_loot_modifier 				value = 0 }
+		}
+		
+		multiply_variable = {		which = wealth_total_loot					which = wealth_loot_percent }
+		controller = {
+			set_variable = {		which = wealth_total_loot					which = PREV }
+			change_variable = { 	which = loot_pool_moving					which = wealth_total_loot }
+			
+			set_variable = {		which = wealth_total_loot					value = 0 }
+		}
+		
+		set_variable = { 			which = wealth_total_loot					value = 0 }
+		set_variable = { 			which = wealth_loot_percent					value = 0 }
+		
+		if = { ### Variables set to 0 after calculations are done
+			limit = {
+				NOT = { has_global_flag = show_for_developers }
+			}
+			set_variable = { 			which = wealth_rural_total_damage			value = 0 }
+			set_variable = { 			which = wealth_urban_total_damage			value = 0 }
+		}
+	}
+}
+
+
+census_calculation = {
+	
+	
+	
+}
+
+check_centralisation_absolutism = { #Exports max_absolutism and absolutism for use in various comparisons.
+	#	disabled until paradox fixes it
+	#	export_to_variable = {
+	#		which = absolutismvar
+	#		value = absolutism
+	#	}
+	absolutism_lookup = {
+		variable = absolutismvar
+	}
+	export_to_variable = {
+		which = max_absolutism
+		value = modifier:max_absolutism
+	}
+}
+
+plague_close_ports = {
+	if = {
+		limit = {
+			check_variable = { which = country_port_percentage						value = 0.01 }
+			NOT = { check_variable = { which = country_port_percentage 				value = 0.25 } }
+		}
+		add_country_modifier = {
+			name = ports_closed_1
+			duration = 1825
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { which = country_port_percentage						value = 0.25 }
+			NOT = { check_variable = { which = country_port_percentage 				value = 0.5 } }
+		}
+		add_country_modifier = {
+			name = ports_closed_2
+			duration = 1825
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { which = country_port_percentage						value = 0.5 }
+			NOT = { check_variable = { which = country_port_percentage 				value = 0.75 } }
+		}
+		add_country_modifier = {
+			name = ports_closed_3
+			duration = 1825
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { which = country_port_percentage						value = 0.75 }
+			NOT = { check_variable = { which = country_port_percentage 				value = 1 } }
+		}
+		add_country_modifier = {
+			name = ports_closed_4
+			duration = 1825
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { which = country_port_percentage						value = 1 }
+			NOT = { check_variable = { which = country_port_percentage 				value = 1.25 } }
+		}
+		add_country_modifier = {
+			name = ports_closed_5
+			duration = 1825
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { which = country_port_percentage						value = 1.25 }
+			NOT = { check_variable = { which = country_port_percentage 				value = 1.5 } }
+		}
+		add_country_modifier = {
+			name = ports_closed_6
+			duration = 1825
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { which = country_port_percentage						value = 1.5 }
+			NOT = { check_variable = { which = country_port_percentage 				value = 1.75 } }
+		}
+		add_country_modifier = {
+			name = ports_closed_7
+			duration = 1825
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { which = country_port_percentage						value = 1.75 }
+			NOT = { check_variable = { which = country_port_percentage 				value = 2 } }
+		}
+		add_country_modifier = {
+			name = ports_closed_8
+			duration = 1825
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { which = country_port_percentage						value = 2 }
+			NOT = { check_variable = { which = country_port_percentage 				value = 2.5 } }
+		}
+		add_country_modifier = {
+			name = ports_closed_9
+			duration = 1825
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { which = country_port_percentage						value = 2.5 }
+			NOT = { check_variable = { which = country_port_percentage 				value = 3 } }
+		}
+		add_country_modifier = {
+			name = ports_closed_10
+			duration = 1825
+		}
+	}
+}
+
+
+
+
+#stability_loss_scaled = {
+#	if = {
+#		limit = {
+#			check_variable = { which = stability_loss_chance 			value = 0.01 }
+#			NOT = { check_variable = { which = stability_loss_chance 	value = 5 } }
+#		}
+#		random_list = {
+#			5 = { subtract_stability_1 = yes }
+#			95 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = stability_loss_chance 			value = 5 }
+#			NOT = { check_variable = { which = stability_loss_chance 	value = 10 } }
+#		}
+#		random_list = {
+#			10 = { subtract_stability_1 = yes }
+#			90 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = stability_loss_chance 			value = 10 }
+#			NOT = { check_variable = { which = stability_loss_chance 	value = 15 } }
+#		}
+#		random_list = {
+#			15 = { subtract_stability_1 = yes }
+#			85 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = stability_loss_chance 			value = 15 }
+#			NOT = { check_variable = { which = stability_loss_chance 	value = 20 } }
+#		}
+#		random_list = {
+#			20 = { subtract_stability_1 = yes }
+#			80 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = stability_loss_chance 			value = 20 }
+#			NOT = { check_variable = { which = stability_loss_chance 	value = 25 } }
+#		}
+#		random_list = {
+#			25 = { subtract_stability_1 = yes }
+#			75 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = stability_loss_chance 			value = 25 }
+#			NOT = { check_variable = { which = stability_loss_chance 	value = 30 } }
+#		}
+#		random_list = {
+#			30 = { subtract_stability_1 = yes }
+#			70 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = stability_loss_chance 			value = 30 }
+#			NOT = { check_variable = { which = stability_loss_chance 	value = 35 } }
+#		}
+#		random_list = {
+#			35 = { subtract_stability_1 = yes }
+#			65 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = stability_loss_chance 			value = 35 }
+#			NOT = { check_variable = { which = stability_loss_chance 	value = 40 } }
+#		}
+#		random_list = {
+#			40 = { subtract_stability_1 = yes }
+#			60 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = stability_loss_chance 			value = 40 }
+#			NOT = { check_variable = { which = stability_loss_chance 	value = 45 } }
+#		}
+#		random_list = {
+#			45 = { subtract_stability_1 = yes }
+#			55 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = stability_loss_chance 			value = 45 }
+#			NOT = { check_variable = { which = stability_loss_chance 	value = 50 } }
+#		}
+#		random_list = {
+#			50 = { subtract_stability_1 = yes }
+#			50 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = stability_loss_chance 			value = 50 }
+#			NOT = { check_variable = { which = stability_loss_chance 	value = 55 } }
+#		}
+#		random_list = {
+#			55 = { subtract_stability_1 = yes }
+#			45 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = stability_loss_chance 			value = 55 }
+#			NOT = { check_variable = { which = stability_loss_chance 	value = 60 } }
+#		}
+#		random_list = {
+#			60 = { subtract_stability_1 = yes }
+#			40 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = stability_loss_chance 			value = 60 }
+#			NOT = { check_variable = { which = stability_loss_chance 	value = 65 } }
+#		}
+#		random_list = {
+#			65 = { subtract_stability_1 = yes }
+#			35 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = stability_loss_chance 			value = 65 }
+#			NOT = { check_variable = { which = stability_loss_chance 	value = 70 } }
+#		}
+#		random_list = {
+#			70 = { subtract_stability_1 = yes }
+#			30 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = stability_loss_chance 			value = 70 }
+#			NOT = { check_variable = { which = stability_loss_chance 	value = 75 } }
+#		}
+#		random_list = {
+#			75 = { subtract_stability_1 = yes }
+#			25 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = stability_loss_chance 			value = 75 }
+#			NOT = { check_variable = { which = stability_loss_chance 	value = 80 } }
+#		}
+#		random_list = {
+#			80 = { subtract_stability_1 = yes }
+#			20 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = stability_loss_chance 			value = 80 }
+#			NOT = { check_variable = { which = stability_loss_chance 	value = 85 } }
+#		}
+#		random_list = {
+#			85 = { subtract_stability_1 = yes }
+#			15 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = stability_loss_chance 			value = 85 }
+#			NOT = { check_variable = { which = stability_loss_chance 	value = 90 } }
+#		}
+#		random_list = {
+#			90 = { subtract_stability_1 = yes }
+#			10 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = stability_loss_chance 			value = 90 }
+#			NOT = { check_variable = { which = stability_loss_chance 	value = 95 } }
+#		}
+#		random_list = {
+#			95 = { subtract_stability_1 = yes }
+#			5 = { }
+#		}
+#	}
+#	if = {
+#		limit = {
+#			check_variable = { which = stability_loss_chance 			value = 95 }
+#		}
+#		random_list = {
+#			subtract_stability_1 = yes
+#		}
+#	}
+#}
+
+assign_siege_modifier = {
+	remove_province_modifier = garrison_outnumbered
+	remove_province_modifier = garrison_significantly_outnumbered
+	remove_province_modifier = garrison_tremendously_outnumbered
+	remove_province_modifier = garrison_massively_outnumbered
+	remove_province_modifier = garrison_overwhelmed
+	set_province_flag = under_siege_penalty_assigned
+	if = { limit = { check_variable = { which = siege_disparity value = 16 } }
+		if = { limit = { check_variable = { which = siege_disparity value = 32 } }
+			if = { limit = { check_variable = { which = siege_disparity value = 64 } }
+				add_province_modifier = { name = garrison_massively_outnumbered duration = -1 }
+			}
+			else = {
+				add_province_modifier = { name = garrison_tremendously_outnumbered duration = -1 }
+			}
+		}
+		else = {
+			add_province_modifier = { name = garrison_tremendously_outnumbered duration = -1 }
+		}
+	}
+	else = {
+		if = { limit = { check_variable = { which = siege_disparity value = 4 } }
+			if = { limit = { check_variable = { which = siege_disparity value = 8 } }
+				add_province_modifier = { name = garrison_significantly_outnumbered duration = -1 }
+			}
+			else = {
+				add_province_modifier = { name = garrison_outnumbered duration = -1 }
+			}
+		}
+	}
+}
+
+set_base_price_of_goods = {
+	set_variable = { which = price_of_rural_good value = 0 }
+	if = {
+		limit = {
+			trade_goods = wheat
+		}
+		set_variable = { which = price_of_rural_good value = 0.5 }
+	}
+	if = {
+		limit = {
+			trade_goods = millet
+		}
+		set_variable = { which = price_of_rural_good value = 0.5 }
+	}
+	if = {
+		limit = {
+			trade_goods = rice
+		}
+		set_variable = { which = price_of_rural_good value = 0.5 }
+	}
+	if = {
+		limit = {
+			trade_goods = maize
+		}
+		set_variable = { which = price_of_rural_good value = 0.5 }
+	}
+	if = {
+		limit = {
+			trade_goods = wine
+		}
+		set_variable = { which = price_of_rural_good value = 1.6 }
+	}
+	if = {
+		limit = {
+			trade_goods = wax
+		}
+		set_variable = { which = price_of_rural_good value = 1.5 }
+	}
+	if = {
+		limit = {
+			trade_goods = wool
+		}
+		set_variable = { which = price_of_rural_good value = 1.5 }
+	}
+	if = {
+		limit = {
+			trade_goods = pearls
+		}
+		set_variable = { which = price_of_rural_good value = 3 }
+	}
+	if = {
+		limit = {
+			trade_goods = hemp
+		}
+		set_variable = { which = price_of_rural_good value = 1.5 }
+	}
+	if = {
+		limit = {
+			trade_goods = fish
+		}
+		set_variable = { which = price_of_rural_good value = 0.5 }
+	}
+	if = {
+		limit = {
+			trade_goods = fur
+		}
+		set_variable = { which = price_of_rural_good value = 2.5 }
+	}
+	#if = {
+	#	limit = {
+	#		trade_goods = salt
+	#	}
+	#	set_variable = { which = price_of_rural_good value = 1 }
+	#}
+	if = {
+		limit = {
+			trade_goods = ivory
+		}
+		set_variable = { which = price_of_rural_good value = 3 }
+	}
+	if = {
+		limit = {
+			trade_goods = tea
+		}
+		set_variable = { which = price_of_rural_good value = 1.6 }
+	}
+	if = {
+		limit = {
+			trade_goods = cinnamon
+		}
+		set_variable = { which = price_of_rural_good value = 3 }
+	}
+	if = {
+		limit = {
+			trade_goods = clove
+		}
+		set_variable = { which = price_of_rural_good value = 2.5 }
+	}
+	if = {
+		limit = {
+			trade_goods = pepper
+		}
+		set_variable = { which = price_of_rural_good value = 2.5 }
+	}
+	if = {
+		limit = {
+			trade_goods = coffee
+		}
+		set_variable = { which = price_of_rural_good value = 2.5 }
+	}
+	if = {
+		limit = {
+			trade_goods = cotton
+		}
+		set_variable = { which = price_of_rural_good value = 2 }
+	}
+	if = {
+		limit = {
+			trade_goods = sugar
+		}
+		set_variable = { which = price_of_rural_good value = 3 }
+	}
+	if = {
+		limit = {
+			trade_goods = tobacco
+		}
+		set_variable = { which = price_of_rural_good value = 3 }
+	}
+	if = {
+		limit = {
+			trade_goods = opium
+		}
+		set_variable = { which = price_of_rural_good value = 3 }
+	}
+	if = {
+		limit = {
+			trade_goods = cacao
+		}
+		set_variable = { which = price_of_rural_good value = 2 }
+	}
+	if = {
+		limit = {
+			trade_goods = cheese
+		}
+		set_variable = { which = price_of_rural_good value = 0.8 }
+	}
+	if = {
+		limit = {
+			trade_goods = carmine
+		}
+		set_variable = { which = price_of_rural_good value = 2.5 }
+	}
+	if = {
+		limit = {
+			trade_goods = lumber
+		}
+		set_variable = { which = price_of_rural_good value = 1.7 }
+	}
+	if = {
+		limit = {
+			trade_goods = livestock
+		}
+		set_variable = { which = price_of_rural_good value = 0.8 }
+	}
+	if = {
+		limit = {
+			trade_goods = olive
+		}
+		set_variable = { which = price_of_rural_good value = 0.9 }
+	}
+	if = {
+		limit = {
+			trade_goods = brazil
+		}
+		set_variable = { which = price_of_rural_good value = 2.5 }
+	}
+	if = {
+		limit = {
+			trade_goods = palm
+		}
+		set_variable = { which = price_of_rural_good value = 1.5 }
+	}
+	if = {
+		limit = {
+			trade_goods = nutmeg
+		}
+		set_variable = { which = price_of_rural_good value = 4 }
+	}
+	if = {
+		limit = {
+			trade_goods = ebony
+		}
+		set_variable = { which = price_of_rural_good value = 2.5 }
+	}
+	if = {
+		limit = {
+			trade_goods = indigo
+		}
+		set_variable = { which = price_of_rural_good value = 3 }
+	}
+	if = {
+		limit = {
+			trade_goods = potatoes
+		}
+		set_variable = { which = price_of_rural_good value = 0.5 }
+	}
+	if = {
+		limit = {
+			trade_goods = palm_date
+		}
+		set_variable = { which = price_of_rural_good value = 1.5 }
+	}
+	if = {
+		limit = {
+			trade_goods = incense
+		}
+		set_variable = { which = price_of_rural_good value = 3 }
+	}
+	if = {
+		limit = {
+			trade_goods = slaves
+		}
+		set_variable = { which = price_of_rural_good value = 1.5 } # generic food stuffs, we dont actually have a system for this
+	}
+}
+
+move_capital_admin_cost = {
+	
+	set_variable = { which = capital_admin_cost 	value = 800 }
+	if = {
+		limit = {
+			has_building = regional_capital
+		}
+		subtract_variable = { which = capital_admin_cost	value = 200 }
+	}
+	capital_scope = {
+		if = {
+			limit = {
+				has_building = bureaucracy_1
+			}
+			PREV = { change_variable = { which = capital_admin_cost 	value = 200 } }
+		}
+		if = {
+			limit = {
+				has_building = bureaucracy_2
+			}
+			PREV = { change_variable = { which = capital_admin_cost 	value = 400 } }
+		}
+		if = {
+			limit = {
+				has_building = bureaucracy_3
+			}
+			PREV = { change_variable = { which = capital_admin_cost 	value = 600 } }
+		}
+		if = {
+			limit = {
+				has_building = bureaucracy_4
+			}
+			PREV = { change_variable = { which = capital_admin_cost 	value = 800 } }
+		}
+		if = {
+			limit = {
+				has_building = bureaucracy_5
+			}
+			PREV = { change_variable = { which = capital_admin_cost 	value = 1000 } }
+		}
+		
+		if = {
+			limit = {
+				check_variable = { which = wealth_urban_as_asset 	value = 1000 }
+				NOT = { check_variable = { which = wealth_urban_as_asset 	value = 2000 } }
+			}
+			PREV = { divide_variable = { which = capital_admin_cost		value = 1.3 } }
+		}
+		if = {
+			limit = {
+				check_variable = { which = wealth_urban_as_asset 	value = 2000 }
+				NOT = { check_variable = { which = wealth_urban_as_asset 	value = 3000 } }
+			}
+			PREV = { divide_variable = { which = capital_admin_cost		value = 1.3 } }
+		}
+		if = {
+			limit = {
+				check_variable = { which = wealth_urban_as_asset 	value = 3000 }
+				NOT = { check_variable = { which = wealth_urban_as_asset 	value = 5000 } }
+			}
+			PREV = { divide_variable = { which = capital_admin_cost		value = 1.3 } }
+		}
+		if = {
+			limit = {
+				check_variable = { which = wealth_urban_as_asset 	value = 5000 }
+				NOT = { check_variable = { which = wealth_urban_as_asset 	value = 8000 } }
+			}
+			PREV = { divide_variable = { which = capital_admin_cost		value = 1.25 } }
+		}
+		if = {
+			limit = {
+				check_variable = { which = wealth_urban_as_asset 	value = 8000 }
+				NOT = { check_variable = { which = wealth_urban_as_asset 	value = 10000 } }
+			}
+			PREV = { divide_variable = { which = capital_admin_cost		value = 1.20 } }
+		}
+		if = {
+			limit = {
+				check_variable = { which = wealth_urban_as_asset 	value = 10000 }
+			}
+			PREV = { divide_variable = { which = capital_admin_cost		value = 1.20 } }
+		}
+	}
+}
+
+move_capital_ducat_cost = {
+	set_variable = { which = capital_ducat_move_cost 	value = 0 }
+	if = {
+		limit = {
+			has_building = regional_capital
+		}
+		subtract_variable = { which = capital_admin_cost	value = 2000 }
+	}
+	capital_scope = {
+		if = {
+			limit = {
+				has_building = bureaucracy_1
+			}
+			change_variable = { which = capital_admin_cost 	value = 1000 }
+		}
+		if = {
+			limit = {
+				has_building = bureaucracy_2
+			}
+			change_variable = { which = capital_admin_cost 	value = 2000 }
+		}
+		if = {
+			limit = {
+				has_building = bureaucracy_3
+			}
+			change_variable = { which = capital_admin_cost 	value = 4000 }
+		}
+		if = {
+			limit = {
+				has_building = bureaucracy_4
+			}
+			change_variable = { which = capital_admin_cost 	value = 8000 }
+		}
+		if = {
+			limit = {
+				has_building = bureaucracy_5
+			}
+			change_variable = { which = capital_admin_cost 	value = 17500 }
+		}
+	}
+	if = {
+		limit = {
+			check_variable = { which = wealth_urban_as_asset 	value = 1000 }
+			NOT = { check_variable = { which = wealth_urban_as_asset 	value = 2000 } }
+		}
+		divide_variable = { which = capital_admin_cost		value = 1.3 }
+	}
+	if = {
+		limit = {
+			check_variable = { which = wealth_urban_as_asset 	value = 2000 }
+			NOT = { check_variable = { which = wealth_urban_as_asset 	value = 3000 } }
+		}
+		divide_variable = { which = capital_admin_cost		value = 1.3 }
+	}
+	if = {
+		limit = {
+			check_variable = { which = wealth_urban_as_asset 	value = 3000 }
+			NOT = { check_variable = { which = wealth_urban_as_asset 	value = 5000 } }
+		}
+		divide_variable = { which = capital_admin_cost		value = 1.3 }
+	}
+	if = {
+		limit = {
+			check_variable = { which = wealth_urban_as_asset 	value = 5000 }
+			NOT = { check_variable = { which = wealth_urban_as_asset 	value = 8000 } }
+		}
+		divide_variable = { which = capital_admin_cost		value = 1.25 }
+	}
+	if = {
+		limit = {
+			check_variable = { which = wealth_urban_as_asset 	value = 8000 }
+			NOT = { check_variable = { which = wealth_urban_as_asset 	value = 10000 } }
+		}
+		divide_variable = { which = capital_admin_cost		value = 1.20 }
+	}
+	if = {
+		limit = {
+			check_variable = { which = wealth_urban_as_asset 	value = 10000 }
+		}
+		divide_variable = { which = capital_admin_cost		value = 1.20 }
+	}
+}
+
+remove_capital_bonus_modifier = {
+	clr_province_flag = was_capital
+}
+
+set_rural_goods_stuff = {
+	clr_province_flag = grain_province
+	clr_province_flag = plantation_goods
+	
+	if = {
+		limit = {
+			OR = {
+				trade_goods = wheat
+				trade_goods = millet
+				trade_goods = rice
+				trade_goods = maize
+				trade_goods = fish
+				trade_goods = potatoes
+				trade_goods = livestock
+			}
+		}
+		set_province_flag = grain_province
+	}
+	
+	if = {
+		limit = {
+			OR = {
+				trade_goods = cheese
+				trade_goods = olive
+				trade_goods = palm
+				trade_goods = palm_date
+				trade_goods = wax
+				trade_goods = wine
+				trade_goods = tea
+				trade_goods = cinnamon
+				trade_goods = clove
+				trade_goods = pepper
+				trade_goods = coffee
+				trade_goods = cotton
+				trade_goods = sugar
+				trade_goods = tobacco
+				trade_goods = opium
+				trade_goods = cacao
+				trade_goods = carmine
+				trade_goods = nutmeg
+				trade_goods = hemp
+				trade_goods = indigo
+				trade_goods = lumber
+				trade_goods = ebony
+				trade_goods = incense
+			}
+		}
+		set_province_flag = plantation_goods
+	}
+}
+
+set_export_food_transfer_value = {
+	set_variable = { which = export_food_transfer_value value = 0.15 }
+	
+	if = {
+		limit = {
+			OR = {
+				trade_goods = wheat
+				trade_goods = millet
+				trade_goods = rice
+				trade_goods = maize
+				trade_goods = fish
+				trade_goods = potatoes
+				trade_goods = livestock
+			}
+		}
+		set_variable = { which = export_food_transfer_value value = 1 }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				trade_goods = cheese
+				trade_goods = olive
+				trade_goods = palm_date
+				trade_goods = wine
+				trade_goods = tea
+				trade_goods = clove
+				trade_goods = pepper
+				trade_goods = coffee
+				trade_goods = cotton
+				trade_goods = sugar
+				trade_goods = tobacco
+				trade_goods = opium
+				trade_goods = cacao
+				trade_goods = hemp
+			}
+		}
+		set_variable = { which = export_food_transfer_value value = 0.5 }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				trade_goods = cinnamon
+				trade_goods = carmine
+				trade_goods = nutmeg
+				trade_goods = indigo
+				trade_goods = incense
+				#trade_goods = lumber
+				#trade_goods = ebony
+				#trade_goods = palm
+				#trade_goods = wax
+				#trade_goods = brazil
+				#trade_goods = ivory
+				#trade_goods = fur
+			}
+		}
+		set_variable = { which = export_food_transfer_value value = 0.25 }
+	}
+}
+
+set_base_price_of_goods_metal = {
+	set_variable = { which = price_of_metal value = 1 }
+	
+	trigger_switch = {
+		on_trigger = has_province_flag
+		
+		tin = { set_variable = { which = price_of_metal value = 3 } }
+		coal = { set_variable = { which = price_of_metal value = 4 } }
+		iron = {
+			set_variable = { which = price_of_metal value = 3 }
+			if = {
+				limit = {
+					west_africa_distrib = yes
+					NOT = {
+						any_province = {
+							west_africa_distrib = yes
+							NOT = { province_id = 1096 }
+							owner = { capital_scope = { continent = europe } }
+						}
+					}
+				}
+				set_variable = { which = price_of_metal value = 4 }
+			}
+		}
+		salt = { set_variable = { which = price_of_metal value = 4 } }
+		copper = { set_variable = { which = price_of_metal value = 4 } }
+		sulphur = { set_variable = { which = price_of_metal value = 3 } }
+		marble = { set_variable = { which = price_of_metal value = 3 } }
+		gems = {
+			set_variable = { which = price_of_metal value = 10 }
+			if = {
+				limit = {
+					OR = {
+						continent = north_america
+						continent = south_america
+					}
+					NOT = {
+						has_global_flag = new_world_plague
+					}
+				}
+				set_variable = { which = price_of_metal value = 3 }
+			}
+		}
+		silver = {
+			set_variable = { which = price_of_metal value = 9 }
+			if = {
+				limit = {
+					OR = {
+						continent = north_america
+						continent = south_america
+					}
+					NOT = {
+						has_global_flag = new_world_plague
+					}
+				}
+				set_variable = { which = price_of_metal value = 2.5 }
+			}
+		}
+		gold = {
+			set_variable = { which = price_of_metal value = 10 }
+			if = {
+				limit = {
+					OR = {
+						continent = north_america
+						continent = south_america
+					}
+					NOT = {
+						has_global_flag = new_world_plague
+					}
+				}
+				set_variable = { which = price_of_metal value = 2.5 }
+			}
+			else_if = { # Inflation
+				limit = {
+					west_africa_distrib = yes
+					NOT = {
+						any_province = {
+							west_africa_distrib = yes
+							owner = { capital_scope = { continent = europe } }
+						}
+					}
+				}
+				set_variable = { which = price_of_metal value = 4 }
+			}
+		}
+		lead = { set_variable = { which = price_of_metal value = 4 } }
+		alum = { set_variable = { which = price_of_metal value = 5 } }
+		obsidian = { set_variable = { which = price_of_metal value = 5 } }
+	}
+}
+
+set_tradegoods = {
+	if = {
+		limit = {
+			OR = {
+				has_port = yes
+				has_terrain = tundra
+			}
+		}
+		change_trade_goods = fish
+	}
+	if = {
+		limit = {
+			desert_trigger = yes
+		}
+		change_trade_goods = wool
+	}
+	if = {
+		limit = {
+			#prominence_terrain_trigger = yes
+			OR = {
+				hills_trigger = yes
+				mountains_trigger = yes
+				highlands_trigger = yes
+			}
+		}
+		change_trade_goods = livestock
+	}
+	if = {
+		limit = {
+			OR = {
+				forest_trigger = yes
+				wood_trigger = yes
+				has_terrain = taiga
+				jungle_trigger = yes
+			}
+		}
+		change_trade_goods = lumber
+	}
+	if = {
+		limit = {
+			OR = {
+				continent = europe
+				continent = mena
+			}
+			shrub_trigger = yes
+		}
+		change_trade_goods = olive
+	}
+	if = {
+		limit = {
+			NOT = {
+				OR = {
+					continent = europe
+					continent = mena
+				}
+			}
+			shrub_trigger = yes
+		}
+		change_trade_goods = wool
+	}
+	if = {
+		limit = {
+			OR = {
+				continent = oceania
+				continent = southeast_asia
+				continent = indian_continent
+				continent = east_asia
+			}
+			NOT = {
+				OR = {
+					#prominence_terrain_trigger = yes
+					hills_trigger = yes
+					mountains_trigger = yes
+					highlands_trigger = yes
+					has_port = yes
+					desert_trigger = yes
+					forest_trigger = yes
+					wood_trigger = yes
+					has_terrain = taiga
+					jungle_trigger = yes
+					shrub_trigger = yes
+				}
+			}
+		}
+		change_trade_goods = rice
+	}
+	if = {
+		limit = {
+			OR = {
+				continent = europe
+				continent = mena
+				continent = central_asia
+				continent = north_asia
+				superregion = central_asia_superregion
+				superregion = eastern_steppe_superregion
+			}
+			NOT = {
+				OR = {
+					#prominence_terrain_trigger = yes
+					hills_trigger = yes
+					mountains_trigger = yes
+					highlands_trigger = yes
+					has_port = yes
+					desert_trigger = yes
+					forest_trigger = yes
+					wood_trigger = yes
+					has_terrain = taiga
+					jungle_trigger = yes
+					shrub_trigger = yes
+				}
+			}
+		}
+		change_trade_goods = wheat
+	}
+	if = {
+		limit = {
+			continent = sub_sahara
+			NOT = {
+				OR = {
+					#prominence_terrain_trigger = yes
+					hills_trigger = yes
+					mountains_trigger = yes
+					highlands_trigger = yes
+					has_port = yes
+					desert_trigger = yes
+					forest_trigger = yes
+					wood_trigger = yes
+					has_terrain = taiga
+					jungle_trigger = yes
+					shrub_trigger = yes
+				}
+			}
+		}
+		change_trade_goods = millet
+	}
+	if = {
+		limit = {
+			OR = {
+				continent = north_america
+				continent = south_america
+			}
+			NOT = {
+				has_port = yes
+				desert_trigger = yes
+			}
+		}
+		change_trade_goods = maize
+	}
+}
+
+check_ruler_stats = {
+	set_variable = { which = ruler_admin_ability	  value = 0 }
+	export_to_variable = {
+		which = ruler_admin_ability
+		value = ADM
+	}
+	
+	set_variable = { which = ruler_diplo_ability	  value = 0 }
+	export_to_variable = {
+		which = ruler_diplo_ability
+		value = DIP
+	}
+	
+	set_variable = { which = ruler_milit_ability	  value = 0 }
+	export_to_variable = {
+		which = ruler_milit_ability
+		value = MIL
+	}
+	if = {
+		limit = {
+			is_nomad = yes
+		}
+		if = {
+			limit = {
+				check_variable = { which = ruler_admin_ability				value = 6 }
+			}
+			if = { limit = { NOT = { has_country_modifier = horde_adm_6 } }
+				remove_horde_adm = yes
+				add_country_modifier = { name = horde_adm_6 duration = -1 hidden = yes }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = ruler_admin_ability				value = 5 }
+			}
+			if = { limit = { NOT = { has_country_modifier = horde_adm_5 } }
+				remove_horde_adm = yes
+				add_country_modifier = { name = horde_adm_5 duration = -1 hidden = yes }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = ruler_admin_ability				value = 4 }
+			}
+			if = { limit = { NOT = { has_country_modifier = horde_adm_4 } }
+				remove_horde_adm = yes
+				add_country_modifier = { name = horde_adm_4 duration = -1 hidden = yes }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = ruler_admin_ability				value = 3 }
+			}
+			if = { limit = { NOT = { has_country_modifier = horde_adm_3 } }
+				remove_horde_adm = yes
+				add_country_modifier = { name = horde_adm_3 duration = -1 hidden = yes }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = ruler_admin_ability				value = 2 }
+			}
+			if = { limit = { NOT = { has_country_modifier = horde_adm_2 } }
+				remove_horde_adm = yes
+				add_country_modifier = { name = horde_adm_2 duration = -1 hidden = yes }
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = ruler_admin_ability				value = 1 }
+			}
+			if = { limit = { NOT = { has_country_modifier = horde_adm_1 } }
+				remove_horde_adm = yes
+				add_country_modifier = { name = horde_adm_1 duration = -1 hidden = yes }
+			}
+		}
+		else_if = { limit = { NOT = { has_country_modifier = horde_adm_0 } }
+			remove_horde_adm = yes
+			add_country_modifier = { name = horde_adm_0 duration = -1 hidden = yes }
+		}
+	}
+}
+
+multiply_by_nontribal_pop = {
+	if = {
+		limit = {
+			check_variable = { which = tribals_ratio		value = 0.01 }
+		}
+		set_variable = { which = nontribal_popC value = 100 }
+		subtract_variable = { which = nontribal_popC which = tribals_ratio }
+		multiply_variable = { which = nontribal_popC which = rural_pop }
+		multiply_variable = { which = nontribal_popC value = 0.01 }
+		
+		if = {
+			limit = {
+				NOT = { check_variable = { which = nontribal_popC		value = 0.01 } }
+			}
+			set_variable = { which = nontribal_popC value = 0.01 }
+		}
+		
+		multiply_variable = { which = $var$ which = nontribal_popC }
+		set_variable = { which = nontribal_popC value = 0 }
+	}
+	else = {
+		multiply_variable = { which = $var$ which = rural_pop }
+		
+	}
+}
+
+divide_by_nontribal_pop = {
+	if = {
+		limit = {
+			check_variable = { which = tribals_ratio		value = 0.01 }
+		}
+		set_variable = { which = nontribal_pop value = 100 }
+		subtract_variable = { which = nontribal_pop which = tribals_ratio }
+		multiply_variable = { which = nontribal_pop which = rural_pop }
+		multiply_variable = { which = nontribal_pop value = 0.01 }
+		
+		if = {
+			limit = {
+				NOT = { check_variable = { which = nontribal_pop		value = 0.01 } }
+			}
+			set_variable = { which = nontribal_pop value = 0.01 }
+		}
+		
+		divide_variable = { which = $var$ which = nontribal_pop }
+		set_variable = { which = nontribal_pop value = 0 }
+	}
+	else = {
+		divide_variable = { which = $var$ which = rural_pop }
+	}
+}
+
+set_to_nontribal_pop = {
+	if = {
+		limit = {
+			check_variable = { which = tribals_ratio		value = 0.01 }
+		}
+		set_variable = { which = $var$ value = 100 }
+		subtract_variable = { which = $var$ which = tribals_ratio }
+		multiply_variable = { which = $var$ which = rural_pop }
+		multiply_variable = { which = $var$ value = 0.01 }
+		if = {
+			limit = {
+				NOT = { check_variable = { which = $var$		value = 0.01 } }
+			}
+			set_variable = { which = $var$ value = 0.01 }
+		}
+	}
+	else = {
+		set_variable = { which = $var$ which = rural_pop }
+		
+	}
+}
+
+export_tech_cost = { # output: adm_tech_cost, dip_tech_cost, mil_tech_cost
+	export_to_variable = { which = techmod value = modifier:technology_cost }
+	export_to_variable = { which = temp value = modifier:all_power_cost }
+	change_variable = { which = techmod which = temp }
+	export_tech_cost_inst = { inst=legalism max=50 }
+	export_tech_cost_inst = { inst=I_meritocracy max=20 }
+	export_tech_cost_inst = { inst=banking max=15 }
+	export_tech_cost_inst = { inst=renaissance max=25 }
+	export_tech_cost_inst = { inst=casual_literacy max=25 }
+	export_tech_cost_inst = { inst=global_trade max=20 }
+	export_tech_cost_inst = { inst=manufactories max=25 }
+	export_tech_cost_inst = { inst=enlightenment max=50 }
+	export_tech_cost_helper = { type = adm }
+	export_tech_cost_helper = { type = dip }
+	export_tech_cost_helper = { type = mil }
+	set_variable = { which = techmod value = 0 }
+	set_variable = { which = temp value = 0 }
+}
+export_tech_cost_inst = { #inst #max
+	if = {
+		limit = {
+			is_institution_enabled = $inst$
+			NOT = { has_institution = $inst$ }
+		}
+		AAA = {
+			set_variable = { which = techmod which = current_year }
+			subtract_variable = { which = techmod which = $inst$_date }
+			if = {
+				limit = {
+					check_variable = { which = techmod value = $max$ }
+				}
+				set_variable = { which = techmod value = $max$ }
+			}
+			multiply_variable = { which = techmod value = 0.01 }
+			PREV = { 
+				change_variable = { which = techmod which = PREV }
+			}
+		}
+	}
+}
+export_tech_cost_helper = { #type
+	export_to_variable = { which = $type$mod value = modifier:$type$_tech_cost_modifier }
+	export_to_variable = { which = $type$tech value = $type$_tech }
+	change_variable = { which = $type$tech value = 1 }
+	change_variable = { which = $type$mod value = 1 }
+	if = { # increase over time
+		limit = {
+			$type$_tech = 6
+		}
+		set_variable = { which = temp which = $type$tech }
+		multiply_variable = { which = temp value = 0.016 }
+		subtract_variable = { which = temp value = 0.106 }
+	}
+	else = {
+		set_variable = { which = temp value = 6 }
+		subtract_variable = { which = temp which = $type$tech }
+		multiply_variable = { which = temp value = -0.016 }
+		subtract_variable = { which = temp value = 0.009 }
+	}
+	change_variable = { which = $type$mod which = temp }
+	set_variable = { which = temp which = $type$tech } # ahead of time
+	multiply_variable = { which = temp value = 10 }
+	change_variable = { which = temp value = 1290 }
+	subtract_variable = { which = temp which = current_year }
+	multiply_variable = { which = temp value = 0.1 }
+	if = {
+		limit = {
+			check_variable = { which = temp value = 0 }
+		}
+		change_variable = { which = $type$mod which = temp }
+	}
+	change_variable = { which = $type$mod which = techmod }
+	set_variable = { which = $type$_tech_cost value = 400 }
+	multiply_variable = { which = $type$_tech_cost which = $type$mod }
+	set_variable = { which = $type$mod value = 0 }
+	set_variable = { which = $type$tech value = 0 }
+}
+#add_level_modifier = { #mod #duration
+#	if = {
+#		limit = {
+#			check_variable = { which = $var$ value = $v6$ }
+#		}
+#		if = {
+#			limit = {
+#				check_variable = { which = $var$ value = $v8$ }
+#			}
+#			if = {
+#				limit = {
+#					check_variable = { which = $var$ value = $v10$ }
+#				}
+#				if = {
+#					limit = {
+#						check_variable = { which = $var$ value = $v11$ }
+#					}
+#					add_disp_country_modifier = { duration=$duration$ mod=$mod$_11 }
+#				}
+#				else = {
+#					add_disp_country_modifier = { duration=$duration$ mod=$mod$_10 }
+#				}
+#			}
+#			else = {
+#				if = {
+#					limit = {
+#						check_variable = { which = $var$ value = $v9$ }
+#					}
+#					add_disp_country_modifier = { duration=$duration$ mod=$mod$_9 }
+#				}
+#				else = {
+#					add_disp_country_modifier = { duration=$duration$ mod=$mod$_8 }
+#				}
+#			}
+#		}
+#		else = {
+#			if = {
+#				limit = {
+#					check_variable = { which = $var$ value = $v7$ }
+#				}
+#				add_disp_country_modifier = { duration=$duration$ mod=$mod$_7 }
+#			}
+#			else = {
+#				add_disp_country_modifier = { duration=$duration$ mod=$mod$_6 }
+#			}
+#		}
+#	}
+#	else = {
+#		if = {
+#			limit = {
+#				check_variable = { which = $var$ value = $v4$ }
+#			}
+#			if = {
+#				limit = {
+#					check_variable = { which = $var$ value = $v5$ }
+#				}
+#				add_disp_country_modifier = { duration=$duration$ mod=$mod$_5 }
+#			}
+#			else = {
+#				add_disp_country_modifier = { duration=$duration$ mod=$mod$_4 }
+#			}
+#		}
+#		else = {
+#			if = {
+#				limit = {
+#					check_variable = { which = $var$ value = $v3$ }
+#				}
+#				add_disp_country_modifier = { duration=$duration$ mod=$mod$_3 }
+#			}
+#			else = {
+#				if = {
+#					limit = {
+#						check_variable = { which = $var$ value = $v2$ }
+#					}
+#					add_disp_country_modifier = { duration=$duration$ mod=$mod$_2 }
+#				}
+#				else = {
+#					add_disp_country_modifier = { duration=$duration$ mod=$mod$_1 }
+#				}
+#			}
+#		}
+#	}
+#}
+remove_disp_modifier = { #mod
+	remove_country_modifier = $mod$
+	remove_country_modifier = disp_$mod$
+}
+add_disp_modifier = { #mod
+	add_country_modifier = {
+		name = $mod$
+		duration = -1
+		hidden = yes
+	}
+	add_country_modifier = {
+		name = disp_$mod$
+		duration = -1
+	}
+}
+
+DiploAnnex_Dev = {
+	if = {
+		limit = {
+			is_core = owner
+			development = 31
+			owner = {
+				is_subject = yes
+				OR = {
+					is_subject_of_type = vassal
+					is_subject_of_type = personal_union
+					is_subject_of_type = client_vassal
+					is_subject_of_type = centralised_daimyo_vassal
+					is_subject_of_type = warlord
+				}
+			}
+		}
+		DiploAnnex_Add = yes
+	}
+	else_if = {
+		limit = {
+			has_province_modifier = DiploAnnexMod_disp
+		}
+		DiploAnnex_Remove = yes
+	}
+}
+DiploAnnex_Remove = {
+	set_variable = { which = DiploAnnexMod value = 0 }
+	remove_province_modifier = DiploAnnexMod_disp
+	remove_province_modifier = DiploAnnexMod_0.64
+	remove_province_modifier = DiploAnnexMod_0.32
+	remove_province_modifier = DiploAnnexMod_0.16
+	remove_province_modifier = DiploAnnexMod_0.08
+	remove_province_modifier = DiploAnnexMod_0.04
+	remove_province_modifier = DiploAnnexMod_0.02
+	remove_province_modifier = DiploAnnexMod_0.01
+}
+DiploAnnex_Add = {
+	add_province_modifier = { name = DiploAnnexMod_disp duration = -1 }
+	export_to_variable = { which = temp value = development }
+	set_variable = { which = temp2 value = 30 }
+	divide_variable = { which = temp2 which = temp }
+	set_variable = { which = temp value = 1 }
+	subtract_variable = { which = temp which = temp2 }
+	export_to_variable = { which = temp2 value = modifier:local_core_creation }
+	multiply_variable = { which = temp2 value = 100 }
+	change_variable = { which = temp2 which = DiploAnnexMod }
+	multiply_variable = { which = temp2 value = 0.01 }
+	multiply_variable = { which = temp2 which = temp }
+	change_variable = { which = temp which = temp2 }
+	multiply_variable = { which = temp value = 100 }
+	if = {
+		limit = {
+			NOT = { is_variable_equal = { which = temp which = DiploAnnexMod } }
+		}
+		set_variable = { which = DiploAnnexMod which = temp }
+		divide_variable = { which = temp value = 100 }
+		AddModHelper = { name=DiploAnnexMod num=0.64 }
+		AddModHelper = { name=DiploAnnexMod num=0.32 }
+		AddModHelper = { name=DiploAnnexMod num=0.16 }
+		AddModHelper = { name=DiploAnnexMod num=0.08 }
+		AddModHelper = { name=DiploAnnexMod num=0.04 }
+		AddModHelper = { name=DiploAnnexMod num=0.02 }
+		AddModHelper = { name=DiploAnnexMod num=0.01 }
+	}
+	set_variable = { which = temp value = 0 }
+	set_variable = { which = temp2 value = 0 }
+}
+AddModHelper = {
+	if = {
+		limit = {
+			check_variable = { which = temp value = $num$ }
+		}
+		subtract_variable = { which = temp value = $num$ }
+		add_province_modifier = { name = $name$_$num$ duration = -1 hidden = yes }
+	}
+	else = {
+		remove_province_modifier = $name$_$num$
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

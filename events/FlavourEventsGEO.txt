@@ -1,0 +1,118 @@
+# The Disolution of Georgia
+country_event = {
+	id = flavor_geo.001
+	title = "flavor_geo.EVTNAME001"
+	desc = "flavor_geo.EVTDESC001"
+	picture = DIPLOMACY_eventPicture
+	
+	trigger = {
+		tag = GEO
+		is_at_war = no																# failsafe to avoid issues because of nation gone during the course of a war
+		NOT = { ADM = 5 }
+		NOT = { check_variable = { which = wellbeing_composite value = 0.8 } }		# nation in bad shape
+		is_year = 1400
+		NOT = { is_year = 1600 }
+		NOT = { has_global_flag = end_of_georgia }
+	}
+	
+	fire_only_once = yes
+	
+	mean_time_to_happen = {
+		years = 20
+		modifier = {
+			factor = 0.75
+			NOT = { ADM = 4 }
+		}
+		modifier = {
+			factor = 0.5
+			NOT = { ADM = 3 }
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_global_flag = end_of_georgia
+			422 = { add_core = KAK remove_core = GEO }
+			2576 = { add_core = KAK remove_core = GEO }
+			release = KAK
+			free_vassal = KAK
+			KAK = {
+				define_ruler = {
+					dynasty = "Bagrationi"
+				}
+				define_heir = {
+					dynasty = Bagrationi
+				}
+			}
+			every_owned_province = {
+				limit = {
+					is_core = KAK
+				}
+				cede_province = KAK
+			}
+			1300 = { add_core = IME remove_core = GEO }
+			1301 = { add_core = IME remove_core = GEO }
+			1449 = { add_core = IME remove_core = GEO }
+			release = IME
+			free_vassal = IME
+			every_owned_province = {
+				limit = {
+					is_core = IME
+				}
+				cede_province = IME
+			}
+			IME = {
+				define_ruler = {
+					dynasty = "Bagrationi"
+				}
+				define_heir = {
+					dynasty = Bagrationi
+				}
+			}
+			every_owned_province = {
+				limit = {
+					is_core = TRE
+				}
+				remove_core = GEO
+				cede_province = TRE
+			}
+			every_owned_province = {
+				limit = {
+					is_core = CIR
+				}
+				remove_core = GEO
+				cede_province = CIR
+			}
+			every_owned_province = {
+				limit = {
+					is_core = SHI
+				}
+				remove_core = GEO
+				cede_province = SHI
+			}
+			every_owned_province = {
+				limit = {
+					is_core = GAZ
+				}
+				remove_core = GEO
+				cede_province = GAZ
+			}
+		}
+	}
+	
+	option = {		# This is the end
+		name = "flavor_geo.EVTOPTA001"
+		add_stability_2 = yes
+		add_legitimacy = 10
+		if = {
+			limit = { has_global_flag = singleplayer }
+			change_tag = KRT
+		}
+	}
+	option = {		# We will never surrender!
+		name = "flavor_geo.EVTOPTB001"
+		subtract_stability_6 = yes
+		declare_war = IME
+		declare_war = KAK
+	}
+}

@@ -1,0 +1,564 @@
+namespace = POP_famine
+
+### By Demian
+
+### These events primarily relate to the growth of populations, and the variables that influence it ###
+
+country_event = {
+	id = POP_famine.001
+	title = POP_famine.001.t
+	desc = POP_famine.001.d
+	picture = REFORM_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		regiongroup = {
+			region = {
+				limit = { is_city = yes }
+				if = { ### 3 years worth of famine, once its up, delete.
+					limit = {
+						has_province_flag = famine_struck
+						check_variable = { which = famine_years_left 	value = 1 }
+					}
+					subtract_variable = { which = famine_years_left		value = 1 } ### Ticks away at the famine, to be removed when famine expires
+					set_variable = { which = rural_percentage_removed 	which = famine_destructiveness_set } ### Set amount to kill off pops
+					trigger_switch = {
+						on_trigger = has_province_modifier
+						famine_relieved_1 = { multiply_variable = { which = rural_percentage_removed 	value = 0.75 } }
+						famine_relieved_2 = { multiply_variable = { which = rural_percentage_removed 	value = 0.5 } }
+					}
+					if = { ### Remove modifiers if value is 0
+						limit = { NOT = { check_variable = { which = famine_years_left 	value = 1 } } }
+						clr_province_flag = famine_struck
+						remove_province_modifier = famine_ended
+						remove_famine = yes
+						trigger_switch = {
+							on_trigger = has_province_modifier
+							famine_relieved_1 = {
+								remove_province_modifier = famine_relieved_1
+								trigger_switch = {
+									on_trigger = has_province_modifier
+									famine_relief_1 = { remove_province_modifier = famine_relief_1 }
+									famine_relief_2 = { remove_province_modifier = famine_relief_2 }
+									famine_relief_3 = { remove_province_modifier = famine_relief_3 }
+									famine_relief_4 = { remove_province_modifier = famine_relief_4 }
+									famine_relief_5 = { remove_province_modifier = famine_relief_5 }
+								}
+							}
+							famine_relieved_2 = {
+								remove_province_modifier = famine_relieved_2
+								trigger_switch = {
+									on_trigger = has_province_modifier
+									famine_relief_2 = { remove_province_modifier = famine_relief_2 }
+									famine_relief_4 = { remove_province_modifier = famine_relief_4 }
+									famine_relief_6 = { remove_province_modifier = famine_relief_6 }
+									famine_relief_8 = { remove_province_modifier = famine_relief_8 }
+									famine_relief_10 = { remove_province_modifier = famine_relief_10 }
+								}
+							}
+						}
+					}
+					if = { ### A cap to prevent too much rural damage
+						limit = { check_variable = { which = rural_percentage_removed	value = 6 } }
+						set_variable = { which = rural_percentage_removed	value = 6 }
+					}
+					multiply_variable = { which = rural_percentage_removed 	value = 3 }
+					multiply_variable = {   which = rural_percentage_removed 	value = 0.01 }
+					remove_rural_population_DEVS = yes
+				}
+				if = { ### Suppresses future famines
+					limit = { check_variable = { which = famine_struck_recently 	value = 0.2 } }
+					subtract_variable = { which = famine_struck_recently	value = 0.2 }
+				}
+				
+				if = {
+					limit = { NOT = { check_variable = { which = food_per_capita_quality 	value = 0.01 } } }
+					set_variable = { which = food_per_capita_quality 	value = 0.01 }
+				}
+				
+				set_to_nontribal_pop = { var=famine_factor } ### Determines risk of famine
+				divide_variable = { which = famine_factor which = food_per_capita_quality }
+				multiply_variable = { which = famine_factor value = 1.05 } ### Universal tuning factor for famines #was 0.8
+				
+				if = {
+					limit = { has_building = canal_level_1 }
+					multiply_variable = { which = famine_factor		value = 0.85 }
+				}
+				else_if = {
+					limit = { has_building = canal_level_2 }
+					multiply_variable = { which = famine_factor		value = 0.75 }
+				}
+				else_if = {
+					limit = { has_building = canal_level_3 }
+					multiply_variable = { which = famine_factor		value = 0.65 }
+				}
+				
+				### Down below, an "aura" for famine is created throughout the world which will inform where and how deadly famine is
+				
+				set_to_nontribal_pop = { var=famine_back_weight } ### This is used to divide by the famine factor to get an objective famine index
+				set_variable = { 	  which = famine_factor_received_1			value = 0 }
+				set_variable = { 	  which = famine_factor_received_2 			value = 0 }
+				set_variable = { 	  which = famine_factor_received_3 			value = 0 }
+				set_variable = { 	  which = famine_factor_transfer_1			value = 0 }
+				set_variable = { 	  which = famine_factor_transfer_2 			value = 0 }
+				set_variable = { 	  which = famine_factor_transfer_3 			value = 0 }
+				set_variable = { 	  which = famine_back_weight_received_1		value = 0 }
+				set_variable = { 	  which = famine_back_weight_received_2 	value = 0 }
+				set_variable = { 	  which = famine_back_weight_received_3 	value = 0 }
+				set_variable = { 	  which = famine_back_weight_transfer_1		value = 0 }
+				set_variable = { 	  which = famine_back_weight_transfer_2 	value = 0 }
+				set_variable = { 	  which = famine_back_weight_transfer_3 	value = 0 }
+				set_variable = { 	  which = famine_factor_total 				value = 0 }
+				set_variable = { 	  which = famine_back_weight_total			value = 0 }
+				
+				set_variable = { 	which = famine_factor_dispersed_1 			which = famine_factor }
+				multiply_variable = { which = famine_factor_dispersed_1			value = 0.5 }
+				
+				set_variable = { 	which = famine_back_weight_dispersed_1 		which = famine_back_weight }
+				multiply_variable = { which = famine_back_weight_dispersed_1	value = 0.5 }
+				
+				every_neighbor_province = {
+					limit = { is_city = yes }
+					set_variable = { 			 which = famine_factor_transfer_1 		which = famine_factor_dispersed_1 }
+					PREV = { change_variable = { which = famine_factor_transfer_1 		which = PREV } }
+					PREV = { change_variable = { which = famine_factor_received_1		which = famine_factor_transfer_1 } }
+					set_variable = { 			 which = famine_factor_transfer_1		value = 0 }
+					PREV = { set_variable = { 	 which = famine_factor_transfer_1		value = 0 } }
+					
+					set_variable = { 			 which = famine_back_weight_transfer_1 		which = famine_back_weight_dispersed_1 }
+					PREV = { change_variable = { which = famine_back_weight_transfer_1 		which = PREV } }
+					PREV = { change_variable = { which = famine_back_weight_received_1		which = famine_back_weight_transfer_1 } }
+					set_variable = { 			 which = famine_back_weight_transfer_1		value = 0 }
+					PREV = { set_variable = { 	 which = famine_back_weight_transfer_1		value = 0 } }
+				}
+				set_variable = { 	which = famine_factor_dispersed_2 			which = famine_factor_received_1 }
+				multiply_variable = { which = famine_factor_dispersed_2			value = 0.5 }
+				
+				set_variable = { 	which = famine_back_weight_dispersed_2 		which = famine_back_weight_received_1 }
+				multiply_variable = { which = famine_back_weight_dispersed_2	value = 0.5 }
+			}
+		}
+		regiongroup = {
+			region = {
+				limit = { is_city = yes }
+				every_neighbor_province = {
+					limit = { is_city = yes }
+					set_variable = { 			 which = famine_factor_transfer_2 		which = famine_factor_dispersed_2 }
+					PREV = { change_variable = { which = famine_factor_transfer_2 		which = PREV } }
+					PREV = { change_variable = { which = famine_factor_received_2		which = famine_factor_transfer_2 } }
+					set_variable = { 			 which = famine_factor_transfer_2		value = 0 }
+					PREV = { set_variable = { 	 which = famine_factor_transfer_2		value = 0 } }
+					
+					set_variable = { 			 which = famine_back_weight_transfer_2 		which = famine_back_weight_dispersed_2 }
+					PREV = { change_variable = { which = famine_back_weight_transfer_2 		which = PREV } }
+					PREV = { change_variable = { which = famine_back_weight_received_2		which = famine_back_weight_transfer_2 } }
+					set_variable = { 			 which = famine_back_weight_transfer_2		value = 0 }
+					PREV = { set_variable = { 	 which = famine_back_weight_transfer_2		value = 0 } }
+				}
+				set_variable = { 	which = famine_factor_dispersed_3 			which = famine_factor_received_2 }
+				multiply_variable = { which = famine_factor_dispersed_3			value = 0.5 }
+				
+				set_variable = { 	which = famine_back_weight_dispersed_3 		which = famine_back_weight_received_2 }
+				multiply_variable = { which = famine_back_weight_dispersed_3	value = 0.5 }
+			}
+		}
+		regiongroup = {
+			region = {
+				limit = { is_city = yes }
+				every_neighbor_province = {
+					limit = { is_city = yes }
+					set_variable = { 			 which = famine_factor_transfer_3 		which = famine_factor_dispersed_3 }
+					PREV = { change_variable = { which = famine_factor_transfer_3 		which = PREV } }
+					PREV = { change_variable = { which = famine_factor_received_3		which = famine_factor_transfer_3 } }
+					set_variable = { 			 which = famine_factor_transfer_3		value = 0 }
+					PREV = { set_variable = { 	 which = famine_factor_transfer_3		value = 0 } }
+					
+					set_variable = { 			 which = famine_back_weight_transfer_3 		which = famine_back_weight_dispersed_3 }
+					PREV = { change_variable = { which = famine_back_weight_transfer_3 		which = PREV } }
+					PREV = { change_variable = { which = famine_back_weight_received_3		which = famine_back_weight_transfer_3 } }
+					set_variable = { 			 which = famine_back_weight_transfer_3		value = 0 }
+					PREV = { set_variable = { 	 which = famine_back_weight_transfer_3		value = 0 } }
+				}
+			}
+		}
+		regiongroup = {
+			region = { ### Sums up famine chance and destructiveness
+				limit = { is_city = yes }
+				change_variable = {   which = famine_factor_total			which = famine_factor }
+				change_variable = {   which = famine_factor_total			which = famine_factor_received_1 }
+				change_variable = {   which = famine_factor_total			which = famine_factor_received_2 }
+				change_variable = {   which = famine_factor_total			which = famine_factor_received_3 }
+				change_variable = {   which = famine_back_weight_total		which = famine_back_weight }
+				change_variable = {   which = famine_back_weight_total		which = famine_back_weight_received_1 }
+				change_variable = {   which = famine_back_weight_total		which = famine_back_weight_received_2 }
+				change_variable = {   which = famine_back_weight_total		which = famine_back_weight_received_3 }
+				set_variable = { 	  which = famine_chance 				which = famine_factor_total }
+				if = {
+					limit = { is_variable_equal = { which = famine_back_weight_total value = 0 } }
+					set_variable = { which = famine_back_weight_total value = 1 } #MASKS AN ISSUE WITH DIVISION BY ZERO!!!
+				}
+				divide_variable = { which = famine_chance which = famine_back_weight_total }
+				subtract_variable = { which = famine_chance 				which = famine_struck_recently }
+				set_variable = { 	  which = famine_destructiveness 		which = famine_chance }
+				if = { ### calculates chance of famine hitting in any given province.  Famine is more likely to break out the more damage provinces are clustered together
+					limit = {
+						NOT = { has_province_flag = famine_struck }
+						check_variable = { which = famine_chance				value = 1.95 }
+						NOT = { check_variable = { which = famine_years_left	value = 1 } }
+					}
+					random_list = {
+						75 = {  }
+						25 = { change_variable = { which = famine_chance value = 0.5 } }
+					}
+					random_list = {
+						75 = {  }
+						25 = { change_variable = { which = famine_chance value = 0.5 } }
+					}
+					random_list = {
+						75 = {  }
+						25 = { change_variable = { which = famine_chance value = 0.5 } }
+					}
+					random_list = {
+						50 = {  }
+						50 = { change_variable = { which = famine_chance value = 0.5 } }
+					}
+					random_list = {
+						50 = {  }
+						50 = { change_variable = { which = famine_chance value = 0.5 } }
+					}
+					random_list = {
+						50 = {  }
+						50 = { change_variable = { which = famine_chance value = 0.5 } }
+					}
+					random_list = {
+						50 = {  }
+						50 = { change_variable = { which = famine_chance value = 0.5 } }
+					}
+					random_list = {
+						50 = {  }
+						50 = { change_variable = { which = famine_chance value = 0.5 } }
+					}
+					random_list = {
+						50 = {  }
+						50 = { change_variable = { which = famine_chance value = 0.5 } }
+					}
+				}
+			}
+		}
+		### If famine threshold is met, famine starts at location and radiates outward
+		regiongroup = {
+			region = {
+				limit = {
+					check_variable = { which = famine_chance	value = 3.25 } #6.25
+					NOT = { has_province_flag = famine_struck }
+					is_island = no
+				}
+				set_province_flag = famine_must_strike
+				every_neighbor_province = {
+					limit = {
+						check_variable = { which = famine_destructiveness 	value = 1.5 }
+						is_city = yes
+						NOT = { has_province_flag = famine_struck }
+					}
+					set_province_flag = famine_must_strike
+					every_neighbor_province = {
+						limit = {
+							check_variable = { which = famine_destructiveness 	value = 1.5 }
+							is_city = yes
+							NOT = { has_province_flag = famine_struck }
+						}
+						set_province_flag = famine_must_strike
+						every_neighbor_province = {
+							limit = {
+								check_variable = { which = famine_destructiveness 	value = 1.5 }
+								is_city = yes
+								NOT = { has_province_flag = famine_struck }
+							}
+							set_province_flag = famine_must_strike
+							every_neighbor_province = {
+								limit = {
+									check_variable = { which = famine_destructiveness 	value = 1.5 }
+									is_city = yes
+									NOT = { has_province_flag = famine_struck }
+								}
+								set_province_flag = famine_must_strike
+								every_neighbor_province = {
+									limit = {
+										check_variable = { which = famine_destructiveness 	value = 1.5 }
+										is_city = yes
+										NOT = { has_province_flag = famine_struck }
+									}
+									set_province_flag = famine_must_strike
+									#every_neighbor_province = {
+									#	limit = {
+									#		check_variable = { which = famine_destructiveness 	value = 1.5 }
+									#		is_city = yes
+									#		NOT = { has_province_flag = famine_struck }
+									#	}
+									#	set_province_flag = famine_must_strike
+									#	every_neighbor_province = {
+									#		limit = {
+									#			check_variable = { which = famine_destructiveness 	value = 1.5 }
+									#			is_city = yes
+									#			NOT = { has_province_flag = famine_struck }
+									#		}
+									#		set_province_flag = famine_must_strike
+									#		every_neighbor_province = {
+									#			limit = {
+									#				check_variable = { which = famine_destructiveness 	value = 1.5 }
+									#				is_city = yes
+									#				NOT = { has_province_flag = famine_struck }
+									#			}
+									#			set_province_flag = famine_must_strike
+									#		}
+									#	}
+									#}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		regiongroup = {
+			region = { ### Now inflict the damage
+				limit = {
+					has_province_flag = famine_must_strike
+					is_city = yes
+				}
+				if = { ### Makes sure there are now totally wacky values.
+					limit = { check_variable = { which = famine_destructiveness			value = 7 } }
+					set_variable = { which = famine_destructiveness		value = 7 }
+				}
+				set_variable = { which = famine_destructiveness_set					which = famine_destructiveness } ### This will insure that the pain due to famine will stick through the 3 year period
+				set_variable = { which = country_famine_destructiveness_gross 		which = famine_destructiveness_set }
+				multiply_variable = { which = country_famine_destructiveness_gross	which = total_pop }
+				
+				owner = { change_variable = { which = country_famine_destructiveness_gross		which = PREV } }
+				owner = {
+					set_country_flag = new_famine_strikes
+					add_country_modifier = { name = famine_in_country duration = 1095 hidden = yes }
+				}
+				clr_province_flag = famine_must_strike
+				set_province_flag = famine_struck
+				if = { limit = { check_variable = { which = famine_destructiveness value = 2.5 } }
+					if = { limit = { check_variable = { which = famine_destructiveness value = 3 } }
+						if = { limit = { check_variable = { which = famine_destructiveness value = 3.5 } }
+							add_permanent_province_modifier = { name = famine_devastating duration = -1 }
+						}
+						else = { add_permanent_province_modifier = { name = famine_terrible duration = -1 } }
+					}
+					else = { add_permanent_province_modifier = { name = famine_harsh duration = -1 } }
+				}
+				else = {
+					if = { limit = { check_variable = { which = famine_destructiveness value = 2 } }
+						add_permanent_province_modifier = { name = famine_limited duration = -1 }
+					}
+					else = { add_permanent_province_modifier = { name = famine_mild duration = -1 } }
+				}
+				set_variable = { which = famine_struck_recently		value = 6 }
+				set_variable = { which = famine_years_left			value = 3 }
+			}
+		}
+		
+		### Variables set to 0 after calculations are done
+		regiongroup = {
+			region = {
+				limit = { is_city = yes }
+				set_variable = { which = famine_rural_density_mod 			value = 0 }
+				set_variable = { which = famine_back_weight					value = 0 }
+				set_variable = { which = famine_back_weight_dispersed_1		value = 0 }
+				set_variable = { which = famine_back_weight_dispersed_2		value = 0 }
+				set_variable = { which = famine_back_weight_dispersed_3		value = 0 }
+				set_variable = { which = famine_back_weight_received_1		value = 0 }
+				set_variable = { which = famine_back_weight_received_2		value = 0 }
+				set_variable = { which = famine_back_weight_received_3		value = 0 }
+				set_variable = { which = famine_back_weight_total			value = 0 }
+				set_variable = { which = famine_chance						value = 0 }
+				set_variable = { which = famine_destructiveness				value = 0 }
+				set_variable = { which = famine_factor_dispersed_1			value = 0 }
+				set_variable = { which = famine_factor_dispersed_2			value = 0 }
+				set_variable = { which = famine_factor_dispersed_3			value = 0 }
+				set_variable = { which = famine_factor_received_1			value = 0 }
+				set_variable = { which = famine_factor_received_2			value = 0 }
+				set_variable = { which = famine_factor_received_3			value = 0 }
+				set_variable = { which = famine_factor_total				value = 0 }
+				set_variable = { which = famine_factor						value = 0 }
+				set_variable = { which = famine_rural_density_sub			value = 0 }
+			}
+		}
+	}
+	
+	option = {
+		name = "POP_famine.001.a"
+		every_country = {
+			limit = { has_country_flag = new_famine_strikes }
+			set_variable = { 	 which = country_famine_recourse_composite 		which = country_famine_destructiveness_gross } ### This will determine how much stability pain will be caused (per capita based)
+			if = {
+				limit = { is_variable_equal = { which = country_total_pop value = 0 } }
+				set_variable = { which = country_total_pop value = 1 } #MASKS AN ISSUE WITH DIVISION BY ZERO!!!
+			}
+			divide_variable = { which = country_famine_recourse_composite which = country_total_pop }
+			country_event = { id = POP_famine.003 days = 5 }
+		}
+	}
+}
+
+country_event = {
+	id = POP_famine.002
+	title = POP_famine.002.t
+	desc = POP_famine.002.d
+	picture = REFORM_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = { country_event = { id = POP_famine.001 days = 5 } }
+	
+	option = { name = "POP_famine.002.a" }
+}
+
+country_event = {
+	id = POP_famine.003
+	title = POP_famine.003.t
+	desc = POP_famine.003.d
+	picture = FAMINE_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = new_famine_strikes
+			
+			set_variable = { 	  which = ducat_cost_a			which = country_famine_destructiveness_gross }
+			multiply_variable = { which = ducat_cost_a 			value = 2 }
+			multiply_variable = { which = ducat_cost_a 			value = 0.001 }
+			multiply_variable = { which = ducat_cost_a			value = 1000 }
+			
+			set_variable = { 	  which = ducat_cost_b			which = country_famine_destructiveness_gross }
+			multiply_variable = { which = ducat_cost_b 			value = 0.75 }
+			multiply_variable = { which = ducat_cost_b 			value = 0.001 }
+			multiply_variable = { which = ducat_cost_b			value = 1000 }
+			
+			set_variable = { 	  which = admin_cost_a			which = country_famine_recourse_composite }
+			multiply_variable = { which = admin_cost_a 			value = 75 }
+			
+			set_variable = { 	  which = admin_cost_b			which = country_famine_recourse_composite }
+			multiply_variable = { which = admin_cost_b 			value = 50 }
+			
+			set_variable = { 	  which = stability_loss_a  	which = country_famine_recourse_composite }
+			multiply_variable = { which = stability_loss_a  	value = 15 }
+			
+			set_variable = { 	  which = stability_loss_b  	which = country_famine_recourse_composite }
+			multiply_variable = { which = stability_loss_b  	value = 30 }
+			
+			set_variable = { 	  which = stability_loss_c  	which = country_famine_recourse_composite }
+			multiply_variable = { which = stability_loss_c  	value = 45 }
+			
+			multiply_variable = { which = admin_cost_a			value = 0.001 }
+			multiply_variable = { which = admin_cost_a 			value = 1000 }
+			multiply_variable = { which = admin_cost_b			value = 0.001 }
+			multiply_variable = { which = admin_cost_b 			value = 1000 }
+		}
+	}
+	
+	option = {
+		name = "POP_famine.003.a"
+		ai_chance = { factor = 0 }
+		custom_tooltip = famine_relief_significant
+		custom_tooltip = admin_cost_a
+		hidden_effect = {
+			set_variable = { which = ducat_cost 	which = ducat_cost_a }
+			set_variable = { which = admin_cost 	which = admin_cost_a }
+			scaled_ducat_cost_country = yes
+			scaled_admin_cost_country = yes
+			every_owned_province = {
+				limit = { is_city = yes }
+				trigger_switch = {
+					on_trigger = has_province_modifier
+					famine_mild = {
+						add_permanent_province_modifier = { name = famine_relief_2 hidden = yes }
+						add_permanent_province_modifier = { name = famine_relieved_2 hidden = yes }
+					}
+					famine_limited = {
+						add_permanent_province_modifier = { name = famine_relief_4 hidden = yes }
+						add_permanent_province_modifier = { name = famine_relieved_2 hidden = yes }
+					}
+					famine_harsh = {
+						add_permanent_province_modifier = { name = famine_relief_6 hidden = yes }
+						add_permanent_province_modifier = { name = famine_relieved_2 hidden = yes }
+					}
+					famine_terrible = {
+						add_permanent_province_modifier = {
+							name = famine_relief_8
+							hidden = yes
+						}
+						add_permanent_province_modifier = {
+							name = famine_relieved_2
+							hidden = yes
+						}
+					}
+					famine_devastating = {
+						add_permanent_province_modifier = {
+							name = famine_relief_10
+							hidden = yes
+						}
+						add_permanent_province_modifier = {
+							name = famine_relieved_2
+							hidden = yes
+						}
+					}
+				}
+			}
+		}
+		custom_tooltip = ducat_cost_a
+		stability_loss_compound_a = yes
+	}
+	
+	option = {
+		name = "POP_famine.003.b"
+		ai_chance = { factor = 0 }
+		custom_tooltip = famine_relief_partial
+		custom_tooltip = admin_cost_b
+		hidden_effect = {
+			set_variable = { which = ducat_cost 	which = ducat_cost_b }
+			set_variable = { which = admin_cost 	which = admin_cost_b }
+			scaled_ducat_cost_country = yes
+			scaled_admin_cost_country = yes
+			every_owned_province = {
+				limit = { is_city = yes }
+				trigger_switch = {
+					on_trigger = has_province_modifier
+					famine_mild = {
+						add_permanent_province_modifier = { name = famine_relief_1 hidden = yes }
+						add_permanent_province_modifier = { name = famine_relieved_1 hidden = yes }
+					}
+					famine_limited = {
+						add_permanent_province_modifier = { name = famine_relief_2 hidden = yes }
+						add_permanent_province_modifier = { name = famine_relieved_1 hidden = yes }
+					}
+					famine_harsh = {
+						add_permanent_province_modifier = { name = famine_relief_3 hidden = yes }
+						add_permanent_province_modifier = { name = famine_relieved_1 hidden = yes }
+					}
+					famine_terrible = {
+						add_permanent_province_modifier = { name = famine_relief_4 hidden = yes }
+						add_permanent_province_modifier = { name = famine_relieved_1 hidden = yes }
+					}
+					famine_devastating = {
+						add_permanent_province_modifier = { name = famine_relief_5 hidden = yes }
+						add_permanent_province_modifier = { name = famine_relieved_1 hidden = yes }
+					}
+				}
+			}
+		}
+		custom_tooltip = ducat_cost_b
+		stability_loss_compound_b = yes
+	}
+	
+	option = {
+		name = "POP_famine.003.c"
+		ai_chance = { factor = 100 }
+		stability_loss_compound_c = yes
+	}
+}

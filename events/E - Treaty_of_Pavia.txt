@@ -1,0 +1,1072 @@
+
+
+# von Wittelsbach - Treaty of Pavia (Wittelsbacher Hausvertrag von Pavia)
+# If the male line in one of the branches of the von Wittelsbach dies out (at least for the Bavarian and Palatinatean branches), their lands get inherited by the other members of the respective (sub)branch
+# so if the line in Bayern-Straubing ends, the Province gets inherited by either Bayern-München or Bayern-Landshut (if they exist)
+# If all Bavarian branches die off, their lands get inherited by the Palatinate, and vice-versa
+# If they have an heir of a different dynasty or a female heir they can protest and a war of succession will ensue.
+# see http://en.wikipedia.org/wiki/War_of_the_Succession_of_Landshut for reference
+
+#country_event = {
+#	id = treaty_pavia.1002
+#	title = "treaty_pavia.1002.t"
+#	desc = "EVT_AI"
+#	picture = BAVARIA_eventPicture
+#	
+#	#hidden = yes
+#		
+#	trigger = {
+#		NOT = { has_country_flag = treaty_of_pavia_ignored }
+#		government = monarchy
+#		OR = {
+#			tag = BAV		# Bavaria
+#			tag = BAW		# Ingolstadt
+#			tag = BAX		# Landshut
+#			tag = BAY		# Munchen
+#			tag = BAZ		# Straubing
+#			tag = PAL		# Palatinate
+#		}
+#		has_regency = yes
+#		OR = {
+#			has_heir = no
+#			has_foreign_heir = yes
+#		}
+#		any_country = {
+#			exists = yes
+#			government = monarchy
+#			NOT = { tag = ROOT }
+#			dynasty = "von Wittelsbach"
+#		}
+#	}
+#	
+#	immediate = {
+#		hidden_effect = {
+#			country_event = { id = treaty_pavia.1000 }
+#		}
+#	}
+#	
+#	
+#	option = {
+#		name = "EVT_AI"
+#	}
+#}
+
+
+country_event = {
+	id = treaty_pavia.1000
+	title = "treaty_pavia.1000.t"
+	desc = "EVT_AI"
+	picture = BAVARIA_eventPicture
+	
+	is_triggered_only = yes
+	
+	hidden = yes
+	
+	trigger = {
+		NOT = { has_country_flag = treaty_of_pavia_ignored }
+		government = monarchy
+		OR = {
+			tag = BAV		# Bavaria
+			tag = BAW		# Ingolstadt
+			tag = BAX		# Landshut
+			tag = BAY		# Munchen
+			tag = BAZ		# Straubing
+			tag = PAL		# Palatinate
+		}
+		is_at_war = no
+		OR = {
+			#has_ruler = "Interregnum"
+			AND = {
+				is_female = yes
+				has_consort_regency = no
+			}
+			NOT = { dynasty = "von Wittelsbach" }
+			has_new_dynasty = yes
+			has_country_flag = bav_no_heir
+			AND = {
+				has_regency = yes
+				OR = {
+					has_heir = no
+					has_foreign_heir = yes
+				}
+			}
+		}
+		any_known_country = {
+			#exists = yes
+			government = monarchy
+			NOT = { tag = ROOT }
+			dynasty = "von Wittelsbach"
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					is_subject_other_than_tributary_trigger = yes
+					overlord = {
+						#exists = yes
+						dynasty = "von Wittelsbach"
+					}
+				}
+				every_core_province = {
+					overlord = {
+						if = {
+							limit = {
+								dynasty = "von Wittelsbach"
+							}
+							PREV = { add_core = PREV }
+						}
+					}
+				}
+				if = {
+					limit = {
+						ai = yes		# Inheriting only for AI, don't want to kick human players out of the game
+					}
+					overlord = {
+						if = {
+							limit = {
+								dynasty = "von Wittelsbach"
+							}
+							inherit = ROOT
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					NOT = { dynasty = "von Wittelsbach" }
+					NOT = {
+						is_subject_other_than_tributary_trigger = yes
+						overlord = {
+							#exists = yes
+							dynasty = "von Wittelsbach"
+						}
+					}
+				}
+				ROOT = {
+					country_event = { id = treaty_pavia.1010 }
+				}
+			}
+			if = {
+				limit = {
+					dynasty = "von Wittelsbach"
+					NOT = {
+						is_subject_other_than_tributary_trigger = yes
+						overlord = {
+							#exists = yes
+							dynasty = "von Wittelsbach"
+						}
+					}
+					# since it's still under Wittelsbach rule, just not the right branch, only other bavarian Wittelsbach rulers have claims, other Wittelsbachs are denied a claim on PU
+					any_known_country = {
+						#exists = yes
+						dynasty = "von Wittelsbach"
+						NOT = { tag = ROOT }
+						OR = {
+							tag = BAV		# Bavaria
+							tag = BAW		# Ingolstadt
+							tag = BAX		# Landshut
+							tag = BAY		# Munchen
+							tag = BAZ		# Straubing
+							tag = PAL		# Palatinate
+						}
+					}
+				}
+				ROOT = {
+					country_event = { id = treaty_pavia.1020 }
+				}
+			}
+		}
+	}
+	
+	
+	option = {
+		name = "EVT_AI"
+	}
+}
+
+country_event = {
+	id = treaty_pavia.1010
+	title = "treaty_pavia.1010.t"
+	desc = "treaty_pavia.1010.d"
+	picture = BAVARIA_eventPicture
+	
+	is_triggered_only = yes
+	
+	
+	option = {
+		name = "treaty_pavia.1010.a"
+		ai_chance = { factor = 85 }
+		hidden_effect = {
+			country_event = { id = treaty_pavia.1011 }
+		}
+		custom_tooltip = treaty_pavia.1010.a.ct
+	}
+	
+	option = {
+		name = "treaty_pavia.1010.b"
+		ai_chance = { factor = 15 }
+		hidden_effect = {
+			set_country_flag = treaty_of_pavia_ignored
+			country_event = { id = treaty_pavia.1012 }
+		}
+		custom_tooltip = treaty_pavia.1010.b.ct
+	}
+}
+
+country_event = {
+	id = treaty_pavia.1020
+	title = "treaty_pavia.1020.t"
+	desc = "treaty_pavia.1020.d"
+	picture = BAVARIA_eventPicture
+	
+	is_triggered_only = yes
+	
+	
+	option = {
+		name = "treaty_pavia.1020.a"
+		ai_chance = { factor = 50 }
+		hidden_effect = {
+			country_event = { id = treaty_pavia.1011 }		# same event as option a in treaty_pavia.1010
+		}
+		custom_tooltip = treaty_pavia.1020.a.ct
+	}
+	
+	option = {
+		name = "treaty_pavia.1020.b"
+		ai_chance = { factor = 50 }
+		hidden_effect = {
+			country_event = { id = treaty_pavia.1022 }
+		}
+		custom_tooltip = treaty_pavia.1020.b.ct
+	}
+}
+
+# treaty_pavia.1010 / 1020 option a event
+country_event = {
+	id = treaty_pavia.1011
+	title = "treaty_pavia.1011.t"
+	desc = "treaty_pavia.1011.d"
+	picture = BAVARIA_eventPicture
+	
+	is_triggered_only = yes
+	
+	hidden = yes
+	
+	
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					any_known_country = {
+						government = monarchy
+						OR = {
+							tag = BAV		# Bavaria
+							tag = BAW		# Ingolstadt
+							tag = BAX		# Landshut
+							tag = BAY		# Munchen
+							tag = BAZ		# Straubing
+							tag = PAL		# Palatinate
+						}
+						NOT = { tag = ROOT }
+						dynasty = "von Wittelsbach"
+					}
+				}
+				every_owned_province = {
+					province_event = { id = treaty_pavia.3001 }
+				}
+				every_core_province = {
+					limit = {
+						NOT = { owned_by = ROOT }
+					}
+					province_event = { id = treaty_pavia.3001 }
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						any_known_country = {
+							government = monarchy
+							OR = {
+								tag = BAV		# Bavaria
+								tag = BAW		# Ingolstadt
+								tag = BAX		# Landshut
+								tag = BAY		# Munchen
+								tag = BAZ		# Straubing
+								tag = PAL		# Palatinate
+							}
+							NOT = { tag = ROOT }
+							dynasty = "von Wittelsbach"
+						}
+					}
+				}
+				random_known_country = {
+					limit = {
+						dynasty = "von Wittelsbach"
+						government = monarchy
+						is_lesser_in_union = no
+					}
+					create_union = ROOT
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVT_AI"
+	}
+}
+
+# treaty_pavia.1010 option b event
+country_event = {
+	id = treaty_pavia.1012
+	title = "treaty_pavia.1012.t"
+	desc = "treaty_pavia.1012.d"
+	picture = BAVARIA_eventPicture
+	
+	is_triggered_only = yes
+	
+	hidden = yes
+	
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					any_known_country = {
+						government = monarchy
+						OR = {
+							tag = BAV		# Bavaria
+							tag = BAW		# Ingolstadt
+							tag = BAX		# Landshut
+							tag = BAY		# Munchen
+							tag = BAZ		# Straubing
+							tag = PAL		# Palatinate
+						}
+						NOT = { tag = ROOT }
+						dynasty = "von Wittelsbach"
+					}
+				}
+				every_owned_province = {
+					limit = {
+						is_core = ROOT
+					}
+					every_country = {
+						limit = {
+							government = monarchy
+							OR = {
+								tag = BAV		# Bavaria
+								tag = BAW		# Ingolstadt
+								tag = BAX		# Landshut
+								tag = BAY		# Munchen
+								tag = BAZ		# Straubing
+								tag = PAL		# Palatinate
+							}
+							NOT = { tag = ROOT }
+							dynasty = "von Wittelsbach"
+						}
+						PREV = { add_core = PREV }
+					}
+				}
+				every_owned_province = {
+					limit = {
+						NOT = { is_core = ROOT }
+					}
+					every_country = {
+						limit = {
+							government = monarchy
+							OR = {
+								tag = BAV		# Bavaria
+								tag = BAW		# Ingolstadt
+								tag = BAX		# Landshut
+								tag = BAY		# Munchen
+								tag = BAZ		# Straubing
+								tag = PAL		# Palatinate
+							}
+							NOT = { tag = ROOT }
+							dynasty = "von Wittelsbach"
+						}
+						PREV = { add_claim = PREV }
+					}
+				}
+				every_core_province = {
+					limit = {
+						NOT = { owned_by = ROOT }
+					}
+					every_country = {
+						limit = {
+							government = monarchy
+							OR = {
+								tag = BAV		# Bavaria
+								tag = BAW		# Ingolstadt
+								tag = BAX		# Landshut
+								tag = BAY		# Munchen
+								tag = BAZ		# Straubing
+								tag = PAL		# Palatinate
+							}
+							NOT = { tag = ROOT }
+							dynasty = "von Wittelsbach"
+						}
+						PREV = { add_claim = PREV }
+					}
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						any_known_country = {
+							government = monarchy
+							OR = {
+								tag = BAV		# Bavaria
+								tag = BAW		# Ingolstadt
+								tag = BAX		# Landshut
+								tag = BAY		# Munchen
+								tag = BAZ		# Straubing
+								tag = PAL		# Palatinate
+							}
+							NOT = { tag = ROOT }
+							dynasty = "von Wittelsbach"
+						}
+					}
+				}
+				every_country = {
+					limit = {
+						dynasty = "von Wittelsbach"
+						government = monarchy
+					}
+					add_casus_belli = { type = cb_restore_personal_union months = 24 target = ROOT }
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVT_AI"
+	}
+}
+
+
+# treaty_pavia.1020 option b event
+country_event = {
+	id = treaty_pavia.1022
+	title = "treaty_pavia.1022.t"
+	desc = "treaty_pavia.1022.d"
+	picture = BAVARIA_eventPicture
+	
+	is_triggered_only = yes
+	
+	hidden = yes
+	
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					any_known_country = {
+						government = monarchy
+						OR = {
+							tag = BAV		# Bavaria
+							tag = BAW		# Ingolstadt
+							tag = BAX		# Landshut
+							tag = BAY		# Munchen
+							tag = BAZ		# Straubing
+							tag = PAL		# Palatinate
+						}
+						NOT = { tag = ROOT }
+						dynasty = "von Wittelsbach"
+					}
+				}
+				every_core_province = {
+					every_country = {
+						limit = {
+							NOT = { PREV = { owned_by = PREV } }
+							government = monarchy
+							OR = {
+								tag = BAV		# Bavaria
+								tag = BAW		# Ingolstadt
+								tag = BAX		# Landshut
+								tag = BAY		# Munchen
+								tag = BAZ		# Straubing
+								tag = PAL		# Palatinate
+							}
+							NOT = { tag = ROOT }
+							dynasty = "von Wittelsbach"
+						}
+						PREV = { add_claim = PREV }
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVT_AI"
+	}
+}
+
+
+# since there is no on_ruler_death trigger, we need to know whether the ruler died without an heir
+# because it's possible that "a noble from house X" may ascend to the throne who isn't an heir
+country_event = {
+	id = treaty_pavia.1101
+	title = "treaty_pavia.1101.t"
+	desc = "EVT_AI"
+	picture = BAVARIA_eventPicture
+	
+	trigger = {
+		government = monarchy
+		has_heir = no
+		OR = {
+			tag = BAV		# Bavaria
+			tag = BAW		# Ingolstadt
+			tag = BAX		# Landshut
+			tag = BAY		# Munchen
+			tag = BAZ		# Straubing
+			tag = PAL		# Palatinate
+		}
+		NOT = { has_country_flag = bav_no_heir }
+	}
+
+	hidden = yes
+	
+	mean_time_to_happen = { months = 1 }
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = bav_no_heir
+		}
+	}
+	
+	option = {
+		name = "EVT_AI"
+	}
+}
+
+
+country_event = {
+	id = treaty_pavia.1102
+	title = "treaty_pavia.1102.t"
+	desc = "EVT_AI"
+	picture = BAVARIA_eventPicture
+	
+	trigger = {
+		has_country_flag = bav_no_heir
+		government = monarchy
+		OR = {
+			tag = BAV		# Bavaria
+			tag = BAW		# Ingolstadt
+			tag = BAX		# Landshut
+			tag = BAY		# Munchen
+			tag = BAZ		# Straubing
+			tag = PAL		# Palatinate
+		}
+		has_heir = yes
+	}
+	
+	hidden = yes
+	
+	mean_time_to_happen = { months = 1 }
+	
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = bav_no_heir
+		}
+	}
+	
+	option = {
+		name = "EVT_AI"
+	}
+}
+
+province_event = {
+	id = treaty_pavia.3001
+	title = "treaty_pavia.3001.t"
+	desc = "EVT_AI"
+	picture = BAVARIA_eventPicture
+	
+	is_triggered_only = yes
+	
+	hidden = yes
+	
+	
+	immediate = {
+		hidden_effect = {
+			# is Palatinate and Bavaria is eligible, Bavaria gets it all
+			if = {
+				limit = {
+					FROM = { tag = PAL }
+					any_known_country = {
+						tag = BAV
+						#exists = yes
+						government = monarchy
+						dynasty = "von Wittelsbach"
+					}
+				}
+				if = {
+					limit = {
+						owned_by = FROM
+					}
+					cede_province = BAV
+					add_claim = BAV
+				}
+				if = {
+					limit = {
+						is_core = FROM
+					}
+					add_core = BAV
+					remove_core = FROM
+				}
+			}
+			# is Palatinate and Bavaria is not eligible (which means, any of the "sub"-bavarias must exist, and thus Bavaria can't exist) the land is split up among whichever Bavarian minors exist
+			if = {
+				limit = {
+					FROM = { tag = PAL }
+					NOT = {
+						any_known_country = {
+							tag = BAV
+							#exists = yes
+							government = monarchy
+							dynasty = "von Wittelsbach"
+						}
+					}
+				}
+				if = {
+					limit = {
+						OR = {
+							is_core = FROM
+							owned_by = FROM
+						}
+					}
+					random_known_country = {
+						limit = {
+							#exists = yes
+							OR = {
+								tag = BAW
+								tag = BAX
+								tag = BAY
+								tag = BAZ
+							}
+							government = monarchy
+							dynasty = "von Wittelsbach"
+						}
+						if = {
+							limit = {
+								ROOT = { owned_by = FROM }
+							}
+							ROOT = { cede_province = PREV }
+							ROOT = { add_claim = PREV }
+						}
+						if = {
+							limit = {
+								ROOT = { is_core = FROM }
+							}
+							ROOT = { add_core = PREV }
+							ROOT = { remove_core = FROM }
+						}
+					}
+				}
+			}
+			# if is BAV, PAL gets it all
+			if = {
+				limit = {
+					FROM = { tag = BAV }
+					any_known_country = {
+						#exists = yes
+						tag = PAL
+						government = monarchy
+						dynasty = "von Wittelsbach"
+					}
+				}
+				if = {
+					limit = {
+						is_core = FROM
+					}
+					add_core = PAL
+					remove_core = FROM
+				}
+				if = {
+					limit = {
+						owned_by = FROM
+					}
+					cede_province = PAL
+					add_claim = PAL
+				}
+			}
+			# if BAW, BAX, BAY, BAZ and any other of those three is eligible, they'll get a chunk
+			if = {
+				limit = {
+					FROM = {
+						OR = {
+							tag = BAW
+							tag = BAX
+							tag = BAY
+							tag = BAZ
+						}
+					}
+					any_known_country = {
+						#exists = yes
+						NOT = { tag = FROM }
+						OR = {
+							tag = BAW
+							tag = BAX
+							tag = BAY
+							tag = BAZ
+						}
+						government = monarchy
+						dynasty = "von Wittelsbach"
+					}
+				}
+				if = {
+					limit = {
+						OR = {
+							is_core = FROM
+							owned_by = FROM
+						}
+					}
+					random_known_country = {
+						limit = {
+							#exists = yes
+							OR = {
+								tag = BAW
+								tag = BAX
+								tag = BAY
+								tag = BAZ
+							}
+							government = monarchy
+							dynasty = "von Wittelsbach"
+						}
+						if = {
+							limit = {
+								ROOT = { owned_by = FROM }
+							}
+							ROOT = { cede_province = PREV }
+							ROOT = { add_claim = PREV }
+						}
+						if = {
+							limit = {
+								ROOT = { is_core = FROM }
+							}
+							ROOT = { add_core = PREV }
+							ROOT = { remove_core = FROM }
+						}
+					}
+				}
+			}
+			# if BAW, BAX, BAY, BAZ and only PAL eligible, PAL gets it all
+			if = {
+				limit = {
+					FROM = {
+						OR = {
+							tag = BAW
+							tag = BAX
+							tag = BAY
+							tag = BAZ
+						}
+					}
+					NOT = {
+						any_known_country = {
+							#exists = yes
+							NOT = { tag = FROM }
+							OR = {
+								tag = BAW
+								tag = BAX
+								tag = BAY
+								tag = BAZ
+							}
+							government = monarchy
+							dynasty = "von Wittelsbach"
+						}
+					}
+				}
+				if = {
+					limit = {
+						owned_by = FROM
+					}
+					add_claim = PAL
+					cede_province = PAL
+				}
+				if = {
+					limit = {
+						is_core = FROM
+					}
+					add_core = PAL
+					remove_core = FROM
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVT_AI"
+	}
+}
+
+country_event = {
+	id = treaty_pavia.1001
+	title = "treaty_pavia.1001.t"
+	desc = "treaty_pavia.1001.d"
+	picture = BAVARIA_eventPicture
+	
+	trigger = {
+		NOT = { has_country_flag = overlord_treaty_of_pavia_ignored }
+		NOT = { has_country_flag = treaty_of_pavia_ignored }
+		is_lesser_in_union = yes
+		OR = {
+			tag = BAV		# Bavaria
+			tag = BAW		# Ingolstadt
+			tag = BAX		# Landshut
+			tag = BAY		# Munchen
+			tag = BAZ		# Straubing
+			tag = PAL		# Palatinate
+		}
+		NOT = { is_at_war = no }
+		any_known_country = {
+			#exists = yes
+			government = monarchy
+			NOT = { tag = ROOT }
+			dynasty = "von Wittelsbach"
+		}
+	}
+	
+	hidden = yes
+	
+	mean_time_to_happen = { months = 1 }
+	
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					overlord = {
+						dynasty = "von Wittelsbach"
+					}
+				}
+				if = {
+					limit = {
+						any_known_country = {
+							NOT = { tag = ROOT }
+							OR = {
+								tag = BAV		# Bavaria
+								tag = BAW		# Ingolstadt
+								tag = BAX		# Landshut
+								tag = BAY		# Munchen
+								tag = BAZ		# Straubing
+								tag = PAL		# Palatinate
+							}
+							government = monarchy
+							dynasty = "von Wittelsbach"
+						}
+					}
+					random_known_country = {
+						limit = {
+							senior_union_with = ROOT
+						}
+						country_event = { id = treaty_pavia.1030 }
+					}
+					#overlord = { country_event = { id = treaty_pavia.1030 } }			# doesn't work for some reason
+				}
+				if = {
+					limit = {
+						NOT = {
+							any_known_country = {
+								NOT = { tag = ROOT }
+								OR = {
+									tag = BAV		# Bavaria
+									tag = BAW		# Ingolstadt
+									tag = BAX		# Landshut
+									tag = BAY		# Munchen
+									tag = BAZ		# Straubing
+									tag = PAL		# Palatinate
+								}
+								government = monarchy
+								dynasty = "von Wittelsbach"
+							}
+						}
+					}
+					random_known_country = {
+						limit = {
+							senior_union_with = ROOT
+						}
+						inherit = ROOT
+					}
+					#overlord = { inherit = ROOT }
+				}
+			}
+			if = {
+				limit = {
+					overlord = {
+						NOT = { dynasty = "von Wittelsbach" }
+					}
+				}
+				random_known_country = {
+					limit = {
+						senior_union_with = ROOT
+					}
+					country_event = { id = treaty_pavia.1040 }
+				}
+				#overlord = { country_event = { id = treaty_pavia.1040 } }			# doesn't work for some reason
+			}
+		}
+	}
+	
+	option = {
+		name = "EVT_AI"
+	}
+}
+
+country_event = {
+	id = treaty_pavia.1030
+	title = "treaty_pavia.1030.t"
+	desc = "treaty_pavia.1030.d"
+	picture = BAVARIA_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "treaty_pavia.1030.a"
+		ai_chance = { factor = 85 }
+		hidden_effect = {
+			every_country = {
+				limit = {
+					war_with = FROM
+					war_with = ROOT
+				}
+				white_peace = FROM
+				white_peace = ROOT
+			}
+			FROM = { country_event = { id = treaty_pavia.1011 } }
+		}
+		custom_tooltip = treaty_pavia.1030.a.ct
+	}
+	
+	option = {
+		name = "treaty_pavia.1030.b"
+		ai_chance = { factor = 15 }
+		hidden_effect = {
+			FROM = { set_country_flag = overlord_treaty_of_pavia_ignored }
+			FROM = { country_event = { id = treaty_pavia.1022 } }
+		}
+		custom_tooltip = treaty_pavia.1030.b.ct
+	}
+}
+
+country_event = {
+	id = treaty_pavia.1040
+	title = "treaty_pavia.1040.t"
+	desc = "treaty_pavia.1040.d"
+	picture = BAVARIA_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "treaty_pavia.1040.a"
+		ai_chance = { factor = 85 }
+		hidden_effect = {
+			every_country = {
+				limit = {
+					war_with = FROM
+					war_with = ROOT
+				}
+				white_peace = FROM
+				white_peace = ROOT
+			}
+			FROM = { country_event = { id = treaty_pavia.1011 } }
+		}
+		custom_tooltip = treaty_pavia.1040.a.ct
+	}
+	
+	option = {
+		name = "treaty_pavia.1040.b"
+		ai_chance = { factor = 15 }
+		hidden_effect = {
+			FROM = { set_country_flag = overlord_treaty_of_pavia_ignored }
+			FROM = { country_event = { id = treaty_pavia.1012 } }
+		}
+		custom_tooltip = treaty_pavia.1040.b.ct
+	}
+}
+
+province_event = {
+	id = treaty_pavia.4001
+	title = "treaty_pavia.4001.t"
+	desc = "EVT_AI"
+	picture = BAVARIA_eventPicture
+	
+	trigger = {
+		NOT = { owner = { has_country_flag = treaty_of_pavia_ignored } }
+		NOT = { owner = { has_country_flag = overlord_treaty_of_pavia_ignored } }
+		owner = {
+			PREV = { owned_by = PREV }
+			OR = {
+				tag = BAV		# Bavaria
+				tag = BAW		# Ingolstadt
+				tag = BAX		# Landshut
+				tag = BAY		# Munchen
+				tag = BAZ		# Straubing
+				tag = PAL		# Palatinate
+			}
+		}
+		any_known_country = {
+			NOT = { PREV = { owned_by = PREV } }
+			PREV = { is_core = PREV }
+			OR = {
+				tag = BAV		# Bavaria
+				tag = BAW		# Ingolstadt
+				tag = BAX		# Landshut
+				tag = BAY		# Munchen
+				tag = BAZ		# Straubing
+				tag = PAL		# Palatinate
+			}
+		}
+		#calc_true_if = {
+		#	all_country = {
+		#		OR = {
+		#			tag = BAV		# Bavaria
+		#			tag = BAW		# Ingolstadt
+		#			tag = BAX		# Landshut
+		#			tag = BAY		# Munchen
+		#			tag = BAZ		# Straubing
+		#			tag = PAL		# Palatinate
+		#		}
+		#		ROOT = { is_core = PREV }
+		#	}
+		#	amount = 2
+		#}
+	}
+	
+	hidden = yes
+
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	immediate = {
+		hidden_effect = {
+			every_country = {
+				limit = {
+					NOT = { ROOT = { owned_by = PREV } }
+					#OR = {
+						#AND = {
+							government = monarchy
+							dynasty = "von Wittelsbach"
+						#}
+						#exists = no
+					#}
+					OR = {
+						tag = BAV		# Bavaria
+						tag = BAW		# Ingolstadt
+						tag = BAX		# Landshut
+						tag = BAY		# Munchen
+						tag = BAZ		# Straubing
+						tag = PAL		# Palatinate
+					}
+					ROOT = { is_core = PREV }
+				}
+				ROOT = { remove_core = PREV }
+				ROOT = { add_claim = PREV }
+			}
+		}
+	}
+	
+	option = {
+		name = "EVT_AI"
+	}
+}

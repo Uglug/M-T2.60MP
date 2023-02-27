@@ -1,0 +1,235 @@
+
+# Haiti produced half the world's coffe until the revolution
+province_event = {
+	id = haiti.1
+	title = "haiti.EVTNAME1"
+	desc = "haiti.EVTDESC1"
+	picture = COLONIZATION_eventPicture
+	
+	trigger = {
+		is_year = 1730
+		OR = {
+			province_id = 488 # Maguana
+			province_id = 1536 # Higuey
+			province_id = 1537 # Magua
+		}
+		is_empty = no
+		NOT = {
+			has_province_modifier = haiti_coffee
+		}
+	}
+	
+	mean_time_to_happen = { years = 5 }
+	
+	option = {
+		name = "haiti.EVTOPTA1"
+		change_trade_goods = coffee
+		set_base_price_of_goods = yes
+		add_province_modifier = {
+			name = "haiti_coffee" # massive production increase
+			duration = -1
+		}
+	}
+}
+
+
+# Haitian Revolution
+country_event = {
+	id = haiti.2
+	title = "haiti.EVTNAME2"
+	desc = "haiti.EVTDESC2"
+	picture = COLONIZATION_eventPicture
+	
+	major = yes
+	
+	fire_only_once = yes
+	
+	trigger = {
+		is_year = 1700
+		technology_group = western
+		num_of_owned_provinces_with = {
+			value = 2
+			region = carribeans_region
+			culture = maroon
+		}
+		is_colonial_nation = no
+		NOT = {
+			capital_scope = {
+				region = carribeans_region
+			}
+		}
+		NOT = { exists = HAT }
+	}
+	mean_time_to_happen = {
+		years = 50
+		modifier = {
+			factor = 0.8
+			culture_group = langue_d_oil
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				accepted_culture = maroon
+			}
+		}
+		modifier = {
+			factor = 0.8
+			NOT = {
+				stability = 1
+			}
+		}
+		modifier = {
+			factor = 0.8
+			owns = 488 # Maguana
+		}
+		modifier = {
+			factor = 0.8
+			owns = 1536 # Higuey
+		}
+		modifier = {
+			factor = 0.8
+			owns = 1537 # Magua
+		}
+	}
+	immediate = {
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					region = carribeans_region
+					culture = maroon
+				}
+				discover_country = HAT
+				add_core = HAT
+			}
+			release = HAT
+			HAT = {
+				revolution_effect = yes
+				change_culture = maroon
+			}
+		}
+	}
+	option = {
+		name = "haiti.EVTOPTA2"
+		HAT = {
+			declare_war_with_cb = {
+				who = ROOT
+				casus_belli = cb_independence_war
+			}
+		}
+		hidden_effect = {
+			HAT = {
+				country_event = {
+					id = haiti.3 days = 1
+				}
+			}
+		}
+	}
+}
+
+# Haitian Mobilisation
+country_event = {
+	id = haiti.3
+	title = "haiti.EVTNAME3"
+	desc = "haiti.EVTDESC3"
+	picture = COLONIZATION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EXCELLENT"
+		HAT = {
+			define_ruler = {
+				name = "Jean-Jacques"
+				dynasty = "Dessalines"
+				adm = 3
+				dip = 1
+				mil = 4
+			}
+			capital_scope = {
+				build_to_forcelimit = {
+					infantry = 0.8
+					cavalry = 0.1
+					artillery = 0.1
+				}
+			}
+			random_owned_province = {
+				limit = {
+					has_port = yes
+				}
+				build_to_forcelimit = {
+					heavy_ship = 0.1
+					light_ship = 0.5
+					transport = 0.3
+				}
+				parliamentarisation_effect = yes
+				change_primary_culture = maroon
+			}
+		}
+	}
+}
+
+# afro-carribeans
+province_event = {
+	id = haiti.4
+	title = "haiti.EVTNAME4"
+	desc = "haiti.EVTDESC4"
+	picture = COLONIZATION_eventPicture
+	
+	trigger = {
+		region = carribeans_region
+		is_city = yes
+		NOT = { culture = maroon }
+		owner = {
+			technology_group = western
+			NOT = { has_country_modifier = the_abolish_slavery_act }
+		}
+	}
+	
+	mean_time_to_happen = { years = 100 }
+	
+	option = {
+		name = "haiti.EVTOPTA4"
+		change_culture = maroon
+		hidden_effect = {
+			set_variable = { which = added_unrest value = 5 }
+			add_base_unrest = yes
+		}
+		custom_tooltip = added_unrest_5
+		#set_province_flag = afro_carribean
+	}
+}
+
+# can't culture convert to get rid of them
+# ^ eh? why?
+#province_event = {
+#	id = haiti.5
+#	title = "haiti.EVTNAME4"
+#	desc = "haiti.EVTDESC4"
+#	picture = COLONIZATION_eventPicture
+#	
+#	trigger = {
+#		has_province_flag = afro_carribean
+#		NOT = {
+#			culture = maroon
+#		}
+#	}
+#	
+#	mean_time_to_happen = { months = 3 }
+#	
+#	option = {
+#		name = "haiti.EVTOPTA4"
+#		change_culture = maroon
+#	}
+#}
+
+# The Alcázar de Colón
+# First viceroyal residence in america. eastern hispaniola.
+
+# Cathedral of Santa María la Menor
+# First Cathedral in america. same province.
+
+# Fortaleza Ozama
+# first fort in america. same province.
+
+# If any agricultural trade good is produced on Curacao
+# Change trade goods to salt. Too arid, lack of fresh water.

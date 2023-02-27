@@ -1,0 +1,490 @@
+# Serenissima medici Decisions
+# by Marco Dandolo
+# Ported to M&T and Maintained by Sun_Wu
+
+country_decisions = {
+	hide_medici_decisions = {
+		major = yes
+		potential = {
+			ai = no
+			has_country_modifier = "medici_system_information"
+		}
+		allow = {
+			NOT = { has_country_flag = medici_decision_off }
+		}
+		effect = {
+			set_country_flag = medici_decision_off
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	view_medici_decisions = {
+		major = yes
+		potential = {
+			ai = no
+			has_country_modifier = "medici_system_information"
+		}
+		allow = {
+			has_country_flag = medici_decision_off
+		}
+		effect = {
+			clr_country_flag = medici_decision_off
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	abolish_gonfaloniere = {
+		major = yes
+		potential = {
+			ai = no
+			tag = FIR
+			NOT = { has_country_flag = medici_decision_off }
+			has_country_modifier = "medici_system_information"
+			NOT = { has_country_flag = medici_signoria }
+		}
+		allow = {
+			prestige = 50
+			has_country_flag = santa_maria_del_fiore_finished
+			has_country_flag = platonic_academy_supported
+			has_country_flag = castato_abolished
+			has_country_flag = patronaged_renaissance_painters
+			check_variable = { which = "artigiani_favor" value = 9 }
+			check_variable = { which = "mercanti_favor" value = 9 }
+			check_variable = { which = "popolo_favor" value = 9 }
+		}
+		effect = {
+			custom_tooltip = abolish_gonfaloniere
+			remove_country_modifier = "medici_system_information"
+			set_country_flag = medici_signoria
+			add_adm_power = 150
+			add_dip_power = 150
+			remove_country_modifier = gonfaloniere_popolo
+			remove_country_modifier = gonfaloniere_artigiani
+			remove_country_modifier = gonfaloniere_mercanti
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	abolish_gonfaloniere_ai = {
+		major = yes
+		potential = {
+			tag = FIR
+			has_country_modifier = "medici_system_information"
+			ai = yes
+			NOT = { has_country_flag = medici_signoria }
+		}
+		allow = {
+			is_at_war = no
+			has_country_flag = santa_maria_del_fiore_finished
+			treasury = 150
+			prestige = 10
+		}
+		effect = {
+			custom_tooltip = abolish_gonfaloniere
+			remove_country_modifier = "medici_system_information"
+			set_country_flag = medici_signoria
+			set_country_flag = patronaged_renaissance_painters
+			set_country_flag = platonic_academy_supported
+			add_adm_power = 150
+			add_dip_power = 150
+			add_treasury = -125
+			if = {
+				limit = {
+					capital_scope = {
+						has_building = small_university
+					}
+				}
+				capital_scope = {
+					remove_building = small_university
+					add_building = medium_university
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	medici_bank_PAP = {
+		potential = {
+			tag = FIR
+			NOT = { has_country_flag = medici_decision_off }
+			has_country_modifier = "medici_system_information"
+			has_country_flag = medici_system_triggers_active
+			NOT = {
+				2530 = {
+					has_province_modifier = provincial_medici_bank
+				}
+			}
+		}
+		allow = {
+			is_at_war = no
+			NOT = { num_of_loans = 1 }
+			years_of_income = 0.25
+			exists = PAP
+			PAP = {
+				owns = 2530
+				capital = 2530
+				has_opinion = { who = ROOT value = 100 }
+			}
+		}
+		effect = {
+			add_years_of_income = -0.25
+			PAP = {
+				country_event = {
+					id = medici_system.5
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	medici_bank_MLO = {
+		potential = {
+			tag = FIR
+			NOT = { has_country_flag = medici_decision_off }
+			has_country_modifier = "medici_system_information"
+			NOT = {
+				104 = {
+					has_province_modifier = provincial_medici_bank
+				}
+			}
+		}
+		allow = {
+			is_at_war = no
+			NOT = { num_of_loans = 1 }
+			years_of_income = 0.25
+			exists = MLO
+			MLO = {
+				owns = 104
+				capital = 104
+				has_opinion = { who = ROOT value = 100 }
+			}
+		}
+		effect = {
+			add_years_of_income = -0.25
+			MLO = {
+				country_event = {
+					id = medici_system.5
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	medici_bank_VEN = {
+		potential = {
+			tag = FIR
+			NOT = { has_country_flag = medici_decision_off }
+			has_country_modifier = "medici_system_information"
+			NOT = {
+				112 = {
+					has_province_modifier = provincial_medici_bank
+				}
+			}
+		}
+		allow = {
+			is_at_war = no
+			NOT = { num_of_loans = 1 }
+			years_of_income = 0.25
+			exists = VEN
+			VEN = {
+				owns = 112
+				capital = 112
+				has_opinion = { who = ROOT value = 100 }
+			}
+		}
+		effect = {
+			add_years_of_income = -0.25
+			VEN = {
+				country_event = {
+					id = medici_system.5
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	medici_bank_NAP = {
+		potential = {
+			tag = FIR
+			NOT = { has_country_flag = medici_decision_off }
+			has_country_modifier = "medici_system_information"
+			NOT = {
+				2531 = {
+					has_province_modifier = provincial_medici_bank
+				}
+			}
+		}
+		allow = {
+			is_at_war = no
+			NOT = { num_of_loans = 1 }
+			years_of_income = 0.25
+			exists = KNP
+			KNP = {
+				owns = 2531
+				capital = 2531
+				has_opinion = { who = ROOT value = 100 }
+			}
+		}
+		effect = {
+			add_years_of_income = -0.25
+			KNP = {
+				country_event = {
+					id = medici_system.5
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	finish_santa_maria_del_fiore = {
+		potential = {
+			tag = FIR
+			NOT = { has_country_flag = medici_decision_off }
+			has_country_modifier = "medici_system_information"
+			NOT = { has_country_flag = santa_maria_del_fiore_finished }
+		}
+		allow = {
+			is_at_war = no
+			NOT = { num_of_loans = 1 }
+			treasury = 350
+		}
+		effect = {
+			set_country_flag = santa_maria_del_fiore_finished
+			add_treasury = -350
+			add_prestige = 10
+			add_adm_power = 25
+			add_dip_power = 25
+			custom_tooltip = popolo_medium_add
+			popolo_favor_medium_add_effect = yes
+			custom_tooltip = artigiani_medium_add
+			artigiani_favor_medium_add_effect = yes
+			custom_tooltip = mercanti_medium_add
+			mercanti_favor_medium_add_effect = yes
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	support_platonic_academy = {
+		potential = {
+			ai = no
+			tag = FIR
+			NOT = { has_country_flag = medici_decision_off }
+			has_country_modifier = "medici_system_information"
+			NOT = { has_country_flag = platonic_academy_supported }
+		}
+		allow = {
+			is_at_war = no
+			NOT = { num_of_loans = 1 }
+			treasury = 150
+			prestige = 20
+			OR = {
+				advisor = philosopher
+				adm = 4
+			}
+		}
+		effect = {
+			set_country_flag = platonic_academy_supported
+			add_treasury = -150
+			add_prestige = 5
+			add_dip_power = 25
+			custom_tooltip = mercanti_medium_add
+			mercanti_favor_medium_add_effect = yes
+			if = {
+				limit = {
+					capital_scope = {
+						has_building = small_university
+					}
+				}
+				capital_scope = {
+					remove_building = small_university
+					add_building = medium_university
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	patronage_renaissance_painters = {
+		potential = {
+			ai = no
+			tag = FIR
+			NOT = { has_country_flag = medici_decision_off }
+			has_country_modifier = "medici_system_information"
+			NOT = { has_country_flag = patronaged_renaissance_painters }
+		}
+		allow = {
+			is_at_war = no
+			NOT = { num_of_loans = 1 }
+			treasury = 150
+			if = {
+				limit = { has_global_flag = singleplayer ai = no }
+				advisor = artist
+			}
+			else = {
+				OR = {
+					advisor = artist
+					adm = 4
+				}
+			}
+		}
+		effect = {
+			set_country_flag = patronaged_renaissance_painters
+			add_treasury = -150
+			add_prestige = 10
+			custom_tooltip = artigiani_medium_add
+			change_variable = {
+				which = "artigiani_favor"
+				value = 2
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	abolish_castato = {
+		potential = {
+			tag = FIR
+			NOT = { has_country_flag = medici_decision_off }
+			has_country_modifier = "medici_system_information"
+			NOT = { has_country_flag = castato_abolished }
+		}
+		allow = {
+			is_at_war = no
+			check_variable = { which = "artigiani_favor" value = 7 }
+			check_variable = { which = "mercanti_favor" value = 7 }
+		}
+		effect = {
+			set_country_flag = castato_abolished
+			add_prestige = 5
+			add_adm_power = 25
+			custom_tooltip = popolo_medium_add
+			popolo_favor_medium_add_effect = yes
+			custom_tooltip = artigiani_little_sub
+			artigiani_favor_sub_effect = yes
+			custom_tooltip = mercanti_little_sub
+			mercanti_favor_sub_effect = yes
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	commission_a_painting = {
+		potential = {
+			ai = no
+			tag = FIR
+			NOT = { has_country_flag = medici_decision_off }
+			has_country_modifier = "medici_system_information"
+		}
+		allow = {
+			is_at_war = no
+			NOT = { num_of_loans = 1 }
+			treasury = 110
+			if = {
+				limit = { has_global_flag = singleplayer ai = no }
+				advisor = artist
+			}
+			else = {
+				OR = {
+					advisor = artist
+					adm = 4
+				}
+			}
+		}
+		effect = {
+			add_treasury = -100
+			add_prestige = 10
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	show_our_greatness = {
+		potential = {
+			ai = no
+			tag = FIR
+			NOT = { has_country_flag = medici_decision_off }
+			has_country_modifier = "medici_system_information"
+		}
+		allow = {
+			is_at_war = no
+			NOT = { num_of_loans = 1 }
+			treasury = 100
+			prestige = 30
+		}
+		effect = {
+			add_treasury = -100
+			add_prestige = -25
+			custom_tooltip = popolo_little_add
+			popolo_favor_add_effect = yes
+			custom_tooltip = artigiani_little_add
+			artigiani_favor_add_effect = yes
+			custom_tooltip = mercanti_little_add
+			mercanti_favor_add_effect = yes
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	create_medici_monarchy = {
+		potential = {
+			NOT = { has_dlc = "Dharma" }
+			check_variable = { which = ms_var value = 3 }
+			#has_country_flag = medici_signoria
+		}
+		allow = {
+			is_at_war = no
+			NOT = { republican_tradition = 60 }
+		}
+		effect = {
+			administratisation_effect = yes
+			if = {
+				limit = { NOT = { has_country_modifier = title_4 has_country_modifier = title_5 has_country_modifier = title_6 } }
+				change_title_4 = yes
+			}
+			define_ruler = {
+				name = "Cosimo"
+				dynasty = "de' Medici"
+				adm = 5
+				dip = 4
+				mil = 4
+				fixed = yes
+			}
+			define_heir = {
+				name = "Piero"
+				dynasty = "de' Medici"
+				claim = 100
+				adm = 4
+				dip = 4
+				mil = 4
+			}
+			add_legitimacy = 75
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+}

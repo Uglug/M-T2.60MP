@@ -1,0 +1,507 @@
+# Made obsolete by the new reforms system.
+country_decisions = {
+	# Support for venetian_republic
+	plutocratic_administration = {
+		potential = {
+			OR = {
+				technology_group = western
+				technology_group = eastern
+				technology_group = turkishtech
+				technology_group = high_turkishtech
+				technology_group = muslim
+			}
+			OR = {
+				nobilisation_trigger = yes
+				adm_republic_trigger = yes
+				dictator_trigger = yes
+				oligarchy_trigger = yes
+				tag = FRL
+				tag = GEN
+				tag = VEN
+				tag = HSA
+			}
+			NOT = { num_of_provinces_in_states = 21 }
+			merchant_trigger = no
+			free_city_trigger = no
+		}
+		allow = {
+			stability = 1
+			adm_tech = 5
+			full_idea_group = trade_ideas
+			NOT = { num_of_provinces_in_states = 21 }
+			is_free_or_tributary_trigger = yes
+			num_of_ports = 1
+			is_at_war = no
+		}
+		effect = {
+			merchantisation_effect = yes
+			subtract_stability_2 = yes
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				num_of_cities = 3
+			}
+		}
+	}
+	
+	changegov_altaic_despotic_monarchy = {
+		potential = {
+			OR = {
+				#native_trigger = yes
+				steppe_trigger = yes
+				mongol_trigger = yes
+			}
+			NOT = { has_dlc = "Dharma" }
+		}
+		allow = {
+			adm_tech = 5			# From technology\ADM.txt
+			stability = 1
+			adm_power = 100			# From common\defines.lua
+			OR = {
+				culture_group = altaic
+				culture_group = tartar_group
+				culture_group = tungusic
+			}
+			OR = {
+				adm = 5
+				mil = 5
+			}
+			is_at_war = no
+		}
+		effect = {
+			add_adm_power = -100
+			trib_king_effect = yes
+#			set_legacy_government = despotic_monarchy
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	changegov_despotic_monarchy = {
+		potential = {
+			OR = {
+				feudalisation_trigger = yes
+				administratisation_trigger = yes
+				absolutism_trigger = yes
+			}
+			NOT = { has_dlc = "Dharma" }
+		}
+		allow = {
+			adm_tech = 5			# From technology\ADM.txt
+			absolutism = 30
+			stability = 1
+			adm_power = 100			# From common\defines.lua
+			OR = {
+				has_country_modifier = "arbitrary"
+				has_country_modifier = "cruel"
+				has_country_modifier = "flamboyant_schemer"
+				has_country_modifier = "energetic"
+				has_country_modifier = "selfish"
+				adm = 5
+				mil = 5
+			}
+			NOT = {
+				OR = {
+					tag = ITA
+					tag = SPI
+					tag = GER
+					tag = ERG
+				}
+			}
+			is_at_war = no
+		}
+		effect = {
+			add_adm_power = -100
+			set_legacy_government = despotic_monarchy
+		}
+		ai_will_do = {
+			factor = 0		# You never want to willingly go back to despotic
+		}
+	}
+	
+	changegov_feudal_monarchy = {
+		potential = {
+			OR = {
+				despotisation_trigger = yes
+				administratisation_trigger = yes
+				absolutism_trigger = yes
+			}
+			NOT = { has_dlc = "Dharma" }
+		}
+		allow = {
+			NOT = { absolutism = 25 }
+			adm_tech = 5			# From technology\ADM.txt
+			stability = 0
+			adm_power = 100			# From common\defines.lua
+			is_at_war = no
+		}
+		effect = {
+			add_adm_power = -100
+			# Tier 1
+			set_legacy_government = feudal_monarchy
+		}
+		ai_will_do = {
+			factor = 0		# You never want to willingly go back to feudal
+		}
+	}
+	
+	changegov_administrative_monarchy = {
+		potential = {
+			adm_tech = 18			# 50 years away
+			OR = {
+				despotisation_trigger = yes
+				feudalisation_trigger = yes
+				constitutionalm_trigger = yes
+			}
+			NOT = { has_dlc = "Dharma" }
+		}
+		allow = {
+			adm_tech = 23			# From technology\ADM.txt
+			stability = 0
+			adm_power = 100			# From common\defines.lua
+			NOT = {
+				OR = {
+					tag = ITA
+					tag = SPI
+					tag = GER
+					tag = ERG
+				}
+				#absolutism = 50
+			}
+			#is_at_war = no
+		}
+		effect = {
+			add_adm_power = -100
+			set_legacy_government = administrative_monarchy
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0		# Don't go backwards from constitutional
+				constitutionalm_trigger = yes
+			}
+		}
+	}
+	
+	changegov_absolute_monarchy = {
+		potential = {
+			adm_tech = 30			# 50 years away
+			OR = {
+				despotisation_trigger = yes
+				feudalisation_trigger = yes
+				administratisation_trigger = yes
+				enlightening_trigger = yes
+				parliamentarisation_trigger = yes
+				thalassocratisation_trigger = yes
+			}
+			NOT = { has_dlc = "Dharma" }
+		}
+		allow = {
+			adm_tech = 35			# From technology\ADM.txt
+			stability = 0
+			adm = 3
+			OR = {
+				adm_power = 100			# From common\defines.lua
+				AND = {
+					administratisation_trigger = yes
+					adm_power = 250
+				}
+			}
+			absolutism = 80
+			is_at_war = no
+		}
+		effect = {
+			# Higher cost for administrative, not a natural change.
+			if = {
+				limit = {
+					administratisation_trigger = yes
+				}
+				add_adm_power = -250
+			}
+			
+			# Standard cost for rest
+			if = {
+				limit = {
+					administratisation_trigger = no
+				}
+				add_adm_power = -100
+			}
+			set_legacy_government = absolute_monarchy
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0		# Don't go backwards from e.despotism
+				enlightening_trigger = yes
+			}
+			modifier = {
+				factor = 0		# Don't go backwards from English
+				parliamentarisation_trigger = yes
+			}
+		}
+	}
+	
+	changegov_constitutional_monarchy = {
+		potential = {
+			adm_tech = 34			# 50 years away
+			OR = {
+				administratisation_trigger = yes
+				thalassocratisation_trigger = yes
+			}
+			NOT = { has_dlc = "Dharma" }
+		}
+		allow = {
+			adm_tech = 39			# From technology\ADM.txt
+			stability = 0
+			adm_power = 100			# From common\defines.lua
+			is_at_war = no
+		}
+		effect = {
+			add_adm_power = -100
+			set_legacy_government = constitutional_monarchy
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				NOT = { absolutism = 60 }
+			}
+		}
+	}
+	
+	changegov_enlightened_despotism = {
+		potential = {
+			adm_tech = 42			# 50 years away
+			absolutism_trigger = yes
+			NOT = { has_dlc = "Dharma" }
+		}
+		allow = {
+			adm_tech = 47			# From technology\ADM.txt
+			stability = 0
+			adm_power = 100			# From common\defines.lua
+			is_at_war = no
+		}
+		effect = {
+			add_adm_power = -100
+			set_legacy_government = enlightened_despotism
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	changegov_religious_order = {
+		potential = {
+			theocracy_trigger = yes
+			NOT = { has_dlc = "Dharma" }
+		}
+		allow = {
+			adm_tech = 7			# From technology\ADM.txt
+			stability = 0
+			adm_power = 100			# From common\defines.lua
+			is_at_war = no
+		}
+		effect = {
+			add_adm_power = -100
+			set_legacy_government = monastic_order_government
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	changegov_theocracy = {
+		potential = {
+			monastic_trigger = yes
+			NOT = { has_dlc = "Dharma" }
+		}
+		allow = {
+			adm_tech = 7			# From technology\ADM.txt
+			stability = 0
+			adm_power = 100			# From common\defines.lua
+			is_at_war = no
+		}
+		effect = {
+			add_adm_power = -100
+			set_legacy_government = theocratic_government
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	changegov_eastern_thalassocracy = {
+		potential = {
+			thalassocratisation_trigger = yes
+			NOT = { has_dlc = "Dharma" }
+		}
+		allow = {
+			absolutism = 25
+			adm_tech = 5			# From technology\ADM.txt
+			stability = 0
+			adm_power = 100			# From common\defines.lua
+			is_at_war = no
+		}
+		effect = {
+			add_adm_power = -100
+			set_legacy_government = tsardom_legacy # odd, i know... blocked by Paradox paradoxal coding. it's actually eastern_monarchy - GG
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	changegov_administrative_republic = {
+		potential = {
+			OR = {
+				oligarchy_trigger = yes
+				nobilisation_trigger = yes
+				merchant_trigger = yes
+			}
+			adm_tech = 18
+			NOT = { has_dlc = "Dharma" }
+		}
+		allow = {
+			#absolutism = 50
+			adm_tech = 23			# From technology\ADM.txt
+			stability = 0
+			adm_power = 100			# From common\defines.lua
+			is_at_war = no
+		}
+		effect = {
+			add_adm_power = -100
+			set_legacy_government = administrative_republic
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				merchant_trigger = yes
+			}
+		}
+	}
+	
+	changegov_noble_republic = {
+		potential = {
+			merchant_trigger = yes
+			NOT = { has_dlc = "Dharma" }
+		}
+		allow = {
+			absolutism = 30
+			adm_tech = 5			# From technology\ADM.txt
+			stability = 1
+			adm_power = 100			# From common\defines.lua
+			faction_in_power = mr_aristocrats
+			is_at_war = no
+		}
+		effect = {
+			add_adm_power = -100
+			subtract_stability_1 = yes
+			set_legacy_government = noble_republic
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	changegov_oligarchic_republic = {
+		potential = {
+			nobilisation_trigger = yes
+			NOT = { has_dlc = "Dharma" }
+		}
+		allow = {
+			absolutism = 20
+			adm_tech = 5			# From technology\ADM.txt
+			stability = 0
+			adm_power = 100			# From common\defines.lua
+			is_at_war = no
+		}
+		effect = {
+			add_adm_power = -100
+			set_legacy_government = oligarchic_republic
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	changegov_republican_dictatorship = {
+		potential = {
+			adm_tech = 29
+			government = republic
+			free_city_trigger = no
+			dictator_trigger = no
+			NOT = { has_dlc = "Dharma" }
+		}
+		allow = {
+			absolutism = 70
+			adm_tech = 34			# From technology\ADM.txt
+			stability = 0
+			adm_power = 100			# From common\defines.lua
+			is_at_war = no
+		}
+		effect = {
+			add_adm_power = -100
+			set_legacy_government = republican_dictatorship
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	changegov_constitutional_republic = {
+		potential = {
+			adm_tech = 41
+			government = republic
+			free_city_trigger = no
+			constitutionalr_trigger = no
+			NOT = { has_dlc = "Dharma" }
+		}
+		allow = {
+			absolutism = 70
+			adm_tech = 46		# From technology\ADM.txt
+			stability = 0
+			adm_power = 100		# From common\defines.lua
+			is_at_war = no
+		}
+		effect = {
+			add_adm_power = -100
+			set_legacy_government = constitutional_republic
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	changegov_asia_despotic_monarchy = {
+		potential = {
+			OR = {
+				indian_monarchy_trigger = yes
+				eastern_monarchy_trigger = yes
+				celestial_trigger = yes
+			}
+			NOT = { has_dlc = "Dharma" }
+		}
+		allow = {
+			has_institution = enlightenment # technology_group = western
+			adm_tech = 5			# From technology\ADM.txt
+			stability = 1
+			adm_power = 100			# From common\defines.lua
+			OR = {
+				adm = 5
+				mil = 5
+			}
+			is_at_war = no
+		}
+		effect = {
+			add_adm_power = -100
+			set_legacy_government = despotic_monarchy
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+}

@@ -1,0 +1,924 @@
+namespace = hre_universities # TODO: move to central namespace file
+
+######################################################
+### HRE / European universities events, by Dezuman ###
+######################################################
+
+###############################
+### Historical universities ###
+###############################
+
+# These were founded only years after Kraków Academy, which is already added by a polish flavor event
+
+
+# University of Vienna
+country_event = {
+	id = hre_universities.001
+	title = "hre_universities.001.t"
+	desc = "hre_universities.001.d"
+	picture = UNIVERSITY_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = HAB
+		owns = 83 # Ostmark
+		83 = {
+			NOT = { has_building = small_university }
+			NOT = { has_building = medium_university }
+			NOT = { has_building = big_university }
+		}
+		is_year = 1362 # Historic date is 1365, but we randomize a bit
+		NOT = { is_year = 1420 }
+	}
+	
+	mean_time_to_happen = { years = 4 }
+	
+	option = {
+		name = "hre_universities.001.EVTOPTA" # Sponsor the university
+		ai_chance = { factor = 100 }
+		add_years_of_income = -0.25
+		add_prestige = 5
+		83 = { add_building = small_university }
+	}
+	option = {
+		name = "hre_universities.001.EVTOPTB" # Do nothing
+		ai_chance = { factor = 0 }
+		add_prestige = -5
+	}
+}
+
+# University of Pecs
+country_event = {
+	id = hre_universities.002
+	title = "hre_universities.002.t"
+	desc = "hre_universities.002.d"
+	picture = UNIVERSITY_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = HUN
+		owns = 153 # Pecs
+		153 = {
+			NOT = { has_building = small_university }
+			NOT = { has_building = medium_university }
+			NOT = { has_building = big_university }
+		}
+		is_year = 1364 # Historic date is 1367, but we randomize a bit
+		NOT = { is_year = 1420 }
+	}
+	
+	mean_time_to_happen = { years = 4 }
+	
+	option = {
+		name = "hre_universities.002.EVTOPTA" # Sponsor the university
+		ai_chance = { factor = 100 }
+		add_years_of_income = -0.25
+		add_prestige = 5
+		153 = { add_building = small_university }
+	}
+	option = {
+		name = "hre_universities.002.EVTOPTB" # Do nothing
+		ai_chance = { factor = 0 }
+		add_prestige = -5
+	}
+}
+
+############################################
+### Dynamic papal-chartered universities ###
+############################################
+
+
+# TODO: Make it a construction instead of instant building add. Will require check for ongoing construction though!
+# TODO: Maybe make sure that the regional city will actually be able to educate country students?
+# TODO: Move the build-university-and-subtract-local-wealth routine to scripted effect (it's also used in "HRE - University_decisions")
+
+
+# For some time period from game start HRE princes (and other catholic nations) without a (papal-chartered) university in their region may ask pope to charter one.
+# This may be built in a nearby province if asker has no good city (a la Count Palatinate founding Koln university)
+# Additionally during western Schism the Roman Pope should issue bulls to found German universities to educate students that can't go to Avignionist Paris university
+# Historic examples: Koln, several in scotland apparently, probably all the ones already handled by static events (krakow, vienna, pecs),
+# Erfurt (Actually by Avignon pope because history is never clean and simple, but it seems to be the only one), Heidelberg.
+
+
+# This event doesn't take into account scaling building costs,
+# I handwave it as pious individuals/the church giving up land for cheap/free because it's papal sponsored
+# Also because scaling costs would be more complicated to handle and I'm lazy
+# These charters will be so rare that it's not a big issue either way
+
+# Chose among possible locations for the chartered university (If any exist)
+country_event = {
+	id = hre_universities.100
+	title = "hre_universities.100.t"
+	desc = "hre_universities.100.d"
+	picture = UNIVERSITY_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		# Potential university location no 1, the capital
+		if = {
+			limit = {
+				capital_scope = {
+					has_urban_infrastructure_1 = yes
+					NOT = {
+						has_building = small_university
+						has_building = medium_university
+						has_building = big_university
+					}
+					religion = catholic
+				}
+			}
+			capital_scope = {
+				set_province_flag = option_for_university
+				save_event_target_as = option_for_university_1
+			}
+			set_country_flag = option_for_university_1
+		}
+		else_if = {
+			limit = {
+				capital_scope = {
+					has_town_hall = yes
+					check_variable = { which = urban_pop value = 1 }
+					NOT = {
+						has_building = small_university
+						has_building = medium_university
+						has_building = big_university
+					}
+				}
+			}
+			capital_scope = {
+				set_province_flag = option_for_university
+				save_event_target_as = option_for_university_1
+			}
+			set_country_flag = option_for_university_1
+		}
+		
+		# Potential university location no 2
+		if = {
+			limit = {
+				any_owned_province = {
+					has_urban_infrastructure_1 = yes
+					NOT = {
+						has_building = small_university
+						has_building = medium_university
+						has_building = big_university
+					}
+					NOT = { has_province_flag = option_for_university }
+					religion = catholic
+				}
+			}
+			random_owned_province = {
+				limit = {
+					has_urban_infrastructure_1 = yes
+					NOT = {
+						has_building = small_university
+						has_building = medium_university
+						has_building = big_university
+					}
+					NOT = { has_province_flag = option_for_university }
+					religion = catholic
+				}
+				set_province_flag = option_for_university
+				save_event_target_as = option_for_university_2
+			}
+			set_country_flag = option_for_university_2
+		}
+		else_if = {
+			limit = {
+				any_owned_province = {
+					has_town_hall = yes
+					check_variable = { which = urban_pop value = 1 }
+					NOT = {
+						has_building = small_university
+						has_building = medium_university
+						has_building = big_university
+					}
+					NOT = { has_province_flag = option_for_university }
+					religion = catholic
+				}
+			}
+			random_owned_province = {
+				limit = {
+					has_town_hall = yes
+					check_variable = { which = urban_pop value = 1 }
+					NOT = {
+						has_building = small_university
+						has_building = medium_university
+						has_building = big_university
+					}
+					NOT = { has_province_flag = option_for_university }
+					religion = catholic
+				}
+				set_province_flag = option_for_university
+				save_event_target_as = option_for_university_2
+			}
+			set_country_flag = option_for_university_2
+		}
+		
+		# Potential university location no 3
+		if = {
+			limit = {
+				any_owned_province = {
+					has_urban_infrastructure_1 = yes
+					NOT = {
+						has_building = small_university
+						has_building = medium_university
+						has_building = big_university
+					}
+					NOT = { has_province_flag = option_for_university }
+					religion = catholic
+				}
+			}
+			random_owned_province = {
+				limit = {
+					has_urban_infrastructure_1 = yes
+					NOT = {
+						has_building = small_university
+						has_building = medium_university
+						has_building = big_university
+					}
+					NOT = { has_province_flag = option_for_university }
+					religion = catholic
+				}
+				set_province_flag = option_for_university
+				save_event_target_as = option_for_university_3
+			}
+			set_country_flag = option_for_university_3
+		}
+		else_if = {
+			limit = {
+				any_owned_province = {
+					has_town_hall = yes
+					check_variable = { which = urban_pop value = 1 }
+					NOT = {
+						has_building = small_university
+						has_building = medium_university
+						has_building = big_university
+					}
+					NOT = { has_province_flag = option_for_university }
+					religion = catholic
+				}
+			}
+			random_owned_province = {
+				limit = {
+					has_town_hall = yes
+					check_variable = { which = urban_pop value = 1 }
+					NOT = {
+						has_building = small_university
+						has_building = medium_university
+						has_building = big_university
+					}
+					NOT = { has_province_flag = option_for_university }
+					religion = catholic
+				}
+				set_province_flag = option_for_university
+				save_event_target_as = option_for_university_3
+			}
+			set_country_flag = option_for_university_3
+		}
+		
+		
+		# Potential regional alternative (slightly higher requirements)
+		if = {
+			limit = {
+				capital_scope = {
+					any_province = {
+						region = PREV
+						NOT = { owned_by = ROOT }
+						has_urban_infrastructure_1 = yes
+						NOT = {
+							has_building = small_university
+							has_building = medium_university
+							has_building = big_university
+						}
+						NOT = { has_province_flag = option_for_university }
+						religion = catholic
+						owner = { religion = catholic }
+					}
+				}
+			}
+			
+			capital_scope = {
+				random_province = {
+					limit = {
+						region = PREV
+						NOT = { owned_by = ROOT }
+						has_urban_infrastructure_1 = yes
+						NOT = {
+							has_building = small_university
+							has_building = medium_university
+							has_building = big_university
+						}
+						NOT = { has_province_flag = option_for_university }
+						religion = catholic
+						owner = { religion = catholic }
+					}
+					set_province_flag = option_for_university
+					save_event_target_as = option_for_university_4
+				}
+			}
+			set_country_flag = option_for_university_4
+		}
+		else_if = {
+			limit = {
+				capital_scope = {
+					any_province = {
+						region = PREV
+						NOT = { owned_by = ROOT }
+						has_town_hall = yes
+						check_variable = { which = urban_pop value = 2 }
+						NOT = {
+							has_building = small_university
+							has_building = medium_university
+							has_building = big_university
+						}
+						NOT = { has_province_flag = option_for_university }
+						religion = catholic
+						owner = { religion = catholic }
+					}
+				}
+			}
+			
+			capital_scope = {
+				random_province = {
+					limit = {
+						region = PREV
+						NOT = { owned_by = ROOT }
+						has_town_hall = yes
+						check_variable = { which = urban_pop value = 2 }
+						NOT = {
+							has_building = small_university
+							has_building = medium_university
+							has_building = big_university
+						}
+						NOT = { has_province_flag = option_for_university }
+						religion = catholic
+						owner = { religion = catholic }
+					}
+					set_province_flag = option_for_university
+					save_event_target_as = option_for_university_4
+				}
+			}
+			set_country_flag = option_for_university_4
+		}
+	}
+	
+	option = {
+		name = "hre_universities.100.EVTOPTA" # Pick location 1, the capital
+		trigger = {
+			has_country_flag = option_for_university_1
+		}
+		ai_chance = { factor = 40 }
+		
+		event_target:option_for_university_1 = {
+			hidden_effect = {
+				if = {
+					limit = {
+						check_variable = { which = "wealth_urban_fluid" value = 50 }
+						check_variable = { which = "wealth_rural_fluid" value = 50 }
+					}
+					subtract_variable = { which = "wealth_urban_fluid" value = 50 }
+					subtract_variable = { which = "wealth_rural_fluid" value = 50 }
+				}
+				else_if = {
+					limit = {
+						check_variable = { which = "wealth_urban_fluid" value = 100 }
+					}
+					subtract_variable = { which = "wealth_urban_fluid" value = 100 }
+				}
+				else_if = {
+					limit = {
+						check_variable = { which = "wealth_rural_fluid" value = 100 }
+					}
+					subtract_variable = { which = "wealth_rural_fluid" value = 100 }
+				}
+				else = {
+					# Going into negatives is not ideal, but won't break anything.
+					subtract_variable = { which = "wealth_urban_fluid" value = 50 }
+					subtract_variable = { which = "wealth_rural_fluid" value = 50 }
+				}
+			}
+			add_building = small_university
+			
+			# This limits papal charter universities to 1 per region.
+			# Not 100% watertight, but will work 99% of times which is good enough.
+			every_province = {
+				limit = {
+					is_capital = yes
+					region = PREV
+				}
+				owner = {
+					set_country_flag = region_has_papal_charter_university
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "hre_universities.100.EVTOPTB" # Pick location 2
+		trigger = {
+			has_country_flag = option_for_university_2
+		}
+		ai_chance = { factor = 25 }
+		
+		event_target:option_for_university_2 = {
+			hidden_effect = {
+				if = {
+					limit = {
+						check_variable = { which = "wealth_urban_fluid" value = 50 }
+						check_variable = { which = "wealth_rural_fluid" value = 50 }
+					}
+					subtract_variable = { which = "wealth_urban_fluid" value = 50 }
+					subtract_variable = { which = "wealth_rural_fluid" value = 50 }
+				}
+				else_if = {
+					limit = {
+						check_variable = { which = "wealth_urban_fluid" value = 100 }
+					}
+					subtract_variable = { which = "wealth_urban_fluid" value = 100 }
+				}
+				else_if = {
+					limit = {
+						check_variable = { which = "wealth_rural_fluid" value = 100 }
+					}
+					subtract_variable = { which = "wealth_rural_fluid" value = 100 }
+				}
+				else = {
+					# Going into negatives is not ideal, but won't break anything.
+					subtract_variable = { which = "wealth_urban_fluid" value = 50 }
+					subtract_variable = { which = "wealth_rural_fluid" value = 50 }
+				}
+			}
+			add_building = small_university
+			
+			# This limits papal charter universities to 1 per region.
+			# Not 100% watertight, but will work 99% of times which is good enough.
+			every_province = {
+				limit = {
+					is_capital = yes
+					region = PREV
+				}
+				owner = {
+					set_country_flag = region_has_papal_charter_university
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "hre_universities.100.EVTOPTC" # Pick location 3
+		trigger = {
+			has_country_flag = option_for_university_3
+		}
+		ai_chance = { factor = 25 }
+		
+		event_target:option_for_university_3 = {
+			hidden_effect = {
+				if = {
+					limit = {
+						check_variable = { which = "wealth_urban_fluid" value = 50 }
+						check_variable = { which = "wealth_rural_fluid" value = 50 }
+					}
+					subtract_variable = { which = "wealth_urban_fluid" value = 50 }
+					subtract_variable = { which = "wealth_rural_fluid" value = 50 }
+				}
+				else_if = {
+					limit = {
+						check_variable = { which = "wealth_urban_fluid" value = 100 }
+					}
+					subtract_variable = { which = "wealth_urban_fluid" value = 100 }
+				}
+				else_if = {
+					limit = {
+						check_variable = { which = "wealth_rural_fluid" value = 100 }
+					}
+					subtract_variable = { which = "wealth_rural_fluid" value = 100 }
+				}
+				else = {
+					# Going into negatives is not ideal, but won't break anything.
+					subtract_variable = { which = "wealth_urban_fluid" value = 50 }
+					subtract_variable = { which = "wealth_rural_fluid" value = 50 }
+				}
+			}
+			add_building = small_university
+			
+			# This limits papal charter universities to 1 per region.
+			# Not 100% watertight, but will work 99% of times which is good enough.
+			every_province = {
+				limit = {
+					is_capital = yes
+					region = PREV
+				}
+				owner = {
+					set_country_flag = region_has_papal_charter_university
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "hre_universities.100.EVTOPTD" # Pick location 4 (A region city)
+		trigger = {
+			has_country_flag = option_for_university_4
+		}
+		ai_chance = { factor = 10 }
+		
+		event_target:option_for_university_4 = {
+			hidden_effect = {
+				if = {
+					limit = {
+						check_variable = { which = "wealth_urban_fluid" value = 50 }
+						check_variable = { which = "wealth_rural_fluid" value = 50 }
+					}
+					subtract_variable = { which = "wealth_urban_fluid" value = 50 }
+					subtract_variable = { which = "wealth_rural_fluid" value = 50 }
+				}
+				else_if = {
+					limit = {
+						check_variable = { which = "wealth_urban_fluid" value = 100 }
+					}
+					subtract_variable = { which = "wealth_urban_fluid" value = 100 }
+				}
+				else_if = {
+					limit = {
+						check_variable = { which = "wealth_rural_fluid" value = 100 }
+					}
+					subtract_variable = { which = "wealth_rural_fluid" value = 100 }
+				}
+				else = {
+					# Going into negatives is not ideal, but won't break anything.
+					subtract_variable = { which = "wealth_urban_fluid" value = 50 }
+					subtract_variable = { which = "wealth_rural_fluid" value = 50 }
+				}
+			}
+			add_building = small_university
+			province_event = { id = hre_universities.101 } # Notification for province owner
+			
+			# This limits papal charter universities to 1 per region.
+			# Not 100% watertight, but will work 99% of times which is good enough.
+			every_province = {
+				limit = {
+					is_capital = yes
+					region = PREV
+				}
+				owner = {
+					set_country_flag = region_has_papal_charter_university
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "hre_universities.100.EVTOPTE" # End event
+		trigger = {
+			OR = {
+				has_country_flag = option_for_university_1
+				has_country_flag = option_for_university_2
+				has_country_flag = option_for_university_3
+				has_country_flag = option_for_university_4
+			}
+		}
+		ai_chance = { factor = 0 }
+		
+		add_treasury = 100 # Refunds money taken by initial decision
+	}
+	
+	option = {
+		name = "hre_universities.100.EVTOPTF" # End event (No candidates available)
+		trigger = {
+			NOT = {
+				has_country_flag = option_for_university_1
+				has_country_flag = option_for_university_2
+				has_country_flag = option_for_university_3
+				has_country_flag = option_for_university_4
+			}
+		}
+		ai_chance = { factor = 100 }
+		
+		add_treasury = 100 # Refunds money taken by initial decision
+	}
+	
+	after = {
+		# Cleanup
+		
+		clr_country_flag = option_for_university_1
+		clr_country_flag = option_for_university_2
+		clr_country_flag = option_for_university_3
+		clr_country_flag = option_for_university_4
+		
+		event_target:option_for_university_1 = {
+			clr_province_flag = option_for_university
+		}
+		event_target:option_for_university_2 = {
+			clr_province_flag = option_for_university
+		}
+		event_target:option_for_university_3 = {
+			clr_province_flag = option_for_university
+		}
+		event_target:option_for_university_4 = {
+			clr_province_flag = option_for_university
+		}
+	}
+}
+
+# TODO: make it declineable? Not so important since it's a sweet deal, but still
+# TODO: Better info on where and by whom the university is built
+
+# Notification event for when another country finances a university in your city
+province_event = {
+	id = hre_universities.101
+	title = "hre_universities.101.t"
+	desc = "hre_universities.101.d"
+	picture = UNIVERSITY_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "OPT.GOOD1" # That's good!
+	}
+}
+
+# Event fired for the pope to accept/decline granting a university charter
+country_event = {
+	id = hre_universities.102
+	title = "hre_universities.102.t"
+	desc = "hre_universities.102.d"
+	picture = UNIVERSITY_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "OPT.VERYWELL" # Very well
+		ai_chance = {
+			factor = 25
+			
+			# More likely to charter during schism because historically and most likely ingame
+			# France supports the antipope, which meant all the clergy supporting the roman pope
+			# is barred from the hugely important Paris university
+			
+			# This is technically railroading, but it's minor and far simpler than the dynamic option
+			modifier = {
+				factor = 4
+				AVI = { num_of_cities = 1 papal_trigger = yes }
+				from = {
+					has_country_flag = support_roman_pope
+				}
+			}
+			
+			# The pope favors pious countries
+			modifier = {
+				factor = 0.85
+				from = {
+					NOT = { piety = -0.66 }
+				}
+			}
+			modifier = {
+				factor = 0.85
+				from = {
+					NOT = { piety = -0.33 }
+				}
+			}
+			modifier = {
+				factor = 0.85
+				from = {
+					NOT = { piety = 0 }
+				}
+			}
+			modifier = {
+				factor = 1.1
+				from = {
+					piety = 0.25
+				}
+			}
+			modifier = {
+				factor = 1.1
+				from = {
+					piety = 0.50
+				}
+			}
+			modifier = {
+				factor = 1.1
+				from = {
+					piety = 0.75
+				}
+			}
+			
+			# The pope favors countries with a strong church
+			modifier = {
+				factor = 0.85
+				from = {
+					NOT = { patriarch_authority = 0.20 }
+				}
+			}
+			modifier = {
+				factor = 0.85
+				from = {
+					NOT = { patriarch_authority = 0.40 }
+				}
+			}
+			modifier = {
+				factor = 1.15
+				from = {
+					patriarch_authority = 0.55
+				}
+			}
+			modifier = {
+				factor = 1.15
+				from = {
+					patriarch_authority = 0.60
+				}
+			}
+			modifier = {
+				factor = 1.15
+				from = {
+					patriarch_authority = 0.75
+				}
+			}
+			
+			# Far more likely to deny if country has SOME level of education
+			modifier = {
+				factor = 0.5
+				from = {
+					check_variable = { which = university_education_multiplier value = 1.05 }
+				}
+			}
+			modifier = {
+				factor = 0.8
+				from = {
+					check_variable = { which = university_education_multiplier value = 1.1 }
+				}
+			}
+			modifier = {
+				factor = 0.8
+				from = {
+					check_variable = { which = university_education_multiplier value = 1.15 }
+				}
+			}
+			modifier = {
+				factor = 0.8
+				from = {
+					check_variable = { which = university_education_multiplier value = 1.2 }
+				}
+			}
+		}
+		
+		from = {
+			country_event = { id = hre_universities.100 days = 30 }
+		}
+	}
+	
+	option = {
+		name = "OPT.NOWAY" # No way!
+		ai_chance = {
+			factor = 75
+			
+			modifier = {
+				factor = 1.5
+				owner = {
+					NOT = {
+						has_opinion = {
+							who = from
+							value = -90
+						}
+					}
+				}
+			}
+			modifier = {
+				factor = 1.5
+				owner = {
+					NOT = {
+						has_opinion = {
+							who = from
+							value = -70
+						}
+					}
+				}
+			}
+			modifier = {
+				factor = 1.35
+				owner = {
+					NOT = {
+						has_opinion = {
+							who = from
+							value = -50
+						}
+					}
+				}
+			}
+			modifier = {
+				factor = 1.35
+				owner = {
+					NOT = {
+						has_opinion = {
+							who = from
+							value = -30
+						}
+					}
+				}
+			}
+			modifier = {
+				factor = 1.2
+				owner = {
+					NOT = {
+						has_opinion = {
+							who = from
+							value = -10
+						}
+					}
+				}
+			}
+			modifier = {
+				factor = 1.2
+				owner = {
+					NOT = {
+						has_opinion = {
+							who = from
+							value = 10
+						}
+					}
+				}
+			}
+			
+			modifier = {
+				factor = 0.9
+				owner = {
+					has_opinion = {
+						who = from
+						value = 30
+					}
+				}
+			}
+			modifier = {
+				factor = 0.9
+				owner = {
+					has_opinion = {
+						who = from
+						value = 50
+					}
+				}
+			}
+			modifier = {
+				factor = 0.9
+				owner = {
+					has_opinion = {
+						who = from
+						value = 70
+					}
+				}
+			}
+			modifier = {
+				factor = 0.9
+				owner = {
+					has_opinion = {
+						who = from
+						value = 90
+					}
+				}
+			}
+			
+			# More likely to deny if country is small
+			modifier = {
+				factor = 1.5
+				from = {
+					NOT = {
+						check_variable = { which = upper_pop_non_overseas value = 3 }
+					}
+				}
+			}
+			modifier = {
+				factor = 0.8
+				from = {
+					check_variable = { which = upper_pop_non_overseas value = 5 }
+				}
+			}
+			modifier = {
+				factor = 0.8
+				from = {
+					check_variable = { which = upper_pop_non_overseas value = 12 }
+				}
+			}
+		}
+		
+		from = {
+			country_event = { id = hre_universities.103 days = 30 }
+		}
+	}
+}
+
+# Notification event for when the pope denies request for university charter
+country_event = {
+	id = hre_universities.103
+	title = "hre_universities.103.t"
+	desc = "hre_universities.103.d"
+	picture = UNIVERSITY_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "OPT.OHWELL" # Oh...well...
+		
+		add_treasury = 100 # Refunds money taken by initial decision
+	}
+}

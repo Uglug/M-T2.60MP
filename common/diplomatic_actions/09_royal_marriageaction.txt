@@ -1,0 +1,226 @@
+# INSTRUCTIONS:
+#
+# condition				A diplomatic action can have any number of condition blocks, each with its own
+#						tooltip, potential and allow section
+#
+# 	tooltip					Sets a custom text string similar to the hardcoded limits
+# 							If no tooltip is scripted, the tooltip for the actual trigger will be shown
+#							Note that the custom tooltip is only shown if the allow trigger is NOT met
+#
+# 	potential				Determines if the trigger is applicable or not
+# 	disallow				Determines if the action is valid or not
+#
+# effect				A diplomatic action can only have one effect block
+
+# ROOT					actor
+# FROM					target
+
+# royal_marriage
+
+royal_marriage = {
+	condition = {
+		tooltip = AMALGAMATION
+		potential = {
+			OR = {
+				tag = AAA
+				FROM = { tag = AAA }
+			}
+		}
+		allow = {
+			always = no
+		}
+	}
+	#condition = {
+	#	tooltip = MARWAR
+	#	potential = {
+	#		has_country_flag = aiHasAgendaInvasion
+	#		
+	#		ai = yes
+	#	}
+	#	allow = {
+	#		always = no
+	#	}
+	#}
+	condition = {
+		tooltip = MARWAR
+		potential = {
+		}
+		allow = {
+			NOT = { war_with = FROM }
+		}
+	}
+	condition = {
+		tooltip = WE_NOTSAME_RELIGIONS_GROUP
+		potential = {
+		}
+		allow = {
+			OR = {
+				AND = {
+					ROOT = { NOT = { prestige = 25 } }
+					ROOT = { NOT = { stability = 1 } }
+					ROOT = { NOT = { legitimacy = 25 } }
+					ROOT = { has_heir = no }
+				}
+				FROM = { religion_group = ROOT }
+			}
+		}
+	}
+	condition = {
+		tooltip = IRISHCLAN
+		potential = {
+			OR = {
+				primary_culture = irish
+				primary_culture = hiberno_norman
+			}
+			government = tribal
+		}
+		allow = {
+			always = no
+		}
+	}
+	condition = {
+		tooltip = IRISHCLAN
+		potential = {
+			FROM = {
+				OR = {
+					primary_culture = irish
+					primary_culture = hiberno_norman
+				}
+				government = tribal
+			}
+		}
+		allow = {
+			always = no
+		}
+	}
+	condition = {
+		tooltip = ROMANIANPRINCE
+		potential = {
+			OR = {
+				tag = WAL
+				tag = MOL
+				tag = ROU
+			}
+			religion = orthodox
+		}
+		allow = {
+			FROM = { religion = orthodox }
+		}
+	}
+	condition = {
+		tooltip = ROMANIANPRINCE
+		potential = {
+			FROM = {
+				OR = {
+					tag = WAL
+					tag = MOL
+					tag = ROU
+				}
+				religion = orthodox
+			}
+		}
+		allow = {
+			religion = orthodox
+		}
+	}
+	condition = {
+		tooltip = ORTHODOXMARRIAGE
+		potential = {
+			NOT = { technology_group = western }
+			OR = {
+				religion = orthodox
+				#religion = chalcedonism
+				religion = coptic
+				religion = chaldean
+				religion = gnostic
+			}
+		}
+		allow = {
+			OR = {
+				FROM = {
+					OR = {
+						religion = orthodox
+						#religion = chalcedonism
+						religion = coptic
+						religion = chaldean
+						religion = gnostic
+						is_neighbor_of = ROOT
+						any_subject_country = {
+							is_subject_other_than_tributary_trigger = yes
+							is_neighbor_of = ROOT
+						}
+						dynasty = ROOT
+					}
+				}
+				any_subject_country = {
+					is_subject_other_than_tributary_trigger = yes
+					is_neighbor_of = FROM
+				}
+			}
+		}
+	}
+	condition = {
+		tooltip = ORTHODOXMARRIAGE
+		potential = {
+			FROM = {
+				NOT = { technology_group = western }
+				OR = {
+					religion = orthodox
+					#religion = chalcedonism
+					religion = coptic
+					religion = chaldean
+					religion = gnostic
+				}
+			}
+		}
+		allow = {
+			OR = {
+				religion = orthodox
+				#religion = chalcedonism
+				religion = coptic
+				religion = chaldean
+				religion = gnostic
+				is_neighbor_of = FROM
+				any_subject_country = {
+					is_subject_other_than_tributary_trigger = yes
+					is_neighbor_of = FROM
+				}
+				FROM = {
+					any_subject_country = {
+						is_subject_other_than_tributary_trigger = yes
+						is_neighbor_of = ROOT
+					}
+				}
+				dynasty = FROM
+			}
+		}
+	}
+	#condition = {
+	#	tooltip = PIZARROBROTHERS
+	#	potential = {
+	#		OR = {
+	#			FROM = {
+	#				tag = PIZ
+	#			}
+	#			tag = PIZ
+	#		}
+	#	}
+	#	allow = {
+	#		always = no
+	#	}
+	#}
+	
+	condition = {
+		tooltip = ANNULMENTREACTION
+		potential = {
+			OR = {
+				has_opinion_modifier = { modifier = marriage_broken who = FROM }
+				reverse_has_opinion_modifier = { modifier = marriage_broken who = FROM }
+			}
+		}
+		allow = {
+			NOT = { has_opinion_modifier = { modifier = marriage_broken who = FROM } }
+			NOT = { reverse_has_opinion_modifier = { modifier = marriage_broken who = FROM } }
+		}
+	}
+}

@@ -1,0 +1,441 @@
+country_decisions = {
+	
+	policy_of_tolerance = {
+		potential = {
+			#Already has a religious policy
+			NOT = { has_country_modifier = religious_tolerance }
+			#Is too intolerant
+			NOT = { has_country_modifier = religious_intolerance }
+			NOT = { has_country_flag = religious_turmoil_happening }
+			#Is already tolerant
+			piety = -0.60
+			NOT = { has_country_modifier = edict_of_tolerance } #Christians
+			NOT = { check_variable = { which = jizya_population value = 1 } }
+		}
+		allow = {
+			adm_power = 10
+			NOT = { any_owned_province = { has_construction = missionary } }
+		}
+		effect = {
+			add_adm_power = -10
+			add_piety = -0.20
+			add_country_modifier = { name = religious_tolerance duration = 3000 }
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				religious_unity = 0.60
+				factor = 0
+			}
+			modifier = {
+				religious_unity = 0.50
+				piety = -0.20
+				factor = 0
+			}
+			modifier = {
+				religious_unity = 0.40
+				piety = 0.20
+				factor = 0
+			}
+			modifier = {
+				religious_unity = 0.30
+				piety = 0.60
+				factor = 0
+			}
+		}
+	}
+	policy_of_intolerance = {
+		potential = {
+			#Already has a religious policy
+			NOT = { has_country_modifier = religious_tolerance }
+			NOT = { has_country_modifier = religious_intolerance }
+			NOT = { has_country_modifier = edict_of_tolerance } #Christians
+			#Cares about religion
+			piety = -0.60
+		}
+		allow = {
+			adm_power = 20
+			OR = {
+				NOT = { religious_unity = 1 }
+				any_subject_country = {
+					is_subject_other_than_tributary_trigger = yes
+					NOT = { religious_unity = 1 }
+				}
+			}
+		}
+		effect = {
+			add_adm_power = -20
+			add_piety = 0.20
+			add_country_modifier = { name = religious_intolerance duration = 3000 }
+			if = { #Once per ruler
+				limit = { NOT = { has_country_flag = policy_of_intolerance } }
+				dg_add_legitimacy = yes
+				set_country_flag = policy_of_intolerance
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				has_country_flag = policy_of_intolerance
+				factor = 0
+			}
+			modifier = {
+				government = monarchy
+				legitimacy = 90
+				factor = 0
+			}
+			modifier = {
+				government = republic
+				republican_tradition = 80
+				factor = 0
+			}
+			modifier = {
+				government = theocracy
+				devotion = 95
+				factor = 0
+			}
+			modifier = {
+				NOT = { religious_unity = 90 }
+				NOT = { piety = -0.20 }
+				factor = 0
+			}
+			modifier = {
+				NOT = { religious_unity = 0.70 }
+				NOT = { piety = 0.20 }
+				factor = 0
+			}
+			modifier = {
+				NOT = { religious_unity = 0.50 }
+				NOT = { piety = 0.60 }
+				factor = 0
+			}
+		}
+	}
+	
+	build_great_cathedral = {
+		potential = {
+			religion_group = christian
+			#NOT = { any_owned_province = { has_province_modifier = great_temple } }
+			#NOT = { any_owned_province = { has_province_modifier = great_mosque } }
+			#NOT = { any_owned_province = { has_province_modifier = great_synagogue } }
+			#NOT = { any_owned_province = { has_province_modifier = great_cathedral } }
+			NOT = { any_owned_province = { has_province_modifier = great_temple_progress } }
+			NOT = { any_owned_province = { has_building = great_temple } }
+			total_development = 75
+			piety = -0.60
+			OR = {
+				ai = yes
+				has_country_flag = religious_news_major
+			}
+		}
+		allow = {
+			#capital_scope = { OR = { temple_trigger = yes cathedral_trigger = yes } }
+			capital_scope = { temple_trigger = yes }
+			treasury = 100
+			adm_power = 10
+			piety = 0.20
+		}
+		effect = {
+			add_treasury = -100
+			add_adm_power = -10
+			hidden_effect = { capital_scope = { set_variable = { which = great_temple value = 10 } } }
+			capital_scope = { add_province_modifier = { name = great_temple_progress duration = -1 } }
+			if = {
+				limit = { piety = 0.60 }
+				add_prestige = 4
+			}
+			else_if = {
+				limit = { piety = 0.20 }
+				add_prestige = 3
+			}
+			else_if = {
+				limit = { piety = -0.20 }
+				add_prestige = 2
+			}
+			else_if = {
+				limit = { piety = -0.60 }
+				add_prestige = 1
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				NOT = { treasury = 200 }
+				factor = 0
+			}
+			modifier = {
+				NOT = {
+					OR = {
+						monthly_income = 16
+						treasury = 1000
+					}
+				}
+				factor = 0
+			}
+		}
+	}
+	build_great_mosque = {
+		potential = {
+			religion_group = muslim
+			#NOT = { any_owned_province = { has_province_modifier = great_temple } }
+			#NOT = { any_owned_province = { has_province_modifier = great_mosque } }
+			#NOT = { any_owned_province = { has_province_modifier = great_synagogue } }
+			#NOT = { any_owned_province = { has_province_modifier = great_cathedral } }
+			NOT = { any_owned_province = { has_province_modifier = great_temple_progress } }
+			NOT = { any_owned_province = { has_building = great_temple } }
+			total_development = 75
+			piety = -0.60
+			OR = {
+				ai = yes
+				has_country_flag = religious_news_major
+			}
+		}
+		allow = {
+			#capital_scope = { OR = { temple_trigger = yes cathedral_trigger = yes } }
+			capital_scope = { temple_trigger = yes }
+			treasury = 100
+			adm_power = 10
+			piety = 0.20
+		}
+		effect = {
+			add_treasury = -100
+			add_adm_power = -10
+			hidden_effect = { capital_scope = { set_variable = { which = great_temple value = 10 } } }
+			capital_scope = { add_province_modifier = { name = great_temple_progress duration = -1 } }
+			if = {
+				limit = { piety = 0.60 }
+				add_prestige = 4
+			}
+			else_if = {
+				limit = { piety = 0.20 }
+				add_prestige = 3
+			}
+			else_if = {
+				limit = { piety = -0.20 }
+				add_prestige = 2
+			}
+			else_if = {
+				limit = { piety = -0.60 }
+				add_prestige = 1
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				NOT = { treasury = 200 }
+				factor = 0
+			}
+			modifier = {
+				NOT = {
+					OR = {
+						monthly_income = 16
+						treasury = 1000
+					}
+				}
+				factor = 0
+			}
+		}
+	}
+	build_great_synagogue = {
+		potential = {
+			religion_group = jewish_group
+			#NOT = { any_owned_province = { has_province_modifier = great_temple } }
+			#NOT = { any_owned_province = { has_province_modifier = great_mosque } }
+			#NOT = { any_owned_province = { has_province_modifier = great_synagogue } }
+			#NOT = { any_owned_province = { has_province_modifier = great_cathedral } }
+			NOT = { any_owned_province = { has_province_modifier = great_temple_progress } }
+			NOT = { any_owned_province = { has_building = great_temple } }
+			total_development = 100
+			piety = -0.60
+			OR = {
+				ai = yes
+				has_country_flag = religious_news_major
+			}
+		}
+		allow = {
+			#capital_scope = { OR = { temple_trigger = yes cathedral_trigger = yes } }
+			capital_scope = { temple_trigger = yes }
+			treasury = 100
+			adm_power = 10
+			piety = 0.20
+		}
+		effect = {
+			add_treasury = -100
+			add_adm_power = -10
+			hidden_effect = { capital_scope = { set_variable = { which = great_temple value = 10 } } }
+			capital_scope = { add_province_modifier = { name = great_temple_progress duration = -1 } }
+			if = {
+				limit = { piety = 0.60 }
+				add_prestige = 4
+			}
+			else_if = {
+				limit = { piety = 0.20 }
+				add_prestige = 3
+			}
+			else_if = {
+				limit = { piety = -0.20 }
+				add_prestige = 2
+			}
+			else_if = {
+				limit = { piety = -0.60 }
+				add_prestige = 1
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				NOT = { treasury = 200 }
+				factor = 0
+			}
+			modifier = {
+				NOT = {
+					OR = {
+						monthly_income = 16
+						treasury = 1000
+					}
+				}
+				factor = 0
+			}
+		}
+	}
+	build_great_temple = {
+		potential = {
+			NOT = { religion_group = christian }
+			NOT = { religion_group = muslim }
+			NOT = { religion_group = jewish_group }
+			NOT = { religion = confucianism }
+			#NOT = { any_owned_province = { has_province_modifier = great_temple } }
+			#NOT = { any_owned_province = { has_province_modifier = great_mosque } }
+			#NOT = { any_owned_province = { has_province_modifier = great_synagogue } }
+			#NOT = { any_owned_province = { has_province_modifier = great_cathedral } }
+			NOT = { any_owned_province = { has_province_modifier = great_temple_progress } }
+			NOT = { any_owned_province = { has_building = great_temple } }
+			total_development = 100
+			piety = -0.60
+			OR = {
+				ai = yes
+				has_country_flag = religious_news_major
+			}
+		}
+		allow = {
+			#capital_scope = { OR = { temple_trigger = yes cathedral_trigger = yes } }
+			capital_scope = { temple_trigger = yes }
+			treasury = 100
+			adm_power = 10
+			piety = 0.20
+		}
+		effect = {
+			add_treasury = -100
+			add_adm_power = -10
+			hidden_effect = { capital_scope = { set_variable = { which = great_temple value = 10 } } }
+			capital_scope = { add_province_modifier = { name = great_temple_progress duration = -1 } }
+			if = {
+				limit = { piety = 0.60 }
+				add_prestige = 4
+			}
+			else_if = {
+				limit = { piety = 0.20 }
+				add_prestige = 3
+			}
+			else_if = {
+				limit = { piety = -0.20 }
+				add_prestige = 2
+			}
+			else_if = {
+				limit = { piety = -0.60 }
+				add_prestige = 1
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				NOT = { treasury = 200 }
+				factor = 0
+			}
+			modifier = {
+				NOT = {
+					OR = {
+						monthly_income = 16
+						treasury = 1000
+					}
+				}
+				factor = 0
+			}
+		}
+	}
+	endow_churches = {
+		potential = {
+			NOT = { has_country_flag = endowed_churches }
+			OR = {
+				AND = {
+					government = monarchy
+					NOT = { legitimacy = 75 }
+				}
+				AND = {
+					government = republic
+					NOT = { republican_tradition = 0.9 }
+				}
+				AND = {
+					government = theocracy
+					NOT = { devotion = 75 }
+				}
+			}
+			piety = -0.60
+			patriarch_authority = 0.20
+			has_regency = no
+			OR = {
+				ai = yes
+				has_country_flag = religious_news_trivial
+			}
+			is_lesser_in_union = no #Can't affect legitimacy
+		}
+		allow = {
+			years_of_income = 0.25
+		}
+		effect = {
+			add_years_of_income = -0.25
+			set_country_flag = endowed_churches
+			dg_add_legitimacy_large = yes
+			remove_country_modifier = unhappy_church_powerful
+			remove_country_modifier = unhappy_church_strong
+			remove_country_modifier = unhappy_church_moderate
+			remove_country_modifier = unhappy_church_weak
+			remove_country_modifier = unhappy_church_impotent
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				NOT = { years_of_income = 0.75 }
+				factor = 0
+			}
+			modifier = {
+				num_of_loans = 2
+				factor = 0
+			}
+			modifier = {
+				NOT = { piety = 0.60 }
+				legitimacy = 90
+				NOT = { has_country_modifier = unhappy_church_powerful }
+				NOT = { has_country_modifier = unhappy_church_strong }
+				factor = 0
+			}
+			modifier = {
+				NOT = { piety = 0.20 }
+				legitimacy = 80
+				NOT = { has_country_modifier = unhappy_church_powerful }
+				NOT = { has_country_modifier = unhappy_church_strong }
+				NOT = { has_country_modifier = unhappy_church_moderate }
+				factor = 0
+			}
+			modifier = {
+				NOT = { piety = -0.20 }
+				legitimacy = 70
+				NOT = { has_country_modifier = unhappy_church_powerful }
+				NOT = { has_country_modifier = unhappy_church_strong }
+				NOT = { has_country_modifier = unhappy_church_moderate }
+				NOT = { has_country_modifier = unhappy_church_weak }
+				factor = 0
+			}
+		}
+	}
+}

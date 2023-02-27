@@ -1,0 +1,137 @@
+
+namespace = trade_share_calculator
+
+# Event to be fired for dummy country (Havaii) at regular intervals
+country_event = {
+	id = trade_share_calculator.001
+	title = no_localization
+	desc = no_localization
+	picture = CIVIL_WAR_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	option = {
+		name = "no_localization"
+		hidden_effect = {
+			random_trade_node = {
+				limit = {
+					has_province_flag = institutions_trade_assess_waiting
+				}
+				clr_province_flag = institutions_trade_assess_waiting
+				
+				set_variable = { which = trade_spread_meritocracy value = 0 }
+				set_variable = { which = trade_spread_legalism value = 0 }
+				set_variable = { which = trade_spread_banking value = 0 }
+				set_variable = { which = trade_spread_renaissance value = 0 }
+				set_variable = { which = trade_spread_casual_literacy value = 0 }
+				
+				# Every country with at least 1 percent trade share in the node adds its institutions to its spread value
+				every_country = {
+					limit = {
+						#exists = yes
+						PREV = {
+							trade_share = {
+								country = PREV
+								share = 1
+							}
+						}
+					}
+					set_variable = { which = trade_spread_share value = 0 }
+					sum_trade_share_in_prev = yes
+					
+					# Adds contribution to the institutions it has
+					if = {
+						limit = { has_institution = I_meritocracy }
+						set_variable = { which = trade_spread_meritocracy which = trade_spread_share }
+						PREV = {
+							change_variable = { which = trade_spread_meritocracy which = PREV }
+						}
+						set_variable = { which = trade_spread_meritocracy value = 0 }
+					}
+					if = {
+						limit = { has_institution = legalism }
+						set_variable = { which = trade_spread_legalism which = trade_spread_share }
+						PREV = {
+							change_variable = { which = trade_spread_legalism which = PREV }
+						}
+						set_variable = { which = trade_spread_legalism value = 0 }
+					}
+					if = {
+						limit = { has_institution = banking }
+						set_variable = { which = trade_spread_banking which = trade_spread_share }
+						PREV = {
+							change_variable = { which = trade_spread_banking which = PREV }
+						}
+						set_variable = { which = trade_spread_banking value = 0 }
+					}
+					if = {
+						limit = { has_institution = renaissance }
+						set_variable = { which = trade_spread_renaissance which = trade_spread_share }
+						PREV = {
+							change_variable = { which = trade_spread_renaissance which = PREV }
+						}
+						set_variable = { which = trade_spread_renaissance value = 0 }
+					}
+					if = {
+						limit = { has_institution = casual_literacy }
+						set_variable = { which = trade_spread_casual_literacy which = trade_spread_share }
+						PREV = {
+							change_variable = { which = trade_spread_casual_literacy which = PREV }
+						}
+						set_variable = { which = trade_spread_casual_literacy value = 0 }
+					}
+				}
+				
+				# Sets flags in trade center provinces depending on calculated trade shares
+				apply_trade_spread_flags = yes
+				
+				# Cleanup, disabled for now!
+				set_variable = { which = trade_spread_meritocracy value = 0 }
+				set_variable = { which = trade_spread_legalism value = 0 }
+				set_variable = { which = trade_spread_banking value = 0 }
+				set_variable = { which = trade_spread_renaissance value = 0 }
+				set_variable = { which = trade_spread_casual_literacy value = 0 }
+				
+				ROOT = {
+					country_event = {
+						id = trade_share_calculator.001
+						days = 3
+					}
+				}
+			}
+		}
+	}
+}
+
+# Event to start the trade share calculation process
+country_event = {
+	id = trade_share_calculator.002
+	title = no_localization
+	desc = no_localization
+	picture = CIVIL_WAR_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	trigger = {
+		is_month_september = yes
+	}
+	
+	option = {
+		name = "no_localization"
+		# Flags all provinces as waiting
+		regiongroup = {
+			region = {
+				limit = {
+					is_city = yes
+				}
+				set_province_flag = institutions_trade_assess_waiting
+			}
+		}
+		# Fires event loop to process flagged provinces on a per-tradenode basis
+		country_event = {
+			id = trade_share_calculator.001
+		}
+	}
+}

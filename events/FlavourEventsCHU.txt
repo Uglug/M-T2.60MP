@@ -1,0 +1,415 @@
+namespace = flavor_chu
+
+country_event = {
+	id = flavor_chu.1
+	title = flavor_chu.1.t
+	desc = flavor_chu.1.d
+	picture = PALAIS_MAZARIN_eventPicture
+	
+	hidden = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		senior_union_with = CHU
+	}
+	
+	option = {
+		name = EVT_AI
+		if = {
+			limit = {
+				CHU = {
+					is_at_war = yes
+				}
+			}
+			every_country = {
+				limit = {
+					offensive_war_with = CHU
+				}
+				country_event = {
+					id = flavor_chu.2
+					days = 1
+				}
+			}
+		}
+		if = {
+			limit = {
+				CHU = {
+					is_at_war = no
+				}
+			}
+			country_event = {
+				id = flavor_chu.3
+			}
+		}
+	}
+}
+
+country_event = {
+	id = flavor_chu.2
+	title = flavor_chu.2.t
+	desc = flavor_chu.2.d
+	picture = BATTLE_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		NOT = { has_country_flag = peace_with_CHU }
+		offensive_war_with = CHU
+		CHU = {
+			is_subject_other_than_tributary_trigger = yes
+		}
+		OR = {
+			tag = JAI
+			tag = MUZ
+			tag = WHI
+			tag = ISF
+		}
+	}
+	
+	option = {
+		name = flavor_chu.2.a
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 0
+				OR = { # These tags desire a restoration of union
+					tag = ERE
+					tag = JAI
+					tag = WHI
+				}
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					tag = MUZ
+					tag = ISF
+				}
+			}
+			2225 = {
+				if = {
+					limit = {
+						owned_by = CHU
+					}
+					cede_province = ROOT
+					add_core = ROOT
+					add_claim = FROM
+				}
+			}
+			1313 = {
+				if = {
+					limit = {
+						owned_by = CHU
+					}
+					if = {
+						limit = {
+							controlled_by = ROOT
+						}
+						cede_province = ROOT
+						add_core = ROOT
+						add_core = FROM
+						3079 = {
+							if = {
+								limit = {
+									owned_by = CHU
+								}
+								cede_province = ROOT
+								add_core = ROOT
+								add_core = FROM
+							}
+						}
+					}
+					else = {
+						cede_province = SDB
+						add_claim = SDB
+						add_core = FROM
+					}
+				}
+			}
+		}
+		white_peace = CHU
+		CHU = {
+			overlord = {
+				country_event = {
+					id = flavor_chu.3
+				}
+			}
+		}
+		white_peace = FROM
+	}
+	
+	option = {
+		name = flavor_chu.2.b
+		ai_chance = {
+			factor = 75
+			modifier = {
+				factor = 0
+				OR = {
+					tag = MUZ
+					tag = ISF
+				}
+			}
+		}
+	}
+	
+	after = {
+		set_country_flag = peace_with_CHU
+	}
+}
+
+country_event = {
+	id = flavor_chu.3
+	title = flavor_chu.3.t
+	desc = flavor_chu.3.d
+	picture = CONQUEST_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		senior_union_with = CHU
+		NOT = { tag = WHI }
+		CHU = {
+			is_at_war = no
+		}
+	}
+	
+	option = {
+		name = flavor_chu.3.a
+		if = {
+			limit = {
+				tag = JAI
+			}
+			every_province = {
+				limit = {
+					is_city = yes
+					owned_by = CHU
+				}
+				add_claim = MUZ
+				if = {
+					limit = {
+						exists = ISF
+					}
+					add_claim = ISF
+				}
+			}
+		}
+		if = {
+			limit = {
+				tag = MUZ
+			}
+			every_province = {
+				limit = {
+					is_city = yes
+					owned_by = CHU
+				}
+				add_claim = JAI
+				if = {
+					limit = {
+						exists = ISF
+					}
+					add_claim = ISF
+				}
+			}
+		}
+		if = {
+			limit = {
+				tag = ISF
+			}
+			every_province = {
+				limit = {
+					is_city = yes
+					owned_by = CHU
+				}
+				add_claim = JAI
+				add_claim = MUZ
+			}
+		}
+		inherit = CHU
+		if = {
+			limit = {
+				SYU = {
+					ai = yes
+					is_vassal = no
+					is_lesser_in_union = no
+				}
+			}
+			create_subject = { subject_type = rebellious_decentralized_vassal subject = SYU } # loose vassal
+		}
+		hidden_effect = {
+			regiongroup = {
+				region = {
+					#limit = {
+					#	is_city = yes
+					#	is_core = CHU
+					#}
+					remove_core = CHU
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = flavor_chu.4
+	title = flavor_chu.4.t
+	desc = flavor_chu.4.d
+	picture = CONQUEST_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = OPT.BASTARD
+		define_ruler = {
+			name = "Akhi"
+			dynasty = "Juq"
+			ADM = 1
+			DIP = 1
+			MIL = 3
+			fixed = yes
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					overlord_of = ARM
+				}
+				ARM = {
+					add_liberty_desire = 200
+				}
+				free_vassal = ARM
+			}
+			if = {
+				limit = {
+					overlord_of = SYU
+				}
+				SYU = {
+					add_liberty_desire = 200
+				}
+				free_vassal = SYU
+			}
+			JAI = {
+				country_event = {
+					id = flavor_chu.5
+					days = 10
+				}
+			}
+			MUZ = {
+				country_event = {
+					id = flavor_chu.5
+					days = 10
+				}
+			}
+			if = {
+				limit = {
+					exists = ISF
+					ISF = {
+						is_at_war = no
+					}
+				}
+				ISF = {
+					country_event = {
+						id = flavor_chu.5
+						days = 10
+					}
+				}
+			}
+			kill_heir = yes
+			define_ruler_to_general = {
+				fire = 2
+				shock = 2
+				manuever = 2
+				siege = 1
+			}
+		}
+	}
+}
+
+country_event = {
+	id = flavor_chu.5
+	title = flavor_chu.5.t
+	desc = flavor_chu.5.d
+	picture = CONQUEST_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_chu.5.a
+		declare_war_with_cb = {
+			who = CHU
+			casus_belli = cb_restore_personal_union
+		}
+		416 = {
+			add_claim = ROOT
+		}
+		add_prestige = 30
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				is_at_war = yes
+			}
+		}
+	}
+	option = {
+		name = flavor_chu.5.b
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 100
+				is_at_war = yes
+			}
+		}
+	}
+}
+
+country_event = {
+	id = flavor_chu.6
+	title = flavor_chu.6.t
+	desc = flavour.chu.6.d
+	picture = CONQUEST_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	hidden = yes
+	
+	trigger = {
+		tag = WHI
+		CHU = {
+			has_country_flag = under_WHI_PU
+			is_lesser_in_union = no
+		}
+	}
+	
+	option = {
+		name = EVT_AI
+		CHU = {
+			clr_country_flag = under_WHI_PU
+			country_event = {
+				id = flavor_chu.4
+			}
+		}
+	}
+}
+
+country_event = {
+	id = flavor_chu.7
+	title = flavor_chu.7.t
+	desc = flavour.chu.7.d
+	picture = CONQUEST_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	hidden = yes
+	
+	trigger = {
+		tag = CHU
+		NOT = { has_country_flag = under_WHI_PU }
+		junior_union_with = WHI
+	}
+	
+	option = {
+		name = EVT_AI
+		set_country_flag = under_WHI_PU
+	}
+}

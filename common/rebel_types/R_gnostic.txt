@@ -1,0 +1,355 @@
+
+gnostic_rebels = {
+	
+	color = { 230 175 175 }
+	area = nation					# Sticks to provinces of their nation
+	government = theocracy			# Desires Theocracy
+	religion = gnostic
+	defection = religion				# Defects to countries of their religion
+	defect_delay = 120				# Held provinces will auto-defect after 18 months, regardless of accept/enforce demands.
+	independence = religion
+	unit_transfer = yes
+	gfx_type = culture_province
+	
+	resilient = no
+	reinforcing = no
+	general = yes
+	smart = yes
+	
+	artillery = 0.0
+	infantry = 0.8
+	cavalry = 0.2
+	
+	morale = 1.1
+	
+	# Possible handle actions
+	handle_action_negotiate = yes
+	handle_action_stability = no
+	handle_action_build_core = no
+	handle_action_send_missionary = yes
+	
+	# The rebel type with the highest modifier for this province gets picked
+	spawn_chance = {
+		factor = 1
+		
+		modifier = {
+			owner = { has_country_flag = religious_turmoil_gnostic }
+			factor = 10
+		}
+		modifier = {
+			factor = 2
+			owner = { NOT = { gnostic = -2 } } #Oppression
+		}
+		modifier = {
+			factor = 2
+			owner = { NOT = { gnostic = 0 } } #Persecution
+		}
+		modifier = {
+			factor = 0.5
+			owner = { gnostic = 1 } #Tolerance
+		}
+		modifier = {
+			factor = 0.5
+			owner = { gnostic = 3 } #Acceptance of this faith
+		}
+		modifier = {
+			NOT = { religion = gnostic }
+			factor = 0.5
+		}
+		modifier = {
+			NOT = { check_variable = { which = gnostic value = 8 } }
+			factor = 0.5
+		}
+		modifier = {
+			NOT = { check_variable = { which = gnostic value = 6 } }
+			factor = 0.5
+		}
+		modifier = {
+			NOT = { check_variable = { which = gnostic value = 4 } }
+			factor = 0.0
+		}
+		modifier = {
+			factor = 0.25
+			has_province_modifier = religious_autonomy #Minorities enjoy religious freedom
+		}
+		modifier = {
+			factor = 50
+			has_missionary = yes
+			religion = gnostic
+		}
+		modifier = {
+			factor = 5
+			any_neighbor_province = {
+				has_missionary = yes
+				religion = gnostic
+			}
+		}
+		modifier = {
+			owner = { has_country_flag = religious_turmoil_gnostic }
+			has_province_modifier = heretic_bastion
+			factor = 10
+		}
+		modifier = {
+			factor = 25
+			owner = {
+				any_owned_province = {
+					has_missionary = yes
+					religion = gnostic
+				}
+			}
+		}
+		modifier = {
+			factor = 1.4
+			owner = { NOT = { religious_unity = 0.80 } }
+		}
+		modifier = {
+			factor = 1.4
+			owner = { NOT = { religious_unity = 0.60 } }
+		}
+		modifier = {
+			factor = 1.4
+			owner = { NOT = { religious_unity = 0.40 } }
+		}
+		modifier = {
+			factor = 1.4
+			owner = { NOT = { religious_unity = 0.20 } }
+		}
+		modifier = {
+			factor = 0.5
+			is_overseas = yes
+		}
+		modifier = {
+			factor = 1.4
+			owner = { advisor = inquisitor }
+		}
+		modifier = {
+			owner = { has_country_flag = useful_gnostic }
+			factor = 0.5
+		}
+		#Rebels are likely to rise up to support invaders of their religion
+		modifier = {
+			owner = {
+				at_war_with_religious_enemy = yes
+				any_known_country = {
+					war_with = PREV
+					religion = gnostic
+				}
+			}
+			factor = 1.4
+		}
+		modifier = {
+			owner = {
+				at_war_with_religious_enemy = yes
+				any_known_country = {
+					war_with = PREV
+					religion = gnostic
+					is_defender_of_faith = yes
+				}
+			}
+			factor = 1.4
+		}
+		modifier = {
+			owner = {
+				at_war_with_religious_enemy = yes
+				any_known_country = {
+					war_with = PREV
+					religion_group = christian
+				}
+			}
+			factor = 1.4
+		}
+		modifier = {
+			has_province_modifier = fanatics_organizing
+			factor = 1.4
+		}
+		modifier = {
+			has_province_modifier = religious_uprising_cooldown
+			factor = 0.1
+		}
+	}
+	
+	# This is checked for EACH province in the Area of Operations
+	movement_evaluation = {
+		factor = 1
+		modifier = {
+			factor = 10
+			controlled_by = gnostic_rebels
+			has_province_modifier = heretic_bastion
+			has_siege = yes
+		}
+		modifier = {
+			has_province_modifier = church_bastion
+			factor = 5
+		}
+		modifier = {
+			has_province_modifier = expulsion_of_heretics
+			factor = 2
+		}
+		modifier = {
+			factor = 2
+			controlled_by = gnostic_rebels
+			has_siege = yes
+		}
+		modifier = {
+			factor = 0.1
+			controlled_by = gnostic_rebels
+			has_siege = no
+		}
+		modifier = {
+			factor = 1.4
+			check_variable = { which = gnostic value = 4 }
+		}
+		modifier = {
+			factor = 1.4
+			religion = gnostic
+		}
+		modifier = {
+			factor = 0.1
+			has_province_modifier = forced_conversion
+		}
+		modifier = {
+			factor = 0.1
+			has_province_modifier = religious_massacre
+		}
+		modifier = {
+			factor = 1.4
+			unrest = 2
+		}
+		modifier = {
+			factor = 1.4
+			unrest = 4
+		}
+		modifier = {
+			factor = 1.4
+			unrest = 6
+		}
+	}
+	
+	# Province Scope
+	siege_won_trigger = {
+		OR = {
+			fort_level = 1
+			is_capital = yes
+			NOT = { any_neighbor_province = { owned_by = ROOT controlled_by = ROOT fort_level = 1 } }
+		}
+	}
+	siege_won_effect = {
+		hidden_effect = {
+			add_province_modifier = { name = religious_uprising_cooldown duration = 7300 hidden = yes }
+		}
+		set_province_flag = gnostic_rebel_victory
+		owner = { set_country_flag = religious_rebel_victory }
+		remove_province_modifier = expulsion_of_heretics
+		if = {
+			limit = {
+				owner = { has_country_flag = religious_turmoil_gnostic }
+				check_variable = { which = gnostic value = 2 }
+			}
+			hidden_effect = {
+				change_variable = { which = gnostic value = 2 }
+				change_variable = { which = province_religion value = -2 }
+			}
+			add_province_modifier = { name = religious_massacre duration = 500 }
+			clr_province_flag = gnostic_rebel_victory
+			if = {
+				limit = {
+					NOT = { owner = { has_disaster = religious_civil_war } }
+					NOT = { any_neighbor_province = { has_province_modifier = heretic_bastion } }
+				}
+				add_province_modifier = { name = heretic_bastion duration = 2000 }
+			}
+		}
+	}
+	
+	# Country scope
+	can_negotiate_trigger = {
+		OR = {
+			any_owned_province = { controlled_by = gnostic_rebels }
+			gnostic = 1 #High tolerance
+		}
+	}
+	
+	# Country scope
+	can_enforce_trigger = {
+		NOT = { any_owned_province = { has_province_modifier = church_bastion } }
+		any_owned_province = { controlled_by = gnostic_rebels }
+	}
+	
+	# Localisation for their demands
+	demands_description = gnostic_rebels_demand
+	
+	# Country Scope
+	demands_enforced_effect = {
+		add_prestige = -50
+		hidden_effect = {
+			every_owned_province = {
+				add_province_modifier = { name = religious_uprising_cooldown duration = 7300 hidden = yes }
+			}
+		}
+		if = {
+			limit = {
+				has_disaster = religious_civil_war
+				OR = {
+					capital_scope = { religion = gnostic }
+					overlord = { religion = gnostic }
+					any_owned_province = { religion = gnostic culture_group = owner is_overseas = no }
+				}
+			}
+			country_event = { id = dg_turmoil.048 }
+		}
+		if = {
+			limit = {
+				has_disaster = religious_civil_war
+				NOT = {
+					OR = {
+						capital_scope = { religion = gnostic }
+						overlord = { religion = gnostic }
+						any_owned_province = { religion = gnostic culture_group = owner is_overseas = no }
+					}
+				}
+			}
+			country_event = { id = dg_turmoil.047 }
+		}
+		every_owned_province = { clr_province_flag = gnostic_rebel_victory }
+		if = {
+			limit = { religion = gnostic }
+			remove_country_modifier = religious_tolerance
+			remove_country_modifier = edict_of_tolerance
+			add_country_modifier = { name = religious_intolerance duration = 2000 }
+			add_legitimacy = -25
+			add_prestige = -50
+		}
+		if = {
+			limit = {
+				NOT = { religion = gnostic }
+				NOT = { government = theocracy }
+				OR = {
+					capital_scope = { religion = gnostic }
+					overlord = { religion = gnostic }
+					any_owned_province = { religion = gnostic culture_group = owner is_overseas = no }
+				}
+			}
+			change_religion = gnostic
+			force_converted = yes
+		}
+		if = {
+			limit = {
+				NOT = { religion = gnostic }
+				OR = {
+					government = theocracy
+					NOT = {
+						OR = {
+							capital_scope = { religion = gnostic }
+							overlord = { religion = gnostic }
+							any_owned_province = { religion = gnostic culture_group = owner is_overseas = no }
+						}
+					}
+				}
+			}
+			every_owned_province = {
+				limit = { check_variable = { which = gnostic value = 4 } }
+				add_province_modifier = { name = religious_autonomy duration = 10000 }
+			}
+		}
+	}
+}

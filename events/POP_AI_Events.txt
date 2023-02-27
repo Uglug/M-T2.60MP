@@ -1,0 +1,644 @@
+namespace = POP_AI
+
+country_event = {
+	id = POP_AI.001
+	title = no_localisation
+	desc = no_localisation
+	picture = CITY_DEVELOPMENT_eventPicture
+	
+	hidden = yes
+	#is_triggered_only = no
+	
+	trigger = {
+		NOT = { has_country_modifier = government_ai_assess_made }
+		is_year = 1358
+		ai = yes
+	}
+	
+	mean_time_to_happen = { months = 6 }
+	
+	immediate = {
+		add_country_modifier = { name = government_ai_assess_made duration = 900 hidden = yes }
+		AIAgenda = yes
+	}
+	
+	option = { name = no_localisation }
+}
+
+country_event = {
+	id = POP_AI.002
+	title = no_localisation
+	desc = no_localisation
+	picture = CITY_DEVELOPMENT_eventPicture
+	
+	hidden = yes
+	is_triggered_only = yes
+	
+	trigger = { ai = yes }
+	
+	immediate = {
+		AIAction = yes
+		AIDo = yes
+	}
+	
+	option = { name = no_localisation }
+}
+
+country_event = {
+	id = POP_AI.102
+	title = no_localisation
+	desc = no_localisation
+	picture = CITY_DEVELOPMENT_eventPicture
+	
+	hidden = yes
+	is_triggered_only = yes
+	
+	#trigger = { always = yes }
+	
+	immediate = {
+		every_country = {
+			limit = {
+				OR = {
+					AND = {
+						has_country_flag = aiHasActionSaveTreasury
+						is_at_war = no
+					}
+					check_variable = { which = aiTreasuryGeneral value = 0.001 }
+				}
+			}
+			GetTreasuryLimit = { return = aiTreasuryVanillaLimit }
+			export_to_variable = { which = aiTreasuryVanilla value = treasury }
+			
+			if = {
+				limit = { check_variable = { which = aiTreasuryVanilla which = aiTreasuryVanillaLimit } }
+				if = {
+					limit = {
+						has_country_flag = aiHasActionSaveTreasury
+						is_at_war = no
+					}
+					set_variable = { which = aiTreasuryIncrease which = aiTreasuryVanilla }
+					subtract_variable = { which = aiTreasuryIncrease which = aiTreasuryVanillaLimit }
+					change_variable = { which = aiTreasuryGeneral which = aiTreasuryIncrease }
+					SetTreasury = { to = aiTreasuryVanillaLimit }
+					set_variable = { which = aiTreasuryIncrease value = 0 }
+				}
+			}
+			else = {
+				set_variable = { which = aiTreasuryTotal which = aiTreasuryVanilla }
+				change_variable = { which = aiTreasuryTotal which = aiTreasuryGeneral }
+				
+				if = {
+					limit = { check_variable = { which = aiTreasuryTotal which = aiTreasuryVanillaLimit } }
+					set_variable = { which = aiTreasuryDecrease which = aiTreasuryVanillaLimit }
+					subtract_variable = { which = aiTreasuryDecrease which = aiTreasuryVanilla }
+					subtract_variable = { which = aiTreasuryGeneral which = aiTreasuryDecrease }
+					SetTreasury = { to = aiTreasuryVanillaLimit }
+					set_variable = { which = aiTreasuryDecrease value = 0 }
+				}
+				else = {
+					SetTreasury = { to = aiTreasuryTotal }
+					set_variable = { which = aiTreasuryGeneral value = 0 }
+				}
+				set_variable = { which = aiTreasuryTotal value = 0 }
+			}
+			
+			# Add manpower to treasury
+			if = {
+				limit = {
+					manpower_percentage = 0.98
+					is_at_war = no
+					manpower = 1
+					ai = yes
+				}
+				export_to_variable = { which = aiTreasuryManpGain value = max_manpower }
+				export_to_variable = { which = aiTreasuryManpCheck value = manpower }
+				
+				#5%		
+				multiply_variable = { which = aiTreasuryManpGain value = 0.05 }
+				
+				if = {
+					limit = { check_variable = { which = aiTreasuryManpGain which = aiTreasuryManpCheck } }
+					set_variable = { which = aiTreasuryManpGain which = aiTreasuryManpCheck }
+				}
+				
+				multiply_variable = { which = aiTreasuryManpGain value = 0.001 }
+				multiply_variable = { which = aiTreasuryManpGain value = 1000 }
+				
+				set_variable = { which = manpower_cost which = aiTreasuryManpGain }
+				
+				scaled_manpower_cost_country = yes
+				
+				# Conversion rate is 1 ducat for 50 men
+				multiply_variable = { which = aiTreasuryManpGain value = 1000 }
+				multiply_variable = { which = aiTreasuryManpGain value = 0.02 }
+				
+				change_variable = { which = aiTreasuryGeneral which = aiTreasuryManpGain }
+				
+				set_variable = { which = manpower_cost value = 0 }
+				set_variable = { which = aiTreasuryManpGain value = 0 }
+				set_variable = { which = aiTreasuryManpCheck value = 0 }
+			}
+			
+			set_variable = { which = aiTreasuryVanilla value = 0 }
+			set_variable = { which = aiTreasuryVanillaLimit value = 0 }
+		}
+	}
+	
+	option = { name = no_localisation }
+}
+
+country_event = {
+	id = POP_AI.109
+	title = no_localisation
+	desc = no_localisation
+	picture = CITY_DEVELOPMENT_eventPicture
+	
+	hidden = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		is_at_war = yes
+		NOT = { has_country_flag = estate_war_decisions_made }
+		has_global_flag = first_estate_fired
+		has_country_flag = stuffs_set
+		ai = yes
+	}
+	
+	immediate = {
+		# If defensive, get free picks
+		if = {
+			limit = {
+				any_known_country = {
+					offensive_war_with = PREV
+					NOT = { defensive_war_with = PREV }
+				}
+			}
+			set_variable = { which = GN_free_picks value = 1 }
+			set_variable = { which = LN_free_picks value = 1 }
+			set_variable = { which = BUR_free_picks value = 1 }
+		}
+		
+		# Get power difference
+		save_event_target_as = aiLevyTarg
+		set_variable = { which = tmpPowerDiff value = 0 }
+		set_variable = { which = tmpPowerDiffSum value = 0 }
+		
+		every_country = {
+			limit = {
+				war_with = event_target:aiLevyTarg
+				OR = {
+					is_in_war = { attacker_leader = THIS }
+					is_in_war = { defender_leader = THIS }
+				}
+			}
+			set_variable = { which = tmpPowerFoe value = 0 }
+			set_variable = { which = tmpPowerAlly value = 0 }
+			
+			every_country = {
+				limit = {
+					is_in_war = {
+						participants = PREV
+						participants = event_target:aiLevyTarg
+					}
+					NOT = { tag = event_target:aiLevyTarg }
+				}
+				AIInitGetPower = {
+					subject = no
+					overlord = no
+					army = yes
+					state = yes
+					estate = yes
+					rest = yes
+					scope = event_target:aiLevyTarg
+					return = tmpPower
+				}
+				if = {
+					limit = { war_with = event_target:aiLevyTarg }
+					PREV = {
+						set_variable = { which = tmpPower which = PREV }
+						change_variable = { which = tmpPowerFoe which = tmpPower }
+						set_variable = { which = tmpPower value = 0 }
+					}
+				}
+				else = {
+					PREV = {
+						set_variable = { which = tmpPower which = PREV }
+						change_variable = { which = tmpPowerAlly which = tmpPower }
+						set_variable = { which = tmpPower value = 0 }
+					}
+				}
+				set_variable = { which = tmpPower value = 0 }
+			}
+			set_variable = { which = tmpPowerDiff which = tmpPowerFoe }
+			subtract_variable = { which = tmpPowerDiff which = tmpPowerAlly }
+			if = {
+				limit = { check_variable = { which = tmpPowerDiff which = event_target:aiLevyTarg } }
+				event_target:aiLevyTarg = { set_variable = { which = tmpPowerDiff which = PREV } }
+			}
+			set_variable = { which = tmpPowerDiffSum which = tmpPowerDiff }
+			if = {
+				limit = { NOT = { check_variable = { which = tmpPowerDiffSum value = 0 } } }
+				set_variable = { which = tmpPowerDiffSum value = 0 }
+			}
+			event_target:aiLevyTarg = { change_variable = { which = tmpPowerDiffSum which = PREV } }
+			set_variable = { which = tmpPowerFoe value = 0 }
+			set_variable = { which = tmpPowerDiff value = 0 }
+			set_variable = { which = tmpPowerDiffSum value = 0 }
+		}
+		AIInitGetPower = {
+			subject = no
+			overlord = no
+			army = yes
+			state = yes
+			estate = no
+			rest = yes
+			scope = event_target:aiLevyTarg
+			return = tmpPowerState
+		}
+		AIInitGetPower = {
+			subject = no
+			overlord = no
+			army = yes
+			state = no
+			estate = yes
+			rest = no
+			scope = event_target:aiLevyTarg
+			return = tmpPowerEstate
+		}
+		multiply_variable = { which = tmpPowerEstate value = 0.5 }
+		# Based on power difference, decide how much should be raised
+		if = {
+			limit = {
+				OR = {
+					check_variable = { which = tmpPowerDiff which = tmpPowerState }
+					check_variable = { which = tmpPowerDiffSum which = tmpPowerState }
+				}
+			}
+			change_variable = { which = tmpPowerState which = tmpPowerEstate }
+			if = {
+				limit = {
+					OR = {
+						check_variable = { which = tmpPowerDiff which = tmpPowerState }
+						check_variable = { which = tmpPowerDiffSum which = tmpPowerState }
+					}
+				}
+				set_country_flag = GN_war_full
+				set_country_flag = LN_war_full
+				set_country_flag = BG_war_full
+				set_country_flag = TR_war_full
+			}
+			else = {
+				set_country_flag = GN_war_part
+				set_country_flag = LN_war_part
+				set_country_flag = BG_war_part
+				set_country_flag = TR_war_part
+			}
+		}
+		else = {
+			multiply_variable = { which = tmpPowerState value = 0.75 }
+			if = {
+				limit = {
+					OR = {
+						check_variable = { which = tmpPowerDiff which = tmpPowerState }
+						check_variable = { which = tmpPowerDiffSum which = tmpPowerState }
+						any_known_country = {
+							war_with = PREV
+							OR = {
+								owns = 1402
+								controls = 1402
+							}
+						}
+					}
+				}
+				set_country_flag = GN_war_part
+				set_country_flag = LN_war_part
+				set_country_flag = BG_war_part
+				set_country_flag = TR_war_part
+			}
+			else = {
+				multiply_variable = { which = tmpPowerState value = 0.25 }
+				if = {
+					limit = {
+						OR = {
+							check_variable = { which = tmpPowerDiff which = tmpPowerState }
+							check_variable = { which = tmpPowerDiffSum which = tmpPowerState }
+						}
+					}
+					if = {
+						limit = {
+							check_variable = { which = estate_greater_nobles_weight_share value = 0.01 }
+							check_variable = { which = estate_greater_nobles_loyalty value = 0.46 }
+						}
+						set_country_flag = GN_war_part
+					}
+					if = {
+						limit = {
+							check_variable = { which = estate_lesser_nobles_weight_share value = 0.01 }
+							check_variable = { which = estate_lesser_nobles_loyalty value = 0.46 }
+						}
+						set_country_flag = LN_war_part
+					}
+					if = {
+						limit = {
+							check_variable = { which = estate_burghers_weight_share value = 0.01 }
+							check_variable = { which = estate_burghers_loyalty value = 0.46 }
+						}
+						set_country_flag = BG_war_part
+					}
+					if = {
+						limit = {
+							check_variable = { which = estate_tribals_weight_share value = 0.01 }
+							check_variable = { which = estate_tribals_loyalty value = 0.46 }
+						}
+						set_country_flag = TR_war_part
+					}
+				}
+			}
+		}
+		
+		set_variable = { which = tmpPowerDiff value = 0 }
+		set_variable = { which = tmpPowerDiffSum value = 0 }
+		set_variable = { which = tmpPowerState value = 0 }
+		set_variable = { which = tmpPowerEstate value = 0 }
+		
+		# Can't raise troops
+		if = {
+			limit = {
+				NOT = {
+					check_variable = { which = estate_greater_nobles_weight_share value = 0.01 }
+					check_variable = { which = estate_greater_nobles_loyalty value = 0.21 }
+				}
+			}
+			clr_country_flag = GN_war_full
+			clr_country_flag = GN_war_part
+			set_variable = { which = GN_free_picks value = 0 }
+		}
+		if = {
+			limit = {
+				NOT = {
+					check_variable = { which = estate_lesser_nobles_weight_share value = 0.01 }
+					check_variable = { which = estate_lesser_nobles_loyalty value = 0.21 }
+				}
+			}
+			clr_country_flag = LN_war_full
+			clr_country_flag = LN_war_part
+			set_variable = { which = LN_free_picks value = 0 }
+		}
+		if = {
+			limit = {
+				NOT = {
+					check_variable = { which = estate_burghers_weight_share value = 0.01 }
+					check_variable = { which = estate_burghers_loyalty value = 0.21 }
+				}
+			}
+			clr_country_flag = BG_war_full
+			clr_country_flag = BG_war_part
+			set_variable = { which = BUR_free_picks value = 0 }
+		}
+		if = {
+			limit = {
+				NOT = {
+					check_variable = { which = estate_tribals_weight_share value = 0.01 }
+					check_variable = { which = estate_tribals_loyalty value = 0.11 }
+				}
+			}
+			clr_country_flag = TR_war_full
+			clr_country_flag = TR_war_part
+		}
+		
+		# Raised troops, so set flag and block more
+		if = {
+			limit = {
+				OR = {
+					has_country_flag = GN_war_part
+					has_country_flag = LN_war_part
+					has_country_flag = BG_war_part
+					has_country_flag = TR_war_part
+					has_country_flag = GN_war_full
+					has_country_flag = LN_war_full
+					has_country_flag = BG_war_full
+					has_country_flag = TR_war_full
+					
+					check_variable = { which = GN_free_picks value = 1 }
+					check_variable = { which = LN_free_picks value = 1 }
+					check_variable = { which = BUR_free_picks value = 1 }
+				}
+			}
+			set_country_flag = estate_war_decisions_made
+		}
+		
+		# Raise troops
+		if = {
+			limit = {
+				OR = {
+					has_country_flag = GN_war_part
+					has_country_flag = GN_war_full
+					check_variable = { which = GN_free_picks value = 1 }
+				}
+			}
+			country_event = { id = POP_Estates_Interactions.007 }
+		}
+		if = {
+			limit = { has_country_flag = GN_war_full }
+			country_event = { id = POP_Estates_Interactions.007 days = 6 }
+		}
+		
+		if = {
+			limit = {
+				OR = {
+					has_country_flag = LN_war_part
+					has_country_flag = LN_war_full
+					check_variable = { which = LN_free_picks value = 1 }
+				}
+			}
+			country_event = { id = POP_Estates_Interactions.108 days = 2 }
+		}
+		if = {
+			limit = { has_country_flag = LN_war_full }
+			country_event = { id = POP_Estates_Interactions.108 days = 8 }
+		}
+		
+		if = {
+			limit = {
+				OR = {
+					has_country_flag = BG_war_part
+					has_country_flag = BG_war_full
+					check_variable = { which = BUR_free_picks value = 1 }
+				}
+			}
+			country_event = { id = POP_Estates_Interactions.207 days = 4 }
+		}
+		if = {
+			limit = { has_country_flag = BG_war_full }
+			country_event = { id = POP_Estates_Interactions.207 days = 10 }
+			country_event = { id = POP_Estates_Interactions.207 days = 16 }
+		}
+		
+		if = {
+			limit = {
+				OR = {
+					has_country_flag = TR_war_full
+					has_country_flag = TR_war_part
+				}
+			}
+			country_event = { id = POP_Estates_Interactions.407 }
+		}
+
+		clr_country_flag = GN_war_part
+		clr_country_flag = LN_war_part
+		clr_country_flag = BG_war_part
+		clr_country_flag = TR_war_part
+		clr_country_flag = GN_war_full
+		clr_country_flag = LN_war_full
+		clr_country_flag = BG_war_full
+		clr_country_flag = TR_war_full
+	}
+	
+	option = { name = no_localisation }
+}
+
+country_event = {
+	id = POP_AI.111
+	title = no_localisation
+	desc = no_localisation
+	picture = CITY_DEVELOPMENT_eventPicture
+	
+	hidden = yes
+	is_triggered_only = yes
+	
+	immediate = {
+		every_country = {
+			if = {
+				limit = {
+					has_country_modifier = aiModCentralize
+					check_variable = { which = absolutismvar which = max_absolutism }
+				}
+				remove_country_modifier = aiModCentralize
+			}
+			else_if = {
+				limit = {
+					NOT = { check_variable = { which = absolutismvar which = max_absolutism } }
+					ai = yes
+				}
+				add_country_modifier = { name = aiModCentralize duration = -1 }
+			}
+		}
+	}
+	
+	option = { name = no_localisation }
+}
+
+country_event = {
+	id = POP_AI.112
+	title = no_localisation
+	desc = no_localisation
+	picture = CITY_DEVELOPMENT_eventPicture
+	
+	hidden = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		is_at_war = no
+		check_variable = { which = country_actual_income value = 0 }
+		ai = yes
+	}
+	
+	immediate = {
+		# 20% of actual surplus income is sent to education and art
+		set_variable = { which = aiEduArtSpent which = country_actual_income }
+		multiply_variable = { which = aiEduArtSpent value = 0.2 }
+		
+		# If HasActionEduArt, 40%
+		if = {
+			limit = { has_country_flag = aiHasActionEduArt }
+			multiply_variable = { which = aiEduArtSpent value = 2 }
+		}
+		
+		# Baseline: spend 0% on education and 10% on court
+		# every second alliance adds 5% to court spending
+		# being any kind of emperor adds 10% to court spending
+		# low edu level late in the game adds to edu spending
+		# low church influence adds edu spending
+		# high average autonomy lowers edu spending
+		
+		# max spending: 20% + 30%
+		
+		#education spending
+		set_variable = { which = temp which = university_education_multiplier }
+		subtract_variable = { which = temp value = 1 }
+		multiply_variable = { which = temp value = 0.3 }
+		if = {
+			limit = { NOT = { patriarch_authority = 50 } }
+			if = {
+				limit = { NOT = { patriarch_authority = 30 } }
+				if = {
+					limit = { NOT = { patriarch_authority = 15 } }
+					change_variable = { which = temp value = 0.3 }
+				}
+				else = { change_variable = { which = temp value = 0.2 } }
+			}
+			else = { change_variable = { which = temp value = 0.1 } }
+		}
+		if = {
+			limit = {
+				is_year = 1600
+				NOT = { check_variable = { which = education_level value = 40 } }
+			}
+			change_variable = { which = temp value = 0.15 }
+		}
+		if = {
+			limit = {
+				is_year = 1750
+				NOT = { check_variable = { which = education_level value = 60 } }
+			}
+			change_variable = { which = temp value = 0.15 }
+		}
+		if = {
+			limit = { average_autonomy = 50 }
+			if = {
+				limit = { average_autonomy = 65 }
+				if = {
+					limit = { average_autonomy = 75 }
+					change_variable = { which = temp value = -0.3 }
+				}
+				else = { change_variable = { which = temp value = -0.2 } }
+			}
+			else = { change_variable = { which = temp value = -0.1 } }
+		}
+		if = {
+			limit = {
+				OR = {
+					government_rank = 6
+					is_emperor = yes
+				}
+			}
+			change_variable = { which = temp value = -0.1 }
+		}
+		if = {
+			limit = { num_of_allies = 2 }
+			if = {
+				limit = { num_of_allies = 3 }
+				change_variable = { which = temp value = -0.2 }
+			}
+			else = { change_variable = { which = temp value = -0.1 } }
+		}
+		if = {
+			limit = { NOT = { check_variable = { which = temp value = 0 } } }
+			set_variable = { which = temp value = 0 }
+		}
+		else_if = {
+			limit = { check_variable = { which = temp value = 0.7 } }
+			set_variable = { which = temp value = 0.7 }
+		}
+		multiply_variable = { which = temp which = aiEduArtSpent }
+		change_variable = { which = education_money_endowed which = temp }
+		
+		subtract_variable = { which = aiEduArtSpent which = temp }
+		change_variable = { which = court_money_endowed which = aiEduArtSpent }
+		change_variable = { which = aiEduArtSpent which = temp }
+		DoTreasury = { who = THIS spend = aiEduArtSpent }
+		set_variable = { which = aiEduArtSpent value = 0 }
+	}
+	
+	option = { name = no_localisation }
+}

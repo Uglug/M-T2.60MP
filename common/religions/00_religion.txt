@@ -1,0 +1,4399 @@
+# If you add religions, and use those tags, do not change them without changing everywhere they are used.
+# Can use any global (not province) modifier
+
+christian = { #Yellows, Browns and Blues
+	defender_of_faith = yes
+	can_form_personal_unions = yes
+	crusade_name = CRUSADE
+	center_of_religion = 2530 # Rome
+	# Flag emblem values - Used for Dynamic Setup of Random Nations.
+	# Emblem texture: game/gfx/interface/client_state_symbols_large.dds
+	# Can be overridden per religion.
+	flags_with_emblem_percentage = 33 # default == 0
+	flag_emblem_index_range = { 1 57 }
+	
+	catholic = {
+		#Includes Roman Catholic and Eastern Rite Catholic
+		color = { 0.8 0.8 0.0 } #yellow
+		icon = 1
+		allowed_conversion = {
+			reformed
+			protestant
+			hussite
+			gnostic
+		}
+		country = {  #VALUE: 2.5-1.0 = 1.5 IDEAS
+			global_missionary_strength = 0.01 #A strong emphasis on missionary work
+			#BONUSES
+			diplomatic_upkeep = 1 #FULL - The Vatican brokers treaties; cardinals and bishops act as diplomats
+			advisor_pool = 1 #FULL - Monastic traditions; cardinals and bishops
+			num_accepted_cultures = 1 # accepted_culture_threshold = -0.100 #HALF - Latin as universal language
+			#Crusading zeal
+			#A lack of capital for investment made trade more difficult
+			#ALSO: Gets access to papal influence
+			#PENALTIES
+			interest = 1.5 #was 2 #HALF - Usury is forbidden and moneylenders problematic
+			adm_tech_cost_modifier = 0.05 #HALF
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			tolerance_own = -1
+			diplomatic_upkeep = 1 #The Vatican brokers treaties; cardinals and bishops act as diplomats
+			advisor_pool = 1 #Monastic traditions; cardinals and bishops
+			num_accepted_cultures = 1 # accepted_culture_threshold = -0.100 #??? Latin as universal language
+			interest = 1.5 #Usury is forbidden and moneylenders problematic
+			adm_tech_cost_modifier = 0.05
+		}
+		
+		hre_religion = yes
+		
+		on_convert = {
+			set_country_flag = voluntary_conversion
+			if = {
+				limit = { NOT = { is_religion_enabled = catholic } }
+				custom_tooltip = convert_dangerous_religion
+				subtract_stability_1 = yes
+			}
+			if = {
+				limit = { check_variable = { which = catholic_population value = 75 } }
+				custom_tooltip = convert_population_75
+				add_stability_1 = yes
+			}
+			else_if = {
+				limit = { check_variable = { which = catholic_population value = 50 } }
+				custom_tooltip = convert_population_50
+			}
+			else_if = {
+				limit = { check_variable = { which = catholic_population value = 25 } }
+				custom_tooltip = convert_population_25
+				subtract_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_population_0
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = { patriarch_authority = 0.75 }
+				custom_tooltip = convert_church_strong
+				subtract_stability_2 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.50 }
+				custom_tooltip = convert_piety_moderate
+				subtract_stability_1 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.25 }
+				custom_tooltip = convert_church_weak
+			}
+			else = {
+				custom_tooltip = convert_church_insignificant
+			}
+			if = {
+				limit = { ADM = 5 }
+				if = {
+					limit = {
+						capital_scope = { religion = catholic }
+					}
+					custom_tooltip = convert_ruler_strong
+					add_stability_3 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+			}
+			else_if = {
+				limit = { ADM = 3 }
+				if = {
+					limit = {
+						capital_scope = { religion = catholic }
+					}
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						capital_scope = { religion = catholic }
+					}
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_incompetent
+				}
+			}
+			if = {
+				limit = { advisor = theologian }
+				custom_tooltip = convert_theologian
+				add_stability_1 = yes
+			}
+			if = {
+				limit = {
+					has_country_flag = was_catholic
+				}
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_previous_recent
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_previous_old
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_recent
+					add_stability_1 = yes
+				}
+			}
+			change_religion = catholic
+		}
+		uses_piety = yes				# Uses piety mechanics
+		has_patriarchs = yes		# Uses patriarch authority
+		#fervor = yes
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+		papacy = {
+			papal_tag = PAP
+			election_cost = 5 						#WHAT DOES THIS MEAN?
+			seat_of_papacy = 2530 # rome			#2530 M&T, 118 VANILLA
+			request_council = {
+				cost = 30
+				potential = {
+				}
+				allow = {
+					is_free_or_tributary_trigger = yes
+					custom_trigger_tooltip = {
+						NOT = { war_with = PAP }
+						NOT = { has_country_flag = enemy_of_pope }
+						tooltip = not_enemy_of_pope
+					}
+					custom_trigger_tooltip = {
+						NOT = { has_country_flag = excommunicated }
+						is_excommunicated = no
+						tooltip = not_excommunicated
+					}
+					custom_trigger_tooltip = {
+						PAP = { NOT = { has_country_flag = calls_for_council } }
+						PAP = { NOT = { has_country_flag = church_council_called } }
+						PAP = { NOT = { has_country_flag = church_council } }
+						tooltip = no_council_already_called
+					}
+					custom_trigger_tooltip = {
+						OR = {
+							NOT = { has_country_flag = ruler_called_council }
+							had_country_flag = { flag = ruler_called_council days = 7200 }
+						}
+						tooltip = once_per_ruler_or_generation
+					}
+					OR = {
+						custom_trigger_tooltip = {
+							reform_desire = 0.80
+							check_variable = { which = catholic_corruption value = 6 }
+							OR = {
+								AND = {
+									has_country_flag = absenteeism
+									OR = {
+										PAP = { NOT = { has_country_flag = seminaries } }
+										PAP = { NOT = { has_country_flag = clerical_residence } }
+									}
+								}
+								AND = {
+									has_country_flag = simony
+									OR = {
+										PAP = { NOT = { has_country_flag = simony_abolished } }
+										PAP = { NOT = { has_country_flag = annate_abolished } }
+									}
+								}
+								AND = {
+									has_country_flag = indulgences_condemned
+									PAP = { NOT = { has_country_flag = indulgences_banned } }
+								}
+								AND = {
+									has_country_flag = consanguinity_problems
+									PAP = { NOT = { has_country_flag = limited_consanguinity_allowed } }
+								}
+								AND = {
+									has_country_flag = papal_nepotism
+									PAP = { NOT = { has_country_flag = nepotism_abolished } }
+								}
+							}
+							tooltip = council_reason_corruption
+						}
+						custom_trigger_tooltip = {
+							exists = AVI #A church schism
+							AVI = { papal_trigger = yes }
+							tooltip = council_reason_schism
+						}
+						custom_trigger_tooltip = {
+							OR = {
+								AND = {
+									OR = {
+										NOT = { religious_unity = 0.80 }
+										any_neighbor_country = { religion = protestant }
+										any_neighbor_country = { religion = reformed }
+									}
+									OR = {
+										is_religion_enabled = protestant
+										is_religion_enabled = reformed
+									}
+									NOT = { has_global_flag = counter_reformation }
+								}
+								AND = {
+									OR = {
+										any_known_country = { has_country_flag = lollard_persecution }
+										has_country_flag = lollard_persecution
+									}
+									is_year = 1400
+									NOT = { PAP = { has_country_flag = lollardy_banned } }
+								}
+							}
+							tooltip = council_reason_heresy
+						}
+					}
+					OR = {
+						is_emperor = yes
+						is_papal_controller = yes
+						num_of_cardinals = 3
+						papal_trigger = yes
+						custom_trigger_tooltip = {
+							has_country_flag = catholic_pragmatic_sanction
+							tooltip = has_catholic_pragmatic_sanction
+						}
+						custom_trigger_tooltip = {
+							PAP = { had_country_flag = { flag = church_council_promised days = 3000 } }
+							tooltip = pope_promised_council
+						}
+						custom_trigger_tooltip = {
+							PAP = { has_country_flag = papal_conciliarism }
+							tooltip = papal_conciliarism_dominant
+						}
+					}
+				}
+				effect = {
+					clr_country_flag = ruler_called_council
+					set_country_flag = ruler_called_council
+					PAP = { set_country_flag = calls_for_council }
+					#hidden_effect = { change_variable = { which = council_requests value = 1 } }
+					if = {
+						limit = { is_papal_controller = yes }
+						country_event = { id = dg_pope.031 }
+					}
+					else = {
+						random_country = {
+							limit = { is_papal_controller = yes }
+							country_event = { id = dg_pope.031 days = 30 }
+						}
+					}
+				}
+				ai_will_do = {
+					factor = 1
+					modifier = {
+						tag = PAP
+						factor = 0
+					}
+					modifier = {
+						is_papal_controller = yes
+						has_country_flag = support_antipope
+						factor = 0
+					}
+					modifier = {
+						NOT = {
+							OR = {
+								AND = {
+									check_variable = { which = catholic_corruption value = 10 }
+									reform_desire = 0.90
+								}
+								AND = {
+									exists = AVI #A church schism
+									AVI = { papal_trigger = yes }
+								}
+								AND = {
+									NOT = { religious_unity = 0.75 }
+									is_religion_enabled = protestant
+									NOT = { has_global_flag = counter_reformation }
+								}
+								AND = {
+									any_country = { has_country_flag = lollard_persecution }
+									is_year = 1400
+									NOT = { PAP = { has_country_flag = lollardy_banned } }
+								}
+							}
+						}
+						factor = 0
+					}
+				}
+			}
+			bless_monarch = {
+				cost = 50
+				potential = {
+					NOT = { tag = PAP }
+				}
+				allow = {
+					piety = -0.60
+					patriarch_authority = 0.40
+					custom_trigger_tooltip = {
+						NOT = { war_with = PAP }
+						NOT = { has_country_flag = enemy_of_pope }
+						tooltip = not_enemy_of_pope
+					}
+					custom_trigger_tooltip = {
+						NOT = { has_country_flag = excommunicated }
+						is_excommunicated = no
+						tooltip = not_excommunicated
+					}
+					custom_trigger_tooltip = {
+						not_have_religious_scandal = yes
+						tooltip = no_religious_scandal
+					}
+					custom_trigger_tooltip = {
+						NOT = { has_country_flag = papal_blessing }
+						tooltip = once_per_ruler
+					}
+				}
+				effect = {
+					set_country_flag = papal_blessing
+					if = {
+						limit = { PAP = { check_variable = { which = papal_authority value = 500 } } }
+						custom_tooltip = unquestioned_pope_desc
+						add_prestige = 20
+					}
+					else_if = {
+						limit = { PAP = { check_variable = { which = papal_authority value = 400 } } }
+						custom_tooltip = strong_pope_desc
+						add_prestige = 15
+					}
+					else_if = {
+						limit = { PAP = { check_variable = { which = papal_authority value = 300 } } }
+						custom_tooltip = weak_pope_desc
+						add_prestige = 10
+					}
+					else_if = {
+						limit = { PAP = { check_variable = { which = papal_authority value = 200 } } }
+						custom_tooltip = nominal_pope_desc
+						add_prestige = 5
+					}
+					if = {
+						limit = { piety = 0.60 }
+						add_legitimacy = 4
+						add_republican_tradition = 2
+						add_devotion = 8
+					}
+					else_if = {
+						limit = { piety = 0.20 }
+						add_legitimacy = 3
+						add_republican_tradition = 15
+						add_devotion = 6
+					}
+					else_if = {
+						limit = { piety = -0.20 }
+						add_legitimacy = 2
+						add_republican_tradition = 1
+						add_devotion = 4
+					}
+					else_if = {
+						limit = { piety = -0.60 }
+						add_legitimacy = 1
+						add_republican_tradition = 0.5
+						add_devotion = 2
+					}
+				}
+				ai_will_do = {
+					factor = 2
+					modifier = {
+						OR = {
+							NOT = { prestige = 5 }
+							NOT = { legitimacy = 60 }
+						}
+						government = monarchy
+						factor = 2
+					}
+					modifier = {
+						OR = {
+							NOT = { prestige = 5 }
+							NOT = { republican_tradition = 60 }
+						}
+						government = republic
+						factor = 2
+					}
+					modifier = {
+						OR = {
+							prestige = 90
+							legitimacy = 95
+						}
+						government = monarchy
+						factor = 0
+					}
+					modifier = {
+						OR = {
+							prestige = 90
+							republican_tradition = 95
+						}
+						government = republic
+						factor = 0
+					}
+				}
+			}
+			create_archbishopric = {
+				cost = 200
+				potential = {
+					papal_trigger = no
+					any_owned_province = {
+						OR = {
+							rich_province_trigger = yes
+							is_capital = yes
+						}
+						is_core = owner
+						OR = {
+							has_owner_accepted_culture = yes
+							culture_group = owner
+						}
+						is_overseas = no
+						any_neighbor_province = { owned_by = ROOT }
+						NOT = { has_province_flag = catholic_patriarchate }
+						NOT = { has_province_flag = catholic_archbishopric }
+						NOT = { any_neighbor_province = { has_province_flag = catholic_archbishopric } }
+						NOT = { any_neighbor_province = { any_neighbor_province = { has_province_flag = catholic_archbishopric } } }
+					}
+				}
+				allow = {
+					is_free_or_tributary_trigger = yes
+					custom_trigger_tooltip = {
+						NOT = { war_with = PAP }
+						NOT = { has_country_flag = enemy_of_pope }
+						tooltip = not_enemy_of_pope
+					}
+					custom_trigger_tooltip = {
+						not_have_religious_scandal = yes
+						tooltip = no_religious_scandal
+					}
+					custom_trigger_tooltip = {
+						NOT = { has_country_flag = excommunicated }
+						is_excommunicated = no
+						tooltip = not_excommunicated
+					}
+				}
+				effect = {
+					random_owned_province = {
+						limit = {
+							OR = {
+								rich_province_trigger = yes
+								is_capital = yes
+							}
+							is_core = owner
+							OR = {
+								has_owner_accepted_culture = yes
+								culture_group = owner
+							}
+							is_overseas = no
+							any_neighbor_province = { owned_by = ROOT }
+							NOT = { has_province_flag = catholic_archbishopric }
+							NOT = { any_neighbor_province = { has_province_flag = catholic_archbishopric } }
+							NOT = { any_neighbor_province = { any_neighbor_province = { has_province_flag = catholic_archbishopric } } }
+						}
+						set_province_flag = catholic_archbishopric
+						add_province_modifier = { name = catholic_archbishopric duration = -1 }
+					}
+				}
+				ai_will_do = { factor = 3 }
+			}
+			local_saint = {
+				cost = 50
+				potential = {
+					NOT = { tag = PAP }
+					any_owned_province = {
+						OR = {
+							religion = catholic
+							check_variable = { which = catholic value = 4 }
+						}
+						NOT = { has_province_modifier = catholic_pilgrimage }
+						NOT = { any_neighbor_province = { has_province_modifier = catholic_pilgrimage } }
+						NOT = { any_neighbor_province = { any_neighbor_province = { has_province_modifier = catholic_pilgrimage } } }
+					}
+				}
+				allow = {
+					piety = -0.20
+					custom_trigger_tooltip = {
+						has_country_flag = sainthood_candidate
+						tooltip = sainthood_candidate
+					}
+					custom_trigger_tooltip = {
+						NOT = { war_with = PAP }
+						NOT = { has_country_flag = enemy_of_pope }
+						tooltip = not_enemy_of_pope
+					}
+					custom_trigger_tooltip = {
+						NOT = { has_country_flag = excommunicated }
+						is_excommunicated = no
+						tooltip = not_excommunicated
+					}
+					custom_trigger_tooltip = {
+						not_have_religious_scandal = yes
+						tooltip = no_religious_scandal
+					}
+					custom_trigger_tooltip = {
+						OR = {
+							NOT = { has_country_flag = papal_canonization }
+							had_country_flag = { flag = papal_canonization days = 7200 }
+						}
+						tooltip = once_per_ruler_or_generation
+					}
+				}
+				effect = {
+					clr_country_flag = papal_canonization
+					set_country_flag = papal_canonization
+					random_owned_province = {
+						limit = {
+							OR = {
+								religion = catholic
+								check_variable = { which = catholic value = 4 }
+							}
+							NOT = { has_province_modifier = catholic_pilgrimage }
+							NOT = { any_neighbor_province = { has_province_modifier = catholic_pilgrimage } }
+							NOT = { any_neighbor_province = { any_neighbor_province = { has_province_modifier = catholic_pilgrimage } } }
+						}
+						province_event = { id = dg_catholic.0211 }
+					}
+				}
+				ai_will_do = {
+					factor = 1
+				}
+			}
+			indulgence_for_sins = {
+				cost = 1
+				potential = {
+					papal_trigger = no
+					PAP = { NOT = { has_country_flag = indulgences_banned } }
+				}
+				allow = {
+					piety = -0.60
+					patriarch_authority = 0.40
+					custom_trigger_tooltip = {
+						NOT = { war_with = PAP }
+						NOT = { has_country_flag = enemy_of_pope }
+						tooltip = not_enemy_of_pope
+					}
+					custom_trigger_tooltip = {
+						NOT = { has_country_flag = excommunicated }
+						is_excommunicated = no
+						tooltip = not_excommunicated
+					}
+					OR = {
+						custom_trigger_tooltip = {
+							OR = {
+								has_country_modifier = religious_scandal_country_weak
+								has_country_modifier = religious_scandal_country
+								has_country_modifier = religious_scandal_country_strong
+							}
+							tooltip = has_religious_scandal
+						}
+						custom_trigger_tooltip = {
+							PAP = { has_country_flag = indulgences_permitted }
+							tooltip = indulgences_for_sale
+						}
+					}
+					custom_trigger_tooltip = {
+						NOT = { has_country_flag = papal_indulgence }
+						tooltip = once_per_pope
+					}
+				}
+				effect = {
+					set_country_flag = papal_indulgence
+					if = {
+						limit = { piety = 0.60 }
+						add_legitimacy = 5
+						add_republican_tradition = 25
+						add_devotion = 10
+					}
+					else_if = {
+						limit = { piety = 0.20 }
+						add_legitimacy = 4
+						add_republican_tradition = 2
+						add_devotion = 8
+					}
+					else_if = {
+						limit = { piety = -0.20 }
+						add_legitimacy = 3
+						add_republican_tradition = 1.5
+						add_devotion = 6
+					}
+					else_if = {
+						limit = { piety = -0.60 }
+						add_legitimacy = 2
+						add_republican_tradition = 1
+						add_devotion = 4
+					}
+					if = {
+						limit = { monthly_income = 100 }
+						add_treasury = -100
+					}
+					else_if = {
+						limit = { monthly_income = 5 }
+						add_years_of_income = -0.08
+					}
+					else = {
+						add_treasury = -5
+					}
+					remove_country_modifier = religious_scandal_country_weak
+					remove_country_modifier = religious_scandal_country
+					remove_country_modifier = religious_scandal_country_strong
+					reverse_add_opinion = { who = PAP modifier = obeyed_religious_leader }
+				}
+				ai_will_do = {
+					factor = 1
+					modifier = {
+						NOT = { devotion = 65 }
+						factor = 5
+					}
+					modifier = {
+						NOT = { legitimacy = 65 }
+						factor = 5
+					}
+					modifier = {
+						NOT = { republican_tradition = 65 }
+						factor = 5
+					}
+					modifier = {
+						is_bankrupt = yes
+						factor = 0
+					}
+					modifier = {
+						num_of_loans = 2
+						factor = 0
+					}
+					modifier = {
+						devotion = 95
+						#government = theocracy
+						factor = 0
+					}
+					modifier = {
+						legitimacy = 95
+						#government = monarchy
+						factor = 0
+					}
+					modifier = {
+						republican_tradition = 95
+						#government = republic
+						factor = 0
+					}
+				}
+			}
+			proclaim_holy_war = {
+				cost = 50
+				potential = {
+					NOT = { tag = PAP }
+				}
+				allow = {
+					custom_trigger_tooltip = {
+						PAP = { check_variable = { which = papal_authority value = 200 } }
+						tooltip = papal_authority_200
+					}
+					at_war_with_religious_enemy = yes
+					piety = -0.20
+					patriarch_authority = 0.40
+					custom_trigger_tooltip = {
+						NOT = { war_with = PAP }
+						NOT = { has_country_flag = enemy_of_pope }
+						tooltip = not_enemy_of_pope
+					}
+					custom_trigger_tooltip = {
+						not_have_religious_scandal = yes
+						tooltip = no_religious_scandal
+					}
+					custom_trigger_tooltip = {
+						NOT = { has_country_flag = excommunicated }
+						is_excommunicated = no
+						tooltip = not_excommunicated
+					}
+					custom_trigger_tooltip = {
+						OR = {
+							NOT = { has_country_flag = papal_crusade }
+							had_country_flag = { flag = papal_crusade days = 7200 }
+						}
+						tooltip = once_per_ruler_or_generation
+					}
+				}
+				effect = {
+					clr_country_flag = papal_crusade
+					set_country_flag = papal_crusade
+					if = {
+						limit = { PAP = { check_variable = { which = papal_authority value = 520 } } }
+						custom_tooltip = unquestioned_pope_desc
+						add_country_modifier = { name = morale_boost duration = 500 }
+						add_war_exhaustion = -2
+						add_manpower = 12
+					}
+					else_if = {
+						limit = { PAP = { check_variable = { which = papal_authority value = 440 } } }
+						custom_tooltip = strong_pope_desc
+						add_country_modifier = { name = morale_boost duration = 400 }
+						add_war_exhaustion = -1.6
+						add_manpower = 10
+					}
+					else_if = {
+						limit = { PAP = { check_variable = { which = papal_authority value = 360 } } }
+						custom_tooltip = weak_pope_desc
+						add_country_modifier = { name = morale_boost duration = 300 }
+						add_war_exhaustion = -1.2
+						add_manpower = 8
+					}
+					else_if = {
+						limit = { PAP = { check_variable = { which = papal_authority value = 280 } } }
+						custom_tooltip = nominal_pope_desc
+						add_country_modifier = { name = morale_boost duration = 200 }
+						add_war_exhaustion = -0.8
+						add_manpower = 6
+					}
+					else = {
+						custom_tooltip = nominal_pope_desc
+						add_country_modifier = { name = morale_boost duration = 100 }
+						add_war_exhaustion = -0.4
+						add_manpower = 4
+					}
+				}
+				ai_will_do = {
+					factor = 1
+					modifier = {
+						factor = 3
+						NOT = { manpower_percentage = 0.2 }
+					}
+					modifier = {
+						factor = 0
+						manpower_percentage = 0.75
+					}
+				}
+			}
+			send_papal_legate = {
+				cost = 25
+				potential = {
+					NOT = { tag = PAP }
+				}
+				allow = {
+					piety = -0.60
+					patriarch_authority = 0.20
+					custom_trigger_tooltip = {
+						NOT = { war_with = PAP }
+						NOT = { has_country_flag = enemy_of_pope }
+						tooltip = not_enemy_of_pope
+					}
+					custom_trigger_tooltip = {
+						NOT = { has_country_flag = excommunicated }
+						is_excommunicated = no
+						tooltip = not_excommunicated
+					}
+					custom_trigger_tooltip = {
+						not_have_religious_scandal = yes
+						tooltip = no_religious_scandal
+					}
+					custom_trigger_tooltip = {
+						NOT = { has_country_flag = papal_advisor }
+						tooltip = once_per_pope
+					}
+					custom_trigger_tooltip = {
+						always = yes
+						tooltip = tt_papal_legate_description
+					}
+				}
+				effect = {
+					set_country_flag = papal_advisor
+					country_event = { id = dg_catholic.014 days = 10 }
+				}
+				ai_will_do = {
+					factor = 0
+				}
+			}
+			#sanction_commercial_monopoly = {
+			#	cost = 100
+			#	potential = {
+			#	}
+			#	allow = {
+			#		patriarch_authority = 0.40
+			#		custom_trigger_tooltip = {
+			#			NOT = { war_with = PAP }
+			#			NOT = { has_country_flag = enemy_of_pope }
+			#			tooltip = not_enemy_of_pope
+			#		}
+			#		custom_trigger_tooltip = {
+			#			NOT = { has_country_flag = excommunicated }
+			#			is_excommunicated = no
+			#			tooltip = not_excommunicated
+			#		}
+			#		custom_trigger_tooltip = {
+			#			not_have_religious_scandal = yes
+			#			tooltip = no_religious_scandal
+			#		}
+			#		custom_trigger_tooltip = {
+			#			OR = {
+			#				NOT = { has_country_flag = papal_monopoly }
+			#				had_country_flag = { flag = papal_monopoly days = 7200 }
+			#			}
+			#			tooltip = once_per_ruler_or_generation
+			#		}
+			#	}
+			#	effect = {
+			#		clr_country_flag = papal_monopoly
+			#		if = {
+			#			limit = { PAP = { check_variable = { which = papal_authority value = 500 } } }
+			#			custom_tooltip = unquestioned_pope_desc
+			#			add_mercantilism = 1		# was 0.01 - RoM
+			#			country_event = { id = dg_papacy.068 days = 30 }
+			#		}
+			#		else_if = {
+			#			limit = { PAP = { check_variable = { which = papal_authority value = 400 } } }
+			#			custom_tooltip = strong_pope_desc
+			#			random_list = {
+			#				80 = { add_mercantilism = 1 country_event = { id = dg_papacy.068 days = 30 } }
+			#				20 = { country_event = { id = dg_papacy.069 days = 30 } }
+			#			}
+			#		}
+			#		else_if = {
+			#			limit = { PAP = { check_variable = { which = papal_authority value = 300 } } }
+			#			custom_tooltip = weak_pope_desc
+			#			random_list = {
+			#				60 = { add_mercantilism = 1 country_event = { id = dg_papacy.068 days = 30 } }
+			#				40 = { country_event = { id = dg_papacy.069 days = 30 } }
+			#			}
+			#		}
+			#		else_if = {
+			#			limit = { PAP = { check_variable = { which = papal_authority value = 200 } } }
+			#			custom_tooltip = nominal_pope_desc
+			#			random_list = {
+			#				40 = { add_mercantilism = 1 country_event = { id = dg_papacy.068 days = 30 } }
+			#				60 = { country_event = { id = dg_papacy.069 days = 30 } }
+			#			}
+			#		}
+			#		else = {
+			#			custom_tooltip = nominal_pope_desc
+			#			random_list = {
+			#				20 = { add_mercantilism = 1 country_event = { id = dg_papacy.068 days = 30 } }
+			#				80 = { country_event = { id = dg_papacy.069 days = 30 } }
+			#			}
+			#		}
+			#		set_country_flag = papal_monopoly
+			#	}
+			#	ai_will_do = {
+			#		factor = 1
+			#		modifier = {
+			#			factor = 0
+			#			NOT = { has_idea_group = trade_ideas }
+			#		}
+			#	}
+			#}
+		}
+	}
+	
+	protestant = {
+		#Includes Lutheran, Anglican, Episcopalean
+		color = { 0.0 0.0 0.7 } #Blue
+		icon = 2
+		allowed_conversion = {
+			reformed
+			catholic
+			hussite
+			gnostic
+		}
+		allowed_center_conversion = {
+			catholic
+		}
+		country = { #VALUE: 2.5-1.0 = 1.5 IDEAS
+			global_missionary_strength = 0.01
+			#BONUSES
+#			production_efficiency = 0.025 #Protestant work ethic
+			global_autonomy = -0.05 #FULL - Centralized power of rulers
+			legitimacy = 0.50 #HALF State control of the church; Divine Right of Kings
+			republican_tradition = 0.25
+			horde_unity = 0.25
+			devotion = 1
+			idea_cost = -0.05 #HALF - Centralized power of rulers; willing to adopt new ideas
+			technology_cost = -0.05 #HALF - Greater literacy
+			#ALSO: Gets access to Church Aspects (indirectly)
+			#PENALTIES
+			tolerance_own = -1 #FULL
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_autonomy = -0.025 #Centralized power of rulers
+			legitimacy = 0.50 #State control of the church; Divine Right of Kings
+			republican_tradition = 0.25
+			horde_unity = 0.25
+			devotion = 1
+			idea_cost = -0.025 #Centralized power of rulers; willing to adopt new ideas
+			technology_cost = -0.025 #HALF - Greater literacy
+			tolerance_own = -2
+		}
+		
+		hre_heretic_religion = yes
+		
+		will_get_center = {
+			any_owned_province = {
+				OR = {
+					religion = protestant
+					religion = catholic
+					religion = reformed
+				}
+				NOT = { province_id = 118 } # Lazio
+				is_in_capital_area = yes
+				is_reformation_center = no
+				is_island = no
+				OR = {
+					has_province_flag = start_of_protestant_reformation
+					development = 10
+				}
+				NOT = {
+					any_neighbor_province = {
+						is_reformation_center = yes
+					}
+				}
+				NOT = {
+					any_province = {
+						area = PREV
+						is_reformation_center = yes
+						religion = protestant
+					}
+				}
+				NOT = { has_climate = tropical }
+				NOT = { has_climate = arid }
+				NOT = { has_climate = arctic }
+			}
+		}
+		
+		on_convert = {
+			set_country_flag = voluntary_conversion
+			if = {
+				limit = { NOT = { is_religion_enabled = protestant } }
+				custom_tooltip = convert_dangerous_religion
+				subtract_stability_1 = yes
+			}
+			if = {
+				limit = { check_variable = { which = protestant_population value = 75 } }
+				custom_tooltip = convert_population_75
+				add_stability_1 = yes
+			}
+			else_if = {
+				limit = { check_variable = { which = protestant_population value = 50 } }
+				custom_tooltip = convert_population_50
+			}
+			else_if = {
+				limit = { check_variable = { which = protestant_population value = 25 } }
+				custom_tooltip = convert_population_25
+				subtract_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_population_0
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = { patriarch_authority = 0.75 }
+				custom_tooltip = convert_church_strong
+				subtract_stability_2 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.50 }
+				custom_tooltip = convert_piety_moderate
+				subtract_stability_1 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.25 }
+				custom_tooltip = convert_church_weak
+			}
+			else = {
+				custom_tooltip = convert_church_insignificant
+			}
+			if = {
+				limit = { ADM = 5 }
+				if = {
+					limit = {
+						capital_scope = { religion = protestant }
+					}
+					custom_tooltip = convert_ruler_strong
+					add_stability_3 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+			}
+			else_if = {
+				limit = { ADM = 3 }
+				if = {
+					limit = {
+						capital_scope = { religion = protestant }
+					}
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						capital_scope = { religion = protestant }
+					}
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_incompetent
+				}
+			}
+			if = {
+				limit = { advisor = theologian }
+				custom_tooltip = convert_theologian
+				add_stability_1 = yes
+			}
+			if = {
+				limit = {
+					has_country_flag = was_protestant
+				}
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_previous_recent
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_previous_old
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_recent
+					add_stability_1 = yes
+				}
+			}
+			change_religion = protestant
+		}
+		uses_piety = yes				# Uses piety mechanics
+		has_patriarchs = yes		# Uses patriarch authority
+		#uses_church_power = yes				#Doesn't work with other systems
+#		aspects = {
+#			married_pastors_aspect
+#			celibate_priests_aspect
+#			legal_divorce_aspect
+#			limited_divorce_aspect
+#			civil_unions_aspect
+#			appointed_bishops_aspect
+#			elected_ministers_aspect
+#			lay_priesthood_aspect
+#			infant_baptism_aspect
+#			adult_baptism_aspect
+#			free_will_aspect
+#			predestination_aspect
+#			biblical_inerrancy_aspect
+#			individual_interpretation_aspect
+#			guided_interpretation_aspect
+#			enforced_membership_aspect
+#			free_membership_aspect
+#			}
+		#fervor = yes		#Doesn't work with other systems
+		date = 1525.5.1 #Martin Luther sides with the Princes against the peasants
+#		date = 1517.10.31 #Martin Luther nails his 95 theses to the door of Wittemburg Church
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	orthodox = {
+		#Includes Greek Orthodox, Russian Orthodox and other Eastern Orthodox churches
+		color = { 0.7 0.5 0.0 } #Brown
+		icon = 3
+		country = { #VALUE: +1.5 IDEAS
+			global_missionary_strength = 0.01 #A strong monastic tradition
+			#BONUSES
+			prestige = 0.50 #HALF - iconography
+			legitimacy = 0.50 #HALF - Ruler is Pontifex Maximus
+			republican_tradition = 0.25
+			horde_unity = 0.25
+			devotion = 1
+			global_autonomy = -0.1 #HALF - Church subordinate to the state
+			#ALSO: Gets access to Patriarchates
+			#PENALTIES
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			prestige = 0.25 #iconography
+			legitimacy = 0.25 #Ruler is Pontifex Maximus
+			republican_tradition = 0.1
+			horde_unity = 0.1
+			devotion = 0.5
+			global_autonomy = -0.025 #HALF - Church subordinate to the state
+			tolerance_own = -1
+		}
+		allowed_conversion = {
+			coptic
+		}
+		on_convert = {
+			set_country_flag = voluntary_conversion
+			if = {
+				limit = { NOT = { is_religion_enabled = orthodox } }
+				custom_tooltip = convert_dangerous_religion
+				subtract_stability_1 = yes
+			}
+			if = {
+				limit = { check_variable = { which = orthodox_population value = 75 } }
+				custom_tooltip = convert_population_75
+				add_stability_1 = yes
+			}
+			else_if = {
+				limit = { check_variable = { which = orthodox_population value = 50 } }
+				custom_tooltip = convert_population_50
+			}
+			else_if = {
+				limit = { check_variable = { which = orthodox_population value = 25 } }
+				custom_tooltip = convert_population_25
+				subtract_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_population_0
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = { patriarch_authority = 0.75 }
+				custom_tooltip = convert_church_strong
+				subtract_stability_2 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.50 }
+				custom_tooltip = convert_piety_moderate
+				subtract_stability_1 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.25 }
+				custom_tooltip = convert_church_weak
+			}
+			else = {
+				custom_tooltip = convert_church_insignificant
+			}
+			if = {
+				limit = { ADM = 5 }
+				if = {
+					limit = {
+						capital_scope = { religion = orthodox }
+					}
+					custom_tooltip = convert_ruler_strong
+					add_stability_3 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+			}
+			else_if = {
+				limit = { ADM = 3 }
+				if = {
+					limit = {
+						capital_scope = { religion = orthodox }
+					}
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						capital_scope = { religion = orthodox }
+					}
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_incompetent
+				}
+			}
+			if = {
+				limit = { advisor = theologian }
+				custom_tooltip = convert_theologian
+				add_stability_1 = yes
+			}
+			if = {
+				limit = {
+					has_country_flag = was_orthodox
+				}
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_previous_recent
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_previous_old
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_recent
+					add_stability_1 = yes
+				}
+			}
+			change_religion = orthodox
+		}
+		uses_piety = yes				# Uses piety mechanics
+		has_patriarchs = yes		# Uses patriarch authority
+		#fervor = yes
+		misguided_heretic = yes		#other christians hate them less
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	#chalcedonism = {
+	#	color = { 0.7 0.5 0.0 } #Brown
+	#	icon = 3
+	#	allowed_conversion = {
+	#		catholic
+	#		orthodox
+	#		gnostic
+	#		coptic
+	#	}
+	#	country = {
+	#		global_missionary_strength = 0.01 #A strong monastic tradition
+	#		#BONUSES
+	#		prestige = 0.50 #HALF - iconography
+	#		legitimacy = 0.50 #HALF - Ruler is Pontifex Maximus
+	#		republican_tradition = 0.25
+	#		horde_unity = 0.25
+	#		devotion = 1
+	#		global_autonomy = -0.025 #HALF - Church subordinate to the state
+	#	}
+	#	heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	#	date = 2000.1.1
+	#}
+	
+	reformed = {
+		color = { 0.6 0.4 0.8 } #Slate Blue (Purple)
+		icon = 4
+		#Includes Calvinist, Reformed, Presbyterian, Huguenots, Puritans, Anabaptists, Hutterites, Mennonites, Amish, Brethren, Methodists, Wesleyans, Church of Christ, Millerites, Seventh Day Adventists, Salvation Army
+		allowed_conversion = {
+			protestant
+			catholic
+			hussite
+			gnostic
+		}
+		allowed_center_conversion = {
+			catholic
+		}
+		will_get_center = {
+			any_owned_province = {
+				OR = {
+					religion = protestant
+					religion = catholic
+					religion = reformed
+				}
+				NOT = { province_id = 118 } # Lazio
+				is_in_capital_area = yes
+				is_reformation_center = no
+				OR = {
+					has_province_flag = start_of_reformed_reformation
+					development = 10
+				}
+				is_island = no
+				NOT = {
+					any_neighbor_province = {
+						is_reformation_center = yes
+					}
+				}
+				NOT = {
+					any_province = {
+						area = PREV
+						religion = reformed
+						is_reformation_center = yes
+					}
+				}
+				NOT = { has_climate = tropical }
+				NOT = { has_climate = arid }
+				NOT = { has_climate = arctic }
+			}
+		}
+		province = {
+		}
+		country = { #VALUE: 2.5 -1.0 = 1.5 IDEAS
+			#BONUSES
+			global_missionary_strength = 0.01
+			merchants = 1 #FULL - Individual accountability encourages capitalism and the concentration of wealth
+			land_morale = 0.05 #HALF - Fanatical at times
+			tolerance_own = 1 #FULL - Fanatical at times
+			#ALSO: Gets access to Church Aspects (indirectly)
+			#PENALTIES
+			tolerance_heretic = -1 #HALF - Very strict faith
+			religious_unity = -0.05 #HALF - Individualistic emphasis results in religious debates
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			merchants = 1 #Individual accountability encourages capitalism and the concentration of wealth
+			land_morale = 0.05 #Fanatical at times
+			tolerance_heretic = -1 #Very strict faith
+			religious_unity = -0.05 #HALF - Individualistic emphasis results in religious debates
+			#global_missionary_strength = -0.01
+		}
+		on_convert = {
+			set_country_flag = voluntary_conversion
+			if = {
+				limit = { NOT = { is_religion_enabled = reformed } }
+				custom_tooltip = convert_dangerous_religion
+				subtract_stability_1 = yes
+			}
+			if = {
+				limit = { check_variable = { which = reformed_population value = 75 } }
+				custom_tooltip = convert_population_75
+				add_stability_1 = yes
+			}
+			else_if = {
+				limit = { check_variable = { which = reformed_population value = 50 } }
+				custom_tooltip = convert_population_50
+			}
+			else_if = {
+				limit = { check_variable = { which = reformed_population value = 25 } }
+				custom_tooltip = convert_population_25
+				subtract_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_population_0
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = { patriarch_authority = 0.75 }
+				custom_tooltip = convert_church_strong
+				subtract_stability_2 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.50 }
+				custom_tooltip = convert_piety_moderate
+				subtract_stability_1 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.25 }
+				custom_tooltip = convert_church_weak
+			}
+			else = {
+				custom_tooltip = convert_church_insignificant
+			}
+			if = {
+				limit = { ADM = 5 }
+				if = {
+					limit = {
+						capital_scope = { religion = reformed }
+					}
+					custom_tooltip = convert_ruler_strong
+					add_stability_3 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+			}
+			else_if = {
+				limit = { ADM = 3 }
+				if = {
+					limit = {
+						capital_scope = { religion = reformed }
+					}
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						capital_scope = { religion = reformed }
+					}
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_incompetent
+				}
+			}
+			if = {
+				limit = { advisor = theologian }
+				custom_tooltip = convert_theologian
+				add_stability_1 = yes
+			}
+			if = {
+				limit = {
+					has_country_flag = was_reformed
+				}
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_previous_recent
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_previous_old
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_recent
+					add_stability_1 = yes
+				}
+			}
+			change_religion = reformed
+		}
+		uses_piety = yes				# Uses piety mechanics
+		has_patriarchs = yes		# Uses patriarch authority
+		#uses_church_power = yes				#Doesn't work with other systems
+#		aspects = {
+#			married_pastors_aspect
+#			celibate_priests_aspect
+#			legal_divorce_aspect
+#			limited_divorce_aspect
+#			civil_unions_aspect
+#			appointed_bishops_aspect
+#			elected_ministers_aspect
+#			lay_priesthood_aspect
+#			infant_baptism_aspect
+#			adult_baptism_aspect
+#			free_will_aspect
+#			predestination_aspect
+#			biblical_inerrancy_aspect
+#			individual_interpretation_aspect
+#			guided_interpretation_aspect
+#			enforced_membership_aspect
+#			free_membership_aspect
+#			}
+		#fervor = yes
+		date = 1536.5.1 #"Institutes of the Christian Religion" is published, defining Calvinism
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	coptic = { #Miaphysite
+		#Includes Coptic Orthodox, Oriental Orthodox, Armenian Apostolic, Syriac Orthodox
+		flags_with_emblem_percentage = 20
+		flag_emblem_index_range = { 1 4 }
+		color = { 0.7 0.7 0.4 } #Dark Khaki
+		icon = 5
+		country = { #VALUE: 1.5 IDEAS
+			global_missionary_strength = 0.01 #A strong monastic tradition
+			#BONUSES
+			legitimacy = 0.50 #HALF - Church subordinate to the state
+			republican_tradition = 0.25
+			horde_unity = 0.25
+			devotion = 1
+			improve_relation_modifier = 0.25 #HALF - Willing to cooperate with heretics and heathens
+			tolerance_heretic = 1 #HALF
+			#ALSO: Gets access to Catholicates
+			#PENALTIES
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			legitimacy = 0.25 #Church subordinate to the state
+			republican_tradition = 0.1
+			horde_unity = 0.1
+			devotion = 0.5
+			improve_relation_modifier = 0.15 #HALF - Willing to cooperate with heretics and heathens
+			tolerance_heretic = 1
+			tolerance_own = -1
+		}
+		allowed_conversion = {
+			orthodox
+		}
+		on_convert = {
+			set_country_flag = voluntary_conversion
+			if = {
+				limit = { NOT = { is_religion_enabled = coptic } }
+				custom_tooltip = convert_dangerous_religion
+				subtract_stability_1 = yes
+			}
+			if = {
+				limit = { check_variable = { which = coptic_population value = 75 } }
+				custom_tooltip = convert_population_75
+				add_stability_1 = yes
+			}
+			else_if = {
+				limit = { check_variable = { which = coptic_population value = 50 } }
+				custom_tooltip = convert_population_50
+			}
+			else_if = {
+				limit = { check_variable = { which = coptic_population value = 25 } }
+				custom_tooltip = convert_population_25
+				subtract_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_population_0
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = { patriarch_authority = 0.75 }
+				custom_tooltip = convert_church_strong
+				subtract_stability_2 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.50 }
+				custom_tooltip = convert_piety_moderate
+				subtract_stability_1 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.25 }
+				custom_tooltip = convert_church_weak
+			}
+			else = {
+				custom_tooltip = convert_church_insignificant
+			}
+			if = {
+				limit = { ADM = 5 }
+				if = {
+					limit = {
+						capital_scope = { religion = coptic }
+					}
+					custom_tooltip = convert_ruler_strong
+					add_stability_3 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+			}
+			else_if = {
+				limit = { ADM = 3 }
+				if = {
+					limit = {
+						capital_scope = { religion = coptic }
+					}
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						capital_scope = { religion = coptic }
+					}
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_incompetent
+				}
+			}
+			if = {
+				limit = { advisor = theologian }
+				custom_tooltip = convert_theologian
+				add_stability_1 = yes
+			}
+			if = {
+				limit = {
+					has_country_flag = was_coptic
+				}
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_previous_recent
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_previous_old
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_recent
+					add_stability_1 = yes
+				}
+			}
+			change_religion = coptic
+		}
+		uses_piety = yes				# Uses piety mechanics
+		has_patriarchs = yes		# Uses patriarch authority
+		#fervor = yes
+		misguided_heretic = yes		#other christians hate them less
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+		
+		holy_sites = {
+			358 # Al Iskandriya
+			3693 # Aksoum
+			332 # Antakya
+			2649 # Qasr Ibrim
+			419 # Yerevan
+		}
+		
+		blessings = {
+			legitimize_government
+			encourage_warriors_of_the_faith
+			send_monks_to_establish_monasteries
+			promote_territorial_rights
+			will_of_the_martyrs
+		}
+	}
+	
+	chaldean = { #Chaldeans
+		#Includes the Apostolic Assyrian Church of the East, Nestorians, Jacobites and St. Thomas Christians
+		color = { 1.0 0.5 0.0 } #Bright Orange
+		icon = 29
+		country = { #VALUE: 1.5 IDEAS
+			global_missionary_strength = 0.01 #A very strong missionary tradition - all the way to China
+			#BONUSES
+			improve_relation_modifier = 0.25 #HALF - able to work with heathens
+			tolerance_heathen = 1 #HALF - Showed the ability to tolerate other faiths while persecuted (but also burned temples when tolerated...)
+			legitimacy = 0.50 #HALF - Supported rulers, often directly with doctors, wives, etc.
+			republican_tradition = 0.25
+			horde_unity = 0.25
+			devotion = 1
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			improve_relation_modifier = 0.15 #HALF - able to work with heathens
+			tolerance_heathen = 1 #HALF - Showed the ability to tolerate other faiths while persecuted (but also burned temples when tolerated...)
+			legitimacy = 0.25 #Supported rulers, often directly with doctors, wives, etc.
+			republican_tradition = 0.1
+			horde_unity = 0.1
+			devotion = 0.5
+			tolerance_own = -1
+		}
+		uses_piety = yes
+		has_patriarchs = yes
+		#fervor = yes
+		misguided_heretic = yes
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	#nestorian = { #Becomes Chaldean
+	#	color = { 1.0 0.5 0.0 } #Bright Orange
+	#	icon = 29
+	#	date = 2000.1.1
+	#	heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	#}
+	
+	gnostic = {
+		#Dualistic Christianity, includes Bogomils/Patarins (Bulgaria, Bosnia and Croatia), Cathars/Albigensians (Provence), Paulicians (Anatolia), Waldensians (Italy), Picards, Tisserands (Low Countries and Rhineland)
+		color = { 0.9 0.7 0.1 } #Goldenrod
+		icon = 6
+		allowed_conversion = {
+			reformed
+			protestant
+			catholic
+			hussite
+			orthodox
+		}
+		province = { }
+		country = { #VALUE: 2.5 -1.0 = 1.5 IDEAS
+			global_missionary_strength = 0.01 #Organized hierarchy and liturgy, popular among nobility and literate classes
+			#Believes in a dualistic good spiritual divine nature vs evil material nature
+			#Avoided eating food that came from sexual union, lived chastely
+			#Rejected sacraments including baptism, marriage and communion
+			#Did not drink alcohol
+			#BONUSES
+			tolerance_heretic = 1 #HALF - strict standards only for 'perfects', allowing regular believers to fall short
+			global_unrest = -1 #HALF - pacifism and asceticism among church leaders and 'perfects'
+			diplomatic_reputation = 1 #FULL - respected even by their enemies for being morally upright
+			adm_tech_cost_modifier = -0.05 #HALF - emphasized spiritualism over materialism, literacy among the nobility
+			#PENALTIES
+			army_tradition = -0.5 #FULL - perfects were expected to be pacifist ascetics
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			tolerance_heretic = 1 #HALF - strict standards only for 'perfects', allowing regular believers to fall short
+			global_unrest = -0.5 #HALF - pacifism and asceticism among church leaders and 'perfects'
+			diplomatic_reputation = 0.5 #FULL - respected even by their enemies for being morally upright
+			adm_tech_cost_modifier = -0.05 #HALF - emphasized spiritualism over materialism, literacy among the nobility
+			#PENALTIES
+			army_tradition = -0.5 #FULL - perfects were expected to be pacifist ascetics
+			tolerance_own = -1
+			#global_missionary_strength = -0.01
+		}
+		on_convert = {
+			set_country_flag = voluntary_conversion
+			if = {
+				limit = { NOT = { is_religion_enabled = gnostic } }
+				custom_tooltip = convert_dangerous_religion
+				subtract_stability_1 = yes
+			}
+			if = {
+				limit = { check_variable = { which = gnostic_population value = 75 } }
+				custom_tooltip = convert_population_75
+				add_stability_1 = yes
+			}
+			else_if = {
+				limit = { check_variable = { which = gnostic_population value = 50 } }
+				custom_tooltip = convert_population_50
+			}
+			else_if = {
+				limit = { check_variable = { which = gnostic_population value = 25 } }
+				custom_tooltip = convert_population_25
+				subtract_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_population_0
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = { patriarch_authority = 0.75 }
+				custom_tooltip = convert_church_strong
+				subtract_stability_2 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.50 }
+				custom_tooltip = convert_piety_moderate
+				subtract_stability_1 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.25 }
+				custom_tooltip = convert_church_weak
+			}
+			else = {
+				custom_tooltip = convert_church_insignificant
+			}
+			if = {
+				limit = { ADM = 5 }
+				if = {
+					limit = {
+						capital_scope = { religion = gnostic }
+					}
+					custom_tooltip = convert_ruler_strong
+					add_stability_3 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+			}
+			else_if = {
+				limit = { ADM = 3 }
+				if = {
+					limit = {
+						capital_scope = { religion = gnostic }
+					}
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						capital_scope = { religion = gnostic }
+					}
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_incompetent
+				}
+			}
+			if = {
+				limit = { advisor = theologian }
+				custom_tooltip = convert_theologian
+				add_stability_1 = yes
+			}
+			if = {
+				limit = {
+					has_country_flag = was_gnostic
+				}
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_previous_recent
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_previous_old
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_recent
+					add_stability_1 = yes
+				}
+			}
+			change_religion = gnostic
+		}
+#		date = 2000.1.1
+		uses_piety = yes				# Uses piety mechanics
+		has_patriarchs = yes		# Uses patriarch authority
+		#uses_church_power = yes				#Doesn't work with other systems
+#		aspects = {
+#			married_pastors_aspect
+#			celibate_priests_aspect
+#			legal_divorce_aspect
+#			limited_divorce_aspect
+#			civil_unions_aspect
+#			appointed_bishops_aspect
+#			elected_ministers_aspect
+#			lay_priesthood_aspect
+#			infant_baptism_aspect
+#			adult_baptism_aspect
+#			free_will_aspect
+#			predestination_aspect
+#			biblical_inerrancy_aspect
+#			individual_interpretation_aspect
+#			guided_interpretation_aspect
+#			enforced_membership_aspect
+#			free_membership_aspect
+#			}
+		#fervor = yes
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	#arianism = { #Becomes Gnostic
+	#	color = { 0.9 0.7 0.1 } #Goldenrod
+	#	icon = 6
+	#	province = { }
+	#	country = {
+	#		global_missionary_strength = 0.01 #Organized hierarchy and liturgy, popular among nobility and literate classes
+	#	}
+	#	date = 2000.1.1
+	#	heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	#}
+	
+	hussite = { #Calixtine
+		#Includes Lollards, Hussites (Utraquists, Taborites, Orebites), Moravian Brethren
+		color = { 0.5 0.8 1.0 } #Sky blue
+		icon = 7
+		allowed_conversion = {
+			reformed
+			protestant
+			catholic
+			gnostic
+		}
+		province = {
+		}
+		country = { #VALUE: 2.5 -1.0 = 1.5 IDEAS
+#			global_missionary_strength = 0.00 #Anticlerical; Some missionaries, but failed to spread far
+			#BONUSES
+			adm_tech_cost_modifier = -0.05 #FULL - Radical ideas about government and democracy
+			legitimacy = 0.50 #HALF - Viewed ruler as in control of the church
+			republican_tradition = 0.25
+			horde_unity = 0.25
+			devotion = 1
+			land_morale = 0.05 #FULL - Could be fanatical at times
+			#PENALTIES
+			global_tax_modifier = -0.05 #FULL - Wanted lower taxes, redivision of wealth
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			adm_tech_cost_modifier = -0.025 #Radical ideas about government and democracy
+			legitimacy = 0.25 #Viewed ruler as in control of the church
+			republican_tradition = 0.1
+			horde_unity = 0.1
+			devotion = 0.5
+			land_morale = 0.025 #Could be fanatical at times
+			global_tax_modifier = -0.10 #Wanted lower taxes, redivision of wealth
+			tolerance_own = -1
+			global_missionary_strength = -0.01
+		}
+		on_convert = {
+			set_country_flag = voluntary_conversion
+			if = {
+				limit = { NOT = { is_religion_enabled = hussite } }
+				custom_tooltip = convert_dangerous_religion
+				subtract_stability_1 = yes
+			}
+			if = {
+				limit = { check_variable = { which = hussite_population value = 75 } }
+				custom_tooltip = convert_population_75
+				add_stability_1 = yes
+			}
+			else_if = {
+				limit = { check_variable = { which = hussite_population value = 50 } }
+				custom_tooltip = convert_population_50
+			}
+			else_if = {
+				limit = { check_variable = { which = hussite_population value = 25 } }
+				custom_tooltip = convert_population_25
+				subtract_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_population_0
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = { patriarch_authority = 0.75 }
+				custom_tooltip = convert_church_strong
+				subtract_stability_2 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.50 }
+				custom_tooltip = convert_piety_moderate
+				subtract_stability_1 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.25 }
+				custom_tooltip = convert_church_weak
+			}
+			else = {
+				custom_tooltip = convert_church_insignificant
+			}
+			if = {
+				limit = { ADM = 5 }
+				if = {
+					limit = {
+						capital_scope = { religion = hussite }
+					}
+					custom_tooltip = convert_ruler_strong
+					add_stability_3 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+			}
+			else_if = {
+				limit = { ADM = 3 }
+				if = {
+					limit = {
+						capital_scope = { religion = hussite }
+					}
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						capital_scope = { religion = hussite }
+					}
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_incompetent
+				}
+			}
+			if = {
+				limit = { advisor = theologian }
+				custom_tooltip = convert_theologian
+				add_stability_1 = yes
+			}
+			if = {
+				limit = {
+					has_country_flag = was_hussite
+				}
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_previous_recent
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_previous_old
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_recent
+					add_stability_1 = yes
+				}
+			}
+			change_religion = hussite
+		}
+		date = 1420.7.1 #The Four Articles of Prague
+		uses_piety = yes				# Uses piety mechanics
+		has_patriarchs = yes		# Uses patriarch authority
+		#uses_church_power = yes				#Doesn't work with other systems
+#		aspects = {
+#			married_pastors_aspect
+#			celibate_priests_aspect
+#			legal_divorce_aspect
+#			limited_divorce_aspect
+#			civil_unions_aspect
+#			appointed_bishops_aspect
+#			elected_ministers_aspect
+#			lay_priesthood_aspect
+#			infant_baptism_aspect
+#			adult_baptism_aspect
+#			free_will_aspect
+#			predestination_aspect
+#			biblical_inerrancy_aspect
+#			individual_interpretation_aspect
+#			guided_interpretation_aspect
+#			enforced_membership_aspect
+#			free_membership_aspect
+#			}
+		#fervor = yes
+#		personal_deity = yes
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	#Compatibility religions (will be replaced at game start, included only for compatibility with CK2 saves)
+	
+	cathar = { #Becomes Gnostic
+		color = { 0.9 0.7 0.1 } #Goldenrod
+		icon = 6
+		date = 2000.1.1 #Sir Not Appearing In This Mod
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	bogomilist = { #Becomes Gnostic
+		color = { 0.9 0.7 0.1 } #Goldenrod
+		icon = 6
+		date = 2000.1.1 #Sir Not Appearing In This Mod
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	fraticelli = { #Becomes Catholic
+		color = { 0.8 0.8 0.0 } #yellow
+		icon = 1
+		date = 2000.1.1 #Sir Not Appearing In This Mod
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	waldensian = { #Becomes Catholic
+		color = { 0.8 0.8 0.0 } #yellow
+		icon = 1
+		date = 2000.1.1 #Sir Not Appearing In This Mod
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	lollard = { #Becomes Calixtine
+		color = { 0.5 0.8 1.0 } #Sky blue
+		icon = 7
+		date = 2000.1.1 #Sir Not Appearing In This Mod
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	paulician = { #Becomes Orthodox
+		color = { 0.7 0.5 0.0 } #Brown
+		icon = 3
+		date = 2000.1.1 #Sir Not Appearing In This Mod
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	monothelite = { #Becomes Orthodox
+		color = { 0.7 0.5 0.0 } #Brown
+		icon = 3
+		date = 2000.1.1 #Sir Not Appearing In This Mod
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	iconoclast = { #Becomes Orthodox
+		color = { 0.7 0.5 0.0 } #Brown
+		icon = 3
+		date = 2000.1.1 #Sir Not Appearing In This Mod
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	messalian = { #Becomes Chaldean
+		color = { 1.0 0.5 0.0 } #Bright Orange
+		icon = 29
+		date = 2000.1.1 #Sir Not Appearing In This Mod
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	monophysite = { #Becomes Miaphysite (Coptic)
+		color = { 0.7 0.7 0.4 } #Dark Khaki
+		icon = 5
+		date = 2000.1.1 #Sir Not Appearing In This Mod
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	#nestorian = { #Becomes Chaldean
+	
+}
+
+muslim = { #Greens
+	defender_of_faith = yes
+	crusade_name = JIHAD
+	center_of_religion = 385 # Mecca
+	flags_with_emblem_percentage = 33
+	flag_emblem_index_range = { 97 106 } #Including Star of David / Seal of Suleyman
+	
+	ai_will_propagate_through_trade = no
+	
+
+	
+	sunni = {
+		#Includes Sunni
+		color = { 0.0 0.6 0 } #Green
+		icon = 8
+		allowed_conversion = {
+			wahhabi
+		}
+		country = { #VALUE: 2.5 -1.0 = 1.5 IDEAS
+			global_missionary_strength = 0.01 #Believers pay a tithe to support missionaries
+			#BONUSES
+			heir_chance = 0.5 #HALF - Polygamy meant an endless supply of potential heirs, but also succession crises
+			tolerance_own = 1 #FULL - Rebalanced
+			tolerance_heretic = 1 #HALF - Relatively tolerant of dissent as long as it remained muslim and accepted state authority
+			global_foreign_trade_power = 0.10 #HALF
+			#PENALTIES
+			legitimacy = -0.25 #FULL - Decadent rulers faced religious uprisings to supplant them
+			republican_tradition = -0.5
+			horde_unity = -0.1
+			devotion = -0.1
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			heir_chance = 0.25 #Polygamy meant an endless supply of potential heirs, but also succession crises
+			tolerance_heretic = 1 #Relatively tolerant of dissent as long as it remained muslim and accepted state authority
+			global_foreign_trade_power = 0.05
+			legitimacy = -0.25 #Decadent rulers faced religious uprisings to supplant them
+			republican_tradition = -0.5
+			devotion = -0.1
+			horde_unity = -0.1
+		}
+		on_convert = {
+			set_country_flag = voluntary_conversion
+			if = {
+				limit = { NOT = { is_religion_enabled = sunni } }
+				custom_tooltip = convert_dangerous_religion
+				subtract_stability_1 = yes
+			}
+			if = {
+				limit = { check_variable = { which = sunni_population value = 75 } }
+				custom_tooltip = convert_population_75
+				add_stability_1 = yes
+			}
+			else_if = {
+				limit = { check_variable = { which = sunni_population value = 50 } }
+				custom_tooltip = convert_population_50
+			}
+			else_if = {
+				limit = { check_variable = { which = sunni_population value = 25 } }
+				custom_tooltip = convert_population_25
+				subtract_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_population_0
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = { patriarch_authority = 0.75 }
+				custom_tooltip = convert_church_strong
+				subtract_stability_2 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.50 }
+				custom_tooltip = convert_piety_moderate
+				subtract_stability_1 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.25 }
+				custom_tooltip = convert_church_weak
+			}
+			else = {
+				custom_tooltip = convert_church_insignificant
+			}
+			if = {
+				limit = { ADM = 5 }
+				if = {
+					limit = {
+						capital_scope = { religion = sunni }
+					}
+					custom_tooltip = convert_ruler_strong
+					add_stability_3 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+			}
+			else_if = {
+				limit = { ADM = 3 }
+				if = {
+					limit = {
+						capital_scope = { religion = sunni }
+					}
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						capital_scope = { religion = sunni }
+					}
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_incompetent
+				}
+			}
+			if = {
+				limit = { advisor = theologian }
+				custom_tooltip = convert_theologian
+				add_stability_1 = yes
+			}
+			if = {
+				limit = {
+					has_country_flag = was_sunni
+				}
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_previous_recent
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_previous_old
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_recent
+					add_stability_1 = yes
+				}
+			}
+			change_religion = sunni
+		}
+		uses_piety = yes				# Uses piety mechanics
+		has_patriarchs = yes		# Uses patriarch authority
+		#fervor = yes
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	shiite = {
+		#Includes Shi'ites, Twelvers, Ismailis, Alevi, Alawites
+		color = { 0.7 1.0 0.2 } #Green-Yellow
+		icon = 9
+		province = {
+		}
+		country = {
+			global_missionary_strength = 0.01
+			#global_heretic_missionary_strength = 0.01
+			#BONUSES
+			heir_chance = 0.5 #Polygamy meant an endless supply of potential heirs, but also succession crises
+			land_morale = 0.10 #Jihad is enshrined as the sixth pillar of Islam
+			#PENALTIES
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			heir_chance = 0.5 #Polygamy meant an endless supply of potential heirs, but also succession crises
+			land_morale = 0.10 #Jihad is enshrined as the sixth pillar of Islam
+			tolerance_own = -1
+		}
+		uses_piety = yes				# Uses piety mechanics
+		has_patriarchs = yes		# Uses patriarch authority
+		#fervor = yes
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	druze = { #Druze
+		color = { 0.0 0.6 0.6 } #Dark Cyan
+		icon = 36
+		province = {
+		}
+		country = {
+			global_missionary_strength = -0.01 #A closed religion after 1050 AD; did not seek converts
+			#BONUSES
+			tolerance_heretic = 2 #Considered the Abrahamic religions to be similar but misguided
+			tolerance_heathen = 2 #Believed in the holiness of many religious figures from diverse religions
+			land_morale = 0.075 #patriotic sacrifice
+			#PENALTIES
+			prestige = -1 #No rituals, no festivals, no holy days
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_missionary_strength = -0.01
+			tolerance_heretic = 1.5 #Considered the Abrahamic religions to be similar but misguided
+			tolerance_heathen = 1.5 #Believed in the holiness of many religious figures from diverse religions
+			land_morale = 0.05 #patriotic sacrifice
+			prestige = -1 #No rituals, no festivals, no holy days
+			tolerance_own = -1
+		}
+		uses_piety = yes				# Uses piety mechanics
+		has_patriarchs = yes		# Uses patriarch authority
+		#fervor = yes
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	ibadi = { #An ancient Islamic division concentrated in Oman and Algeria
+		color = { 0.0 0.2 0.0 } #Army Green
+		icon = 10
+		province = {
+		}
+		country = { #VALUE: 2.5 -1.0 = 1.5 IDEAS
+#			global_missionary_strength = 0.00
+			#BONUSES
+			heir_chance = 0.5 #HALF - Polygamy meant an endless supply of potential heirs, but also succession crises
+			tolerance_heathen = 1 #HALF - Allow for the 'ungrateful monotheists'
+			tolerance_heretic = 1 #HALF - Did not persecute other Muslims (much)
+			fort_maintenance_modifier = -0.1 #HALF - A closed community, conservative
+			core_creation = -0.05 #enemy_core_creation = 0.25 #HALF - A closed community
+			#PENALTIES
+			diplomatic_upkeep = -1 #FULL - Believers are expected to shun unbelievers and sinners
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			heir_chance = 0.25 #Polygamy meant an endless supply of potential heirs, but also succession crises
+			tolerance_heathen = 1 #Allow for the 'ungrateful monotheists'
+			tolerance_heretic = 1 #Did not persecute other Muslims (much)
+			fort_maintenance_modifier = -0.1 #HALF - A closed community, conservative
+			diplomatic_upkeep = -1 #Believers are expected to shun unbelievers and sinners
+			tolerance_own = -1
+			global_missionary_strength = -0.01
+		}
+		uses_piety = yes				# Uses piety mechanics
+		has_patriarchs = yes		# Uses patriarch authority
+		#fervor = yes
+		misguided_heretic = yes		#other christians hate them less
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	wahhabi = {
+		color = { 0.0 1.0 0 } #Dark Green
+		icon = 11
+		allowed_conversion = {
+			sunni
+		}
+		country = { #VALUE: 
+			global_missionary_strength = 0.01 #A strong missionary tradition
+			#BONUS
+			global_heretic_missionary_strength = 0.01
+			tolerance_own = 1 #Often fanatical support for the faith
+			land_morale = 0.1 #Encouraged rulers to retake Arab lands from corrupt rulers
+			legitimacy = 0.25
+			republican_tradition = 0.1
+			horde_unity = 0.1
+			devotion = 0.5
+			heir_chance = 0.5 #Polygamy meant an endless supply of potential heirs, but also succession crises
+			#PENALTIES
+			tolerance_heathen = -1 #A fundamentalist push towards pure Islam untainted by other groups
+			tolerance_heretic = -1
+			adm_tech_cost_modifier = 0.10 #Socially conservative
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_heretic_missionary_strength = 0.01
+			land_morale = 0.05 #Encouraged rulers to retake Arab lands from corrupt rulers
+			legitimacy = 0.25
+			republican_tradition = 0.1
+			horde_unity = 0.1
+			devotion = 0.5
+			heir_chance = 0.25 #Polygamy meant an endless supply of potential heirs, but also succession crises
+			tolerance_heathen = -1 #A fundamentalist push towards pure Islam untainted by other groups
+			tolerance_heretic = -1
+			adm_tech_cost_modifier = 0.05 #Socially conservative
+		}
+		on_convert = {
+			set_country_flag = voluntary_conversion
+			if = {
+				limit = { NOT = { is_religion_enabled = wahhabi } }
+				custom_tooltip = convert_dangerous_religion
+				subtract_stability_1 = yes
+			}
+			if = {
+				limit = { check_variable = { which = wahhabi_population value = 75 } }
+				custom_tooltip = convert_population_75
+				add_stability_1 = yes
+			}
+			else_if = {
+				limit = { check_variable = { which = wahhabi_population value = 50 } }
+				custom_tooltip = convert_population_50
+			}
+			else_if = {
+				limit = { check_variable = { which = wahhabi_population value = 25 } }
+				custom_tooltip = convert_population_25
+				subtract_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_population_0
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = { patriarch_authority = 0.75 }
+				custom_tooltip = convert_church_strong
+				subtract_stability_2 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.50 }
+				custom_tooltip = convert_piety_moderate
+				subtract_stability_1 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.25 }
+				custom_tooltip = convert_church_weak
+			}
+			else = {
+				custom_tooltip = convert_church_insignificant
+			}
+			if = {
+				limit = { ADM = 5 }
+				if = {
+					limit = {
+						capital_scope = { religion = wahhabi }
+					}
+					custom_tooltip = convert_ruler_strong
+					add_stability_3 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+			}
+			else_if = {
+				limit = { ADM = 3 }
+				if = {
+					limit = {
+						capital_scope = { religion = wahhabi }
+					}
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						capital_scope = { religion = wahhabi }
+					}
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_incompetent
+				}
+			}
+			if = {
+				limit = { advisor = theologian }
+				custom_tooltip = convert_theologian
+				add_stability_1 = yes
+			}
+			if = {
+				limit = {
+					has_country_flag = was_wahhabi
+				}
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_previous_recent
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_previous_old
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_recent
+					add_stability_1 = yes
+				}
+			}
+			change_religion = wahhabi
+		}
+		date = 1744.1.1
+		uses_piety = yes				# Uses piety mechanics
+		has_patriarchs = yes		# Uses patriarch authority
+		#fervor = yes
+		misguided_heretic = yes		#Not as hated
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	#Compatibility religions (will be replaced at game start, included only for compatibility with CK2 saves)
+	
+	zikri = { #Becomes Sunni
+		color = { 0.0 0.6 0 } #Green
+		icon = 8
+		date = 2000.1.1 #Sir Not Appearing In This Mod
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	yazidi = { #Becomes Sunni
+		color = { 0.0 0.6 0 } #Green
+		icon = 8
+		date = 2000.1.1 #Sir Not Appearing In This Mod
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	kharijite = { #Becomes Ibadi
+		color = { 0.0 0.2 0.0 } #Army Green
+		icon = 10
+		date = 2000.1.1 #Sir Not Appearing In This Mod
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	hurufi = { #Becomes Shiite
+		color = { 0.7 1.0 0.2 } #Green-Yellow
+		icon = 9
+		date = 2000.1.1 #Sir Not Appearing In This Mod
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+}
+
+taoic = { #Reds
+	flags_with_emblem_percentage = 33
+	flag_emblem_index_range = { 58 80 }
+	
+	buddhism = { #Theravada Buddhism
+		color = { 0.9 0.6 0.5 } #Dark Salmon
+		icon = 12
+		allowed_conversion = { #Very unlikely but not impossible
+			vajrayana
+			mahayana
+		}
+		country = {
+			global_missionary_strength = 0.01 #A strong missionary tradition
+			#BONUSES
+			prestige = 0.5 #Built many monuments and statues
+			tolerance_heretic = 1 #Buddhism was generally tolerant of other Buddhists
+			tolerance_heathen = 2 #A generally tolerant faith; allowed Catholics and Hindus to live without attempting to convert them
+			mercenary_cost = -0.20 #Accepted heathen mercenaries
+			#PENALTIES
+			years_of_nationalism = 5 #Poor treatment of conquered people, including destroying local Theravada temples and killing monks
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			prestige = 0.25 #Built many monuments and statues
+			tolerance_heretic = 1 #Buddhism was generally tolerant of other Buddhists
+			tolerance_heathen = 2 #A generally tolerant faith; allowed Catholics and Hindus to live without attempting to convert them
+			mercenary_cost = -0.20 #Accepted heathen mercenaries
+			years_of_nationalism = 5 #Poor treatment of conquered people, including destroying local Theravada temples and killing monks
+			tolerance_own = -1
+		}
+		on_convert = {
+			set_country_flag = voluntary_conversion
+			if = {
+				limit = { NOT = { is_religion_enabled = buddhism } }
+				custom_tooltip = convert_dangerous_religion
+				subtract_stability_1 = yes
+			}
+			if = {
+				limit = { check_variable = { which = buddhism_population value = 75 } }
+				custom_tooltip = convert_population_75
+				add_stability_1 = yes
+			}
+			else_if = {
+				limit = { check_variable = { which = buddhism_population value = 50 } }
+				custom_tooltip = convert_population_50
+			}
+			else_if = {
+				limit = { check_variable = { which = buddhism_population value = 25 } }
+				custom_tooltip = convert_population_25
+				subtract_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_population_0
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = { patriarch_authority = 0.75 }
+				custom_tooltip = convert_church_strong
+				subtract_stability_2 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.50 }
+				custom_tooltip = convert_piety_moderate
+				subtract_stability_1 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.25 }
+				custom_tooltip = convert_church_weak
+			}
+			else = {
+				custom_tooltip = convert_church_insignificant
+			}
+			if = {
+				limit = { ADM = 5 }
+				if = {
+					limit = {
+						capital_scope = { religion = buddhism }
+					}
+					custom_tooltip = convert_ruler_strong
+					add_stability_3 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+			}
+			else_if = {
+				limit = { ADM = 3 }
+				if = {
+					limit = {
+						capital_scope = { religion = buddhism }
+					}
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						capital_scope = { religion = buddhism }
+					}
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_incompetent
+				}
+			}
+			if = {
+				limit = { advisor = theologian }
+				custom_tooltip = convert_theologian
+				add_stability_1 = yes
+			}
+			if = {
+				limit = {
+					has_country_flag = was_buddhism
+				}
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_previous_recent
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_previous_old
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_recent
+					add_stability_1 = yes
+				}
+			}
+			change_religion = buddhism
+		}
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		#fervor = yes
+		misguided_heretic = yes		#Not as hated
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	confucianism = {
+		color = { 0.9 0.4 0.8 } #Orchid
+		icon = 13
+		province = {
+		}
+		country = { #VALUE: 3.0 -1.5 = 1.5 IDEAS
+			global_missionary_strength = -0.01 #Spread slowly, not via missionaries
+			#BONUSES
+			tolerance_heretic = 1 #HALF - Neo-Confucianism fused together Confucian, Taoist and Buddhist elements; All Taoic religions generally tolerant of each other (increased by triggered modifiers)
+			tolerance_heathen = 1 #HALF - Tolerant of other religions, to a point (but covered in Confucian tolerance system)
+			global_unrest = -2 #FULL - Meritocratic government and bureaucracy
+			ae_impact = -0.05 #HALF - emphasized harmony and community
+			improve_relation_modifier = 0.2 #HALF - emphasized harmony and community
+			prestige = 0.5 #HALF - ceremonial, emphasized perfection
+			#ALSO gets access to Confucian tolerance system
+			#PENALTIES
+			legitimacy = -0.25 #FULL - The Mandate of Heaven meant that when famine or floods happened, people blamed their rulers
+			republican_tradition = -0.5
+			horde_unity = -0.5
+			devotion = -0.25
+			tolerance_own = -0.5 #HALF - Not exactly a religion; does not inspire holy figures or crusaders
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_missionary_strength = -0.02 #Spread slowly, not via missionaries
+			#BONUSES
+			tolerance_heretic = 1 #HALF - Neo-Confucianism fused together Confucian, Taoist and Buddhist elements; All Taoic religions generally tolerant of each other (increased by triggered modifiers)
+			tolerance_heathen = 1 #HALF - Tolerant of other religions, to a point (but covered in Confucian tolerance system)
+			global_unrest = -1 #FULL - Meritocratic government and bureaucracy
+			ae_impact = -0.025 #HALF - emphasized harmony and community
+			improve_relation_modifier = 0.1 #HALF - emphasized harmony and community
+			prestige = 0.25 #HALF - ceremonial, emphasized perfection
+			#ALSO gets access to Confucian tolerance system
+			#PENALTIES
+			legitimacy = -0.25 #FULL - The Mandate of Heaven meant that when famine or floods happened, people blamed their rulers
+			republican_tradition = -0.5
+			horde_unity = -0.5
+			devotion = -0.25
+			tolerance_own = -1 #HALF - Not exactly a religion; does not inspire holy figures or crusaders
+		}
+#		personal_deity = yes
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		#fervor = yes
+		misguided_heretic = yes		#Not as hated
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	mahayana = { #Mahayana Buddhism
+		color = { 0.6 0.0 0.0 } #Dark red
+		icon = 14
+		allowed_conversion = { #Very unlikely but not impossible
+			buddhism
+			vajrayana
+		}
+		country = {
+#			global_missionary_strength = 0.00
+			#BONUSES
+			tolerance_heretic = 1 #All Taoic religions generally tolerant of each other
+			tolerance_heathen = 1 #Able to incorporate Shinto gods into their faith; somewhat tolerant of Christians
+			prestige = 0.5 #Ceremonial
+			idea_cost = -0.10 #Willing to adopt new ideas
+			free_leader_pool = 1 #Religious endorsement of warrior caste
+			#PENALTIES
+			global_autonomy = 0.05 #The temples resisted attempts to centralize the state until they were crushed
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			tolerance_heretic = 1 #All Taoic religions generally tolerant of each other
+			tolerance_heathen = 1 #Able to incorporate Shinto gods into their faith; somewhat tolerant of Christians
+			prestige = 0.25 #Ceremonial
+			idea_cost = -0.05 #Willing to adopt new ideas
+			free_leader_pool = 1 #Religious endorsement of warrior caste
+			global_autonomy = 0.025 #The temples resisted attempts to centralize the state until they were crushed
+			tolerance_own = -1
+			global_missionary_strength = -0.01
+		}
+		on_convert = {
+			set_country_flag = voluntary_conversion
+			if = {
+				limit = { NOT = { is_religion_enabled = mahayana } }
+				custom_tooltip = convert_dangerous_religion
+				subtract_stability_1 = yes
+			}
+			if = {
+				limit = { check_variable = { which = mahayana_population value = 75 } }
+				custom_tooltip = convert_population_75
+				add_stability_1 = yes
+			}
+			else_if = {
+				limit = { check_variable = { which = mahayana_population value = 50 } }
+				custom_tooltip = convert_population_50
+			}
+			else_if = {
+				limit = { check_variable = { which = mahayana_population value = 25 } }
+				custom_tooltip = convert_population_25
+				subtract_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_population_0
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = { patriarch_authority = 0.75 }
+				custom_tooltip = convert_church_strong
+				subtract_stability_2 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.50 }
+				custom_tooltip = convert_piety_moderate
+				subtract_stability_1 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.25 }
+				custom_tooltip = convert_church_weak
+			}
+			else = {
+				custom_tooltip = convert_church_insignificant
+			}
+			if = {
+				limit = { ADM = 5 }
+				if = {
+					limit = {
+						capital_scope = { religion = mahayana }
+					}
+					custom_tooltip = convert_ruler_strong
+					add_stability_3 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+			}
+			else_if = {
+				limit = { ADM = 3 }
+				if = {
+					limit = {
+						capital_scope = { religion = mahayana }
+					}
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						capital_scope = { religion = mahayana }
+					}
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_incompetent
+				}
+			}
+			if = {
+				limit = { advisor = theologian }
+				custom_tooltip = convert_theologian
+				add_stability_1 = yes
+			}
+			if = {
+				limit = {
+					has_country_flag = was_mahayana
+				}
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_previous_recent
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_previous_old
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_recent
+					add_stability_1 = yes
+				}
+			}
+			change_religion = mahayana
+		}
+#		personal_deity = yes
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		#fervor = yes
+		misguided_heretic = yes		#Not as hated
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	vajrayana = { #Tibetan Buddhism
+		color = { 1.0 0.3 0.0 } #Orange-red
+		icon = 15
+		allowed_conversion = { #Incredibly unlikely but possible
+			mahayana
+			buddhism
+		}
+		country = {
+#			global_missionary_strength = 0.00 #Skepticism, oral learning
+			#BONUSES
+			legitimacy = 0.50 #Doctrine of reincarnation reinforces traditonal power structures
+			republican_tradition = 0.25
+			horde_unity = 0.25
+			devotion = 1
+			tolerance_heretic = 1 #All Taoic religions generally tolerant of each other
+			global_unrest = -1 #Contemplative; high value on social order
+			#PENALTIES
+			global_manpower_modifier = -0.05 #Monasteries were a huge drain
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			legitimacy = 0.25 #Doctrine of reincarnation reinforces traditonal power structures
+			republican_tradition = 0.1
+			horde_unity = 0.1
+			devotion = 0.5
+			tolerance_heretic = 1 #All Taoic religions generally tolerant of each other
+			global_unrest = -1 #Contemplative; high value on social order
+			global_manpower_modifier = -0.05 #Monasteries were a huge drain
+			tolerance_own = -1
+			global_missionary_strength = -0.01
+		}
+		on_convert = {
+			set_country_flag = voluntary_conversion
+			if = {
+				limit = { NOT = { is_religion_enabled = vajrayana } }
+				custom_tooltip = convert_dangerous_religion
+				subtract_stability_1 = yes
+			}
+			if = {
+				limit = { check_variable = { which = vajrayana_population value = 75 } }
+				custom_tooltip = convert_population_75
+				add_stability_1 = yes
+			}
+			else_if = {
+				limit = { check_variable = { which = vajrayana_population value = 50 } }
+				custom_tooltip = convert_population_50
+			}
+			else_if = {
+				limit = { check_variable = { which = vajrayana_population value = 25 } }
+				custom_tooltip = convert_population_25
+				subtract_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_population_0
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = { patriarch_authority = 0.75 }
+				custom_tooltip = convert_church_strong
+				subtract_stability_2 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.50 }
+				custom_tooltip = convert_piety_moderate
+				subtract_stability_1 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.25 }
+				custom_tooltip = convert_church_weak
+			}
+			else = {
+				custom_tooltip = convert_church_insignificant
+			}
+			if = {
+				limit = { ADM = 5 }
+				if = {
+					limit = {
+						capital_scope = { religion = vajrayana }
+					}
+					custom_tooltip = convert_ruler_strong
+					add_stability_3 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+			}
+			else_if = {
+				limit = { ADM = 3 }
+				if = {
+					limit = {
+						capital_scope = { religion = vajrayana }
+					}
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						capital_scope = { religion = vajrayana }
+					}
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_incompetent
+				}
+			}
+			if = {
+				limit = { advisor = theologian }
+				custom_tooltip = convert_theologian
+				add_stability_1 = yes
+			}
+			if = {
+				limit = {
+					has_country_flag = was_vajrayana
+				}
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_previous_recent
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_previous_old
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_recent
+					add_stability_1 = yes
+				}
+			}
+			change_religion = vajrayana
+		}
+#		personal_deity = yes
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		#fervor = yes
+		misguided_heretic = yes		#Not as hated
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	crusade_name = HOLY_WAR
+	defender_of_faith = yes
+}
+
+dharmic = {
+	flags_with_emblem_percentage = 33
+	flag_emblem_index_range = { 61 82 } #Many shared with Eastern
+	
+	hinduism = {
+		color = { 0.6 0.8 1.0 } #Powder blue
+		icon = 16
+		allowed_conversion = { #Hindu rulers did rarely convert to Jain or Buddhism, although this became increasingly rare in later periods as Hinduism became more defined
+			jain
+		}
+		country = {
+#			global_missionary_strength = 0.00 #An organized religion, but belief in itself as an ethnic religion
+			#BONUSES
+			tolerance_heretic = 1 #Very tolerant of Jains, Adi Dharam and Sikhs; known to protect their temples from Muslims; incorporated some of their beliefs into Hinduism (but also tried to convert them and at times slaughtered the tribal Adi)
+			num_accepted_cultures = 2 # accepted_culture_threshold = -0.100
+			legitimacy = 0.50
+			advisor_cost = -0.15 #Caste system
+#			heir_chance = 0.5 #Some limited forms of polygamy or concubinage existed
+			#PENALTIES
+			advisor_pool = -1 #The caste system meant little social mobility outside your caste
+#			global_unrest = 1 #Untouchables, lower castes banned from many parts of society, not allowed to read the vedas
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			tolerance_heretic = 0.5 #Very tolerant of Jains, Adi Dharam and Sikhs; known to protect their temples from Muslims; incorporated some of their beliefs into Hinduism (but also tried to convert them and at times slaughtered the tribal Adi)
+			num_accepted_cultures = 1 # accepted_culture_threshold = -0.100
+			legitimacy = 0.25
+			advisor_cost = -0.1 #Caste system
+			advisor_pool = -1 #The caste system meant little social mobility outside your caste
+			global_missionary_strength = -0.01
+			tolerance_own = -1
+		}
+		on_convert = {
+			set_country_flag = voluntary_conversion
+			if = {
+				limit = { NOT = { is_religion_enabled = hinduism } }
+				custom_tooltip = convert_dangerous_religion
+				subtract_stability_1 = yes
+			}
+			if = {
+				limit = { check_variable = { which = hinduism_population value = 75 } }
+				custom_tooltip = convert_population_75
+				add_stability_1 = yes
+			}
+			else_if = {
+				limit = { check_variable = { which = hinduism_population value = 50 } }
+				custom_tooltip = convert_population_50
+			}
+			else_if = {
+				limit = { check_variable = { which = hinduism_population value = 25 } }
+				custom_tooltip = convert_population_25
+				subtract_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_population_0
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = { patriarch_authority = 0.75 }
+				custom_tooltip = convert_church_strong
+				subtract_stability_2 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.50 }
+				custom_tooltip = convert_piety_moderate
+				subtract_stability_1 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.25 }
+				custom_tooltip = convert_church_weak
+			}
+			else = {
+				custom_tooltip = convert_church_insignificant
+			}
+			if = {
+				limit = { ADM = 5 }
+				if = {
+					limit = {
+						capital_scope = { religion = hinduism }
+					}
+					custom_tooltip = convert_ruler_strong
+					add_stability_3 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+			}
+			else_if = {
+				limit = { ADM = 3 }
+				if = {
+					limit = {
+						capital_scope = { religion = hinduism }
+					}
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						capital_scope = { religion = hinduism }
+					}
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_incompetent
+				}
+			}
+			if = {
+				limit = { advisor = theologian }
+				custom_tooltip = convert_theologian
+				add_stability_1 = yes
+			}
+			if = {
+				limit = {
+					has_country_flag = was_hinduism
+				}
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_previous_recent
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_previous_old
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_recent
+					add_stability_1 = yes
+				}
+			}
+			change_religion = hinduism
+		}
+#		personal_deity = yes
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		#fervor = yes
+		misguided_heretic = yes		#Not as hated
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	sikhism = {
+		color = { 0.1 0.1 0.7 } #Light Sea Green
+		icon = 17
+		province = {
+		}
+		country = {
+#			global_missionary_strength = 0.00
+			#BONUSES
+			army_tradition = 0.5 #All adult males receive military training
+			land_morale = 0.075 #Martial training for all adult males, a militant outlook
+			tolerance_heretic = 1 #emphasized the equality of all people, sexes, castes, religion or color and provided a social safety net (population growth, peace)
+			tolerance_heathen = 1 #emphasized the equality of all people, sexes, castes, religion or color and provided a social safety net (population growth, peace)
+			#PENALTIES
+			legitimacy = -0.25 #Often infighting, military strength to win political power
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			army_tradition = 0.25 #All adult males receive military training
+			land_morale = 0.05 #Martial training for all adult males, a militant outlook
+			tolerance_heretic = 1 #emphasized the equality of all people, sexes, castes, religion or color and provided a social safety net (population growth, peace)
+			tolerance_heathen = 1 #emphasized the equality of all people, sexes, castes, religion or color and provided a social safety net (population growth, peace)
+			legitimacy = -0.25 #Often infighting, military strength to win political power
+			tolerance_own = -1
+			global_missionary_strength = -0.01
+		}
+		date = 1606.5.30 #Martyrdom of the fifth Guru
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		#fervor = yes
+		misguided_heretic = yes		#Not as hated
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	jain = { #concentrated in Western India: Marathrasa especially, Gujarat, Rajasthan, Madhya Pradesh.  Very sparse in eastern India, northern India.
+		color = { 0.5 1.0 0.7 } #Pale blue
+		icon = 18
+		allowed_conversion = { #Hindu rulers did rarely convert to Jain or Buddhism, although this became increasingly rare in later periods as Hinduism became more defined
+			hinduism
+		}
+		province = {
+		}
+		country = {
+			global_missionary_strength = 0.005 #Did not engage in large-scale conversion but had some success nevertheless
+			#BONUS
+			idea_cost = -0.10 #tolerant of others, emphasized learning
+			trade_efficiency = 0.10 #Most surviving Jain were merchant caste, concentrated in urban areas
+			tolerance_heathen = 1 #did not persecute followers of other religions even when in power; provided food, protection, medicine and learning to needy
+			tolerance_heretic = 1 #did not persecute followers of other religions even when in power; provided food, protection, medicine and learning to needy
+			#PENALTIES
+			global_manpower_modifier = -0.05 #Pacifist
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_missionary_strength = -0.005 #Did not engage in large-scale conversion but had some success nevertheless
+			#BONUS
+			idea_cost = -0.05 #tolerant of others, emphasized learning
+			trade_efficiency = 0.05 #Most surviving Jain were merchant caste, concentrated in urban areas
+			tolerance_heathen = 1 #did not persecute followers of other religions even when in power; provided food, protection, medicine and learning to needy
+			tolerance_heretic = 1 #did not persecute followers of other religions even when in power; provided food, protection, medicine and learning to needy
+			global_manpower_modifier = -0.05 #Pacifist
+			tolerance_own = -1
+		}
+		on_convert = {
+			set_country_flag = voluntary_conversion
+			if = {
+				limit = { NOT = { is_religion_enabled = jain } }
+				custom_tooltip = convert_dangerous_religion
+				subtract_stability_1 = yes
+			}
+			if = {
+				limit = { check_variable = { which = jain_population value = 75 } }
+				custom_tooltip = convert_population_75
+				add_stability_1 = yes
+			}
+			else_if = {
+				limit = { check_variable = { which = jain_population value = 50 } }
+				custom_tooltip = convert_population_50
+			}
+			else_if = {
+				limit = { check_variable = { which = jain_population value = 25 } }
+				custom_tooltip = convert_population_25
+				subtract_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_population_0
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = { patriarch_authority = 0.75 }
+				custom_tooltip = convert_church_strong
+				subtract_stability_2 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.50 }
+				custom_tooltip = convert_piety_moderate
+				subtract_stability_1 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.25 }
+				custom_tooltip = convert_church_weak
+			}
+			else = {
+				custom_tooltip = convert_church_insignificant
+			}
+			if = {
+				limit = { ADM = 5 }
+				if = {
+					limit = {
+						capital_scope = { religion = jain }
+					}
+					custom_tooltip = convert_ruler_strong
+					add_stability_3 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+			}
+			else_if = {
+				limit = { ADM = 3 }
+				if = {
+					limit = {
+						capital_scope = { religion = jain }
+					}
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						capital_scope = { religion = jain }
+					}
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_incompetent
+				}
+			}
+			if = {
+				limit = { advisor = theologian }
+				custom_tooltip = convert_theologian
+				add_stability_1 = yes
+			}
+			if = {
+				limit = {
+					has_country_flag = was_jain
+				}
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_previous_recent
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_previous_old
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_recent
+					add_stability_1 = yes
+				}
+			}
+			change_religion = jain
+		}
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		#fervor = yes
+		misguided_heretic = yes		#Not as hated
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+		#two major denominations are sky-clad (Digambara) and white-robed (Shvetmbara), split apart 81 AD
+		#nearly 90% of jaina temples were donated by a single wealthy individual, creating 'Cities of Temples'
+		#Sramana (religious ascetics) orders
+	}
+	
+	jainism = { #Duplicate for compatibility
+		color = { 0.5 1.0 0.7 } #Pale blue
+		icon = 18
+		province = {
+		}
+		country = {
+			global_missionary_strength = 0.005 #Did not engage in large-scale conversion but had some success nevertheless
+			#BONUS
+			idea_cost = -0.10 #tolerant of others, emphasized learning
+			trade_efficiency = 0.10 #Most surviving Jain were merchant caste, concentrated in urban areas
+			tolerance_heathen = 1 #did not persecute followers of other religions even when in power; provided food, protection, medicine and learning to needy
+			tolerance_heretic = 1 #did not persecute followers of other religions even when in power; provided food, protection, medicine and learning to needy
+			#PENALTIES
+			global_manpower_modifier = -0.05 #Pacifist
+		}
+		date = 2000.1.1
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	zoroastrian = {
+		flag_emblem_index_range = { 113 113 }
+		color = { 0.3 0.4 0.9 } #Royal blue
+		icon = 19
+		province = {
+		}
+		country = { #VALUE: 1.5 (2.0 -0.5) IDEAS
+			#BONUSES
+			legitimacy = 0.5 #HALF - the king was seen as semi-divine; divine marriage also helped prune the royal family; sturih marriage allowed for widows to appoint future children as their deceased husband's
+			republican_tradition = 0.25 #See above
+			horde_unity = 0.25 #See above
+			devotion = 1 #See above
+			prestige = 0.5 #HALF - Ritualistic religion, with king leading rituals; kings showed legitimacy through art and building
+			global_tax_modifier = 0.05 #HALF - priests cursed people who did not pay their taxes to the king
+			advisor_cost = -0.1 #HALF - Literate priesthood served as royal advisors; women could act as advisors as well
+#			advisor_pool = 1 #FULL - Literate priesthood served as royal advisors; women could act as advisors as well
+			#PENALTIES
+			adm_tech_cost_modifier = 0.05 #HALF - literacy was rare among the laity, and the writing system deliberately difficult to master
+#			diplomatic_upkeep = -1 #FULL - strictly forbidden from intermarriage
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			#BONUSES
+			legitimacy = 0.25 #HALF - the king was seen as semi-divine; divine marriage also helped prune the royal family
+			republican_tradition = 0.1 #See above
+			horde_unity = 0.1 #See above
+			devotion = 0.5 #See above
+			prestige = 0.25 #HALF - Ritualistic religion, with king leading rituals; kings showed legitimacy through art and building
+			global_tax_modifier = 0.05 #HALF - priests cursed people who did not pay their taxes to the king
+			advisor_cost = -0.1 #HALF - Literate priesthood served as royal advisors; women could act as advisors as well
+#			advisor_pool = 1 #FULL - Literate priesthood served as royal advisors; women could act as advisors as well
+			#PENALTIES
+			adm_tech_cost_modifier = 0.05 #HALF - literacy was rare among the laity, and the writing system deliberately difficult to master
+#			diplomatic_upkeep = -1 #FULL - strictly forbidden from intermarriage
+			tolerance_own = -1
+			global_missionary_strength = -0.01
+		}
+#		personal_deity = yes
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		#fervor = yes
+		misguided_heretic = yes		#Not as hated
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	#Compatibility religions (will be replaced at game start, included only for compatibility with CK2 saves)
+	
+	mazdaki = { #Becomes Zoroastrian
+		color = { 0.3 0.4 0.9 } #Royal blue
+		icon = 19
+		date = 2000.1.1 #Sir Not Appearing In This Mod
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	manichean = { #Becomes Zoroastrian
+		color = { 0.3 0.4 0.9 } #Royal blue
+		icon = 19
+		date = 2000.1.1 #Sir Not Appearing In This Mod
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	crusade_name = HOLY_WAR
+	defender_of_faith = yes
+}
+
+jewish_group = {
+	flags_with_emblem_percentage = 33 # default == 0
+	flag_emblem_index_range = { 108 109 }
+	
+	jewish = {
+		color = { 0.8 0.1 0.5 } #Violet
+		icon = 21
+		province = {
+		}
+		country = {
+#			global_missionary_strength = 0.00 #strictures against conversion
+			#BONUSES
+			advisor_pool = 1 #highly educated, emphasis on education and law
+			interest = -2 #no compunction against usury; longstanding tradition of moneylending
+			merchants = 1 #well educated middle class with worldwide contacts
+			trade_efficiency = 0.10 #contacts throughout the world in Jewish communities
+			#PENALTIES
+			diplomatic_reputation = -1 #Suspicion of Jews in foreign courts
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			advisor_pool = 1 #highly educated, emphasis on education and law
+			interest = -1 #no compunction against usury; longstanding tradition of moneylending
+			merchants = 1 #well educated middle class with worldwide contacts
+			trade_efficiency = 0.05 #contacts throughout the world in Jewish communities
+			diplomatic_reputation = -1 #Suspicion of Jews in foreign courts
+			tolerance_own = -1
+			global_missionary_strength = -0.01
+		}
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		#fervor = yes
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	#Compatibility religions (will be replaced at game start, included only for compatibility with CK2 saves)
+	
+	samaritan = { #Becomes Jewish
+		color = { 0.8 0.1 0.5 } #Violet
+		icon = 21
+		date = 2000.1.1 #Sir Not Appearing In This Mod
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	karaite = { #Becomes Zoroastrian
+		color = { 0.8 0.1 0.5 } #Violet
+		icon = 21
+		date = 2000.1.1 #Sir Not Appearing In This Mod
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	crusade_name = MILKHEMET_MITZVAH
+	defender_of_faith = yes
+}
+
+new_world_pagan = { #Creams
+	flags_with_emblem_percentage = 10
+	flag_emblem_index_range = { 83 96 }
+	
+	mesoamerican_religion = {
+		color = { 0.45 0.45 0.25 }
+		icon = 37
+		country = {
+#			global_missionary_strength = -0.00
+			global_heretic_missionary_strength = 0.02
+			#BONUSES
+			prestige = 0.5 #Ceremonial
+			core_creation = -0.10 #enemy_core_creation = 1 #Limited authority outside their own city; fierce resistance to outsiders
+			#PENALTIES
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_heretic_missionary_strength = 0.01
+			prestige = 0.25 #Ceremonial
+			core_creation = -0.05 #enemy_core_creation = 1 #Limited authority outside their own city; fierce resistance to outsiders
+			tolerance_own = -1
+			global_missionary_strength = -0.01
+		}
+		province = {
+			local_missionary_strength = 0.05
+		}
+		
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		can_have_secondary_religion = yes
+		religious_reforms = yes
+		authority = yes
+		reform_tooltip = MESOAMERICAN_REFORM_TOOLTIP
+		
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	inca_reformed = { #DUPLICATE kept for compatibility with CK2 - immediately converted in-game
+#		color = { 1.0 0.7 0.9 } #Rose
+		color = { 0.25 0.45 0.45 } #Paradox
+		icon = 22
+		province = {
+			local_missionary_strength = 0.05
+		}
+		country = {
+#			global_missionary_strength = 0.00 #Incorporated conquered religious idols as part of their worship
+			global_heretic_missionary_strength = 0.02
+			#BONUSES
+			tolerance_heathen = 1 #A relatively accepting religion
+			tolerance_heretic = 1 #Incorporated foreign gods and idols into their faith
+			years_of_nationalism = -5 #Captured idols and forced resettlement
+			#PENALTIES
+			diplomatic_upkeep = -1 #Society was focused around the ruler (Sapa Inka) and could be paralyzed without him
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_heretic_missionary_strength = 0.01
+			tolerance_heathen = 1 #A relatively accepting religion
+			tolerance_heretic = 1 #Incorporated foreign gods and idols into their faith
+			years_of_nationalism = -2 #Captured idols and forced resettlement
+			diplomatic_upkeep = -1 #Society was focused around the ruler (Sapa Inka) and could be paralyzed without him
+			tolerance_own = -1
+			global_missionary_strength = -0.01
+		}
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		can_have_secondary_religion = yes
+		#fervor = yes
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+		date = 2000.1.1 #Should not show up in-game
+	}
+	
+	inti = { #Inti sun worship (Inca Empire) - New World pagan
+#		color = { 1.0 0.7 0.9 } #Rose
+		color = { 0.25 0.45 0.45 } #Paradox
+		icon = 22
+		province = {
+			local_missionary_strength = 0.05
+		}
+		country = {
+#			global_missionary_strength = 0.00 #Incorporated conquered religious idols as part of their worship
+			global_heretic_missionary_strength = 0.02
+			#BONUSES
+			tolerance_heathen = 1 #A relatively accepting religion
+			tolerance_heretic = 1 #Incorporated foreign gods and idols into their faith
+			years_of_nationalism = -5 #Captured idols and forced resettlement
+			#PENALTIES
+			diplomatic_upkeep = -1 #Society was focused around the ruler (Sapa Inka) and could be paralyzed without him
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_heretic_missionary_strength = 0.01
+			tolerance_heathen = 1 #A relatively accepting religion
+			tolerance_heretic = 1 #Incorporated foreign gods and idols into their faith
+			years_of_nationalism = -2 #Captured idols and forced resettlement
+			diplomatic_upkeep = -1 #Society was focused around the ruler (Sapa Inka) and could be paralyzed without him
+			tolerance_own = -1
+			global_missionary_strength = -0.01
+		}
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		can_have_secondary_religion = yes
+		#fervor = yes
+		authority = yes
+		religious_reforms = yes
+		reform_tooltip = INTI_REFORM_TOOLTIP
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	totemism = { #Midewiwin (North American Tribes)
+		color = { 0.5 0.45 0.45 }
+		icon = 23
+		province = {
+			local_missionary_strength = 0.05
+		}
+		country = {
+			global_missionary_strength = -0.01 #Not an organized religion
+			#global_heretic_missionary_strength = 0.02
+			#BONUSES
+			tolerance_heathen = 2 #A relatively accepting religion
+			leader_land_manuever = 1 #Braves went on vision quests in the wilderness by themselves
+			#PENALTIES
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_missionary_strength = -0.02 #Not an organized religion
+			#global_heretic_missionary_strength = 0.02
+			tolerance_heathen = 1 #A relatively accepting religion
+			leader_land_manuever = 1 #Braves went on vision quests in the wilderness by themselves
+			tolerance_own = -1
+		}
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		can_have_secondary_religion = yes
+		#fervor = yes
+		heretic = { Fundamentalist Reactionary Prophetic Charismatic Syncretic Tribal }
+	}
+	
+	aztec_reformed = { #DUPLICATE kept for compatibility with CK2 - immediately converted in-game
+		#color = { 0.8 0.4 0.4 } #Indian Red
+		color = { 0.25 0.45 0.25 } #Paradox
+		icon = 24
+		province = {
+			local_missionary_strength = 0.05
+		}
+		country = {
+#			global_missionary_strength = 0.00
+			global_heretic_missionary_strength = 0.02
+			#BONUSES
+			land_morale = 0.075 #Flower wars; soldiers knew death was preferable to capture due to torture and human sacrifices
+			army_tradition = 0.5 #Flower wars
+			#PENALTIES
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_heretic_missionary_strength = 0.01
+			land_morale = 0.05 #Flower wars; soldiers knew death was preferable to capture due to torture and human sacrifices
+			army_tradition = 0.25 #Flower wars
+			tolerance_own = -1
+			global_missionary_strength = -0.01
+		}
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		can_have_secondary_religion = yes
+		#fervor = yes
+		heretic = { Fundamentalist Reactionary Prophetic Charismatic Syncretic Tribal }
+		date = 2000.1.1 #Should not show up in-game
+	}
+	
+	nahuatl = { #Toltecayotl (Aztec Empire) - New World pagan
+		#color = { 0.8 0.4 0.4 } #Indian Red
+		color = { 0.25 0.45 0.25 } #Paradox
+		icon = 24
+		province = {
+			local_missionary_strength = 0.05
+		}
+		country = {
+#			global_missionary_strength = 0.00
+			global_heretic_missionary_strength = 0.02
+			#BONUSES
+			land_morale = 0.075 #Flower wars; soldiers knew death was preferable to capture due to torture and human sacrifices
+			army_tradition = 0.5 #Flower wars
+			vassal_income = 0.25
+			#PENALTIES
+			diplomatic_reputation = -1
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_heretic_missionary_strength = 0.01
+			land_morale = 0.05 #Flower wars; soldiers knew death was preferable to capture due to torture and human sacrifices
+			army_tradition = 0.25 #Flower wars
+			vassal_income = 0.25
+			diplomatic_reputation = -1
+			tolerance_own = -1
+			global_missionary_strength = -0.01
+		}
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		can_have_secondary_religion = yes
+		#fervor = yes
+#		doom = yes #Can't mod the effects of doom, sadly
+		authority = yes
+		declare_war_in_regency = yes
+		religious_reforms = yes
+#		reform_tooltip = NAHUATL_REFORM_TOOLTIP
+		heretic = { Fundamentalist Reactionary Prophetic Charismatic Syncretic Tribal }
+	}
+	
+	pantheism = {
+		color = { 0.8 0.7 0.6 } #Bisque
+		icon = 25
+		province = {
+			local_missionary_strength = 0.05
+		}
+		country = {
+			global_missionary_strength = -0.01 #Not an organized religion
+			#global_heretic_missionary_strength = 0.02
+			#BONUSES
+			heir_chance = 0.5 #Polygamy allowed for more potential heirs
+			tolerance_heretic = 2
+			tolerance_heathen = 2
+			#PENALTIES
+			prestige = -1 #Not an organized religion
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_missionary_strength = -0.02 #Not an organized religion
+			#global_heretic_missionary_strength = 0.02
+			heir_chance = 0.5 #Polygamy allowed for more potential heirs
+			tolerance_heretic = 1.5
+			tolerance_heathen = 1.5
+			prestige = -1 #Not an organized religion
+			tolerance_own = -1
+		}
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		can_have_secondary_religion = yes
+		#fervor = yes
+		heretic = { Fundamentalist Reactionary Prophetic Charismatic Syncretic Tribal }
+#		date = 2000.1.1
+	}
+	crusade_name = HOLY_WAR
+	defender_of_faith = yes
+}
+
+european_pagan = {
+	flags_with_emblem_percentage = 10
+	flag_emblem_index_range = { 83 96 }
+	
+	baltic_pagan_reformed = { #CK2 Romuva - Old World pagan
+		color = { 0.95 0.3 0.3 } #Pale red
+		icon = 30
+		province = {
+			local_missionary_strength = 0.05
+		}
+		country = {
+			global_missionary_strength = -0.005 #Somewhat organized, but no missionary tradition
+			global_heretic_missionary_strength = 0.01
+			#BONUSES
+			land_morale = 0.075 #Fiercely defended themselves from Catholic crusaders
+			tolerance_heathen = 1 #tolerant of other faiths
+			tolerance_heretic = 1.5 #Saw other polytheistic gods as reflections of its own
+#			stability_cost_modifier = -0.05 #Darna (harmony) is the highest value
+			#PENALTIES
+			interest = 2 #Seeking interest is forbidden, so hard to find loans
+			global_autonomy = 0.025 #Divided chieftains
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_missionary_strength = -0.015 #Somewhat organized, but no missionary tradition
+			#global_heretic_missionary_strength = 0.02
+			land_morale = 0.05 #Fiercely defended themselves from Catholic crusaders
+			tolerance_heathen = 0.5 #tolerant of other faiths
+			tolerance_heretic = 1 #Saw other polytheistic gods as reflections of its own
+#			stability_cost_modifier = -0.05 #Darna (harmony) is the highest value
+			interest = 1 #Seeking interest is forbidden, so hard to find loans
+			global_autonomy = 0.025 #Divided chieftains
+			tolerance_own = -1
+		}
+#		personal_deity = yes
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		can_have_secondary_religion = yes
+		#fervor = yes
+		misguided_heretic = yes
+		heretic = { Fundamentalist Reactionary Prophetic Charismatic Syncretic Tribal }
+#		date = 2000.1.1
+	}
+	
+	finnish_pagan_reformed = { #CK2 Ukkousko - Old World pagan
+		color = { 1.0 0.4 0.7 } #Hot pink
+		icon = 31
+		province = {
+			local_missionary_strength = 0.05 #Relies on oral tradition
+		}
+		country = {
+			global_missionary_strength = -0.01 #Not an organized religion, no missionary tradition
+			#global_heretic_missionary_strength = 0.02
+			#BONUSES
+			tolerance_heretic = 2 #FULL - Saw other polytheistic gods as reflections of its own
+			diplomatic_reputation = 1 #FULL - Seers were in demand in other countries, educated some foreign noble children
+			prestige_from_land = 0.25 #HALF - Divination
+			#PENALTIES
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_missionary_strength = -0.02 #Not an organized religion, no missionary tradition
+			#global_heretic_missionary_strength = 0.02
+			tolerance_heretic = 1.5 #Saw other polytheistic gods as reflections of its own
+			diplomatic_reputation = 1 #Seers were in demand in other countries, educated some foreign noble children
+			prestige_from_land = 0.25 #HALF - Divination
+			tolerance_own = -1
+		}
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		can_have_secondary_religion = yes
+		#fervor = yes
+		misguided_heretic = yes
+		heretic = { Fundamentalist Reactionary Prophetic Charismatic Syncretic Tribal }
+#		date = 2000.1.1
+	}
+	
+	slavic_pagan_reformed = { #CK2 Ridnoviry - Old World pagan (dharmic?)
+		color = { 0.9 0.6 0.9 } #Plum
+		icon = 32
+		province = {
+			local_missionary_strength = 0.01 #Some successful resistance to Christianity
+		}
+		country = {
+			global_missionary_strength = -0.01 #Not a very organized religion, no missionary tradition
+			#global_heretic_missionary_strength = 0.02
+			#BONUSES
+			tolerance_heretic = 1 #Emphasizes nationalism, ancestor veneration; sometimes described as intolerant; however, sees other polytheistic gods as reflections of its own
+			tolerance_heathen = 1
+			tolerance_own = 1 #Emphasizes nationalism, ancestor veneration
+			#PENALTIES
+			years_of_nationalism = 5 #Emphasizes nationalism
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_missionary_strength = -0.02 #Not a very organized religion, no missionary tradition
+			#global_heretic_missionary_strength = 0.02
+			tolerance_heretic = 0.5 #Emphasizes nationalism, ancestor veneration; sometimes described as intolerant; however, sees other polytheistic gods as reflections of its own
+			tolerance_heathen = 0.5
+			years_of_nationalism = 2 #Emphasizes nationalism
+		}
+#		personal_deity = yes
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		can_have_secondary_religion = yes
+		#fervor = yes
+		misguided_heretic = yes
+		heretic = { Fundamentalist Reactionary Prophetic Charismatic Syncretic Tribal }
+#		date = 2000.1.1
+	}
+	
+	norse_pagan_reformed = { #CK2 Asatru - Old World pagan
+#		color = { 0.7 0.8 0.9 } #Steel blue
+		color = { 0.75 0.75 0.75 } #Paradox
+		icon = 33
+		province = {
+			local_missionary_strength = 0.05
+		}
+		country = {
+			global_missionary_strength = -0.01 #Not an organized or missionary religion
+			#global_heretic_missionary_strength = 0.02
+			#BONUSES
+			land_morale = 0.075 #Emphasis on personal honour, bravery and warfare, no compunctions against killing
+			tolerance_heretic = 2 #Saw other polytheistic gods as reflections of its own
+			range = 0.25 #Viking explorers and colonists
+			#PENALTIES
+			diplomatic_reputation = -1 #Disliked because of Viking raids
+			global_unrest = 0.5 #Known for vengeance, berserkers, personal honour and bravery
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_missionary_strength = -0.02 #Not an organized or missionary religion
+			#global_heretic_missionary_strength = 0.02
+			land_morale = 0.05 #Emphasis on personal honour, bravery and warfare, no compunctions against killing
+			tolerance_heretic = 1 #Saw other polytheistic gods as reflections of its own
+			range = 0.25 #Viking explorers and colonists
+			diplomatic_reputation = -1 #Disliked because of Viking raids
+			global_unrest = 0.5 #Known for vengeance, berserkers, personal honour and bravery
+			tolerance_own = -1
+		}
+#		personal_deity = yes
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		can_have_secondary_religion = yes
+		#fervor = yes
+		misguided_heretic = yes
+		heretic = { Fundamentalist Reactionary Prophetic Charismatic Syncretic Tribal }
+#		date = 2000.1.1
+	}
+	
+	hellenic_pagan = { #CK2 Hellenic - Old World pagan
+		color = { 0.3 0.3 0.9 } #Light purple
+		icon = 34
+		province = {
+			local_missionary_strength = 0.05
+		}
+		country = {
+			global_missionary_strength = -0.005 #Somewhat organized; not a missionary religion
+			global_heretic_missionary_strength = 0.01
+			#BONUSES
+			republican_tradition = 0.25 #Sophism, emphasis on debate and democratic participation
+			tolerance_heretic = 2 #Saw other polytheistic gods as reflections of its own
+			adm_tech_cost_modifier = -0.10 #Ionic rationalism
+			prestige = 0.5 #Greek architecture and art
+			#PENALTIES
+			tolerance_own = -1 #Does not inspire unity or zeal; Greek skepticism
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_missionary_strength = -0.015 #Somewhat organized; not a missionary religion
+			#global_heretic_missionary_strength = 0.02
+			republican_tradition = 0.2 #Sophism, emphasis on debate and democratic participation
+			tolerance_heretic = 1 #Saw other polytheistic gods as reflections of its own
+			adm_tech_cost_modifier = -0.10 #Ionic rationalism
+			prestige = 0.25 #Greek architecture and art
+			tolerance_own = -2 #Does not inspire unity or zeal; Greek skepticism
+		}
+#		personal_deity = yes
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		can_have_secondary_religion = yes
+		#fervor = yes
+		misguided_heretic = yes
+		heretic = { Fundamentalist Reactionary Prophetic Charismatic Syncretic Tribal }
+#		date = 2000.1.1
+	}
+	
+	#Compatibility religions (will be replaced at game start, included only for compatibility with CK2 saves)
+	
+	celtic_pagan_reformed = { #Tuatha #Becomes Rodnoverie
+		color = { 0.9 0.6 0.9 } #Plum
+		icon = 32
+		date = 2000.1.1 #Sir Not Appearing In This Mod
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	german_pagan_reformed = { #Urglaube #Becomes Asatru
+		color = { 0.75 0.75 0.75 } #Paradox
+		icon = 33
+		date = 2000.1.1 #Sir Not Appearing In This Mod
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	crusade_name = HOLY_WAR
+	defender_of_faith = yes
+}
+
+pagan = { #Old World Pagans - Blues (Africa) Purples (Asia)
+	flags_with_emblem_percentage = 10
+	flag_emblem_index_range = { 83 96 }
+	
+	adi_dharam = { #Sarnaism (India's tribes)
+		color = { 0.1 0.1 0.4 } #Midnight blue
+		icon = 20
+		province = {
+			local_missionary_strength = 0.05 #Relies upon oral traditions
+		}
+		country = {
+			global_missionary_strength = -0.01 #Not an organized religion at all
+			#global_heretic_missionary_strength = 0.02
+			#BONUSES
+			global_autonomy = -0.05 #FULL - heavily communal decision making, even on a religious level
+			heir_chance = 0.5 #Polygamy allowed for more potential heirs
+			global_unrest = -1 #Egalitarian for its time
+			#PENALTIES
+			diplomatic_upkeep = -1 #Members afraid to die outside their tribes (ex-communion) or give up family in afterlife
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_missionary_strength = -0.02 #Not an organized religion at all
+			#global_heretic_missionary_strength = 0.02
+			global_autonomy = -0.025 #FULL - heavily communal decision making, even on a religious level
+			heir_chance = 0.5 #Polygamy allowed for more potential heirs
+			global_unrest = -1 #Egalitarian for its time
+			diplomatic_upkeep = -1 #Members afraid to die outside their tribes (ex-communion) or give up family in afterlife
+			tolerance_own = -1
+		}
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		can_have_secondary_religion = yes
+		#fervor = yes
+		misguided_heretic = yes		#Not as hated
+		heretic = { Fundamentalist Reactionary Prophetic Charismatic Syncretic Tribal }
+	}
+	
+	shinto = { #Shinto
+		color = { 0.3 0.0 0.2 } #???
+		icon = 38
+		allowed_conversion = {
+			mahayana
+		}
+		country = {
+			global_missionary_strength = -0.01 #Not an organized religion
+			#global_heretic_missionary_strength = 0.02
+			#BONUSES
+			legitimacy = 0.5 #Emphasizes the divinity of the emperor
+			prestige = 0.5 #Highly ceremonial
+			land_morale = 0.075 #Bushido code
+			#PENALTIES
+			#global_tax_income = -0.05 #Sacrifices to the spirits
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_missionary_strength = -0.02 #Not an organized religion
+			#global_heretic_missionary_strength = 0.02
+			legitimacy = 0.25 #Emphasizes the divinity of the emperor
+			prestige = 0.25 #Highly ceremonial
+			land_morale = 0.05 #Bushido code
+			#global_tax_income = -0.05 #Sacrifices to the spirits
+			tolerance_own = -1
+		}
+		on_convert = {
+			set_country_flag = voluntary_conversion
+			if = {
+				limit = { NOT = { is_religion_enabled = shinto } }
+				custom_tooltip = convert_dangerous_religion
+				subtract_stability_1 = yes
+			}
+			if = {
+				limit = { check_variable = { which = shinto_population value = 75 } }
+				custom_tooltip = convert_population_75
+				add_stability_1 = yes
+			}
+			else_if = {
+				limit = { check_variable = { which = shinto_population value = 50 } }
+				custom_tooltip = convert_population_50
+			}
+			else_if = {
+				limit = { check_variable = { which = shinto_population value = 25 } }
+				custom_tooltip = convert_population_25
+				subtract_stability_1 = yes
+			}
+			else = {
+				custom_tooltip = convert_population_0
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = { patriarch_authority = 0.75 }
+				custom_tooltip = convert_church_strong
+				subtract_stability_2 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.50 }
+				custom_tooltip = convert_piety_moderate
+				subtract_stability_1 = yes
+			}
+			else_if = {
+				limit = { patriarch_authority = 0.25 }
+				custom_tooltip = convert_church_weak
+			}
+			else = {
+				custom_tooltip = convert_church_insignificant
+			}
+			if = {
+				limit = { ADM = 5 }
+				if = {
+					limit = {
+						capital_scope = { religion = shinto }
+					}
+					custom_tooltip = convert_ruler_strong
+					add_stability_3 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+			}
+			else_if = {
+				limit = { ADM = 3 }
+				if = {
+					limit = {
+						capital_scope = { religion = shinto }
+					}
+					custom_tooltip = convert_ruler_moderate
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						capital_scope = { religion = shinto }
+					}
+					custom_tooltip = convert_ruler_weak
+					add_stability_1 = yes
+				}
+				else = {
+					custom_tooltip = convert_ruler_incompetent
+				}
+			}
+			if = {
+				limit = { advisor = theologian }
+				custom_tooltip = convert_theologian
+				add_stability_1 = yes
+			}
+			if = {
+				limit = {
+					has_country_flag = was_shinto
+				}
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_previous_recent
+					add_stability_2 = yes
+				}
+				else = {
+					custom_tooltip = convert_previous_old
+					add_stability_1 = yes
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						check_variable = { which = sympathy_to_old_religion value = 1 }
+					}
+					custom_tooltip = convert_recent
+					add_stability_1 = yes
+				}
+			}
+			change_religion = shinto
+		}
+#		personal_deity = yes
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		can_have_secondary_religion = yes
+		#fervor = yes
+		misguided_heretic = yes		#Not as hated
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	animism = {
+		color = { 0.4 0.6 0.6 } #Cadet Blue
+		icon = 26
+		province = {
+			local_missionary_strength = 0.05
+		}
+		country = {
+			global_missionary_strength = -0.01 #Not an organized religion
+			#global_heretic_missionary_strength = 0.02
+			#BONUSES
+			heir_chance = 0.5 #Polygamy allowed for more potential heirs
+			tolerance_heretic = 2
+			tolerance_heathen = 2 #Relatively accepting
+			#PENALTIES
+			prestige = -1 #Not an organized religion
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_missionary_strength = -0.02 #Not an organized religion
+			#global_heretic_missionary_strength = 0.02
+			heir_chance = 0.5 #Polygamy allowed for more potential heirs
+			tolerance_heretic = 1.5
+			tolerance_heathen = 1.5 #Relatively accepting
+			prestige = -0.5 #Not an organized religion
+			tolerance_own = -1
+		}
+		can_have_secondary_religion = yes
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		#fervor = yes
+		misguided_heretic = yes
+		heretic = { Fundamentalist Reactionary Prophetic Charismatic Syncretic Tribal }
+	}
+	
+	west_african_pagan_reformed = { #CK2 Akan
+		color = { 0.0 0.0 0.4 } #Navy
+		icon = 27
+		province = {
+			local_missionary_strength = 0.05
+		}
+		country = {
+			global_missionary_strength = -0.01 #Not an organized religion
+			#global_heretic_missionary_strength = 0.02
+			#BONUSES
+			tolerance_heathen = 2 #A relatively accepting religion
+			global_trade_power = 0.10 #Suppliers for the slave trade
+			heir_chance = 0.5 #Polygamy allowed for more potential heirs
+			#PENALTIES
+			global_unrest = 1 #Suppliers for the slave trade; slaves from their own people when there was no war
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_missionary_strength = -0.02 #Not an organized religion
+			#global_heretic_missionary_strength = 0.02
+			tolerance_heathen = 1 #A relatively accepting religion
+			global_trade_power = 0.05 #Suppliers for the slave trade
+			heir_chance = 0.5 #Polygamy allowed for more potential heirs
+			global_unrest = 1 #Suppliers for the slave trade; slaves from their own people when there was no war
+			tolerance_own = -1
+		}
+		can_have_secondary_religion = yes
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		#fervor = yes
+		misguided_heretic = yes
+		heretic = { Fundamentalist Reactionary Prophetic Charismatic Syncretic Tribal }
+	}
+	
+	shamanism = { #Din i-Ilahi NEEDS NEW BONUSES
+		color = { 0.3 0.6 0.3 } #EU4 colour
+		icon = 39
+		province = {
+			local_missionary_strength = 0.05
+		}
+		country = {
+			global_missionary_strength = -0.50 # religion based on tolerance
+			#BONUSES
+			#loot_amount = 0.25
+			tolerance_heretic = 2 #A relatively accepting religion
+			tolerance_heathen = 2 #A relatively accepting religion
+			#PENALTIES
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_missionary_strength = -0.50 # religion based on tolerance
+			#loot_amount = 0.25
+			tolerance_heretic = 1.5 #A relatively accepting religion
+			tolerance_heathen = 1.5 #A relatively accepting religion
+		}
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		can_have_secondary_religion = yes
+		#fervor = yes
+		misguided_heretic = yes
+		fetishist_cult = yes
+		heretic = { Fundamentalist Reactionary Prophetic Charismatic Syncretic Tribal }
+	}
+	
+	tibetan_bon = { #Becomes Shamanism
+		color = { 0.1 0.3 0.85 } #Blue
+		icon = 28
+		province = {
+			local_missionary_strength = 0.05
+		}
+		country = {
+			global_missionary_strength = -0.01 #Not an organized religion
+			#global_heretic_missionary_strength = 0.02
+			#BONUSES
+			land_morale = 0.05 #Encouraged bravery and killing
+			tolerance_heathen = 2 #Enforced religious equality; Khans patronized several religions
+			leader_land_manuever = 1
+			#PENALTIES
+			legitimacy = -0.25 #Succession to the strongest
+			diplomatic_reputation = -1 #Horrible reputation
+		}
+		date = 2000.1.1
+		heretic = { Fundamentalist Reactionary Prophetic Charismatic Syncretic Tribal }
+	}
+	
+	muism = { #Becomes Shamanism
+		color = { 0.1 0.3 0.85 } #Blue
+		icon = 28
+		province = {
+			local_missionary_strength = 0.05
+		}
+		country = {
+			global_missionary_strength = -0.01 #Not an organized religion
+			#global_heretic_missionary_strength = 0.02
+			#BONUSES
+			land_morale = 0.05 #Encouraged bravery and killing
+			tolerance_heathen = 2 #Enforced religious equality; Khans patronized several religions
+			leader_land_manuever = 1
+			#PENALTIES
+			legitimacy = -0.25 #Succession to the strongest
+			diplomatic_reputation = -1 #Horrible reputation
+		}
+		date = 2000.1.1
+		heretic = { Fundamentalist Reactionary Prophetic Charismatic Syncretic Tribal }
+	}
+	
+	polynesian_religion = { #Atua
+		color = { 0.1 0.7 0.7 } #Sea Green
+		icon = 35
+		province = {
+			local_missionary_strength = 0.05
+		}
+		country = {
+			global_missionary_strength = -0.01 #Not really an organized religion
+			#global_heretic_missionary_strength = 0.02
+			#BONUSES
+			tolerance_heathen = 1 #Accepting of other religions
+			dip_tech_cost_modifier = -0.1 #Great emphasis on seafaring
+			naval_maintenance_modifier = -0.10 #Great emphasis on seafaring
+			#PENALTIES
+			#Chief and high priest often the same role
+			#Polygamy allowed for more potential heirs
+			#Primary concern of religion was to protect people from the spirits through strict obedience to the laws
+			#Human sacrifice was done on special occasions
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_missionary_strength = -0.02 #Not really an organized religion
+			#global_heretic_missionary_strength = 0.02
+			tolerance_heathen = 1 #Accepting of other religions
+			dip_tech_cost_modifier = -0.05 #Great emphasis on seafaring
+			naval_maintenance_modifier = -0.05 #Great emphasis on seafaring
+			tolerance_own = -1
+		}
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		can_have_secondary_religion = yes
+		#fervor = yes
+		misguided_heretic = yes
+		heretic = { Fundamentalist Reactionary Prophetic Charismatic Syncretic Tribal }
+	}
+	
+	tengri_pagan_reformed = {
+		color = { 0.1 0.3 0.85 } #Blue
+		icon = 28
+		province = {
+			local_missionary_strength = 0.05
+		}
+		country = {
+			global_missionary_strength = -0.01 #Not an organized religion
+			#global_heretic_missionary_strength = 0.02
+			#BONUSES
+			land_morale = 0.05 #Encouraged bravery and killing
+			tolerance_heathen = 2 #Enforced religious equality; Khans patronized several religions
+			leader_land_manuever = 1
+			#PENALTIES
+			legitimacy = -0.25 #Succession to the strongest
+			diplomatic_reputation = -1 #Horrible reputation
+		}
+		country_as_secondary = { #Same bonuses as above, but 1 lower tolerance_own and missionary_strength
+			global_missionary_strength = -0.02 #Not an organized religion
+			#global_heretic_missionary_strength = 0.02
+			land_morale = 0.025 #Encouraged bravery and killing
+			tolerance_heathen = 1.5 #Enforced religious equality; Khans patronized several religions
+			leader_land_manuever = 1
+			legitimacy = -0.25 #Succession to the strongest
+			diplomatic_reputation = -1 #Horrible reputation
+			tolerance_own = -1
+		}
+		uses_piety = yes
+		has_patriarchs = yes		# Uses patriarch authority
+		can_have_secondary_religion = yes
+		#fervor = yes
+		misguided_heretic = yes
+		heretic = { Fundamentalist Reactionary Prophetic Charismatic Syncretic Tribal }
+		date = 2000.1.1 #Duplicate which should not show up in game
+	}
+	
+	#Compatibility religions (will be replaced at game start, included only for compatibility with CK2 saves)
+	
+	egyptian_pagan = { #Kemetic #Becomes Animist
+		color = { 0.4 0.6 0.6 } #Cadet Blue
+		icon = 26
+		date = 2000.1.1 #Sir Not Appearing In This Mod
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	zun_pagan_reformed = { #Becomes Animist
+		color = { 0.9 1.0 0.0 }
+		icon = 26
+		date = 2000.1.1
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	zunism = { #Becomes Animist
+		color = { 0.9 1.0 0.0 }
+		icon = 26
+		date = 2000.1.1
+		heretic = { Fundamentalist Sectarian Populist Reactionary Millenarian Apocalyptic Ultraorthodox Humanistic Syncretic Messianic }
+	}
+	
+	crusade_name = HOLY_WAR
+	defender_of_faith = yes
+}
+

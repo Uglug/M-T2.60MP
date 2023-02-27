@@ -1,0 +1,499 @@
+
+eng_british_conquest = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		OR = {
+			tag = ENG
+			tag = GBR
+		}
+		#has_country_flag = k_of_eng
+	}
+	has_country_shield = yes
+	
+	eng_mighty_army = {
+		icon = mission_assemble_an_army
+		trigger = {
+			army_size_percentage = 1
+			manpower_percentage = 0.6
+			num_of_generals = 1
+		}
+		effect = {
+			scotland_region = {
+				limit = {
+					NOT = {
+						is_core = ROOT
+						owned_by = ROOT
+					}
+				}
+				add_permanent_claim = ROOT
+			}
+			if = {
+				limit = {
+					exists = SCO
+				}
+				add_casus_belli = {
+					target = SCO
+					type = cb_vassalize_mission
+				}
+			}
+		}
+	}
+	
+	eng_conquer_scotland = {
+		icon = mission_build_up_to_force_limit
+		required_missions = { eng_mighty_army }
+		
+		provinces_to_highlight = {
+			region = scotland_region
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			if = {
+				limit = { ai = no }
+				scotland_region = {
+					type = all
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+			}
+			else = {
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					region = scotland_region
+					value = 15
+				}
+			}
+		}
+		effect = {
+			add_army_tradition = 25
+		}
+	}
+	
+	eng_mighty_navy = {
+		icon = mission_establish_high_seas_navy
+		required_missions = { eng_conquer_scotland }
+		trigger = {
+			navy_size_percentage = 0.9
+		}
+		effect = {
+			ireland_region = {
+				limit = {
+					NOT = {
+						is_core = ROOT
+						owned_by = ROOT
+					}
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	eng_conquer_ireland = {
+		icon = mission_unite_home_region
+		required_missions = { eng_mighty_navy }
+		provinces_to_highlight = {
+			region = ireland_region
+			NOT = { owned_by = ROOT }
+		}
+		trigger = {
+			if = {
+				limit = { ai = no }
+				ireland_region = {
+					type = all
+					owned_by = ROOT
+				}
+			}
+			else = {
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					region = ireland_region
+					value = 14
+				}
+			}
+		}
+		effect = {
+			add_prestige = 20
+		}
+	}
+	
+	eng_constitutional_monarchy = {
+		icon = mission_empire
+		required_missions = { eng_conquer_ireland }
+		trigger = {
+			OR = {
+				constitutionalm_trigger = yes
+				constitutionalr_trigger = yes
+			}
+			absolutism = 50
+		}
+		effect = {
+			country_event = { id = mission_formable.011 }
+			hidden_effect = { complete_mission = eng_constitutional_monarchy }
+		}
+	}
+	
+	eng_conquer_iceland = {
+		icon = mission_alliances
+		required_missions = { eng_constitutional_monarchy }
+		provinces_to_highlight = {
+			area = subarctic_islands_area
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			subarctic_islands_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		effect = {
+			add_navy_tradition = 15
+		}
+	}
+}
+
+eng_hyw_north = {
+	slot = 6
+	generic = no
+	ai = yes
+	potential = {
+		OR = {
+			tag = ENG
+			tag = GBR
+		}
+		#has_country_flag = k_of_eng
+	}
+	has_country_shield = yes
+	
+	eng_defend_montfort = {
+		icon = mission_alliances
+		provinces_to_highlight = {
+			area = brittany_area
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			if = {
+				limit = { exists = BRI NOT = { overlord_of = BRI } }
+				BRI = {
+					owns = 1388
+					alliance_with = ROOT
+				}
+			}
+			else_if = {
+				limit = { exists = MNF NOT = { overlord_of = MNF } }
+				MNF = {
+					owns = 1388
+					alliance_with = ROOT
+				}
+			}
+			else = {
+				brittany_area = {
+					type = all
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+			}
+		}
+		effect = {
+			add_prestige = 10
+		}
+	}
+	
+	eng_guillaume_heritage = {
+		icon = mission_unite_home_region
+		required_missions = { eng_defend_montfort }
+		provinces_to_highlight = {
+			OR = {
+				area = normandy_area
+				area = picardy_area
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			normandy_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			picardy_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					FRA = { owns = 183 }
+				}
+				add_casus_belli = {
+					type = cb_vassalize_mission
+					months = 1200
+					target = FRA
+				}
+			}
+			else = {
+				ile_de_france_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { owned_by = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+		}
+	}
+	
+	eng_vassalize_france = {
+		icon = mission_monarch_in_throne_room
+		required_missions = { eng_guillaume_heritage }
+		provinces_to_highlight = {
+			area = ile_de_france_area
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			ile_de_france_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		effect = {
+			add_army_tradition = 25
+		}
+	}
+	
+	eng_subjugate_flanders = {
+		icon = mission_high_income
+		required_missions = { eng_vassalize_france }
+		provinces_to_highlight = {
+			area = flanders_area
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			flanders_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		effect = {
+			add_prestige = 15
+		}
+	}
+}
+
+eng_hyw_south = {
+	slot = 7
+	generic = no
+	ai = yes
+	potential = {
+		OR = {
+			tag = ENG
+			tag = GBR
+		}
+		#has_country_flag = k_of_eng
+	}
+	has_country_shield = yes
+	
+	eng_control_aquitaine = {
+		icon = mission_unite_home_region
+		required_missions = { eng_defend_montfort }
+		position = 2
+		provinces_to_highlight = {
+			region = aquitaine_region
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			aquitaine_region = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		effect = {
+			capital_scope = {
+				add_province_modifier = { name = "mission_large_urban_gravity" duration = 7300 }
+			}
+			custom_tooltip = desc_mission_large_urban_gravity
+		}
+	}
+	
+	eng_subjugate_anjou = {
+		icon = mission_conquer_50_development
+		required_missions = { eng_control_aquitaine }
+		provinces_to_highlight = {
+			area = anjou_poitou_area
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			anjou_poitou_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		effect = {
+			add_prestige = 15
+		}
+	}
+}
+
+eng_oxford_missions = {
+	slot = 6
+	generic = no
+	ai = yes
+	potential = {
+		OR = {
+			tag = ENG
+			tag = GBR
+		}
+		#has_country_flag = k_of_eng
+	}
+	has_country_shield = yes
+	
+	eng_medium_oxford = {
+		icon = mission_early_game_buildings
+		required_missions = { }
+		position = 5
+		provinces_to_highlight = {
+			province_id = 237		# Oxford
+		}
+		trigger = {
+			237 = {
+				owned_by = ROOT
+				has_building = medium_university
+			}
+		}
+		effect = {
+			237 = {
+				add_province_modifier = { name = "mission_small_urban_gravity" duration = 3650 }
+			}
+			custom_tooltip = desc_mission_small_urban_gravity_tt
+		}
+	}
+}
+
+eng_cambridge_missions = {
+	slot = 6
+	generic = no
+	ai = yes
+	potential = {
+		OR = {
+			tag = ENG
+			tag = GBR
+		}
+		#has_country_flag = k_of_eng
+	}
+	has_country_shield = yes
+	
+	eng_medium_cambridge = {
+		icon = mission_early_game_buildings
+		required_missions = { }
+		position = 6
+		provinces_to_highlight = {
+			province_id = 1283		# Cambridge
+		}
+		trigger = {
+			1283 = {
+				owned_by = ROOT
+				HasBuildingOrBetter = { b1=medium_university b2=big_university }
+			}
+		}
+		effect = {
+			1283 = {
+				add_province_modifier = { name = "mission_small_urban_gravity" duration = 3650 }
+			}
+			custom_tooltip = desc_mission_small_urban_gravity_tt
+		}
+	}
+}
+
+eng_med_base = {
+	slot = 7
+	generic = no
+	ai = yes
+	potential = {
+		OR = {
+			tag = ENG
+			tag = GBR
+		}
+		#has_country_flag = k_of_eng
+	}
+	has_country_shield = yes
+	
+	eng_conquer_menorca = {
+		icon = mission_conquer_50_development
+		position = 5
+		provinces_to_highlight = {
+			province_id = 2358
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			2358 = {
+				owned_by = ROOT
+				range = ROOT
+				is_core = ROOT
+			}
+		}
+		effect = {
+			2358 = {
+				add_province_modifier = { name = "mission_small_urban_gravity" duration = 3650 }
+			}
+			custom_tooltip = desc_mission_small_urban_gravity_tt
+		}
+	}
+	
+	eng_fortify_menorca = {
+		icon = mission_early_game_buildings
+		required_missions = { eng_conquer_menorca }
+		provinces_to_highlight = {
+			province_id = 2358
+		}
+		trigger = {
+			2358 = {
+				owned_by = ROOT
+				HasBuildingOrBetter = { b1=fort_14th b2=fort_15th b3=fort_16th b4=fort_17th b5=fort_18th }
+			}
+		}
+		effect = {
+			add_mil_power = 50
+		}
+	}
+	
+	eng_develop_menorca = {
+		icon = mission_early_game_buildings
+		required_missions = { eng_fortify_menorca }
+		provinces_to_highlight = {
+			province_id = 2358
+		}
+		trigger = {
+			2358 = {
+				owned_by = ROOT
+				HasBuildingOrBetter = { b1=harbour_infrastructure_1 b2=harbour_infrastructure_2 b3=harbour_infrastructure_3x b4=harbour_infrastructure_4 b5=harbour_infrastructure_5 }
+			}
+		}
+		effect = {
+			2358 = {
+				add_province_modifier = { name = "mission_small_urban_gravity" duration = 3650 }
+			}
+			custom_tooltip = desc_mission_small_urban_gravity_tt
+		}
+	}
+	
+	eng_menorca_base = {
+		icon = mission_early_game_buildings
+		required_missions = { eng_develop_menorca }
+		provinces_to_highlight = {
+			province_id = 2358
+		}
+		trigger = {
+			2358 = {
+				owned_by = ROOT
+				HasBuildingOrBetter = { b1=military_harbour_1 b2=military_harbour_2 b3=military_harbour_3 b4=military_harbour_4 }
+			}
+		}
+		effect = {
+			add_navy_tradition = 10
+		}
+	}
+}

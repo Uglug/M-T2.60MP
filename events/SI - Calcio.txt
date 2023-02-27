@@ -1,0 +1,353 @@
+# Events concerning Calcio
+# by Marco Dandolo
+
+# Events 0-7 Calcio
+
+#0 Game ends
+#1 Preparations
+#2 Chianina
+#3 Betting
+#4 Should the ruler play?
+#5 Festivities begin
+#6 A guest from far away
+#7 A hard fight
+
+
+##########
+# Calcio #
+##########
+
+#Game ends
+country_event = {
+	id = festa_calcio.0
+	title = "festa_calcio.EVTNAME0"
+	desc = "festa_calcio.EVTDESC0"
+	picture = CALCIO_eventPicture
+	
+	trigger = {
+		has_country_modifier = festivating_calcio
+		has_country_flag = calcio_action
+		is_month = 2
+		NOT = {
+			has_country_modifier = glorious_calcio
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		
+		name = "festa_calcio.EVTOPTA0"	#It was fun
+		
+		add_prestige = 5
+		remove_country_modifier = festivating_calcio
+		add_country_modifier = {
+			name = "glorious_calcio"
+			duration = 1825
+		}
+		
+		clr_country_flag = calcio_decision
+		clr_country_flag = calcio_chianina
+		clr_country_flag = calcio_betting
+		clr_country_flag = calcio_ruler_plays
+		clr_country_flag = calcio_ruler_plays_yes
+		clr_country_flag = calcio_ruler_plays_no
+		clr_country_flag = calcio_action
+	}
+}
+
+#Preparations
+country_event = {
+	id = festa_calcio.1
+	title = "festa_calcio.EVTNAME1"
+	desc = "festa_calcio.EVTDESC1"
+	picture = CALCIO_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "festa_calcio.EVTOPTA1"	#Let's begin
+		add_country_modifier = {
+			name = "preparing_calcio"
+			duration = -1
+		}
+	}
+}
+
+#Chianina
+country_event = {
+	id = festa_calcio.2
+	title = "festa_calcio.EVTNAME2"
+	desc = "festa_calcio.EVTDESC2"
+	picture = CALCIO_eventPicture
+	
+	trigger = {
+		has_country_modifier = preparing_calcio
+		NOT = {
+			has_country_flag = calcio_chianina
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = "festa_calcio.EVTOPTA2"	#The best Chianina
+		
+		add_years_of_income = -0.3
+		add_prestige = 2
+		set_country_flag = calcio_chianina
+		ai_chance = { factor = 100 }
+	}
+	
+	option = {
+		name = "festa_calcio.EVTOPTB2"	#A good Chianina
+		
+		add_years_of_income = -0.15
+		add_prestige = 1
+		set_country_flag = calcio_chianina
+	}
+	
+	option = {
+		name = "festa_calcio.EVTOPTC2"	#An average Chianina
+		
+		add_years_of_income = -0.05
+		set_country_flag = calcio_chianina
+	}
+}
+
+#Betting
+country_event = {
+	id = festa_calcio.3
+	title = "festa_calcio.EVTNAME3"
+	desc = "festa_calcio.EVTDESC3"
+	picture = CALCIO_eventPicture
+	
+	trigger = {
+		has_country_modifier = preparing_calcio
+		has_country_flag = calcio_chianina
+		NOT = {
+			has_country_flag = calcio_betting
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = "festa_calcio.EVTOPTA3"	#Betting sounds good
+		set_country_flag = calcio_betting
+		random_list = {
+			5 = { add_years_of_income = 0.8 add_prestige = 3 }
+			10 = { add_years_of_income = 0.4 add_prestige = 2 }
+			25 = { add_years_of_income = 0.2 add_prestige = 1 }
+			30 = { add_years_of_income = -0.2 add_prestige = -1 }
+			20 = { add_years_of_income = -0.4 add_prestige = -2 }
+			10 = { add_years_of_income = -0.8 add_prestige = -3 }
+		}
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				tag = PAP
+			}
+		}
+	}
+	
+	option = {
+		name = "festa_calcio.EVTOPTB3"	#Betting is sin!
+		
+		add_papal_influence = 1
+		set_country_flag = calcio_betting
+		ai_chance = { factor = 50 }
+	}
+}
+
+#Should the ruler play?
+country_event = {
+	id = festa_calcio.4
+	title = "festa_calcio.EVTNAME4"
+	desc = "festa_calcio.EVTDESC4"
+	picture = CALCIO_eventPicture
+	
+	trigger = {
+		has_country_modifier = preparing_calcio
+		has_country_flag = calcio_betting
+		NOT = {
+			has_country_flag = calcio_ruler_plays
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		trigger = {
+			mil = 1
+			NOT = { mil = 4 }
+		}
+		name = "festa_calcio.EVTOPTA4"	#He needs some physical education
+		
+		add_prestige = 1
+		set_country_flag = calcio_ruler_plays
+		set_country_flag = calcio_ruler_plays_yes
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				mil = 1
+			}
+			modifier = {
+				factor = 0.5
+				mil = 3
+			}
+		}
+	}
+	
+	option = {
+		name = "festa_calcio.EVTOPTB4"	#It's better to watch the game from the loggia
+		
+		set_country_flag = calcio_ruler_plays
+		set_country_flag = calcio_ruler_plays_no
+		ai_chance = { factor = 50 }
+	}
+}
+
+#Festivities begin!
+country_event = {
+	id = festa_calcio.5
+	title = "festa_calcio.EVTNAME5"
+	desc = "festa_calcio.EVTDESC5"
+	picture = CALCIO_eventPicture
+	
+	trigger = {
+		has_country_modifier = preparing_calcio
+		has_country_flag = calcio_chianina
+		has_country_flag = calcio_betting
+		has_country_flag = calcio_ruler_plays
+		is_month = 1
+		
+		NOT = {
+			has_country_modifier = festivating_calcio
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = "festa_calcio.EVTOPTA5"	#Viva il Calcio!
+		
+		remove_country_modifier = preparing_calcio
+		add_country_modifier = {
+			name = "festivating_calcio"
+			duration = -1
+		}
+	}
+}
+
+#A guest from far away
+country_event = {
+	id = festa_calcio.6
+	title = "festa_calcio.EVTNAME6"
+	desc = "festa_calcio.EVTDESC6"
+	picture = CALCIO_eventPicture
+	
+	trigger = {
+		has_country_modifier = festivating_calcio
+		has_country_flag = calcio_ruler_plays_no
+		
+		NOT = {
+			has_country_flag = calcio_action
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		name = "festa_calcio.EVTOPTA6"	#Have a talk
+		random_known_country = {
+			add_opinion = {
+				who = ROOT
+				modifier = opinion_pleased
+			}
+		}
+		set_country_flag = calcio_action
+	}
+	option = {
+		name = "festa_calcio.EVTOPTB6"	#Bring him a drink and something to eat
+		add_years_of_income = -0.1
+		add_prestige = 1
+		set_country_flag = calcio_action
+	}
+}
+
+#A hard fight
+country_event = {
+	id = festa_calcio.7
+	title = "festa_calcio.EVTNAME7"
+	desc = "festa_calcio.EVTDESC7"
+	picture = CALCIO_eventPicture
+	
+	trigger = {
+		has_country_modifier = festivating_calcio
+		has_country_flag = calcio_betting
+		has_country_flag = calcio_ruler_plays_yes
+		NOT = {
+			has_country_flag = calcio_action
+		}
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	option = {
+		trigger = {
+			mil = 1
+			NOT = { mil = 2 }
+		}
+		name = "festa_calcio.EVTOPTA7"	#Attack!
+		random_list = {
+			45 = { change_mil = 1 add_prestige = 1 }
+			40 = { add_prestige = 1 }
+			15 = { add_prestige = -1 }
+		}
+		set_country_flag = calcio_action
+		ai_chance = { factor = 100 }
+	}
+	
+	option = {
+		trigger = {
+			mil = 2
+			NOT = { mil = 3 }
+		}
+		name = "festa_calcio.EVTOPTA7"	#Attack!
+		random_list = {
+			35 = { change_mil = 1 add_prestige = 3 }
+			50 = { add_prestige = 3 }
+			15 = { change_mil = -1 add_prestige = -3 }
+		}
+		set_country_flag = calcio_action
+		ai_chance = { factor = 50 }
+	}
+	
+	option = {
+		trigger = {
+			mil = 3
+			NOT = { mil = 4 }
+		}
+		name = "festa_calcio.EVTOPTA7"	#Attack!
+		random_list = {
+			30 = { change_mil = 1 add_prestige = 5 }
+			40 = { add_prestige = 5 }
+			30 = { change_mil = -1 add_prestige = -5 }
+		}
+		set_country_flag = calcio_action
+		ai_chance = { factor = 0 }
+	}
+	
+	option = {
+		name = "festa_calcio.EVTOPTB7"	#Defend!
+		add_republican_tradition = 1
+		add_legitimacy = 1
+		add_papal_influence = 1
+		add_prestige = -1
+		set_country_flag = calcio_action
+		ai_chance = { factor = 50 }
+	}
+}

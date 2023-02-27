@@ -1,0 +1,243 @@
+country_decisions = {
+# REMOVED EDICT OF NANTES DECISIONS (DEI GRATIA)
+	
+	move_the_court_to_versailles = {
+		
+		potential = {
+			tag = FRA
+			capital = 183
+			government = monarchy
+			adm_tech = 26
+			NOT = { has_country_flag = versailles_court }
+		}
+		allow = {
+			full_idea_group = economic_ideas
+			absolutism = 60
+		}
+		effect = {
+			set_country_flag = versailles_court
+			add_prestige = 33
+			183 = {
+				# add_base_tax = 2
+				change_province_name = "Versailles"
+				rename_capital = "Versailles"
+			}
+			add_absolutism = 10
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	permanent_taxation_system = {
+		
+		potential = {
+			OR = {
+				has_country_modifier = feudal_structure
+				has_country_modifier = feudal_economics
+			}
+		}
+		allow = {
+			adm_tech = 11
+			OR = {
+				ADM = 2
+				advisor = alderman
+				advisor = statesman
+			}
+		}
+		effect = {
+			custom_tooltip = permanent_taxation_system_tooltip
+			if = {
+				limit = { has_country_modifier = feudal_structure }
+				remove_country_modifier = feudal_structure
+				add_country_modifier = {
+					name = "feudal_army_organisation"
+					duration = -1
+				}
+			}
+			#if = {
+			#	limit = { has_country_modifier = feudal_economics }
+				remove_country_modifier = feudal_economics
+			#}
+			add_country_modifier = {
+				name = "finances_under_reform"
+				duration = 365
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+	first_permanent_army = {
+		
+		potential = {
+			OR = {
+				has_country_modifier = feudal_structure
+				has_country_modifier = feudal_army_organisation
+			}
+		}
+		allow = {
+			mil_tech = 12
+			OR = {
+				ADM = 2
+				advisor = alderman
+				advisor = statesman
+			}
+		}
+		effect = {
+			if = {
+				limit = { has_country_modifier = feudal_structure }
+				remove_country_modifier = feudal_structure
+				add_country_modifier = {
+					name = "feudal_economics"
+					duration = -1
+				}
+			}
+			#if = {
+			#	limit = { has_country_modifier = feudal_army_organisation }
+				remove_country_modifier = feudal_army_organisation
+			#}
+			add_country_modifier = {
+				name = "military_under_reform"
+				duration = 365
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+# End of Saint Malo Republic
+	end_saint_malo_republic = {
+		
+		potential = {
+			owns = 4008 # Saint Malo
+			is_core = 4008
+			4008 = {
+				has_province_modifier = saint_malo_city3
+			}
+			has_any_disaster = no
+		}
+		allow = {
+			stability = 1
+			treasury = 600
+			adm = 2
+			dip = 2
+		}
+		effect = {
+			add_prestige = 5
+			add_treasury = -500
+			4008 = {
+				add_permanent_province_modifier = {
+					name = saint_malo_city2
+					duration = -1
+				}
+				remove_province_modifier = saint_malo_city3
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+# End of La Rochelle Republic
+	end_la_rochelle_republic = { #Launch a military expedition.
+		
+		potential = {
+			owns = 172 # Aunis
+			is_core = 172
+			172 = {
+				has_province_modifier = republique_la_rochelle
+			}
+			has_any_disaster = no
+		}
+		allow = {
+			stability = 1
+			manpower_percentage = 0.5
+			treasury = 600
+			OR = {
+				mil = 4
+				advisor = statesman
+				advisor = commandant
+				advisor = grand_captain
+			}
+		}
+		effect = {
+			add_prestige = 5
+			add_treasury = -500
+			add_yearly_manpower = -0.8
+			172 = { remove_province_modifier = republique_la_rochelle }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+# Negociate the freedom of Jean II
+	negociate_freedom_jean = {
+		
+		potential = {
+			tag = FRA
+			war_with = ENG
+			has_country_flag = ruler_prisonner_of_war
+			has_global_flag = hundred_years_war
+		}
+		allow = {
+			tag = FRA
+			war_with = ENG
+			has_country_flag = ruler_prisonner_of_war
+			war_exhaustion = 6
+			OR = {
+				NOT = { has_country_flag = negociating_release_jean }
+				had_country_flag = { flag = negociating_release_jean days = 365 }
+			}
+		}
+		effect = {
+			ENG = { country_event = { id = prisonner_of_war.501 } }
+			set_country_flag = negociating_release_jean
+		}
+		ai_will_do = {
+			factor = 0.1
+			modifier = {
+				factor = 0
+				NOT = { war_exhaustion = 7 }
+			}
+			modifier = {
+				factor = 2
+				war_exhaustion = 10
+			}
+			modifier = {
+				factor = 2
+				war_exhaustion = 20
+			}
+			modifier = {
+				factor = 2
+				war_exhaustion = 30
+			}
+			modifier = {
+				factor = 2
+				war_exhaustion = 40
+			}
+			modifier = {
+				factor = 2
+				war_exhaustion = 50
+			}
+			modifier = {
+				factor = 5
+				has_any_disaster = yes
+			}
+			modifier = {
+				factor = 2
+				NOT = { manpower_percentage = 0.25 }
+			}
+			modifier = {
+				factor = 2
+				NOT = { manpower_percentage = 0.10 }
+			}
+		}
+	}
+	
+}

@@ -1,0 +1,1418 @@
+namespace = POP_province_damage
+
+### By Demian
+
+province_event = { #Province loses population when occupied and gains trauma
+	id = POP_province_damage.001
+	title = POP_province_damage.001.t
+	desc = POP_province_damage.001.d
+	picture = BURNING_CITY_eventPicture
+	hidden = yes
+	
+	is_triggered_only = yes # added it to siege lost on_action
+	
+	trigger = {
+		NOT = { controlled_by = REB }
+		NOT = { controlled_by = owner }
+		NOT = { has_province_modifier = province_damaged }
+		is_colony = no
+	}
+	
+	immediate = {
+		# Imports variable version of loot_amount modifier from occupying country
+		set_variable = { which = country_loot_modifier		which = controller }
+		if = {
+			limit = {
+				NOT = { check_variable = { which = country_loot_modifier		value = 0.01 } }
+			}
+			set_variable = { which = country_loot_modifier 		value = 0.01 }
+		}
+		set_variable = { which = temp_damage_modifier		which = country_loot_modifier }
+					
+		# Clears intermediate variable
+		set_variable = { which = country_loot_modifier 		value = 0 }
+		
+		if = {
+			limit = { has_province_flag = tribals_control_province } # Tribes arent as dense, harder to loot.
+			multiply_variable = { which = temp_damage_modifier value = 0.75 }
+		}
+		if = {
+			limit = { culture = controller }
+			multiply_variable = { which = temp_damage_modifier value = 0.85 }
+		}
+		if = {
+			limit = { culture_group = controller }
+			multiply_variable = { which = temp_damage_modifier value = 0.9 }
+		}
+		if = {
+			limit = { religion = controller }
+			multiply_variable = { which = temp_damage_modifier value = 0.8 }
+		}
+		if = {
+			limit = { religion_group = controller }
+			multiply_variable = { which = temp_damage_modifier value = 0.9 }
+		}
+		if = {
+			limit = { is_core = controller }
+			multiply_variable = { which = temp_damage_modifier value = 0.75 }
+		}
+		if = {
+			limit = { is_claim = controller }
+			multiply_variable = { which = temp_damage_modifier value = 0.85 }
+		}
+		
+		# Reduce the loot severity
+		multiply_variable = { which = temp_damage_modifier value = 0.8 }
+		
+		if = {
+			limit = {
+				NOT = { has_province_modifier = province_looted_this_war }
+			}
+		
+			#set_variable = { which = wealth_urban_percentage_removed 	value = 0 }
+			random_list = {
+				10 = {
+					set_variable = { which = wealth_urban_percentage_removed value = 0.5 }
+				}
+				20 = {
+					set_variable = { which = wealth_urban_percentage_removed value = 0.4 }
+				}
+				40 = {
+					set_variable = { which = wealth_urban_percentage_removed value = 0.3 }
+				}
+				30 = {
+					set_variable = { which = wealth_urban_percentage_removed value = 0.2 }
+				}
+			}
+			
+			multiply_variable = { which = wealth_urban_percentage_removed 	which = temp_damage_modifier }
+			
+			if = {
+				limit = {
+					check_variable = { which = wealth_urban_looted_fatigue value = 0.001 }
+				}
+				set_variable = { which = temp_fatigue_modifier value = 1 }
+				subtract_variable = { which = temp_fatigue_modifier which = wealth_urban_looted_fatigue }
+				multiply_variable = { which = wealth_urban_percentage_removed which = temp_fatigue_modifier }
+				
+				set_variable = { which = temp_fatigue_modifier value = 0 }
+			}
+			else = {
+				set_variable = { which = wealth_urban_looted_fatigue value = 0 }
+			}
+			
+			change_variable = { which = wealth_urban_looted_fatigue		which = wealth_urban_percentage_removed }
+			change_variable = { which = wealth_urban_looted_fatigue		which = wealth_urban_percentage_removed }
+			
+			if = {
+				limit = {
+					check_variable = { which = wealth_urban_looted_fatigue    value = 0.95 }
+				}
+				set_variable = { which = wealth_urban_looted_fatigue	value = 0.95 }
+			}
+			
+			if = {
+				limit = {
+					check_variable = { which = wealth_urban_percentage_removed    value = 0.9 } #90% max
+				}
+				set_variable = { which = wealth_urban_percentage_removed   value = 0.9 }
+			}
+			else_if = {
+				limit = {
+					NOT = { check_variable = { which = wealth_urban_percentage_removed    value = 0.01 } } #1% min
+				}
+				set_variable = { which = wealth_urban_percentage_removed   value = 0.01 }
+			}
+			
+			urban_wealth_damaged = yes
+			#set_variable = { which = wealth_rural_percentage_removed 	value = 0 }
+			random_list = {
+				10 = {
+					set_variable = { which = wealth_rural_percentage_removed value = 0.3 }
+				}
+				20 = {
+					set_variable = { which = wealth_rural_percentage_removed value = 0.25 }
+				}
+				40 = {
+					set_variable = { which = wealth_rural_percentage_removed value = 0.2 }
+				}
+				30 = {
+					set_variable = { which = wealth_rural_percentage_removed value = 0.15 }
+				}
+			}
+			multiply_variable = { which = wealth_rural_percentage_removed which = temp_damage_modifier }
+			
+			if = {
+				limit = {
+					check_variable = { which = wealth_rural_looted_fatigue value = 0.001 }
+				}
+				set_variable = { which = temp_fatigue_modifier value = 1 }
+				subtract_variable = { which = temp_fatigue_modifier which = wealth_rural_looted_fatigue }
+				multiply_variable = { which = wealth_rural_percentage_removed which = temp_fatigue_modifier }
+				
+				set_variable = { which = temp_fatigue_modifier value = 0 }
+			}
+			else = {
+				set_variable = { which = wealth_rural_looted_fatigue value = 0 }
+			}
+			
+			change_variable = { which = wealth_rural_looted_fatigue		which = wealth_rural_percentage_removed }
+			change_variable = { which = wealth_rural_looted_fatigue		which = wealth_rural_percentage_removed }
+			
+			if = {
+				limit = {
+					check_variable = { which = wealth_rural_looted_fatigue    value = 0.95 }
+				}
+				set_variable = { which = wealth_rural_looted_fatigue	value = 0.95 }
+			}
+			
+			if = {
+				limit = {
+					check_variable = { which = wealth_rural_percentage_removed    value = 0.9 } #90% max
+				}
+				set_variable = { which = wealth_rural_percentage_removed   value = 0.9 }
+			}
+			else_if = {
+				limit = {
+					NOT = { check_variable = { which = wealth_rural_percentage_removed    value = 0.01 } } #1% min
+				}
+				set_variable = { which = wealth_rural_percentage_removed   value = 0.01 }
+			}
+			
+			
+			rural_wealth_damaged = yes
+			loot_province = yes
+			add_permanent_province_modifier = {
+				name = province_looted_this_war
+				duration = -1
+			}
+		}
+		
+		add_province_modifier = {
+			name = province_damaged
+			duration = -1
+			hidden = yes
+		}
+		
+		add_province_modifier = {
+			name = province_damage_cooldown
+			duration = 365
+			hidden = yes
+		}
+		
+		#set_variable = { which = urban_percentage_removed		value = 0 }
+		#set_variable = { which = rural_percentage_removed		value = 0 }
+		random_list = {
+			10 = {
+				set_variable = { which = population_bloodied value = 0.35 }
+			}
+			20 = {
+				set_variable = { which = population_bloodied value = 0.3 }
+			}
+			40 = {
+				set_variable = { which = population_bloodied value = 0.25 }
+			}
+			30 = {
+				set_variable = { which = population_bloodied value = 0.2 }
+			}
+		}
+		multiply_variable = { which = population_bloodied 		 which = temp_damage_modifier }
+		multiply_variable = { which = population_bloodied		 value = 0.75 } # This value tunes damage due to war
+		
+		set_variable = {    which = rural_percentage_removed	which = population_bloodied }
+		multiply_variable = { which = rural_percentage_removed	 value = 0.5 }
+		
+		if = {
+			limit = {
+				check_variable = { which = rural_percentage_removed    value = 0.9 } #90% max
+			}
+			set_variable = { which = rural_percentage_removed   value = 0.9 }
+		}
+		else_if = {
+			limit = {
+				NOT = { check_variable = { which = rural_percentage_removed    value = 0.01 } } #1% min
+			}
+			set_variable = { which = rural_percentage_removed   value = 0.01 }
+		}
+		
+		set_variable = {    which = urban_percentage_removed	which = population_bloodied }
+		multiply_variable = { which = urban_percentage_removed	 value = 2 }
+		
+		if = {
+			limit = {
+				check_variable = { which = urban_percentage_removed    value = 0.9 } #90% max
+			}
+			set_variable = { which = urban_percentage_removed   value = 0.9 }
+		}
+		else_if = {
+			limit = {
+				NOT = { check_variable = { which = urban_percentage_removed    value = 0.01 } } #1% min
+			}
+			set_variable = { which = urban_percentage_removed   value = 0.01 }
+		}
+		
+		apply_loot_relation_hits = yes
+		
+		set_variable = { which = urbans_dead which = urban_percentage_removed }
+		multiply_variable = { which = urbans_dead value = 10 }
+		multiply_variable = { which = urbans_dead which = urban_pop }
+		set_variable = { which = urbans_killed which = urbans_dead }
+		set_variable = { which = urbans_dead_total which = urbans_dead }
+		set_variable = { which = urbans_killed_total which = urbans_dead }
+		
+		set_variable = { which = rurals_dead which = rural_percentage_removed }
+		multiply_variable = { which = rurals_dead value = 10 }
+		multiply_variable = { which = rurals_dead which = rural_pop }
+		set_variable = { which = rurals_killed which = rurals_dead }
+		set_variable = { which = rurals_dead_total which = rurals_dead }
+		set_variable = { which = rurals_killed_total which = rurals_dead }
+		
+		controller = {
+			save_event_target_as = prov_controller
+		}
+		owner = {
+			save_event_target_as = prov_owner
+			change_variable = { which = urbans_dead which = PREV }
+			change_variable = { which = rurals_dead which = PREV }
+			every_country = {
+				limit = {
+					war_with = PREV
+					OR = {
+						is_in_war = {
+							attackers = event_target:prov_controller
+							defenders = PREV
+						}
+						is_in_war = {
+							attackers = PREV
+							defenders = event_target:prov_controller
+						}
+					}
+				}
+				change_variable = { which = urbans_killed_total which = ROOT }
+				change_variable = { which = rurals_killed_total which = ROOT }
+			}
+		}
+		controller = {
+			change_variable = { which = urbans_killed which = PREV }
+			change_variable = { which = rurals_killed which = PREV }
+			every_country = {
+				limit = {
+					war_with = PREV
+					OR = {
+						is_in_war = {
+							attackers = event_target:prov_owner
+							defenders = PREV
+						}
+						is_in_war = {
+							attackers = PREV
+							defenders = event_target:prov_owner
+						}
+					}
+				}
+				change_variable = { which = urbans_dead_total which = ROOT }
+				change_variable = { which = rurals_dead_total which = ROOT }
+			}
+		}
+		
+		set_variable = { which = urbans_dead value = 0 }
+		set_variable = { which = urbans_killed value = 0 }
+		set_variable = { which = urbans_dead_total value = 0 }
+		set_variable = { which = urbans_killed_total value = 0 }
+		
+		set_variable = { which = rurals_dead value = 0 }
+		set_variable = { which = rurals_killed value = 0 }
+		set_variable = { which = rurals_dead_total value = 0 }
+		set_variable = { which = rurals_killed_total value = 0 }
+		
+		remove_urban_population_DEVS = yes
+		remove_rural_population_DEVS = yes
+		
+		if = {
+			limit = {
+				NOT = { check_variable = { which = province_trauma value = 0.01 } }
+			}
+			set_variable = { which = province_trauma			value = 0 }
+		}
+		
+		if = {
+			limit = {
+				NOT = { check_variable = { which = province_trauma value = 100 } }
+			}
+			set_variable = { which = province_trauma_added		value = 0 }
+			
+			random_list = {
+				5 = {
+					change_variable = { which = province_trauma_added		value = 3 }
+				}
+				10 = {
+					change_variable = { which = province_trauma_added		value = 2 }
+				}
+				20 = {
+					change_variable = { which = province_trauma_added		value = 1.75 }
+				}
+				40 = {
+					change_variable = { which = province_trauma_added		value = 1.5 }
+				}
+				25 = {
+					change_variable = { which = province_trauma_added		value = 1 }
+				}
+			}
+			multiply_variable = { which = province_trauma_added			which = temp_damage_modifier }
+			
+			change_variable = {	  which = province_trauma				which = province_trauma_added }
+		}
+		
+		if = { limit = { check_variable = { which = province_trauma value = 6 } }
+			if = { limit = { check_variable = { which = province_trauma value = 8 } }
+				if = { limit = { check_variable = { which = province_trauma value = 10 } }
+					if = {
+						limit = {
+							NOT = { has_province_modifier = trauma_devastating }
+						}
+						remove_trauma = yes
+						add_permanent_province_modifier = {
+							name = trauma_devastating
+							duration = -1
+						}
+						add_devastation = 100
+					}
+				}
+				else = {
+					if = {
+						limit = {
+							NOT = { has_province_modifier = trauma_terrible }
+						}
+						remove_trauma = yes
+						add_permanent_province_modifier = {
+							name = trauma_terrible
+							duration = -1
+						}
+						add_devastation = -100
+						add_devastation = 80
+					}
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						NOT = { has_province_modifier = trauma_harsh }
+					}
+					remove_trauma = yes
+					add_permanent_province_modifier = {
+						name = trauma_harsh
+						duration = -1
+					}
+					add_devastation = -100
+					add_devastation = 60
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = province_trauma value = 2 } }
+				if = { limit = { check_variable = { which = province_trauma value = 4 } }
+					if = {
+						limit = {
+							NOT = { has_province_modifier = trauma_limited }
+						}
+						remove_trauma = yes
+						add_permanent_province_modifier = {
+							name = trauma_limited
+							duration = -1
+						}
+						add_devastation = -100
+						add_devastation = 40
+					}
+				}
+				else = {
+					if = {
+						limit = {
+							NOT = { has_province_modifier = trauma_mild }
+						}
+						remove_trauma = yes
+						add_permanent_province_modifier = {
+							name = trauma_mild
+							duration = -1
+						}
+						add_devastation = -100
+						add_devastation = 20
+					}
+				}
+			}
+		}
+		
+		#if = { ### Variables set to 0 after calculations are done
+			#limit = {
+			#	NOT = { has_global_flag = show_for_developers }
+			#}
+			set_variable = {    which = population_bloodied			 value = 0 } # Dez: Cleaning up variables to avoid cluttering saves
+			set_variable = { which = temp_damage_modifier value = 0 }
+		#}
+	}
+	option = {
+		name = "POP_province_damage.001.a"
+	}
+}
+
+province_event = { #Province continues to suffer population damage after occupation, though slowly
+	id = POP_province_damage.002
+	title = POP_province_damage.002.t
+	desc = POP_province_damage.002.d
+	picture = BURNING_CITY_eventPicture
+	hidden = yes
+	
+	trigger = {
+		has_province_modifier = province_damaged
+		NOT = { has_province_modifier = province_damage_cooldown }
+		is_colony = no
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	immediate = {
+		add_province_modifier = {
+			name = province_damage_cooldown
+			duration = 365
+			hidden = yes
+		}
+		#set_variable = { which = urban_percentage_removed		value = 0 }
+		#set_variable = { which = rural_percentage_removed		value = 0 }
+		random_list = {
+			10 = {
+				set_variable = { which = population_bleeding value = 0.05 }
+			}
+			20 = {
+				set_variable = { which = population_bleeding value = 0.04 }
+			}
+			40 = {
+				set_variable = { which = population_bleeding value = 0.03 }
+			}
+			30 = {
+				set_variable = { which = population_bleeding value = 0.02 }
+			}
+		}
+		multiply_variable = { which = population_bleeding		 value = 0.75 } # This value tunes damage due to war
+		
+		set_variable = {    which = rural_percentage_removed	which = population_bleeding }
+		multiply_variable = { which = rural_percentage_removed	 value = 0.5 }
+		
+		if = {
+			limit = {
+				check_variable = { which = rural_percentage_removed    value = 0.9 } #90% max
+			}
+			set_variable = { which = rural_percentage_removed   value = 0.9 }
+		}
+		else_if = {
+			limit = {
+				NOT = { check_variable = { which = rural_percentage_removed    value = 0.01 } } #1% min
+			}
+			set_variable = { which = rural_percentage_removed   value = 0.01 }
+		}
+		
+		set_variable = {    which = urban_percentage_removed	which = population_bleeding }
+		multiply_variable = { which = urban_percentage_removed	 value = 2 }
+		
+		if = {
+			limit = {
+				check_variable = { which = urban_percentage_removed    value = 0.9 } #90% max
+			}
+			set_variable = { which = urban_percentage_removed   value = 0.9 }
+		}
+		else_if = {
+			limit = {
+				NOT = { check_variable = { which = urban_percentage_removed    value = 0.01 } } #1% min
+			}
+			set_variable = { which = urban_percentage_removed   value = 0.01 }
+		}
+		
+		if = {
+			limit = {
+				NOT = { controlled_by = owner }
+				NOT = { controlled_by = REB }
+			}
+			
+			set_variable = { which = urbans_dead which = urban_percentage_removed }
+			multiply_variable = { which = urbans_dead value = 10 }
+			multiply_variable = { which = urbans_dead which = urban_pop }
+			set_variable = { which = urbans_killed which = urbans_dead }
+			set_variable = { which = urbans_dead_total which = urbans_dead }
+			set_variable = { which = urbans_killed_total which = urbans_dead }
+			
+			set_variable = { which = rurals_dead which = rural_percentage_removed }
+			multiply_variable = { which = rurals_dead value = 10 }
+			multiply_variable = { which = rurals_dead which = rural_pop }
+			set_variable = { which = rurals_killed which = rurals_dead }
+			set_variable = { which = rurals_dead_total which = rurals_dead }
+			set_variable = { which = rurals_killed_total which = rurals_dead }
+			
+			controller = {
+				save_event_target_as = prov_controller
+			}
+			owner = {
+				save_event_target_as = prov_owner
+				change_variable = { which = urbans_dead which = PREV }
+				change_variable = { which = rurals_dead which = PREV }
+				every_country = {
+					limit = {
+						war_with = PREV
+						OR = {
+							is_in_war = {
+								attackers = event_target:prov_controller
+								defenders = PREV
+							}
+							is_in_war = {
+								attackers = PREV
+								defenders = event_target:prov_controller
+							}
+						}
+					}
+					change_variable = { which = urbans_killed_total which = ROOT }
+					change_variable = { which = rurals_killed_total which = ROOT }
+				}
+			}
+			controller = {
+				change_variable = { which = urbans_killed which = PREV }
+				change_variable = { which = rurals_killed which = PREV }
+				every_country = {
+					limit = {
+						war_with = PREV
+						OR = {
+							is_in_war = {
+								attackers = event_target:prov_owner
+								defenders = PREV
+							}
+							is_in_war = {
+								attackers = PREV
+								defenders = event_target:prov_owner
+							}
+						}
+					}
+					change_variable = { which = urbans_dead_total which = ROOT }
+					change_variable = { which = rurals_dead_total which = ROOT }
+				}
+			}
+			
+			set_variable = { which = urbans_dead value = 0 }
+			set_variable = { which = urbans_killed value = 0 }
+			set_variable = { which = urbans_dead_total value = 0 }
+			set_variable = { which = urbans_killed_total value = 0 }
+			
+			set_variable = { which = rurals_dead value = 0 }
+			set_variable = { which = rurals_killed value = 0 }
+			set_variable = { which = rurals_dead_total value = 0 }
+			set_variable = { which = rurals_killed_total value = 0 }
+		}
+		
+		remove_urban_population_DEVS = yes
+		remove_rural_population_DEVS = yes
+		set_variable = { which = population_bleeding			value = 0 }
+		
+		if = {
+			limit = {
+				NOT = { check_variable = { which = province_trauma value = 0.01 } }
+			}
+			set_variable = { which = province_trauma			value = 0 }
+		}
+		if = {
+			limit = {
+				NOT = { check_variable = { which = province_trauma value = 100 } }
+			}
+			set_variable = { which = province_trauma_added		value = 0 }
+			
+			random_list = {
+				30 = {
+					change_variable = { which = province_trauma_added		value = 1 }
+				}
+				40 = {
+					change_variable = { which = province_trauma_added		value = 0.75 }
+				}
+				30 = {
+					change_variable = { which = province_trauma_added		value = 0.5 }
+				}
+			}
+			
+			change_variable = {	  which = province_trauma				which = province_trauma_added }
+		}
+		
+		if = { limit = { check_variable = { which = province_trauma value = 6 } }
+			if = { limit = { check_variable = { which = province_trauma value = 8 } }
+				if = { limit = { check_variable = { which = province_trauma value = 10 } }
+					if = {
+						limit = {
+							NOT = { has_province_modifier = trauma_devastating }
+						}
+						remove_trauma = yes
+						add_permanent_province_modifier = {
+							name = trauma_devastating
+							duration = -1
+						}
+						add_devastation = 100
+					}
+				}
+				else = {
+					if = {
+						limit = {
+							NOT = { has_province_modifier = trauma_terrible }
+						}
+						remove_trauma = yes
+						add_permanent_province_modifier = {
+							name = trauma_terrible
+							duration = -1
+						}
+						add_devastation = -100
+						add_devastation = 80
+					}
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						NOT = { has_province_modifier = trauma_harsh }
+					}
+					remove_trauma = yes
+					add_permanent_province_modifier = {
+						name = trauma_harsh
+						duration = -1
+					}
+					add_devastation = -100
+					add_devastation = 60
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = province_trauma value = 2 } }
+				if = { limit = { check_variable = { which = province_trauma value = 4 } }
+					if = {
+						limit = {
+							NOT = { has_province_modifier = trauma_limited }
+						}
+						remove_trauma = yes
+						add_permanent_province_modifier = {
+							name = trauma_limited
+							duration = -1
+						}
+						add_devastation = -100
+						add_devastation = 40
+					}
+				}
+				else = {
+					if = {
+						limit = {
+							NOT = { has_province_modifier = trauma_mild }
+						}
+						remove_trauma = yes
+						add_permanent_province_modifier = {
+							name = trauma_mild
+							duration = -1
+						}
+						add_devastation = -100
+						add_devastation = 20
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = "POP_province_damage.002.a"
+		#province_event = {
+		#	id = POP_province_damage.003
+		#}
+	}
+}
+
+province_event = { #Province loses population when occupied and gains trauma
+	id = POP_province_damage.003
+	title = POP_province_damage.003.t
+	desc = POP_province_damage.003.d
+	picture = BURNING_CITY_eventPicture
+	hidden = yes
+	
+	trigger = {
+		has_province_modifier = province_looted_this_war
+		owner = { is_at_war = no }
+		is_colony = no
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	immediate = {
+		remove_province_modifier = province_looted_this_war
+		#if = {
+		#	limit = {
+		#		has_province_modifier = province_damaged
+		#	}
+			remove_province_modifier = province_damaged
+		#}
+	}
+	
+	option = {
+		name = "POP_province_damage.003.a"
+	}
+}
+
+province_event = { #Province loses population when occupied and gains trauma
+	id = POP_province_damage.004
+	title = POP_province_damage.004.t
+	desc = POP_province_damage.004.d
+	picture = BURNING_CITY_eventPicture
+	hidden = yes
+	is_triggered_only = yes # Moved to on_action
+	
+	trigger = {
+		controlled_by = REB
+		NOT = { has_province_modifier = rebel_occupied }
+		is_colony = no
+	}
+	
+	#mean_time_to_happen = {
+	#	months = 1
+	#}
+	
+	immediate = {
+		
+		if = {
+			limit = {
+				NOT = { has_province_modifier = province_looted_this_war }
+			}
+			set_variable = { which = wealth_urban_percentage_removed 	value = 0.15 }
+			urban_wealth_damaged = yes
+			set_variable = { which = wealth_rural_percentage_removed 	value = 0.075 }
+			rural_wealth_damaged = yes
+		}
+		add_province_modifier = {
+			name = rebel_occupied
+			duration = 3650
+			hidden = yes
+		}
+		add_province_modifier = {
+			name = rebel_damage_cooldown
+			duration = 750
+			hidden = yes
+		}
+		#set_variable = { which = urban_percentage_removed		value = 0 }
+		#set_variable = { which = rural_percentage_removed		value = 0 }
+		random_list = {
+			10 = {
+				set_variable = { which = population_bloodied value = 0.15 }
+			}
+			20 = {
+				set_variable = { which = population_bloodied value = 0.12 }
+			}
+			40 = {
+				set_variable = { which = population_bloodied value = 0.10 }
+			}
+			30 = {
+				set_variable = { which = population_bloodied value = 0.05 }
+			}
+		}
+		multiply_variable = { which = population_bloodied		 value = 0.75 } # This value tunes damage due to war
+		
+		set_variable = {    which = rural_percentage_removed	which = population_bloodied }
+		multiply_variable = { which = rural_percentage_removed	 value = 0.5 }
+		
+		if = {
+			limit = {
+				check_variable = { which = rural_percentage_removed    value = 0.9 } #90% max
+			}
+			set_variable = { which = rural_percentage_removed   value = 0.9 }
+		}
+		else_if = {
+			limit = {
+				NOT = { check_variable = { which = rural_percentage_removed    value = 0.01 } } #1% min
+			}
+			set_variable = { which = rural_percentage_removed   value = 0.01 }
+		}
+		
+		set_variable = {    which = urban_percentage_removed	which = population_bloodied }
+		multiply_variable = { which = urban_percentage_removed	 value = 2 }
+		
+		if = {
+			limit = {
+				check_variable = { which = urban_percentage_removed    value = 0.9 } #90% max
+			}
+			set_variable = { which = urban_percentage_removed   value = 0.9 }
+		}
+		else_if = {
+			limit = {
+				NOT = { check_variable = { which = urban_percentage_removed    value = 0.01 } } #1% min
+			}
+			set_variable = { which = urban_percentage_removed   value = 0.01 }
+		}
+		remove_urban_population_DEVS = yes
+		remove_rural_population_DEVS = yes
+		
+		
+		if = {
+			limit = {
+				NOT = { check_variable = { which = province_trauma value = 0.01 } }
+			}
+			set_variable = { which = province_trauma			value = 0 }
+		}
+		if = {
+			limit = {
+				NOT = { check_variable = { which = province_trauma value = 20 } }
+			}
+			#set_variable = { which = province_trauma_added 	    value = 0 }
+			#	set_variable = { which = province_trauma_scaling    value = 0 }
+			random_list = {
+				10 = {
+					set_variable = { which = province_trauma_added		value = 2 }
+				}
+				20 = {
+					set_variable = { which = province_trauma_added		value = 1.75 }
+				}
+				40 = {
+					set_variable = { which = province_trauma_added		value = 1.5 }
+				}
+				30 = {
+					set_variable = { which = province_trauma_added		value = 1 }
+				}
+			}
+			#	set_variable = { which = province_trauma_scaling			which = province_trauma }
+			#	multiply_variable = { which = province_trauma_scaling		value = 0.1 }
+			#	subtract_variable = { which = province_trauma_scaling		value = 1 }
+			#	multiply_variable = { which = province_trauma_scaling		which = province_trauma_added }
+			#	subtract_variable = { which = province_trauma				which = province_trauma_scaling }
+			change_variable = {	  which = province_trauma				which = province_trauma_added }
+		}
+		
+		if = { limit = { check_variable = { which = province_trauma value = 6 } }
+			if = { limit = { check_variable = { which = province_trauma value = 8 } }
+				if = { limit = { check_variable = { which = province_trauma value = 10 } }
+					if = {
+						limit = {
+							NOT = { has_province_modifier = trauma_devastating }
+						}
+						remove_trauma = yes
+						add_permanent_province_modifier = {
+							name = trauma_devastating
+							duration = -1
+						}
+						add_devastation = 100
+					}
+				}
+				else = {
+					if = {
+						limit = {
+							NOT = { has_province_modifier = trauma_terrible }
+						}
+						remove_trauma = yes
+						add_permanent_province_modifier = {
+							name = trauma_terrible
+							duration = -1
+						}
+						add_devastation = -100
+						add_devastation = 80
+					}
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						NOT = { has_province_modifier = trauma_harsh }
+					}
+					remove_trauma = yes
+					add_permanent_province_modifier = {
+						name = trauma_harsh
+						duration = -1
+					}
+					add_devastation = -100
+					add_devastation = 60
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = province_trauma value = 2 } }
+				if = { limit = { check_variable = { which = province_trauma value = 4 } }
+					if = {
+						limit = {
+							NOT = { has_province_modifier = trauma_limited }
+						}
+						remove_trauma = yes
+						add_permanent_province_modifier = {
+							name = trauma_limited
+							duration = -1
+						}
+						add_devastation = -100
+						add_devastation = 40
+					}
+				}
+				else = {
+					if = {
+						limit = {
+							NOT = { has_province_modifier = trauma_mild }
+						}
+						remove_trauma = yes
+						add_permanent_province_modifier = {
+							name = trauma_mild
+							duration = -1
+						}
+						add_devastation = -100
+						add_devastation = 20
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = "POP_province_damage.004.a"
+		
+		#province_event = {
+		#	id = POP_province_damage.003
+		#}
+	}
+}
+
+province_event = { #Province continues to suffer population damage after occupation, though slowly
+	id = POP_province_damage.005
+	title = POP_province_damage.005.t
+	desc = POP_province_damage.005.d
+	picture = BURNING_CITY_eventPicture
+	hidden = yes
+	
+	trigger = {
+		has_province_modifier = rebel_occupied
+		NOT = { has_province_modifier = rebel_damage_cooldown }
+		is_colony = no
+	}
+	
+	mean_time_to_happen = { months = 1 }
+	
+	immediate = {
+		add_province_modifier = {
+			name = rebel_damage_cooldown
+			duration = 750
+			hidden = yes
+		}
+		#set_variable = { which = urban_percentage_removed		value = 0 }
+		#set_variable = { which = rural_percentage_removed		value = 0 }
+		random_list = {
+			10 = {
+				set_variable = { which = population_bleeding value = 0.05 }
+			}
+			20 = {
+				set_variable = { which = population_bleeding value = 0.04 }
+			}
+			40 = {
+				set_variable = { which = population_bleeding value = 0.03 }
+			}
+			30 = {
+				set_variable = { which = population_bleeding value = 0.02 }
+			}
+		}
+		multiply_variable = { which = population_bleeding		 value = 0.75 } # This value tunes damage due to war
+		
+		set_variable = {    which = rural_percentage_removed	which = population_bleeding }
+		multiply_variable = { which = rural_percentage_removed	 value = 0.5 }
+		
+		if = {
+			limit = {
+				check_variable = { which = rural_percentage_removed    value = 0.9 } #90% max
+			}
+			set_variable = { which = rural_percentage_removed   value = 0.9 }
+		}
+		else_if = {
+			limit = {
+				NOT = { check_variable = { which = rural_percentage_removed    value = 0.01 } } #1% min
+			}
+			set_variable = { which = rural_percentage_removed   value = 0.01 }
+		}
+		
+		set_variable = {    which = urban_percentage_removed	which = population_bleeding }
+		multiply_variable = { which = urban_percentage_removed	 value = 2 }
+		
+		if = {
+			limit = {
+				check_variable = { which = urban_percentage_removed    value = 0.9 } #90% max
+			}
+			set_variable = { which = urban_percentage_removed   value = 0.9 }
+		}
+		else_if = {
+			limit = {
+				NOT = { check_variable = { which = urban_percentage_removed    value = 0.01 } } #1% min
+			}
+			set_variable = { which = urban_percentage_removed   value = 0.01 }
+		}
+		remove_urban_population_DEVS = yes
+		remove_rural_population_DEVS = yes
+		set_variable = { which = population_bleeding			value = 0 }
+		
+		if = {
+			limit = {
+				NOT = { check_variable = { which = province_trauma value = 0.01 } }
+			}
+			set_variable = { which = province_trauma			value = 0 }
+		}
+		if = {
+			limit = {
+				NOT = { check_variable = { which = province_trauma value = 20 } }
+			}
+			#set_variable = { which = province_trauma_added		value = 0 }
+			#	set_variable = { which = province_trauma_scaling	value = 0 }
+			random_list = {
+				30 = {
+					set_variable = { which = province_trauma_added		value = 1.25 }
+				}
+				40 = {
+					set_variable = { which = province_trauma_added		value = 1 }
+				}
+				30 = {
+					set_variable = { which = province_trauma_added		value = 0.75 }
+				}
+			}
+			#	set_variable = { which = province_trauma_scaling			which = province_trauma }
+			#	multiply_variable = { which = province_trauma_scaling		value = 0.1 }
+			#	subtract_variable = { which = province_trauma_scaling		value = 1 }
+			#	multiply_variable = { which = province_trauma_scaling		which = province_trauma_added }
+			#	subtract_variable = { which = province_trauma				which = province_trauma_scaling }
+			change_variable = {	  which = province_trauma				which = province_trauma_added }
+		}
+		
+		if = { limit = { check_variable = { which = province_trauma value = 6 } }
+			if = { limit = { check_variable = { which = province_trauma value = 8 } }
+				if = { limit = { check_variable = { which = province_trauma value = 10 } }
+					if = {
+						limit = {
+							NOT = { has_province_modifier = trauma_devastating }
+						}
+						remove_trauma = yes
+						add_permanent_province_modifier = {
+							name = trauma_devastating
+							duration = -1
+						}
+						add_devastation = 100
+					}
+				}
+				else = {
+					if = {
+						limit = {
+							NOT = { has_province_modifier = trauma_terrible }
+						}
+						remove_trauma = yes
+						add_permanent_province_modifier = {
+							name = trauma_terrible
+							duration = -1
+						}
+						add_devastation = -100
+						add_devastation = 80
+					}
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						NOT = { has_province_modifier = trauma_harsh }
+					}
+					remove_trauma = yes
+					add_permanent_province_modifier = {
+						name = trauma_harsh
+						duration = -1
+					}
+					add_devastation = -100
+					add_devastation = 60
+				}
+			}
+		}
+		else = {
+			if = { limit = { check_variable = { which = province_trauma value = 2 } }
+				if = { limit = { check_variable = { which = province_trauma value = 4 } }
+					if = {
+						limit = {
+							NOT = { has_province_modifier = trauma_limited }
+						}
+						remove_trauma = yes
+						add_permanent_province_modifier = {
+							name = trauma_limited
+							duration = -1
+						}
+						add_devastation = -100
+						add_devastation = 40
+					}
+				}
+				else = {
+					if = {
+						limit = {
+							NOT = { has_province_modifier = trauma_mild }
+						}
+						remove_trauma = yes
+						add_permanent_province_modifier = {
+							name = trauma_mild
+							duration = -1
+						}
+						add_devastation = -100
+						add_devastation = 20
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = "POP_province_damage.005.a"
+		#province_event = {
+		#	id = POP_province_damage.003
+		#}
+	}
+}
+
+province_event = { #City sacked
+	id = POP_province_damage.006
+	title = POP_province_damage.006.t
+	desc = POP_province_damage.006.d
+	picture = BURNING_CITY_eventPicture
+	hidden = yes
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		#set_variable = { which = wealth_urban_percentage_removed 	value = 0 }
+		random_list = {
+			10 = {
+				set_variable = { which = wealth_urban_percentage_removed value = 0.5 }
+			}
+			20 = {
+				set_variable = { which = wealth_urban_percentage_removed value = 0.4 }
+			}
+			40 = {
+				set_variable = { which = wealth_urban_percentage_removed value = 0.3 }
+			}
+			30 = {
+				set_variable = { which = wealth_urban_percentage_removed value = 0.2 }
+			}
+		}
+			
+		if = {
+			limit = {
+				check_variable = { which = wealth_urban_looted_fatigue    value = 0.001 }
+			}
+			set_variable = { which = temp_fatigue_modifier value = 1 }
+			subtract_variable = { which = temp_fatigue_modifier which = wealth_urban_looted_fatigue }
+			multiply_variable = { which = wealth_urban_percentage_removed which = temp_fatigue_modifier }
+			
+			set_variable = { which = temp_fatigue_modifier value = 0 }
+		}
+		else = {
+			set_variable = { which = wealth_urban_looted_fatigue value = 0 }
+		}
+		
+		change_variable = { which = wealth_urban_looted_fatigue		which = wealth_urban_percentage_removed }
+		change_variable = { which = wealth_urban_looted_fatigue		which = wealth_urban_percentage_removed }
+		
+		if = {
+			limit = {
+				check_variable = { which = wealth_urban_looted_fatigue    value = 0.95 }
+			}
+			set_variable = { which = wealth_urban_looted_fatigue	value = 0.95 }
+		}
+		
+		if = {
+			limit = {
+				check_variable = { which = wealth_urban_percentage_removed    value = 0.9 } #90% max
+			}
+			set_variable = { which = wealth_urban_percentage_removed   value = 0.9 }
+		}
+		else_if = {
+			limit = {
+				NOT = { check_variable = { which = wealth_urban_percentage_removed    value = 0.01 } } #1% min
+			}
+			set_variable = { which = wealth_urban_percentage_removed   value = 0.01 }
+		}
+		
+		urban_wealth_damaged = yes
+		loot_province = yes
+		
+		add_permanent_province_modifier = {
+			name = province_looted_this_war
+			duration = -1
+		}
+		add_province_modifier = {
+			name = province_damaged
+			duration = -1
+			hidden = yes
+		}
+		
+		add_province_modifier = {
+			name = province_damage_cooldown
+			duration = 365
+			hidden = yes
+		}
+		
+		#set_variable = { which = urban_percentage_removed		value = 0 }
+		random_list = {
+			10 = {
+				set_variable = { which = population_bloodied value = 0.5 }
+			}
+			20 = {
+				set_variable = { which = population_bloodied value = 0.4 }
+			}
+			40 = {
+				set_variable = { which = population_bloodied value = 0.3 }
+			}
+			20 = {
+				set_variable = { which = population_bloodied value = 0.2 }
+			}
+			10 = {
+				set_variable = { which = population_bloodied value = 0.15 }
+			}
+		}
+		
+		set_variable = {    which = urban_percentage_removed	which = population_bloodied }
+		
+		if = {
+			limit = {
+				check_variable = { which = urban_percentage_removed    value = 0.9 } #90% max
+			}
+			set_variable = { which = urban_percentage_removed   value = 0.9 }
+		}
+		else_if = {
+			limit = {
+				NOT = { check_variable = { which = urban_percentage_removed    value = 0.1 } } #10% min
+			}
+			set_variable = { which = urban_percentage_removed   value = 0.1 }
+		}
+		
+		remove_urban_population_DEVS = yes
+		
+		
+		#if = { ### Variables set to 0 after calculations are done
+			#limit = {
+			#	NOT = { has_global_flag = show_for_developers }
+			#}
+			set_variable = {    which = population_bloodied			 value = 0 } # Dez: Cleaning up variables to avoid cluttering saves
+		#}
+	}
+	
+	option = {
+		name = "POP_province_damage.006.a"
+		#province_event = {
+		#	id = POP_province_damage.003
+		#}
+	}
+}
+
+
+province_event = { #Countryside sacked
+	id = POP_province_damage.007
+	title = POP_province_damage.007.t
+	desc = POP_province_damage.007.d
+	picture = BURNING_CITY_eventPicture
+	hidden = yes
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		#set_variable = { which = wealth_rural_percentage_removed 	value = 0 }
+		random_list = {
+			10 = {
+				set_variable = { which = wealth_rural_percentage_removed value = 0.3 }
+			}
+			20 = {
+				set_variable = { which = wealth_rural_percentage_removed value = 0.25 }
+			}
+			40 = {
+				set_variable = { which = wealth_rural_percentage_removed value = 0.2 }
+			}
+			30 = {
+				set_variable = { which = wealth_rural_percentage_removed value = 0.15 }
+			}
+		}
+			
+		if = {
+			limit = {
+				check_variable = { which = wealth_rural_looted_fatigue    value = 0.001 }
+			}
+			set_variable = { which = temp_fatigue_modifier value = 1 }
+			subtract_variable = { which = temp_fatigue_modifier which = wealth_rural_looted_fatigue }
+			multiply_variable = { which = wealth_rural_percentage_removed which = temp_fatigue_modifier }
+			
+			set_variable = { which = temp_fatigue_modifier value = 0 }
+		}
+		else = {
+			set_variable = { which = wealth_rural_looted_fatigue value = 0 }
+		}
+		
+		change_variable = { which = wealth_rural_looted_fatigue		which = wealth_rural_percentage_removed }
+		change_variable = { which = wealth_rural_looted_fatigue		which = wealth_rural_percentage_removed }
+		
+		if = {
+			limit = {
+				check_variable = { which = wealth_rural_looted_fatigue    value = 0.95 }
+			}
+			set_variable = { which = wealth_rural_looted_fatigue	value = 0.95 }
+		}
+		
+		if = {
+			limit = {
+				check_variable = { which = wealth_rural_percentage_removed    value = 0.9 } #90% max
+			}
+			set_variable = { which = wealth_rural_percentage_removed   value = 0.9 }
+		}
+		else_if = {
+			limit = {
+				NOT = { check_variable = { which = wealth_rural_percentage_removed    value = 0.01 } } #1% min
+			}
+			set_variable = { which = wealth_rural_percentage_removed   value = 0.01 }
+		}
+		
+		rural_wealth_damaged = yes
+		loot_province = yes
+		
+		add_province_modifier = {
+			name = province_damaged
+			duration = -1
+			hidden = yes
+		}
+		
+		add_province_modifier = {
+			name = province_damage_cooldown
+			duration = 365
+			hidden = yes
+		}
+		
+		#set_variable = { which = rural_percentage_removed		value = 0 }
+		random_list = {
+			10 = {
+				set_variable = { which = population_bloodied value = 0.3 }
+			}
+			20 = {
+				set_variable = { which = population_bloodied value = 0.25 }
+			}
+			40 = {
+				set_variable = { which = population_bloodied value = 0.2 }
+			}
+			30 = {
+				set_variable = { which = population_bloodied value = 0.15 }
+			}
+		}
+		
+		set_variable = {    which = rural_percentage_removed	which = population_bloodied }
+		
+		if = {
+			limit = {
+				check_variable = { which = rural_percentage_removed    value = 0.9 } #90% max
+			}
+			set_variable = { which = rural_percentage_removed   value = 0.9 }
+		}
+		else_if = {
+			limit = {
+				NOT = { check_variable = { which = rural_percentage_removed    value = 0.1 } } #10% min
+			}
+			set_variable = { which = rural_percentage_removed   value = 0.1 }
+		}
+		
+		remove_rural_population_DEVS = yes
+		
+		
+		#if = { ### Variables set to 0 after calculations are done
+			#limit = {
+			#	NOT = { has_global_flag = show_for_developers }
+			#}
+			set_variable = {    which = population_bloodied			 value = 0 } # Dez: Cleaning up variables to avoid cluttering saves
+		#}
+	}
+	
+	option = {
+		name = "POP_province_damage.007.a"
+		#province_event = {
+		#	id = POP_province_damage.003
+		#}
+	}
+}

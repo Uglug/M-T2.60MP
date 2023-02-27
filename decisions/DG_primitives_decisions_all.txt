@@ -1,0 +1,242 @@
+country_decisions = {
+	
+	organized_religion_clerical_requirements = {
+		potential = {
+			OR = {
+				religion_group = pagan
+				religion_group = new_world_pagan
+				religion_group = european_pagan
+			}
+			OR = {
+				technology_group = western
+				technology_group = eastern
+				has_institution = enlightenment # is_westernising = yes # pending discussion on better replacement
+			}
+			NOT = { has_country_modifier = organized_religion_clerical_requirements }
+			#Already somewhat organized
+			NOT = { religion = inti }
+			NOT = { religion = nahuatl }
+		}
+		allow = {
+			ADM = 4
+			adm_power = 200
+			advisor = theologian
+			piety = 0.20
+		}
+		effect = {
+			add_adm_power = -200
+			kill_advisor = theologian
+			subtract_stability_1 = yes
+			add_country_modifier = { name = organized_religion_clerical_requirements duration = -1 }
+			hidden_effect = { change_variable = { which = church_property value = 2 } }
+			add_patriarch_authority = 0.10
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	organized_religion_written_scripture = {
+		potential = {
+			OR = {
+				has_country_modifier = organized_religion_clerical_requirements
+				religion = inti
+				religion = nahuatl
+			}
+			OR = {
+				religion_group = pagan
+				religion_group = new_world_pagan
+				religion_group = european_pagan
+			}
+			OR = {
+				technology_group = western
+				technology_group = eastern
+				has_institution = enlightenment # is_westernising = yes # pending discussion on better replacement
+			}
+			NOT = { has_country_modifier = organized_religion_written_scripture }
+		}
+		allow = {
+			ADM = 4
+			adm_power = 200
+			advisor = theologian
+			piety = 0.20
+		}
+		effect = {
+			add_adm_power = -200
+			kill_advisor = theologian
+			subtract_stability_1 = yes
+			add_country_modifier = { name = organized_religion_written_scripture duration = -1 }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	organized_religion_legal_reforms = {
+		potential = {
+			has_country_modifier = organized_religion_written_scripture
+			OR = {
+				religion_group = pagan
+				religion_group = new_world_pagan
+				religion_group = european_pagan
+			}
+			OR = {
+				technology_group = western
+				technology_group = eastern
+				has_institution = enlightenment # is_westernising = yes # pending discussion on better replacement
+			}
+			NOT = { has_country_modifier = organized_religion_legal_reforms }
+		}
+		allow = {
+			ADM = 4
+			adm_power = 200
+			advisor = theologian
+			piety = 0.20
+		}
+		effect = {
+			add_adm_power = -200
+			kill_advisor = theologian
+			subtract_stability_1 = yes
+			add_country_modifier = { name = organized_religion_legal_reforms duration = -1 }
+			set_country_flag = religious_courts
+			add_patriarch_authority = 0.10
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	organized_religion_standardized_credo = {
+		potential = {
+			has_country_modifier = organized_religion_written_scripture
+			OR = {
+				religion_group = pagan
+				religion_group = new_world_pagan
+				religion_group = european_pagan
+			}
+			OR = {
+				technology_group = western
+				technology_group = eastern
+				has_institution = enlightenment # is_westernising = yes # pending discussion on better replacement
+			}
+			NOT = { has_country_modifier = organized_religion_standardized_credo }
+		}
+		allow = {
+			ADM = 4
+			adm_power = 200
+			advisor = theologian
+			piety = 0.20
+		}
+		effect = {
+			add_adm_power = -200
+			kill_advisor = theologian
+			subtract_stability_1 = yes
+			add_country_modifier = { name = organized_religion_standardized_credo duration = -1 }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	organized_religion_universal_creed = {
+		potential = {
+			has_country_modifier = organized_religion_standardized_credo
+			OR = {
+				religion_group = pagan
+				religion_group = new_world_pagan
+				religion_group = european_pagan
+			}
+			OR = {
+				technology_group = western
+				technology_group = eastern
+				has_institution = enlightenment # is_westernising = yes # pending discussion on better replacement
+			}
+			NOT = { has_country_modifier = organized_religion_universal_creed }
+		}
+		allow = {
+			ADM = 4
+			adm_power = 200
+			advisor = theologian
+			piety = 0.20
+		}
+		effect = {
+			add_adm_power = -200
+			kill_advisor = theologian
+			subtract_stability_1 = yes
+			add_country_modifier = { name = organized_religion_universal_creed duration = -1 }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	
+	reject_monotheist_religions = {
+		potential = {
+			ai = no
+			OR = {
+				religion_group = pagan
+				religion_group = new_world_pagan
+				religion_group = european_pagan
+			}
+			OR = {
+				has_country_flag = christians_tolerated
+				has_country_flag = jews_tolerated
+				has_country_flag = dharmics_tolerated
+				has_country_flag = buddhists_tolerated
+			}
+		}
+		allow = {
+			ADM = 4
+			piety = -0.20
+			is_at_war = no
+			stability = 1
+			NOT = { has_country_modifier = religious_tolerance }
+		}
+		effect = {
+			clr_country_flag = christians_tolerated
+			clr_country_flag = christians_permitted
+			clr_country_flag = jews_tolerated
+			clr_country_flag = jews_permitted
+			clr_country_flag = muslims_tolerated
+			clr_country_flag = muslims_permitted
+			if = {
+				limit = {
+					num_of_owned_provinces_with = { value = 1 OR = { religion_group = christian religion_group = muslim religion_group = jewish_group } }
+					NOT = { num_of_owned_provinces_with = { value = 3 OR = { religion_group = christian religion_group = muslim religion_group = jewish_group } } }
+				}
+				subtract_stability_1 = yes
+			}
+			if = {
+				limit = {
+					num_of_owned_provinces_with = { value = 3 OR = { religion_group = christian religion_group = muslim religion_group = jewish_group } }
+					NOT = { num_of_owned_provinces_with = { value = 5 OR = { religion_group = christian religion_group = muslim religion_group = jewish_group } } }
+				}
+				subtract_stability_2 = yes
+			}
+			if = {
+				limit = {
+					num_of_owned_provinces_with = { value = 5 OR = { religion_group = christian religion_group = muslim religion_group = jewish_group } }
+					NOT = { num_of_owned_provinces_with = { value = 7 OR = { religion_group = christian religion_group = muslim religion_group = jewish_group } } }
+				}
+				subtract_stability_3 = yes
+			}
+			if = {
+				limit = {
+					num_of_owned_provinces_with = { value = 7 OR = { religion_group = christian religion_group = muslim religion_group = jewish_group } }
+					NOT = { num_of_owned_provinces_with = { value = 9 OR = { religion_group = christian religion_group = muslim religion_group = jewish_group } } }
+				}
+				subtract_stability_4 = yes
+			}
+			if = {
+				limit = {
+					num_of_owned_provinces_with = { value = 9 OR = { religion_group = christian religion_group = muslim religion_group = jewish_group } }
+				}
+				subtract_stability_5 = yes
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+}

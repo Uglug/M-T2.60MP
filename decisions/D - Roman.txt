@@ -1,0 +1,168 @@
+country_decisions = {
+	claim_heir_to_rome = {
+		major = yes
+		potential = {
+			tag = ROM
+			NOT = { has_country_flag = heir_to_rome }
+		}
+		allow = {
+			is_at_war = no
+			owns = 2530 #Rome
+			dip_power = 250
+		}
+		effect = {
+			hidden_effect = {
+				country_event = { id = flavor_byz.301 }
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+
+	claim_heir_to_rome_byz = {
+		major = yes
+		potential = {
+			tag = BYZ
+			NOT = { has_country_flag = heir_to_rome }
+			owns = 1402 # Konstantinoupolis
+			owns = 2238 # Thrace is back under Roman control
+			owns = 146 # Greece is within the states grasp
+			owns = 2552 #Prussa - Ottomans are on the backfoot
+			OR = {
+				ai = yes
+				has_global_flag = singleplayer
+			}
+
+		}
+		allow = {
+			is_at_war = no
+			check_variable = { which = "Demesne_in_East_Rome" value = 75 }
+			dip_power = 250
+		}
+		effect = {
+			hidden_effect = {
+				country_event = { id = flavor_byz.301 }
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+
+	declare_pax_romana = {
+		major = yes
+		potential = {
+			has_country_flag = heir_to_rome
+			NOT = { has_country_flag = pax_romana_declared }
+			check_variable = { which = "Cores_on_the_Roman_Empire" value = 325 } #Conquest should be halfway done to see this
+		}
+		allow = {
+			is_at_war = no
+			check_variable = { which = "Cores_on_the_Roman_Empire" value = 550 } #Conquest should be mostly done to achieve this
+			owns = 2530 # Western Capital
+			owns = 1402 # Eastern Capital
+			adm_power = 100
+			dip_power = 250
+		}
+		effect = {
+			add_adm_power = -100
+			add_dip_power = -250
+			hidden_effect = {
+				set_country_flag = pax_romana_declared
+				clr_country_flag = heir_to_rome
+				every_known_country = {
+					limit = {
+						#exists = yes
+						NOT = { is_subject_of = ROOT }
+					}
+					add_opinion = { who = ROOT modifier = opinion_pax_romana }
+				}
+			}
+			custom_tooltip = pax_romana_relations
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+	modernize_along_western_lines_byz = {
+		potential = {
+			tag = BYZ
+			technology_group = eastern
+			total_development = 100
+			OR = {
+				mil_tech = 12
+				adm_tech = 12
+				dip_tech = 12
+			}
+			OR = {
+				has_institution = renaissance
+				has_institution = enlightenment
+				religion = catholic
+				religion = protestant
+				religion = reformed
+				religion = hussite
+			}
+		}
+		allow = {
+			is_at_war = no
+			is_free_or_tributary_trigger = yes
+			total_development = 500
+			any_neighbor_country = {
+				technology_group = western
+			}
+			has_institution = renaissance
+			has_institution = banking
+			NOT = { has_country_modifier = obstacle_succession }
+			OR = {
+				adm_tech = 20
+				full_idea_group = bureaucracy_ideas
+			}
+			OR = {
+				mil_tech = 20
+				full_idea_group = leadership_ideas
+			}
+			stability = 2
+			AND = {
+				adm_power = 250
+				years_of_income = 0.75
+			}
+		}
+		effect = {
+			add_adm_power = -250
+			add_mil_power = 250
+			add_years_of_income = -0.75
+			subtract_stability_2 = yes
+			change_technology_group = western
+			change_unit_type = western
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+
+	claim_heir_to_rome_removal = {
+		major = yes
+		potential = {
+			tag = BYZ
+			has_country_flag = heir_to_rome
+			ai = no
+			#singleplayer_trigger = no
+			has_global_flag = multiplayer
+
+		}
+		allow = {
+		}
+		effect = {
+			clr_country_flag = heir_to_rome
+			add_dip_power = 250
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+}
