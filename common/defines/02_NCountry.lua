@@ -6,6 +6,7 @@ NDefines.NGovernment.GOVERNMENT_REFORM_COST_INCREASE = 0
 NDefines.NCountry.OVERSEAS_CLIENT_STATES = 1						-- Allow overseas client states?
 
 NDefines.NCountry.NEIGHBOURBONUS_CAP = -0.05
+NDefines.NCountry.BASE_POWER_INCREASE = 4
 
 NDefines.NCountry.ALLOW_ZERO_BASE_VALUES = 1						-- Affects base tax, base manpower, and base production
 NDefines.NCountry.ALLOW_ESTATE_AND_PARLIAMENT_SEAT_IN_PROVINCE = 1	-- Whether or not a province can have both an estate and a parliament seat
