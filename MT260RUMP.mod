@@ -1,6 +1,6 @@
-name="MT260RUMP"
+name="MT2.60MP"
 version="v2.60.3"
-path="mod/MT260RUMP"
+path="mod/MT2.60MP"
 tags={
 	"Religion"
 	"Military"
