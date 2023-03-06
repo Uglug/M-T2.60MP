@@ -1489,6 +1489,7 @@ province_event = { ### Road building event
 	
 	immediate = {
 		hidden_effect = {
+			clr_country_flag = interacting_with_province1
 			trigger_switch = {
 				on_trigger = has_building
 				highway_network = {
@@ -2400,6 +2401,21 @@ province_event = { ### Examine capital options
 		}
 	}
 	
+	option = { ### Teleport capital
+		name = "POP_dev_button_interactions.202.da"
+		#trigger = {
+
+		#	can_build_bureaucracy_6 = yes
+		#}
+		ai_chance = { factor = 0 }
+		hidden_effect = {
+			
+			province_event = {
+				id = POP_dev_button_interactions.1000
+			}
+		}
+	}
+	
 	option = { ### That is all
 		# name = "POP_dev_button_interactions.202.c"
 		name = exit
@@ -2411,6 +2427,78 @@ province_event = { ### Examine capital options
 			set_province_flag = interacting_with_province
 			province_event = { id = POP_dev_button_interactions.001 }
 		}
+	}
+}
+
+province_event = { ### Move Capital, no bureaucracy building needed
+	id = POP_dev_button_interactions.1000
+	title = POP_dev_button_interactions.1000.t
+	desc = POP_dev_button_interactions.1000.d
+	picture = GREAT_BUILDING_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	trigger = {
+		
+	}
+	immediate = {
+		hidden_effect = {
+			owner = {
+				export_to_variable = {
+					which = b6_treasury
+					value = treasury
+				}
+				PREV = { set_variable = { which = b6_treasury		value = 0 } }
+				PREV = { set_variable = { which = b6_treasury 		which = PREV } }
+				
+				export_to_variable = {
+					which = b6_income
+					value = monthly_income
+				}
+				multiply_variable = { which = b6_income value = 6}
+				
+				PREV = { set_variable = { which = b6_income		value = 0 } }
+				PREV = { set_variable = { which = b6_income 		which = PREV } }
+				export_to_variable = {
+					which = b6_dev
+					value = total_development
+				}
+				
+				multiply_variable = { which = b6_dev value = 0.5}
+				PREV = { set_variable = { which = b6_dev		value = 0 } }
+				PREV = { set_variable = { which = b6_dev 		which = PREV } }
+				
+				set_variable = { which = ducat_cost value = 10000}
+				change_variable = { which = ducat_cost which = b6_income}
+				change_variable = { which = ducat_cost which = b6_dev}
+				
+				PREV = { set_variable = { which = ducat_cost 	value = 0 } }
+				PREV = { set_variable = { which = ducat_cost 	which = PREV } }
+			}		
+			
+		}
+	}
+	
+	option = { ### Build Teleport Capital
+		name = "POP_dev_button_interactions.1000.a"
+		highlight = yes
+		trigger = {
+			check_variable = { which = b6_treasury which = ducat_cost}
+		}
+		hidden_effect = {			
+			owner = { scaled_ducat_cost_country = yes }
+		}
+		ai_chance = { factor = 0 }
+		add_building = bureaucracy_6
+		custom_tooltip = ducats_spent 
+		
+		clr_province_flag = dev_button_interact
+	}
+	
+	option = { ### That is all
+		name = exit
+		highlight = yes		
+		ai_chance = { factor = 0 }
+		clr_province_flag = dev_button_interact
 	}
 }
 
