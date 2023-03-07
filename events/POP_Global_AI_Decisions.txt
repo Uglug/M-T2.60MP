@@ -1,0 +1,79 @@
+namespace = POP_Global_AI_Decisions
+
+### By KJ and Demian
+
+#############
+### Index ###
+#############
+
+### Event 1: AI makes war aid choice ###
+### Event 2: AI makes war aid choice ###
+### Event 3: Favors, decentralize, policies  GN_PRIV_GIVE	LN_PRIV_GIVE   BG_PRIV_GIVE				###
+
+country_event = { ### Give AI extra construction money to spend
+	id = POP_Global_AI_Decisions.006
+	title = POP_Global_AI_Decisions.006.t
+	desc = POP_Global_AI_Decisions.006.d
+	picture = REFORM_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		set_variable = { which = average_unrest 			value = 0 }
+		set_variable = { which = average_effective_unrest 	value = 0 }
+		export_to_variable = {
+			which = average_effective_unrest
+			value = average_effective_unrest
+		}
+		export_to_variable = {
+			which = average_unrest
+			value = average_unrest
+		}
+	}
+	
+	
+	option = {
+		name = "POP_Global_AI_Decisions.006.a"
+	}
+}
+
+country_event = {
+	id = POP_Global_AI_Decisions.007
+	title = POP_Global_AI_Decisions.007.t
+	desc = POP_Global_AI_Decisions.007.d
+	picture = REFORM_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	trigger = {
+		has_global_flag = first_estate_fired
+	}
+	
+	immediate = {
+		regiongroup = {
+			region = {
+				limit = {
+					is_city = yes
+					unrest = 4
+					NOT = { has_province_modifier = autonomy_increased }
+					NOT = { local_autonomy = 90 }
+					owner = { ai = yes }
+				}
+				export_to_variable = { which = adjusted_absolutism_cost	value = development	}
+				divide_variable = { which = adjusted_absolutism_cost value = 20 }
+				owner = { add_absolutism = adjusted_absolutism_cost }
+				set_variable = { which = adjusted_absolutism_cost	value = 0	}
+				add_local_autonomy = 10
+				add_province_modifier = {
+					name = autonomy_increased
+					duration = 3650
+				}
+			}
+		}
+	}
+	
+	
+	option = {
+		name = "POP_Global_AI_Decisions.007.a"
+	}
+}

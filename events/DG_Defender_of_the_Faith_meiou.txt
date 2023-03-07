@@ -1,0 +1,1645 @@
+namespace = dg_defender
+#2 of 2 events finished and optimized
+#No custom tooltips needed
+#variables and flags hidden
+
+#########################
+# Defender of the Faith #
+#########################
+
+# ID Range  59 General Religion + 20 Defender of the Faith + xx
+
+#01 Defender of the Faith
+#02 REMOVED (Loss of Faith - claims fade on their own now)
+#03 Claims on $PROVINCENAME$ (player notification)
+
+################################################################################
+
+#country_event = { #Defender of the Faith
+#
+#id = dg_defender.001
+#title = dg_defender.001.t
+#desc = dg_defender.001.d
+#picture = turmoil_call_for_holy_war
+#
+#is_triggered_only = yes #By dg_setup.003 (new ruler)
+#
+#immediate = { hidden_effect = { set_country_flag = defender_of_the_faith_choice } }
+#	
+#option = {
+#	name = dg_defender.001.a #Maintain a bastion of purity
+#	ai_chance = {
+#		factor = 50
+#		modifier = {
+#			NOT = { religious_unity = 0.80 }
+#			factor = 0.7
+#			}
+#		modifier = {
+#			NOT = { religious_unity = 0.60 }
+#			factor = 0.7
+#			}
+#		modifier = {
+#			NOT = { religious_unity = 0.40 }
+#			factor = 0.7
+#			}
+#		modifier = {
+#			NOT = { religious_unity = 0.20 }
+#			factor = 0
+#			}
+#		}
+#	if = {
+#		limit = { has_country_modifier = religious_tolerance }
+#		remove_country_modifier = religious_tolerance
+#		add_piety = 0.20
+#		}
+#	if = {
+#		limit = { piety = 0.60 }
+#		add_prestige = 6
+#		add_country_modifier = { name = religious_intolerance duration = 3000 }
+#		add_piety = 0.20
+#		}
+#	if = {
+#		limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#		add_prestige = 4
+#		add_country_modifier = { name = religious_intolerance duration = 2000 }
+#		add_piety = 0.20
+#		}
+#	if = {
+#		limit = { NOT = { piety = 0.20 } }
+#		add_prestige = 2
+#		add_country_modifier = { name = religious_intolerance duration = 1000 }
+#		add_piety = 0.20
+#		}
+#	}
+#option = {
+#	name = dg_defender.001.b #Purify the true faith
+#	trigger = {
+#		NOT = { religion_group = jewish_group } #No heresies
+#		}
+#	ai_chance = {
+#		factor = 25
+#		#Our holy lands are held by heretics
+#		modifier = { #sikhism Amritsar
+#			religion = sikhism
+#			PUN = { has_country_flag = amritsar_built }
+#			any_province = {
+#				has_province_flag = amritsar
+#				owner = { religion_group = ROOT NOT = { religion = ROOT } }
+#				}
+#			factor = 10
+#			}
+#		#Rome
+#		modifier = {
+#			religion = catholic
+#			any_province = {
+#				province_rome_trigger = yes
+#				owner = { NOT = { religion = ROOT } }
+#				owner = { religion_group = ROOT }
+#				}
+#			factor = 10
+#			}
+#		#Constantinople
+#		modifier = {
+#			OR = {
+#				religion = orthodox
+#				religion = coptic
+#				}
+#			capital_scope = { continent = europe NOT = { near_east_region_trigger = yes } }
+#			any_province = {
+#				province_constantinople_trigger = yes
+#				owner = { NOT = { religion = ROOT } }
+#				owner = { religion_group = ROOT }
+#				}
+#			factor = 10
+#			}
+#		modifier = {
+#			OR = {
+#				religion = orthodox
+#				religion = coptic
+#				}
+#			NOT = { capital_scope = { continent = europe NOT = { near_east_region_trigger = yes } } }
+#			any_province = {
+#				province_constantinople_trigger = yes
+#				owner = { NOT = { religion = ROOT } }
+#				owner = { religion_group = ROOT }
+#				}
+#			factor = 2
+#			}
+#		#Jerusalem
+#		modifier = {
+#			religion = catholic
+#			379 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			factor = 5
+#			}
+#		modifier = {
+#			OR = {
+#				religion = orthodox
+#				religion = coptic
+#				}
+#			379 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			factor = 2
+#			}
+#		modifier = {
+#			religion = jewish
+#			379 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			factor = 20
+#			}
+#		modifier = {
+#			OR = {
+#				religion = sunni
+#				religion = shiite
+#				}
+#			379 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			factor = 3
+#			}
+#		#Alexandria
+#		modifier = {
+#			OR = {
+#				religion = orthodox
+#				religion = coptic
+#				}
+#			capital_scope = { africa_continent_trigger = yes }
+#			358 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			factor = 10
+#			}
+#		modifier = {
+#			OR = {
+#				religion = orthodox
+#				religion = coptic
+#				}
+#			NOT = { capital_scope = { africa_continent_trigger = yes } }
+#			358 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			factor = 2
+#			}
+#		#Antioch (Damascus)
+#		modifier = {
+#			OR = {
+#				religion = orthodox
+#				religion = coptic
+#				}
+#			capital_scope = { OR = { asia_continent_trigger = yes near_east_region_trigger = yes } }
+#			382 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			factor = 10
+#			}
+#		modifier = {
+#			OR = {
+#				religion = orthodox
+#				religion = coptic
+#				}
+#			NOT = { capital_scope = { OR = { asia_continent_trigger = yes near_east_region_trigger = yes } } }
+#			382 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			factor = 2
+#			}
+#		#Mecca and Medina
+#		modifier = {
+#			OR = {
+#				religion = sunni
+#				religion = wahhabi
+#				}
+#			385 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			factor = 10
+#			}
+#		modifier = {
+#			OR = {
+#				religion = sunni
+#				religion = wahhabi
+#				}
+#			384 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			factor = 5
+#			}
+#		#al Najaf
+#		modifier = {
+#			religion = shiite
+#			1330 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			factor = 10
+#			}
+#		#Varanasi
+#		modifier = {
+#			religion = hinduism
+#			2632 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			factor = 2
+#			}
+#		#Baghdad
+#		modifier = {
+#			religion = chaldean
+#			410 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			factor = 2
+#			}
+#		#We are at war with heretics already
+#		modifier = {
+#			any_known_country = {
+#				war_with = ROOT
+#				NOT = { religion = ROOT }
+#				religion_group = ROOT
+#				}
+#			factor = 3
+#			}
+#		#We are not ready for a war
+#		modifier = {
+#			war_exhaustion = 5
+#			factor = 0.5
+#			}
+#		modifier = {
+#			war_exhaustion = 10
+#			factor = 0.5
+#			}
+#		modifier = {
+#			war_exhaustion = 15
+#			factor = 0.5
+#			}
+#		modifier = {
+#			war_exhaustion = 20
+#			factor = 0.5
+#			}
+#		modifier = {
+#			NOT = { manpower_percentage = 0.10 }
+#			factor = 0.5
+#			}
+#		modifier = {
+#			NOT = { manpower_percentage = 0.30 }
+#			factor = 0.5
+#			}
+#		modifier = {
+#			NOT = { manpower_percentage = 0.50 }
+#			factor = 0.5
+#			}
+#		modifier = {
+#			num_of_loans = 1
+#			factor = 0.5
+#			}
+#		modifier = {
+#			is_bankrupt = yes
+#			factor = 0.2
+#			}
+#		modifier = {
+#			any_known_country = {
+#				war_with = ROOT
+#				religion = ROOT
+#				}
+#			factor = 0.5
+#			}
+#		}
+#	###CATHOLIC CRUSADES
+#	if = {
+#		limit = { #Heretics own Rome (1st priority)
+#			religion = catholic
+#			NOT = { 2530 = { is_claim = ROOT } }
+#			NOT = { owns = 2530 }
+#			2530 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			}
+#		2530 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						2530 = { owner = { ai = no } }
+#						2530 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					2530 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			2530 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	if = {
+#		limit = { #Heretics own Jerusalem (2nd priority)
+#			religion = catholic
+#			OR = {
+#				2530 = { owner = { religion = ROOT } }
+#				2530 = { owner = { NOT = { religion_group = ROOT } } }
+#				}
+#			NOT = { 379 = { is_claim = ROOT } }
+#			NOT = { owns = 379 }
+#			379 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			}
+#		379 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						379 = { owner = { ai = no } }
+#						379 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					379 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			379 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	###ORTHODOX AND MIAPHYSITE CRUSADES
+#	if = {
+#		limit = { #Heretics own Constantinople (1st priority for Europeans, last for others)
+#			OR = {
+#				religion = orthodox
+#				religion = coptic
+#				}
+#			OR = {
+#				capital_scope = { continent = europe }
+#				AND = {
+#					OR = {
+#						382 = { owner = { religion = ROOT } }
+#						382 = { owner = { NOT = { religion_group = ROOT } } }
+#						}
+#					OR = {
+#						358 = { owner = { religion = ROOT } }
+#						358 = { owner = { NOT = { religion_group = ROOT } } }
+#						}
+#					}
+#				}
+#			NOT = { 1402 = { is_claim = ROOT } }
+#			NOT = { owns = 1402 }
+#			1402 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			}
+#		1402 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						1402 = { owner = { ai = no } }
+#						1402 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					1402 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			1402 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	if = {
+#		limit = { #Heretics own Alexandria (1st priority for Africans, 2nd for others)
+#			OR = {
+#				religion = orthodox
+#				religion = coptic
+#				}
+#			OR = {
+#				capital_scope = { africa_continent_trigger = yes }
+#				1402 = { owner = { religion = ROOT } }
+#				1402 = { owner = { NOT = { religion_group = ROOT } } }
+#				382 = { owner = { religion = ROOT } }
+#				382 = { owner = { NOT = { religion_group = ROOT } } }
+#				}
+#			NOT = { 358 = { is_claim = ROOT } }
+#			NOT = { owns = 358 }
+#			358 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			}
+#		358 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						358 = { owner = { ai = no } }
+#						358 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					358 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			358 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	if = {
+#		limit = { #Heretics own Antioch (1st priority for Asians, 2nd for others)
+#			OR = {
+#				religion = orthodox
+#				religion = coptic
+#				}
+#			OR = {
+#				capital_scope = { asia_continent_trigger = yes }
+#				OR = {
+#					1402 = { owner = { religion = ROOT } }
+#					1402 = { owner = { NOT = { religion_group = ROOT } } }
+#					}
+#				358 = { owner = { religion = ROOT } }
+#				358 = { owner = { NOT = { religion_group = ROOT } } }
+#				}
+#			NOT = { 382 = { is_claim = ROOT } }
+#			NOT = { owns = 382 }
+#			382 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			}
+#		382 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						382 = { owner = { ai = no } }
+#						382 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					382 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			382 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	if = {
+#		limit = { #Heretics own Jerusalem (4th priority)
+#			OR = {
+#				religion = orthodox
+#				religion = coptic
+#				}
+#			OR = {
+#				1402 = { owner = { religion = ROOT } }
+#				1402 = { owner = { NOT = { religion_group = ROOT } } }
+#				}
+#			OR = {
+#				358 = { owner = { religion = ROOT } }
+#				358 = { owner = { NOT = { religion_group = ROOT } } }
+#				}
+#			OR = {
+#				382 = { owner = { religion = ROOT } }
+#				382 = { owner = { NOT = { religion_group = ROOT } } }
+#				}
+#			NOT = { 379 = { is_claim = ROOT } }
+#			NOT = { owns = 379 }
+#			379 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			}
+#		379 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						379 = { owner = { ai = no } }
+#						379 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					379 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			379 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	###MUSLIM JIHADS
+#	if = {
+#		limit = { #Heretics own Mecca (1st priority for Sunnis and Wahhabis, 2nd for Shi'ites)
+#			OR = {
+#				religion = sunni
+#				religion = wahhabi
+#				religion = shiite
+#				}
+#			OR = {
+#				NOT = { religion = shiite }
+#				AND = {
+#					1330 = { owner = { religion = ROOT } }
+#					1330 = { owner = { NOT = { religion_group = ROOT } } }
+#					}
+#				}
+#			NOT = { 385 = { is_claim = ROOT } }
+#			NOT = { owns = 385 }
+#			385 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			}
+#		385 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						385 = { owner = { ai = no } }
+#						385 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					385 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			385 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	if = {
+#		limit = { #Heretics own Medina (2nd priority for Sunnis and Wahhabis, 3rd for Shi'ites)
+#			OR = {
+#				religion = sunni
+#				religion = wahhabi
+#				religion = shiite
+#				}
+#			OR = {
+#				385 = { owner = { religion = ROOT } }
+#				385 = { owner = { NOT = { religion_group = ROOT } } }
+#				}
+#			OR = {
+#				NOT = { religion = shiite }
+#				AND = {
+#					1330 = { owner = { religion = ROOT } }
+#					1330 = { owner = { NOT = { religion_group = ROOT } } }
+#					}
+#				}
+#			NOT = { 384 = { is_claim = ROOT } }
+#			NOT = { owns = 384 }
+#			384 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			}
+#		384 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						384 = { owner = { ai = no } }
+#						384 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					384 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			384 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	if = {
+#		limit = { #Heretics own Jerusalem (3rd priority for Sunnis and Wahhabis)
+#			OR = {
+#				religion = sunni
+#				religion = shiite
+#				}
+#			OR = {
+#				385 = { owner = { religion = ROOT } }
+#				385 = { owner = { NOT = { religion_group = ROOT } } }
+#				}
+#			OR = {
+#				384 = { owner = { religion = ROOT } }
+#				384 = { owner = { NOT = { religion_group = ROOT } } }
+#				}
+#			NOT = { 379 = { is_claim = ROOT } }
+#			NOT = { owns = 379 }
+#			379 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			}
+#		379 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						379 = { owner = { ai = no } }
+#						379 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					379 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			379 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	if = {
+#		limit = { #Heretics own Al Najaf (Karbala) (1st priority for Shi'ites)
+#			religion = shiite
+#			NOT = { 1330 = { is_claim = ROOT } }
+#			NOT = { owns = 1330 }
+#			1330 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			}
+#		1330 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						1330 = { owner = { ai = no } }
+#						1330 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					1330 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			1330 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	###HINDU HOLY WARS
+#	if = {
+#		limit = { #Heretics own Varanasi (Lower Doab) (1st priority)
+#			religion = hinduism
+#			NOT = { 2632 = { is_claim = ROOT } }
+#			NOT = { owns = 2632 }
+#			2632 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			}
+#		2632 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						2632 = { owner = { ai = no } }
+#						2632 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					2632 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			2632 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	###CHALDEAN HOLY WARS
+#	if = {
+#		limit = { #Heretics own Baghdad
+#			religion = chaldean
+#			NOT = { 410 = { is_claim = ROOT } }
+#			NOT = { owns = 410 }
+#			410 = { owner = { NOT = { religion = ROOT } religion_group = ROOT } }
+#			}
+#		410 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						410 = { owner = { ai = no } }
+#						410 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					410 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			410 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	###sikhism HOLY WARS
+#	if = {
+#		limit = { #Heretics own Amritsar (1st priority, minor)
+#			religion = sikhism
+#			PUN = { has_country_flag = amritsar_built }
+#			any_province = {
+#				has_province_flag = amritsar
+#				NOT = { is_claim = ROOT }
+#				NOT = { owned_by = ROOT }
+#				owner = { religion_group = ROOT }
+#				NOT = { owner = { religion = ROOT } }
+#				}
+#			}
+#		random_province = {
+#			limit = { has_province_flag = amritsar }
+#			add_claim = ROOT
+#			}
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				any_country = {
+#					any_owned_province = { has_province_flag = amritsar }
+#					OR = {
+#						AND = {
+#							ai = no
+#							has_country_flag = religious_news_trivial
+#							}
+#						any_neighbor_country = { tag = ROOT }
+#						}
+#					}
+#				}
+#			random_province = {
+#				limit = { has_province_flag = amritsar }
+#				province_event = { id = dg_defender.003 days = 0 }
+#				}
+#			}
+#		}
+#	###REACTIONS BY CORELIGIONISTS
+#	every_country = {
+#		limit = {
+#			religion = ROOT
+#			NOT = { war_with = ROOT }
+#			NOT = { is_rival = ROOT }
+#			OR = {
+#				piety = 0.60
+#				AND = {
+#					piety = 0.20
+#					any_neighbor_country = {
+#						NOT = { religion = ROOT }
+#						religion_group = ROOT
+#						}
+#					}
+#				AND = { #Does not appear to be working
+#					piety = -0.20
+#					any_country = {
+#						war_with = PREV
+#						NOT = { religion = ROOT }
+#						religion_group = ROOT
+#						}
+#					}
+#				}
+#			}
+#		add_opinion = { who = ROOT modifier = defender_of_faith_major }
+#		}
+#	every_country = {
+#		limit = {
+#			religion = ROOT
+#			NOT = { war_with = ROOT }
+#			NOT = { is_rival = ROOT }
+#			NOT = {
+#				OR = {
+#					piety = 0.60
+#					AND = {
+#						piety = 0.20
+#						any_neighbor_country = {
+#							NOT = { religion = ROOT }
+#							religion_group = ROOT
+#							}
+#						}
+#					AND = { #Does not appear to be working
+#						piety = -0.20
+#						any_country = {
+#							war_with = PREV
+#							NOT = { religion = ROOT }
+#							religion_group = ROOT
+#							}
+#						}
+#					}
+#				}
+#			OR = {
+#				piety = 0.20
+#				AND = {
+#					piety = -0.20
+#					any_neighbor_country = {
+#						NOT = { religion = ROOT }
+#						religion_group = ROOT
+#						}
+#					}
+#				AND = { #Does not appear to be working
+#					piety = -0.60
+#					any_country = {
+#						war_with = PREV
+#						NOT = { religion = ROOT }
+#						religion_group = ROOT
+#						}
+#					}
+#				}
+#			}
+#		add_opinion = { who = ROOT modifier = defender_of_faith_minor }
+#		}
+#	}
+#option = {
+#	name = dg_defender.001.c #Bring the true faith to the infidel
+#	ai_chance = {
+#		factor = 25
+#		#Our holy lands are held by heathens
+#		modifier = {
+#			religion = sikhism
+#			PUN = { has_country_flag = amritsar_built }
+#			any_province = {
+#				has_province_flag = amritsar
+#				owner = { NOT = { religion_group = ROOT } }
+#				}
+#			factor = 10
+#			}
+#		#Rome
+#		modifier = {
+#			religion = catholic
+#			2530 = { owner = { NOT = { religion_group = ROOT } } }
+#			factor = 10
+#			}
+#		#Constantinople
+#		modifier = {
+#			OR = {
+#				religion = orthodox
+#				religion = coptic
+#				}
+#			capital_scope = { continent = europe }
+#			1402 = { owner = { NOT = { religion_group = ROOT } } }
+#			factor = 10
+#			}
+#		modifier = {
+#			OR = {
+#				religion = orthodox
+#				religion = coptic
+#				}
+#			NOT = { capital_scope = { continent = europe } }
+#			1402 = { owner = { NOT = { religion_group = ROOT } } }
+#			factor = 2
+#			}
+#		#Jerusalem
+#		modifier = {
+#			religion = catholic
+#			379 = { owner = { NOT = { religion_group = ROOT } } }
+#			factor = 5
+#			}
+#		modifier = {
+#			OR = {
+#				religion = orthodox
+#				religion = coptic
+#				}
+#			379 = { owner = { NOT = { religion_group = ROOT } } }
+#			factor = 2
+#			}
+#		modifier = {
+#			religion = jewish
+#			379 = { owner = { NOT = { religion_group = ROOT } } }
+#			factor = 20
+#			}
+#		modifier = {
+#			OR = {
+#				religion = sunni
+#				religion = shiite
+#				religion = wahhabi
+#				}
+#			379 = { owner = { NOT = { religion_group = ROOT } } }
+#			factor = 3
+#			}
+#		#Alexandria
+#		modifier = {
+#			OR = {
+#				religion = orthodox
+#				religion = coptic
+#				}
+#			capital_scope = { africa_continent_trigger = yes }
+#			358 = { owner = { NOT = { religion_group = ROOT } } }
+#			factor = 10
+#			}
+#		modifier = {
+#			OR = {
+#				religion = orthodox
+#				religion = coptic
+#				}
+#			NOT = { capital_scope = { africa_continent_trigger = yes } }
+#			358 = { owner = { NOT = { religion_group = ROOT } } }
+#			factor = 2
+#			}
+#		#Antioch (Damascus)
+#		modifier = {
+#			OR = {
+#				religion = orthodox
+#				religion = coptic
+#				}
+#			capital_scope = { asia_continent_trigger = yes }
+#			382 = { owner = { NOT = { religion_group = ROOT } } }
+#			factor = 10
+#			}
+#		modifier = {
+#			OR = {
+#				religion = orthodox
+#				religion = coptic
+#				}
+#			NOT = { capital_scope = { asia_continent_trigger = yes } }
+#			382 = { owner = { NOT = { religion_group = ROOT } } }
+#			factor = 2
+#			}
+#		#Mecca and Medina
+#		modifier = {
+#			OR = {
+#				religion = sunni
+#				religion = wahhabi
+#				}
+#			385 = { owner = { NOT = { religion_group = ROOT } } }
+#			factor = 10
+#			}
+#		modifier = {
+#			OR = {
+#				religion = sunni
+#				religion = wahhabi
+#				}
+#			NOT = { religion = shiite }
+#			384 = { owner = { NOT = { religion_group = ROOT } } }
+#			factor = 5
+#			}
+#		#al Najaf
+#		modifier = {
+#			religion = shiite
+#			1330 = { owner = { NOT = { religion_group = ROOT } } }
+#			factor = 10
+#			}
+#		#Varanasi
+#		modifier = {
+#			religion = hinduism
+#			2632 = { owner = { NOT = { religion_group = ROOT } } }
+#			factor = 2
+#			}
+#		#Baghdad
+#		modifier = {
+#			religion = chaldean
+#			410 = { owner = { NOT = { religion_group = ROOT } } }
+#			factor = 2
+#			}
+#		#We are at war with heathens already
+#		modifier = {
+#			any_known_country = {
+#				war_with = ROOT
+#				NOT = { religion_group = ROOT }
+#				}
+#			factor = 3
+#			}
+#		#We are not ready for a war
+#		modifier = {
+#			war_exhaustion = 5
+#			factor = 0.5
+#			}
+#		modifier = {
+#			war_exhaustion = 10
+#			factor = 0.5
+#			}
+#		modifier = {
+#			war_exhaustion = 15
+#			factor = 0.5
+#			}
+#		modifier = {
+#			war_exhaustion = 20
+#			factor = 0.5
+#			}
+#		modifier = {
+#			NOT = { manpower_percentage = 0.10 }
+#			factor = 0.5
+#			}
+#		modifier = {
+#			NOT = { manpower_percentage = 0.30 }
+#			factor = 0.5
+#			}
+#		modifier = {
+#			NOT = { manpower_percentage = 0.50 }
+#			factor = 0.5
+#			}
+#		modifier = {
+#			num_of_loans = 1
+#			factor = 0.5
+#			}
+#		modifier = {
+#			is_bankrupt = yes
+#			factor = 0.2
+#			}
+#		modifier = {
+#			any_known_country = {
+#				war_with = ROOT
+#				religion = ROOT
+#				}
+#			factor = 0.5
+#			}
+#		}
+#	###CATHOLIC CRUSADES
+#	if = {
+#		limit = { #Heathens own Rome (1st priority)
+#			religion = catholic
+#			NOT = { 2530 = { is_claim = ROOT } }
+#			NOT = { owns = 2530 }
+#			2530 = { owner = { NOT = { religion_group = ROOT } } }
+#			}
+#		2530 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						2530 = { owner = { ai = no } }
+#						2530 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					2530 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			2530 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	if = {
+#		limit = { #Heathens own Jerusalem (2nd priority)
+#			religion = catholic
+#			OR = {
+#				2530 = { owner = { religion = ROOT } }
+#				2530 = { owner = { NOT = { religion_group = ROOT } } }
+#				}
+#			NOT = { 379 = { is_claim = ROOT } }
+#			NOT = { owns = 379 }
+#			379 = { owner = { NOT = { religion_group = ROOT } } }
+#			}
+#		379 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						379 = { owner = { ai = no } }
+#						379 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					379 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			379 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	###ORTHODOX AND MIAPHYSITE CRUSADES
+#	if = {
+#		limit = { #Heathens own Constantinople (1st priority for Europeans, last for others)
+#			OR = {
+#				religion = orthodox
+#				religion = coptic
+#				}
+#			OR = {
+#				capital_scope = { continent = europe }
+#				AND = {
+#					OR = {
+#						382 = { owner = { religion = ROOT } }
+#						382 = { owner = { NOT = { religion_group = ROOT } } }
+#						}
+#					OR = {
+#						358 = { owner = { religion = ROOT } }
+#						358 = { owner = { NOT = { religion_group = ROOT } } }
+#						}
+#					}
+#				}
+#			NOT = { 1402 = { is_claim = ROOT } }
+#			NOT = { owns = 1402 }
+#			1402 = { owner = { NOT = { religion_group = ROOT } } }
+#			}
+#		1402 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						1402 = { owner = { ai = no } }
+#						1402 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					1402 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			1402 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	if = {
+#		limit = { #Heathens own Alexandria (1st priority for Africans, 2nd for others)
+#			OR = {
+#				religion = orthodox
+#				religion = coptic
+#				}
+#			OR = {
+#				capital_scope = { africa_continent_trigger = yes }
+#				1402 = { owner = { religion = ROOT } }
+#				1402 = { owner = { NOT = { religion_group = ROOT } } }
+#				382 = { owner = { religion = ROOT } }
+#				382 = { owner = { NOT = { religion_group = ROOT } } }
+#				}
+#			NOT = { 358 = { is_claim = ROOT } }
+#			NOT = { owns = 358 }
+#			358 = { owner = { NOT = { religion_group = ROOT } } }
+#			}
+#		358 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						358 = { owner = { ai = no } }
+#						358 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					358 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			358 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	if = {
+#		limit = { #Heathens own Antioch (Aleppo) (1st priority for Asians, 2nd for others)
+#			OR = {
+#				religion = orthodox
+#				religion = coptic
+#				}
+#			OR = {
+#				capital_scope = { asia_continent_trigger = yes }
+#				OR = {
+#					1402 = { owner = { religion = ROOT } }
+#					1402 = { owner = { NOT = { religion_group = ROOT } } }
+#					}
+#				358 = { owner = { religion = ROOT } }
+#				358 = { owner = { NOT = { religion_group = ROOT } } }
+#				}
+#			NOT = { 382 = { is_claim = ROOT } }
+#			NOT = { owns = 382 }
+#			382 = { owner = { NOT = { religion_group = ROOT } } }
+#			}
+#		382 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						382 = { owner = { ai = no } }
+#						382 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					382 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			382 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	if = {
+#		limit = { #Heathens own Jerusalem (4th priority)
+#			OR = {
+#				religion = orthodox
+#				religion = coptic
+#				}
+#			OR = {
+#				1402 = { owner = { religion = ROOT } }
+#				1402 = { owner = { NOT = { religion_group = ROOT } } }
+#				}
+#			OR = {
+#				358 = { owner = { religion = ROOT } }
+#				358 = { owner = { NOT = { religion_group = ROOT } } }
+#				}
+#			OR = {
+#				382 = { owner = { religion = ROOT } }
+#				382 = { owner = { NOT = { religion_group = ROOT } } }
+#				}
+#			NOT = { 379 = { is_claim = ROOT } }
+#			NOT = { owns = 379 }
+#			379 = { owner = { NOT = { religion_group = ROOT } } }
+#			}
+#		379 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						379 = { owner = { ai = no } }
+#						379 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					379 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			379 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	###MUSLIM JIHADS
+#	if = {
+#		limit = { #Heathens own Mecca (1st priority for Sunnis and Wahhabis, 2nd for Shi'ites)
+#			OR = {
+#				religion = sunni
+#				religion = wahhabi
+#				religion = shiite
+#				}
+#			OR = {
+#				NOT = { religion = shiite }
+#				OR = {
+#					1330 = { owner = { religion = ROOT } }
+#					1330 = { owner = { NOT = { religion_group = ROOT } } }
+#					}
+#				}
+#			NOT = { 385 = { is_claim = ROOT } }
+#			NOT = { owns = 385 }
+#			385 = { owner = { NOT = { religion_group = ROOT } } }
+#			}
+#		385 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						385 = { owner = { ai = no } }
+#						385 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					385 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			385 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	if = {
+#		limit = { #Heathens own Medina (2nd priority for Sunnis and Wahhabis, 3rd for Shi'ites)
+#			OR = {
+#				religion = sunni
+#				religion = wahhabi
+#				religion = shiite
+#				}
+#			OR = {
+#				385 = { owner = { religion = ROOT } }
+#				385 = { owner = { NOT = { religion_group = ROOT } } }
+#				}
+#			OR = {
+#				NOT = { religion = shiite }
+#				OR = {
+#					1330 = { owner = { religion = ROOT } }
+#					1330 = { owner = { NOT = { religion_group = ROOT } } }
+#					}
+#				}
+#			NOT = { 384 = { is_claim = ROOT } }
+#			NOT = { owns = 384 }
+#			384 = { owner = { NOT = { religion_group = ROOT } } }
+#			}
+#		384 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						384 = { owner = { ai = no } }
+#						384 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					384 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			384 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	if = {
+#		limit = { #Heathens own Jerusalem (3rd priority for Sunnis and Wahhabis)
+#			OR = {
+#				religion = sunni
+#				religion = shiite
+#				}
+#			OR = {
+#				385 = { owner = { religion = ROOT } }
+#				385 = { owner = { NOT = { religion_group = ROOT } } }
+#				}
+#			OR = {
+#				384 = { owner = { religion = ROOT } }
+#				384 = { owner = { NOT = { religion_group = ROOT } } }
+#				}
+#			NOT = { 379 = { is_claim = ROOT } }
+#			NOT = { owns = 379 }
+#			379 = { owner = { NOT = { religion_group = ROOT } } }
+#			}
+#		379 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						379 = { owner = { ai = no } }
+#						379 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					379 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			379 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	if = {
+#		limit = { #Heathens own Al Najaf (Karbala) (1st priority for Shi'ites)
+#			religion = shiite
+#			NOT = { 1330 = { is_claim = ROOT } }
+#			NOT = { owns = 1330 }
+#			1330 = { owner = { NOT = { religion_group = ROOT } } }
+#			}
+#		1330 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						1330 = { owner = { ai = no } }
+#						1330 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					1330 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			1330 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	###HINDU HOLY WARS
+#	if = {
+#		limit = { #Heathens own Varanasi (Lower Doab) (1st priority)
+#			religion = hinduism
+#			NOT = { 2632 = { is_claim = ROOT } }
+#			NOT = { owns = 2632 }
+#			2632 = { owner = { NOT = { religion_group = ROOT } } }
+#			}
+#		2632 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						2632 = { owner = { ai = no } }
+#						2632 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					2632 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			2632 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	###CHALDEAN HOLY WARS
+#	if = {
+#		limit = { #Heathens own Baghdad
+#			religion = chaldean
+#			NOT = { 410 = { is_claim = ROOT } }
+#			NOT = { owns = 410 }
+#			410 = { owner = { NOT = { religion_group = ROOT } } }
+#			}
+#		410 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						410 = { owner = { ai = no } }
+#						410 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					410 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			410 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	###sikhism HOLY WARS
+#	if = {
+#		limit = { #Heathens own Amritsar (1st priority, minor)
+#			religion = sikhism
+#			PUN = { has_country_flag = amritsar_built }
+#			any_province = {
+#				has_province_flag = amritsar
+#				NOT = { is_claim = ROOT }
+#				NOT = { owned_by = ROOT }
+#				owner = { religion_group = ROOT }
+#				NOT = { owner = { religion = ROOT } }
+#				}
+#			}
+#		random_province = {
+#			limit = { has_province_flag = amritsar }
+#			add_claim = ROOT
+#			}
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				any_country = {
+#					any_owned_province = { has_province_flag = amritsar }
+#					OR = {
+#						AND = {
+#							ai = no
+#							has_country_flag = religious_news_trivial
+#							}
+#						any_neighbor_country = { tag = ROOT }
+#						}
+#					}
+#				}
+#			random_province = {
+#				limit = { has_province_flag = amritsar }
+#				province_event = { id = dg_defender.003 days = 0 }
+#				}
+#			}
+#		}
+#	#JEWISH HOLY WARS
+#	if = {
+#		limit = { #Heathens own Jerusalem
+#			religion_group = jewish_group
+#			NOT = { 379 = { is_claim = ROOT } }
+#			NOT = { owns = 379 }
+#			379 = { owner = { NOT = { religion_group = ROOT } } }
+#			}
+#		379 = { add_claim = ROOT }
+#		if = {
+#			limit = { piety = 0.60 }
+#			add_yearly_manpower = 0.02
+#			}
+#		if = {
+#			limit = { piety = 0.20 NOT = { piety = 0.60 } }
+#			add_yearly_manpower = 0.01
+#			}
+#		if = {
+#			limit = {
+#				OR = {
+#					AND = {
+#						379 = { owner = { ai = no } }
+#						379 = { owner = { has_country_flag = religious_news_trivial } }
+#						}
+#					379 = { owner = { any_neighbor_country = { tag = ROOT } } }
+#					}
+#				}
+#			379 = { province_event = { id = dg_defender.003 days = 0 } }
+#			}
+#		}
+#	###REACTIONS BY CORELIGIONISTS
+#	every_country = {
+#		limit = {
+#			religion = ROOT
+#			NOT = { war_with = ROOT }
+#			NOT = { is_rival = ROOT }
+#			OR = {
+#				piety = 0.60
+#				AND = {
+#					piety = 0.20
+#					any_neighbor_country = { NOT = { religion_group = ROOT } }
+#					}
+#				AND = { #Does not appear to be working
+#					piety = -0.20
+#					any_country = {
+#						war_with = PREV #The country being checked?
+#						NOT = { religion_group = ROOT }
+#						}
+#					}
+#				}
+#			}
+#		add_opinion = { who = ROOT modifier = defender_of_faith_major }
+#		}
+#	every_country = {
+#		limit = {
+#			religion = ROOT
+#			NOT = { war_with = ROOT }
+#			NOT = { is_rival = ROOT }
+#			NOT = {
+#				OR = {
+#					piety = 0.60
+#					AND = {
+#						piety = 0.20
+#						any_neighbor_country = { NOT = { religion_group = ROOT } }
+#						}
+#					AND = { #Does not appear to be working
+#						piety = -0.20
+#						any_country = {
+#							war_with = PREV
+#							NOT = { religion_group = ROOT }
+#							}
+#						}
+#					}
+#				}
+#			OR = {
+#				piety = 0.20
+#				AND = {
+#					piety = -0.20
+#					any_neighbor_country = { NOT = { religion_group = ROOT } }
+#					}
+#				AND = { #Does not appear to be working
+#					piety = -0.60
+#					any_country = {
+#						war_with = PREV
+#						NOT = { religion_group = ROOT }
+#						}
+#					}
+#				}
+#			}
+#		add_opinion = { who = ROOT modifier = defender_of_faith_minor }
+#		}
+#	}
+#
+#}
+
+#province_event = { #Claims on $PROVINCENAME$ (player notification)
+#
+#id = dg_defender.003
+#title = dg_defender.003.t
+#desc = dg_defender.003.d
+#picture = turmoil_call_for_holy_war
+#
+#is_triggered_only = yes
+#
+#option = {
+#	name = dg_defender.003.a
+#	owner = {
+#		add_opinion = { who = FROM modifier = defender_of_faith_claim }
+#		add_casus_belli = { type = cb_insult months = 12 target = FROM }
+#		}
+#	}
+#
+#}
+

@@ -1,0 +1,4489 @@
+# # ########################################
+# # Burgundy & Netherlands Events        #
+# ########################################
+
+# # Ruler of Burgundy Dies
+# country_event = {
+	# id = flavor_bur.1
+	# title = "flavor_bur.EVTNAME1"
+	# desc = "flavor_bur.EVTDESC1"
+	# picture = DEATH_OF_HEIR_eventPicture
+	
+	# major = yes
+	
+	# trigger = {
+		# tag = BUR
+		# NOT = { has_global_flag = 1530_start_date }
+		# ai = yes
+		# NOT = { has_country_flag = burgundian_succession_crisis }
+		# luck = no
+		# is_at_war = yes
+		# is_emperor = no
+		# government = monarchy
+		# OR = { has_regency = no has_consort_regency = yes }
+		# is_female = no
+		# OR = {
+			# AND = {
+				# is_free_or_tributary_trigger = yes
+				# check_variable = { which = "Cores_on_the_Netherlands" value = 10 }
+			# }
+			# AND = {
+				# is_subject_other_than_tributary_trigger = yes
+				# check_variable = { which = "Cores_on_the_Netherlands" value = 15 }
+			# }
+		# }
+		# capital_scope = {
+			# continent = europe
+		# }
+		# FRA = {
+			# exists = yes
+			# is_free_or_tributary_trigger = yes
+			# num_of_cities = 8
+			# is_neighbor_of = BUR
+		# }
+		# OR = {
+			# emperor = {
+				# exists = yes
+				# NOT = { war_with = FRA }
+			# }
+			# emperor = {
+				# exists = no
+			# }
+		# }
+	# }
+	
+	# mean_time_to_happen = {
+		# years = 41
+		# #		modifier = {			#Vari. No reason when condition is "luck = no"
+		# #			factor = 1.1
+		# #			luck = yes
+		# #		}
+		# modifier = {
+			# factor = 0.75
+			# has_heir = no
+		# }
+		# modifier = {
+			# factor = 0.75
+			# is_monarch_leader = yes
+		# }
+		# modifier = {
+			# factor = 0.75
+			# is_heir_leader = yes
+		# }
+		# modifier = {
+			# factor = 0.85
+			# NOT = { war_score = 0 }
+		# }
+		# modifier = {
+			# factor = 0.75
+			# NOT = { war_score = -25 }
+		# }
+		# modifier = {
+			# factor = 0.75
+			# NOT = { war_score = -50 }
+		# }
+		# modifier = {
+			# factor = 0.5
+			# NOT = { war_score = -75 }
+		# }
+	# }
+	
+	# immediate = {
+		# hidden_effect = {
+			# set_country_flag = burgundian_succession_crisis
+			# clr_country_flag = french_apanage
+			# add_ruler_modifier = {
+				# name = burgundian_succession_crisis
+			# }
+			# # France
+			# if = {
+				# limit = {
+					# any_owned_province = {
+						# OR = {
+							# region = east_france_region
+							# region = provence_region
+							# region = languedoc_region
+							# region = high_countries_region
+							# culture_group = langue_d_oil
+						# }
+						# NOT = { region = belgii_region }
+						# NOT = { region = low_countries_region }
+						# is_part_of_hre = no
+					# }
+				# }
+				# every_owned_province = {
+					# limit = {
+						# OR = {
+							# region = east_france_region
+							# region = provence_region
+							# region = languedoc_region
+							# region = high_countries_region
+							# culture_group = langue_d_oil
+						# }
+						# is_part_of_hre = no
+						# NOT = { region = belgii_region }
+						# NOT = { region = low_countries_region }
+					# }
+					# set_province_flag = bur_french_province
+				# }
+				# set_country_flag = bur_eligible_france
+			# }
+			# # Emperor
+			# if = {
+				# limit = {
+					# emperor = {
+						# OR = {
+							# NOT = { war_with = BUR }
+							# NOT = {
+								# any_owned_province = {
+									# controlled_by = BUR
+								# }
+							# }
+						# }
+						# OR = {
+							# AND = {
+								# tag = HAB
+								# num_of_cities = 6
+							# }
+							# num_of_cities = 8
+						# }
+					# }
+				# }
+				# every_owned_province = {
+					# limit = {
+						# NOT = { has_province_flag = bur_french_province }
+					# }
+					# set_province_flag = bur_emperor_province
+				# }
+				# set_country_flag = bur_eligible_emperor
+			# }
+			# # Royal Marriage Neighbor
+			# if = {														#Vari. Impossible if Burgundy isn't independant.
+				# limit = {
+					# any_country = {
+						# marriage_with = ROOT
+						# is_neighbor_of = ROOT
+						# num_of_cities = 3
+						# is_free_or_tributary_trigger = yes
+						# capital_scope = {
+							# is_part_of_hre = yes
+						# }
+					# }
+				# }
+				# every_owned_province = {
+					# limit = {
+						# NOT = { has_province_flag = bur_french_province }
+						# NOT = { has_province_flag = bur_emperor_province }
+					# }
+					# set_province_flag = bur_marriage_neighbor_province
+				# }
+				# random_country = {
+					# limit = {
+						# marriage_with = ROOT
+						# is_neighbor_of = ROOT
+						# num_of_cities = 3
+						# is_free_or_tributary_trigger = yes
+						# capital_scope = {
+							# is_part_of_hre = yes
+						# }
+					# }
+					# set_country_flag = bur_marriage_neighbor
+				# }
+				# set_country_flag = bur_eligible_marriage_neighbor
+			# }
+			# # Royal Marriage
+			# if = {																#Vari. Impossible if Burgundy isn't independant.
+				# limit = {
+					# any_country = {
+						# marriage_with = ROOT
+						# NOT = { is_neighbor_of = ROOT }
+						# num_of_cities = 3
+						# is_free_or_tributary_trigger = yes
+						# capital_scope = {
+							# is_part_of_hre = yes
+						# }
+					# }
+				# }
+				# every_owned_province = {
+					# limit = {
+						# NOT = { has_province_flag = bur_french_province }
+						# NOT = { has_province_flag = bur_emperor_province }
+						# NOT = { has_province_flag = bur_marriage_neighbor_province }
+					# }
+					# set_province_flag = bur_marriage_province
+				# }
+				# random_country = {
+					# limit = {
+						# marriage_with = ROOT
+						# NOT = { is_neighbor_of = ROOT }
+						# num_of_cities = 3
+						# is_free_or_tributary_trigger = yes
+						# capital_scope = {
+							# is_part_of_hre = yes
+						# }
+					# }
+					# set_country_flag = bur_marriage
+				# }
+				# set_country_flag = bur_eligible_marriage
+			# }
+			# # Spain
+			# if = {
+				# limit = {
+					# any_country = {
+						# OR = {
+							# tag = SPA
+							# tag = CAS
+						# }
+						# marriage_with = ROOT
+						# is_free_or_tributary_trigger = yes
+						# capital_scope = {
+							# is_part_of_hre = no
+						# }
+					# }
+				# }
+				# every_owned_province = {
+					# limit = {
+						# NOT = { has_province_flag = bur_french_province }
+						# NOT = { has_province_flag = bur_emperor_province }
+						# NOT = { has_province_flag = bur_marriage_neighbor_province }
+						# NOT = { has_province_flag = bur_marriage_province }
+					# }
+					# set_province_flag = bur_spanish_provinces
+				# }
+				# set_country_flag = bur_eligible_spain
+				# if = {																	#Vari. Impossible if Burgundy isn't independant.
+					# limit = {
+						# SPA = {
+							# marriage_with = ROOT
+							# is_free_or_tributary_trigger = yes
+						# }
+					# }
+					# set_country_flag = spain_spa
+				# }
+				# if = {																	#Vari. Impossible if Burgundy isn't independant.
+					# limit = {
+						# NOT = { has_country_flag = spain_spa }
+						# CAS = {
+							# marriage_with = ROOT
+							# is_free_or_tributary_trigger = yes
+						# }
+					# }
+					# set_country_flag = spain_cas
+				# }
+			# }
+			# # The Rest to Emperor
+			# if = {
+				# limit = {
+					# emperor = {
+						# exists = yes
+					# }
+				# }
+				# every_owned_province = {
+					# limit = {
+						# NOT = { has_province_flag = bur_french_province }
+						# NOT = { has_province_flag = bur_emperor_province }
+						# NOT = { has_province_flag = bur_marriage_neighbor_province }
+						# NOT = { has_province_flag = bur_marriage_province }
+						# NOT = { has_province_flag = bur_spanish_provinces }
+					# }
+					# set_province_flag = bur_the_rest_to_emperor
+				# }
+				# set_country_flag = bur_eligible_the_rest_to_emperor
+			# }
+			# # Neighbor
+			# if = {
+				# limit = {
+					# any_neighbor_country = {
+						# exists = yes
+						# government = monarchy
+						# is_free_or_tributary_trigger = yes
+						# capital_scope = {
+							# continent = europe
+							# NOT = { region = south_england_region }
+						# }
+					# }
+				# }
+				# every_owned_province = {
+					# limit = {
+						# NOT = { has_province_flag = bur_french_province }
+						# NOT = { has_province_flag = bur_emperor_province }
+						# NOT = { has_province_flag = bur_marriage_neighbor_province }
+						# NOT = { has_province_flag = bur_marriage_province }
+						# NOT = { has_province_flag = bur_spanish_provinces }
+						# NOT = { has_province_flag = bur_the_rest_to_emperor }
+					# }
+					# set_province_flag = bur_neighbor
+				# }
+				# random_neighbor_country = {
+					# limit = {
+						# exists = yes
+						# government = monarchy
+						# is_free_or_tributary_trigger = yes
+						# capital_scope = {
+							# continent = europe
+							# NOT = { region = south_england_region }
+						# }
+					# }
+					# set_country_flag = bur_neighbor
+				# }
+				# set_country_flag = bur_eligible_neighbor
+			# }
+			# # Neighbor
+			# if = {
+				# limit = {
+					# NOT = {
+						# any_neighbor_country = {
+							# exists = yes
+							# government = monarchy
+							# is_free_or_tributary_trigger = yes
+							# capital_scope = {
+								# continent = europe
+								# NOT = { region = south_england_region }
+							# }
+						# }
+					# }
+					# any_neighbor_country = {
+						# exists = yes
+						# is_free_or_tributary_trigger = yes
+						# capital_scope = {
+							# continent = europe
+							# NOT = { region = south_england_region }
+						# }
+					# }
+				# }
+				# every_owned_province = {
+					# limit = {
+						# NOT = { has_province_flag = bur_french_province }
+						# NOT = { has_province_flag = bur_emperor_province }
+						# NOT = { has_province_flag = bur_marriage_neighbor_province }
+						# NOT = { has_province_flag = bur_marriage_province }
+						# NOT = { has_province_flag = bur_spanish_provinces }
+						# NOT = { has_province_flag = bur_the_rest_to_emperor }
+					# }
+					# set_province_flag = bur_neighbor
+				# }
+				# random_neighbor_country = {
+					# limit = {
+						# exists = yes
+						# is_free_or_tributary_trigger = yes
+						# capital_scope = {
+							# continent = europe
+							# NOT = { region = south_england_region }
+						# }
+					# }
+					# set_country_flag = bur_neighbor
+				# }
+				# set_country_flag = bur_eligible_neighbor
+			# }
+		# }
+	# }
+	
+	# option = {
+		# name = "flavor_bur.EVTOPTA1"
+		# if = {
+			# limit = {
+				# has_heir = yes
+			# }
+			# kill_heir = yes
+		# }
+		# tooltip = {
+			# kill_ruler = yes
+		# }
+		# hidden_effect = {
+			# define_ruler = {
+				# regency = yes
+			# }
+			# # France
+			# if = {
+				# limit = {
+					# has_country_flag = bur_eligible_france
+					# any_owned_province = {
+						# has_province_flag = bur_french_province
+					# }
+				# }
+				# FRA = {
+					# country_event = { id = flavor_bur.3 days = 3 }
+				# }
+			# }
+			# # Emperor
+			# if = {
+				# limit = {
+					# NOT = { has_country_flag = bur_eligible_france }
+					# has_country_flag = bur_eligible_emperor
+					# any_owned_province = {
+						# has_province_flag = bur_emperor_province
+					# }
+				# }
+				# emperor = {
+					# country_event = { id = flavor_bur.4 days = 3 }
+				# }
+			# }
+			# # Royal Marriage Neighbor
+			# if = {
+				# limit = {
+					# NOT = { has_country_flag = bur_eligible_france }
+					# NOT = { has_country_flag = bur_eligible_emperor }
+					# has_country_flag = bur_eligible_marriage_neighbor
+					# any_owned_province = {
+						# has_province_flag = bur_marriage_neighbor_province
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_marriage_neighbor
+					# }
+					# country_event = { id = flavor_bur.5 days = 3 }
+				# }
+			# }
+			# # Royal Marriage
+			# if = {
+				# limit = {
+					# NOT = { has_country_flag = bur_eligible_france }
+					# NOT = { has_country_flag = bur_eligible_emperor }
+					# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+					# has_country_flag = bur_eligible_marriage
+					# any_owned_province = {
+						# has_province_flag = bur_marriage_province
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_marriage
+					# }
+					# country_event = { id = flavor_bur.5 days = 3 }
+				# }
+			# }
+			# # Spain
+			# if = {
+				# limit = {
+					# NOT = { has_country_flag = bur_eligible_france }
+					# NOT = { has_country_flag = bur_eligible_emperor }
+					# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+					# NOT = { has_country_flag = bur_eligible_marriage }
+					# has_country_flag = bur_eligible_spain
+					# any_owned_province = {
+						# has_province_flag = bur_spanish_provinces
+					# }
+				# }
+				# if = {
+					# limit = {
+						# has_country_flag = spain_spa
+					# }
+					# SPA = {
+						# country_event = { id = flavor_bur.19 days = 3 }
+					# }
+				# }
+				# if = {
+					# limit = {
+						# has_country_flag = spain_cas
+					# }
+					# CAS = {
+						# country_event = { id = flavor_bur.19 days = 3 }
+					# }
+				# }
+			# }
+			# # The Rest to Emperor
+			# if = {
+				# limit = {
+					# NOT = { has_country_flag = bur_eligible_france }
+					# NOT = { has_country_flag = bur_eligible_emperor }
+					# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+					# NOT = { has_country_flag = bur_eligible_marriage }
+					# NOT = { has_country_flag = bur_eligible_spain }
+					# has_country_flag = bur_eligible_the_rest_to_emperor
+					# any_owned_province = {
+						# has_province_flag = bur_the_rest_to_emperor
+					# }
+				# }
+				# emperor = {
+					# country_event = { id = flavor_bur.4 days = 3 }
+				# }
+			# }
+			# # Neighbor
+			# if = {
+				# limit = {
+					# NOT = { has_country_flag = bur_eligible_france }
+					# NOT = { has_country_flag = bur_eligible_emperor }
+					# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+					# NOT = { has_country_flag = bur_eligible_marriage }
+					# NOT = { has_country_flag = bur_eligible_spain }
+					# NOT = { has_country_flag = bur_eligible_the_rest_to_emperor }
+					# has_country_flag = bur_eligible_neighbor
+					# any_owned_province = {
+						# has_province_flag = bur_neighbor
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_neighbor
+					# }
+					# country_event = { id = flavor_bur.6 days = 3 }
+				# }
+			# }
+		# }
+	# }
+# }
+
+# # Fate of Burgundy
+# country_event = {
+	# id = flavor_bur.2
+	# title = "flavor_bur.EVTNAME2"
+	# desc = "flavor_bur.EVTDESC2"
+	# picture = CIVIL_WAR_eventPicture
+	
+	# major = yes
+	
+	# trigger = {
+		# tag = BUR
+		# NOT = { has_global_flag = 1530_start_date }
+		# ai = yes
+		# NOT = { has_country_flag = burgundian_succession_crisis }
+		# is_at_war = no
+		# is_free_or_tributary_trigger = yes
+		# is_emperor = no
+		# NOT = { is_year = 1500 }
+		# capital_scope = {
+			# continent = europe
+		# }
+		# has_regency = yes
+		# has_heir = no
+		# FRA = {
+			# exists = yes
+			# is_free_or_tributary_trigger = yes
+			# num_of_cities = 8
+			# is_neighbor_of = BUR
+		# }
+		# OR = {
+			# emperor = {
+				# exists = yes
+				# NOT = { war_with = FRA }
+			# }
+			# emperor = {
+				# exists = no
+			# }
+		# }
+	# }
+	
+	# mean_time_to_happen = {
+		# years = 50
+		# modifier = {
+			# factor = 1.1
+			# luck = yes
+		# }
+		# modifier = {
+			# factor = 0.75
+			# has_heir = no
+		# }
+		# modifier = {
+			# factor = 0.75
+			# is_monarch_leader = yes
+		# }
+		# modifier = {
+			# factor = 0.75
+			# is_heir_leader = yes
+		# }
+		# modifier = {
+			# factor = 0.85
+			# NOT = { war_score = 0 }
+		# }
+		# modifier = {
+			# factor = 0.75
+			# NOT = { war_score = -25 }
+		# }
+		# modifier = {
+			# factor = 0.75
+			# NOT = { war_score = -50 }
+		# }
+		# modifier = {
+			# factor = 0.5
+			# NOT = { war_score = -75 }
+		# }
+	# }
+	
+	# immediate = {
+		# hidden_effect = {
+			# set_country_flag = burgundian_succession_crisis
+			# add_ruler_modifier = {
+				# name = burgundian_succession_crisis
+			# }
+			# # France
+			# if = {
+				# limit = {
+					# any_owned_province = {
+						# OR = {
+							# region = east_france_region
+							# region = provence_region
+							# region = languedoc_region
+							# region = high_countries_region
+							# culture_group = langue_d_oil
+						# }
+						# is_part_of_hre = no
+					# }
+				# }
+				# every_owned_province = {
+					# limit = {
+						# OR = {
+							# region = east_france_region
+							# region = provence_region
+							# region = languedoc_region
+							# region = high_countries_region
+							# culture_group = langue_d_oil
+						# }
+						# is_part_of_hre = no
+					# }
+					# set_province_flag = bur_french_province
+				# }
+				# set_country_flag = bur_eligible_france
+			# }
+			# # Emperor
+			# if = {
+				# limit = {
+					# emperor = {
+						# OR = {
+							# AND = {
+								# tag = HAB
+								# num_of_cities = 6
+							# }
+							# num_of_cities = 8
+						# }
+					# }
+				# }
+				# every_owned_province = {
+					# limit = {
+						# NOT = { has_province_flag = bur_french_province }
+					# }
+					# set_province_flag = bur_emperor_province
+				# }
+				# set_country_flag = bur_eligible_emperor
+			# }
+			# # Royal Marriage Neighbor
+			# if = {
+				# limit = {
+					# any_country = {
+						# marriage_with = ROOT
+						# is_neighbor_of = ROOT
+						# num_of_cities = 3
+						# is_free_or_tributary_trigger = yes
+						# capital_scope = {
+							# is_part_of_hre = yes
+						# }
+					# }
+				# }
+				# every_owned_province = {
+					# limit = {
+						# NOT = { has_province_flag = bur_french_province }
+						# NOT = { has_province_flag = bur_emperor_province }
+					# }
+					# set_province_flag = bur_marriage_neighbor_province
+				# }
+				# random_country = {
+					# limit = {
+						# marriage_with = ROOT
+						# is_neighbor_of = ROOT
+						# num_of_cities = 3
+						# is_free_or_tributary_trigger = yes
+						# capital_scope = {
+							# is_part_of_hre = yes
+						# }
+					# }
+					# set_country_flag = bur_marriage_neighbor
+				# }
+				# set_country_flag = bur_eligible_marriage_neighbor
+			# }
+			# # Royal Marriage
+			# if = {
+				# limit = {
+					# any_country = {
+						# marriage_with = ROOT
+						# NOT = { is_neighbor_of = ROOT }
+						# num_of_cities = 3
+						# is_free_or_tributary_trigger = yes
+						# capital_scope = {
+							# is_part_of_hre = yes
+						# }
+					# }
+				# }
+				# every_owned_province = {
+					# limit = {
+						# NOT = { has_province_flag = bur_french_province }
+						# NOT = { has_province_flag = bur_emperor_province }
+						# NOT = { has_province_flag = bur_marriage_neighbor_province }
+					# }
+					# set_province_flag = bur_marriage_province
+				# }
+				# random_country = {
+					# limit = {
+						# marriage_with = ROOT
+						# is_neighbor_of = ROOT
+						# num_of_cities = 3
+						# is_free_or_tributary_trigger = yes
+						# capital_scope = {
+							# is_part_of_hre = yes
+						# }
+					# }
+					# set_country_flag = bur_marriage_neighbor
+				# }
+				# set_country_flag = bur_eligible_marriage
+			# }
+			# # Spain
+			# if = {
+				# limit = {
+					# any_country = {
+						# OR = {
+							# tag = SPA
+							# tag = CAS
+						# }
+						# marriage_with = ROOT
+						# is_free_or_tributary_trigger = yes
+						# capital_scope = {
+							# is_part_of_hre = no
+						# }
+					# }
+				# }
+				# every_owned_province = {
+					# limit = {
+						# NOT = { has_province_flag = bur_french_province }
+						# NOT = { has_province_flag = bur_emperor_province }
+						# NOT = { has_province_flag = bur_marriage_neighbor_province }
+						# NOT = { has_province_flag = bur_marriage_province }
+					# }
+					# set_province_flag = bur_spanish_provinces
+				# }
+				# set_country_flag = bur_eligible_spain
+				# if = {
+					# limit = {
+						# SPA = {
+							# marriage_with = ROOT
+							# is_free_or_tributary_trigger = yes
+						# }
+					# }
+					# set_country_flag = spain_spa
+				# }
+				# if = {
+					# limit = {
+						# NOT = { has_country_flag = spain_spa }
+						# CAS = {
+							# marriage_with = ROOT
+							# is_free_or_tributary_trigger = yes
+						# }
+					# }
+					# set_country_flag = spain_cas
+				# }
+			# }
+			# # The Rest to Emperor
+			# if = {
+				# limit = {
+					# emperor = {
+						# exists = yes
+					# }
+				# }
+				# every_owned_province = {
+					# limit = {
+						# NOT = { has_province_flag = bur_french_province }
+						# NOT = { has_province_flag = bur_emperor_province }
+						# NOT = { has_province_flag = bur_marriage_neighbor_province }
+						# NOT = { has_province_flag = bur_marriage_province }
+						# NOT = { has_province_flag = bur_spanish_provinces }
+					# }
+					# set_province_flag = bur_the_rest_to_emperor
+				# }
+				# set_country_flag = bur_eligible_the_rest_to_emperor
+			# }
+			# # Neighbor
+			# if = {
+				# limit = {
+					# any_neighbor_country = {
+						# exists = yes
+						# government = monarchy
+						# is_free_or_tributary_trigger = yes
+						# capital_scope = {
+							# continent = europe
+							# NOT = { region = south_england_region }
+						# }
+					# }
+				# }
+				# every_owned_province = {
+					# limit = {
+						# NOT = { has_province_flag = bur_french_province }
+						# NOT = { has_province_flag = bur_emperor_province }
+						# NOT = { has_province_flag = bur_marriage_neighbor_province }
+						# NOT = { has_province_flag = bur_marriage_province }
+						# NOT = { has_province_flag = bur_spanish_provinces }
+						# NOT = { has_province_flag = bur_the_rest_to_emperor }
+					# }
+					# set_province_flag = bur_neighbor
+				# }
+				# random_neighbor_country = {
+					# limit = {
+						# exists = yes
+						# government = monarchy
+						# is_free_or_tributary_trigger = yes
+						# capital_scope = {
+							# continent = europe
+							# NOT = { region = south_england_region }
+						# }
+					# }
+					# set_country_flag = bur_neighbor
+				# }
+				# set_country_flag = bur_eligible_neighbor
+			# }
+			# # Neighbor
+			# if = {
+				# limit = {
+					# NOT = {
+						# any_neighbor_country = {
+							# exists = yes
+							# government = monarchy
+							# is_free_or_tributary_trigger = yes
+							# capital_scope = {
+								# continent = europe
+								# NOT = { region = south_england_region }
+							# }
+						# }
+					# }
+					# any_neighbor_country = {
+						# exists = yes
+						# is_free_or_tributary_trigger = yes
+						# capital_scope = {
+							# continent = europe
+							# NOT = { region = south_england_region }
+						# }
+					# }
+				# }
+				# every_owned_province = {
+					# limit = {
+						# NOT = { has_province_flag = bur_french_province }
+						# NOT = { has_province_flag = bur_emperor_province }
+						# NOT = { has_province_flag = bur_marriage_neighbor_province }
+						# NOT = { has_province_flag = bur_marriage_province }
+						# NOT = { has_province_flag = bur_spanish_provinces }
+						# NOT = { has_province_flag = bur_the_rest_to_emperor }
+					# }
+					# set_province_flag = bur_neighbor
+				# }
+				# random_neighbor_country = {
+					# limit = {
+						# exists = yes
+						# is_free_or_tributary_trigger = yes
+						# capital_scope = {
+							# continent = europe
+							# NOT = { region = south_england_region }
+						# }
+					# }
+					# set_country_flag = bur_neighbor
+				# }
+				# set_country_flag = bur_eligible_neighbor
+			# }
+		# }
+	# }
+	
+	# option = {
+		# name = "flavor_bur.EVTOPTA2"
+		# hidden_effect = {
+			# # France
+			# if = {
+				# limit = {
+					# has_country_flag = bur_eligible_france
+					# any_owned_province = {
+						# has_province_flag = bur_french_province
+					# }
+				# }
+				# FRA = {
+					# country_event = { id = flavor_bur.3 days = 3 }
+				# }
+			# }
+			# # Emperor
+			# if = {
+				# limit = {
+					# NOT = { has_country_flag = bur_eligible_france }
+					# has_country_flag = bur_eligible_emperor
+					# any_owned_province = {
+						# has_province_flag = bur_emperor_province
+					# }
+				# }
+				# emperor = {
+					# country_event = { id = flavor_bur.4 days = 3 }
+				# }
+			# }
+			# # Royal Marriage Neighbor
+			# if = {
+				# limit = {
+					# NOT = { has_country_flag = bur_eligible_france }
+					# NOT = { has_country_flag = bur_eligible_emperor }
+					# has_country_flag = bur_eligible_marriage_neighbor
+					# any_owned_province = {
+						# has_province_flag = bur_marriage_neighbor_province
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_marriage_neighbor
+					# }
+					# country_event = { id = flavor_bur.5 days = 3 }
+				# }
+			# }
+			# # Royal Marriage
+			# if = {
+				# limit = {
+					# NOT = { has_country_flag = bur_eligible_france }
+					# NOT = { has_country_flag = bur_eligible_emperor }
+					# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+					# has_country_flag = bur_eligible_marriage
+					# any_owned_province = {
+						# has_province_flag = bur_marriage_province
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_marriage
+					# }
+					# country_event = { id = flavor_bur.5 days = 3 }
+				# }
+			# }
+			# # Spain
+			# if = {
+				# limit = {
+					# NOT = { has_country_flag = bur_eligible_france }
+					# NOT = { has_country_flag = bur_eligible_emperor }
+					# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+					# NOT = { has_country_flag = bur_eligible_marriage }
+					# has_country_flag = bur_eligible_spain
+					# any_owned_province = {
+						# has_province_flag = bur_spanish_provinces
+					# }
+				# }
+				# if = {
+					# limit = {
+						# has_country_flag = spain_spa
+					# }
+					# SPA = {
+						# country_event = { id = flavor_bur.19 days = 3 }
+					# }
+				# }
+				# if = {
+					# limit = {
+						# has_country_flag = spain_cas
+					# }
+					# CAS = {
+						# country_event = { id = flavor_bur.19 days = 3 }
+					# }
+				# }
+			# }
+			# # The Rest to Emperor
+			# if = {
+				# limit = {
+					# NOT = { has_country_flag = bur_eligible_france }
+					# NOT = { has_country_flag = bur_eligible_emperor }
+					# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+					# NOT = { has_country_flag = bur_eligible_marriage }
+					# NOT = { has_country_flag = bur_eligible_spain }
+					# has_country_flag = bur_eligible_the_rest_to_emperor
+					# any_owned_province = {
+						# has_province_flag = bur_the_rest_to_emperor
+					# }
+				# }
+				# emperor = {
+					# country_event = { id = flavor_bur.4 days = 3 }
+				# }
+			# }
+			# # Neighbor
+			# if = {
+				# limit = {
+					# NOT = { has_country_flag = bur_eligible_france }
+					# NOT = { has_country_flag = bur_eligible_emperor }
+					# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+					# NOT = { has_country_flag = bur_eligible_marriage }
+					# NOT = { has_country_flag = bur_eligible_spain }
+					# NOT = { has_country_flag = bur_eligible_the_rest_to_emperor }
+					# has_country_flag = bur_eligible_neighbor
+					# any_owned_province = {
+						# has_province_flag = bur_neighbor
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_neighbor
+					# }
+					# country_event = { id = flavor_bur.6 days = 3 }
+				# }
+			# }
+		# }
+	# }
+# }
+
+# ##### France #####
+
+# # Burgundian Succession Crisis
+# country_event = {
+	# id = flavor_bur.3
+	# title = "flavor_bur.EVTNAME3"
+	# desc = "flavor_bur.EVTDESC3"
+	# picture = DEATH_OF_HEIR_eventPicture
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "flavor_bur.EVTOPTA3"
+		# ai_chance = { factor = 100 }
+		# if = {
+			# limit = {
+				# war_with = BUR
+			# }
+			# white_peace = BUR
+		# }
+		# # Clear vassalization
+		# hidden_effect = {
+			# if = {
+				# limit = {
+					# BUR = {
+						# vassal_of = FRA
+					# }
+				# }
+				# free_vassal = BUR
+			# }
+		# }
+		# set_country_flag = bur_successor
+		# BUR = {
+			# every_owned_province = {
+				# limit = {
+					# has_province_flag = bur_french_province
+				# }
+				# add_core = ROOT
+			# }
+			# every_owned_province = {
+				# limit = {
+					# has_province_flag = bur_french_province
+				# }
+				# cede_province = ROOT
+				# set_province_flag = bur_succession_province
+				# clr_province_flag = bur_french_province
+			# }
+		# }
+		
+		# # Clear flags
+		# hidden_effect = {
+			# BUR = {
+				# clr_country_flag = bur_eligible_france
+			# }
+		# }
+		
+		
+		# # Send on event
+		# hidden_effect = {
+			# # Emperor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# has_country_flag = bur_eligible_emperor
+					# }
+				# }
+				# emperor = {
+					# country_event = { id = flavor_bur.4 days = 3 }
+				# }
+			# }
+			# # Royal Marriage Neighbor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# has_country_flag = bur_eligible_marriage_neighbor
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_marriage_neighbor
+					# }
+					# country_event = { id = flavor_bur.5 days = 3 }
+				# }
+			# }
+			# # Royal Marriage
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# has_country_flag = bur_eligible_marriage
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_marriage
+					# }
+					# country_event = { id = flavor_bur.5 days = 3 }
+				# }
+			# }
+			# # Spain
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# has_country_flag = bur_eligible_spain
+					# }
+				# }
+				# if = {
+					# limit = {
+						# BUR = {
+							# has_country_flag = spain_spa
+						# }
+					# }
+					# SPA = {
+						# country_event = { id = flavor_bur.19 days = 3 }
+					# }
+				# }
+				# if = {
+					# limit = {
+						# BUR = {
+							# has_country_flag = spain_cas
+						# }
+					# }
+					# CAS = {
+						# country_event = { id = flavor_bur.19 days = 3 }
+					# }
+				# }
+			# }
+			# # The Rest to Emperor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# NOT = { has_country_flag = bur_eligible_spain }
+						# has_country_flag = bur_eligible_the_rest_to_emperor
+					# }
+				# }
+				# emperor = {
+					# country_event = { id = flavor_bur.4 days = 3 }
+				# }
+			# }
+			# # Neighbor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# NOT = { has_country_flag = bur_eligible_spain }
+						# NOT = { has_country_flag = bur_eligible_the_rest_to_emperor }
+						# has_country_flag = bur_eligible_neighbor
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_neighbor
+					# }
+					# country_event = { id = flavor_bur.6 days = 3 }
+				# }
+			# }
+		# }
+	# }
+	# option = {
+		# name = "flavor_bur.EVTOPTB3"
+		# ai_chance = { factor = 0 }
+		# add_prestige = -10
+		
+		# # Clear flags
+		# hidden_effect = {
+			# BUR = {
+				# clr_country_flag = bur_eligible_france
+			# }
+		# }
+		
+		# # Send on event
+		# hidden_effect = {
+			# # Emperor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# has_country_flag = bur_eligible_emperor
+					# }
+				# }
+				# emperor = {
+					# country_event = { id = flavor_bur.4 days = 3 }
+				# }
+			# }
+			# # Royal Marriage Neighbor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# has_country_flag = bur_eligible_marriage_neighbor
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_marriage_neighbor
+					# }
+					# country_event = { id = flavor_bur.5 days = 3 }
+				# }
+			# }
+			# # Royal Marriage
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# has_country_flag = bur_eligible_marriage
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_marriage
+					# }
+					# country_event = { id = flavor_bur.5 days = 3 }
+				# }
+			# }
+			# # Spain
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# has_country_flag = bur_eligible_spain
+					# }
+				# }
+				# if = {
+					# limit = {
+						# BUR = {
+							# has_country_flag = spain_spa
+						# }
+					# }
+					# SPA = {
+						# country_event = { id = flavor_bur.19 days = 3 }
+					# }
+				# }
+				# if = {
+					# limit = {
+						# BUR = {
+							# has_country_flag = spain_cas
+						# }
+					# }
+					# CAS = {
+						# country_event = { id = flavor_bur.19 days = 3 }
+					# }
+				# }
+			# }
+			# # The Rest to Emperor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# NOT = { has_country_flag = bur_eligible_spain }
+						# has_country_flag = bur_eligible_the_rest_to_emperor
+					# }
+				# }
+				# emperor = {
+					# country_event = { id = flavor_bur.4 days = 3 }
+				# }
+			# }
+			# # Neighbor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# NOT = { has_country_flag = bur_eligible_spain }
+						# NOT = { has_country_flag = bur_eligible_the_rest_to_emperor }
+						# has_country_flag = bur_eligible_neighbor
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_neighbor
+					# }
+					# country_event = { id = flavor_bur.6 days = 3 }
+				# }
+			# }
+		# }
+	# }
+# }
+
+# ##### Emperor #####
+
+# # Burgundian Succession Crisis
+# country_event = {
+	# id = flavor_bur.4
+	# title = "flavor_bur.EVTNAME3"
+	# desc = "flavor_bur.EVTDESC4"
+	# picture = DEATH_OF_HEIR_eventPicture
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "flavor_bur.EVTOPTA3"
+		# ai_chance = { factor = 100 }
+		# if = {
+			# limit = {
+				# war_with = BUR
+			# }
+			# white_peace = BUR
+		# }
+		# set_country_flag = bur_successor
+		# BUR = {
+			# every_owned_province = {
+				# limit = {
+					# OR = {
+						# has_province_flag = bur_french_province
+						# has_province_flag = bur_emperor_province
+					# }
+				# }
+				# add_core = ROOT
+			# }
+			# every_owned_province = {
+				# limit = {
+					# OR = {
+						# has_province_flag = bur_french_province
+						# has_province_flag = bur_emperor_province
+					# }
+				# }
+				# cede_province = ROOT
+				# set_province_flag = bur_succession_province
+				# clr_province_flag = bur_french_province
+				# clr_province_flag = bur_emperor_province
+			# }
+		# }
+		
+		# # Clear flags
+		# hidden_effect = {
+			# # The Rest to Emperor
+			# if = {
+				# limit = {
+					# is_emperor = yes
+					# BUR = {
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# has_country_flag = bur_eligible_the_rest_to_emperor
+					# }
+				# }
+				# BUR = {
+					# clr_country_flag = bur_eligible_the_rest_to_emperor
+				# }
+			# }
+			# # Emperor
+			# if = {
+				# limit = {
+					# is_emperor = yes
+					# BUR = {
+						# has_country_flag = bur_eligible_emperor
+					# }
+				# }
+				# BUR = {
+					# clr_country_flag = bur_eligible_emperor
+				# }
+			# }
+		# }
+		
+		# # Send on event
+		# hidden_effect = {
+			# # Emperor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# has_country_flag = bur_eligible_emperor
+					# }
+				# }
+				# emperor = {
+					# country_event = { id = flavor_bur.4 days = 3 }
+				# }
+			# }
+			# # Royal Marriage Neighbor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# has_country_flag = bur_eligible_marriage_neighbor
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_marriage_neighbor
+					# }
+					# country_event = { id = flavor_bur.5 days = 3 }
+				# }
+			# }
+			# # Royal Marriage
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# has_country_flag = bur_eligible_marriage
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_marriage
+					# }
+					# country_event = { id = flavor_bur.5 days = 3 }
+				# }
+			# }
+			# # Spain
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# has_country_flag = bur_eligible_spain
+					# }
+				# }
+				# if = {
+					# limit = {
+						# BUR = {
+							# has_country_flag = spain_spa
+						# }
+					# }
+					# SPA = {
+						# country_event = { id = flavor_bur.19 days = 3 }
+					# }
+				# }
+				# if = {
+					# limit = {
+						# BUR = {
+							# has_country_flag = spain_cas
+						# }
+					# }
+					# CAS = {
+						# country_event = { id = flavor_bur.19 days = 3 }
+					# }
+				# }
+			# }
+			# # The Rest to Emperor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# NOT = { has_country_flag = bur_eligible_spain }
+						# has_country_flag = bur_eligible_the_rest_to_emperor
+					# }
+				# }
+				# emperor = {
+					# country_event = { id = flavor_bur.4 days = 3 }
+				# }
+			# }
+			# # Neighbor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# NOT = { has_country_flag = bur_eligible_spain }
+						# NOT = { has_country_flag = bur_eligible_the_rest_to_emperor }
+						# has_country_flag = bur_eligible_neighbor
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_neighbor
+					# }
+					# country_event = { id = flavor_bur.6 days = 3 }
+				# }
+			# }
+		# }
+	# }
+	# option = {
+		# name = "flavor_bur.EVTOPTB3"
+		# ai_chance = { factor = 0 }
+		# add_prestige = -10
+		
+		# # Clear flags
+		# hidden_effect = {
+			# # The Rest to Emperor
+			# BUR = {
+				# clr_country_flag = bur_eligible_the_rest_to_emperor
+				# clr_country_flag = bur_eligible_emperor
+			# }
+		# }
+		
+		# # Send on event
+		# hidden_effect = {
+			# # Emperor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# has_country_flag = bur_eligible_emperor
+					# }
+				# }
+				# emperor = {
+					# country_event = { id = flavor_bur.4 days = 3 }
+				# }
+			# }
+			# # Royal Marriage Neighbor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# has_country_flag = bur_eligible_marriage_neighbor
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_marriage_neighbor
+					# }
+					# country_event = { id = flavor_bur.5 days = 3 }
+				# }
+			# }
+			# # Royal Marriage
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# has_country_flag = bur_eligible_marriage
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_marriage
+					# }
+					# country_event = { id = flavor_bur.5 days = 3 }
+				# }
+			# }
+			# # Spain
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# has_country_flag = bur_eligible_spain
+					# }
+				# }
+				# if = {
+					# limit = {
+						# BUR = {
+							# has_country_flag = spain_spa
+						# }
+					# }
+					# SPA = {
+						# country_event = { id = flavor_bur.19 days = 3 }
+					# }
+				# }
+				# if = {
+					# limit = {
+						# BUR = {
+							# has_country_flag = spain_cas
+						# }
+					# }
+					# CAS = {
+						# country_event = { id = flavor_bur.19 days = 3 }
+					# }
+				# }
+			# }
+			# # The Rest to Emperor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# NOT = { has_country_flag = bur_eligible_spain }
+						# has_country_flag = bur_eligible_the_rest_to_emperor
+					# }
+				# }
+				# emperor = {
+					# country_event = { id = flavor_bur.4 days = 3 }
+				# }
+			# }
+			# # Neighbor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# NOT = { has_country_flag = bur_eligible_spain }
+						# NOT = { has_country_flag = bur_eligible_the_rest_to_emperor }
+						# has_country_flag = bur_eligible_neighbor
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_neighbor
+					# }
+					# country_event = { id = flavor_bur.6 days = 3 }
+				# }
+			# }
+		# }
+	# }
+# }
+
+# ##### Royal Marriage #####
+
+# # Burgundian Succession Crisis
+# country_event = {
+	# id = flavor_bur.5
+	# title = "flavor_bur.EVTNAME3"
+	# desc = "flavor_bur.EVTDESC5"
+	# picture = DEATH_OF_HEIR_eventPicture
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "flavor_bur.EVTOPTA3"
+		# ai_chance = { factor = 100 }
+		# if = {
+			# limit = {
+				# war_with = BUR
+			# }
+			# white_peace = BUR
+		# }
+		# set_country_flag = bur_successor
+		# # Royal Marriage Neighbor
+		# if = {
+			# limit = {
+				# has_country_flag = bur_marriage_neighbor
+				# BUR = {
+					# has_country_flag = bur_eligible_marriage_neighbor
+				# }
+			# }
+			# BUR = {
+				# every_owned_province = {
+					# limit = {
+						# OR = {
+							# has_province_flag = bur_french_province
+							# has_province_flag = bur_emperor_province
+							# has_province_flag = bur_marriage_neighbor_province
+						# }
+					# }
+					# add_core = ROOT
+				# }
+				# every_owned_province = {
+					# limit = {
+						# OR = {
+							# has_province_flag = bur_french_province
+							# has_province_flag = bur_emperor_province
+							# has_province_flag = bur_marriage_neighbor_province
+						# }
+					# }
+					# cede_province = ROOT
+					# set_province_flag = bur_succession_province
+					# clr_province_flag = bur_french_province
+					# clr_province_flag = bur_emperor_province
+					# clr_province_flag = bur_marriage_neighbor_province
+				# }
+			# }
+			# clr_country_flag = bur_marriage_neighbor
+		# }
+		# # Royal Marriage
+		# if = {
+			# limit = {
+				# has_country_flag = bur_marriage
+				# BUR = {
+					# has_country_flag = bur_eligible_marriage
+				# }
+			# }
+			# BUR = {
+				# every_owned_province = {
+					# limit = {
+						# OR = {
+							# has_province_flag = bur_french_province
+							# has_province_flag = bur_emperor_province
+							# has_province_flag = bur_marriage_neighbor_province
+							# has_province_flag = bur_marriage_province
+						# }
+					# }
+					# add_core = ROOT
+				# }
+				# every_owned_province = {
+					# limit = {
+						# OR = {
+							# has_province_flag = bur_french_province
+							# has_province_flag = bur_emperor_province
+							# has_province_flag = bur_marriage_neighbor_province
+							# has_province_flag = bur_marriage_province
+						# }
+					# }
+					# cede_province = ROOT
+					# set_province_flag = bur_succession_province
+					# clr_province_flag = bur_french_province
+					# clr_province_flag = bur_emperor_province
+					# clr_province_flag = bur_marriage_neighbor_province
+					# clr_province_flag = bur_marriage_province
+				# }
+			# }
+			# clr_country_flag = bur_marriage
+		# }
+		
+		# # Clear flags
+		# hidden_effect = {
+			# # Royal Marriage
+			# if = {
+				# limit = {
+					# has_country_flag = bur_marriage
+					# BUR = {
+						# has_country_flag = bur_eligible_marriage
+					# }
+				# }
+				# clr_country_flag = bur_marriage
+				# BUR = {
+					# clr_country_flag = bur_eligible_marriage
+				# }
+			# }
+			# # Royal Marriage
+			# if = {
+				# limit = {
+					# has_country_flag = bur_marriage_neighbor
+					# BUR = {
+						# has_country_flag = bur_eligible_marriage_neighbor
+					# }
+				# }
+				# clr_country_flag = bur_marriage_neighbor
+				# BUR = {
+					# clr_country_flag = bur_eligible_marriage_neighbor
+				# }
+			# }
+		# }
+		
+		# # Send on event
+		# hidden_effect = {
+			# # Emperor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# has_country_flag = bur_eligible_emperor
+					# }
+				# }
+				# emperor = {
+					# country_event = { id = flavor_bur.4 days = 3 }
+				# }
+			# }
+			# # Royal Marriage Neighbor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# has_country_flag = bur_eligible_marriage_neighbor
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_marriage_neighbor
+					# }
+					# country_event = { id = flavor_bur.5 days = 3 }
+				# }
+			# }
+			# # Royal Marriage
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# has_country_flag = bur_eligible_marriage
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_marriage
+					# }
+					# country_event = { id = flavor_bur.5 days = 3 }
+				# }
+			# }
+			# # Spain
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# has_country_flag = bur_eligible_spain
+					# }
+				# }
+				# if = {
+					# limit = {
+						# BUR = {
+							# has_country_flag = spain_spa
+						# }
+					# }
+					# SPA = {
+						# country_event = { id = flavor_bur.19 days = 3 }
+					# }
+				# }
+				# if = {
+					# limit = {
+						# BUR = {
+							# has_country_flag = spain_cas
+						# }
+					# }
+					# CAS = {
+						# country_event = { id = flavor_bur.19 days = 3 }
+					# }
+				# }
+			# }
+			# # The Rest to Emperor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# NOT = { has_country_flag = bur_eligible_spain }
+						# has_country_flag = bur_eligible_the_rest_to_emperor
+					# }
+				# }
+				# emperor = {
+					# country_event = { id = flavor_bur.4 days = 3 }
+				# }
+			# }
+			# # Neighbor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# NOT = { has_country_flag = bur_eligible_spain }
+						# NOT = { has_country_flag = bur_eligible_the_rest_to_emperor }
+						# has_country_flag = bur_eligible_neighbor
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_neighbor
+					# }
+					# country_event = { id = flavor_bur.6 days = 3 }
+				# }
+			# }
+		# }
+	# }
+	# option = {
+		# name = "flavor_bur.EVTOPTB3"
+		# ai_chance = { factor = 0 }
+		# add_prestige = -10
+		
+		# # Clear flags
+		# hidden_effect = {
+			# # Royal Marriage
+			# if = {
+				# limit = {
+					# has_country_flag = bur_marriage
+					# BUR = {
+						# has_country_flag = bur_eligible_marriage
+					# }
+				# }
+				# clr_country_flag = bur_marriage
+				# BUR = {
+					# clr_country_flag = bur_eligible_marriage
+				# }
+			# }
+			# # Royal Marriage
+			# if = {
+				# limit = {
+					# has_country_flag = bur_marriage_neighbor
+					# BUR = {
+						# has_country_flag = bur_eligible_marriage_neighbor
+					# }
+				# }
+				# clr_country_flag = bur_marriage_neighbor
+				# BUR = {
+					# clr_country_flag = bur_eligible_marriage_neighbor
+				# }
+			# }
+		# }
+		
+		# # Send on event
+		# hidden_effect = {
+			# # Emperor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# has_country_flag = bur_eligible_emperor
+					# }
+				# }
+				# emperor = {
+					# country_event = { id = flavor_bur.4 days = 3 }
+				# }
+			# }
+			# # Royal Marriage Neighbor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# has_country_flag = bur_eligible_marriage_neighbor
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_marriage_neighbor
+					# }
+					# country_event = { id = flavor_bur.5 days = 3 }
+				# }
+			# }
+			# # Royal Marriage
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# has_country_flag = bur_eligible_marriage
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_marriage
+					# }
+					# country_event = { id = flavor_bur.5 days = 3 }
+				# }
+			# }
+			# # Spain
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# has_country_flag = bur_eligible_spain
+					# }
+				# }
+				# if = {
+					# limit = {
+						# BUR = {
+							# has_country_flag = spain_spa
+						# }
+					# }
+					# SPA = {
+						# country_event = { id = flavor_bur.19 days = 3 }
+					# }
+				# }
+				# if = {
+					# limit = {
+						# BUR = {
+							# has_country_flag = spain_cas
+						# }
+					# }
+					# CAS = {
+						# country_event = { id = flavor_bur.19 days = 3 }
+					# }
+				# }
+			# }
+			# # The Rest to Emperor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# NOT = { has_country_flag = bur_eligible_spain }
+						# has_country_flag = bur_eligible_the_rest_to_emperor
+					# }
+				# }
+				# emperor = {
+					# country_event = { id = flavor_bur.4 days = 3 }
+				# }
+			# }
+			# # Neighbor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# NOT = { has_country_flag = bur_eligible_spain }
+						# NOT = { has_country_flag = bur_eligible_the_rest_to_emperor }
+						# has_country_flag = bur_eligible_neighbor
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_neighbor
+					# }
+					# country_event = { id = flavor_bur.6 days = 3 }
+				# }
+			# }
+		# }
+	# }
+# }
+
+# ##### Spain #####
+
+# # Burgundian Succession Crisis
+# country_event = {
+	# id = flavor_bur.19
+	# title = "flavor_bur.EVTNAME3"
+	# desc = "flavor_bur.EVTDESC5"
+	# picture = DEATH_OF_HEIR_eventPicture
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "flavor_bur.EVTOPTA3"
+		# ai_chance = { factor = 100 }
+		# if = {
+			# limit = {
+				# war_with = BUR
+			# }
+			# white_peace = BUR
+		# }
+		# set_country_flag = bur_successor
+		# # Spain
+		# if = {
+			# limit = {
+				# BUR = {
+					# has_country_flag = bur_eligible_spain
+				# }
+			# }
+			# BUR = {
+				# every_owned_province = {
+					# limit = {
+						# OR = {
+							# has_province_flag = bur_french_province
+							# has_province_flag = bur_emperor_province
+							# has_province_flag = bur_marriage_neighbor_province
+							# has_province_flag = bur_marriage_province
+							# has_province_flag = bur_spanish_provinces
+						# }
+					# }
+					# add_core = ROOT
+				# }
+				# every_owned_province = {
+					# limit = {
+						# OR = {
+							# has_province_flag = bur_french_province
+							# has_province_flag = bur_emperor_province
+							# has_province_flag = bur_marriage_neighbor_province
+							# has_province_flag = bur_marriage_province
+							# has_province_flag = bur_spanish_provinces
+						# }
+					# }
+					# cede_province = ROOT
+					# set_province_flag = bur_succession_province
+					# clr_province_flag = bur_french_province
+					# clr_province_flag = bur_emperor_province
+					# clr_province_flag = bur_marriage_neighbor_province
+					# clr_province_flag = bur_marriage_province
+					# clr_province_flag = bur_spanish_provinces
+				# }
+			# }
+		# }
+		
+		# # Clear flags
+		# hidden_effect = {
+			# # Royal Marriage
+			# if = {
+				# limit = {
+					# BUR = {
+						# has_country_flag = bur_eligible_spain
+					# }
+				# }
+				# BUR = {
+					# clr_country_flag = bur_eligible_spain
+				# }
+			# }
+		# }
+		
+		# # Send on event
+		# hidden_effect = {
+			# # Emperor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# has_country_flag = bur_eligible_emperor
+					# }
+				# }
+				# emperor = {
+					# country_event = { id = flavor_bur.4 days = 3 }
+				# }
+			# }
+			# # Royal Marriage Neighbor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# has_country_flag = bur_eligible_marriage_neighbor
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_marriage_neighbor
+					# }
+					# country_event = { id = flavor_bur.5 days = 3 }
+				# }
+			# }
+			# # Royal Marriage
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# has_country_flag = bur_eligible_marriage
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_marriage
+					# }
+					# country_event = { id = flavor_bur.5 days = 3 }
+				# }
+			# }
+			# # Spain
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# has_country_flag = bur_eligible_spain
+					# }
+				# }
+				# if = {
+					# limit = {
+						# BUR = {
+							# has_country_flag = spain_spa
+						# }
+					# }
+					# SPA = {
+						# country_event = { id = flavor_bur.19 days = 3 }
+					# }
+				# }
+				# if = {
+					# limit = {
+						# BUR = {
+							# has_country_flag = spain_cas
+						# }
+					# }
+					# CAS = {
+						# country_event = { id = flavor_bur.19 days = 3 }
+					# }
+				# }
+			# }
+			# # The Rest to Emperor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# NOT = { has_country_flag = bur_eligible_spain }
+						# has_country_flag = bur_eligible_the_rest_to_emperor
+					# }
+				# }
+				# emperor = {
+					# country_event = { id = flavor_bur.4 days = 3 }
+				# }
+			# }
+			# # Neighbor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# NOT = { has_country_flag = bur_eligible_spain }
+						# NOT = { has_country_flag = bur_eligible_the_rest_to_emperor }
+						# has_country_flag = bur_eligible_neighbor
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_neighbor
+					# }
+					# country_event = { id = flavor_bur.6 days = 3 }
+				# }
+			# }
+		# }
+	# }
+	# option = {
+		# name = "flavor_bur.EVTOPTB3"
+		# ai_chance = { factor = 0 }
+		# add_prestige = -10
+		
+		# # Clear flags
+		# hidden_effect = {
+			# # Royal Marriage
+			# if = {
+				# limit = {
+					# BUR = {
+						# has_country_flag = bur_eligible_spain
+					# }
+				# }
+				# BUR = {
+					# clr_country_flag = bur_eligible_spain
+				# }
+			# }
+		# }
+		
+		# # Send on event
+		# hidden_effect = {
+			# # Emperor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# has_country_flag = bur_eligible_emperor
+					# }
+				# }
+				# emperor = {
+					# country_event = { id = flavor_bur.4 days = 3 }
+				# }
+			# }
+			# # Royal Marriage Neighbor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# has_country_flag = bur_eligible_marriage_neighbor
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_marriage_neighbor
+					# }
+					# country_event = { id = flavor_bur.5 days = 3 }
+				# }
+			# }
+			# # Royal Marriage
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# has_country_flag = bur_eligible_marriage
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_marriage
+					# }
+					# country_event = { id = flavor_bur.5 days = 3 }
+				# }
+			# }
+			# # Spain
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# has_country_flag = bur_eligible_spain
+					# }
+				# }
+				# if = {
+					# limit = {
+						# BUR = {
+							# has_country_flag = spain_spa
+						# }
+					# }
+					# SPA = {
+						# country_event = { id = flavor_bur.19 days = 3 }
+					# }
+				# }
+				# if = {
+					# limit = {
+						# BUR = {
+							# has_country_flag = spain_cas
+						# }
+					# }
+					# CAS = {
+						# country_event = { id = flavor_bur.19 days = 3 }
+					# }
+				# }
+			# }
+			# # The Rest to Emperor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# NOT = { has_country_flag = bur_eligible_spain }
+						# has_country_flag = bur_eligible_the_rest_to_emperor
+					# }
+				# }
+				# emperor = {
+					# country_event = { id = flavor_bur.4 days = 3 }
+				# }
+			# }
+			# # Neighbor
+			# if = {
+				# limit = {
+					# BUR = {
+						# exists = yes
+						# NOT = { has_country_flag = bur_eligible_france }
+						# NOT = { has_country_flag = bur_eligible_emperor }
+						# NOT = { has_country_flag = bur_eligible_marriage_neighbor }
+						# NOT = { has_country_flag = bur_eligible_marriage }
+						# NOT = { has_country_flag = bur_eligible_spain }
+						# NOT = { has_country_flag = bur_eligible_the_rest_to_emperor }
+						# has_country_flag = bur_eligible_neighbor
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# has_country_flag = bur_neighbor
+					# }
+					# country_event = { id = flavor_bur.6 days = 3 }
+				# }
+			# }
+		# }
+	# }
+# }
+
+# ##### Neighbor #####
+
+# # Burgundian Succession Crisis
+# country_event = {
+	# id = flavor_bur.6
+	# title = "flavor_bur.EVTNAME3"
+	# desc = "flavor_bur.EVTDESC6"
+	# picture = DEATH_OF_HEIR_eventPicture
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "flavor_bur.EVTOPTA3"
+		# ai_chance = { factor = 100 }
+		# if = {
+			# limit = {
+				# war_with = BUR
+			# }
+			# white_peace = BUR
+		# }
+		# set_country_flag = bur_successor
+		# BUR = {
+			# every_owned_province = {
+				# add_core = ROOT
+			# }
+			# every_owned_province = {
+				# cede_province = ROOT
+				# set_province_flag = bur_succession_province
+				# clr_province_flag = bur_french_province
+				# clr_province_flag = bur_emperor_province
+				# clr_province_flag = bur_marriage_neighbor_province
+				# clr_province_flag = bur_marriage_province
+				# clr_province_flag = bur_spanish_provinces
+				# clr_province_flag = bur_the_rest_to_emperor
+				# clr_province_flag = bur_neighbor
+			# }
+		# }
+		# clr_country_flag = bur_neighbor
+		
+		# # Clear flags
+		# hidden_effect = {
+			# BUR = {
+				# clr_country_flag = bur_eligible_neighbor
+			# }
+		# }
+	# }
+# }
+
+# # May release previous owner provinces in HRE
+# country_event = {
+	# id = flavor_bur.7
+	# title = "flavor_bur.EVTNAME7"
+	# desc = "flavor_bur.EVTDESC7"
+	# picture = DIPLOMACY_eventPicture
+	
+	# is_triggered_only = yes
+	
+	# immediate = {
+		# clr_country_flag = bur_successor
+	# }
+	
+	# option = {
+		# name = "flavor_bur.EVTOPTA7"
+		# ai_chance = { factor = 100 }
+		# every_owned_province = {
+			# limit = {
+				# has_province_flag = bur_succession_province
+				# is_part_of_hre = yes
+				# any_core_country = {
+					# NOT = { tag = ROOT }
+					# exists = yes
+					# capital_scope = {
+						# is_part_of_hre = yes
+					# }
+				# }
+			# }
+			# remove_core = ROOT
+			# random_core_country = {
+				# limit = {
+					# NOT = { tag = ROOT }
+					# exists = yes
+					# capital_scope = {
+						# is_part_of_hre = yes
+					# }
+				# }
+				# PREV = {
+					# cede_province = PREV
+				# }
+			# }
+		# }
+	# }
+	# option = {
+		# name = "flavor_bur.EVTOPTB7"
+		# ai_chance = { factor = 0 }
+		# add_prestige = -10
+	# }
+# }
+
+# # PROVINCENAME Revolts!
+# province_event = {
+	# id = flavor_bur.8
+	# title = "flavor_bur.EVTNAME8"
+	# desc = "flavor_bur.EVTDESC8"
+	# picture = ANGRY_MOB_eventPicture
+	
+	# trigger = {
+		# owner = { ai = no }
+		# is_year = 1550
+		# NOT = { is_year = 1650 }
+		# NOT = { has_global_flag = dutch_revolt }
+		# NOT = { has_province_modifier = local_autonomy_modifier }
+		# OR = {
+			# region = belgii_region
+			# region = low_countries_region
+		# }
+		# OR = {
+			# culture_group = low_frankish
+			# is_core = NED
+		# }
+		# owner = {
+			# NOT = { tag = NED }
+			# NOT = { tag = FLA }
+			# is_free_or_tributary_trigger = yes
+			# num_of_cities = 6
+			# capital_scope = {
+				# NOT = { region = belgii_region }
+				# NOT = { region = low_countries_region }
+			# }
+			# NOT = { culture_group = low_frankish }
+		# }
+	# }
+	
+	# mean_time_to_happen = {
+		# years = 333
+		# modifier = {
+			# factor = 0.75
+			# owner = { is_at_war = yes }
+		# }
+		# modifier = {
+			# factor = 0.5
+			# has_owner_religion = no
+		# }
+		# modifier = {
+			# factor = 0.5
+			# owner = {
+				# NOT = { culture_group = ROOT }
+			# }
+		# }
+		# modifier = {
+			# factor = 0.5
+			# owner = {
+				# NOT = { primary_culture = ROOT }
+				# NOT = { accepted_culture = ROOT }
+			# }
+		# }
+		# modifier = {
+			# factor = 0.5
+			# owner = { war_with = NED }
+		# }
+		# modifier = {
+			# factor = 0.75
+			# unrest = 3
+		# }
+		# modifier = {
+			# factor = 0.75
+			# unrest = 5
+		# }
+		# modifier = {
+			# factor = 0.75
+			# unrest = 7
+		# }
+		# modifier = {
+			# factor = 0.75
+			# unrest = 9
+		# }
+	# }
+	
+	# immediate = {
+		# set_global_flag = dutch_revolt
+	# }
+	
+	# option = {
+		# name = "flavor_bur.EVTOPTA8"
+		# set_province_flag = dutch_revolt
+		# if = {
+			# limit = {
+				# NOT = { exists = NED }
+			# }
+			# add_province_modifier = {
+				# name = "nationalists_organizing"
+				# duration = 3650
+			# }
+			# hidden_effect = {
+				# set_variable = { which = added_unrest value = 10 }
+				# add_base_unrest = yes
+			# }
+			# custom_tooltip = added_unrest_10
+		# }
+		# if = {
+			# limit = {
+				# exists = NED
+			# }
+			# add_province_modifier = {
+				# name = "nationalists_organizing"
+				# duration = 3650
+			# }
+			# hidden_effect = {
+				# set_variable = { which = added_unrest value = 10 }
+				# add_base_unrest = yes
+			# }
+			# custom_tooltip = added_unrest_10
+		# }
+	# }
+	# option = {
+		# name = "flavor_bur.EVTOPTB8"
+		# set_province_flag = no_dutch_revolt
+		# add_province_modifier = {
+			# name = local_autonomy_modifier
+			# duration = 3650
+		# }
+	# }
+# }
+
+# # PROVINCENAME Revolts!
+# province_event = {
+	# id = flavor_bur.9
+	# title = "flavor_bur.EVTNAME9"
+	# desc = "flavor_bur.EVTDESC9"
+	# picture = ANGRY_MOB_eventPicture
+	
+	# trigger = {
+		# owner = { ai = no }
+		# is_year = 1550
+		# NOT = { is_year = 1650 }
+		# has_global_flag = dutch_revolt
+		# NOT = { has_province_flag = dutch_revolt }
+		# NOT = { has_province_flag = no_dutch_revolt }
+		# NOT = { has_province_modifier = local_autonomy_modifier }
+		# OR = {
+			# region = belgii_region
+			# region = low_countries_region
+		# }
+		# OR = {
+			# culture_group = low_frankish
+			# is_core = NED
+		# }
+		# owner = {
+			# NOT = { tag = NED }
+			# NOT = { tag = FLA }
+			# is_free_or_tributary_trigger = yes
+			# num_of_cities = 6
+			# capital_scope = {
+				# NOT = { region = belgii_region }
+				# NOT = { region = low_countries_region }
+			# }
+			# NOT = { culture_group = low_frankish }
+		# }
+	# }
+	
+	# mean_time_to_happen = {
+		# years = 10
+		# modifier = {
+			# factor = 0.5
+			# any_neighbor_province = {
+				# has_province_flag = dutch_revolt
+			# }
+		# }
+		# modifier = {
+			# factor = 0.5
+			# has_owner_religion = no
+		# }
+		# modifier = {
+			# factor = 0.5
+			# owner = {
+				# NOT = { culture_group = ROOT }
+			# }
+		# }
+		# modifier = {
+			# factor = 0.5
+			# owner = {
+				# NOT = { primary_culture = ROOT }
+				# NOT = { accepted_culture = ROOT }
+			# }
+		# }
+		# modifier = {
+			# factor = 0.5
+			# owner = { war_with = NED }
+		# }
+		# modifier = {
+			# factor = 0.75
+			# unrest = 3
+		# }
+		# modifier = {
+			# factor = 0.75
+			# unrest = 5
+		# }
+		# modifier = {
+			# factor = 0.75
+			# unrest = 7
+		# }
+		# modifier = {
+			# factor = 0.75
+			# unrest = 9
+		# }
+	# }
+	
+	# option = {
+		# name = "flavor_bur.EVTOPTA9"
+		# set_province_flag = dutch_revolt
+		# if = {
+			# limit = {
+				# NOT = { exists = NED }
+			# }
+			# add_province_modifier = {
+				# name = "nationalists_organizing"
+				# duration = 3650
+			# }
+			# hidden_effect = {
+				# set_variable = { which = added_unrest value = 10 }
+				# add_base_unrest = yes
+			# }
+			# custom_tooltip = added_unrest_10
+		# }
+		# if = {
+			# limit = {
+				# exists = NED
+			# }
+			# add_province_modifier = {
+				# name = "nationalists_organizing"
+				# duration = 3650
+			# }
+			# hidden_effect = {
+				# set_variable = { which = added_unrest value = 10 }
+				# add_base_unrest = yes
+			# }
+			# custom_tooltip = added_unrest_10
+		# }
+	# }
+	# option = {
+		# name = "flavor_bur.EVTOPTB9"
+		# set_province_flag = no_dutch_revolt
+		# add_province_modifier = {
+			# name = local_autonomy_modifier
+			# duration = 3650
+		# }
+	# }
+# }
+
+# # Netherlands Declare Independence!
+# country_event = {
+	# id = flavor_bur.10
+	# title = "flavor_bur.EVTNAME10"
+	# desc = "flavor_bur.EVTDESC10"
+	# picture = ANGRY_MOB_eventPicture
+	
+	# major = yes
+	# fire_only_once = yes
+	
+	# trigger = {
+		# is_year = 1550
+		# NOT = { is_year = 1650 }
+		# ai = yes
+		# NOT = { exists = NED }
+		# NOT = { tag = FLA }
+		# is_free_or_tributary_trigger = yes
+		# num_of_cities = 6
+		# any_owned_province = {
+			# OR = {
+				# region = belgii_region
+				# region = low_countries_region
+			# }
+			# OR = {
+				# culture_group = low_frankish
+				# is_core = NED
+			# }
+		# }
+		# capital_scope = {
+			# NOT = { region = belgii_region }
+			# NOT = { region = low_countries_region }
+		# }
+		# NOT = { culture_group = low_frankish }
+	# }
+	
+	# mean_time_to_happen = {
+		# years = 166
+		# modifier = {
+			# factor = 0.75
+			# NOT = { accepted_culture = dutch }
+		# }
+		# modifier = {
+			# factor = 0.75
+			# NOT = { accepted_culture = flemish }
+		# }
+		# modifier = {
+			# factor = 0.75
+			# NOT = { accepted_culture = brabantian }
+		# }
+		# modifier = {
+			# factor = 0.75
+			# num_of_owned_provinces_with = {
+				# value = 2
+				# OR = {
+					# region = belgii_region
+					# region = low_countries_region
+				# }
+				# culture_group = low_frankish
+			# }
+		# }
+		# modifier = {
+			# factor = 0.75
+			# num_of_owned_provinces_with = {
+				# value = 4
+				# OR = {
+					# region = belgii_region
+					# region = low_countries_region
+				# }
+				# culture_group = low_frankish
+			# }
+		# }
+		# modifier = {
+			# factor = 0.75
+			# num_of_owned_provinces_with = {
+				# value = 6
+				# OR = {
+					# region = belgii_region
+					# region = low_countries_region
+				# }
+				# culture_group = low_frankish
+			# }
+		# }
+		# modifier = {
+			# factor = 0.75
+			# num_of_owned_provinces_with = {
+				# value = 8
+				# OR = {
+					# region = belgii_region
+					# region = low_countries_region
+				# }
+				# culture_group = low_frankish
+			# }
+		# }
+	# }
+	
+	# immediate = {
+		# hidden_effect = {
+			# every_owned_province = {
+				# limit = {
+					# OR = {
+						# region = belgii_region
+						# region = low_countries_region
+					# }
+					# OR = {
+						# culture_group = low_frankish
+						# is_core = NED
+					# }
+					# is_capital = no
+				# }
+				# discover_country = NED
+				# add_core = NED
+			# }
+			# release = NED
+			# NED = {
+				# crown_republic_effect = yes
+			# }
+			# every_owned_province = {
+				# limit = {
+					# OR = {
+						# region = belgii_region
+						# region = low_countries_region
+					# }
+					# NOT = { is_core = ROOT }
+				# }
+				# add_territorial_core_effect = yes
+			# }
+		# }
+	# }
+	
+	# option = {
+		# name = "flavor_bur.EVTOPTA10"
+		# NED = {
+			# declare_war_with_cb = {
+				# who = ROOT
+				# casus_belli = cb_independence_war
+			# }
+		# }
+		# hidden_effect = {
+			# NED = {
+				# country_event = { id = flavor_bur.11 days = 1 }
+			# }
+			# every_country = {
+				# limit = {
+					# NOT = { tag = ROOT }
+					# NOT = { tag = NED }
+					# any_owned_province = {
+						# OR = {
+							# region = belgii_region
+							# region = low_countries_region
+						# }
+					# }
+				# }
+				# country_event = { id = flavor_bur.12 days = 10 }
+			# }
+		# }
+	# }
+# }
+
+# # Dutch Mobilization
+# country_event = {
+	# id = flavor_bur.11
+	# title = "flavor_bur.EVTNAME11"
+	# desc = "flavor_bur.EVTDESC11"
+	# picture = MILITARY_CAMP_eventPicture
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "EXCELLENT"
+		# NED = {
+			# capital_scope = {
+				# build_to_forcelimit = {
+					# infantry = 0.6
+					# cavalry = 0.3
+					# artillery = 0.1
+				# }
+			# }
+			# random_owned_province = {
+				# limit = {
+					# has_port = yes
+				# }
+				# build_to_forcelimit = {
+					# heavy_ship = 0.3
+					# light_ship = 0.3
+					# transport = 0.2
+				# }
+			# }
+		# }
+	# }
+# }
+
+# # Dutch Claims
+# country_event = {
+	# id = flavor_bur.12
+	# title = "flavor_bur.EVTNAME12"
+	# desc = "flavor_bur.EVTDESC12"
+	# picture = DIPLOMACY_eventPicture
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "flavor_bur.EVTOPTA12"
+		# every_owned_province = {
+			# limit = {
+				# OR = {
+					# region = belgii_region
+					# region = low_countries_region
+				# }
+			# }
+			# add_claim = NED
+		# }
+	# }
+# }
+
+# # Dutch state joins the Netherlands
+# country_event = {
+	# id = flavor_bur.16
+	# title = "flavor_bur.EVTNAME16"
+	# desc = "flavor_bur.EVTDESC16"
+	# picture = DIPLOMACY_eventPicture
+	
+	# major = yes
+	
+	# trigger = {
+		# #is_year = 1550
+		# #NOT = { is_year = 1650 }
+		# culture_group = low_frankish
+		# NOT = { num_of_cities = 3 }
+		# NOT = { tag = NED }
+		# NED = {
+			# exists = yes
+			# ai = yes
+		# }
+		# is_free_or_tributary_trigger = yes
+		# is_at_war = no
+		# all_owned_province = {
+			# OR = {
+				# region = belgii_region
+				# region = low_countries_region
+			# }
+		# }
+		# ai = yes
+	# }
+	
+	# mean_time_to_happen = {
+		# years = 50
+		# modifier = {
+			# factor = 0.75
+			# primary_culture = dutch
+		# }
+		# modifier = {
+			# factor = 1.25
+			# primary_culture = flemish
+		# }
+		# modifier = {
+			# factor = 1.25
+			# primary_culture = brabantian
+		# }
+		# modifier = {
+			# factor = 0.9
+			# has_opinion = {
+				# who = NED
+				# value = 50
+			# }
+		# }
+		# modifier = {
+			# factor = 0.9
+			# has_opinion = {
+				# who = NED
+				# value = 100
+			# }
+		# }
+		# modifier = {
+			# factor = 0.9
+			# has_opinion = {
+				# who = NED
+				# value = 150
+			# }
+		# }
+		# modifier = {
+			# factor = 1.1
+			# NOT = {
+				# has_opinion = {
+					# who = NED
+					# value = -50
+				# }
+			# }
+		# }
+		# modifier = {
+			# factor = 1.1
+			# NOT = {
+				# has_opinion = {
+					# who = NED
+					# value = -100
+				# }
+			# }
+		# }
+		# modifier = {
+			# factor = 1.1
+			# NOT = {
+				# has_opinion = {
+					# who = NED
+					# value = -150
+				# }
+			# }
+		# }
+	# }
+	
+	# option = {
+		# name = "flavor_bur.EVTOPTA16"
+		# NED = {
+			# country_event = { id = flavor_bur.17 days = 1 }
+		# }
+	# }
+# }
+
+# # Incorporated into the Netherlands
+# country_event = {
+	# id = flavor_bur.17
+	# title = "flavor_bur.EVTNAME17"
+	# desc = "flavor_bur.EVTDESC17"
+	# picture = DIPLOMACY_eventPicture
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "flavor_bur.EVTOPTA17"
+		# FROM = {
+			# every_owned_province = {
+				# add_core = NED
+			# }
+		# }
+		# inherit = FROM
+	# }
+# }
+
+# # PROVINCENAME Revolts!
+# province_event = {
+	# id = flavor_bur.18
+	# title = "flavor_bur.EVTNAME18"
+	# desc = "flavor_bur.EVTDESC18"
+	# picture = ANGRY_MOB_eventPicture
+	
+	# trigger = {
+		# is_year = 1550
+		# NOT = { is_year = 1650 }
+		# NED = {
+			# exists = yes
+			# ai = yes
+		# }
+		# owner = {
+			# NOT = { tag = NED }
+		# }
+		# OR = {
+			# region = belgii_region
+			# region = low_countries_region
+		# }
+		# OR = {
+			# culture_group = low_frankish
+			# is_core = NED
+		# }
+		# OR = {
+			# NOT = { has_province_flag = dutch_revolt }
+			# had_province_flag = { flag = dutch_revolt days = 1825 }
+		# }
+		# owner = {
+			# OR = {
+				# capital_scope = {
+					# NOT = { region = belgii_region }
+					# NOT = { region = low_countries_region }
+				# }
+				# NOT = { culture_group = low_frankish }
+			# }
+		# }
+	# }
+	
+	# mean_time_to_happen = {
+		# years = 10
+		# modifier = {
+			# factor = 0.75
+			# any_neighbor_province = {
+				# owned_by = NED
+			# }
+		# }
+		# modifier = {
+			# factor = 0.75
+			# any_neighbor_province = {
+				# has_province_flag = dutch_revolt
+			# }
+		# }
+		# modifier = {
+			# factor = 0.75
+			# has_owner_religion = no
+		# }
+		# modifier = {
+			# factor = 0.75
+			# owner = {
+				# NOT = { culture_group = ROOT }
+			# }
+		# }
+		# modifier = {
+			# factor = 0.75
+			# owner = {
+				# NOT = { primary_culture = ROOT }
+				# NOT = { accepted_culture = ROOT }
+			# }
+		# }
+		# modifier = {
+			# factor = 0.5
+			# owner = { war_with = NED }
+		# }
+		# modifier = {
+			# factor = 0.75
+			# unrest = 3
+		# }
+		# modifier = {
+			# factor = 0.75
+			# unrest = 5
+		# }
+		# modifier = {
+			# factor = 0.75
+			# unrest = 7
+		# }
+		# modifier = {
+			# factor = 0.75
+			# unrest = 9
+		# }
+	# }
+	
+	# option = {
+		# name = "flavor_bur.EVTOPTA18"
+		# ai_chance = {
+			# factor = 50
+			# modifier = {
+				# factor = 0
+				# owner = {
+					# NOT = { num_of_cities = 5 }
+				# }
+			# }
+		# }
+		# set_province_flag = dutch_revolt
+		# add_province_modifier = {
+			# name = "nationalists_organizing"
+			# duration = 3650
+		# }
+		# hidden_effect = {
+			# set_variable = { which = added_unrest value = 10 }
+			# add_base_unrest = yes
+		# }
+		# custom_tooltip = added_unrest_10
+	# }
+	# option = {
+		# name = "flavor_bur.EVTOPTB18"
+		# ai_chance = {
+			# factor = 50
+			# modifier = {
+				# factor = 0
+				# owner = {
+					# num_of_cities = 5
+				# }
+			# }
+		# }
+		# add_core = NED
+		# cede_province = NED
+	# }
+# }
+
+# # Dutch Nobility demands General Estates
+# country_event = {
+	# id = flavor_bur.13
+	# title = "flavor_bur.EVTNAME13"
+	# desc = "flavor_bur.EVTDESC13"
+	# picture = DIPLOMACY_eventPicture
+	
+	# fire_only_once = yes
+	
+	# trigger = {
+		# tag = BUR
+		# is_year = 1500
+		# NOT = { is_year = 1600 }
+		# NOT = { has_global_flag = 1530_start_date }
+		# NOT = { exists = NED }
+		# owns = 2360 # Antwerpen
+		# owns = 97 # Amsterdam
+		# NOT = { primary_culture = dutch }
+	# }
+	
+	# mean_time_to_happen = { years = 166 }
+	
+	# option = {		# No Concessions
+		# name = "flavor_bur.EVTOPTA13"
+		# belgii_region = {
+			# limit = {
+				# owned_by = BUR
+			# }
+			# hidden_effect = {
+				# set_variable = { which = added_unrest value = 10 }
+				# add_base_unrest = yes
+			# }
+			# custom_tooltip = added_unrest_10
+		# }
+		# low_countries_region = {
+			# limit = {
+				# owned_by = BUR
+			# }
+			# hidden_effect = {
+				# set_variable = { which = added_unrest value = 10 }
+				# add_base_unrest = yes
+			# }
+			# custom_tooltip = added_unrest_10
+		# }
+		# random_list = {
+			# 30 = {}
+			# 40 = {
+				# subtract_stability_points_50 = yes
+			# }
+			# 30 = {
+				# subtract_stability_1 = yes
+			# }
+		# }
+		# set_country_flag = harsh_dutch
+	# }
+	# option = {		# Lower the taxes
+		# name = "flavor_bur.EVTOPTB13"
+		# ai_chance = { factor = 0 }
+		# add_adm_power = -100
+	# }
+# }
+
+# # The Count of Charolais and the Edict of Blood
+# country_event = {
+	# id = flavor_bur.14
+	# title = "flavor_bur.EVTNAME14"
+	# desc = "flavor_bur.EVTDESC14"
+	# picture = ANGRY_MOB_eventPicture
+	
+	# fire_only_once = yes
+	
+	# trigger = {
+		# tag = BUR
+		# NOT = { has_global_flag = 1530_start_date }
+		# NOT = { exists = NED }
+		# has_country_flag = harsh_dutch
+		# owns = 2360 # Antwerpen
+		# owns = 97 # Amsterdam
+	# }
+	
+	# mean_time_to_happen = { years = 5 }
+	
+	# option = {		# No Concessions
+		# name = "flavor_bur.EVTOPTA14"
+		# belgii_region = {
+			# limit = {
+				# owned_by = BUR
+			# }
+			# hidden_effect = {
+				# set_variable = { which = added_unrest value = 5 }
+				# add_base_unrest = yes
+			# }
+			# custom_tooltip = added_unrest_5
+		# }
+		# low_countries_region = {
+			# limit = {
+				# owned_by = BUR
+			# }
+			# hidden_effect = {
+				# set_variable = { which = added_unrest value = 5 }
+				# add_base_unrest = yes
+			# }
+			# custom_tooltip = added_unrest_5
+		# }
+	# }
+	# option = {		# Don't introduce that Consumption Tax
+		# name = "flavor_bur.EVTOPTB14"
+		# add_legitimacy = -25
+		# add_prestige = -25
+	# }
+# }
+
+# # The Count of Macon and the Union of Arras
+# country_event = {
+	# id = flavor_bur.15
+	# title = "flavor_bur.EVTNAME15"
+	# desc = "flavor_bur.EVTDESC15"
+	# picture = DIPLOMACY_eventPicture
+	
+	# fire_only_once = yes
+	
+	# trigger = {
+		# tag = BUR
+		# has_country_flag = harsh_dutch
+		# NOT = { has_global_flag = 1530_start_date }
+		# religion = catholic
+	# }
+	
+	# mean_time_to_happen = { years = 5 }
+	
+	# option = {		# Sign the Union of Arras
+		# name = "flavor_bur.EVTOPTA15"
+		# belgii_region = {
+			# limit = {
+				# owned_by = BUR
+				# NOT = { religion = catholic }
+			# }
+			# hidden_effect = {
+				# set_variable = { which = added_unrest value = 2 }
+				# add_base_unrest = yes
+			# }
+			# custom_tooltip = added_unrest_2
+		# }
+		# low_countries_region = {
+			# limit = {
+				# owned_by = BUR
+				# NOT = { religion = catholic }
+			# }
+			# hidden_effect = {
+				# set_variable = { which = added_unrest value = 2 }
+				# add_base_unrest = yes
+			# }
+			# custom_tooltip = added_unrest_2
+		# }
+		# add_legitimacy = -50
+		# add_prestige = -50
+	# }
+	# option = {		# No Concessions
+		# name = "flavor_bur.EVTOPTB15"
+		# belgii_region = {
+			# limit = {
+				# owned_by = BUR
+				# NOT = { religion = catholic }
+			# }
+			# hidden_effect = {
+				# set_variable = { which = added_unrest value = 7 }
+				# add_base_unrest = yes
+			# }
+			# custom_tooltip = added_unrest_7
+		# }
+		# low_countries_region = {
+			# limit = {
+				# owned_by = BUR
+				# NOT = { religion = catholic }
+			# }
+			# hidden_effect = {
+				# set_variable = { which = added_unrest value = 7 }
+				# add_base_unrest = yes
+			# }
+			# custom_tooltip = added_unrest_7
+		# }
+	# }
+# }
+
+# # Margarethe III and the union with Burgundy
+# country_event = {
+	# id = flavor_bur.1001
+	# title = "flavor_bur.1001.n"
+	# desc = "flavor_bur.1001.t"
+	# picture = BURGUNDIAN_PRESENTATION_eventPicture
+	
+	# is_triggered_only = yes
+	
+	# trigger = {
+		# tag = FLA
+		# is_female = yes
+		# exists = BUR
+		# NOT = { personal_union = 1 }
+		# NOT = { is_year = 1405 } #Death of Margarethe
+		# NOT = { has_country_flag = union_with_burgundy }
+	# }
+	
+	# immediate = { set_country_flag = union_with_burgundy }
+	
+	# option = {
+		# name = "flavor_bur.1001.a"
+		# ai_chance = { factor = 95 }
+		# custom_tooltip = game_over
+		# every_country = {
+			# limit = {
+				# OR = {
+					# alliance_with = ROOT
+					# marriage_with = ROOT
+					# is_neighbor_of = ROOT
+					# is_subject_of = ROOT
+					# overlord_of = ROOT
+					# culture_group = low_frankish
+				# }
+				# NOT = { tag = BUR }
+			# }
+			# country_event = { id = flavor_bur.1013 days = 6 }
+		# }
+		# BUR = { country_event = { id = flavor_bur.1002 days = 5 } }
+	# }
+	
+	# option = {
+		# name = "flavor_bur.1001.b"
+		# ai_chance = { factor = 5 }
+		# add_legitimacy = -50
+		# add_prestige = -25
+		# break_marriage = BUR
+		# BUR = { add_casus_belli = { target = ROOT type = cb_restore_personal_union months = 120 } }
+	# }
+# }
+
+# country_event = {
+	# id = flavor_bur.1002
+	# title = "flavor_bur.1002.n"
+	# desc = "flavor_bur.1002.t"
+	# picture = BURGUNDIAN_PRESENTATION_eventPicture
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "flavor_bur.1002.a"
+		# ai_chance = { factor = 100 }
+		# FROM = {
+			# hidden_effect = {
+				# every_owned_province = {
+					# every_neighbor_province = {
+						# limit = {
+							# NOT = { owned_by = FROM }
+							# NOT = { owned_by = BUR }
+							# OR = {
+								# region = belgii_region
+								# region = low_countries_region
+							# }
+						# }
+						# add_claim = BUR
+						# owner = { set_country_flag = burgundian_claim }
+					# }
+				# }
+			# }
+		# }
+		# inherit = FROM
+	# }
+	
+	# option = {
+		# name = "flavor_bur.1002.b"
+		# ai_chance = { factor = 0 }
+		# add_legitimacy = 10
+		# add_prestige = 20
+	# }
+# }
+
+# # Death of Philippe de Rouvre
+# country_event = {
+	# id = flavor_bur.1003
+	# title = "flavor_bur.1003.n"
+	# desc = "flavor_bur.1003.t"
+	# picture = PLAGUE_RETURN_eventPicture
+	
+	# fire_only_once = yes
+	
+	# trigger = {
+		# tag = BUR
+		# NOT = { has_global_flag = 1530_start_date }
+		# OR = {
+			# has_regency = yes
+			# AND = {
+				# has_ruler = "Philippe I"
+				# has_heir = no
+			# }
+		# }
+		# NOT = { has_country_flag = burgundian_succession_crisis }
+		# NOT = { has_country_flag = burgundian_escape_clause }
+		# FRA = { is_lesser_in_union = no }
+	# }
+	
+	# mean_time_to_happen = { years = 5 }
+	
+	# option = {
+		# name = "flavor_bur.1003.a"
+		# ai_chance = { factor = 100 }
+		# FRA = {
+			# country_event = { id = flavor_bur.1004 days = 5 }
+		# }
+	# }
+# }
+
+# country_event = {
+	# id = flavor_bur.1004
+	# title = "flavor_bur.1004.n"
+	# desc = "flavor_bur.1004.t"
+	# picture = BURGUNDIAN_PRESENTATION_eventPicture
+	
+	# fire_only_once = yes
+	
+	# is_triggered_only = yes
+	
+	# immediate = {
+		# BUR = {
+			# 88 = { cede_province = ARS }
+			# 193 = { cede_province = ARS }
+			# 2366 = { cede_province = ARS }
+			# 4228 = { cede_province = ARS }
+		# }
+		# ARS = {
+			# define_ruler = {
+				# name = "Margarethe III"
+				# dynasty = "de Dampierre"
+				# DIP = 3
+				# ADM = 5
+				# MIL = 3
+				# female = yes
+			# }
+		# }
+		# vassalize = ARS
+	# }
+	
+	# option = {
+		# name = "flavor_bur.1004.a"
+		# ai_chance = { factor = 90 }
+		# free_vassal = BUR
+		# create_union = BUR
+	# }
+	
+	# option = {
+		# name = "flavor_bur.1004.b"
+		# ai_chance = { factor = 10 }
+		# BUR = {
+			# kill_heir = yes
+			# kill_ruler = yes
+			# define_ruler = {
+				# name = "Philippe II"
+				# dynasty = "de Valois"
+				# ADM = 6
+				# DIP = 5
+				# MIL = 4
+			# }
+			# add_ruler_modifier = {
+				# name = margarethe_marriage
+			# }
+		# }
+	# }
+	
+	# option = {
+		# name = "flavor_bur.1004.c"
+		# ai_chance = { factor = 0 }
+	# }
+# }
+
+# country_event = {
+	# id = flavor_bur.1005
+	# title = "flavor_bur.1005.n"
+	# desc = "flavor_bur.1005.t"
+	# picture = BURGUNDIAN_PRESENTATION_eventPicture
+	
+	# fire_only_once = yes
+	
+	# trigger = {
+		# tag = FRA
+		# OR = {
+			# senior_union_with = BUR
+			# NOT = { exists = BUR }
+		# }
+		# BUR = {
+			# NOT = { has_country_flag = burgundian_succession_crisis }
+			# NOT = { has_country_flag = burgundian_escape_clause }
+		# }
+		# NOT = { has_global_flag = 1530_start_date }
+	# }
+	
+	# mean_time_to_happen = { months = 30 }
+	
+	# option = {
+		# name = "flavor_bur.1005.a"
+		# ai_chance = { factor = 90 }
+		# if = {
+			# limit = {
+				# senior_union_with = BUR
+			# }
+			# break_union = BUR
+		# }
+		# if = {
+			# limit = {
+				# NOT = { exists = BUR }
+			# }
+			# every_owned_province = {
+				# limit = {
+					# is_core = BUR
+				# }
+				# cede_province = BUR
+			# }
+		# }
+		# BUR = {
+			# kill_heir = yes
+			# kill_ruler = yes
+			# define_ruler = {
+				# name = "Philippe II"
+				# dynasty = "de Valois"
+				# ADM = 6
+				# DIP = 5
+				# MIL = 4
+				# fixed = yes
+			# }
+			# add_ruler_modifier = {
+				# name = margarethe_marriage
+			# }
+		# }
+		# create_subject = {
+			# who = BUR
+			# subject_type = appanage_subject
+		# }
+		# if = {
+			# limit = {
+				# FLA = { is_subject_of = FRA }
+			# }
+			# FRA = { free_vassal = FLA }
+			# BUR = { vassalize = FLA }
+		# }
+		# if = {
+			# limit = {
+				# HAI = { is_subject_of = FRA }
+			# }
+			# FRA = { free_vassal = HAI }
+			# BUR = { vassalize = HAI }
+		# }
+		# if = {
+			# limit = {
+				# HOL = { is_subject_of = FRA }
+			# }
+			# FRA = { free_vassal = HOL }
+			# BUR = { vassalize = HOL }
+		# }
+		# if = {
+			# limit = {
+				# FLA = { is_subject_of = BRB }
+			# }
+			# FRA = { free_vassal = BRB }
+			# BUR = { vassalize = BRB }
+		# }
+		# if = {
+			# limit = {
+				# AUV = { is_subject_of = FRA }
+			# }
+			# FRA = { free_vassal = AUV }
+			# BUR = { vassalize = AUV }
+		# }
+	# }
+	
+	# option = {
+		# name = "flavor_bur.1005.b"
+		# ai_chance = { factor = 10 }
+		# if = {
+			# limit = {
+				# senior_union_with = BUR
+			# }
+			# BUR = {
+				# add_opinion = { who = ROOT modifier = independence_refused }
+			# }
+		# }
+		# if = {
+			# limit = {
+				# NOT = { exists = BUR }
+			# }
+			# 192 = {
+				# add_nationalism = 10
+				# hidden_effect = {
+					# set_variable = { which = added_unrest value = 5 }
+					# add_base_unrest = yes
+				# }
+				# custom_tooltip = added_unrest_5
+			# }
+			# 2365 = {
+				# add_nationalism = 10
+				# hidden_effect = {
+					# set_variable = { which = added_unrest value = 5 }
+					# add_base_unrest = yes
+				# }
+				# custom_tooltip = added_unrest_5
+			# }
+		# }
+	# }
+# }
+
+# country_event = {
+	# id = flavor_bur.1006
+	# title = "flavor_bur.1006.n"
+	# desc = "flavor_bur.1006.t"
+	# picture = BURGUNDY_COURT_eventPicture
+
+	# trigger = {
+		# has_country_flag = burgundian_claim
+		# #Minimum requirements
+		# culture_group = low_frankish
+		# NOT = { num_of_cities = 8 }
+		# capital_scope = {
+			# OR = {
+				# region = belgii_region
+				# region = low_countries_region
+			# }
+		# }
+		# government = monarchy
+		# #Specific to this event
+		# #Exclusions
+		# is_at_war = no
+		# NOT = { tag = NED }
+		# NOT = { tag = BUR }
+		# OR = {
+			# overlord = { ai = yes }
+			# NOT = { is_subject_other_than_tributary_trigger = yes }
+		# }
+		# exists = BUR
+		# BUR = { NOT = { has_country_flag = burgundian_succession_crisis } }
+		# NOT = { has_global_flag = 1530_start_date }
+	# }
+	
+	# mean_time_to_happen = {
+		
+		# years = 8
+		
+		# modifier = {
+			# NOT = { num_of_cities = 2 }
+			# factor = 2
+		# }
+		# modifier = {
+			# NOT = { num_of_cities = 3 }
+			# factor = 2
+		# }
+		# modifier = {
+			# NOT = { num_of_cities = 4 }
+			# factor = 2
+		# }
+		# modifier = {
+			# factor = 0.5
+			# num_of_owned_provinces_with = {
+				# is_claim = BUR
+				# value = 2
+			# }
+		# }
+		# modifier = {
+			# any_neighbor_country = { tag = BUR }
+			# factor = 0.25
+		# }
+		# modifier = {
+			# has_heir = no
+			# factor = 0.5
+		# }
+		# modifier = {
+			# marriage_with = BUR
+			# factor = 0.7
+		# }
+		# modifier = {
+			# ai = no
+			# factor = 3
+		# }
+	# }
+	
+	# option = {
+		# name = "flavor_bur.1006.a"
+		# ai_chance = { factor = 95 }
+		# BUR = { country_event = { id = flavor_bur.1007 days = 1 } }
+	# }
+	
+	# option = {
+		# name = "flavor_bur.1006.b"
+		# ai_chance = { factor = 5 }
+		# declare_war = BUR
+		# BUR = { country_event = { id = flavor_bur.1008 days = 1 } }
+	# }
+# }
+
+# country_event = {
+	# id = flavor_bur.1007
+	# title = "flavor_bur.1007.n"
+	# desc = "flavor_bur.1007.t"
+	# picture = BURGUNDY_COURT_eventPicture
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "flavor_bur.1007.a"
+		# trigger = { FROM = { ai = yes } }
+		# ai_chance = { factor = 90 }
+		# FROM = {
+			# hidden_effect = {
+				# every_owned_province = {
+					# every_neighbor_province = {
+						# limit = {
+							# NOT = { owned_by = FROM }
+							# NOT = { owned_by = BUR }
+							# OR = {
+								# region = belgii_region
+								# region = low_countries_region
+							# }
+						# }
+						# add_claim = BUR
+					# }
+				# }
+			# }
+		# }
+		# inherit = FROM
+	# }
+	
+	# option = {
+		# name = "flavor_bur.1007.b"
+		# ai_chance = { factor = 10 }
+		# vassalize = FROM
+	# }
+	
+	# option = {
+		# name = "flavor_bur.1007.c"
+		# ai_chance = { factor = 0 }
+		# add_legitimacy = 10
+		# add_prestige = 20
+	# }
+# }
+
+# country_event = {
+	# id = flavor_bur.1008
+	# title = "flavor_bur.1008.n"
+	# desc = "flavor_bur.1008.t"
+	# picture = BURGUNDY_COURT_eventPicture
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "flavor_bur.1008.a"
+		# every_province = {
+			# limit = {
+				# is_city = yes
+				# OR = {
+					# region = belgii_region
+					# region = low_countries_region
+				# }
+				# owned_by = BRB
+			# }
+			# add_core = ROOT
+		# }
+	# }
+# }
+
+# #The bankruptcy of Namur
+# country_event = {
+	# id = flavor_bur.1009
+	# title = flavor_bur.1009.n
+	# desc = flavor_bur.1009.t
+	# picture = DIPLOMACY_eventPicture
+	
+	# fire_only_once = yes
+	
+	# trigger = {
+		# culture_group = low_frankish
+		# NOT = { has_global_flag = 1530_start_date }
+		# #Minimum requirements
+		# NOT = { num_of_cities = 8 }
+		# capital_scope = {
+			# OR = {
+				# region = belgii_region
+				# region = low_countries_region
+			# }
+		# }
+		# government = monarchy
+		# #Specific to this event
+		# NOT = { years_of_income = 1 }
+		# OR = {
+			# num_of_loans = 1
+			# is_bankrupt = yes
+			# NOT = { years_of_income = 0.1 }
+			# NOT = { stability = -2 }
+			# num_of_revolts = 1
+		# }
+		# #Exclusions
+		# OR = { has_regency = no has_consort_regency = yes }
+		# is_at_war = no
+		# NOT = { tag = NED }
+		# NOT = { tag = BUR }
+		# NOT = { personal_union = 1 }
+		# NOT = { is_subject_other_than_tributary_trigger = yes }
+		# exists = BUR
+		# BUR = { NOT = { has_country_flag = burgundian_succession_crisis } }
+	# }
+	
+	# mean_time_to_happen = {
+		
+		# years = 41
+		
+		# modifier = {
+			# any_neighbor_country = { tag = BUR }
+			# factor = 0.25
+		# }
+		# modifier = {
+			# has_heir = no
+			# factor = 0.5
+		# }
+		# modifier = {
+			# ai = no
+			# factor = 3
+		# }
+		# modifier = {
+			# num_of_loans = 1
+			# factor = 0.7
+		# }
+		# modifier = {
+			# NOT = { years_of_income = 0.10 }
+			# factor = 0.7
+		# }
+		# modifier = {
+			# is_bankrupt = yes
+			# factor = 0.25
+		# }
+		# #Avoid the same country being targeted by a game-over event several times
+		# modifier = {
+			# has_country_flag = burgundian_claim
+			# factor = 2
+		# }
+		# modifier = {
+			# marriage_with = BUR
+			# factor = 2
+		# }
+		# modifier = {
+			# is_female = yes
+			# factor = 2
+		# }
+	# }
+	
+	# option = {
+		# name = flavor_bur.1009.a
+		# ai_chance = { factor = 95 }
+		# custom_tooltip = game_over
+		# add_years_of_income = 1
+		# BUR = {
+			# if = {
+				# limit = {
+					# HAI = { junior_union_with = HOL }
+				# }
+				# set_country_flag = hainaut_inheritance
+			# }
+			# country_event = { id = flavor_bur.1101 days = 5 }
+		# }
+	# }
+	# option = {
+		# name = flavor_bur.1009.b
+		# ai_chance = { factor = 5 }
+		# random_list = {
+			# 30 = {}
+			# 40 = {
+				# subtract_stability_points_50 = yes
+			# }
+			# 30 = {
+				# subtract_stability_1 = yes
+			# }
+		# }
+		# add_legitimacy = -10
+		# add_prestige = -10
+		# remove_advisor = random
+	# }
+# }
+
+# # New Phase of the Cod and Hook Conflict in Holland
+# country_event = {
+	# id = flavor_bur.1010
+	# title = "flavor_bur.1010.n"
+	# desc = "flavor_bur.1010.t"
+	# picture = CODS_HOOKS_eventPicture
+	
+	# trigger = {
+		# has_country_flag = burgundian_support
+		# NOT = {
+			# OR = {
+				# has_ruler_modifier = involved_for_annexation
+				# has_ruler_modifier = involved_for_vasselage
+				# has_ruler_modifier = non_involvement
+			# }
+		# }
+		# NOT = { has_global_flag = 1530_start_date }
+		# HOL = {
+			# num_of_cities = 1
+			# is_free_or_tributary_trigger = yes
+		# }
+	# }
+	
+	# mean_time_to_happen = { months = 12 }
+	
+	# option = {
+		# name = "flavor_bur.1010.a"
+		# ai_chance = { factor = 90 }
+		# add_treasury = -50
+		# add_ruler_modifier = {
+			# name = involved_for_annexation
+		# }
+		# 97 = {
+			# add_province_modifier = {
+				# name = "peasants_organizing"
+				# duration = 1825
+			# }
+			# hidden_effect = {
+				# set_variable = { which = added_unrest value = 5 }
+				# add_base_unrest = yes
+			# }
+			# custom_tooltip = added_unrest_5
+		# }
+		# HOL = {
+			# add_opinion = { who = ROOT modifier = outside_intervention }
+			# set_country_flag = burgandian_interference_a
+		# }
+	# }
+	
+	# option = {
+		# name = "flavor_bur.1010.b"
+		# ai_chance = { factor = 10 }
+		# add_treasury = -25
+		# add_ruler_modifier = {
+			# name = involved_for_vasselage
+		# }
+		# HOL = {
+			# add_opinion = { who = ROOT modifier = outside_intervention }
+			# set_country_flag = burgandian_interference_v
+		# }
+	# }
+	
+	# option = {
+		# name = "flavor_bur.1010.c"
+		# ai_chance = { factor = 0 }
+		# add_ruler_modifier = {
+			# name = non_involvement
+		# }
+		# HOL = {
+			# add_opinion = { who = ROOT modifier = non_interference }
+		# }
+	# }
+# }
+
+# country_event = {
+	# id = flavor_bur.1011
+	# title = "flavor_bur.1011.n"
+	# desc = "flavor_bur.1011.t"
+	# picture = CODS_HOOKS_eventPicture
+	
+	# fire_only_once = yes
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "flavor_bur.1011.a"
+		# inherit = HOL
+		# if = {
+			# limit = {
+				# has_country_flag = hainaut_inheritance
+				# HAI = { is_at_war = no }
+			# }
+			# inherit = HAI
+		# }
+	# }
+# }
+
+# country_event = {
+	# id = flavor_bur.1012
+	# title = "flavor_bur.1012.n"
+	# desc = "flavor_bur.1012.t"
+	# picture = CODS_HOOKS_eventPicture
+	
+	# fire_only_once = yes
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "flavor_bur.1012.a"
+		# vassalize = HOL
+		# if = {
+			# limit = {
+				# HAI = { junior_union_with = HOL }
+			# }
+			# vassalize = HAI
+		# }
+	# }
+# }
+
+# country_event = {
+	# id = flavor_bur.1013
+	# title = flavor_bur.1013.n
+	# desc = flavor_bur.1013.t
+	# picture = DIPLOMACY_eventPicture
+	
+	# is_triggered_only = yes #By flavor_bur.1001
+	
+	# option = {
+		# name = flavor_bur.1013.a #Accept the union
+		# ai_chance = { factor = 90 }
+	# }
+	# option = {
+		# name = flavor_bur.1013.b #Reject the union
+		# ai_chance = {
+			# factor = 10
+			# modifier = {
+				# is_rival = BUR
+				# factor = 3
+			# }
+			# modifier = {
+				# is_enemy = BUR
+				# factor = 3
+			# }
+			# modifier = {
+				# overlord_of = FROM
+				# factor = 3
+			# }
+			# modifier = {
+				# alliance_with = FROM
+				# factor = 2
+			# }
+			# modifier = {
+				# marriage_with = FROM
+				# factor = 2
+			# }
+			# modifier = {
+				# war_with = BUR
+				# factor = 5
+			# }
+			# modifier = {
+				# truce_with = BUR
+				# factor = 5
+			# }
+		# }
+		# add_legitimacy = -1
+		# BUR = { add_opinion = { who = ROOT modifier = insulted } }
+		# if = {
+			# limit = { overlord_of = FROM }
+			# add_casus_belli = { target = BUR type = cb_insult months = 120 }
+		# }
+		# if = {
+			# limit = {
+				# NOT = { overlord_of = FROM }
+				# OR = {
+					# alliance_with = FROM
+					# marriage_with = FROM
+				# }
+			# }
+			# add_casus_belli = { target = BUR type = cb_insult months = 12 }
+		# }
+	# }
+# }
+
+# country_event = {
+	# id = flavor_bur.1014
+	# title = "flavor_bur.1014.n"
+	# desc = "flavor_bur.1014.t"
+	# picture = CODS_HOOKS_eventPicture
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "flavor_bur.1014.a"
+		# every_province = {
+			# limit = {
+				# is_city = yes
+				# previous_owner = HOL
+			# }
+			# add_claim = ROOT
+		# }
+		# every_province = {
+			# limit = {
+				# is_city = yes
+				# owned_by = HAI
+				# HAI = { junior_union_with = HOL }
+			# }
+			# add_claim = ROOT
+		# }
+	# }
+# }
+
+# country_event = {
+	# id = flavor_bur.1015
+	# title = "flavor_bur.1015.n"
+	# desc = "flavor_bur.1015.t"
+	# picture = CODS_HOOKS_eventPicture
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "flavor_bur.1015.a"
+		# every_province = {
+			# limit = {
+				# is_city = yes
+				# owned_by = HOL
+			# }
+			# add_claim = ROOT
+		# }
+		# every_province = {
+			# limit = {
+				# is_city = yes
+				# owned_by = HAI
+				# HAI = { junior_union_with = HOL }
+			# }
+			# add_claim = ROOT
+		# }
+	# }
+# }
+
+# country_event = {
+	# id = flavor_bur.1051
+	# title = "flavor_bur.1051.n"
+	# desc = "flavor_bur.1051.t"
+	# picture = BURGUNDIAN_PRESENTATION_eventPicture
+
+	# is_triggered_only = yes										#Triggered by Burgundy decisions
+
+	# option = {
+		# name = "flavor_bur.1051.a"
+		# ai_chance = { factor = 100 }
+		# FROM = {
+			# inherit = ROOT
+		# }
+	# }
+	
+	# option = {
+		# name = "flavor_bur.1051.b"
+		# ai_chance = { factor = 100 }
+		# FROM = {
+			# remove_country_modifier = expansion_trough_marriage
+			# add_opinion = {
+				# who = ROOT
+				# modifier = opinion_refused_marriage
+			# }
+		# }
+	# }
+# }
+
+# # The count of Namur pawns his County
+# country_event = {
+	# id = flavor_bur.1101
+	# title = "flavor_bur.1101.n"
+	# desc = "flavor_bur.1101.t"
+	# picture = DIPLOMACY_eventPicture
+
+	# is_triggered_only = yes										#Triggered by a NAM pawn_the_county decision (REUW_Burgundy decision file).
+	
+	# option = {
+		# name = "flavor_bur.1101.a"
+		# ai_chance = { factor = 100 }
+		# if = {
+			# limit = { FROM = { total_development = 5 NOT = { total_development = 10 } } }
+			# add_treasury = -10
+		# }
+		# if = {
+			# limit = { FROM = { total_development = 10 NOT = { total_development = 15 } } }
+			# add_treasury = -20
+		# }
+		# if = {
+			# limit = { FROM = { total_development = 15 NOT = { total_development = 20 } } }
+			# add_treasury = -30
+		# }
+		# if = {
+			# limit = { FROM = { total_development = 20 NOT = { total_development = 25 } } }
+			# add_treasury = -40
+		# }
+		# if = {
+			# limit = { FROM = { total_development = 25 NOT = { total_development = 30 } } }
+			# add_treasury = -50
+		# }
+		# if = {
+			# limit = { FROM = { total_development = 30 NOT = { total_development = 35 } } }
+			# add_treasury = -60
+		# }
+		# if = {
+			# limit = { FROM = { total_development = 35 NOT = { total_development = 40 } } }
+			# add_treasury = -70
+		# }
+		# if = {
+			# limit = { FROM = { total_development = 40 NOT = { total_development = 45 } } }
+			# add_treasury = -80
+		# }
+		# if = {
+			# limit = { FROM = { total_development = 45 NOT = { total_development = 50 } } }
+			# add_treasury = -90
+		# }
+		# if = {
+			# limit = { FROM = { total_development = 50 } }
+			# add_treasury = -100
+		# }
+		# inherit = FROM
+		# FROM = {
+			# hidden_effect = {
+				# every_owned_province = {
+					# every_neighbor_province = {
+						# limit = {
+							# NOT = { owned_by = FROM }
+							# NOT = { owned_by = BUR }
+							# OR = {
+								# region = belgii_region
+								# region = low_countries_region
+							# }
+						# }
+						# add_claim = BUR
+						# owner = { set_country_flag = burgundian_claim }
+					# }
+				# }
+			# }
+		# }
+	# }
+	# option = {
+		# name = "flavor_bur.1101.b"
+		# ai_chance = { factor = 0 }
+		# add_prestige = -25
+	# }
+# }
+
+# country_event = {
+	# id = flavor_bur.1151
+	# title = "flavor_bur.1151.nname"
+	# desc = "flavor_bur.1151.desc"
+	# picture = DIPLOMACY_eventPicture
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "flavor_bur.1151.opta"
+		# ai_chance = { factor = 0 }
+		# add_prestige = -10
+	# }
+# }
+
+# #Netherlands
+# country_event = {
+	# id = flavor_bur.2001
+	# title = "flavor_bur.2001.n"
+	# desc = "flavor_bur.2001.t"
+	# picture = FLANDERS_eventPicture
+	
+	# is_triggered_only = yes
+	
+	# trigger = {
+		# NOT = { has_global_flag = 1530_start_date }
+	# }
+	
+	# immediate = {
+		# set_global_flag = zeventien_provincien
+	# }
+	
+	# option = {
+		# name = "flavor_bur.2001.a"
+		# every_province = {
+			# limit = {
+				# is_city = yes
+				# is_core = BRB
+			# }
+			# remove_core = BRB
+		# }
+		# every_province = {
+			# limit = {
+				# is_city = yes
+				# is_core = FLA
+			# }
+			# remove_core = FLA
+		# }
+		# every_province = {
+			# limit = {
+				# is_city = yes
+				# is_core = HAI
+			# }
+			# remove_core = HAI
+		# }
+		# every_province = {
+			# limit = {
+				# is_city = yes
+				# is_core = HOL
+			# }
+			# remove_core = HOL
+		# }
+		# every_province = {
+			# limit = {
+				# is_city = yes
+				# OR = {
+					# region = belgii_region
+					# region = low_countries_region
+				# }
+			# }
+			# add_core = NED
+		# }
+	# }
+# }
+
+# # Spanish Netherlands
+# country_event = {
+	# id = flavor_bur.9001
+	# title = "flavor_bur.9001.n"			# "The Netherlands"
+	# desc = "flavor_bur.9001.t"			# "We have managed to form a personal union with the beneficiary of the Burgundy inheritance. It might be a good idea to secure the wealth of the Low Countries under our direct rule.
+	# picture = FLANDERS_eventPicture
+	
+	# trigger = {
+		# tag = SPA
+		# any_country = {
+			# has_country_flag = burgundy_inheritance
+			# num_of_owned_provinces_with = {
+				# value = 3
+				# OR = {
+					# region = belgii_region
+					# region = low_countries_region
+				# }
+			# }
+			# junior_union_with = ROOT
+		# }
+	# }
+	
+	# mean_time_to_happen = { months = 30 }
+	
+	# option = {
+		# name = "flavor_bur.9001.a"		# "The Spanish Netherlands"
+		# ai_chance = { factor = 95 }
+		# every_country = {
+			# limit = {
+				# has_country_flag = burgundy_inheritance
+				# junior_union_with = ROOT
+			# }
+			# every_owned_province = {
+				# limit = {
+					# OR = {
+						# region = belgii_region
+						# region = low_countries_region
+					# }
+				# }
+				# cede_province = ROOT
+				# add_nationalism = 3
+			# }
+		# }
+	# }
+	
+	# option = {
+		# name = "flavor_bur.9001.b"		# "What for ?"
+		# ai_chance = { factor = 5 }
+	# }
+# }
+

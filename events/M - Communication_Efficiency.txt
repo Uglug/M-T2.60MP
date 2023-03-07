@@ -1,0 +1,2595 @@
+#########################################
+#		Communication Efficiency		#
+# 		  by Sun_Wu and Malorn			#
+#	 edited by Dezuman to also calculate CI 	#
+#########################################
+
+
+
+#country_event = {
+#	id = comm_effic.1
+#	title = "comm_effic.1.t"
+#	desc = "comm_effic.1.d"
+#	picture = PALAIS_MAZARIN_eventPicture
+#	
+#	is_triggered_only = yes
+#	
+#	hidden = yes
+#	
+#	immediate = {
+#		every_owned_province = {
+#			
+#			# The CI of a province is determined by pop numbers, with urban weighted x3
+#			# In absolute terms a province has a base value of 1/3, with every rural adding 1/9 and every urban 1/3
+#			set_variable = { which = "communication_importance" value = 3 }
+#			change_variable = { which = "communication_importance" which = "total_rural" }
+#			divide_variable = { which = "communication_importance" value = 3 }
+#			change_variable = { which = "communication_importance" which = "total_urban" }
+#			divide_variable = { which = "communication_importance" value = 3 } # To not have insane numbers...
+#
+#
+#			# Will actually be at least one point higher than source, so we compare for lower distance
+#			set_variable = { which = "communication_source_distance" value = 0 }
+#
+#			# Used to allow CI to account for sea zone CE transfer
+#			clr_province_flag = CE_to_sea
+#			clr_province_flag = CE_from_sea
+#			clr_province_flag = CE_from_oversea
+#
+#			set_variable = { which = "Distance" value = 21 }
+#			clr_province_flag = DistanceSet
+#			sea_zone = {
+#				clr_province_flag = DistanceSet
+#				set_variable = { which = "Distance" value = 21 }
+#				set_variable = { which = "communication_importance" value = 0 }
+#			}
+#			
+#			remove_province_modifier = perfect_communication
+#			remove_province_modifier = rapid_communication
+#			remove_province_modifier = quick_communication
+#			remove_province_modifier = fairly_quick_communication
+#			remove_province_modifier = decent_communication
+#			remove_province_modifier = average_communication
+#			remove_province_modifier = moderate_communication
+#			remove_province_modifier = difficult_communication
+#			remove_province_modifier = poor_communication
+#			remove_province_modifier = very_poor_communication
+#			remove_province_modifier = terrible_communication
+#		}
+#		
+#		# Roads, and Terrain
+#		every_owned_province = {
+#			if = {
+#				limit = {
+#					has_building = road_and_rail_network
+#				}
+#				subtract_variable = { which = "Distance" value = 2 }
+#			}
+#			if = {
+#				limit = {
+#					OR = {
+#						has_building = highway_network
+#						has_building = paved_road_network
+#					}
+#				}
+#				subtract_variable = { which = "Distance" value = 1 }
+#			}
+#			if = {
+#				limit = {
+#					owner = { has_country_modifier = military_aristocracy }
+#				}
+#				change_variable = { which = "Distance" value = 1 }
+#			}
+#			#terrain
+#			#Simple roads and building bridges can tame this terrain.
+#			if = {
+#				limit = {
+#					OR = {
+#						forest_trigger = yes
+#						wood_trigger = yes
+#						jungle_trigger = yes
+#						has_terrain = marsh
+#						desert_trigger = yes
+#						has_terrain = taiga
+#					}
+#					AND = {
+#						NOT = { has_building = road_and_rail_network }
+#						NOT = { has_building = highway_network }
+#						NOT = { has_building = paved_road_network }
+#						NOT = { has_building = road_network }
+#					}
+#				}
+#				change_variable = { which = "Distance" value = 1 }
+#			}
+#			#Troublesome terrains that require advanced roadbuilding techniques to improve.
+#			if = {
+#				limit = {
+#					OR = {
+#						jungle_trigger = yes
+#						mountains_trigger = yes
+#						highlands_trigger = yes
+#						has_terrain = marsh
+#						has_terrain = taiga
+#						has_terrain = tundra
+#						has_terrain = floodplains
+#					}
+#					AND = {
+#						NOT = { has_building = road_and_rail_network }
+#						NOT = { has_building = highway_network }
+#					}
+#				}
+#				change_variable = { which = "Distance" value = 1 }
+#			}
+#			#Extremely difficult terrains, that no amount of good roads can perfectly tame.
+#			if = {
+#				limit = {
+#					OR = {
+#						has_terrain = arctic
+#						mountains_trigger = yes
+#					}
+#				}
+#				change_variable = { which = "Distance" value = 1 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_modifier = oasis_route
+#				}
+#				change_variable = { which = "Distance" value = 3 }
+#			}
+#			#Pocket province tags should only be applied to a province where all surrounding provinces touch each other.  It should not used in other circumtances.
+#			if = {
+#				limit = {
+#					has_province_flag = pocket_province
+#				}
+#				subtract_variable = { which = "Distance" value = 1 }
+#			}
+#			if = {
+#				limit = {
+#					owner = { has_active_policy = relay_system }
+#					has_building = regional_capital
+#				}
+#				subtract_variable = { which = "Distance" value = 1 }
+#			}
+#			if = {
+#				limit = {
+#					owner = { has_active_policy = policing_the_roads }
+#					has_building = regional_capital
+#				}
+#				subtract_variable = { which = "Distance" value = 1 }
+#			}
+#		}
+#		# Capital and surrounding provinces
+#		capital_scope = {
+#			if = {
+#				limit = { owner = { has_active_policy = relay_system } }
+#				subtract_variable = { which = "Distance" value = 1 }
+#			}
+#			if = {
+#				limit = { owner = { has_active_policy = policing_the_roads } }
+#				subtract_variable = { which = "Distance" value = 1 }
+#			}
+#			subtract_variable = { which = "Distance" value = 21 }
+#			
+#			#If capital at -4
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = DistanceSet }
+#					NOT = { check_variable = { which = "Distance" value = -3 } }
+#				}
+#				set_province_flag = DistanceSet
+#				sea_zone = {
+#					set_province_flag = DistanceSet
+#					subtract_variable = { which = "Distance" value = 24 }
+#					PREV = { set_province_flag = CE_to_sea }
+#				}
+#				every_neighbor_province = {
+#					limit = {
+#						owned_by = ROOT
+#						NOT = { has_province_flag = DistanceSet }
+#					}
+#					set_variable = { which = "communication_source_distance" value = -3 }
+#					set_province_flag = DistanceSet
+#					subtract_variable = { which = "Distance" value = 22 }
+#					if = {
+#						limit = { NOT = { check_variable = { which = "Distance" value = -2 } } }
+#						sea_zone = {
+#							if = {
+#								limit = {
+#									NOT = { has_province_flag = DistanceSet }
+#								}
+#								PREV = { set_province_flag = CE_to_sea }
+#								set_province_flag = DistanceSet
+#								subtract_variable = { which = "Distance" value = 23 }
+#							}
+#						}
+#						every_neighbor_province = {
+#							limit = {
+#								owned_by = ROOT
+#								NOT = { has_province_flag = DistanceSet }
+#							}
+#							set_variable = { which = "communication_source_distance" value = -2 }
+#							set_province_flag = DistanceSet
+#							subtract_variable = { which = "Distance" value = 21 }
+#						}
+#					}
+#				}
+#			}
+#			
+#			#If capital at -3
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = DistanceSet }
+#					NOT = { check_variable = { which = "Distance" value = -2 } }
+#				}
+#				set_province_flag = DistanceSet
+#				sea_zone = {
+#					set_province_flag = DistanceSet
+#					subtract_variable = { which = "Distance" value = 23 }
+#					PREV = { set_province_flag = CE_to_sea }
+#				}
+#				every_neighbor_province = {
+#					limit = {
+#						owned_by = ROOT
+#						NOT = { has_province_flag = DistanceSet }
+#					}
+#					set_variable = { which = "communication_source_distance" value = -2 }
+#					set_province_flag = DistanceSet
+#					subtract_variable = { which = "Distance" value = 21 }
+#					if = {
+#						limit = { NOT = { check_variable = { which = "Distance" value = -1 } } }
+#						sea_zone = {
+#							if = {
+#								limit = {
+#									NOT = { has_province_flag = DistanceSet }
+#								}
+#								set_province_flag = DistanceSet
+#								subtract_variable = { which = "Distance" value = 22 }
+#								PREV = { set_province_flag = CE_to_sea }
+#							}
+#						}
+#						every_neighbor_province = {
+#							limit = {
+#								owned_by = ROOT
+#								NOT = { has_province_flag = DistanceSet }
+#							}
+#							set_variable = { which = "communication_source_distance" value = -1 }
+#							set_province_flag = DistanceSet
+#							subtract_variable = { which = "Distance" value = 20 }
+#						}
+#					}
+#				}
+#			}
+#			
+#			#If capital at -2
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = DistanceSet }
+#					NOT = { check_variable = { which = "Distance" value = -1 } }
+#				}
+#				set_province_flag = DistanceSet
+#				sea_zone = {
+#					set_province_flag = DistanceSet
+#					subtract_variable = { which = "Distance" value = 22 }
+#					PREV = { set_province_flag = CE_to_sea }
+#				}
+#				every_neighbor_province = {
+#					limit = {
+#						owned_by = ROOT
+#						NOT = { has_province_flag = DistanceSet }
+#					}
+#					set_variable = { which = "communication_source_distance" value = -1 }
+#					set_province_flag = DistanceSet
+#					subtract_variable = { which = "Distance" value = 20 }
+#					if = {
+#						limit = { NOT = { check_variable = { which = "Distance" value = 0 } } }
+#						sea_zone = {
+#							if = {
+#								limit = {
+#									NOT = { has_province_flag = DistanceSet }
+#								}
+#								set_province_flag = DistanceSet
+#								subtract_variable = { which = "Distance" value = 21 }
+#								PREV = { set_province_flag = CE_to_sea }
+#							}
+#						}
+#						every_neighbor_province = {
+#							limit = {
+#								owned_by = ROOT
+#								NOT = { has_province_flag = DistanceSet }
+#							}
+#							set_variable = { which = "communication_source_distance" value = 0 }
+#							set_province_flag = DistanceSet
+#							subtract_variable = { which = "Distance" value = 19 }
+#						}
+#					}
+#				}
+#			}
+#			
+#			#If capital at -1
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = DistanceSet }
+#					NOT = { check_variable = { which = "Distance" value = 0 } }
+#				}
+#				set_province_flag = DistanceSet
+#				sea_zone = {
+#					set_province_flag = DistanceSet
+#					subtract_variable = { which = "Distance" value = 21 }
+#					PREV = { set_province_flag = CE_to_sea }
+#				}
+#				every_neighbor_province = {
+#					limit = {
+#						owned_by = ROOT
+#						NOT = { has_province_flag = DistanceSet }
+#					}
+#					set_variable = { which = "communication_source_distance" value = 0 }
+#					set_province_flag = DistanceSet
+#					subtract_variable = { which = "Distance" value = 19 }
+#					if = {
+#						limit = { NOT = { check_variable = { which = "Distance" value = 1 } } }
+#						sea_zone = {
+#							if = {
+#								limit = {
+#									NOT = { has_province_flag = DistanceSet }
+#								}
+#								set_province_flag = DistanceSet
+#								subtract_variable = { which = "Distance" value = 20 }
+#								PREV = { set_province_flag = CE_to_sea }
+#							}
+#						}
+#						every_neighbor_province = {
+#							limit = {
+#								owned_by = ROOT
+#								NOT = { has_province_flag = DistanceSet }
+#							}
+#							set_variable = { which = "communication_source_distance" value = 1 }
+#							set_province_flag = DistanceSet
+#							subtract_variable = { which = "Distance" value = 18 }
+#						}
+#					}
+#				}
+#			}
+#			
+#			#If capital at 0
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = DistanceSet }
+#					NOT = { check_variable = { which = "Distance" value = 1 } }
+#				}
+#				set_province_flag = DistanceSet
+#				sea_zone = {
+#					set_province_flag = DistanceSet
+#					subtract_variable = { which = "Distance" value = 20 }
+#					PREV = { set_province_flag = CE_to_sea }
+#				}
+#				every_neighbor_province = {
+#					limit = {
+#						owned_by = ROOT
+#						NOT = { has_province_flag = DistanceSet }
+#					}
+#					set_variable = { which = "communication_source_distance" value = 1 }
+#					set_province_flag = DistanceSet
+#					subtract_variable = { which = "Distance" value = 18 }
+#					if = {
+#						limit = { NOT = { check_variable = { which = "Distance" value = 2 } } }
+#						sea_zone = {
+#							if = {
+#								limit = {
+#									NOT = { has_province_flag = DistanceSet }
+#								}
+#								set_province_flag = DistanceSet
+#								subtract_variable = { which = "Distance" value = 19 }
+#								PREV = { set_province_flag = CE_to_sea }
+#							}
+#						}
+#						every_neighbor_province = {
+#							limit = {
+#								owned_by = ROOT
+#								NOT = { has_province_flag = DistanceSet }
+#							}
+#							set_variable = { which = "communication_source_distance" value = 2 }
+#							set_province_flag = DistanceSet
+#							subtract_variable = { which = "Distance" value = 17 }
+#						}
+#					}
+#				}
+#			}
+#			
+#		}
+#
+#		# CONDITIONAL Neighboring Distance -3
+#		if = {
+#			limit = {
+#				capital_scope = { NOT = { check_variable = { which = "Distance" value = -3 } } }
+#			}
+#			every_owned_province = {
+#				limit = {
+#					NOT = { has_province_flag = DistanceSet }
+#					OR = {
+#						any_neighbor_province = {
+#							NOT = { check_variable = { which = "Distance" value = -2 } }
+#							owned_by = ROOT
+#						}
+#						sea_zone = {
+#							NOT = { check_variable = { which = "Distance" value = -2 } }
+#						}
+#					}
+#				}
+#				if = {
+#					limit = {
+#						sea_zone = { NOT = { check_variable = { which = "Distance" value = -2 } } }
+#					}
+#					set_province_flag = CE_from_sea
+#				}
+#				set_variable = { which = "communication_source_distance" value = -2 }
+#				set_province_flag = DistanceSet
+#				subtract_variable = { which = "Distance" value = 21 }
+#			}
+#		}
+#
+#		# CONDITIONAL Neighboring Distance -2 SEA
+#		if = {
+#			limit = {
+#				capital_scope = { NOT = { check_variable = { which = "Distance" value = -3 } } }
+#			}
+#			every_owned_province = {
+#				limit = {
+#					NOT = { check_variable = { which = "Distance" value = -1 } }
+#				}
+#				sea_zone = {
+#					if = {
+#						limit = {
+#							NOT = { has_province_flag = DistanceSet }
+#						}
+#						set_province_flag = DistanceSet
+#						subtract_variable = { which = "Distance" value = 22 }
+#						PREV = { set_province_flag = CE_to_sea }
+#					}
+#				}
+#			}
+#		}
+#		# CONDITIONAL Neighboring Distance -2
+#		if = {
+#			limit = {
+#				capital_scope = { NOT = { check_variable = { which = "Distance" value = -2 } } }
+#			}
+#			every_owned_province = {
+#				limit = {
+#					NOT = { has_province_flag = DistanceSet }
+#					OR = {
+#						any_neighbor_province = {
+#							NOT = { check_variable = { which = "Distance" value = -1 } }
+#							owned_by = ROOT
+#						}
+#						sea_zone = {
+#							NOT = { check_variable = { which = "Distance" value = -1 } }
+#						}
+#					}
+#				}
+#				if = {
+#					limit = {
+#						sea_zone = { NOT = { check_variable = { which = "Distance" value = -1 } } }
+#					}
+#					set_province_flag = CE_from_sea
+#				}
+#				set_variable = { which = "communication_source_distance" value = -1 }
+#				set_province_flag = DistanceSet
+#				subtract_variable = { which = "Distance" value = 20 }
+#			}
+#		}
+#
+#		# CONDITIONAL Neighboring Distance -1 SEA
+#		if = {
+#			limit = {
+#				capital_scope = { NOT = { check_variable = { which = "Distance" value = -2 } } }
+#			}
+#			every_owned_province = {
+#				limit = {
+#					NOT = { check_variable = { which = "Distance" value = 0 } }
+#				}
+#				sea_zone = {
+#					if = {
+#						limit = {
+#							NOT = { has_province_flag = DistanceSet }
+#						}
+#						set_province_flag = DistanceSet
+#						subtract_variable = { which = "Distance" value = 21 }
+#						PREV = { set_province_flag = CE_to_sea }
+#					}
+#				}
+#			}
+#		}
+#		# CONDITIONAL Neighboring Distance -1
+#		if = {
+#			limit = {
+#				capital_scope = { NOT = { check_variable = { which = "Distance" value = -1 } } }
+#			}
+#			every_owned_province = {
+#				limit = {
+#					NOT = { has_province_flag = DistanceSet }
+#					OR = {
+#						any_neighbor_province = {
+#							NOT = { check_variable = { which = "Distance" value = 0 } }
+#							owned_by = ROOT
+#						}
+#						sea_zone = {
+#							NOT = { check_variable = { which = "Distance" value = 0 } }
+#						}
+#					}
+#				}
+#				if = {
+#					limit = {
+#						sea_zone = { NOT = { check_variable = { which = "Distance" value = 0 } } }
+#					}
+#					set_province_flag = CE_from_sea
+#				}
+#				set_variable = { which = "communication_source_distance" value = 0 }
+#				set_province_flag = DistanceSet
+#				subtract_variable = { which = "Distance" value = 19 }
+#			}
+#		}
+#
+#		# CONDITIONAL Neighboring Distance 0 SEA
+#		if = {
+#			limit = {
+#				capital_scope = { NOT = { check_variable = { which = "Distance" value = -1 } } }
+#			}
+#			every_owned_province = {
+#				limit = {
+#					NOT = { check_variable = { which = "Distance" value = 1 } }
+#				}
+#				sea_zone = {
+#					if = {
+#						limit = {
+#							NOT = { has_province_flag = DistanceSet }
+#						}
+#						set_province_flag = DistanceSet
+#						subtract_variable = { which = "Distance" value = 20 }
+#						PREV = { set_province_flag = CE_to_sea }
+#					}
+#				}
+#			}
+#		}
+#		# CONDITIONAL Neighboring Distance 0
+#		if = {
+#			limit = {
+#				capital_scope = { NOT = { check_variable = { which = "Distance" value = 0 } } }
+#			}
+#			every_owned_province = {
+#				limit = {
+#					NOT = { has_province_flag = DistanceSet }
+#					OR = {
+#						any_neighbor_province = {
+#							NOT = { check_variable = { which = "Distance" value = 1 } }
+#							owned_by = ROOT
+#						}
+#						sea_zone = {
+#							NOT = { check_variable = { which = "Distance" value = 1 } }
+#						}
+#					}
+#				}
+#				if = {
+#					limit = {
+#						sea_zone = { NOT = { check_variable = { which = "Distance" value = 1 } } }
+#					}
+#					set_province_flag = CE_from_sea
+#				}
+#				set_variable = { which = "communication_source_distance" value = 1 }
+#				set_province_flag = DistanceSet
+#				subtract_variable = { which = "Distance" value = 18 }
+#			}
+#		}
+#		
+#		# Neighboring Distance 1 SEA
+#		every_owned_province = {
+#			limit = {
+#				NOT = { check_variable = { which = "Distance" value = 2 } }
+#			}
+#			sea_zone = {
+#				if = {
+#					limit = {
+#						NOT = { has_province_flag = DistanceSet }
+#					}
+#					set_province_flag = DistanceSet
+#					subtract_variable = { which = "Distance" value = 19 }
+#					PREV = { set_province_flag = CE_to_sea }
+#				}
+#			}
+#		}
+#		# Neighboring Distance 1
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = DistanceSet }
+#				OR = {
+#					any_neighbor_province = {
+#						NOT = { check_variable = { which = "Distance" value = 2 } }
+#						owned_by = ROOT
+#					}
+#					sea_zone = {
+#						NOT = { check_variable = { which = "Distance" value = 2 } }
+#					}
+#				}
+#			}
+#			if = {
+#				limit = {
+#					sea_zone = { NOT = { check_variable = { which = "Distance" value = 2 } } }
+#				}
+#				set_province_flag = CE_from_sea
+#			}
+#			set_variable = { which = "communication_source_distance" value = 2 }
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 17 }
+#		}
+#
+#	
+#		# Regional Capitals set to 2 distance
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = DistanceSet }
+#				has_building = regional_capital
+#				NOT = { check_variable = { which = "Distance" value = 18 } }
+#			}
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 15 }
+#		}
+#		# Neighboring Distance 2 SEA
+#		every_owned_province = {
+#			limit = {
+#				NOT = { check_variable = { which = "Distance" value = 3 } }
+#			}
+#			sea_zone = {
+#				if = {
+#					limit = {
+#						NOT = { has_province_flag = DistanceSet }
+#					}
+#					set_province_flag = DistanceSet
+#					subtract_variable = { which = "Distance" value = 18 }
+#					PREV = { set_province_flag = CE_to_sea }
+#				}
+#			}
+#		}
+#		# Neighboring Distance 2
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = DistanceSet }
+#				OR = {
+#					any_neighbor_province = {
+#						NOT = { check_variable = { which = "Distance" value = 3 } }
+#						owned_by = ROOT
+#					}
+#					sea_zone = {
+#						NOT = { check_variable = { which = "Distance" value = 3 } }
+#					}
+#				}
+#			}
+#			if = {
+#				limit = {
+#					sea_zone = { NOT = { check_variable = { which = "Distance" value = 3 } } }
+#				}
+#				set_province_flag = CE_from_sea
+#			}
+#			set_variable = { which = "communication_source_distance" value = 3 }
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 16 }
+#		}
+#
+#		# Regional Capitals set to 3 distance
+#		every_owned_province = {
+#			limit = {
+#				has_building = regional_capital
+#				NOT = { has_province_flag = DistanceSet }
+#				NOT = { check_variable = { which = "Distance" value = 19 } }
+#			}
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 15 }
+#		}
+#		# Neighboring Distance 3 SEA
+#		every_owned_province = {
+#			limit = {
+#				NOT = { check_variable = { which = "Distance" value = 4 } }
+#			}
+#			sea_zone = {
+#				if = {
+#					limit = {
+#						NOT = {
+#							has_province_flag = DistanceSet
+#						}
+#					}
+#					set_province_flag = DistanceSet
+#					subtract_variable = { which = "Distance" value = 17 }
+#					PREV = { set_province_flag = CE_to_sea }
+#				}
+#			}
+#		}
+#		# Neighboring Distance 3
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = DistanceSet }
+#				OR = {
+#					any_neighbor_province = {
+#						NOT = { check_variable = { which = "Distance" value = 4 } }
+#						owned_by = ROOT
+#					}
+#					sea_zone = {
+#						NOT = { check_variable = { which = "Distance" value = 4 } }
+#					}
+#				}
+#			}
+#			if = {
+#				limit = {
+#					sea_zone = { NOT = { check_variable = { which = "Distance" value = 4 } } }
+#				}
+#				set_province_flag = CE_from_sea
+#			}
+#			set_variable = { which = "communication_source_distance" value = 4 }
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 15 }
+#		}
+#
+#		# Regional Capitals set to 4 distance
+#		every_owned_province = {
+#			limit = {
+#				has_building = regional_capital
+#				NOT = { has_province_flag = DistanceSet }
+#				NOT = { check_variable = { which = "Distance" value = 20 } }
+#			}
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 15 }
+#		}
+#		# Neighboring Distance 4 SEA
+#		every_owned_province = {
+#			limit = {
+#				NOT = { check_variable = { which = "Distance" value = 5 } }
+#			}
+#			sea_zone = {
+#				if = {
+#					limit = {
+#						NOT = {
+#							has_province_flag = DistanceSet
+#						}
+#					}
+#					set_province_flag = DistanceSet
+#					subtract_variable = { which = "Distance" value = 16 }
+#					PREV = { set_province_flag = CE_to_sea }
+#				}
+#			}
+#		}
+#		# Neighboring Distance 4
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = DistanceSet }
+#				OR = {
+#					any_neighbor_province = {
+#						NOT = { check_variable = { which = "Distance" value = 5 } }
+#						owned_by = ROOT
+#					}
+#					sea_zone = {
+#						NOT = { check_variable = { which = "Distance" value = 5 } }
+#					}
+#				}
+#			}
+#			if = {
+#				limit = {
+#					sea_zone = { NOT = { check_variable = { which = "Distance" value = 5 } } }
+#				}
+#				set_province_flag = CE_from_sea
+#			}
+#			set_variable = { which = "communication_source_distance" value = 5 }
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 14 }
+#		}
+#
+#		# Regional Capitals set to 5 distance
+#		every_owned_province = {
+#			limit = {
+#				has_building = regional_capital
+#				NOT = { has_province_flag = DistanceSet }
+#				NOT = { check_variable = { which = "Distance" value = 21 } }
+#			}
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 15 }
+#		}
+#		# Neighboring Distance 5 SEA
+#		every_owned_province = {
+#			limit = {
+#				NOT = { check_variable = { which = "Distance" value = 6 } }
+#			}
+#			sea_zone = {
+#				if = {
+#					limit = {
+#						NOT = {
+#							has_province_flag = DistanceSet
+#						}
+#					}
+#					set_province_flag = DistanceSet
+#					subtract_variable = { which = "Distance" value = 15 }
+#					PREV = { set_province_flag = CE_to_sea }
+#				}
+#			}
+#		}
+#		# Neighboring Distance 5
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = DistanceSet }
+#				OR = {
+#					any_neighbor_province = {
+#						NOT = { check_variable = { which = "Distance" value = 6 } }
+#						owned_by = ROOT
+#					}
+#					sea_zone = {
+#						NOT = { check_variable = { which = "Distance" value = 6 } }
+#					}
+#				}
+#			}
+#			if = {
+#				limit = {
+#					sea_zone = { NOT = { check_variable = { which = "Distance" value = 6 } } }
+#				}
+#				set_province_flag = CE_from_sea
+#			}
+#			set_variable = { which = "communication_source_distance" value = 6 }
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 13 }
+#		}
+#
+#		# Regional Capitals set to 6 distance
+#		every_owned_province = {
+#			limit = {
+#				has_building = regional_capital
+#				NOT = { has_province_flag = DistanceSet }
+#				NOT = { check_variable = { which = "Distance" value = 22 } }
+#			}
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 15 }
+#		}
+#		# Neighboring Distance 6 SEA
+#		every_owned_province = {
+#			limit = {
+#				NOT = { check_variable = { which = "Distance" value = 7 } }
+#			}
+#			sea_zone = {
+#				if = {
+#					limit = {
+#						NOT = {
+#							has_province_flag = DistanceSet
+#						}
+#					}
+#					set_province_flag = DistanceSet
+#					subtract_variable = { which = "Distance" value = 14 }
+#					PREV = { set_province_flag = CE_to_sea }
+#				}
+#			}
+#		}
+#		# Neighboring Distance 6
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = DistanceSet }
+#				OR = {
+#					any_neighbor_province = {
+#						NOT = { check_variable = { which = "Distance" value = 7 } }
+#						owned_by = ROOT
+#					}
+#					sea_zone = {
+#						NOT = { check_variable = { which = "Distance" value = 7 } }
+#					}
+#				}
+#			}
+#			if = {
+#				limit = {
+#					sea_zone = { NOT = { check_variable = { which = "Distance" value = 7 } } }
+#				}
+#				set_province_flag = CE_from_sea
+#			}
+#			set_variable = { which = "communication_source_distance" value = 7 }
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 12 }
+#		}
+#
+#		# Regional Capitals set to 7 distance
+#		every_owned_province = {
+#			limit = {
+#				has_building = regional_capital
+#				NOT = { has_province_flag = DistanceSet }
+#				NOT = { check_variable = { which = "Distance" value = 23 } }
+#			}
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 15 }
+#		}
+#		# Neighboring Distance 7 SEA
+#		every_owned_province = {
+#			limit = {
+#				NOT = { check_variable = { which = "Distance" value = 8 } }
+#			}
+#			sea_zone = {
+#				if = {
+#					limit = {
+#						NOT = {
+#							has_province_flag = DistanceSet
+#						}
+#					}
+#					set_province_flag = DistanceSet
+#					subtract_variable = { which = "Distance" value = 13 }
+#					PREV = { set_province_flag = CE_to_sea }
+#				}
+#			}
+#		}
+#		# Neighboring Distance 7
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = DistanceSet }
+#				OR = {
+#					any_neighbor_province = {
+#						NOT = { check_variable = { which = "Distance" value = 8 } }
+#						owned_by = ROOT
+#					}
+#					sea_zone = {
+#						NOT = { check_variable = { which = "Distance" value = 8 } }
+#					}
+#					AND = {
+#						owner = { has_active_policy = organized_counter_piracy }
+#						OR = {
+#							has_building = harbour_infrastructure_3x
+#							has_building = harbour_infrastructure_4
+#						}
+#					}
+#				}
+#			}
+#			if = {
+#				limit = {
+#					AND = {
+#						owner = { has_active_policy = organized_counter_piracy }
+#						OR = {
+#							has_building = harbour_infrastructure_3x
+#							has_building = harbour_infrastructure_4
+#						}
+#					}
+#				}
+#				set_province_flag = CE_from_oversea
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CE_from_oversea }
+#					sea_zone = { NOT = { check_variable = { which = "Distance" value = 8 } } }
+#				}
+#				set_province_flag = CE_from_sea
+#			}
+#			set_variable = { which = "communication_source_distance" value = 8 }
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 11 }
+#		}
+#
+#		# Regional Capitals set to 8 distance
+#		every_owned_province = {
+#			limit = {
+#				has_building = regional_capital
+#				NOT = { has_province_flag = DistanceSet }
+#				NOT = { check_variable = { which = "Distance" value = 24 } }
+#			}
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 15 }
+#		}
+#		# Neighboring Distance 8 SEA
+#		every_owned_province = {
+#			limit = {
+#				NOT = { check_variable = { which = "Distance" value = 9 } }
+#			}
+#			sea_zone = {
+#				if = {
+#					limit = {
+#						NOT = {
+#							has_province_flag = DistanceSet
+#						}
+#					}
+#					set_province_flag = DistanceSet
+#					subtract_variable = { which = "Distance" value = 12 }
+#					PREV = { set_province_flag = CE_to_sea }
+#				}
+#			}
+#		}
+#		# Neighboring Distance 8 (Harbour5)
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = DistanceSet }
+#				OR = {
+#					any_neighbor_province = {
+#						NOT = { check_variable = { which = "Distance" value = 9 } }
+#						owned_by = ROOT
+#					}
+#					sea_zone = {
+#						NOT = { check_variable = { which = "Distance" value = 9 } }
+#					}
+#					has_building = harbour_infrastructure_5
+#				}
+#			}
+#			if = {
+#				limit = {
+#					has_building = harbour_infrastructure_5
+#				}
+#				set_province_flag = CE_from_oversea
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CE_from_oversea }
+#					sea_zone = { NOT = { check_variable = { which = "Distance" value = 9 } } }
+#				}
+#				set_province_flag = CE_from_sea
+#			}
+#			set_variable = { which = "communication_source_distance" value = 9 }
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 10 }
+#		}
+#
+#		# Neighboring Distance 9 SEA
+#		every_owned_province = {
+#			limit = {
+#				NOT = { check_variable = { which = "Distance" value = 10 } }
+#			}
+#			sea_zone = {
+#				if = {
+#					limit = {
+#						NOT = {
+#							has_province_flag = DistanceSet
+#						}
+#					}
+#					set_province_flag = DistanceSet
+#					subtract_variable = { which = "Distance" value = 11 }
+#					PREV = { set_province_flag = CE_to_sea }
+#				}
+#			}
+#		}
+#		# Neighboring Distance 9 (Harbour4)
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = DistanceSet }
+#				OR = {
+#					any_neighbor_province = {
+#						NOT = { check_variable = { which = "Distance" value = 10 } }
+#						owned_by = ROOT
+#					}
+#					sea_zone = {
+#						NOT = { check_variable = { which = "Distance" value = 10 } }
+#					}
+#					has_building = harbour_infrastructure_4
+#				}
+#			}
+#			if = {
+#				limit = {
+#					has_building = harbour_infrastructure_4
+#				}
+#				set_province_flag = CE_from_oversea
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CE_from_oversea }
+#					sea_zone = { NOT = { check_variable = { which = "Distance" value = 10 } } }
+#				}
+#				set_province_flag = CE_from_sea
+#			}
+#			set_variable = { which = "communication_source_distance" value = 10 }
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 9 }
+#		}
+#
+#		# Neighboring Distance 10 SEA
+#		every_owned_province = {
+#			limit = {
+#				NOT = { check_variable = { which = "Distance" value = 11 } }
+#			}
+#			sea_zone = {
+#				if = {
+#					limit = {
+#						NOT = {
+#							has_province_flag = DistanceSet
+#						}
+#					}
+#					set_province_flag = DistanceSet
+#					subtract_variable = { which = "Distance" value = 10 }
+#					PREV = { set_province_flag = CE_to_sea }
+#				}
+#			}
+#		}
+#		# Neighboring Distance 10 (Harbour3)
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = DistanceSet }
+#				OR = {
+#					any_neighbor_province = {
+#						NOT = { check_variable = { which = "Distance" value = 11 } }
+#						owned_by = ROOT
+#					}
+#					sea_zone = {
+#						NOT = { check_variable = { which = "Distance" value = 11 } }
+#					}
+#					has_building = harbour_infrastructure_3x
+#				}
+#			}
+#			if = {
+#				limit = {
+#					has_building = harbour_infrastructure_3x
+#				}
+#				set_province_flag = CE_from_oversea
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CE_from_oversea }
+#					sea_zone = { NOT = { check_variable = { which = "Distance" value = 11 } } }
+#				}
+#				set_province_flag = CE_from_sea
+#			}
+#			set_variable = { which = "communication_source_distance" value = 11 }
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 8 }
+#		}
+#
+#		# Neighboring Distance 11 SEA
+#		every_owned_province = {
+#			limit = {
+#				NOT = { check_variable = { which = "Distance" value = 12 } }
+#			}
+#			sea_zone = {
+#				if = {
+#					limit = {
+#						NOT = {
+#							has_province_flag = DistanceSet
+#						}
+#					}
+#					set_province_flag = DistanceSet
+#					subtract_variable = { which = "Distance" value = 9 }
+#					PREV = { set_province_flag = CE_to_sea }
+#				}
+#			}
+#		}
+#		# Neighboring Distance 11 (Harbour2)
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = DistanceSet }
+#				OR = {
+#					any_neighbor_province = {
+#						NOT = { check_variable = { which = "Distance" value = 12 } }
+#						owned_by = ROOT
+#					}
+#					sea_zone = {
+#						NOT = { check_variable = { which = "Distance" value = 12 } }
+#					}
+#					has_building = harbour_infrastructure_1
+#				}
+#			}
+#			if = {
+#				limit = {
+#					has_building = harbour_infrastructure_1
+#				}
+#				set_province_flag = CE_from_oversea
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CE_from_oversea }
+#					sea_zone = { NOT = { check_variable = { which = "Distance" value = 12 } } }
+#				}
+#				set_province_flag = CE_from_sea
+#			}
+#			set_variable = { which = "communication_source_distance" value = 12 }
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 7 }
+#		}
+#		
+#		# Neighboring Distance 12 (Harbour1)
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = DistanceSet }
+#				OR = {
+#					any_neighbor_province = {
+#						NOT = { check_variable = { which = "Distance" value = 13 } }
+#						owned_by = ROOT
+#					}
+#					sea_zone = {
+#						NOT = { check_variable = { which = "Distance" value = 13 } }
+#					}
+#					has_building = harbour_infrastructure_1
+#				}
+#			}
+#			if = {
+#				limit = {
+#					has_building = harbour_infrastructure_1
+#				}
+#				set_province_flag = CE_from_oversea
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CE_from_oversea }
+#					sea_zone = { NOT = { check_variable = { which = "Distance" value = 13 } } }
+#				}
+#				set_province_flag = CE_from_sea
+#			}
+#			set_variable = { which = "communication_source_distance" value = 13 }
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 6 }
+#		}
+#		
+#		# Neighboring Distance 13 (Port)
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = DistanceSet }
+#				OR = {
+#					any_neighbor_province = {
+#						NOT = { check_variable = { which = "Distance" value = 14 } }
+#						owned_by = ROOT
+#					}
+#					sea_zone = {
+#						NOT = { check_variable = { which = "Distance" value = 14 } }
+#					}
+#					has_port = yes
+#				}
+#			}
+#			if = {
+#				limit = {
+#					has_port = yes
+#				}
+#				set_province_flag = CE_from_oversea
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CE_from_oversea }
+#					sea_zone = { NOT = { check_variable = { which = "Distance" value = 14 } } }
+#				}
+#				set_province_flag = CE_from_sea
+#			}
+#			set_variable = { which = "communication_source_distance" value = 14 }
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 5 }
+#		}
+#
+#		# Neighboring Distance 14
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = DistanceSet }
+#				OR = {
+#					any_neighbor_province = {
+#						NOT = { check_variable = { which = "Distance" value = 15 } }
+#						owned_by = ROOT
+#					}
+#					sea_zone = {
+#						NOT = { check_variable = { which = "Distance" value = 15 } }
+#					}
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CE_from_oversea }
+#					sea_zone = { NOT = { check_variable = { which = "Distance" value = 15 } } }
+#				}
+#				set_province_flag = CE_from_sea
+#			}
+#			set_variable = { which = "communication_source_distance" value = 15 }
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 4 }
+#		}
+#		
+#		# Neighboring Distance 15
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = DistanceSet }
+#				OR = {
+#					any_neighbor_province = {
+#						NOT = { check_variable = { which = "Distance" value = 16 } }
+#						owned_by = ROOT
+#					}
+#					sea_zone = {
+#						NOT = { check_variable = { which = "Distance" value = 16 } }
+#					}
+#				}
+#			}
+#			if = {
+#				limit = {
+#					sea_zone = { NOT = { check_variable = { which = "Distance" value = 16 } } }
+#				}
+#				set_province_flag = CE_from_sea
+#			}
+#			set_variable = { which = "communication_source_distance" value = 16 }
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 3 }
+#		}
+#		
+#		# Neighboring Distance 16
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = DistanceSet }
+#				OR = {
+#					any_neighbor_province = {
+#						NOT = { check_variable = { which = "Distance" value = 17 } }
+#						owned_by = ROOT
+#					}
+#					sea_zone = {
+#						NOT = { check_variable = { which = "Distance" value = 17 } }
+#					}
+#				}
+#			}
+#			if = {
+#				limit = {
+#					sea_zone = { NOT = { check_variable = { which = "Distance" value = 17 } } }
+#				}
+#				set_province_flag = CE_from_sea
+#			}
+#			set_variable = { which = "communication_source_distance" value = 17 }
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 2 }
+#		}
+#		
+#		# Neighboring Distance 17
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = DistanceSet }
+#				OR = {
+#					any_neighbor_province = {
+#						NOT = { check_variable = { which = "Distance" value = 18 } }
+#						owned_by = ROOT
+#					}
+#					sea_zone = {
+#						NOT = { check_variable = { which = "Distance" value = 18 } }
+#					}
+#				}
+#			}
+#			if = {
+#				limit = {
+#					sea_zone = { NOT = { check_variable = { which = "Distance" value = 18 } } }
+#				}
+#				set_province_flag = CE_from_sea
+#			}
+#			set_variable = { which = "communication_source_distance" value = 18 }
+#			set_province_flag = DistanceSet
+#			subtract_variable = { which = "Distance" value = 1 }
+#		}
+#		country_event = { id = comm_effic.2 days = 3 }
+#	}
+#	
+#	option = {
+#		name = "comm_effic.1.a"
+#	}
+#}
+#
+#country_event = {
+#	id = comm_effic.2
+#	title = "comm_effic.2.t"
+#	desc = "comm_effic.2.d"
+#	picture = PALAIS_MAZARIN_eventPicture
+#	
+#	is_triggered_only = yes
+#	
+#	hidden = yes
+#	
+#	immediate = {
+#		name = "comm_effic.2.a"
+#		every_owned_province = {
+#			clr_province_flag = CE_Set
+#			
+#			remove_province_modifier = perfect_communication
+#			remove_province_modifier = rapid_communication
+#			remove_province_modifier = quick_communication
+#			remove_province_modifier = fairly_quick_communication
+#			remove_province_modifier = decent_communication
+#			remove_province_modifier = average_communication
+#			remove_province_modifier = moderate_communication
+#			remove_province_modifier = difficult_communication
+#			remove_province_modifier = poor_communication
+#			remove_province_modifier = very_poor_communication
+#			remove_province_modifier = terrible_communication
+#		}
+#		
+#		
+#		#applies modifiers
+#		every_owned_province = {
+#			limit = {
+#				is_colony = no
+#			}
+#			#1
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CE_Set }
+#					NOT = { check_variable = { which = "Distance" value = 1 } }
+#				}
+#				set_province_flag = CE_Set
+#				add_province_modifier = {
+#					name = "perfect_communication"
+#					duration = -1
+#				}
+#			}
+#			#2
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CE_Set }
+#					NOT = { check_variable = { which = "Distance" value = 3 } }
+#				}
+#				set_province_flag = CE_Set
+#				add_province_modifier = {
+#					name = "rapid_communication"
+#					duration = -1
+#				}
+#			}
+#			#3
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CE_Set }
+#					NOT = { check_variable = { which = "Distance" value = 5 } }
+#				}
+#				set_province_flag = CE_Set
+#				add_province_modifier = {
+#					name = "quick_communication"
+#					duration = -1
+#				}
+#			}
+#			#4
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CE_Set }
+#					NOT = { check_variable = { which = "Distance" value = 7 } }
+#				}
+#				set_province_flag = CE_Set
+#				add_province_modifier = {
+#					name = "fairly_quick_communication"
+#					duration = -1
+#				}
+#			}
+#			#5
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CE_Set }
+#					NOT = { check_variable = { which = "Distance" value = 9 } }
+#				}
+#				set_province_flag = CE_Set
+#				add_province_modifier = {
+#					name = "decent_communication"
+#					duration = -1
+#				}
+#			}
+#			#6
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CE_Set }
+#					NOT = { check_variable = { which = "Distance" value = 11 } }
+#				}
+#				set_province_flag = CE_Set
+#				add_province_modifier = {
+#					name = "average_communication"
+#					duration = -1
+#				}
+#			}
+#			#7
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CE_Set }
+#					NOT = { check_variable = { which = "Distance" value = 13 } }
+#				}
+#				set_province_flag = CE_Set
+#				add_province_modifier = {
+#					name = "moderate_communication"
+#					duration = -1
+#				}
+#			}
+#			#8
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CE_Set }
+#					NOT = { check_variable = { which = "Distance" value = 15 } }
+#				}
+#				set_province_flag = CE_Set
+#				add_province_modifier = {
+#					name = "difficult_communication"
+#					duration = -1
+#				}
+#			}
+#			#9
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CE_Set }
+#					NOT = { check_variable = { which = "Distance" value = 17 } }
+#				}
+#				set_province_flag = CE_Set
+#				add_province_modifier = {
+#					name = "poor_communication"
+#					duration = -1
+#				}
+#			}
+#			#10
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CE_Set }
+#					NOT = { check_variable = { which = "Distance" value = 19 } }
+#				}
+#				set_province_flag = CE_Set
+#				add_province_modifier = {
+#					name = "very_poor_communication"
+#					duration = -1
+#				}
+#			}
+#			#11
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CE_Set }
+#				}
+#				set_province_flag = CE_Set
+#				add_province_modifier = {
+#					name = "terrible_communication"
+#					duration = -1
+#				}
+#			}
+#		}
+#		country_event = { id = comm_effic.3 days = 3 }
+#	}
+#	
+#	option = {
+#		name = "comm_effic.2.a"
+#	}
+#}
+#
+#
+#country_event = {
+#	id = comm_effic.3
+#	title = "comm_effic.3.t"
+#	desc = "comm_effic.3.d"
+#	picture = PALAIS_MAZARIN_eventPicture
+#	
+#	is_triggered_only = yes
+#	
+#	hidden = yes
+#	
+#	immediate = {
+#
+#		every_owned_province = {
+#			clr_province_flag = CI_calc
+#			clr_province_flag = CI_set
+#
+#			remove_province_modifier = communication_importance_0
+#			remove_province_modifier = communication_importance_1
+#			remove_province_modifier = communication_importance_2
+#			remove_province_modifier = communication_importance_3
+#			remove_province_modifier = communication_importance_4
+#			remove_province_modifier = communication_importance_5
+#			remove_province_modifier = communication_importance_6
+#			remove_province_modifier = communication_importance_7
+#			remove_province_modifier = communication_importance_8
+#			remove_province_modifier = communication_importance_9
+#			remove_province_modifier = communication_importance_from_oversea
+#			remove_province_modifier = communication_importance_from_sea
+#			remove_province_modifier = communication_importance_to_sea
+#		}
+#
+#
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = CI_calc }
+#				check_variable = { which = "communication_source_distance" value = 18 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#
+#				#sea_zone = {
+#				#	PREV = { change_variable = { which = "communication_importance" which = PREV } }
+#				#}
+#				sea_zone = { PREV = { change_variable = { which = "communication_importance" which = PREV } } }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_calc
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_calc
+#				sea_zone = {
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CI_calc }
+#				}
+#				set_province_flag = CI_calc
+#				random_neighbor_province = {
+#					limit = {
+#						NOT = { check_variable = { which = "Distance" value = 18 } }
+#						owned_by = ROOT
+#					}
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#		}
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = CI_calc }
+#				check_variable = { which = "communication_source_distance" value = 17 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#				sea_zone = { PREV = { change_variable = { which = "communication_importance" which = PREV } } }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_calc
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_calc
+#				sea_zone = {
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CI_calc }
+#				}
+#				set_province_flag = CI_calc
+#				random_neighbor_province = {
+#					limit = {
+#						NOT = { check_variable = { which = "Distance" value = 17 } }
+#						owned_by = ROOT
+#					}
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#		}
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = CI_calc }
+#				check_variable = { which = "communication_source_distance" value = 16 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#				sea_zone = { PREV = { change_variable = { which = "communication_importance" which = PREV } } }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_calc
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_calc
+#				sea_zone = {
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CI_calc }
+#				}
+#				set_province_flag = CI_calc
+#				random_neighbor_province = {
+#					limit = {
+#						NOT = { check_variable = { which = "Distance" value = 16 } }
+#						owned_by = ROOT
+#					}
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#		}
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = CI_calc }
+#				check_variable = { which = "communication_source_distance" value = 15 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#				sea_zone = { PREV = { change_variable = { which = "communication_importance" which = PREV } } }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_calc
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_calc
+#				sea_zone = {
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CI_calc }
+#				}
+#				set_province_flag = CI_calc
+#				random_neighbor_province = {
+#					limit = {
+#						NOT = { check_variable = { which = "Distance" value = 15 } }
+#						owned_by = ROOT
+#					}
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#		}
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = CI_calc }
+#				check_variable = { which = "communication_source_distance" value = 14 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#				sea_zone = { PREV = { change_variable = { which = "communication_importance" which = PREV } } }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_calc
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_calc
+#				sea_zone = {
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CI_calc }
+#				}
+#				set_province_flag = CI_calc
+#				random_neighbor_province = {
+#					limit = {
+#						NOT = { check_variable = { which = "Distance" value = 14 } }
+#						owned_by = ROOT
+#					}
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#		}
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = CI_calc }
+#				check_variable = { which = "communication_source_distance" value = 13 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#				sea_zone = { PREV = { change_variable = { which = "communication_importance" which = PREV } } }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_calc
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_calc
+#				sea_zone = {
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CI_calc }
+#				}
+#				set_province_flag = CI_calc
+#				random_neighbor_province = {
+#					limit = {
+#						NOT = { check_variable = { which = "Distance" value = 13 } }
+#						owned_by = ROOT
+#					}
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#		}
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = CI_calc }
+#				check_variable = { which = "communication_source_distance" value = 12 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#				sea_zone = { PREV = { change_variable = { which = "communication_importance" which = PREV } } }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_calc
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_calc
+#				sea_zone = {
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CI_calc }
+#				}
+#				set_province_flag = CI_calc
+#				random_neighbor_province = {
+#					limit = {
+#						NOT = { check_variable = { which = "Distance" value = 12 } }
+#						owned_by = ROOT
+#					}
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#		}
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = CI_calc }
+#				check_variable = { which = "communication_source_distance" value = 11 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#				sea_zone = { PREV = { change_variable = { which = "communication_importance" which = PREV } } }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_calc
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_calc
+#				sea_zone = {
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CI_calc }
+#				}
+#				set_province_flag = CI_calc
+#				random_neighbor_province = {
+#					limit = {
+#						NOT = { check_variable = { which = "Distance" value = 11 } }
+#						owned_by = ROOT
+#					}
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#		}
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = CI_calc }
+#				check_variable = { which = "communication_source_distance" value = 10 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#				sea_zone = { PREV = { change_variable = { which = "communication_importance" which = PREV } } }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_calc
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_calc
+#				sea_zone = {
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CI_calc }
+#				}
+#				set_province_flag = CI_calc
+#				random_neighbor_province = {
+#					limit = {
+#						NOT = { check_variable = { which = "Distance" value = 10 } }
+#						owned_by = ROOT
+#					}
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#		}
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = CI_calc }
+#				check_variable = { which = "communication_source_distance" value = 9 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#				sea_zone = { PREV = { change_variable = { which = "communication_importance" which = PREV } } }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_calc
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_calc
+#				sea_zone = {
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CI_calc }
+#				}
+#				set_province_flag = CI_calc
+#				random_neighbor_province = {
+#					limit = {
+#						NOT = { check_variable = { which = "Distance" value = 9 } }
+#						owned_by = ROOT
+#					}
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#		}
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = CI_calc }
+#				check_variable = { which = "communication_source_distance" value = 8 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#				sea_zone = { PREV = { change_variable = { which = "communication_importance" which = PREV } } }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_calc
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_calc
+#				sea_zone = {
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CI_calc }
+#				}
+#				set_province_flag = CI_calc
+#				random_neighbor_province = {
+#					limit = {
+#						NOT = { check_variable = { which = "Distance" value = 8 } }
+#						owned_by = ROOT
+#					}
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#		}
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = CI_calc }
+#				check_variable = { which = "communication_source_distance" value = 7 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#				sea_zone = { PREV = { change_variable = { which = "communication_importance" which = PREV } } }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_calc
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_calc
+#				sea_zone = {
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CI_calc }
+#				}
+#				set_province_flag = CI_calc
+#				random_neighbor_province = {
+#					limit = {
+#						NOT = { check_variable = { which = "Distance" value = 7 } }
+#						owned_by = ROOT
+#					}
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#		}
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = CI_calc }
+#				check_variable = { which = "communication_source_distance" value = 6 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#				sea_zone = { PREV = { change_variable = { which = "communication_importance" which = PREV } } }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_calc
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_calc
+#				sea_zone = {
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CI_calc }
+#				}
+#				set_province_flag = CI_calc
+#				random_neighbor_province = {
+#					limit = {
+#						NOT = { check_variable = { which = "Distance" value = 6 } }
+#						owned_by = ROOT
+#					}
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#		}
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = CI_calc }
+#				check_variable = { which = "communication_source_distance" value = 5 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#				sea_zone = { PREV = { change_variable = { which = "communication_importance" which = PREV } } }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_calc
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_calc
+#				sea_zone = {
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CI_calc }
+#				}
+#				set_province_flag = CI_calc
+#				random_neighbor_province = {
+#					limit = {
+#						NOT = { check_variable = { which = "Distance" value = 5 } }
+#						owned_by = ROOT
+#					}
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#		}
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = CI_calc }
+#				check_variable = { which = "communication_source_distance" value = 4 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#				sea_zone = { PREV = { change_variable = { which = "communication_importance" which = PREV } } }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_calc
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_calc
+#				sea_zone = {
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CI_calc }
+#				}
+#				set_province_flag = CI_calc
+#				random_neighbor_province = {
+#					limit = {
+#						NOT = { check_variable = { which = "Distance" value = 4 } }
+#						owned_by = ROOT
+#					}
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#		}
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = CI_calc }
+#				check_variable = { which = "communication_source_distance" value = 3 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#				sea_zone = { PREV = { change_variable = { which = "communication_importance" which = PREV } } }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_calc
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_calc
+#				sea_zone = {
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CI_calc }
+#				}
+#				set_province_flag = CI_calc
+#				random_neighbor_province = {
+#					limit = {
+#						NOT = { check_variable = { which = "Distance" value = 3 } }
+#						owned_by = ROOT
+#					}
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#		}
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = CI_calc }
+#				check_variable = { which = "communication_source_distance" value = 2 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#				sea_zone = { PREV = { change_variable = { which = "communication_importance" which = PREV } } }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_calc
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_calc
+#				sea_zone = {
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CI_calc }
+#				}
+#				set_province_flag = CI_calc
+#				random_neighbor_province = {
+#					limit = {
+#						NOT = { check_variable = { which = "Distance" value = 2 } }
+#						owned_by = ROOT
+#					}
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#		}
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = CI_calc }
+#				check_variable = { which = "communication_source_distance" value = 1 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#				sea_zone = { PREV = { change_variable = { which = "communication_importance" which = PREV } } }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_calc
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_calc
+#				sea_zone = {
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CI_calc }
+#				}
+#				set_province_flag = CI_calc
+#				random_neighbor_province = {
+#					limit = {
+#						NOT = { check_variable = { which = "Distance" value = 1 } }
+#						owned_by = ROOT
+#					}
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#		}
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = CI_calc }
+#				check_variable = { which = "communication_source_distance" value = 0 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#				sea_zone = { PREV = { change_variable = { which = "communication_importance" which = PREV } } }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_calc
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_calc
+#				sea_zone = {
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CI_calc }
+#				}
+#				set_province_flag = CI_calc
+#				random_neighbor_province = {
+#					limit = {
+#						NOT = { check_variable = { which = "Distance" value = 0 } }
+#						owned_by = ROOT
+#					}
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#		}
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = CI_calc }
+#				check_variable = { which = "communication_source_distance" value = -1 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#				sea_zone = { PREV = { change_variable = { which = "communication_importance" which = PREV } } }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_calc
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_calc
+#				sea_zone = {
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CI_calc }
+#				}
+#				set_province_flag = CI_calc
+#				random_neighbor_province = {
+#					limit = {
+#						NOT = { check_variable = { which = "Distance" value = -1 } }
+#						owned_by = ROOT
+#					}
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#		}
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = CI_calc }
+#				check_variable = { which = "communication_source_distance" value = -2 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#				sea_zone = { PREV = { change_variable = { which = "communication_importance" which = PREV } } }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_calc
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_calc
+#				sea_zone = {
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CI_calc }
+#				}
+#				set_province_flag = CI_calc
+#				random_neighbor_province = {
+#					limit = {
+#						NOT = { check_variable = { which = "Distance" value = -2 } }
+#						owned_by = ROOT
+#					}
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#		}
+#		every_owned_province = {
+#			limit = {
+#				NOT = { has_province_flag = CI_calc }
+#				check_variable = { which = "communication_source_distance" value = -3 }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#				sea_zone = { PREV = { change_variable = { which = "communication_importance" which = PREV } } }
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_calc
+#			}
+#			if = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_calc
+#				sea_zone = {
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_province_flag = CI_calc }
+#				}
+#				set_province_flag = CI_calc
+#				random_neighbor_province = {
+#					limit = {
+#						NOT = { check_variable = { which = "Distance" value = -3 } }
+#						owned_by = ROOT
+#					}
+#					change_variable = { which = "communication_importance" which = PREV }
+#				}
+#			}
+#		}
+#
+#		every_owned_province = {
+#			# Clears variable because it's no longer needed
+#			set_variable = { which = "communication_source_distance" value = 0 }
+#		}
+#		
+#		
+#		if = {
+#			limit = { has_country_flag = show_CI }
+#			every_owned_province = {
+#				limit = {
+#					NOT = { has_province_flag = CI_set }
+#					NOT = { check_variable = { which = "communication_importance" value = 2 } }
+#				}
+#				set_province_flag = CI_set
+#				add_province_modifier = {
+#					name = "communication_importance_0"
+#					duration = -1
+#				}
+#			}
+#			every_owned_province = {
+#				limit = {
+#					NOT = { has_province_flag = CI_set }
+#					NOT = { check_variable = { which = "communication_importance" value = 3 } }
+#				}
+#				set_province_flag = CI_set
+#				add_province_modifier = {
+#					name = "communication_importance_1"
+#					duration = -1
+#				}
+#			}
+#			every_owned_province = {
+#				limit = {
+#					NOT = { has_province_flag = CI_set }
+#					NOT = { check_variable = { which = "communication_importance" value = 5 } }
+#				}
+#				set_province_flag = CI_set
+#				add_province_modifier = {
+#					name = "communication_importance_2"
+#					duration = -1
+#				}
+#			}
+#			every_owned_province = {
+#				limit = {
+#					NOT = { has_province_flag = CI_set }
+#					NOT = { check_variable = { which = "communication_importance" value = 7 } }
+#				}
+#				set_province_flag = CI_set
+#				add_province_modifier = {
+#					name = "communication_importance_3"
+#					duration = -1
+#				}
+#			}
+#			every_owned_province = {
+#				limit = {
+#					NOT = { has_province_flag = CI_set }
+#					NOT = { check_variable = { which = "communication_importance" value = 10 } }
+#				}
+#				set_province_flag = CI_set
+#				add_province_modifier = {
+#					name = "communication_importance_4"
+#					duration = -1
+#				}
+#			}
+#			every_owned_province = {
+#				limit = {
+#					NOT = { has_province_flag = CI_set }
+#					NOT = { check_variable = { which = "communication_importance" value = 13 } }
+#				}
+#				set_province_flag = CI_set
+#				add_province_modifier = {
+#					name = "communication_importance_5"
+#					duration = -1
+#				}
+#			}
+#			every_owned_province = {
+#				limit = {
+#					NOT = { has_province_flag = CI_set }
+#					NOT = { check_variable = { which = "communication_importance" value = 17 } }
+#				}
+#				set_province_flag = CI_set
+#				add_province_modifier = {
+#					name = "communication_importance_6"
+#					duration = -1
+#				}
+#			}
+#			every_owned_province = {
+#				limit = {
+#					NOT = { has_province_flag = CI_set }
+#					NOT = { check_variable = { which = "communication_importance" value = 21 } }
+#				}
+#				set_province_flag = CI_set
+#				add_province_modifier = {
+#					name = "communication_importance_7"
+#					duration = -1
+#				}
+#			}
+#			every_owned_province = {
+#				limit = {
+#					NOT = { has_province_flag = CI_set }
+#					NOT = { check_variable = { which = "communication_importance" value = 26 } }
+#				}
+#				set_province_flag = CI_set
+#				add_province_modifier = {
+#					name = "communication_importance_8"
+#					duration = -1
+#				}
+#			}
+#			every_owned_province = {
+#				limit = {
+#					NOT = { has_province_flag = CI_set }
+#					check_variable = { which = "communication_importance" value = 26 }
+#				}
+#				set_province_flag = CI_set
+#				add_province_modifier = {
+#					name = "communication_importance_9"
+#					duration = -1
+#				}
+#			}
+#			every_owned_province = {
+#				limit = {
+#					has_province_flag = CE_to_sea
+#				}
+#				set_province_flag = CI_set
+#				add_province_modifier = {
+#					name = "communication_importance_to_sea"
+#					duration = -1
+#				}
+#			}
+#			every_owned_province = {
+#				limit = {
+#					has_province_flag = CE_from_sea
+#				}
+#				set_province_flag = CI_set
+#				add_province_modifier = {
+#					name = "communication_importance_from_sea"
+#					duration = -1
+#				}
+#			}
+#			every_owned_province = {
+#				limit = {
+#					has_province_flag = CE_from_oversea
+#				}
+#				set_province_flag = CI_set
+#				add_province_modifier = {
+#					name = "communication_importance_from_oversea"
+#					duration = -1
+#				}
+#			}
+#		}
+#	}
+#	
+#	option = {
+#		name = "comm_effic.3.a"
+#	}
+#}
