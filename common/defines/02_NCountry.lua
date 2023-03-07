@@ -7,6 +7,7 @@ NDefines.NCountry.EXPLOIT_COOLDOWN_MONTHS = 9999
 NDefines.NCountry.SIBERIAN_FRONTIER_DAILY_BASE = 5					-- monthly..
 NDefines.NCountry.SIBERIAN_FRONTIER_DAILY_RANGE = 10
 NDefines.NCountry.CONTRIBUTE_TO_CAPITAL_MIN_DEV_RATIO = 0.5			-- Overlord's development times this value must be smaller than Subject's development.
+NDefines.NCountry.BASE_POWER_INCREASE = 4
 NDefines.NCountry.FORCE_SEPPUKU_POWER_MULTIPLIER = 5				-- Times victim's stats
 NDefines.NCountry.SHOGUN_INTERACTIONS_DURATION = 10					-- Years
 NDefines.NCountry.SHOGUN_INTERACTIONS_LEGITIMACY = -20

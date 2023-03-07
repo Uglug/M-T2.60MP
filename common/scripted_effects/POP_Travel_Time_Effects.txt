@@ -732,8 +732,8 @@ calc_prov_factor = {
 	}
 	
 	if = {
-		limit = { owner = { full_idea_group = logistic_ideas } }
-		multiply_variable = { which = prov_rad value = 0.9 }
+		limit = { owner = { full_idea_group = expansion_ideas } }
+		multiply_variable = { which = prov_rad value = 0.95 }
 	}
 
 	set_variable = { which = prov_factor which = prov_rad }
@@ -884,8 +884,8 @@ calc_port_dist = {
 	multiply_variable = { which = boarding_cost which = travel_time_sailing_modifier }
 	
 	if = {
-		limit = { owner = { full_idea_group = naval_ideas } }
-		multiply_variable = { which = boarding_cost value = 0.95 }
+		limit = { owner = { full_idea_group = global_empire_ideas } }
+		multiply_variable = { which = boarding_cost value = 0.975 }
 	}
 
 	change_variable = { which = inform_sender_1 which = boarding_cost }
@@ -1827,8 +1827,11 @@ travel_time_recap = {
 			has_country_flag = runner_country_@ROOT
 		}
 		every_owned_province = {
-			limit = {
-				has_province_modifier = has_regional_capital
+			limit = {			
+				OR = {
+					has_building = bureaucracy_6
+					has_province_modifier = has_regional_capital
+				}
 				#owner = { check_variable = { which = capital_effect_factor value = 0.001 } }
 			}
 			#set_variable = { which = capital_effect_factor which = owner }
@@ -1858,6 +1861,10 @@ travel_time_recap = {
 					set_variable = { which = subtractor1 	value = 0.6 }
 					set_variable = { which = subtractor2 	value = 8 }
 				}
+				bureaucracy_6 = {
+					set_variable = { which = subtractor1 	value = 0.99 }
+					set_variable = { which = subtractor2 	value = 20 }
+				}				
 			}
 
 			#multiply_variable = { which = subtractor1 which = capital_effect_factor }
@@ -1960,7 +1967,7 @@ travel_time_final = {
 			
 			if = {
 				limit = { owner = { has_idea = state_organization } }
-				multiply_variable = { which = runner_final_time value = 0.9 }
+				multiply_variable = { which = runner_final_time value = 1.0 }
 			}
 			
 			if = {
