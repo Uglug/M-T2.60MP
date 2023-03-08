@@ -1,8 +1,8 @@
 
 NDefines.NMilitary.SLACKEN_AP_DROP = 0.05
-NDefines.NMilitary.SLACKEN_MANPOWER_INCREASE = 1.5
+NDefines.NMilitary.SLACKEN_MANPOWER_INCREASE = 2
 
-NDefines.NMilitary.ARMY_DRILL_YEARLY_DECAY = -2.5					-- Loss from not Drilling
+NDefines.NMilitary.ARMY_DRILL_YEARLY_DECAY = -1.0					-- Loss from not Drilling
 NDefines.NMilitary.ARMY_DRILL_YEARLY_GAIN = 10						-- Gain from Drilling
 NDefines.NMilitary.ARMY_DRILL_MAX = 100
 NDefines.NMilitary.ARMY_DRILL_MAX_MORALE = 0.5
@@ -11,7 +11,7 @@ NDefines.NMilitary.ARMY_DRILL_SKILL_MONTHS = 120					-- The average number of mo
 NDefines.NMilitary.COSSACKS_SHOCK_DAMAGE_BONUS = 0.1
 NDefines.NMilitary.STRELTSY_FIRE_DAMAGE_BONUS = 0.1
 NDefines.NMilitary.MAX_SAILOR_LACK_ATTRITION = 1
-NDefines.NMilitary.SAILOR_MAINTAINANCE = 0.02						-- of build cost.
+NDefines.NMilitary.SAILOR_MAINTAINANCE = 0.03						-- of build cost.
 NDefines.NMilitary.BANNER_DISCIPLINE_BONUS = 0.05
 NDefines.NMilitary.BANNER_MANPOWER_USAGE = 0.25
 NDefines.NMilitary.BANNER_REINFORCE_SPEED = -0.5
@@ -31,7 +31,7 @@ NDefines.NMilitary.PARTICIPATION_SCORE_OVERSEAS_MULT = 0.25			-- How much less p
 NDefines.NMilitary.PARTICIPATION_SCORE_MERC_MULT = 0.5				-- How much less participation do you get from mercs?
 NDefines.NMilitary.PARTICIPATION_SCORE_UNFORTIFIED_MULT = 0.1		-- How much less participation do you get from besieging unfortified provinces?
 
-NDefines.NMilitary.FORT_PER_DEV_RATIO = 60							-- 1 non-obsolete maintained fort per this amount of development = +1 AT
+NDefines.NMilitary.FORT_PER_DEV_RATIO = 100							-- 1 non-obsolete maintained fort per this amount of development = +1 AT
 NDefines.NMilitary.MOVE_LOCK_PERCENTAGE = 0.5						-- Unit movement is locked after this percentage of progress
 NDefines.NMilitary.REGULAR_LEADER_POWER = 1							-- Used for generals & admirals (affects total pips)
 NDefines.NMilitary.EXPLORER_LEADER_POWER = 0.8						-- Used for conquistadors & explorers (affects total pips)
@@ -60,8 +60,8 @@ NDefines.NMilitary.INF_REGIMENT_MANPOWER_COST = 1 					-- 1 = 1000 men in cost.
 NDefines.NMilitary.CAV_REGIMENT_MANPOWER_COST = 1 					-- 1 = 1000 men in cost.
 NDefines.NMilitary.ART_REGIMENT_MANPOWER_COST = 1 					-- 1 = 1000 men in cost.
 NDefines.NMilitary.HEAVY_SHIP_SAILORS_COST = 500					-- 1 = 1 men in cost.
-NDefines.NMilitary.LIGHT_SHIP_SAILORS_COST = 100					-- 1 = 1 men in cost.
-NDefines.NMilitary.GALLEY_SHIP_SAILORS_COST = 200					-- 1 = 1 men in cost.
+NDefines.NMilitary.LIGHT_SHIP_SAILORS_COST = 250					-- 1 = 1 men in cost.
+NDefines.NMilitary.GALLEY_SHIP_SAILORS_COST = 150					-- 1 = 1 men in cost.
 NDefines.NMilitary.TRANSPORT_SHIP_SAILORS_COST = 50					-- 1 = 1 men in cost.
 NDefines.NMilitary.MAX_MANPOWER = 25 								-- years in mp pool
 NDefines.NMilitary.MIN_MONTHLY_MANPOWER = 0.01						-- 10 men/month is minimum
@@ -72,10 +72,10 @@ NDefines.NMilitary.SLAVE_RAIDS_DURATION = 3650
 NDefines.NMilitary.INFANTRY_SPEED = 0.5 							-- _MDEF_INFANTRY_SPEED = 10
 NDefines.NMilitary.CAVALRY_SPEED = 0.5 								-- _MDEF_CAVALRY_SPEED = 10
 NDefines.NMilitary.ARTILLERY_SPEED = 0.5 							-- _MDEF_ARTILLERY_SPEED = 10
-NDefines.NMilitary.HEAVY_SHIP_SPEED = 5.5 							-- _MDEF_HEAVY_SHIP_SPEED = 10
+NDefines.NMilitary.HEAVY_SHIP_SPEED = 4.0 							-- _MDEF_HEAVY_SHIP_SPEED = 10
 NDefines.NMilitary.LIGHT_SHIP_SPEED = 6								-- _MDEF_LIGHT_SHIP_SPEED = 10
-NDefines.NMilitary.GALLEY_SPEED = 5.5 								-- _MDEF_GALLEY_SPEED = 10
-NDefines.NMilitary.TRANSPORT_SPEED = 5.5 							-- _MDEF_TRANSPORT_SPEED = 10
+NDefines.NMilitary.GALLEY_SPEED = 4.0 								-- _MDEF_GALLEY_SPEED = 10
+NDefines.NMilitary.TRANSPORT_SPEED = 4.0 							-- _MDEF_TRANSPORT_SPEED = 10
 NDefines.NMilitary.INFANTRY_COST = 28 								-- _MDEF_INFANTRY_COST = 10
 NDefines.NMilitary.CAVALRY_COST = 44 								-- _MDEF_CAVALRY_COST = 10
 NDefines.NMilitary.ARTILLERY_COST = 64 								-- _MDEF_ARTILLERY_COST = 10
@@ -101,7 +101,7 @@ NDefines.NMilitary.TRADITION_GAIN_NAVAL = 45						-- Tradition gain base value f
 NDefines.NMilitary.CONDOTTIERI_TRADITION_BONUS = 1.5				-- This modifies army tradition gained from fighting with condottieris
 
 NDefines.NMilitary.MERCENARY_SUPPORT_LIMIT_BASE = 10				-- Base (and thus minimum) value for mercenary support limit.
-NDefines.NMilitary.MERCENARY_SUPPORT_LIMIT_FRACTION = 0.1			-- Fraction of regular army support/force limit that goes into mercenary support limit.
+NDefines.NMilitary.MERCENARY_SUPPORT_LIMIT_FRACTION = 0.3			-- Fraction of regular army support/force limit that goes into mercenary support limit.
 NDefines.NMilitary.FRONT_LINE_MODIFIER = 1 							-- _MDEF_FRONT_LINE_MODIFIER_
 NDefines.NMilitary.BACK_LINE_MODIFIER = 0.5 						-- _MDEF_BACK_LINE_MODIFIER_
 NDefines.NMilitary.BASE_COMBAT_WIDTH = 9							-- _MDEF_BASE_COMBAT_WIDTH_
@@ -120,7 +120,7 @@ NDefines.NMilitary.NOMAD_LOOT_TRADITION = 0.005	 					-- _MDEF_NOMAD_LOOT_TRADIT
 NDefines.NMilitary.NOMAD_PLAINS_SHOCK_BONUS = 0.25
 NDefines.NMilitary.NOMAD_NON_PLAINS_SHOCK_PENALTY = -0.25
 NDefines.NMilitary.SUPPLYLIMIT_BASE_MULTIPLIER = 1
-NDefines.NMilitary.WAR_LENGTH_DAMAGE_MODIFIER = 0.03				-- How much (by percentage) the damage dealt will be increased each day of the combat
+NDefines.NMilitary.WAR_LENGTH_DAMAGE_MODIFIER = 0.025				-- How much (by percentage) the damage dealt will be increased each day of the combat
 NDefines.NMilitary.MORALE_RECOVERY_SPEED = 0.15						-- How much (by percentage) of the maximum morale that the current morale will be recovered with at a time
 NDefines.NMilitary.MORALE_RECOVERY_SPEED_OWN_TERRITORY = 0.05		-- How much the recovery speed for morale will be modified if unit is in controlled territory
 NDefines.NMilitary.HOSTILE_TERRITORY_SPEED_MODIFIER = 0				-- speed modifier into hostile territory
@@ -179,7 +179,7 @@ NDefines.NMilitary.SELECT_BUILD_PROVINCE_WEIGHT_TIME = 50
 NDefines.NMilitary.ADMIRAL_BLOCKADE_BONUS_PER_SIEGE_PIP = 0.1
 NDefines.NMilitary.NAVAL_TARGET_SELECT_ITERATIONS = 12   			-- (Was positioning * 20, 12 would represent old positioning = 0.6)
 NDefines.NMilitary.NAVAL_BASE_ENGAGEMENT_WIDTH = 16   				-- Number of ships that can fire per round
-NDefines.NMilitary.HEAVY_SHIP_COMBAT_WIDTH = 2
+NDefines.NMilitary.HEAVY_SHIP_COMBAT_WIDTH = 3
 NDefines.NMilitary.LIGHT_SHIP_COMBAT_WIDTH = 1
 NDefines.NMilitary.GALLEY_COMBAT_WIDTH = 1
 NDefines.NMilitary.TRANSPORT_COMBAT_WIDTH = 1
