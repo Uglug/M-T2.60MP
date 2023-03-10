@@ -45,7 +45,7 @@ NDefines.NCountry.CORRUPTION_COST = 0.03							-- cost for monthly combat per de
 NDefines.NCountry.STATE_MAINTENANCE_DEV_FACTOR = 0.025				-- per dev
 NDefines.NCountry.STATE_MAINTENANCE_DISTANCE_FACTOR = 0				-- distance
 NDefines.NCountry.STATE_MAINTENANCE_CONTINENT_FACTOR = 0			-- different continet
-NDefines.NCountry.STATE_MAINTENANCE_CULTURE_FACTOR = 0.15			-- non accepted culture
+NDefines.NCountry.STATE_MAINTENANCE_CULTURE_FACTOR = 0.5			-- non accepted culture
 
 NDefines.NCountry.ALLOW_ZERO_BASE_VALUES = 1						-- Affects base tax, base manpower, and base production
 NDefines.NCountry.ALLOW_ESTATE_AND_PARLIAMENT_SEAT_IN_PROVINCE = 1 	-- Whether or not a province can have both an estate and a parliament seat
