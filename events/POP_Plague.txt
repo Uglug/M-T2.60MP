@@ -17,15 +17,13 @@ country_event = { ### This event initiates a plague wave
 	}
 	
 	mean_time_to_happen = {
-		years = 10
+		years = 11
 		modifier = {	is_year = 1370	factor = 1.1	}
 		modifier = {	is_year = 1380	factor = 1.1	}
 		modifier = {	is_year = 1400	factor = 1.1	}
-		modifier = {	is_year = 1425	factor = 1.1	}
-		modifier = {	is_year = 1470	factor = 1.1	}
-		modifier = {	is_year = 1540	factor = 1.1	}
+		modifier = {	is_year = 1500	factor = 0.9	}
+		modifier = {	is_year = 1550	factor = 0.9	}
 		modifier = {	is_year = 1600	factor = 1.1	}
-		modifier = {	is_year = 1700	factor = 1.1	}
 		modifier = {	is_year = 1800	factor = 1.1	}
 	}
 	
@@ -45,23 +43,23 @@ country_event = { ### This event initiates a plague wave
 		}
 		else = {
 			random_list = {
-				5 = {
+				4 = {
 					set_global_flag = plague_imminent_doom
 					set_variable = { which = plague_strength_local value = 450 }
 				}
-				15 = {
+				10 = {
 					set_global_flag = plague_imminent_disastrous
 					set_variable = { which = plague_strength_local value = 350 }
 				}
-				45 = {
+				40 = {
 					set_global_flag = plague_imminent_virulent
 					set_variable = { which = plague_strength_local value = 270 }
 				}
-				25 = {
+				20 = {
 					set_global_flag = plague_imminent_moderate
 					set_variable = { which = plague_strength_local value = 220 }
 				}
-				10 = {
+				20 = {
 					set_global_flag = plague_imminent_weak
 					set_variable = { which = plague_strength_local value = 150 }
 				}
@@ -144,70 +142,540 @@ country_event = { ### This event chooses the province to start the plague in.
 	hidden = yes
 	
 	immediate = {
-		hidden_effect = {
-			random_province = {
-				limit = {
-					has_province_flag = trade_center_modifier_has
-					is_city = yes
-					NOT = {
-						check_variable = { which = province_plague_immunity value = -50 }
-						has_province_flag = no_plagues
+				hidden_effect = {
+			if {
+				limit {
+					is_year = 1500
+				}
+				random_list = {
+					35 = {
+						random_province = {
+							limit = {
+								is_city = yes
+								OR = {
+									continent = europe
+									continent = central_asia
+									continent = mena									
+								}
+								has_province_flag = trade_center_modifier_has
+								NOT = {
+									check_variable = { which = province_plague_immunity value = -50 }
+									has_province_flag = no_plagues
+								}
+								province_trade_power = 20
+							}
+							if = {
+								limit = {
+									NOT = { has_global_flag = new_world_plague }
+								}
+								set_global_flag = new_world_plague
+							}
+							save_global_event_target_as = plague_begun_target 
+							set_global_flag = plague_begun
+							add_permanent_province_modifier = {
+								name = plague_origin
+								duration = -1
+							}
+							province_event = {
+								id = POP_Plague.003
+								days = 1
+							}
+						}
+						#if it can't find low-resistance with trade power, go lower and wider
+						set_variable = { which = test_immunity value = -90 }
+						while = {
+							limit = {
+								NOT = {
+									has_global_flag = plague_begun
+									check_variable = { which = test_immunity value = -20 }
+								}
+							}
+							random_province = {
+								limit = {
+									is_city = yes
+									OR = {
+										continent = europe
+										continent = central_asia
+										continent = mena									
+									}									
+									has_province_flag = trade_center_modifier_has						   
+									OR = {
+										check_variable = { which = province_plague_immunity value = -95 }
+										NOT = { owner = { is_tribal = yes } }
+									}
+									NOT = {
+										check_variable = { which = province_plague_immunity which = test_immunity }
+										has_province_flag = no_plagues
+									}
+									
+									OR = {
+										AND = {
+											owner = { is_colonial_nation = no }
+											owner = { capital_scope = { NOT = { has_province_flag = no_plagues } } }
+										}
+										AND = {
+											owner = { is_colonial_nation = yes }
+											owner = { colonial_parent = { capital_scope = { NOT = { has_province_flag = no_plagues } } } }
+										}
+									}
+								}
+								random = {
+									chance = 60
+									set_global_flag = plague_begun
+									set_global_flag = new_world_plague
+									save_global_event_target_as = plague_begun_target 
+									add_permanent_province_modifier = {
+										name = plague_origin
+										duration = -1
+									}
+									province_event = {
+										id = POP_Plague.003
+										days = 1
+									}
+								}
+							}
+							change_variable = { which = test_immunity value = 10 }
+						}
+						while = {
+							limit = {
+								NOT = {
+									has_global_flag = plague_begun
+									check_variable = { which = test_immunity value = 90 }
+								}
+							}
+							random_province = {
+								limit = {
+									is_city = yes
+									OR = {
+										continent = europe
+										continent = central_asia
+										continent = mena									
+									}									
+									has_province_flag = trade_center_modifier_has
+									NOT = {
+										check_variable = { which = province_plague_immunity which = test_immunity }
+										has_province_flag = no_plagues
+									}
+								}
+								random = {
+									chance = 60
+									save_global_event_target_as = plague_begun_target 
+									set_global_flag = plague_begun
+									add_permanent_province_modifier = {
+										name = plague_origin
+										duration = -1
+									}
+									province_event = {
+										id = POP_Plague.003
+										days = 1
+									}
+								}
+							}
+							change_variable = { which = test_immunity value = 10 }
+						}
+						#finally, if it can't find a vulnerable province, it will take anything it can get
+						if = {
+							limit = {
+								NOT = { has_global_flag = plague_begun }
+							}
+							random_province = {
+								limit = {
+									is_city = yes
+									OR = {
+										continent = europe
+										continent = central_asia
+										continent = mena									
+									}
+									has_province_flag = trade_center_modifier_has
+									NOT = { has_province_flag = no_plagues }
+								}
+								save_global_event_target_as = plague_begun_target 
+								set_global_flag = plague_begun
+								add_permanent_province_modifier = {
+									name = plague_origin
+									duration = -1
+								}
+								province_event = {
+									id = POP_Plague.003
+									days = 1
+								}
+							}
+							if = {
+								limit = {
+									NOT = { has_global_flag = plague_begun }
+								}
+								clr_global_flag = plague_imminent_doom
+								clr_global_flag = plague_imminent_disastrous
+								clr_global_flag = plague_imminent_virulent
+								clr_global_flag = plague_imminent_moderate
+								clr_global_flag = plague_imminent_weak
+					
+								remove_country_modifier = plague_triggered
+							}
+						}
 					}
-				}
-				#if = {
-				#	limit = {
-				#		NOT = { has_global_flag = new_world_plague }
-				#	}
-					set_global_flag = new_world_plague
-				#}
-				save_global_event_target_as = plague_begun_target 
-				set_global_flag = plague_begun
-				add_permanent_province_modifier = {
-					name = plague_origin
-					duration = -1
-				}
-				province_event = {
-					id = POP_Plague.003
-					days = 1
+					
+					35 = {
+						random_province = {
+							limit = {
+								is_city = yes
+								OR = {
+									continent = southeast_asia
+									continent = indian_continent
+									continent = east_asia										
+								}
+								has_province_flag = trade_center_modifier_has
+								NOT = {
+									check_variable = { which = province_plague_immunity value = -50 }
+									has_province_flag = no_plagues
+								}
+								province_trade_power = 20
+							}
+							if = {
+								limit = {
+									NOT = { has_global_flag = new_world_plague }
+								}
+								set_global_flag = new_world_plague
+							}
+							save_global_event_target_as = plague_begun_target 
+							set_global_flag = plague_begun
+							add_permanent_province_modifier = {
+								name = plague_origin
+								duration = -1
+							}
+							province_event = {
+								id = POP_Plague.003
+								days = 1
+							}
+						}
+						#if it can't find low-resistance with trade power, go lower and wider
+						set_variable = { which = test_immunity value = -90 }
+						while = {
+							limit = {
+								NOT = {
+									has_global_flag = plague_begun
+									check_variable = { which = test_immunity value = -20 }
+								}
+							}
+							random_province = {
+								limit = {
+									is_city = yes
+									OR = {
+										continent = southeast_asia
+										continent = indian_continent
+										continent = east_asia								
+									}
+									has_province_flag = trade_center_modifier_has						   
+									OR = {
+										check_variable = { which = province_plague_immunity value = -95 }
+										NOT = { owner = { is_tribal = yes } }
+									}
+									NOT = {
+										check_variable = { which = province_plague_immunity which = test_immunity }
+										has_province_flag = no_plagues
+									}
+									
+									OR = {
+										AND = {
+											owner = { is_colonial_nation = no }
+											owner = { capital_scope = { NOT = { has_province_flag = no_plagues } } }
+										}
+										AND = {
+											owner = { is_colonial_nation = yes }
+											owner = { colonial_parent = { capital_scope = { NOT = { has_province_flag = no_plagues } } } }
+										}
+									}
+								}
+								random = {
+									chance = 60
+									set_global_flag = plague_begun
+									set_global_flag = new_world_plague
+									save_global_event_target_as = plague_begun_target 
+									add_permanent_province_modifier = {
+										name = plague_origin
+										duration = -1
+									}
+									province_event = {
+										id = POP_Plague.003
+										days = 1
+									}
+								}
+							}
+							change_variable = { which = test_immunity value = 10 }
+						}
+						while = {
+							limit = {
+								NOT = {
+									has_global_flag = plague_begun
+									check_variable = { which = test_immunity value = 90 }
+								}
+							}
+							random_province = {
+								limit = {
+									is_city = yes
+									OR = {
+										continent = southeast_asia
+										continent = indian_continent
+										continent = east_asia								
+									}
+									has_province_flag = trade_center_modifier_has
+									NOT = {
+										check_variable = { which = province_plague_immunity which = test_immunity }
+										has_province_flag = no_plagues
+									}
+								}
+								random = {
+									chance = 60
+									save_global_event_target_as = plague_begun_target 
+									set_global_flag = plague_begun
+									add_permanent_province_modifier = {
+										name = plague_origin
+										duration = -1
+									}
+									province_event = {
+										id = POP_Plague.003
+										days = 1
+									}
+								}
+							}
+							change_variable = { which = test_immunity value = 10 }
+						}
+						#finally, if it can't find a vulnerable province, it will take anything it can get
+						if = {
+							limit = {
+								NOT = { has_global_flag = plague_begun }
+							}
+							random_province = {
+								limit = {
+									is_city = yes
+									OR = {
+										continent = southeast_asia
+										continent = indian_continent
+										continent = east_asia								
+									}
+									has_province_flag = trade_center_modifier_has
+									NOT = { has_province_flag = no_plagues }
+								}
+								save_global_event_target_as = plague_begun_target 
+								set_global_flag = plague_begun
+								add_permanent_province_modifier = {
+									name = plague_origin
+									duration = -1
+								}
+								province_event = {
+									id = POP_Plague.003
+									days = 1
+								}
+							}
+							if = {
+								limit = {
+									NOT = { has_global_flag = plague_begun }
+								}
+								clr_global_flag = plague_imminent_doom
+								clr_global_flag = plague_imminent_disastrous
+								clr_global_flag = plague_imminent_virulent
+								clr_global_flag = plague_imminent_moderate
+								clr_global_flag = plague_imminent_weak
+					
+								remove_country_modifier = plague_triggered
+							}
+						}						
+					}
+					
+					35 = {
+						random_province = {
+							limit = {
+								is_city = yes
+								OR = {
+									continent = south_america
+									continent = north_america
+									continent = sub_sahara
+								}
+								has_province_flag = trade_center_modifier_has
+								NOT = {
+									check_variable = { which = province_plague_immunity value = -50 }
+									has_province_flag = no_plagues
+								}
+								province_trade_power = 20
+							}
+							if = {
+								limit = {
+									NOT = { has_global_flag = new_world_plague }
+								}
+								set_global_flag = new_world_plague
+							}
+							save_global_event_target_as = plague_begun_target 
+							set_global_flag = plague_begun
+							add_permanent_province_modifier = {
+								name = plague_origin
+								duration = -1
+							}
+							province_event = {
+								id = POP_Plague.003
+								days = 1
+							}
+						}
+						#if it can't find low-resistance with trade power, go lower and wider
+						set_variable = { which = test_immunity value = -90 }
+						while = {
+							limit = {
+								NOT = {
+									has_global_flag = plague_begun
+									check_variable = { which = test_immunity value = -20 }
+								}
+							}
+							random_province = {
+								limit = {
+									is_city = yes
+									OR = {
+										continent = south_america
+										continent = north_america
+										continent = sub_sahara
+									}
+									has_province_flag = trade_center_modifier_has						   
+									OR = {
+										check_variable = { which = province_plague_immunity value = -95 }
+										NOT = { owner = { is_tribal = yes } }
+									}
+									NOT = {
+										check_variable = { which = province_plague_immunity which = test_immunity }
+										has_province_flag = no_plagues
+									}
+									
+									OR = {
+										AND = {
+											owner = { is_colonial_nation = no }
+											owner = { capital_scope = { NOT = { has_province_flag = no_plagues } } }
+										}
+										AND = {
+											owner = { is_colonial_nation = yes }
+											owner = { colonial_parent = { capital_scope = { NOT = { has_province_flag = no_plagues } } } }
+										}
+									}
+								}
+								random = {
+									chance = 60
+									set_global_flag = plague_begun
+									set_global_flag = new_world_plague
+									save_global_event_target_as = plague_begun_target 
+									add_permanent_province_modifier = {
+										name = plague_origin
+										duration = -1
+									}
+									province_event = {
+										id = POP_Plague.003
+										days = 1
+									}
+								}
+							}
+							change_variable = { which = test_immunity value = 10 }
+						}
+						while = {
+							limit = {
+								NOT = {
+									has_global_flag = plague_begun
+									check_variable = { which = test_immunity value = 90 }
+								}
+							}
+							random_province = {
+								limit = {
+									is_city = yes
+									OR = {
+										continent = south_america
+										continent = north_america
+										continent = sub_sahara
+									}
+									has_province_flag = trade_center_modifier_has
+									NOT = {
+										check_variable = { which = province_plague_immunity which = test_immunity }
+										has_province_flag = no_plagues
+									}
+								}
+								random = {
+									chance = 60
+									save_global_event_target_as = plague_begun_target 
+									set_global_flag = plague_begun
+									add_permanent_province_modifier = {
+										name = plague_origin
+										duration = -1
+									}
+									province_event = {
+										id = POP_Plague.003
+										days = 1
+									}
+								}
+							}
+							change_variable = { which = test_immunity value = 10 }
+						}
+						#finally, if it can't find a vulnerable province, it will take anything it can get
+						if = {
+							limit = {
+								NOT = { has_global_flag = plague_begun }
+							}
+							random_province = {
+								limit = {
+									is_city = yes
+									OR = {
+										continent = south_america
+										continent = north_america
+										continent = sub_sahara
+									}
+									has_province_flag = trade_center_modifier_has
+									NOT = { has_province_flag = no_plagues }
+								}
+								save_global_event_target_as = plague_begun_target 
+								set_global_flag = plague_begun
+								add_permanent_province_modifier = {
+									name = plague_origin
+									duration = -1
+								}
+								province_event = {
+									id = POP_Plague.003
+									days = 1
+								}
+							}
+							if = {
+								limit = {
+									NOT = { has_global_flag = plague_begun }
+								}
+								clr_global_flag = plague_imminent_doom
+								clr_global_flag = plague_imminent_disastrous
+								clr_global_flag = plague_imminent_virulent
+								clr_global_flag = plague_imminent_moderate
+								clr_global_flag = plague_imminent_weak
+					
+								remove_country_modifier = plague_triggered
+							}
+						}											
+					}
 				}
 			}
-			#if it can't find low-resistance with trade power, go lower and wider
-			set_variable = { which = test_immunity value = -90 }
-			while = {
-				limit = {
-					NOT = {
-						has_global_flag = plague_begun
-						check_variable = { which = test_immunity value = -20 }
-					}
-				}
-				random_province = {
-					limit = {
-						has_province_flag = trade_center_modifier_has
-						is_city = yes
-						OR = {
-							check_variable = { which = province_plague_immunity value = -95 }
-							owner = { is_tribal = no }
-						}
-						NOT = {
-							check_variable = { which = province_plague_immunity which = test_immunity }
-							has_province_flag = no_plagues
-						}
-						OR = {
-							owner = {
-								is_colonial_nation = no
-								capital_scope = { NOT = { has_province_flag = no_plagues } }
+			else = {
+				random_list = {
+				35 = {
+					random_province = {
+						limit = {
+							is_city = yes
+							OR = {
+								continent = europe
+								continent = central_asia
+								continent = mena									
 							}
-							owner = {
-								is_colonial_nation = yes
-								colonial_parent = { capital_scope = { NOT = { has_province_flag = no_plagues } } }
+							has_province_flag = trade_center_modifier_has
+							NOT = {
+								check_variable = { which = province_plague_immunity value = -50 }
+								has_province_flag = no_plagues
 							}
+							province_trade_power = 20
 						}
-					}
-					random = {
-						chance = 60
-						set_global_flag = plague_begun
-						set_global_flag = new_world_plague
+						if = {
+							limit = {
+								NOT = { has_global_flag = new_world_plague }
+							}
+							set_global_flag = new_world_plague
+						}
 						save_global_event_target_as = plague_begun_target 
+						set_global_flag = plague_begun
 						add_permanent_province_modifier = {
 							name = plague_origin
 							duration = -1
@@ -217,27 +685,162 @@ country_event = { ### This event chooses the province to start the plague in.
 							days = 1
 						}
 					}
-				}
-				change_variable = { which = test_immunity value = 10 }
-			}
-			while = {
-				limit = {
-					NOT = {
-						has_global_flag = plague_begun
-						check_variable = { which = test_immunity value = 90 }
+					#if it can't find low-resistance with trade power, go lower and wider
+					set_variable = { which = test_immunity value = -90 }
+					while = {
+						limit = {
+							NOT = {
+								has_global_flag = plague_begun
+								check_variable = { which = test_immunity value = -20 }
+							}
+						}
+						random_province = {
+							limit = {
+								is_city = yes
+								OR = {
+									continent = europe
+									continent = central_asia
+									continent = mena									
+								}									
+								has_province_flag = trade_center_modifier_has						   
+								OR = {
+									check_variable = { which = province_plague_immunity value = -95 }
+									NOT = { owner = { is_tribal = yes } }
+								}
+								NOT = {
+									check_variable = { which = province_plague_immunity which = test_immunity }
+									has_province_flag = no_plagues
+								}
+								
+								OR = {
+									AND = {
+										owner = { is_colonial_nation = no }
+										owner = { capital_scope = { NOT = { has_province_flag = no_plagues } } }
+									}
+									AND = {
+										owner = { is_colonial_nation = yes }
+										owner = { colonial_parent = { capital_scope = { NOT = { has_province_flag = no_plagues } } } }
+									}
+								}
+							}
+							random = {
+								chance = 60
+								set_global_flag = plague_begun
+								set_global_flag = new_world_plague
+								save_global_event_target_as = plague_begun_target 
+								add_permanent_province_modifier = {
+									name = plague_origin
+									duration = -1
+								}
+								province_event = {
+									id = POP_Plague.003
+									days = 1
+								}
+							}
+						}
+						change_variable = { which = test_immunity value = 10 }
 					}
-				}
-				random_province = {
-					limit = {
-						has_province_flag = trade_center_modifier_has
-						is_city = yes
-						NOT = {
-							check_variable = { which = province_plague_immunity which = test_immunity }
-							has_province_flag = no_plagues
+					while = {
+						limit = {
+							NOT = {
+								has_global_flag = plague_begun
+								check_variable = { which = test_immunity value = 90 }
+							}
+						}
+						random_province = {
+							limit = {
+								is_city = yes
+								OR = {
+									continent = europe
+									continent = central_asia
+									continent = mena									
+								}									
+								has_province_flag = trade_center_modifier_has
+								NOT = {
+									check_variable = { which = province_plague_immunity which = test_immunity }
+									has_province_flag = no_plagues
+								}
+							}
+							random = {
+								chance = 60
+								save_global_event_target_as = plague_begun_target 
+								set_global_flag = plague_begun
+								add_permanent_province_modifier = {
+									name = plague_origin
+									duration = -1
+								}
+								province_event = {
+									id = POP_Plague.003
+									days = 1
+								}
+							}
+						}
+						change_variable = { which = test_immunity value = 10 }
+					}
+					#finally, if it can't find a vulnerable province, it will take anything it can get
+					if = {
+						limit = {
+							NOT = { has_global_flag = plague_begun }
+						}
+						random_province = {
+							limit = {
+								is_city = yes
+								OR = {
+									continent = europe
+									continent = central_asia
+									continent = mena									
+								}
+								has_province_flag = trade_center_modifier_has
+								NOT = { has_province_flag = no_plagues }
+							}
+							save_global_event_target_as = plague_begun_target 
+							set_global_flag = plague_begun
+							add_permanent_province_modifier = {
+								name = plague_origin
+								duration = -1
+							}
+							province_event = {
+								id = POP_Plague.003
+								days = 1
+							}
+						}
+						if = {
+							limit = {
+								NOT = { has_global_flag = plague_begun }
+							}
+							clr_global_flag = plague_imminent_doom
+							clr_global_flag = plague_imminent_disastrous
+							clr_global_flag = plague_imminent_virulent
+							clr_global_flag = plague_imminent_moderate
+							clr_global_flag = plague_imminent_weak
+				
+							remove_country_modifier = plague_triggered
 						}
 					}
-					random = {
-						chance = 60
+				}
+				
+				65 = {
+					random_province = {
+						limit = {
+							is_city = yes
+							OR = {
+								continent = southeast_asia
+								continent = indian_continent
+								continent = east_asia										
+							}
+							has_province_flag = trade_center_modifier_has
+							NOT = {
+								check_variable = { which = province_plague_immunity value = -50 }
+								has_province_flag = no_plagues
+							}
+							province_trade_power = 20
+						}
+						if = {
+							limit = {
+								NOT = { has_global_flag = new_world_plague }
+							}
+							set_global_flag = new_world_plague
+						}
 						save_global_event_target_as = plague_begun_target 
 						set_global_flag = plague_begun
 						add_permanent_province_modifier = {
@@ -249,44 +852,141 @@ country_event = { ### This event chooses the province to start the plague in.
 							days = 1
 						}
 					}
-				}
-				change_variable = { which = test_immunity value = 10 }
-			}
-			#finally, if it can't find a vulnerable province, it will take anything it can get
-			if = {
-				limit = {
-					NOT = { has_global_flag = plague_begun }
-				}
-				random_province = {
-					limit = {
-						has_province_flag = trade_center_modifier_has
-						NOT = { has_province_flag = no_plagues }
-						is_city = yes
+					#if it can't find low-resistance with trade power, go lower and wider
+					set_variable = { which = test_immunity value = -90 }
+					while = {
+						limit = {
+							NOT = {
+								has_global_flag = plague_begun
+								check_variable = { which = test_immunity value = -20 }
+							}
+						}
+						random_province = {
+							limit = {
+								is_city = yes
+								OR = {
+									continent = southeast_asia
+									continent = indian_continent
+									continent = east_asia								
+								}
+								has_province_flag = trade_center_modifier_has						   
+								OR = {
+									check_variable = { which = province_plague_immunity value = -95 }
+									NOT = { owner = { is_tribal = yes } }
+								}
+								NOT = {
+									check_variable = { which = province_plague_immunity which = test_immunity }
+									has_province_flag = no_plagues
+								}
+								
+								OR = {
+									AND = {
+										owner = { is_colonial_nation = no }
+										owner = { capital_scope = { NOT = { has_province_flag = no_plagues } } }
+									}
+									AND = {
+										owner = { is_colonial_nation = yes }
+										owner = { colonial_parent = { capital_scope = { NOT = { has_province_flag = no_plagues } } } }
+									}
+								}
+							}
+							random = {
+								chance = 60
+								set_global_flag = plague_begun
+								set_global_flag = new_world_plague
+								save_global_event_target_as = plague_begun_target 
+								add_permanent_province_modifier = {
+									name = plague_origin
+									duration = -1
+								}
+								province_event = {
+									id = POP_Plague.003
+									days = 1
+								}
+							}
+						}
+						change_variable = { which = test_immunity value = 10 }
 					}
-					save_global_event_target_as = plague_begun_target 
-					set_global_flag = plague_begun
-					add_permanent_province_modifier = {
-						name = plague_origin
-						duration = -1
+					while = {
+						limit = {
+							NOT = {
+								has_global_flag = plague_begun
+								check_variable = { which = test_immunity value = 90 }
+							}
+						}
+						random_province = {
+							limit = {
+								is_city = yes
+								OR = {
+									continent = southeast_asia
+									continent = indian_continent
+									continent = east_asia								
+								}
+								has_province_flag = trade_center_modifier_has
+								NOT = {
+									check_variable = { which = province_plague_immunity which = test_immunity }
+									has_province_flag = no_plagues
+								}
+							}
+							random = {
+								chance = 60
+								save_global_event_target_as = plague_begun_target 
+								set_global_flag = plague_begun
+								add_permanent_province_modifier = {
+									name = plague_origin
+									duration = -1
+								}
+								province_event = {
+									id = POP_Plague.003
+									days = 1
+								}
+							}
+						}
+						change_variable = { which = test_immunity value = 10 }
 					}
-					province_event = {
-						id = POP_Plague.003
-						days = 1
-					}
+					#finally, if it can't find a vulnerable province, it will take anything it can get
+					if = {
+						limit = {
+							NOT = { has_global_flag = plague_begun }
+						}
+						random_province = {
+							limit = {
+								is_city = yes
+								OR = {
+									continent = southeast_asia
+									continent = indian_continent
+									continent = east_asia								
+								}
+								has_province_flag = trade_center_modifier_has
+								NOT = { has_province_flag = no_plagues }
+							}
+							save_global_event_target_as = plague_begun_target 
+							set_global_flag = plague_begun
+							add_permanent_province_modifier = {
+								name = plague_origin
+								duration = -1
+							}
+							province_event = {
+								id = POP_Plague.003
+								days = 1
+							}
+						}
+						if = {
+							limit = {
+								NOT = { has_global_flag = plague_begun }
+							}
+							clr_global_flag = plague_imminent_doom
+							clr_global_flag = plague_imminent_disastrous
+							clr_global_flag = plague_imminent_virulent
+							clr_global_flag = plague_imminent_moderate
+							clr_global_flag = plague_imminent_weak
+				
+							remove_country_modifier = plague_triggered
+						}
+					}						
 				}
-				if = {
-					limit = {
-						NOT = { has_global_flag = plague_begun }
-					}
-					clr_global_flag = plague_imminent_doom
-					clr_global_flag = plague_imminent_disastrous
-					clr_global_flag = plague_imminent_virulent
-					clr_global_flag = plague_imminent_moderate
-					clr_global_flag = plague_imminent_weak
-		
-					remove_country_modifier = plague_triggered
-				}
-			}
+			} }
+			
 		}
 	}
 	
