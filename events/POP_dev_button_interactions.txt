@@ -560,6 +560,16 @@ province_event = { ### Base Menu
 		ai_chance = { factor = 0 }
 	}
 	
+	option = { ### Centers data
+		name = "POP_dev_button_interactions.001.cd"
+		hidden_effect = {
+		set_province_flag = center_calc
+			province_event = {
+				id = POP_dev_button_interactions.1001
+			}
+		}
+	}
+	
 	option = { ### Fight Emirate of Mount Lebanon
 		name = "POP_dev_button_interactions.001.emld"
 		trigger = {
@@ -2413,7 +2423,6 @@ province_event = { ### Examine capital options
 		}
 		ai_chance = { factor = 0 }
 		hidden_effect = {
-
 			province_event = {
 				id = POP_dev_button_interactions.1000
 			}
@@ -2507,6 +2516,255 @@ province_event = { ### Move Capital, no bureaucracy building needed
 		clr_country_flag = interacting_with_province1
 	}
 }
+
+province_event = { ### Centers calc
+	id = POP_dev_button_interactions.1001
+	title = POP_dev_button_interactions.1001.t
+	desc = POP_dev_button_interactions.1001.d
+	picture = GREAT_BUILDING_eventPicture
+	is_triggered_only = yes
+	hidden = no
+	trigger = {
+
+	}
+	immediate = {
+		hidden_effect = {
+			##log = "----------- mt_find_centers.txt results:"
+			random_province = {
+				limit = {
+					#has_building = interact_with_province_build
+					#province_id = 361
+					has_province_flag = center_calc
+				}
+				AAA = {
+					set_variable = { which = temp_mod value = 1 }
+					set_variable = { which = sr_id which = PREV }
+					set_variable = { which = cont_id which = PREV }
+					if = {
+						limit = {
+							check_variable = { which = year_ticker value = 101 }
+						}
+						set_variable = { which = temp_mod which = year_ticker }
+						subtract_variable = { which = temp_mod value = 100 }
+						multiply_variable = { which = temp_mod value = 0.5 }
+						change_variable = { which = temp_mod value = 200 }
+						multiply_variable = { which = temp_mod value = 0.005 }
+					}
+					#trade
+					set_variable = { which = temp_value value = 1 }
+					set_variable = { which = temp_highest value = 0 }
+					set_variable = { which = temp_trade_power value = 0 }
+					every_province = {
+						limit = {
+							is_variable_equal = { which = sr_id which = PREV }
+						}
+						export_to_variable = { which = temp_trade_power value = province_trade_power }
+						set_variable = { which = temp_trade_highest which = temp_trade_power }
+						PREV = {
+							change_variable = { which = temp_trade_power which = PREV }
+						}
+						if = {
+							limit = {
+								check_variable = { which = temp_trade_highest which = PREV }
+							}
+							save_event_target_as = highest
+							PREV = {
+								set_variable = { which = temp_trade_highest which = PREV }
+							}
+						}
+					}
+					divide_variable = { which = temp_trade_power which = temp_mod }
+					set_variable { which = temp_trade_power_total which = temp_trade_power }
+					#log = "Total effective trade power for [Prev.GetName]'s superregion is [This.temp_trade_power.GetValue]."
+					if = {
+						limit = {
+							check_variable = { which = temp_trade_power value = 820 }
+						}
+						change_variable = { which = trade_temp_4 value = 1 }
+						event_target:highest = {
+							#log = "  [This.GetName] ([This.prov_id.GetValue]) has a dominant center of trade."
+						}
+					}
+					set_variable = { which = temp_1 value = 0 }
+					set_variable = { which = temp_2 value = 0 }
+					set_variable = { which = temp_3 value = 0 }
+					if = { limit = { check_variable = { which = temp_trade_power value = 25 } } subtract_variable = { which = temp_trade_power value = 25 } change_variable = { which = trade_temp_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_trade_power value = 50 } } subtract_variable = { which = temp_trade_power value = 50 } change_variable = { which = trade_temp_2 value = 1 } }
+					if = { limit = { check_variable = { which = temp_trade_power value = 35 } } subtract_variable = { which = temp_trade_power value = 35 } change_variable = { which = trade_temp_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_trade_power value = 35 } } subtract_variable = { which = temp_trade_power value = 35 } change_variable = { which = trade_temp_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_trade_power value = 100 } } subtract_variable = { which = temp_trade_power value = 100 } change_variable = { which = trade_temp_3 value = 1 } }
+					if = { limit = { check_variable = { which = temp_trade_power value = 75 } } subtract_variable = { which = temp_trade_power value = 75 } change_variable = { which = trade_temp_2 value = 1 } }
+					if = { limit = { check_variable = { which = temp_trade_power value = 45 } } subtract_variable = { which = temp_trade_power value = 45 } change_variable = { which = trade_temp_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_trade_power value = 45 } } subtract_variable = { which = temp_trade_power value = 45 } change_variable = { which = trade_temp_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_trade_power value = 90 } } subtract_variable = { which = temp_trade_power value = 90 } change_variable = { which = trade_temp_2 value = 1 } }
+					if = { limit = { check_variable = { which = temp_trade_power value = 60 } } subtract_variable = { which = temp_trade_power value = 60 } change_variable = { which = trade_temp_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_trade_power value = 60 } } subtract_variable = { which = temp_trade_power value = 60 } change_variable = { which = trade_temp_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_trade_power value = 350 } } subtract_variable = { which = temp_trade_power value = 350 } change_variable = { which = trade_temp_3 value = 1 } }
+					if = { limit = { check_variable = { which = temp_trade_power value = 100 } } subtract_variable = { which = temp_trade_power value = 100 } change_variable = { which = trade_temp_2 value = 1 } }
+					if = { limit = { check_variable = { which = temp_trade_power value = 75 } } subtract_variable = { which = temp_trade_power value = 75 } change_variable = { which = trade_temp_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_trade_power value = 75 } } subtract_variable = { which = temp_trade_power value = 75 } change_variable = { which = trade_temp_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_trade_power value = 90 } } subtract_variable = { which = temp_trade_power value = 90 } change_variable = { which = trade_temp_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_trade_power value = 90 } } subtract_variable = { which = temp_trade_power value = 90 } change_variable = { which = trade_temp_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_trade_power value = 100 } } change_variable = { which = trade_temp_1 value = 1 } }
+					#log = "  This generates [This.trade_temp_3.GetValue] major, [This.trade_temp_2.GetValue] important and [This.trade_temp_1.GetValue] minor centers of trade."
+					#log = "-----"
+					
+					set_variable = { which = temp_value value = 1 }
+					set_variable = { which = temp_highest value = 0 }
+					set_variable = { which = temp_power value = 0 }
+					every_province = {
+						limit = {
+							is_variable_equal = { which = sr_id which = PREV }
+						}
+						set_variable = { which = temp_production_power which = urban_production_power }
+						set_variable = { which = temp_production_highest which = temp_production_power }
+						PREV = {
+							change_variable = { which = temp_production_power which = PREV }
+						}
+						if = {
+							limit = {
+								check_variable = { which = temp_production_highest which = PREV }
+							}
+							save_event_target_as = highest
+							PREV = {
+								set_variable = { which = temp_production_highest which = PREV }
+							}
+						}
+					}
+					divide_variable = { which = temp_production_power which = temp_mod }
+					set_variable { which = temp_production_power_total which = temp_production_power }
+					#log = "Total effective urban production power for [Prev.GetName]'s superregion is [This.temp_production_power.GetValue]."
+					if = {
+						limit = {
+							check_variable = { which = temp_production_power value = 590 }
+						}
+						change_variable = { which = production_temp_4 value = 1 }
+						event_target:highest = {
+							#log = "  [This.GetName] ([This.prov_id.GetValue]) has a dominant center of production."
+						}
+					}
+					set_variable = { which = production_temp_1 value = 0 }
+					set_variable = { which = production_temp_2 value = 0 }
+					set_variable = { which = production_temp_3 value = 0 }
+					if = { limit = { check_variable = { which = temp_production_power value = 10 } } subtract_variable = { which = temp_production_power value = 10 } change_variable = { which = production_temp_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_production_power value = 15 } } subtract_variable = { which = temp_production_power value = 15 } change_variable = { which = production_temp_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_production_power value = 30 } } subtract_variable = { which = temp_production_power value = 30 } change_variable = { which = production_temp_2 value = 1 } }
+					if = { limit = { check_variable = { which = temp_production_power value = 20 } } subtract_variable = { which = temp_production_power value = 20 } change_variable = { which = production_temp_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_production_power value = 20 } } subtract_variable = { which = temp_production_power value = 20 } change_variable = { which = production_temp_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_production_power value = 60 } } subtract_variable = { which = temp_production_power value = 60 } change_variable = { which = production_temp_3 value = 1 } }
+					if = { limit = { check_variable = { which = temp_production_power value = 30 } } subtract_variable = { which = temp_production_power value = 30 } change_variable = { which = production_temp_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_production_power value = 50 } } subtract_variable = { which = temp_production_power value = 50 } change_variable = { which = production_temp_2 value = 1 } }
+					if = { limit = { check_variable = { which = temp_production_power value = 35 } } subtract_variable = { which = temp_production_power value = 35 } change_variable = { which = production_temp_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_production_power value = 60 } } subtract_variable = { which = temp_production_power value = 60 } change_variable = { which = production_temp_2 value = 1 } }
+					if = { limit = { check_variable = { which = temp_production_power value = 40 } } subtract_variable = { which = temp_production_power value = 40 } change_variable = { which = production_temp_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_production_power value = 40 } } subtract_variable = { which = temp_production_power value = 40 } change_variable = { which = production_temp_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_production_power value = 260 } } subtract_variable = { which = temp_production_power value = 260 } change_variable = { which = production_temp_2 value = 1 } }
+					if = { limit = { check_variable = { which = temp_production_power value = 120 } } subtract_variable = { which = temp_production_power value = 120 } change_variable = { which = production_temp_3 value = 1 } }
+					if = { limit = { check_variable = { which = temp_production_power value = 80 } } change_variable = { which = production_temp_1 value = 1 } }
+					#log = "  This generates [This.production_temp_3.GetValue] major, [This.production_temp_2.GetValue] important and [This.production_temp_1.GetValue] minor centers of production."
+					#log = "-----"
+					#art
+					set_variable = { which = temp_value value = 1 }
+					set_variable = { which = temp_highest value = 0 }
+					set_variable = { which = temp_power value = 0 }
+					every_province = {
+						limit = {
+							is_variable_equal = { which = cont_id which = PREV }
+						}
+						set_variable = { which = temp_art_highest which = art_power }
+						if = {
+							limit = {
+								check_variable = { which = temp_art_highest which = PREV }
+							}
+							save_event_target_as = highest
+							PREV = {
+								set_variable = { which = temp_art_highest which = PREV }
+							}
+						}
+						if = {
+							limit = {
+								is_variable_equal = { which = sr_id which = PREV }
+							}
+							set_variable = { which = temp_art_power which = temp_art_highest }
+							PREV = {
+								change_variable = { which = temp_art_power which = PREV }
+							}
+						}
+						set_variable = { which = temp_art_power value = 0 }
+						set_variable = { which = temp_art_highest value = 0 }
+					}
+					divide_variable = { which = temp_art_power which = temp_mod }
+					set_variable { which = temp_art_power_total which = temp_art_power }
+					#log = "Total effective art power for [Prev.GetName]'s superregion is [This.temp_art_power_total.GetValue]."
+					set_variable = { which = temp_art_1 value = 0 }
+					set_variable = { which = temp_art_2 value = 0 }
+					set_variable = { which = temp_art_3 value = 0 }
+					if = { limit = { check_variable = { which = temp_art_power value = 10 } } subtract_variable = { which = temp_art_power value = 10 } change_variable = { which = temp_art_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_art_power value = 20 } } subtract_variable = { which = temp_art_power value = 20 } change_variable = { which = temp_art_2 value = 1 } }
+					if = { limit = { check_variable = { which = temp_art_power value = 13 } } subtract_variable = { which = temp_art_power value = 13 } change_variable = { which = temp_art_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_art_power value = 16 } } subtract_variable = { which = temp_art_power value = 16 } change_variable = { which = temp_art_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_art_power value = 25 } } subtract_variable = { which = temp_art_power value = 25 } change_variable = { which = temp_art_2 value = 1 } }
+					if = { limit = { check_variable = { which = temp_art_power value = 20 } } subtract_variable = { which = temp_art_power value = 20 } change_variable = { which = temp_art_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_art_power value = 30 } } subtract_variable = { which = temp_art_power value = 30 } change_variable = { which = temp_art_2 value = 1 } }
+					if = { limit = { check_variable = { which = temp_art_power value = 25 } } subtract_variable = { which = temp_art_power value = 25 } change_variable = { which = temp_art_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_art_power value = 30 } } subtract_variable = { which = temp_art_power value = 30 } change_variable = { which = temp_art_1 value = 1 } }
+					if = { limit = { check_variable = { which = temp_art_power value = 40 } } subtract_variable = { which = temp_art_power value = 40 } change_variable = { which = temp_art_2 value = 1 } }
+					if = { limit = { check_variable = { which = temp_art_power value = 40 } } change_variable = { which = temp_art_1 value = 1 } }
+					if = {
+						limit = {
+							is_variable_equal = { which = sr_id which = event_target:highest }
+							event_target:highest = {
+								check_variable = { which = temp_art_power value = 12 }
+							}
+						}
+						if = {
+							limit = {
+								check_variable = { which = temp_art_2 value = 1 }
+							}
+							subtract_variable = { which = temp_art_2 value = 1 }
+						}
+						else = {
+							subtract_variable = { which = temp_art_1 value = 1 }
+						}
+						event_target:highest = {
+							#log = "  [This.GetName] ([This.prov_id.GetValue]) has a continental center of art."
+						}
+					}
+					#log = "  This generates [This.temp_art_2.GetValue] regional and [This.temp_art_1.GetValue] local centers of art."
+					
+				}
+			}
+			#log = "-----------"			
+		}
+	}
+
+	option = { ### That is all
+		name = exit
+		highlight = yes		
+		ai_chance = { factor = 0 }
+		clr_province_flag = dev_button_interact
+		clr_province_flag = center_calc
+		hidden_effect = {		
+			AAA = {
+				set_variable = { which = temp_trade_power_total value = 0 }
+				set_variable = { which = trade_temp_4 value = 0 }
+				set_variable = { which = trade_temp_3 value = 0 }
+				set_variable = { which = trade_temp_2 value = 0 }
+				set_variable = { which = trade_temp_1 value = 0 }
+				set_variable = { which = temp_production_power_total value = 0 }
+				set_variable = { which = production_temp_4 value = 0 }
+				set_variable = { which = production_temp_3 value = 0 }
+				set_variable = { which = production_temp_2 value = 0 }
+				set_variable = { which = production_temp_1 value = 0 }
+				set_variable = { which = temp_art_power_total value = 0 }
+				set_variable = { which = temp_art_2 value = 0 }
+				set_variable = { which = temp_art_1 value = 0 }
+			}
+		}
+		
+	}
+}
+
 
 province_event = { ### Move Capital, no bureaucracy building needed
 	id = POP_dev_button_interactions.203
